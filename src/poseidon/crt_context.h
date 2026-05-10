@@ -53,11 +53,12 @@ public:
             return upper_half_threshold_.get();
         }
 
+        // 笔记：RNSTool提供了诸如BConv等, rns相关操作或许是最需要进行通信优化的部分
         POSEIDON_NODISCARD inline const util::RNSTool *rns_tool() const noexcept
         {
             return rns_tool_.get();
         }
-
+        // 笔记：RNSToolQP主要提供了key switch用到的mod down和mod up
         POSEIDON_NODISCARD inline const util::RNSToolQP *qp_rns_tool() const noexcept
         {
             return rns_tool_qp_tool_.get();

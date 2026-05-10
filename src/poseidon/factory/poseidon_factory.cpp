@@ -19,6 +19,7 @@ PoseidonFactory *PoseidonFactory::get_instance()
     if (factory_ == nullptr)
     {
 #ifdef USING_HARDWARE
+        // 笔记：后续gpu加速或许可以复用这个context
         factory_ = new PoseidonFactory(DEVICE_TYPE::DEVICE_HARDWARE);
 #else
         factory_ = new PoseidonFactory(DEVICE_TYPE::DEVICE_SOFTWARE);

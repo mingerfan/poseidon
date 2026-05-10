@@ -5,7 +5,7 @@
 #include "poseidon/advance/polynomial_evaluation.h"
 #include "poseidon/key/keyswitch.h"
 #include "poseidon/encryptor.h"
-
+// 笔记：进行计算的核心，了解细节重点观察
 namespace poseidon
 {
 class EvaluatorCkksBase : public EvaluatorBase

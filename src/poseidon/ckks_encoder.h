@@ -85,6 +85,7 @@ public:
                        Plaintext &destination,
                        MemoryPoolHandle pool = MemoryManager::GetPool()) const
     {
+        // 问题：这里的values对应的是什么？
         encode_internal(values.data(), values.size(), parms_id, scale, destination,
                         std::move(pool));
     }
@@ -115,10 +116,13 @@ public:
     inline void encode(const std::vector<T> &values, double scale, Plaintext &destination,
                        MemoryPoolHandle pool = MemoryManager::GetPool()) const
     {
+        // 笔记：看起来parms_id是context分配的，主要根据context中的ParametersLiteral的所有关键参数做哈希，
+        // 生成唯一的params_id_
         encode(values, context_.crt_context()->first_parms_id(), scale, destination,
                std::move(pool));
     }
 
+// 笔记：提供更安全的std::vector
 #ifdef POSEIDON_USE_MSGSL
     /**
         Encodes a vector of double-precision floating-point real or complex numbers
@@ -375,6 +379,7 @@ public:
     POSEIDON_NODISCARD inline const PoseidonContext &context() const { return context_; }
 
 private:
+    // toview
     template <typename T, typename = std::enable_if_t<
                               std::is_same<std::remove_cv_t<T>, double>::value ||
                               std::is_same<std::remove_cv_t<T>, std::complex<double>>::value>>

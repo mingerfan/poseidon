@@ -1,0 +1,5 @@
+# Global constraints for Codex in this project
+
+[[requirements]]
+description = "Never use pacman -Sy to avoid partial upgrades on Arch Linux. Always use pacman -S instead."
+rule = "NEVER run `pacman -Sy <pkg>`. This causes partial upgrades that can break the system. Always use `pacman -S <pkg>` (without -y). If the package is not found in the local database, ask the user before running `pacman -Syu`."
