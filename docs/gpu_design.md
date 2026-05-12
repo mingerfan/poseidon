@@ -215,7 +215,7 @@ virtual void add(const AbstractCiphertext &ciph, const AbstractCiphertext &ciph2
 `AbstractEvaluator`下有多个后端实现：
 
 - `CPUEvaluator`：对现有Poseidon软件路径的适配层。它只接受host layout的数据，内部调用原有`EvaluatorBase`。
-- `SingleGPUEvaluator`：对单卡GPU执行路径的适配层。第一阶段可以包装Cheddar，后续考虑优化实现。
+- `SingleGPUEvaluator`：对单卡GPU执行路径的适配层。第一阶段可以让GPU侧storage和layout尽量贴近Cheddar，以类似“外挂后端”的方式接入Cheddar能力；后续再逐步内化为自研kernel。Cheddar类型不应出现在公开API中。
 - `MultiGPUEvaluator`：面向多卡的自研执行路径。它需要先定义分布式数据布局，再实现具体算子，不能只依赖单卡Cheddar wrapper自然扩展。
 
 每个后端都应该声明自己的能力边界，例如支持的scheme、数据域、密文布局、key布局和word width。当输入数据不满足后端能力要求时，应该显式报错，而不是在运算过程中隐式搬运或隐式转换。
@@ -235,7 +235,9 @@ virtual void add(const AbstractCiphertext &ciph, const AbstractCiphertext &ciph2
 ![AbstractCiphertext Architecture](attachments/2026-05-11T06:47:23.352Z.png)
 
 ## 统一逻辑对象与互斥Storage
-为了保留统一API，可以把`Ciphertext`设计成一个逻辑句柄。它的元数据保存在外层，实际物理数据通过类似Rust enum的互斥storage承载。在C++中可以用`std::variant`表达：
+为了保留统一API，可以把`Ciphertext`设计成一个逻辑句柄。它的元数据保存在外层，实际物理数据通过类似Rust enum的互斥storage承载。这里的“enum-like”首先是语义约束：同一个`Ciphertext`在任意时刻只拥有一种权威物理表示，例如host storage、single-GPU storage或distributed storage。
+
+工程实现上需要避免在核心公共头文件中直接暴露CUDA、RMM或Cheddar类型。下面这种写法只适合作为概念示意，不适合直接放进`ciphertext.h`：
 
 ``` cpp
 using CiphertextStorage = std::variant<
@@ -250,7 +252,33 @@ class Ciphertext {
 };
 ```
 
-这种设计下，同一个`Ciphertext`对象在任意时刻只拥有一种物理表示，避免同时维护host副本和GPU副本带来的一致性问题。它仍然可以通过统一API传给不同的Evaluator，但Evaluator在执行前必须检查当前`storage`是否满足自己的后端能力要求。如果不满足，应要求调用者显式转换，而不是在算子内部隐式搬运。
+原因是`std::variant`需要知道每个alternative的完整类型定义。如果`CudaCiphertextStorage`内部包含CUDA、RMM或Cheddar成员，那么所有包含`ciphertext.h`的CPU-only用户都会被迫依赖CUDA Toolkit。这会污染Poseidon现有软件路径的编译边界。
+
+更稳妥的实现是让公共`Ciphertext`保持CUDA-free，通过PIMPL、type-erasure或opaque handle隔离后端实现：
+
+``` cpp
+enum class CiphertextStorageKind {
+    Host,
+    Cuda,
+    Distributed
+};
+
+class CiphertextStorageImpl {
+public:
+    virtual ~CiphertextStorageImpl() = default;
+    virtual CiphertextStorageKind kind() const noexcept = 0;
+    virtual std::unique_ptr<CiphertextStorageImpl> clone() const = 0;
+};
+
+class Ciphertext {
+    CiphertextMeta meta;
+    std::unique_ptr<CiphertextStorageImpl> storage;
+};
+```
+
+`HostCiphertextStorage`可以在CPU-only构建中提供；`CudaCiphertextStorage`和`DistributedCiphertextStorage`则放在GPU相关头文件或源文件中实现。这样上层仍然得到一个统一的`Ciphertext`对象，但核心公共头文件不需要include CUDA依赖。
+
+这种设计下，同一个`Ciphertext`对象在任意时刻只拥有一种权威物理表示，避免同时维护host副本和GPU副本带来的一致性问题。它仍然可以通过统一API传给不同的Evaluator，但Evaluator在执行前必须检查当前`storage->kind()`以及layout是否满足自己的后端能力要求。如果不满足，应要求调用者显式转换，而不是在算子内部隐式搬运。
 
 这里“统一”的是逻辑API和对象入口，而不是让所有Evaluator都自动消费所有物理storage。storage的实际类型仍然是显式、可检查、互斥的。
 
@@ -262,6 +290,8 @@ ct.to_cuda_inplace(device_id);             // 原地替换storage
 ```
 
 `to_*`接口应该被视为显式的数据传输或布局转换边界。转换后，旧storage是否保留、是否失效、是否需要同步，都应由接口语义明确规定。第一阶段建议采用互斥storage，即原地转换会替换旧storage，不维护多份缓存。
+
+使用PIMPL或虚接口的代价是需要显式实现拷贝语义，例如通过`clone()`完成深拷贝；同时会引入一次间接访问和一次堆分配。但这些成本发生在密文对象管理和算子入口处，相比GPU kernel launch和FHE算子本身通常可以忽略。需要避免的是在系数级循环或kernel内部引入虚调用。
 
 ## Metadata与Device参数
 `CiphertextMeta`应放在外层`Ciphertext`中，作为host-side的权威元数据。它包含`parms_id`、scale、level或NPInfo、`is_ntt_form`、component数量、slot数量、layout id等信息。这些信息主要服务于CPU侧调度、类型检查、后端能力判断、kernel选择和输出对象尺寸计算。
@@ -287,11 +317,38 @@ struct CudaCiphertextView {
 
 - `domain`：数据所在域，例如`Host`、`CudaDevice{id}`、`Distributed{shards}`。
 - `size/capacity`：实际元素数量与容量。
-- `stream/event`语义：异步拷贝和kernel launch需要明确同步边界。
+- `stream/event`语义：记录或配合运行时管理异步拷贝、kernel launch之间的依赖关系，确保某个buffer在被读取前，其前序写入或传输已经完成。
 
 `FieldData`拥有数据，并可以按需生成`FieldDataView`和`FieldDataConstView`。这些view只是短生命周期borrow，不拥有内存，也不延长`FieldData`生命周期。任何`resize`、释放、跨域迁移、重新分配都会使旧view失效。因此，view不应长期保存在密文对象中，只应在调用kernel或handler前临时生成。
 
 跨域复制不应该进入`FieldData`内部。更清晰的职责划分是：`FieldData`描述并拥有buffer，`TransferManager`或`DomainRuntime`负责根据源域、目标域、stream和设备拓扑执行拷贝。这样后续支持host staging、P2P、NVLink或多卡同步时，不需要让每个buffer owner知道所有传输策略。这种传输可以是运行时的，也可以是提前规划好的。
+
+## 执行流与同步模型
+GPU算子通常是异步的。host侧发起`cudaMemcpyAsync`或kernel launch后，操作可能尚未完成，host线程就已经继续向下执行。因此，GPU后端必须明确stream和同步边界，否则连续算子之间可能出现读写顺序不确定的问题。
+
+第一阶段建议采用单stream模型降低复杂度：
+
+- `SingleGPUEvaluator`持有一个默认stream，或者从GPU后端专用的`ExecutionContext`中取得一个stream。
+- 同一个算子内部的多个kernel，例如NTT、element-wise multiply、INTT、key switch、rescale，默认按顺序enqueue到同一个stream。
+- 连续算子链，例如`multiply_relin -> rescale`，只要使用同一个stream，就可以依赖CUDA stream的顺序语义，不需要在两个算子之间插入host同步。
+- `to_host()`、显式`synchronize()`、需要读取host结果的debug接口，以及某些资源回收边界，才应该成为明确的同步点。
+
+如果`ExecutionContext`放在核心公共头文件中，它也不应直接包含`cudaStream_t`。可以使用opaque stream handle，或者把`CudaExecutionContext`放在GPU后端头文件中。示意接口可以设计为：
+
+``` cpp
+class ExecutionContext {
+    StreamHandle stream; // opaque handle, or use CudaExecutionContext in GPU-only headers
+    SyncPolicy sync_policy;
+};
+
+evaluator.multiply_relin(a, b, tmp, relin_keys, exec);
+evaluator.rescale(tmp, out, exec);
+exec.synchronize();
+```
+
+在这个模型下，GPU evaluator方法可以被理解为“提交工作到stream”，而不是“每次调用都等待GPU完成”。如果需要保留更传统的同步API，可以在上层提供默认策略：同步版本在算子返回前调用`synchronize()`，异步版本则由调用者或`ExecutionContext`管理同步。
+
+多stream和多卡版本需要进一步引入event依赖。例如，一个buffer在stream A上完成写入，而后续kernel在stream B上读取它时，必须通过event建立`stream B wait event`关系。这个复杂度不应混入Phase 1 MVP；Phase 1可以先规定同一条算子链使用同一个stream。
 
 ## GPUCiphertext的所有权模型
 `GPUCiphertext`应该是拥有型对象。它内部应持有由`FieldData`组成的storage描述，而不是持有`FieldDataView`或`FieldDataConstView`。view类型只适合作为临时参数，不适合作为密文的长期成员。
@@ -350,11 +407,42 @@ class GPUCiphertextView {
 ## 后端适配约束
 `CPUEvaluator`、`SingleGPUEvaluator`和`MultiGPUEvaluator`可以共享同一套`AbstractEvaluator` API，但它们不应该对任意物理storage做隐式处理。更稳妥的设计是：统一API保留在逻辑对象层，后端执行时只接受自己声明支持的storage类型和布局。
 
-- `CPUEvaluator`要求输入的`CiphertextStorage`为`HostCiphertextStorage`，或已经显式转换为可映射到Poseidon原生`Ciphertext`的host layout。
-- `SingleGPUEvaluator`要求输入的`CiphertextStorage`为`CudaCiphertextStorage`，并要求其layout可以映射到Cheddar的`Ciphertext<word>`或本项目自己的单卡GPU layout。
-- `MultiGPUEvaluator`要求输入的`CiphertextStorage`为`DistributedCiphertextStorage`，并要求其分布式切分策略与当前算子匹配。
+- `CPUEvaluator`要求输入的storage kind为`Host`，或已经显式转换为可映射到Poseidon原生`Ciphertext`的host layout。
+- `SingleGPUEvaluator`要求输入的storage kind为`Cuda`，并要求其layout可以映射到后端私有的Cheddar表示或本项目自己的单卡GPU layout。公开接口不应暴露Cheddar的`Ciphertext<word>`。
+- `MultiGPUEvaluator`要求输入的storage kind为`Distributed`，并要求其分布式切分策略与当前算子匹配。
 
 如果未来需要在一个表达式中混合CPU和GPU数据，应在表达式执行前显式插入复制或转换步骤，而不是让算子内部偷偷搬运数据。这样用户侧仍然使用统一的`evaluator.add(a, b, out)`形式，但数据placement和转换成本不会被隐藏。
+
+## Cheddar集成边界
+Cheddar不能只被理解为一个可以轻量包装的函数库。它有自己的`Context`、`Container`、`Ciphertext<word>`、`DeviceVector<word>`、NTT handler和element-wise handler。如果在Poseidon和Cheddar之间设计一个很厚的adapter，并试图在每个算子边界做复杂布局转译，Phase 1的实现风险会很高。
+
+更可行的策略是：Phase 1的GPU侧数据结构主动贴近Cheddar的物理模型，把Cheddar作为一个后端私有的“外挂式”执行引擎接入。也就是说，`CudaCiphertextStorage`、`CudaPlaintextStorage`和GPU key storage的内部布局应尽量选择Cheddar容易直接消费的形式，例如按component组织`c0/c1/c2`，每个component内部连续存放对应level下的RNS primes，并提供能映射到Cheddar view的device buffer。
+
+这样设计时，adapter的职责应尽量收窄：
+
+- `SingleGPUEvaluator`内部持有Cheddar相关的后端上下文，例如`CheddarContextAdapter`或更薄的wrapper。
+- `CudaCiphertextStorage`可以在GPU实现文件中直接持有Cheddar对象，也可以持有Cheddar-compatible的自定义device buffer。
+- adapter主要负责Poseidon参数到Cheddar context/NPInfo的初始化映射，以及公开`Ciphertext`到GPU storage的边界转换。
+- GPU算子内部不应反复在Poseidon layout和Cheddar layout之间转换；进入GPU storage后，应尽量长期保持Cheddar-compatible layout。
+- 公开API、核心`Ciphertext`头文件和CPU-only构建不包含Cheddar类型。
+- 如果后续替换为自研kernel，应优先复用这套GPU侧layout和storage抽象，而不是重新改动上层`Ciphertext`、`ExecutionContext`和`SingleGPUEvaluator`接口。
+
+这意味着Phase 1不是在Poseidon原生host layout上临时调用Cheddar kernel，而是先定义一套Cheddar-like的GPU原生layout。Cheddar只是这套layout的第一版执行后端。至少需要提前固定并验证：word width是否一致、RNS prime顺序是否一致、Cheddar的NPInfo如何对应Poseidon的level、Cheddar的`bx_/ax_/rx_`如何对应Poseidon的`c0/c1/c2`、输入输出是否处于相同NTT form，以及rescale后scale和level如何回写到host-side meta。
+
+这种路线的好处是adapter不会膨胀成每个算子的复杂翻译层。代价是GPU侧storage在Phase 1会明显带有Cheddar形状；但只要这个形状被封装在GPU后端内部，后续仍然可以把Cheddar对象替换为自研`FieldData + ComponentStorage + kernel`实现。
+
+## Phase 1 MVP范围
+为了避免抽象先行，第一阶段应先定义一个最小可工作的单卡CKKS链路。建议Phase 1只承诺以下范围：
+
+- 后端：只支持`SingleGPUEvaluator`，不支持多卡。
+- 存储：只支持host storage和single-GPU CUDA storage之间的显式转换；不维护host/GPU双副本缓存。
+- 执行：默认使用单stream模型，连续算子不做隐式host同步。
+- 数据对象：优先支持`Ciphertext`、`Plaintext`和`RelinKeys`的GPU表示；`GaloisKeys`和rotation可以后置。
+- 核心算子：至少跑通CKKS的device-resident `add`、`multiply_relin`、`rescale`链路。
+- 内部算子：NTT、INTT、element-wise multiply、key switch、mod switch可以先作为`multiply_relin`和`rescale`的内部实现细节，不急着暴露为公开API。
+- Cheddar：作为后端私有的外挂式执行引擎或参考实现，不出现在公开接口中；GPU侧layout优先保持Cheddar-compatible，减少算子级adapter复杂度。
+
+Phase 1暂不处理以下问题：`DistributedCiphertext`、多GPU shard layout、跨stream event调度、自动跨后端迁移、表达式级调度和复杂缓存一致性。它们可以作为Phase 2之后的演进方向。
 
 ## 多卡设计的待定问题
 目前`MultiGPUEvaluator`仍然只是架构占位。真正实现前，必须先确定分布式密文的切分维度。可能的切分方式包括：
@@ -365,5 +453,3 @@ class GPUCiphertextView {
 - 按coefficient切分：对NTT和rotation通信压力较大，通常需要更复杂的通信计划。
 
 在没有确定切分策略之前，`DistributedCiphertext`只应作为接口预留。
-
-
