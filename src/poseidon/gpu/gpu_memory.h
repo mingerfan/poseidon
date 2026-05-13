@@ -2,7 +2,7 @@
 
 #include <cstddef>
 #include <cstdint>
-#include <stdexcept>
+#include <utility>
 
 namespace poseidon
 {
@@ -10,16 +10,27 @@ namespace gpu
 {
 
 /**
- * @brief Lightweight device vector placeholder.
+ * @brief GPU residue word type.
  *
- * This class is intended to own a contiguous memory region on one GPU device.
- * The actual CUDA allocation/free logic should be implemented later with
- * cudaSetDevice / cudaMalloc / cudaFree or by reusing Cheddar's DeviceVector.
+ * The GPU backend targets small RNS primes below 32 bits.
+ * Therefore GPU-side ciphertext/plaintext residues are stored as uint32_t.
+ *
+ * Multiplication kernels may still use uint64_t as intermediate type.
+ */
+using GpuWord = std::uint32_t;
+using GpuWide = std::uint64_t;
+
+/**
+ * @brief Lightweight GPU memory owner.
+ *
+ * This is the future replacement/wrapper of cudaMalloc/cudaFree or Cheddar's
+ * DeviceVector. It owns one contiguous device buffer on one GPU.
  *
  * Current stage:
- * - Only defines the interface.
- * - Allocation is left as TODO.
+ * - Only provides framework-level interface.
+ * - Real CUDA allocation/free is TODO.
  */
+template <typename T>
 class DeviceVector
 {
 public:
@@ -33,43 +44,64 @@ public:
     DeviceVector(const DeviceVector &) = delete;
     DeviceVector &operator=(const DeviceVector &) = delete;
 
-    DeviceVector(DeviceVector &&) = default;
-    DeviceVector &operator=(DeviceVector &&) = default;
+    DeviceVector(DeviceVector &&other) noexcept
+    {
+        move_from(std::move(other));
+    }
+
+    DeviceVector &operator=(DeviceVector &&other) noexcept
+    {
+        if (this != &other)
+        {
+            release();
+            move_from(std::move(other));
+        }
+        return *this;
+    }
 
     ~DeviceVector()
     {
         release();
     }
 
+    /**
+     * @brief Allocate device memory.
+     *
+     * TODO:
+     * - cudaSetDevice(device_id)
+     * - cudaMalloc(&ptr_, size * sizeof(T))
+     */
     void allocate(std::size_t size, int device_id)
     {
-        // TODO:
-        // cudaSetDevice(device_id);
-        // cudaMalloc(&ptr_, size * sizeof(std::uint64_t));
-        //
-        // For now, only record metadata.
+        release();
+
+        // TODO: real GPU allocation.
+        ptr_ = nullptr;
         size_ = size;
         device_id_ = device_id;
-        ptr_ = nullptr;
     }
 
+    /**
+     * @brief Release device memory.
+     *
+     * TODO:
+     * - cudaSetDevice(device_id_)
+     * - cudaFree(ptr_)
+     */
     void release()
     {
-        // TODO:
-        // if (ptr_ != nullptr) {
-        //     cudaSetDevice(device_id_);
-        //     cudaFree(ptr_);
-        // }
+        // TODO: real GPU free.
         ptr_ = nullptr;
         size_ = 0;
+        device_id_ = 0;
     }
 
-    std::uint64_t *data()
+    T *data()
     {
         return ptr_;
     }
 
-    const std::uint64_t *data() const
+    const T *data() const
     {
         return ptr_;
     }
@@ -79,32 +111,49 @@ public:
         return size_;
     }
 
-    int device_id() const
-    {
-        return device_id_;
-    }
-
     bool empty() const
     {
         return size_ == 0;
     }
 
+    int device_id() const
+    {
+        return device_id_;
+    }
+
 private:
-    std::uint64_t *ptr_ = nullptr;
+    void move_from(DeviceVector &&other) noexcept
+    {
+        ptr_ = other.ptr_;
+        size_ = other.size_;
+        device_id_ = other.device_id_;
+
+        other.ptr_ = nullptr;
+        other.size_ = 0;
+        other.device_id_ = 0;
+    }
+
+private:
+    T *ptr_ = nullptr;
     std::size_t size_ = 0;
     int device_id_ = 0;
 };
 
 /**
- * @brief One physical GPU memory block.
+ * @brief Physical GPU memory block.
  *
- * This object does not know whether the memory stores c0, c1, q0-q3,
- * or any FHE semantic region. It only owns a memory buffer on one GPU.
+ * This object only knows:
+ * - which GPU device it belongs to;
+ * - how large the buffer is;
+ * - where the device pointer is.
+ *
+ * It does not know FHE semantics such as c0/c1, RNS limb range, or coefficient
+ * range. Those meanings are described by higher-level structures.
  */
 struct GpuFieldData
 {
     int device_id = 0;
-    DeviceVector buffer;
+    DeviceVector<GpuWord> buffer;
 
     GpuFieldData() = default;
 
@@ -112,12 +161,12 @@ struct GpuFieldData
         : device_id(dev), buffer(elem_count, dev)
     {}
 
-    std::uint64_t *data()
+    GpuWord *data()
     {
         return buffer.data();
     }
 
-    const std::uint64_t *data() const
+    const GpuWord *data() const
     {
         return buffer.data();
     }
