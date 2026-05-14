@@ -13,7 +13,7 @@ namespace gpu
  * @brief GPU residue word type.
  *
  * The GPU backend targets small RNS primes below 32 bits.
- * Therefore GPU-side ciphertext/plaintext residues are stored as uint32_t.
+ * Therefore GPU-side ciphertext/plaintext/key residues are stored as uint32_t.
  *
  * Multiplication kernels may still use uint64_t as intermediate type.
  */
@@ -23,11 +23,10 @@ using GpuWide = std::uint64_t;
 /**
  * @brief Lightweight GPU memory owner.
  *
- * This is the future replacement/wrapper of cudaMalloc/cudaFree or Cheddar's
- * DeviceVector. It owns one contiguous device buffer on one GPU.
+ * This class is intended to own one contiguous device buffer on one GPU.
  *
  * Current stage:
- * - Only provides framework-level interface.
+ * - Only defines the framework-level interface.
  * - Real CUDA allocation/free is TODO.
  */
 template <typename T>
@@ -147,8 +146,8 @@ private:
  * - how large the buffer is;
  * - where the device pointer is.
  *
- * It does not know FHE semantics such as c0/c1, RNS limb range, or coefficient
- * range. Those meanings are described by higher-level structures.
+ * It does not know FHE semantics such as c0/c1, RNS limb range,
+ * coefficient range, plaintext/key layout, or parameter level.
  */
 struct GpuFieldData
 {

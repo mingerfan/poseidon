@@ -1,8 +1,8 @@
 #pragma once
 
 #include "poseidon/parameters_literal.h"
-#include "poseidon/gpu/gpu_ciphertext.h"
 #include "poseidon/gpu/gpu_memory.h"
+#include "poseidon/gpu/gpu_rns_poly.h"
 
 #include <cstddef>
 #include <vector>
@@ -12,6 +12,9 @@ namespace poseidon
 namespace gpu
 {
 
+/**
+ * @brief Semantic metadata of a GPU plaintext.
+ */
 struct GpuPlaintextMeta
 {
     parms_id_type parms_id{};
@@ -27,29 +30,43 @@ struct GpuPlaintextMeta
 struct GpuPlaintextView
 {
     GpuPlaintextMeta meta;
-    std::vector<GpuRNSPolyView> polys;
+    GpuRNSPolyView poly;
 };
 
 struct GpuConstPlaintextView
 {
     GpuPlaintextMeta meta;
-    std::vector<GpuConstRNSPolyView> polys;
+    GpuConstRNSPolyView poly;
 };
 
 /**
  * @brief GPU-side plaintext data.
  *
  * Plaintext normally contains one logical RNS polynomial.
- * It still reuses the same field/shard/view model as ciphertext so that
- * add_plain and multiply_plain can share GPU handlers.
+ *
+ * It still uses the same field/shard/poly model as ciphertext:
+ * - fields_ owns GPU memory;
+ * - poly_ describes the logical plaintext RNS polynomial;
+ * - poly_.shards can describe single-GPU or multi-GPU placement.
  */
 class GpuPlaintextData
 {
 public:
     GpuPlaintextMeta meta;
 
+    /**
+     * @brief Real GPU memory blocks.
+     *
+     * This can be one field on one GPU, or multiple fields across GPUs.
+     */
     std::vector<GpuFieldData> fields_;
-    GpuRNSPoly gpupoly_;
+
+    /**
+     * @brief Logical plaintext RNS polynomial.
+     *
+     * The plaintext polynomial can also be sharded across limb/coeff dimensions.
+     */
+    GpuRNSPoly poly_;
 
 public:
     GpuPlaintextData() = default;
@@ -61,6 +78,7 @@ public:
      *
      * TODO:
      * - Translate shard.field_index into device pointer.
+     * - Validate shard ranges.
      */
     GpuPlaintextView make_view();
 
@@ -69,6 +87,7 @@ public:
      *
      * TODO:
      * - Translate shard.field_index into const device pointer.
+     * - Validate shard ranges.
      */
     GpuConstPlaintextView make_const_view() const;
 
@@ -77,7 +96,7 @@ public:
      *
      * TODO:
      * - Allocate one field covering all q limbs and all coefficients.
-     * - Build default shard layout.
+     * - Build default full-range shard layout.
      */
     static GpuPlaintextData allocate_single_device(
         std::size_t degree,

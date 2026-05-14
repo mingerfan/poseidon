@@ -30,7 +30,7 @@ public:
      *
      * TODO:
      * - Read shape and metadata from CPU Ciphertext.
-     * - Allocate GpuCiphertextData.
+     * - Allocate GpuCiphertextData according to placement.
      * - Convert CPU uint64_t residues to GPU uint32_t residues.
      * - Copy data to GPU fields.
      */
@@ -52,6 +52,9 @@ public:
 
     /**
      * @brief Upload CPU Plaintext to GPU.
+     *
+     * TODO:
+     * - Support the same shard/placement model as ciphertext.
      */
     static GpuPlaintextData upload_plaintext(
         const Plaintext &src,
@@ -66,6 +69,10 @@ public:
 
     /**
      * @brief Upload CPU relinearization keys to GPU.
+     *
+     * TODO:
+     * - Preserve key-switching key layout;
+     * - support multi-GPU shard placement.
      */
     static GpuRelinKeysData upload_relin_keys(
         const RelinKeys &src,
@@ -73,6 +80,10 @@ public:
 
     /**
      * @brief Upload CPU Galois keys to GPU.
+     *
+     * TODO:
+     * - Preserve Galois element to key mapping;
+     * - support multi-GPU shard placement.
      */
     static GpuGaloisKeysData upload_galois_keys(
         const GaloisKeys &src,

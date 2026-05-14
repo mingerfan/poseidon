@@ -1,8 +1,8 @@
 #pragma once
 
 #include "poseidon/parameters_literal.h"
-#include "poseidon/gpu/gpu_ciphertext.h"
 #include "poseidon/gpu/gpu_memory.h"
+#include "poseidon/gpu/gpu_rns_poly.h"
 
 #include <cstddef>
 #include <vector>
@@ -50,17 +50,27 @@ struct GpuConstEvaluationKeyView
  * - Galois/rotation keys;
  * - other key-switching keys.
  *
- * Current stage:
- * - Only defines storage/interface.
- * - Concrete key layout is TODO.
+ * The key data also uses the same field/shard/poly model:
+ * - fields_ owns GPU memory;
+ * - polys_ describes logical key polynomials;
+ * - each key polynomial can be sharded across GPUs.
  */
 class GpuEvaluationKeyData
 {
 public:
     GpuKeyMeta meta;
 
+    /**
+     * @brief Real GPU memory blocks.
+     */
     std::vector<GpuFieldData> fields_;
-    std::vector<GpuRNSPoly> key_polys_;
+
+    /**
+     * @brief Logical key RNS polynomials.
+     *
+     * Each key polynomial may have one or more shards.
+     */
+    std::vector<GpuRNSPoly> polys_;
 
 public:
     GpuEvaluationKeyData() = default;
@@ -69,11 +79,17 @@ public:
 
     /**
      * @brief Create mutable view of evaluation key data.
+     *
+     * TODO:
+     * - Translate field_index into device pointers.
      */
     GpuEvaluationKeyView make_view();
 
     /**
      * @brief Create const view of evaluation key data.
+     *
+     * TODO:
+     * - Translate field_index into const device pointers.
      */
     GpuConstEvaluationKeyView make_const_view() const;
 };

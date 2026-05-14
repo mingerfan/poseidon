@@ -2,6 +2,7 @@
 
 #include "poseidon/parameters_literal.h"
 #include "poseidon/gpu/gpu_memory.h"
+#include "poseidon/gpu/gpu_rns_poly.h"
 
 #include <cstddef>
 #include <vector>
@@ -14,8 +15,8 @@ namespace gpu
 /**
  * @brief Semantic metadata of a GPU ciphertext.
  *
- * This describes the FHE state of the ciphertext, while fields_/gpupolys_
- * describe physical GPU storage.
+ * This describes the FHE state of the ciphertext.
+ * fields_/polys_ describe the physical GPU storage.
  */
 struct GpuCiphertextMeta
 {
@@ -29,93 +30,6 @@ struct GpuCiphertextMeta
     std::size_t p_count = 0;
 
     std::size_t component_count = 0;
-};
-
-/**
- * @brief Physical slice of one logical RNS polynomial component.
- *
- * A shard says:
- * - which GPU memory block stores this slice;
- * - which RNS limbs it covers;
- * - which coefficient range it covers.
- */
-struct GpuPolyShard
-{
-    std::size_t field_index = 0;
-    std::size_t field_offset = 0;
-
-    std::size_t limb_begin = 0;
-    std::size_t limb_count = 0;
-
-    std::size_t coeff_begin = 0;
-    std::size_t coeff_count = 0;
-};
-
-/**
- * @brief Logical GPU-side RNS polynomial.
- *
- * For ciphertext:
- * - component_id = 0 means c0;
- * - component_id = 1 means c1;
- * - component_id = 2 means c2.
- *
- * This structure does not own GPU memory. It only records which shards belong
- * to this component.
- */
-struct GpuRNSPoly
-{
-    std::size_t component_id = 0;
-
-    std::size_t degree = 0;
-    std::size_t q_count = 0;
-    std::size_t p_count = 0;
-
-    std::vector<GpuPolyShard> shards;
-};
-
-/**
- * @brief Mutable view of one physical shard.
- *
- * View objects are temporary and non-owning. They are created before launching
- * GPU handlers/kernels.
- */
-struct GpuPolyShardView
-{
-    int device_id = 0;
-    GpuWord *ptr = nullptr;
-
-    std::size_t limb_begin = 0;
-    std::size_t limb_count = 0;
-
-    std::size_t coeff_begin = 0;
-    std::size_t coeff_count = 0;
-};
-
-/**
- * @brief Const view of one physical shard.
- */
-struct GpuConstPolyShardView
-{
-    int device_id = 0;
-    const GpuWord *ptr = nullptr;
-
-    std::size_t limb_begin = 0;
-    std::size_t limb_count = 0;
-
-    std::size_t coeff_begin = 0;
-    std::size_t coeff_count = 0;
-};
-
-struct GpuRNSPolyView
-{
-    std::size_t component_id = 0;
-    std::vector<GpuPolyShardView> shards;
-};
-
-struct GpuConstRNSPolyView
-{
-    std::size_t component_id = 0;
-    std::vector<GpuConstPolyShardView> shards;
 };
 
 struct GpuCiphertextView
@@ -135,10 +49,10 @@ struct GpuConstCiphertextView
  *
  * This is the GPU counterpart of Poseidon Ciphertext.
  *
- * Long-term responsibility:
- * - Own GPU memory through fields_;
- * - Describe c0/c1/c2 through gpupolys_;
- * - Expose temporary views for GPU handlers/kernels.
+ * Responsibility:
+ * - own GPU memory through fields_;
+ * - describe c0/c1/c2 through polys_;
+ * - expose temporary views for GPU handlers/kernels.
  */
 class GpuCiphertextData
 {
@@ -148,7 +62,7 @@ public:
     /**
      * @brief Real GPU memory blocks.
      *
-     * A single ciphertext may contain multiple fields:
+     * A ciphertext may contain multiple fields:
      * - one field per component on one GPU;
      * - or multiple fields per component across multiple GPUs.
      */
@@ -157,11 +71,11 @@ public:
     /**
      * @brief Logical ciphertext components.
      *
-     * gpupolys_[0] represents c0;
-     * gpupolys_[1] represents c1;
-     * gpupolys_[2] represents c2, if present.
+     * polys_[0] represents c0;
+     * polys_[1] represents c1;
+     * polys_[2] represents c2, if present.
      */
-    std::vector<GpuRNSPoly> gpupolys_;
+    std::vector<GpuRNSPoly> polys_;
 
 public:
     GpuCiphertextData() = default;
@@ -194,7 +108,7 @@ public:
      * It does not copy CPU data.
      *
      * First-stage layout:
-     * - one field per component;
+     * - one field per ciphertext component;
      * - each field stores [q0 | q1 | ... | q_{q_count-1}];
      * - each q block stores degree coefficients.
      *

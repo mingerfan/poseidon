@@ -15,7 +15,7 @@ bool GpuPlaintextData::empty() const
 GpuPlaintextView GpuPlaintextData::make_view()
 {
     // TODO:
-    // Build mutable plaintext view from fields_ and gpupoly_.
+    // Build mutable plaintext view from fields_ and poly_.
 
     throw std::runtime_error("GpuPlaintextData::make_view is not implemented yet");
 }
@@ -23,7 +23,7 @@ GpuPlaintextView GpuPlaintextData::make_view()
 GpuConstPlaintextView GpuPlaintextData::make_const_view() const
 {
     // TODO:
-    // Build const plaintext view from fields_ and gpupoly_.
+    // Build const plaintext view from fields_ and poly_.
 
     throw std::runtime_error("GpuPlaintextData::make_const_view is not implemented yet");
 }

@@ -17,8 +17,7 @@ void GpuParameterData::build_from_poseidon_context(
     int device_id)
 {
     // TODO:
-    // This function should convert Poseidon CPU context information into
-    // GPU-resident parameter tables.
+    // Convert Poseidon CPU context information into GPU-resident parameter tables.
     //
     // Expected future behavior:
     // 1. Traverse all CrtContext::ContextData levels.
@@ -26,6 +25,7 @@ void GpuParameterData::build_from_poseidon_context(
     // 3. Build/copy modular reduction constants.
     // 4. Build/copy NTT/INTT tables.
     // 5. Build/copy rescale/modswitch/key-switch related constants.
+    // 6. Build GpuParameterShard objects matching the intended GPU placement.
     //
     // This function should make GpuEvaluator independent of PoseidonContext
     // during GPU operator execution.

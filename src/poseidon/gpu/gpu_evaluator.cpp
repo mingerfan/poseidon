@@ -21,6 +21,7 @@ void GpuEvaluator::add(
     //
     // Expected steps:
     // - Check metadata compatibility.
+    // - Check placement compatibility across ciphertext/parameter shards.
     // - Query level info from params_.
     // - Create const views for a/b and mutable view for res.
     // - Launch elementwise add kernel.
@@ -65,7 +66,9 @@ void GpuEvaluator::add_plain(
 {
     // TODO:
     // GPU add_plain.
+    //
     // For CKKS, plaintext is added to c0 only.
+    // Placement of ct, pt, and parameter shards must be compatible.
 
     (void)ct;
     (void)pt;
@@ -81,7 +84,9 @@ void GpuEvaluator::sub_plain(
 {
     // TODO:
     // GPU sub_plain.
+    //
     // For CKKS, plaintext is subtracted from c0 only.
+    // Placement of ct, pt, and parameter shards must be compatible.
 
     (void)ct;
     (void)pt;
@@ -97,7 +102,9 @@ void GpuEvaluator::multiply_plain(
 {
     // TODO:
     // GPU multiply_plain.
+    //
     // Each ciphertext component should be multiplied by plaintext polynomial.
+    // Placement of ct, pt, and parameter shards must be compatible.
 
     (void)ct;
     (void)pt;
@@ -112,6 +119,7 @@ void GpuEvaluator::ntt_fwd(
 {
     // TODO:
     // GPU forward NTT for every active component and limb.
+    // Requires parameter shards containing NTT tables.
 
     (void)ct;
     (void)res;
@@ -125,6 +133,7 @@ void GpuEvaluator::ntt_inv(
 {
     // TODO:
     // GPU inverse NTT for every active component and limb.
+    // Requires parameter shards containing INTT tables.
 
     (void)ct;
     (void)res;
@@ -139,10 +148,13 @@ void GpuEvaluator::multiply(
 {
     // TODO:
     // GPU ciphertext-ciphertext multiplication.
+    //
     // Common size-2 x size-2 case:
     // res.c0 = a.c0 * b.c0
     // res.c1 = a.c0 * b.c1 + a.c1 * b.c0
     // res.c2 = a.c1 * b.c1
+    //
+    // Placement of a, b, res, and parameter shards must be compatible.
 
     (void)a;
     (void)b;
@@ -216,6 +228,7 @@ void GpuEvaluator::relinearize(
     // TODO:
     // GPU relinearization.
     // Requires GPU key-switching pipeline.
+    // Placement of ct, relin_keys, res, and parameter shards must be compatible.
 
     (void)ct;
     (void)relin_keys;
@@ -233,6 +246,7 @@ void GpuEvaluator::rotate(
     // TODO:
     // GPU rotation.
     // Requires Galois permutation and key switching.
+    // Placement of ct, galois_keys, res, and parameter shards must be compatible.
 
     (void)ct;
     (void)step;
@@ -250,6 +264,7 @@ void GpuEvaluator::conjugate(
     // TODO:
     // GPU conjugation.
     // Requires conjugation permutation and key switching.
+    // Placement of ct, galois_keys, res, and parameter shards must be compatible.
 
     (void)ct;
     (void)galois_keys;

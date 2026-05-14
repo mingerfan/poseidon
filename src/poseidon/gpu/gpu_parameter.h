@@ -15,27 +15,27 @@ namespace gpu
 {
 
 /**
- * @brief GPU-side information for one modulus-chain level.
+ * @brief GPU-side parameter shard.
  *
- * This is the GPU-side counterpart of Poseidon CrtContext::ContextData.
- * It should eventually contain all device-resident parameter tables needed by
- * GPU homomorphic operators.
+ * Parameter data is not an RNS polynomial, so it does not use GpuRNSPoly.
+ * However, it still needs to support multi-GPU placement.
+ *
+ * A parameter shard describes which parameter tables are available on one GPU
+ * for a certain RNS limb range.
  */
-struct GpuLevelInfo
+struct GpuParameterShard
 {
-    parms_id_type parms_id{};
-
-    std::size_t degree = 0;
-    std::size_t q_count = 0;
-    std::size_t p_count = 0;
-
     int device_id = 0;
+
+    std::size_t limb_begin = 0;
+    std::size_t limb_count = 0;
 
     /**
      * @brief Device-side q and p primes.
      *
-     * Since GPU primes are expected to be below 32 bits, they are stored as
-     * GpuWord.
+     * Depending on implementation choice:
+     * - this shard may hold only the local limb range;
+     * - or it may hold a full copy of all primes on this device.
      */
     DeviceVector<GpuWord> q_primes;
     DeviceVector<GpuWord> p_primes;
@@ -65,6 +65,30 @@ struct GpuLevelInfo
 };
 
 /**
+ * @brief GPU-side information for one modulus-chain level.
+ *
+ * This is the GPU-side counterpart of Poseidon CrtContext::ContextData.
+ * It should eventually contain all device-resident parameter tables needed by
+ * GPU homomorphic operators.
+ */
+struct GpuLevelInfo
+{
+    parms_id_type parms_id{};
+
+    std::size_t degree = 0;
+    std::size_t q_count = 0;
+    std::size_t p_count = 0;
+
+    /**
+     * @brief Per-device or per-limb parameter shards.
+     *
+     * This makes parameter placement compatible with ciphertext/plaintext/key
+     * shard placement.
+     */
+    std::vector<GpuParameterShard> shards;
+};
+
+/**
  * @brief GPU-side parameter cache.
  *
  * This object should be built from PoseidonContext once.
@@ -90,7 +114,8 @@ public:
      * - copy q/p primes to GPU 32-bit arrays;
      * - prepare NTT/INTT tables;
      * - prepare reduction constants;
-     * - prepare rescale/modswitch/key-switch tables.
+     * - prepare rescale/modswitch/key-switch tables;
+     * - build per-device/per-limb GpuParameterShard objects.
      */
     void build_from_poseidon_context(const PoseidonContext &context, int device_id);
 
