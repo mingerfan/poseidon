@@ -1,3 +1,7 @@
 build*
 .vscode/
 thirdparty
+.clangd
+.claude/
+compile_commands.json
+stubs/
