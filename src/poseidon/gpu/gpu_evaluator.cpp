@@ -8,267 +8,336 @@ namespace gpu
 {
 
 GpuEvaluator::GpuEvaluator(const GpuParameterData &params)
-    : params_(params)
+    : params_(params),
+      elementwise_handler_(params),
+      ntt_handler_(params),
+      modswitch_handler_(params)
 {}
 
 void GpuEvaluator::add(
-    const GpuCiphertextData &a,
-    const GpuCiphertextData &b,
-    GpuCiphertextData &res) const
+    const GpuCiphertextData &left_ciphertext,
+    const GpuCiphertextData &right_ciphertext,
+    GpuCiphertextData &destination_ciphertext) const
 {
     // TODO:
-    // GPU ciphertext addition.
+    // 1. Check FHE semantic validity:
+    //    - same parms_id;
+    //    - compatible scale;
+    //    - same NTT form;
+    //    - same degree and active limb count.
     //
-    // Expected steps:
-    // - Check metadata compatibility.
-    // - Check placement compatibility across ciphertext/parameter shards.
-    // - Query level info from params_.
-    // - Create const views for a/b and mutable view for res.
-    // - Launch elementwise add kernel.
+    // 2. Prepare destination metadata:
+    //    - destination metadata should follow add semantics;
+    //    - destination component count should be max(left_count, right_count).
+    //
+    // 3. Prepare destination storage.
+    //
+    // 4. Create views:
+    //    - left ciphertext const view;
+    //    - right ciphertext const view;
+    //    - destination ciphertext mutable view.
+    //
+    // 5. Query level information from params_.
+    //
+    // 6. Call elementwise_handler_.add_ciphertext(...).
 
-    (void)a;
-    (void)b;
-    (void)res;
+    (void)left_ciphertext;
+    (void)right_ciphertext;
+    (void)destination_ciphertext;
 
     throw std::runtime_error("GpuEvaluator::add is not implemented yet");
 }
 
 void GpuEvaluator::sub(
-    const GpuCiphertextData &a,
-    const GpuCiphertextData &b,
-    GpuCiphertextData &res) const
+    const GpuCiphertextData &left_ciphertext,
+    const GpuCiphertextData &right_ciphertext,
+    GpuCiphertextData &destination_ciphertext) const
 {
-    // TODO: GPU ciphertext subtraction.
+    // TODO:
+    // Same high-level structure as add(), but call subtraction handler.
 
-    (void)a;
-    (void)b;
-    (void)res;
+    (void)left_ciphertext;
+    (void)right_ciphertext;
+    (void)destination_ciphertext;
 
     throw std::runtime_error("GpuEvaluator::sub is not implemented yet");
 }
 
 void GpuEvaluator::negate(
-    const GpuCiphertextData &a,
-    GpuCiphertextData &res) const
+    const GpuCiphertextData &source_ciphertext,
+    GpuCiphertextData &destination_ciphertext) const
 {
-    // TODO: GPU ciphertext negation.
+    // TODO:
+    // 1. Check source metadata.
+    // 2. Prepare destination metadata and storage.
+    // 3. Create views.
+    // 4. Call elementwise_handler_.negate_ciphertext(...).
 
-    (void)a;
-    (void)res;
+    (void)source_ciphertext;
+    (void)destination_ciphertext;
 
     throw std::runtime_error("GpuEvaluator::negate is not implemented yet");
 }
 
 void GpuEvaluator::add_plain(
-    const GpuCiphertextData &ct,
-    const GpuPlaintextData &pt,
-    GpuCiphertextData &res) const
+    const GpuCiphertextData &source_ciphertext,
+    const GpuPlaintextData &source_plaintext,
+    GpuCiphertextData &destination_ciphertext) const
 {
     // TODO:
-    // GPU add_plain.
+    // 1. Check ciphertext/plaintext semantic compatibility.
+    // 2. Prepare destination metadata and storage.
+    // 3. Create views.
+    // 4. Call elementwise_handler_.add_plain_to_ciphertext(...).
     //
-    // For CKKS, plaintext is added to c0 only.
-    // Placement of ct, pt, and parameter shards must be compatible.
+    // CKKS rule:
+    // - plaintext is added only to c0.
 
-    (void)ct;
-    (void)pt;
-    (void)res;
+    (void)source_ciphertext;
+    (void)source_plaintext;
+    (void)destination_ciphertext;
 
     throw std::runtime_error("GpuEvaluator::add_plain is not implemented yet");
 }
 
 void GpuEvaluator::sub_plain(
-    const GpuCiphertextData &ct,
-    const GpuPlaintextData &pt,
-    GpuCiphertextData &res) const
+    const GpuCiphertextData &source_ciphertext,
+    const GpuPlaintextData &source_plaintext,
+    GpuCiphertextData &destination_ciphertext) const
 {
     // TODO:
-    // GPU sub_plain.
+    // 1. Check ciphertext/plaintext semantic compatibility.
+    // 2. Prepare destination metadata and storage.
+    // 3. Create views.
+    // 4. Call elementwise_handler_.sub_plain_from_ciphertext(...).
     //
-    // For CKKS, plaintext is subtracted from c0 only.
-    // Placement of ct, pt, and parameter shards must be compatible.
+    // CKKS rule:
+    // - plaintext is subtracted only from c0.
 
-    (void)ct;
-    (void)pt;
-    (void)res;
+    (void)source_ciphertext;
+    (void)source_plaintext;
+    (void)destination_ciphertext;
 
     throw std::runtime_error("GpuEvaluator::sub_plain is not implemented yet");
 }
 
 void GpuEvaluator::multiply_plain(
-    const GpuCiphertextData &ct,
-    const GpuPlaintextData &pt,
-    GpuCiphertextData &res) const
+    const GpuCiphertextData &source_ciphertext,
+    const GpuPlaintextData &source_plaintext,
+    GpuCiphertextData &destination_ciphertext) const
 {
     // TODO:
-    // GPU multiply_plain.
-    //
-    // Each ciphertext component should be multiplied by plaintext polynomial.
-    // Placement of ct, pt, and parameter shards must be compatible.
+    // 1. Check ciphertext/plaintext semantic compatibility.
+    // 2. Prepare destination metadata:
+    //    - destination scale = ciphertext scale * plaintext scale.
+    // 3. Prepare destination storage.
+    // 4. Create views.
+    // 5. Call elementwise_handler_.multiply_plain_with_ciphertext(...).
 
-    (void)ct;
-    (void)pt;
-    (void)res;
+    (void)source_ciphertext;
+    (void)source_plaintext;
+    (void)destination_ciphertext;
 
     throw std::runtime_error("GpuEvaluator::multiply_plain is not implemented yet");
 }
 
 void GpuEvaluator::ntt_fwd(
-    const GpuCiphertextData &ct,
-    GpuCiphertextData &res) const
+    const GpuCiphertextData &source_ciphertext,
+    GpuCiphertextData &destination_ciphertext) const
 {
     // TODO:
-    // GPU forward NTT for every active component and limb.
-    // Requires parameter shards containing NTT tables.
+    // 1. Check source is not already in NTT form.
+    // 2. Prepare destination metadata with is_ntt_form = true.
+    // 3. Prepare destination storage.
+    // 4. Create views.
+    // 5. Call ntt_handler_.forward_ciphertext(...).
 
-    (void)ct;
-    (void)res;
+    (void)source_ciphertext;
+    (void)destination_ciphertext;
 
     throw std::runtime_error("GpuEvaluator::ntt_fwd is not implemented yet");
 }
 
 void GpuEvaluator::ntt_inv(
-    const GpuCiphertextData &ct,
-    GpuCiphertextData &res) const
+    const GpuCiphertextData &source_ciphertext,
+    GpuCiphertextData &destination_ciphertext) const
 {
     // TODO:
-    // GPU inverse NTT for every active component and limb.
-    // Requires parameter shards containing INTT tables.
+    // 1. Check source is in NTT form.
+    // 2. Prepare destination metadata with is_ntt_form = false.
+    // 3. Prepare destination storage.
+    // 4. Create views.
+    // 5. Call ntt_handler_.inverse_ciphertext(...).
 
-    (void)ct;
-    (void)res;
+    (void)source_ciphertext;
+    (void)destination_ciphertext;
 
     throw std::runtime_error("GpuEvaluator::ntt_inv is not implemented yet");
 }
 
 void GpuEvaluator::multiply(
-    const GpuCiphertextData &a,
-    const GpuCiphertextData &b,
-    GpuCiphertextData &res) const
+    const GpuCiphertextData &left_ciphertext,
+    const GpuCiphertextData &right_ciphertext,
+    GpuCiphertextData &destination_ciphertext) const
 {
     // TODO:
-    // GPU ciphertext-ciphertext multiplication.
+    // 1. Check ciphertext semantic compatibility.
+    // 2. Prepare destination metadata:
+    //    - destination component count = left_count + right_count - 1.
+    //    - destination scale = left scale * right scale.
+    // 3. Prepare destination storage.
+    // 4. Create views.
+    // 5. Call elementwise_handler_.multiply_ciphertext(...).
     //
-    // Common size-2 x size-2 case:
-    // res.c0 = a.c0 * b.c0
-    // res.c1 = a.c0 * b.c1 + a.c1 * b.c0
-    // res.c2 = a.c1 * b.c1
-    //
-    // Placement of a, b, res, and parameter shards must be compatible.
+    // Note:
+    // - This corresponds to Cheddar-style Tensor operation,
+    //   but must be implemented using Poseidon's polys[index] model.
 
-    (void)a;
-    (void)b;
-    (void)res;
+    (void)left_ciphertext;
+    (void)right_ciphertext;
+    (void)destination_ciphertext;
 
     throw std::runtime_error("GpuEvaluator::multiply is not implemented yet");
 }
 
 void GpuEvaluator::square(
-    const GpuCiphertextData &a,
-    GpuCiphertextData &res) const
+    const GpuCiphertextData &source_ciphertext,
+    GpuCiphertextData &destination_ciphertext) const
 {
     // TODO:
-    // GPU optimized square.
+    // 1. Check source metadata.
+    // 2. Prepare destination metadata and storage.
+    // 3. Create views.
+    // 4. Call elementwise_handler_.square_ciphertext(...).
 
-    (void)a;
-    (void)res;
+    (void)source_ciphertext;
+    (void)destination_ciphertext;
 
     throw std::runtime_error("GpuEvaluator::square is not implemented yet");
 }
 
 void GpuEvaluator::rescale(
-    const GpuCiphertextData &ct,
-    GpuCiphertextData &res) const
+    const GpuCiphertextData &source_ciphertext,
+    GpuCiphertextData &destination_ciphertext) const
 {
     // TODO:
-    // GPU rescale.
-    // Should support 32-bit physical primes and logical multi-prime dropping.
+    // 1. Determine destination level and scale.
+    // 2. Prepare destination metadata and storage.
+    // 3. Query source and destination level info from params_.
+    // 4. Create views.
+    // 5. Call modswitch_handler_.rescale_ciphertext(...).
 
-    (void)ct;
-    (void)res;
+    (void)source_ciphertext;
+    (void)destination_ciphertext;
 
     throw std::runtime_error("GpuEvaluator::rescale is not implemented yet");
 }
 
 void GpuEvaluator::rescale_dynamic(
-    const GpuCiphertextData &ct,
-    GpuCiphertextData &res,
+    const GpuCiphertextData &source_ciphertext,
+    GpuCiphertextData &destination_ciphertext,
     double min_scale) const
 {
     // TODO:
-    // GPU dynamic/logical rescale.
+    // 1. Determine how many physical 32-bit primes should be dropped.
+    // 2. Determine destination level and scale.
+    // 3. Prepare destination metadata and storage.
+    // 4. Call modswitch_handler_.rescale_dynamic_ciphertext(...).
 
-    (void)ct;
-    (void)res;
+    (void)source_ciphertext;
+    (void)destination_ciphertext;
     (void)min_scale;
 
     throw std::runtime_error("GpuEvaluator::rescale_dynamic is not implemented yet");
 }
 
 void GpuEvaluator::drop_modulus(
-    const GpuCiphertextData &ct,
-    GpuCiphertextData &res,
+    const GpuCiphertextData &source_ciphertext,
+    GpuCiphertextData &destination_ciphertext,
     parms_id_type target_parms_id) const
 {
     // TODO:
-    // GPU drop modulus.
+    // 1. Check target parms_id.
+    // 2. Prepare destination metadata and storage.
+    // 3. Query source and destination level info.
+    // 4. Call modswitch_handler_.drop_modulus_ciphertext(...).
 
-    (void)ct;
-    (void)res;
+    (void)source_ciphertext;
+    (void)destination_ciphertext;
     (void)target_parms_id;
 
     throw std::runtime_error("GpuEvaluator::drop_modulus is not implemented yet");
 }
 
 void GpuEvaluator::relinearize(
-    const GpuCiphertextData &ct,
+    const GpuCiphertextData &source_ciphertext,
     const GpuRelinKeysData &relin_keys,
-    GpuCiphertextData &res) const
+    GpuCiphertextData &destination_ciphertext) const
 {
     // TODO:
     // GPU relinearization.
-    // Requires GPU key-switching pipeline.
-    // Placement of ct, relin_keys, res, and parameter shards must be compatible.
+    //
+    // Current framework decision:
+    // - keep this as a top-level TODO for now;
+    // - introduce a dedicated key-switch handler only after Poseidon key-switch
+    //   layout is fully mapped.
+    //
+    // Expected future logic:
+    // - check source component count;
+    // - check relin key compatibility;
+    // - prepare destination with two components;
+    // - run GPU key-switch pipeline.
 
-    (void)ct;
+    (void)source_ciphertext;
     (void)relin_keys;
-    (void)res;
+    (void)destination_ciphertext;
 
     throw std::runtime_error("GpuEvaluator::relinearize is not implemented yet");
 }
 
 void GpuEvaluator::rotate(
-    const GpuCiphertextData &ct,
+    const GpuCiphertextData &source_ciphertext,
     int step,
     const GpuGaloisKeysData &galois_keys,
-    GpuCiphertextData &res) const
+    GpuCiphertextData &destination_ciphertext) const
 {
     // TODO:
     // GPU rotation.
-    // Requires Galois permutation and key switching.
-    // Placement of ct, galois_keys, res, and parameter shards must be compatible.
+    //
+    // Current framework decision:
+    // - keep this as a top-level TODO for now;
+    // - introduce a dedicated key-switch handler only after Poseidon key-switch
+    //   layout is fully mapped.
+    //
+    // Expected future logic:
+    // - select Galois key by rotation step;
+    // - apply automorphism/permutation;
+    // - run GPU key-switch pipeline.
 
-    (void)ct;
+    (void)source_ciphertext;
     (void)step;
     (void)galois_keys;
-    (void)res;
+    (void)destination_ciphertext;
 
     throw std::runtime_error("GpuEvaluator::rotate is not implemented yet");
 }
 
 void GpuEvaluator::conjugate(
-    const GpuCiphertextData &ct,
+    const GpuCiphertextData &source_ciphertext,
     const GpuGaloisKeysData &galois_keys,
-    GpuCiphertextData &res) const
+    GpuCiphertextData &destination_ciphertext) const
 {
     // TODO:
     // GPU conjugation.
-    // Requires conjugation permutation and key switching.
-    // Placement of ct, galois_keys, res, and parameter shards must be compatible.
+    //
+    // Current framework decision:
+    // - keep this as a top-level TODO for now;
+    // - introduce a dedicated key-switch handler only after Poseidon key-switch
+    //   layout is fully mapped.
 
-    (void)ct;
+    (void)source_ciphertext;
     (void)galois_keys;
-    (void)res;
+    (void)destination_ciphertext;
 
     throw std::runtime_error("GpuEvaluator::conjugate is not implemented yet");
 }
