@@ -75,33 +75,22 @@ public:
 
     /**
      * @brief Create mutable temporary plaintext view.
-     *
-     * TODO:
-     * - Translate shard.field_index into device pointer.
-     * - Validate shard ranges.
      */
     GpuPlaintextView make_view();
 
     /**
      * @brief Create const temporary plaintext view.
-     *
-     * TODO:
-     * - Translate shard.field_index into const device pointer.
-     * - Validate shard ranges.
      */
     GpuConstPlaintextView make_const_view() const;
 
     /**
      * @brief Allocate single-device plaintext storage.
-     *
-     * TODO:
-     * - Allocate one field covering all q limbs and all coefficients.
-     * - Build default full-range shard layout.
      */
     static GpuPlaintextData allocate_single_device(
         std::size_t degree,
         std::size_t q_count,
-        int device_id);
+        int device_id,
+        std::size_t p_count = 0);
 };
 
 }  // namespace gpu

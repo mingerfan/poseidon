@@ -1,95 +1,409 @@
 #include "poseidon/gpu/gpu_uploader.h"
 
+#include "poseidon/ciphertext.h"
+#include "poseidon/key/galoiskeys.h"
+#include "poseidon/key/relinkeys.h"
+#include "poseidon/plaintext.h"
+#include "poseidon/poseidon_context.h"
+
+#include <algorithm>
+#include <cstdint>
+#include <limits>
 #include <stdexcept>
+#include <utility>
+#include <vector>
 
 namespace poseidon
 {
 namespace gpu
 {
+namespace
+{
+
+std::size_t checked_mul(std::size_t a, std::size_t b, const char *what)
+{
+    if (a != 0 && b > std::numeric_limits<std::size_t>::max() / a)
+    {
+        throw std::overflow_error(what);
+    }
+    return a * b;
+}
+
+GpuWord checked_gpu_word(std::uint64_t value, const char *what)
+{
+    if (value > std::numeric_limits<GpuWord>::max())
+    {
+        throw std::invalid_argument(what);
+    }
+    return static_cast<GpuWord>(value);
+}
+
+void copy_uint64_to_device_field(
+    const std::uint64_t *src,
+    std::size_t count,
+    GpuFieldData &dst,
+    const char *what)
+{
+    if (count > dst.size())
+    {
+        throw std::out_of_range("source data exceeds GPU field allocation");
+    }
+    if (count != 0 && src == nullptr)
+    {
+        throw std::invalid_argument("source pointer is null");
+    }
+
+    std::vector<GpuWord> tmp(count);
+    for (std::size_t i = 0; i < count; ++i)
+    {
+        tmp[i] = checked_gpu_word(src[i], what);
+    }
+
+    dst.buffer.copy_from_host(tmp.data(), tmp.size());
+}
+
+void copy_device_field_to_uint64(
+    const GpuFieldData &src,
+    std::uint64_t *dst,
+    std::size_t count)
+{
+    if (count > src.size())
+    {
+        throw std::out_of_range("GPU field is smaller than requested download size");
+    }
+    if (count != 0 && dst == nullptr)
+    {
+        throw std::invalid_argument("destination pointer is null");
+    }
+
+    std::vector<GpuWord> tmp(count);
+    src.buffer.copy_to_host(tmp.data(), tmp.size());
+    std::transform(tmp.cbegin(), tmp.cend(), dst, [](GpuWord value) {
+        return static_cast<std::uint64_t>(value);
+    });
+}
+
+void ciphertext_limb_shape(
+    const Ciphertext &src,
+    std::size_t &q_count,
+    std::size_t &p_count)
+{
+    q_count = src.coeff_modulus_size();
+    p_count = 0;
+
+    if (!src.polys().empty() && src.polys()[0].poly_degree() != 0)
+    {
+        q_count = src.polys()[0].rns_num_q();
+        p_count = src.polys()[0].rns_num_p();
+    }
+}
+
+void plaintext_limb_shape(
+    const Plaintext &src,
+    std::size_t &degree,
+    std::size_t &q_count,
+    std::size_t &p_count)
+{
+    if (src.is_ntt_form())
+    {
+        const auto &poly = src.poly();
+        degree = poly.poly_degree();
+        q_count = poly.rns_num_q();
+        p_count = poly.rns_num_p();
+        if (degree == 0 || q_count + p_count == 0)
+        {
+            throw std::invalid_argument(
+                "NTT plaintext does not carry a usable RNSPoly shape");
+        }
+        return;
+    }
+
+    degree = src.coeff_count();
+    q_count = src.coeff_count() == 0 ? 0 : 1;
+    p_count = 0;
+}
+
+void append_uploaded_ciphertext_as_key_polys(
+    GpuCiphertextData &&uploaded,
+    std::size_t key_index,
+    std::size_t decomposition_index,
+    GpuEvaluationKeyData &dst)
+{
+    if (dst.meta.degree == 0)
+    {
+        dst.meta.degree = uploaded.meta.degree;
+        dst.meta.q_count = uploaded.meta.q_count;
+        dst.meta.p_count = uploaded.meta.p_count;
+    }
+    else if (dst.meta.degree != uploaded.meta.degree ||
+             dst.meta.q_count != uploaded.meta.q_count ||
+             dst.meta.p_count != uploaded.meta.p_count)
+    {
+        throw std::invalid_argument("inconsistent evaluation-key polynomial shape");
+    }
+
+    dst.meta.component_count = std::max(dst.meta.component_count, uploaded.meta.component_count);
+
+    const auto field_base = dst.fields_.size();
+    for (auto &field : uploaded.fields_)
+    {
+        dst.fields_.push_back(std::move(field));
+    }
+
+    for (std::size_t component = 0; component < uploaded.polys_.size(); ++component)
+    {
+        auto poly = std::move(uploaded.polys_[component]);
+        poly.poly_id = dst.polys_.size();
+        for (auto &shard : poly.shards)
+        {
+            shard.field_index += field_base;
+        }
+
+        GpuEvaluationKeyPolyMeta poly_meta;
+        poly_meta.poly_id = poly.poly_id;
+        poly_meta.key_index = key_index;
+        poly_meta.decomposition_index = decomposition_index;
+        poly_meta.component_index = component;
+
+        dst.poly_metadata_.push_back(poly_meta);
+        dst.polys_.push_back(std::move(poly));
+    }
+}
+
+template <typename KSwitchKeyType>
+GpuEvaluationKeyData upload_kswitch_keys(
+    const KSwitchKeyType &src,
+    int device_id)
+{
+    GpuEvaluationKeyData dst;
+    dst.meta.key_parms_id = src.parms_id();
+    dst.meta.key_count = src.data().size();
+
+    for (std::size_t key_index = 0; key_index < src.data().size(); ++key_index)
+    {
+        const auto &decompositions = src.data()[key_index];
+        dst.meta.decomposition_count =
+            std::max(dst.meta.decomposition_count, decompositions.size());
+
+        for (std::size_t decomp_index = 0; decomp_index < decompositions.size(); ++decomp_index)
+        {
+            auto uploaded = GpuUploader::upload_ciphertext(
+                decompositions[decomp_index].data(),
+                device_id);
+            append_uploaded_ciphertext_as_key_polys(
+                std::move(uploaded),
+                key_index,
+                decomp_index,
+                dst);
+        }
+    }
+
+    return dst;
+}
+
+}  // namespace
 
 GpuCiphertextData GpuUploader::upload_ciphertext(
     const Ciphertext &src,
     int device_id)
 {
-    // TODO:
-    // Implement CPU Ciphertext -> GPU Ciphertext upload.
-    //
-    // Important:
-    // CPU Poseidon stores residues as uint64_t.
-    // GPU backend stores residues as uint32_t.
-    //
-    // This conversion is valid only when all active RNS primes are below 32 bits
-    // and residues are in canonical range.
+    if (!src.is_valid() || src.size() == 0)
+    {
+        return {};
+    }
 
-    (void)src;
-    (void)device_id;
+    std::size_t q_count = 0;
+    std::size_t p_count = 0;
+    ciphertext_limb_shape(src, q_count, p_count);
 
-    throw std::runtime_error("GpuUploader::upload_ciphertext is not implemented yet");
+    auto dst = GpuCiphertextData::allocate_single_device(
+        src.poly_modulus_degree(),
+        q_count,
+        src.size(),
+        device_id,
+        p_count);
+
+    dst.meta.parms_id = src.parms_id();
+    dst.meta.scale = src.scale();
+    dst.meta.correction_factor = src.correction_factor();
+    dst.meta.is_ntt_form = src.is_ntt_form();
+
+    const auto limb_count = q_count + p_count;
+    const auto poly_word_count = checked_mul(
+        src.poly_modulus_degree(),
+        limb_count,
+        "ciphertext polynomial size overflow");
+
+    for (std::size_t component = 0; component < src.size(); ++component)
+    {
+        copy_uint64_to_device_field(
+            src.data(component),
+            poly_word_count,
+            dst.fields_[component],
+            "GpuUploader only supports ciphertext residues that fit in GpuWord");
+    }
+
+    return dst;
 }
 
 void GpuUploader::download_ciphertext(
     const GpuCiphertextData &src,
     Ciphertext &dst)
 {
-    // TODO:
-    // Implement GPU Ciphertext -> CPU Ciphertext download.
-
     (void)src;
     (void)dst;
+    throw std::invalid_argument(
+        "GpuUploader::download_ciphertext requires PoseidonContext to rebuild CPU RNSPoly views");
+}
 
-    throw std::runtime_error("GpuUploader::download_ciphertext is not implemented yet");
+void GpuUploader::download_ciphertext(
+    const GpuCiphertextData &src,
+    Ciphertext &dst,
+    const PoseidonContext &context)
+{
+    if (src.empty())
+    {
+        dst.release();
+        return;
+    }
+
+    const auto limb_count = src.meta.q_count + src.meta.p_count;
+    dst.resize(context, src.meta.parms_id, src.meta.component_count);
+
+    if (dst.poly_modulus_degree() != src.meta.degree ||
+        dst.coeff_modulus_size() != limb_count ||
+        dst.size() != src.meta.component_count)
+    {
+        throw std::invalid_argument(
+            "GPU ciphertext shape does not match PoseidonContext target level");
+    }
+
+    dst.scale() = src.meta.scale;
+    dst.correction_factor() = src.meta.correction_factor;
+    dst.is_ntt_form() = src.meta.is_ntt_form;
+
+    const auto poly_word_count = checked_mul(
+        src.meta.degree,
+        limb_count,
+        "ciphertext polynomial size overflow");
+
+    for (std::size_t component = 0; component < src.meta.component_count; ++component)
+    {
+        copy_device_field_to_uint64(
+            src.fields_.at(component),
+            dst.data(component),
+            poly_word_count);
+    }
 }
 
 GpuPlaintextData GpuUploader::upload_plaintext(
     const Plaintext &src,
     int device_id)
 {
-    // TODO:
-    // Implement CPU Plaintext -> GPU Plaintext upload.
+    if (!src.is_valid())
+    {
+        return {};
+    }
 
-    (void)src;
-    (void)device_id;
+    std::size_t degree = 0;
+    std::size_t q_count = 0;
+    std::size_t p_count = 0;
+    plaintext_limb_shape(src, degree, q_count, p_count);
 
-    throw std::runtime_error("GpuUploader::upload_plaintext is not implemented yet");
+    auto dst = GpuPlaintextData::allocate_single_device(
+        degree,
+        q_count,
+        device_id,
+        p_count);
+
+    dst.meta.parms_id = src.parms_id();
+    dst.meta.scale = src.scale();
+    dst.meta.is_ntt_form = src.is_ntt_form();
+
+    const auto word_count = checked_mul(
+        degree,
+        q_count + p_count,
+        "plaintext size overflow");
+    if (word_count != src.coeff_count())
+    {
+        throw std::invalid_argument("plaintext coefficient count does not match GPU shape");
+    }
+
+    copy_uint64_to_device_field(
+        src.data(),
+        word_count,
+        dst.fields_[0],
+        "GpuUploader only supports plaintext coefficients that fit in GpuWord");
+
+    return dst;
 }
 
 void GpuUploader::download_plaintext(
     const GpuPlaintextData &src,
     Plaintext &dst)
 {
-    // TODO:
-    // Implement GPU Plaintext -> CPU Plaintext download.
+    if (src.empty())
+    {
+        dst.release();
+        return;
+    }
 
-    (void)src;
-    (void)dst;
+    if (src.meta.is_ntt_form || src.meta.parms_id != parms_id_zero)
+    {
+        throw std::invalid_argument(
+            "GpuUploader::download_plaintext requires PoseidonContext for NTT plaintext");
+    }
 
-    throw std::runtime_error("GpuUploader::download_plaintext is not implemented yet");
+    const auto word_count = src.fields_[0].size();
+    dst.resize(word_count);
+    dst.parms_id() = parms_id_zero;
+    dst.scale() = src.meta.scale;
+
+    copy_device_field_to_uint64(src.fields_[0], dst.data(), word_count);
+}
+
+void GpuUploader::download_plaintext(
+    const GpuPlaintextData &src,
+    Plaintext &dst,
+    const PoseidonContext &context)
+{
+    if (src.empty())
+    {
+        dst.release();
+        return;
+    }
+
+    const auto word_count = checked_mul(
+        src.meta.degree,
+        src.meta.q_count + src.meta.p_count,
+        "plaintext size overflow");
+
+    if (src.meta.is_ntt_form || src.meta.parms_id != parms_id_zero)
+    {
+        dst.resize(context, src.meta.parms_id, word_count);
+    }
+    else
+    {
+        dst.resize(word_count);
+        dst.parms_id() = parms_id_zero;
+    }
+
+    dst.scale() = src.meta.scale;
+    copy_device_field_to_uint64(src.fields_[0], dst.data(), word_count);
 }
 
 GpuRelinKeysData GpuUploader::upload_relin_keys(
     const RelinKeys &src,
     int device_id)
 {
-    // TODO:
-    // Implement CPU RelinKeys -> GPU RelinKeys upload.
-
-    (void)src;
-    (void)device_id;
-
-    throw std::runtime_error("GpuUploader::upload_relin_keys is not implemented yet");
+    return upload_kswitch_keys(src, device_id);
 }
 
 GpuGaloisKeysData GpuUploader::upload_galois_keys(
     const GaloisKeys &src,
     int device_id)
 {
-    // TODO:
-    // Implement CPU GaloisKeys -> GPU GaloisKeys upload.
-
-    (void)src;
-    (void)device_id;
-
-    throw std::runtime_error("GpuUploader::upload_galois_keys is not implemented yet");
+    return upload_kswitch_keys(src, device_id);
 }
 
 }  // namespace gpu

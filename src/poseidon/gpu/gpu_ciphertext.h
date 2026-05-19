@@ -5,6 +5,7 @@
 #include "poseidon/gpu/gpu_rns_poly.h"
 
 #include <cstddef>
+#include <cstdint>
 #include <vector>
 
 namespace poseidon
@@ -23,6 +24,7 @@ struct GpuCiphertextMeta
     parms_id_type parms_id{};
 
     double scale = 1.0;
+    std::uint64_t correction_factor = 1;
     bool is_ntt_form = false;
 
     std::size_t degree = 0;
@@ -85,19 +87,11 @@ public:
 
     /**
      * @brief Create a mutable temporary view.
-     *
-     * TODO:
-     * - Translate shard.field_index into actual device pointers.
-     * - Validate shard ranges.
      */
     GpuCiphertextView make_view();
 
     /**
      * @brief Create a const temporary view.
-     *
-     * TODO:
-     * - Translate shard.field_index into actual const device pointers.
-     * - Validate shard ranges.
      */
     GpuConstCiphertextView make_const_view() const;
 
@@ -109,17 +103,17 @@ public:
      *
      * First-stage layout:
      * - one field per ciphertext component;
-     * - each field stores [q0 | q1 | ... | q_{q_count-1}];
-     * - each q block stores degree coefficients.
+     * - each field stores [q0 | ... | q_{q_count-1} | p0 | ...];
+     * - each limb block stores degree coefficients.
      *
-     * TODO:
-     * - Real GPU allocation depends on DeviceVector implementation.
+     * Device allocation is delegated to DeviceVector.
      */
     static GpuCiphertextData allocate_single_device(
         std::size_t degree,
         std::size_t q_count,
         std::size_t component_count,
-        int device_id);
+        int device_id,
+        std::size_t p_count = 0);
 };
 
 }  // namespace gpu

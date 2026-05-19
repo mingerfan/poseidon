@@ -28,6 +28,15 @@ struct GpuKeyMeta
 
     std::size_t key_count = 0;
     std::size_t decomposition_count = 0;
+    std::size_t component_count = 0;
+};
+
+struct GpuEvaluationKeyPolyMeta
+{
+    std::size_t poly_id = 0;
+    std::size_t key_index = 0;
+    std::size_t decomposition_index = 0;
+    std::size_t component_index = 0;
 };
 
 struct GpuEvaluationKeyView
@@ -72,6 +81,12 @@ public:
      */
     std::vector<GpuRNSPoly> polys_;
 
+    /**
+     * @brief Mapping from a flattened GPU key polynomial back to Poseidon's
+     * keys_[key_index][decomposition_index].data(component_index) layout.
+     */
+    std::vector<GpuEvaluationKeyPolyMeta> poly_metadata_;
+
 public:
     GpuEvaluationKeyData() = default;
 
@@ -79,17 +94,11 @@ public:
 
     /**
      * @brief Create mutable view of evaluation key data.
-     *
-     * TODO:
-     * - Translate field_index into device pointers.
      */
     GpuEvaluationKeyView make_view();
 
     /**
      * @brief Create const view of evaluation key data.
-     *
-     * TODO:
-     * - Translate field_index into const device pointers.
      */
     GpuConstEvaluationKeyView make_const_view() const;
 };
