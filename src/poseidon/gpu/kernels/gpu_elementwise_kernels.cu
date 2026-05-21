@@ -25,6 +25,7 @@ __global__ void add_poly_shard_kernel(
     const GpuWord *left_values,
     const GpuWord *right_values,
     const GpuWord *q_primes,
+    std::size_t modulus_offset,
     std::size_t limb_count,
     std::size_t coeff_count,
     std::size_t degree)
@@ -37,14 +38,37 @@ __global__ void add_poly_shard_kernel(
     // offset       -> local_limb * degree + local_coeff
     // destination_values[offset] =
     //     left_values[offset] + right_values[offset] mod modulus
+    // destination_values：gpu上输出的数组指针，kernel要将结果写到该指针里
+    // left/right_values：指的是相加的密文1和密文2，低位求和
 
-    (void)destination_values;
-    (void)left_values;
-    (void)right_values;
-    (void)q_primes;
-    (void)limb_count;
-    (void)coeff_count;
-    (void)degree;
+    // block*块内线程计算相同的内容，x来索引具体位置，所以表示并行总运行的线程数？
+    std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    // 当前计算密文的模数个数和每个小密文的poly数，表示总计算量
+    std::size_t total = limb_count * coeff_count;
+
+    // 表示当前计算所需线程小于实际启动的线程，所以将溢出的线程返回，避免闲置
+    if (tid >= total)
+    {
+        return;
+    }
+
+    // offset标识的是对应gpu的内存位置，coeff_count指的是shred记录的系数个数
+    std::size_t local_limb = tid / coeff_count;
+    std::size_t local_coeff = tid % coeff_count;
+    std::size_t offset = local_limb * degree + local_coeff;
+
+    GpuWord modulus = q_primes[modulus_offset + local_limb];
+
+    GpuWide sum =
+        static_cast<GpuWide>(left_values[offset]) +
+        static_cast<GpuWide>(right_values[offset]);
+
+    if (sum >= modulus)
+    {
+        sum -= modulus;
+    }
+
+    destination_values[offset] = static_cast<GpuWord>(sum);
 }
 
 /**
@@ -179,34 +203,99 @@ void launch_add_poly_shard(
     const GpuParameterShard &parameter_shard,
     std::size_t degree)
 {
-    // TODO:
-    // Host-side launcher for modular addition.
-    //
-    // Expected future behavior:
-    // 1. cudaSetDevice(destination_shard.device_id)
-    // 2. Validate that all shard pointers are non-null.
-    // 3. Compute:
-    //      total_count = limb_count * coeff_count
-    //      block_size  = e.g. 256
-    //      grid_size   = ceil(total_count / block_size)
-    // 4. Launch:
-    //      add_poly_shard_kernel<<<grid_size, block_size>>>(
-    //          destination_shard.ptr,
-    //          left_shard.ptr,
-    //          right_shard.ptr,
-    //          parameter_shard.q_primes.data(),
-    //          destination_shard.limb_count,
-    //          destination_shard.coeff_count,
-    //          degree)
-    // 5. Check CUDA errors.
+    // 检查是否存在空指针
+    if (destination_shard.ptr == nullptr ||
+        left_shard.ptr == nullptr ||
+        right_shard.ptr == nullptr)
+    {
+        throw std::invalid_argument("launch_add_poly_shard: null data pointer");
+    }
 
-    (void)destination_shard;
-    (void)left_shard;
-    (void)right_shard;
-    (void)parameter_shard;
-    (void)degree;
+    if (parameter_shard.q_primes.data() == nullptr)
+    {
+        throw std::invalid_argument("launch_add_poly_shard: null q_primes pointer");
+    }
 
-    throw std::runtime_error("kernel::launch_add_poly_shard is not implemented yet");
+    if (degree == 0 ||
+        destination_shard.limb_count == 0 ||
+        destination_shard.coeff_count == 0)
+    {
+        throw std::invalid_argument("launch_add_poly_shard: empty shard shape");
+    }
+
+    if (destination_shard.device_id != left_shard.device_id ||
+        destination_shard.device_id != right_shard.device_id ||
+        destination_shard.device_id != parameter_shard.device_id)
+    {
+        throw std::invalid_argument("launch_add_poly_shard: device mismatch");
+    }
+
+    if (destination_shard.limb_begin != left_shard.limb_begin ||
+        destination_shard.limb_begin != right_shard.limb_begin ||
+        destination_shard.limb_count != left_shard.limb_count ||
+        destination_shard.limb_count != right_shard.limb_count ||
+        destination_shard.coeff_begin != left_shard.coeff_begin ||
+        destination_shard.coeff_begin != right_shard.coeff_begin ||
+        destination_shard.coeff_count != left_shard.coeff_count ||
+        destination_shard.coeff_count != right_shard.coeff_count)
+    {
+        throw std::invalid_argument("launch_add_poly_shard: shard shape mismatch");
+    }
+
+    if (destination_shard.coeff_count > degree)
+    {
+        throw std::invalid_argument("launch_add_poly_shard: coeff_count exceeds degree");
+    }
+
+    if (destination_shard.limb_begin < parameter_shard.limb_begin)
+    {
+        throw std::invalid_argument("launch_add_poly_shard: parameter shard does not cover limb range");
+    }
+
+    const std::size_t modulus_offset =
+        destination_shard.limb_begin - parameter_shard.limb_begin;
+    
+    if (modulus_offset + destination_shard.limb_count > parameter_shard.q_primes.size())
+    {
+        throw std::invalid_argument("launch_add_poly_shard: q_primes does not cover limb range");
+    }
+
+    const std::size_t total_count =
+        destination_shard.limb_count * destination_shard.coeff_count;
+
+    if (total_count == 0)
+    {
+        return;
+    }
+
+    // cudaSetDevice选择当前要 launch 的 GPU
+    gpu_check_cuda(
+        cudaSetDevice(destination_shard.device_id),
+        "launch_add_poly_shard cudaSetDevice");
+
+    constexpr int block_size = 256;
+    const int grid_size = static_cast<int>(
+        (total_count + block_size - 1) / block_size);
+
+    add_poly_shard_kernel<<<grid_size, block_size>>>(
+        destination_shard.ptr,
+        left_shard.ptr,
+        right_shard.ptr,
+        parameter_shard.q_primes.data(),
+        modulus_offset,
+        destination_shard.limb_count,
+        destination_shard.coeff_count,
+        degree);
+    
+    // 判断kernel是否正确发射，不代表计算完成
+    gpu_check_cuda(
+        cudaGetLastError(),
+        "launch_add_poly_shard kernel launch");
+    
+    // kernel计算异步，CPU等待发射到GPU的计算任务完成，初版用来测试
+    gpu_check_cuda(
+        cudaDeviceSynchronize(),
+        "launch_add_poly_shard kernel sync");
 }
 
 void launch_sub_poly_shard(
@@ -252,15 +341,53 @@ void launch_copy_poly_shard(
     const GpuConstPolyShardView &source_shard,
     std::size_t degree)
 {
-    // TODO:
-    // Host-side launcher for shard copy.
-    // It should launch copy_poly_shard_kernel or use cudaMemcpyAsync if suitable.
+    if (destination_shard.ptr == nullptr || source_shard.ptr == nullptr)
+    {
+        throw std::invalid_argument("launch_copy_poly_shard: null data pointer");
+    }
 
-    (void)destination_shard;
-    (void)source_shard;
-    (void)degree;
+    if (degree == 0 ||
+        destination_shard.limb_count == 0 ||
+        destination_shard.coeff_count == 0)
+    {
+        throw std::invalid_argument("launch_copy_poly_shard: empty shard shape");
+    }
 
-    throw std::runtime_error("kernel::launch_copy_poly_shard is not implemented yet");
+    if (destination_shard.device_id != source_shard.device_id)
+    {
+        throw std::invalid_argument("launch_copy_poly_shard: device mismatch");
+    }
+
+    if (destination_shard.limb_begin != source_shard.limb_begin ||
+        destination_shard.limb_count != source_shard.limb_count ||
+        destination_shard.coeff_begin != source_shard.coeff_begin ||
+        destination_shard.coeff_count != source_shard.coeff_count)
+    {
+        throw std::invalid_argument("launch_copy_poly_shard: shard shape mismatch");
+    }
+
+    if (destination_shard.coeff_begin != 0 ||
+        source_shard.coeff_begin != 0 ||
+        destination_shard.coeff_count != degree ||
+        source_shard.coeff_count != degree)
+    {
+        throw std::invalid_argument(
+            "launch_copy_poly_shard: only full-coeff shard copy is supported");
+    }
+
+    gpu_check_cuda(
+        cudaSetDevice(destination_shard.device_id),
+        "launch_copy_poly_shard cudaSetDevice");
+
+    const std::size_t word_count = destination_shard.limb_count * degree;
+
+    gpu_check_cuda(
+        cudaMemcpy(
+            destination_shard.ptr,
+            source_shard.ptr,
+            word_count * sizeof(GpuWord),
+            cudaMemcpyDeviceToDevice),
+        "launch_copy_poly_shard cudaMemcpyDeviceToDevice");
 }
 
 void launch_dyadic_product_poly_shard(

@@ -1,11 +1,26 @@
 #include "poseidon/gpu/gpu_evaluator.h"
 
 #include <stdexcept>
+#include <algorithm>
+#include <cmath>
+#include <utility>
 
 namespace poseidon
 {
 namespace gpu
 {
+
+namespace
+{
+
+bool same_scale(double a, double b)
+{
+    const double tolerance =
+        1e-6 * std::max({1.0, std::abs(a), std::abs(b)});
+    return std::abs(a - b) <= tolerance;
+}
+
+}  // namespace
 
 GpuEvaluator::GpuEvaluator(const GpuParameterData &params)
     : params_(params),
@@ -19,33 +34,69 @@ void GpuEvaluator::add(
     const GpuCiphertextData &right_ciphertext,
     GpuCiphertextData &destination_ciphertext) const
 {
-    // TODO:
-    // 1. Check FHE semantic validity:
-    //    - same parms_id;
-    //    - compatible scale;
-    //    - same NTT form;
-    //    - same degree and active limb count.
-    //
-    // 2. Prepare destination metadata:
-    //    - destination metadata should follow add semantics;
-    //    - destination component count should be max(left_count, right_count).
-    //
-    // 3. Prepare destination storage.
-    //
-    // 4. Create views:
-    //    - left ciphertext const view;
-    //    - right ciphertext const view;
-    //    - destination ciphertext mutable view.
-    //
-    // 5. Query level information from params_.
-    //
-    // 6. Call elementwise_handler_.add_ciphertext(...).
+    if (left_ciphertext.empty() || right_ciphertext.empty())
+    {
+        throw std::invalid_argument("GpuEvaluator::add: empty ciphertext");
+    }
 
-    (void)left_ciphertext;
-    (void)right_ciphertext;
-    (void)destination_ciphertext;
+    if (!(left_ciphertext.meta.parms_id == right_ciphertext.meta.parms_id))
+    {
+        throw std::invalid_argument("GpuEvaluator::add: parms_id mismatch");
+    }
 
-    throw std::runtime_error("GpuEvaluator::add is not implemented yet");
+    if (left_ciphertext.meta.is_ntt_form != right_ciphertext.meta.is_ntt_form)
+    {
+        throw std::invalid_argument("GpuEvaluator::add: NTT form mismatch");
+    }
+
+    if (left_ciphertext.meta.degree != right_ciphertext.meta.degree ||
+        left_ciphertext.meta.q_count != right_ciphertext.meta.q_count ||
+        left_ciphertext.meta.p_count != right_ciphertext.meta.p_count)
+    {
+        throw std::invalid_argument("GpuEvaluator::add: shape mismatch");
+    }
+
+    if (!same_scale(left_ciphertext.meta.scale, right_ciphertext.meta.scale))
+    {
+        throw std::invalid_argument("GpuEvaluator::add: scale mismatch");
+    }
+
+    if (left_ciphertext.meta.p_count != 0)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::add: p limbs are not supported by add kernel yet");
+    }
+
+    const std::size_t result_components =
+        std::max(left_ciphertext.meta.component_count,
+                 right_ciphertext.meta.component_count);
+
+    const int device_id = left_ciphertext.fields_.at(0).device_id;
+
+    GpuCiphertextData result =
+        GpuCiphertextData::allocate_single_device(
+            left_ciphertext.meta.degree,
+            left_ciphertext.meta.q_count,
+            result_components,
+            device_id,
+            left_ciphertext.meta.p_count);
+
+    result.meta = left_ciphertext.meta;
+    result.meta.component_count = result_components;
+
+    auto left_view = left_ciphertext.make_const_view();
+    auto right_view = right_ciphertext.make_const_view();
+    auto destination_view = result.make_view();
+
+    const auto &level_info = params_.get_level(left_ciphertext.meta.parms_id);
+
+    elementwise_handler_.add_ciphertext(
+        destination_view,
+        left_view,
+        right_view,
+        level_info);
+
+    destination_ciphertext = std::move(result);
 }
 
 void GpuEvaluator::sub(

@@ -2,6 +2,7 @@
 #include "poseidon/gpu/kernels/gpu_elementwise_kernels.h"
 
 #include <stdexcept>
+#include <algorithm>
 
 namespace poseidon
 {
@@ -12,24 +13,62 @@ GpuElementwiseHandler::GpuElementwiseHandler(const GpuParameterData &params)
     : params_(params)
 {}
 
+// 最顶层的加法，支持不同component密文的求和，低位求和，按component调用add_poly
 void GpuElementwiseHandler::add_ciphertext(
     GpuCiphertextView &destination_view,
     const GpuConstCiphertextView &left_view,
     const GpuConstCiphertextView &right_view,
     const GpuLevelInfo &level_info) const
 {
-    // TODO:
-    // 1. Check physical placement compatibility among destination/left/right.
-    // 2. Add common Poseidon components through add_poly().
-    // 3. Copy extra components from the larger ciphertext through copy_poly().
-    // 4. add_poly() should eventually call kernel::launch_add_poly_shard(...).
+    if (!(left_view.meta.parms_id == right_view.meta.parms_id) ||
+        !(left_view.meta.parms_id == destination_view.meta.parms_id))
+    {
+        throw std::invalid_argument("add_ciphertext: parms_id mismatch");
+    }
 
-    (void)destination_view;
-    (void)left_view;
-    (void)right_view;
-    (void)level_info;
+    if (left_view.meta.is_ntt_form != right_view.meta.is_ntt_form ||
+        left_view.meta.is_ntt_form != destination_view.meta.is_ntt_form)
+    {
+        throw std::invalid_argument("add_ciphertext: NTT form mismatch");
+    }
 
-    throw std::runtime_error("GpuElementwiseHandler::add_ciphertext is not implemented yet");
+    if (left_view.meta.degree != right_view.meta.degree ||
+        left_view.meta.degree != destination_view.meta.degree ||
+        left_view.meta.q_count != right_view.meta.q_count ||
+        left_view.meta.q_count != destination_view.meta.q_count ||
+        left_view.meta.p_count != right_view.meta.p_count ||
+        left_view.meta.p_count != destination_view.meta.p_count)
+    {
+        throw std::invalid_argument("add_ciphertext: shape mismatch");
+    }
+
+    const auto common_count = std::min(left_view.polys.size(), right_view.polys.size());
+    const auto result_count = std::max(left_view.polys.size(), right_view.polys.size());
+
+    if (destination_view.polys.size() != result_count)
+    {
+        throw std::invalid_argument("add_ciphertext: destination component count mismatch");
+    }
+
+    for (std::size_t i = 0; i < common_count; ++i)
+    {
+        add_poly(destination_view.polys[i], left_view.polys[i], right_view.polys[i], level_info);
+    }
+
+    if (left_view.polys.size() > right_view.polys.size())
+    {
+        for (std::size_t i = common_count; i < left_view.polys.size(); ++i)
+        {
+            copy_poly(destination_view.polys[i], left_view.polys[i], level_info);
+        }
+    }
+    else
+    {
+        for (std::size_t i = common_count; i < right_view.polys.size(); ++i)
+        {
+            copy_poly(destination_view.polys[i], right_view.polys[i], level_info);
+        }
+    }
 }
 
 void GpuElementwiseHandler::sub_ciphertext(
@@ -185,28 +224,55 @@ void GpuElementwiseHandler::add_poly(
     const GpuConstRNSPolyView &right_poly,
     const GpuLevelInfo &level_info) const
 {
-    // TODO:
-    // 1. Validate that destination_poly, left_poly, and right_poly have
-    //    compatible shard counts and shard ranges.
-    // 2. For each shard:
-    //    - find the matching GpuParameterShard from level_info;
-    //    - call kernel::launch_add_poly_shard(...).
-    //
-    // Example future call:
-    //
-    // kernel::launch_add_poly_shard(
-    //     destination_shard,
-    //     left_shard,
-    //     right_shard,
-    //     parameter_shard,
-    //     destination_poly.degree);
+    if (destination_poly.shards.size() != left_poly.shards.size() ||
+        destination_poly.shards.size() != right_poly.shards.size())
+    {
+        throw std::invalid_argument("add_poly: shard count mismatch");
+    }
 
-    (void)destination_poly;
-    (void)left_poly;
-    (void)right_poly;
-    (void)level_info;
+    for (std::size_t i = 0; i < destination_poly.shards.size(); ++i)
+    {
+        const auto &dst = destination_poly.shards[i];
+        const auto &lhs = left_poly.shards[i];
+        const auto &rhs = right_poly.shards[i];
 
-    throw std::runtime_error("GpuElementwiseHandler::add_poly is not implemented yet");
+        if (dst.device_id != lhs.device_id ||
+            dst.device_id != rhs.device_id ||
+            dst.limb_begin != lhs.limb_begin ||
+            dst.limb_begin != rhs.limb_begin ||
+            dst.limb_count != lhs.limb_count ||
+            dst.limb_count != rhs.limb_count ||
+            dst.coeff_begin != lhs.coeff_begin ||
+            dst.coeff_begin != rhs.coeff_begin ||
+            dst.coeff_count != lhs.coeff_count ||
+            dst.coeff_count != rhs.coeff_count)
+        {
+            throw std::invalid_argument("add_poly: shard placement mismatch");
+        }
+
+        const GpuParameterShard *parameter_shard = nullptr;
+        for (const auto &candidate : level_info.shards)
+        {
+            const bool same_device = candidate.device_id == dst.device_id;
+            const bool covers_limb =
+                dst.limb_begin >= candidate.limb_begin &&
+                dst.limb_begin + dst.limb_count <=
+                    candidate.limb_begin + candidate.limb_count;
+
+            if (same_device && covers_limb)
+            {
+                parameter_shard = &candidate;
+                break;
+            }
+        }
+
+        if (parameter_shard == nullptr)
+        {
+            throw std::invalid_argument("add_poly: no matching parameter shard");
+        }
+
+        kernel::launch_add_poly_shard(dst, lhs, rhs, *parameter_shard, level_info.degree);
+    }
 }
 
 void GpuElementwiseHandler::sub_poly(
@@ -250,18 +316,28 @@ void GpuElementwiseHandler::copy_poly(
     const GpuConstRNSPolyView &source_poly,
     const GpuLevelInfo &level_info) const
 {
-    // TODO:
-    // 1. Validate shard alignment.
-    // 2. Call kernel::launch_copy_poly_shard(...).
-    //
-    // Copy does not need modulus parameters, but level_info may still be useful
-    // for placement validation.
+    if (destination_poly.shards.size() != source_poly.shards.size())
+    {
+        throw std::invalid_argument("copy_poly: shard count mismatch");
+    }
 
-    (void)destination_poly;
-    (void)source_poly;
-    (void)level_info;
+    for (std::size_t i = 0; i < destination_poly.shards.size(); ++i)
+    {
+        const auto &dst = destination_poly.shards[i];
+        const auto &src = source_poly.shards[i];
 
-    throw std::runtime_error("GpuElementwiseHandler::copy_poly is not implemented yet");
+        if (dst.device_id != src.device_id ||
+            dst.limb_begin != src.limb_begin ||
+            dst.limb_count != src.limb_count ||
+            dst.coeff_begin != src.coeff_begin ||
+            dst.coeff_count != src.coeff_count)
+        {
+            throw std::invalid_argument("copy_poly: shard placement mismatch");
+        }
+
+        (void)level_info;
+        kernel::launch_copy_poly_shard(dst, src, level_info.degree);
+    }
 }
 
 void GpuElementwiseHandler::multiply_plain_poly(

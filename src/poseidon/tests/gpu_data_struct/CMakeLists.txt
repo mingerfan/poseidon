@@ -37,6 +37,10 @@ add_test(
 )
 
 if(POSEIDON_GPU_DATA_STRUCT_ENABLE_GPU_TESTS)
+    enable_language(CUDA)
+    set(CMAKE_CUDA_STANDARD 17)
+    set(CMAKE_CUDA_STANDARD_REQUIRED ON)
+
     find_package(CUDAToolkit REQUIRED)
     find_package(rmm CONFIG REQUIRED)
 
@@ -46,6 +50,11 @@ if(POSEIDON_GPU_DATA_STRUCT_ENABLE_GPU_TESTS)
         "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_parameter.cpp"
         "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_plaintext.cpp"
         "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_uploader.cpp"
+    )
+
+    set(POSEIDON_GPU_ELEMENTWISE_SOURCES
+        "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_elementwise_handler.cpp"
+        "${POSEIDON_ROOT}/src/poseidon/gpu/kernels/gpu_elementwise_kernels.cu"
     )
 
     add_executable(test_gpu_data_struct_generation
@@ -66,4 +75,17 @@ if(POSEIDON_GPU_DATA_STRUCT_ENABLE_GPU_TESTS)
     )
     set_tests_properties(test_gpu_data_struct_generation
         PROPERTIES SKIP_RETURN_CODE 77)
+
+    add_executable(demo_gpu_ciphertext_add_handler
+        demo_gpu_ciphertext_add_handler.cpp
+        ${POSEIDON_GPU_DATA_STRUCT_SOURCES}
+        ${POSEIDON_GPU_ELEMENTWISE_SOURCES}
+    )
+
+    target_link_libraries(demo_gpu_ciphertext_add_handler
+        PRIVATE
+            poseidon_shared
+            CUDA::cudart
+            rmm::rmm
+    )
 endif()
