@@ -3,7 +3,7 @@
 #include "poseidon/decryptor.h"
 #include "poseidon/encryptor.h"
 #include "poseidon/factory/poseidon_factory.h"
-#include "poseidon/gpu/gpu_elementwise_handler.h"
+#include "poseidon/gpu/gpu_evaluator.h"
 #include "poseidon/gpu/gpu_parameter.h"
 #include "poseidon/gpu/gpu_uploader.h"
 #include "poseidon/keygenerator.h"
@@ -138,6 +138,7 @@ void print_gpu_cipher_layout(
             const auto &field = cipher.fields_[shard.field_index];
             std::cout << "    shard[" << j << "] field=" << shard.field_index
                       << " device=" << field.device_id
+                      << " offset=" << shard.field_offset
                       << " limb=[" << shard.limb_begin << ", "
                       << shard.limb_begin + shard.limb_count << ")"
                       << " coeff=[" << shard.coeff_begin << ", "
@@ -223,7 +224,7 @@ int run_demo()
     const auto parms = make_demo_parameters();
     PoseidonContext context(parms);
 
-    std::cout << "===== GPU Ciphertext Add Handler Demo =====\n";
+    std::cout << "===== GPU Ciphertext Add Evaluator Demo =====\n";
     std::cout << "scheme        = CKKS\n";
     std::cout << "degree        = " << parms.degree() << "\n";
     std::cout << "slots         = " << parms.slot() << "\n";
@@ -279,37 +280,13 @@ int run_demo()
     print_gpu_cipher_layout("gpu_ct0", gpu_ct0);
     print_gpu_cipher_layout("gpu_ct1", gpu_ct1);
 
-    const std::size_t output_components =
-        std::max(gpu_ct0.meta.component_count, gpu_ct1.meta.component_count);
+    GpuEvaluator gpu_evaluator(gpu_params);
+    GpuCiphertextData gpu_output;
 
-    auto gpu_output = GpuCiphertextData::allocate_single_device(
-        gpu_ct0.meta.degree,
-        gpu_ct0.meta.q_count,
-        output_components,
-        device_id,
-        gpu_ct0.meta.p_count);
-
-    gpu_output.meta = gpu_ct0.meta;
-    gpu_output.meta.component_count = output_components;
-    gpu_output.meta.parms_id = cpu_result.parms_id();
-    gpu_output.meta.scale = cpu_result.scale();
-    gpu_output.meta.correction_factor = cpu_result.correction_factor();
-    gpu_output.meta.is_ntt_form = cpu_result.is_ntt_form();
-
-    print_gpu_cipher_layout("gpu_output_before_add", gpu_output);
-
-    std::cout << "\n[GPU handler add]\n";
-    auto left_view = gpu_ct0.make_const_view();
-    auto right_view = gpu_ct1.make_const_view();
-    auto output_view = gpu_output.make_view();
-
-    GpuElementwiseHandler handler(gpu_params);
-    handler.add_ciphertext(
-        output_view,
-        left_view,
-        right_view,
-        gpu_params.get_level(gpu_ct0.meta.parms_id));
-    std::cout << "GpuElementwiseHandler::add_ciphertext finished\n";
+    std::cout << "\n[GPU evaluator add]\n";
+    gpu_evaluator.add(gpu_ct0, gpu_ct1, gpu_output);
+    std::cout << "GpuEvaluator::add finished\n";
+    print_gpu_cipher_layout("gpu_output_after_add", gpu_output);
 
     Ciphertext gpu_result;
     GpuUploader::download_ciphertext(gpu_output, gpu_result, context);
@@ -334,8 +311,8 @@ int run_demo()
     constexpr int timing_iterations = 200;
     std::cout << "\n[add operation timing]\n";
     std::cout << "iterations              = " << timing_iterations << "\n";
-    std::cout << "included in timing       = add operation on existing ciphertext buffers\n";
-    std::cout << "excluded from timing     = encode/encrypt/upload/download/decrypt/decode/allocation\n";
+    std::cout << "included in timing       = top-level GpuEvaluator::add\n";
+    std::cout << "excluded from timing     = encode/encrypt/upload/download/decrypt/decode\n";
 
     Ciphertext cpu_timing_result;
     cpu_evaluator->add(ct0, ct1, cpu_timing_result);
@@ -350,11 +327,7 @@ int run_demo()
         std::chrono::duration<double, std::milli>(cpu_end - cpu_begin).count();
 
     gpu_check_cuda(cudaSetDevice(device_id), "timing cudaSetDevice");
-    handler.add_ciphertext(
-        output_view,
-        left_view,
-        right_view,
-        gpu_params.get_level(gpu_ct0.meta.parms_id));
+    gpu_evaluator.add(gpu_ct0, gpu_ct1, gpu_output);
     gpu_check_cuda(cudaDeviceSynchronize(), "timing warmup sync");
 
     cudaEvent_t gpu_start = nullptr;
@@ -366,11 +339,7 @@ int run_demo()
     gpu_check_cuda(cudaEventRecord(gpu_start), "timing cudaEventRecord start");
     for (int i = 0; i < timing_iterations; ++i)
     {
-        handler.add_ciphertext(
-            output_view,
-            left_view,
-            right_view,
-            gpu_params.get_level(gpu_ct0.meta.parms_id));
+        gpu_evaluator.add(gpu_ct0, gpu_ct1, gpu_output);
     }
     gpu_check_cuda(cudaEventRecord(gpu_stop), "timing cudaEventRecord stop");
     gpu_check_cuda(cudaEventSynchronize(gpu_stop), "timing cudaEventSynchronize stop");
@@ -391,11 +360,11 @@ int run_demo()
     std::cout << "cpu evaluator.add total ms          = " << cpu_total_ms << "\n";
     std::cout << "cpu evaluator.add avg ms            = "
               << cpu_total_ms / timing_iterations << "\n";
-    std::cout << "gpu handler.add wall total ms       = " << gpu_wall_total_ms << "\n";
-    std::cout << "gpu handler.add wall avg ms         = "
+    std::cout << "gpu evaluator.add wall total ms     = " << gpu_wall_total_ms << "\n";
+    std::cout << "gpu evaluator.add wall avg ms       = "
               << gpu_wall_total_ms / timing_iterations << "\n";
-    std::cout << "gpu handler.add cuda-event total ms = " << gpu_event_total_ms << "\n";
-    std::cout << "gpu handler.add cuda-event avg ms   = "
+    std::cout << "gpu evaluator.add cuda-event total ms = " << gpu_event_total_ms << "\n";
+    std::cout << "gpu evaluator.add cuda-event avg ms   = "
               << gpu_event_total_ms / timing_iterations << "\n";
 
     std::cout << "\n===== DEMO FINISHED =====\n";

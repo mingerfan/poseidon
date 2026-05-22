@@ -20,6 +20,46 @@ bool same_scale(double a, double b)
     return std::abs(a - b) <= tolerance;
 }
 
+bool same_logical_shard_layout(
+    const GpuRNSPoly &reference,
+    const GpuRNSPoly &candidate)
+{
+    if (reference.shards.size() != candidate.shards.size())
+    {
+        return false;
+    }
+
+    for (std::size_t i = 0; i < reference.shards.size(); ++i)
+    {
+        const auto &lhs = reference.shards[i];
+        const auto &rhs = candidate.shards[i];
+        if (lhs.limb_begin != rhs.limb_begin ||
+            lhs.limb_count != rhs.limb_count ||
+            lhs.coeff_begin != rhs.coeff_begin ||
+            lhs.coeff_count != rhs.coeff_count)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool all_components_use_layout(
+    const GpuCiphertextData &ciphertext,
+    const GpuRNSPoly &reference)
+{
+    for (const auto &poly : ciphertext.polys_)
+    {
+        if (!same_logical_shard_layout(reference, poly))
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 }  // namespace
 
 GpuEvaluator::GpuEvaluator(const GpuParameterData &params)
@@ -68,17 +108,30 @@ void GpuEvaluator::add(
     }
 
     const std::size_t result_components =
-        std::max(left_ciphertext.meta.component_count,
-                 right_ciphertext.meta.component_count);
+        std::max(left_ciphertext.size(), right_ciphertext.size());
 
     const int device_id = left_ciphertext.fields_.at(0).device_id;
+    const auto &reference_layout = left_ciphertext.polys_.at(0);
+
+    if (left_ciphertext.meta.component_count != left_ciphertext.size() ||
+        right_ciphertext.meta.component_count != right_ciphertext.size())
+    {
+        throw std::invalid_argument("GpuEvaluator::add: component metadata mismatch");
+    }
+
+    if (!all_components_use_layout(left_ciphertext, reference_layout) ||
+        !all_components_use_layout(right_ciphertext, reference_layout))
+    {
+        throw std::invalid_argument("GpuEvaluator::add: shard layout mismatch");
+    }
 
     GpuCiphertextData result =
-        GpuCiphertextData::allocate_single_device(
+        GpuCiphertextData::allocate_single_device_sharded(
             left_ciphertext.meta.degree,
             left_ciphertext.meta.q_count,
             result_components,
             device_id,
+            reference_layout.shards,
             left_ciphertext.meta.p_count);
 
     result.meta = left_ciphertext.meta;

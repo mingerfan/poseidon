@@ -25,3 +25,20 @@ cmake --build "${BUILD_DIR}" -j"$(nproc)"
 
 echo "=== Run tests ==="
 ctest --test-dir "${BUILD_DIR}" --output-on-failure
+
+if [[ "${ENABLE_GPU_TESTS}" == "ON" ]]; then
+    DEMO_BIN="${BUILD_DIR}/demo_gpu_ciphertext_add_handler"
+    if [[ -x "${DEMO_BIN}" ]]; then
+        echo "=== Run GPU add demo ==="
+        set +e
+        "${DEMO_BIN}"
+        DEMO_STATUS=$?
+        set -e
+
+        if [[ "${DEMO_STATUS}" == "77" ]]; then
+            echo "GPU add demo skipped"
+        elif [[ "${DEMO_STATUS}" != "0" ]]; then
+            exit "${DEMO_STATUS}"
+        fi
+    fi
+fi

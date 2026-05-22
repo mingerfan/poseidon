@@ -20,6 +20,15 @@ std::size_t checked_mul(std::size_t a, std::size_t b, const char *what)
     return a * b;
 }
 
+std::size_t checked_add(std::size_t a, std::size_t b, const char *what)
+{
+    if (b > std::numeric_limits<std::size_t>::max() - a)
+    {
+        throw std::overflow_error(what);
+    }
+    return a + b;
+}
+
 void validate_shard(
     const GpuRNSPoly &poly,
     const GpuPolyShard &shard,
@@ -43,10 +52,14 @@ void validate_shard(
     }
 
     const auto &field = fields[shard.field_index];
-    const auto last_limb_offset =
-        checked_mul(shard.limb_count - 1, poly.degree, "GpuEvaluationKeyData shard size overflow");
-    const auto physical_end =
-        shard.field_offset + last_limb_offset + shard.coeff_begin + shard.coeff_count;
+    const auto shard_size = checked_mul(
+        shard.limb_count,
+        shard.coeff_count,
+        "GpuEvaluationKeyData shard size overflow");
+    const auto physical_end = checked_add(
+        shard.field_offset,
+        shard_size,
+        "GpuEvaluationKeyData shard physical end overflow");
     if (physical_end > field.size())
     {
         throw std::out_of_range("GpuEvaluationKeyData shard exceeds field allocation");
@@ -79,7 +92,7 @@ GpuEvaluationKeyView GpuEvaluationKeyData::make_view()
             auto &field = fields_[shard.field_index];
             GpuPolyShardView shard_view;
             shard_view.device_id = field.device_id;
-            shard_view.ptr = field.data() + shard.field_offset + shard.coeff_begin;
+            shard_view.ptr = field.data() + shard.field_offset;
             shard_view.limb_begin = shard.limb_begin;
             shard_view.limb_count = shard.limb_count;
             shard_view.coeff_begin = shard.coeff_begin;
@@ -112,7 +125,7 @@ GpuConstEvaluationKeyView GpuEvaluationKeyData::make_const_view() const
             const auto &field = fields_[shard.field_index];
             GpuConstPolyShardView shard_view;
             shard_view.device_id = field.device_id;
-            shard_view.ptr = field.data() + shard.field_offset + shard.coeff_begin;
+            shard_view.ptr = field.data() + shard.field_offset;
             shard_view.limb_begin = shard.limb_begin;
             shard_view.limb_count = shard.limb_count;
             shard_view.coeff_begin = shard.coeff_begin;

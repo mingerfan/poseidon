@@ -65,8 +65,8 @@ public:
      * @brief Real GPU memory blocks.
      *
      * A ciphertext may contain multiple fields:
-     * - one field per component on one GPU;
-     * - or multiple fields per component across multiple GPUs.
+     * - each field represents one selected GPU's storage for this object;
+     * - shards describe packed slices inside those fields.
      */
     std::vector<GpuFieldData> fields_;
 
@@ -101,10 +101,10 @@ public:
      * This only allocates GPU storage and builds default layout.
      * It does not copy CPU data.
      *
-     * First-stage layout:
-     * - one field per ciphertext component;
-     * - each field stores [q0 | ... | q_{q_count-1} | p0 | ...];
-     * - each limb block stores degree coefficients.
+     * Default single-device layout:
+     * - one field for the selected GPU;
+     * - each ciphertext component is represented by one packed shard;
+     * - component shards are stored consecutively in the field.
      *
      * Device allocation is delegated to DeviceVector.
      */
@@ -113,6 +113,26 @@ public:
         std::size_t q_count,
         std::size_t component_count,
         int device_id,
+        std::size_t p_count = 0);
+
+    /**
+     * @brief Allocate single-device ciphertext storage with a shard template.
+     *
+     * The shard template describes one logical ciphertext component. The
+     * allocator applies it to every component and assigns field_index and
+     * field_offset automatically. Template field_index/field_offset values are
+     * ignored.
+     *
+     * Each shard is stored as one contiguous packed region:
+     * - limb-major inside the shard;
+     * - local offset = local_limb * coeff_count + local_coeff.
+     */
+    static GpuCiphertextData allocate_single_device_sharded(
+        std::size_t degree,
+        std::size_t q_count,
+        std::size_t component_count,
+        int device_id,
+        const std::vector<GpuPolyShard> &shard_template,
         std::size_t p_count = 0);
 };
 

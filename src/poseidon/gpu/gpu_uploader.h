@@ -35,6 +35,17 @@ public:
         int device_id);
 
     /**
+     * @brief Upload CPU Ciphertext with a custom single-device shard template.
+     *
+     * The template describes one ciphertext component. field_index and
+     * field_offset in the template are ignored and assigned by the allocator.
+     */
+    static GpuCiphertextData upload_ciphertext(
+        const Ciphertext &src,
+        int device_id,
+        const std::vector<GpuPolyShard> &shard_template);
+
+    /**
      * @brief Download GPU Ciphertext to CPU.
      *
      * - Resize CPU Ciphertext.

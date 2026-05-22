@@ -34,8 +34,8 @@ __global__ void add_poly_shard_kernel(
     // Each CUDA thread should process one residue:
     //
     // linear_index -> local_limb, local_coeff
-    // modulus      -> q_primes[local_limb]
-    // offset       -> local_limb * degree + local_coeff
+    // modulus      -> q_primes[modulus_offset + local_limb]
+    // offset       -> local_limb * coeff_count + local_coeff
     // destination_values[offset] =
     //     left_values[offset] + right_values[offset] mod modulus
     // destination_values：gpu上输出的数组指针，kernel要将结果写到该指针里
@@ -52,10 +52,11 @@ __global__ void add_poly_shard_kernel(
         return;
     }
 
-    // offset标识的是对应gpu的内存位置，coeff_count指的是shred记录的系数个数
+    // Shard data is packed in limb-major order:
+    // [local limb 0 coeffs][local limb 1 coeffs]...
     std::size_t local_limb = tid / coeff_count;
     std::size_t local_coeff = tid % coeff_count;
-    std::size_t offset = local_limb * degree + local_coeff;
+    std::size_t offset = local_limb * coeff_count + local_coeff;
 
     GpuWord modulus = q_primes[modulus_offset + local_limb];
 
@@ -69,6 +70,8 @@ __global__ void add_poly_shard_kernel(
     }
 
     destination_values[offset] = static_cast<GpuWord>(sum);
+
+    (void)degree;
 }
 
 /**
@@ -366,20 +369,12 @@ void launch_copy_poly_shard(
         throw std::invalid_argument("launch_copy_poly_shard: shard shape mismatch");
     }
 
-    if (destination_shard.coeff_begin != 0 ||
-        source_shard.coeff_begin != 0 ||
-        destination_shard.coeff_count != degree ||
-        source_shard.coeff_count != degree)
-    {
-        throw std::invalid_argument(
-            "launch_copy_poly_shard: only full-coeff shard copy is supported");
-    }
-
     gpu_check_cuda(
         cudaSetDevice(destination_shard.device_id),
         "launch_copy_poly_shard cudaSetDevice");
 
-    const std::size_t word_count = destination_shard.limb_count * degree;
+    const std::size_t word_count =
+        destination_shard.limb_count * destination_shard.coeff_count;
 
     gpu_check_cuda(
         cudaMemcpy(
@@ -388,6 +383,8 @@ void launch_copy_poly_shard(
             word_count * sizeof(GpuWord),
             cudaMemcpyDeviceToDevice),
         "launch_copy_poly_shard cudaMemcpyDeviceToDevice");
+
+    (void)degree;
 }
 
 void launch_dyadic_product_poly_shard(

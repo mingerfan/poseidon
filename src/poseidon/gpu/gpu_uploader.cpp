@@ -7,6 +7,7 @@
 #include "poseidon/poseidon_context.h"
 
 #include <algorithm>
+#include <cuda_runtime_api.h>
 #include <cstdint>
 #include <limits>
 #include <stdexcept>
@@ -62,6 +63,35 @@ void copy_uint64_to_device_field(
     dst.buffer.copy_from_host(tmp.data(), tmp.size());
 }
 
+void copy_gpu_words_to_device_field_offset(
+    const GpuWord *src,
+    std::size_t count,
+    GpuFieldData &dst,
+    std::size_t dst_offset)
+{
+    if (dst_offset > dst.size() || count > dst.size() - dst_offset)
+    {
+        throw std::out_of_range("source data exceeds GPU field allocation");
+    }
+    if (count != 0 && src == nullptr)
+    {
+        throw std::invalid_argument("source pointer is null");
+    }
+    if (count == 0)
+    {
+        return;
+    }
+
+    gpu_check_cuda(cudaSetDevice(dst.device_id), "cudaSetDevice");
+    gpu_check_cuda(
+        cudaMemcpy(
+            dst.data() + dst_offset,
+            src,
+            count * sizeof(GpuWord),
+            cudaMemcpyHostToDevice),
+        "cudaMemcpyHostToDevice shard");
+}
+
 void copy_device_field_to_uint64(
     const GpuFieldData &src,
     std::uint64_t *dst,
@@ -81,6 +111,35 @@ void copy_device_field_to_uint64(
     std::transform(tmp.cbegin(), tmp.cend(), dst, [](GpuWord value) {
         return static_cast<std::uint64_t>(value);
     });
+}
+
+void copy_device_field_offset_to_gpu_words(
+    const GpuFieldData &src,
+    std::size_t src_offset,
+    GpuWord *dst,
+    std::size_t count)
+{
+    if (src_offset > src.size() || count > src.size() - src_offset)
+    {
+        throw std::out_of_range("GPU field is smaller than requested shard download size");
+    }
+    if (count != 0 && dst == nullptr)
+    {
+        throw std::invalid_argument("destination pointer is null");
+    }
+    if (count == 0)
+    {
+        return;
+    }
+
+    gpu_check_cuda(cudaSetDevice(src.device_id), "cudaSetDevice");
+    gpu_check_cuda(
+        cudaMemcpy(
+            dst,
+            src.data() + src_offset,
+            count * sizeof(GpuWord),
+            cudaMemcpyDeviceToHost),
+        "cudaMemcpyDeviceToHost shard");
 }
 
 void ciphertext_limb_shape(
@@ -121,6 +180,95 @@ void plaintext_limb_shape(
     degree = src.coeff_count();
     q_count = src.coeff_count() == 0 ? 0 : 1;
     p_count = 0;
+}
+
+void upload_ciphertext_component_shards(
+    const Ciphertext &src,
+    std::size_t component,
+    const GpuRNSPoly &poly,
+    std::vector<GpuFieldData> &fields,
+    const char *what)
+{
+    const auto degree = src.poly_modulus_degree();
+    const auto *component_data = src.data(component);
+
+    for (const auto &shard : poly.shards)
+    {
+        const auto shard_word_count = checked_mul(
+            shard.limb_count,
+            shard.coeff_count,
+            "ciphertext shard word count overflow");
+        std::vector<GpuWord> packed(shard_word_count);
+
+        for (std::size_t local_limb = 0; local_limb < shard.limb_count; ++local_limb)
+        {
+            for (std::size_t local_coeff = 0; local_coeff < shard.coeff_count; ++local_coeff)
+            {
+                const auto cpu_index =
+                    checked_mul(
+                        shard.limb_begin + local_limb,
+                        degree,
+                        "ciphertext CPU shard index overflow") +
+                    shard.coeff_begin + local_coeff;
+                const auto gpu_index =
+                    checked_mul(
+                        local_limb,
+                        shard.coeff_count,
+                        "ciphertext GPU shard index overflow") +
+                    local_coeff;
+
+                packed[gpu_index] = checked_gpu_word(component_data[cpu_index], what);
+            }
+        }
+
+        copy_gpu_words_to_device_field_offset(
+            packed.data(),
+            packed.size(),
+            fields.at(shard.field_index),
+            shard.field_offset);
+    }
+}
+
+void download_ciphertext_component_shards(
+    const GpuRNSPoly &poly,
+    const std::vector<GpuFieldData> &fields,
+    std::uint64_t *component_data)
+{
+    for (const auto &shard : poly.shards)
+    {
+        const auto shard_word_count = checked_mul(
+            shard.limb_count,
+            shard.coeff_count,
+            "ciphertext shard word count overflow");
+        std::vector<GpuWord> packed(shard_word_count);
+
+        copy_device_field_offset_to_gpu_words(
+            fields.at(shard.field_index),
+            shard.field_offset,
+            packed.data(),
+            packed.size());
+
+        for (std::size_t local_limb = 0; local_limb < shard.limb_count; ++local_limb)
+        {
+            for (std::size_t local_coeff = 0; local_coeff < shard.coeff_count; ++local_coeff)
+            {
+                const auto cpu_index =
+                    checked_mul(
+                        shard.limb_begin + local_limb,
+                        poly.degree,
+                        "ciphertext CPU shard index overflow") +
+                    shard.coeff_begin + local_coeff;
+                const auto gpu_index =
+                    checked_mul(
+                        local_limb,
+                        shard.coeff_count,
+                        "ciphertext GPU shard index overflow") +
+                    local_coeff;
+
+                component_data[cpu_index] = static_cast<std::uint64_t>(packed[gpu_index]);
+            }
+        }
+    }
 }
 
 void append_uploaded_ciphertext_as_key_polys(
@@ -216,11 +364,38 @@ GpuCiphertextData GpuUploader::upload_ciphertext(
     std::size_t p_count = 0;
     ciphertext_limb_shape(src, q_count, p_count);
 
-    auto dst = GpuCiphertextData::allocate_single_device(
+    GpuPolyShard shard;
+    shard.limb_begin = 0;
+    shard.limb_count = q_count + p_count;
+    shard.coeff_begin = 0;
+    shard.coeff_count = src.poly_modulus_degree();
+
+    return upload_ciphertext(
+        src,
+        device_id,
+        std::vector<GpuPolyShard>{shard});
+}
+
+GpuCiphertextData GpuUploader::upload_ciphertext(
+    const Ciphertext &src,
+    int device_id,
+    const std::vector<GpuPolyShard> &shard_template)
+{
+    if (!src.is_valid() || src.size() == 0)
+    {
+        return {};
+    }
+
+    std::size_t q_count = 0;
+    std::size_t p_count = 0;
+    ciphertext_limb_shape(src, q_count, p_count);
+
+    auto dst = GpuCiphertextData::allocate_single_device_sharded(
         src.poly_modulus_degree(),
         q_count,
         src.size(),
         device_id,
+        shard_template,
         p_count);
 
     dst.meta.parms_id = src.parms_id();
@@ -228,18 +403,13 @@ GpuCiphertextData GpuUploader::upload_ciphertext(
     dst.meta.correction_factor = src.correction_factor();
     dst.meta.is_ntt_form = src.is_ntt_form();
 
-    const auto limb_count = q_count + p_count;
-    const auto poly_word_count = checked_mul(
-        src.poly_modulus_degree(),
-        limb_count,
-        "ciphertext polynomial size overflow");
-
     for (std::size_t component = 0; component < src.size(); ++component)
     {
-        copy_uint64_to_device_field(
-            src.data(component),
-            poly_word_count,
-            dst.fields_[component],
+        upload_ciphertext_component_shards(
+            src,
+            component,
+            dst.polys_.at(component),
+            dst.fields_,
             "GpuUploader only supports ciphertext residues that fit in GpuWord");
     }
 
@@ -282,17 +452,12 @@ void GpuUploader::download_ciphertext(
     dst.correction_factor() = src.meta.correction_factor;
     dst.is_ntt_form() = src.meta.is_ntt_form;
 
-    const auto poly_word_count = checked_mul(
-        src.meta.degree,
-        limb_count,
-        "ciphertext polynomial size overflow");
-
     for (std::size_t component = 0; component < src.meta.component_count; ++component)
     {
-        copy_device_field_to_uint64(
-            src.fields_.at(component),
-            dst.data(component),
-            poly_word_count);
+        download_ciphertext_component_shards(
+            src.polys_.at(component),
+            src.fields_,
+            dst.data(component));
     }
 }
 

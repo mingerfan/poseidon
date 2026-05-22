@@ -226,18 +226,19 @@ void expect_gpu_ciphertext_shape(const poseidon::gpu::GpuCiphertextData &gpu_cip
     CHECK_EQ(gpu_cipher.meta.q_count, q_count);
     CHECK_EQ(gpu_cipher.meta.p_count, p_count);
     CHECK_EQ(gpu_cipher.meta.component_count, cpu_cipher.size());
-    CHECK_EQ(gpu_cipher.fields_.size(), cpu_cipher.size());
+    CHECK_EQ(gpu_cipher.fields_.size(), std::size_t{1});
     CHECK_EQ(gpu_cipher.polys_.size(), cpu_cipher.size());
 
     const auto limb_count = q_count + p_count;
     const auto field_size = cpu_cipher.poly_modulus_degree() * limb_count;
+    CHECK_EQ(gpu_cipher.fields_[0].device_id, device_id);
+    CHECK_EQ(gpu_cipher.fields_[0].size(), field_size * cpu_cipher.size());
+
     const auto view = gpu_cipher.make_const_view();
     CHECK_EQ(view.polys.size(), cpu_cipher.size());
 
     for (std::size_t component = 0; component < cpu_cipher.size(); ++component)
     {
-        CHECK_EQ(gpu_cipher.fields_[component].device_id, device_id);
-        CHECK_EQ(gpu_cipher.fields_[component].size(), field_size);
         CHECK_EQ(gpu_cipher.polys_[component].poly_id, component);
         CHECK_EQ(gpu_cipher.polys_[component].degree, cpu_cipher.poly_modulus_degree());
         CHECK_EQ(gpu_cipher.polys_[component].q_count, q_count);
@@ -245,8 +246,8 @@ void expect_gpu_ciphertext_shape(const poseidon::gpu::GpuCiphertextData &gpu_cip
         CHECK_EQ(gpu_cipher.polys_[component].shards.size(), std::size_t{1});
 
         const auto &shard = gpu_cipher.polys_[component].shards[0];
-        CHECK_EQ(shard.field_index, component);
-        CHECK_EQ(shard.field_offset, std::size_t{0});
+        CHECK_EQ(shard.field_index, std::size_t{0});
+        CHECK_EQ(shard.field_offset, component * field_size);
         CHECK_EQ(shard.limb_begin, std::size_t{0});
         CHECK_EQ(shard.limb_count, limb_count);
         CHECK_EQ(shard.coeff_begin, std::size_t{0});
@@ -270,7 +271,7 @@ void expect_gpu_evaluation_key_matches_cpu(
     CHECK_TRUE(gpu_keys.meta.decomposition_count > 0);
     CHECK_EQ(gpu_keys.meta.component_count, std::size_t{2});
     CHECK_EQ(gpu_keys.polys_.size(), gpu_keys.poly_metadata_.size());
-    CHECK_EQ(gpu_keys.fields_.size(), gpu_keys.polys_.size());
+    CHECK_TRUE(!gpu_keys.fields_.empty());
 
     const auto view = gpu_keys.make_const_view();
     CHECK_EQ(view.polys.size(), gpu_keys.polys_.size());
@@ -288,8 +289,7 @@ void expect_gpu_evaluation_key_matches_cpu(
         CHECK_EQ(poly.shards.size(), std::size_t{1});
 
         const auto &shard = poly.shards[0];
-        CHECK_EQ(shard.field_index, poly_index);
-        CHECK_EQ(shard.field_offset, std::size_t{0});
+        CHECK_TRUE(shard.field_index < gpu_keys.fields_.size());
         CHECK_EQ(shard.limb_begin, std::size_t{0});
         CHECK_EQ(shard.limb_count, gpu_keys.meta.q_count + gpu_keys.meta.p_count);
         CHECK_EQ(shard.coeff_begin, std::size_t{0});
@@ -304,16 +304,19 @@ void expect_gpu_evaluation_key_matches_cpu(
             cpu_keys.data()[mapping.key_index][mapping.decomposition_index].data();
         const auto component = mapping.component_index;
         const auto word_count = cpu_cipher.poly_modulus_degree() * cpu_cipher.coeff_modulus_size();
-        CHECK_EQ(word_count, gpu_keys.fields_[shard.field_index].size());
-        CHECK_EQ(gpu_keys.fields_[shard.field_index].device_id, device_id);
+        const auto &field = gpu_keys.fields_[shard.field_index];
+        CHECK_TRUE(shard.field_offset + word_count <= field.size());
+        CHECK_EQ(field.device_id, device_id);
 
-        std::vector<poseidon::gpu::GpuWord> host_words(word_count);
-        gpu_keys.fields_[shard.field_index].buffer.copy_to_host(
+        std::vector<poseidon::gpu::GpuWord> host_words(field.size());
+        field.buffer.copy_to_host(
             host_words.data(),
             host_words.size());
         for (std::size_t i = 0; i < word_count; ++i)
         {
-            CHECK_EQ(static_cast<std::uint64_t>(host_words[i]), cpu_cipher.data(component)[i]);
+            CHECK_EQ(
+                static_cast<std::uint64_t>(host_words[shard.field_offset + i]),
+                cpu_cipher.data(component)[i]);
         }
     }
 }

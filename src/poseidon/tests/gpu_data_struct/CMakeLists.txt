@@ -53,7 +53,10 @@ if(POSEIDON_GPU_DATA_STRUCT_ENABLE_GPU_TESTS)
     )
 
     set(POSEIDON_GPU_ELEMENTWISE_SOURCES
+        "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_evaluator.cpp"
         "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_elementwise_handler.cpp"
+        "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_modswitch_handler.cpp"
+        "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_ntt_handler.cpp"
         "${POSEIDON_ROOT}/src/poseidon/gpu/kernels/gpu_elementwise_kernels.cu"
     )
 
