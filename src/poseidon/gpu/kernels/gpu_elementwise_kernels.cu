@@ -74,6 +74,55 @@ __global__ void add_poly_shard_kernel(
     (void)degree;
 }
 
+__global__ void add_two_poly_shards_kernel(
+    GpuWord *destination_values0,
+    GpuWord *destination_values1,
+    const GpuWord *left_values0,
+    const GpuWord *left_values1,
+    const GpuWord *right_values0,
+    const GpuWord *right_values1,
+    const GpuWord *q_primes,
+    std::size_t modulus_offset,
+    std::size_t limb_count,
+    std::size_t coeff_count,
+    std::size_t degree)
+{
+    const std::size_t values_per_component = limb_count * coeff_count;
+    const std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    if (tid >= values_per_component * 2)
+    {
+        return;
+    }
+
+    const bool second_component = tid >= values_per_component;
+    const std::size_t local_index =
+        second_component ? tid - values_per_component : tid;
+    const std::size_t local_limb = local_index / coeff_count;
+    const std::size_t local_coeff = local_index % coeff_count;
+    const std::size_t offset = local_limb * coeff_count + local_coeff;
+
+    GpuWord *destination_values =
+        second_component ? destination_values1 : destination_values0;
+    const GpuWord *left_values =
+        second_component ? left_values1 : left_values0;
+    const GpuWord *right_values =
+        second_component ? right_values1 : right_values0;
+
+    const GpuWord modulus = q_primes[modulus_offset + local_limb];
+    GpuWide sum =
+        static_cast<GpuWide>(left_values[offset]) +
+        static_cast<GpuWide>(right_values[offset]);
+
+    if (sum >= modulus)
+    {
+        sum -= modulus;
+    }
+
+    destination_values[offset] = static_cast<GpuWord>(sum);
+
+    (void)degree;
+}
+
 /**
  * @brief CUDA kernel skeleton for modular subtraction.
  */
@@ -295,10 +344,131 @@ void launch_add_poly_shard(
         cudaGetLastError(),
         "launch_add_poly_shard kernel launch");
     
-    // kernel计算异步，CPU等待发射到GPU的计算任务完成，初版用来测试
+    // Do not synchronize here. The caller decides when to wait, so multiple
+    // shard/component kernels can be queued without a CPU round trip per launch.
+}
+
+void launch_add_two_poly_shards(
+    const GpuPolyShardView &destination_shard0,
+    const GpuPolyShardView &destination_shard1,
+    const GpuConstPolyShardView &left_shard0,
+    const GpuConstPolyShardView &left_shard1,
+    const GpuConstPolyShardView &right_shard0,
+    const GpuConstPolyShardView &right_shard1,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    if (destination_shard0.ptr == nullptr ||
+        destination_shard1.ptr == nullptr ||
+        left_shard0.ptr == nullptr ||
+        left_shard1.ptr == nullptr ||
+        right_shard0.ptr == nullptr ||
+        right_shard1.ptr == nullptr)
+    {
+        throw std::invalid_argument("launch_add_two_poly_shards: null data pointer");
+    }
+
+    if (parameter_shard.q_primes.data() == nullptr)
+    {
+        throw std::invalid_argument("launch_add_two_poly_shards: null q_primes pointer");
+    }
+
+    if (degree == 0 ||
+        destination_shard0.limb_count == 0 ||
+        destination_shard0.coeff_count == 0)
+    {
+        throw std::invalid_argument("launch_add_two_poly_shards: empty shard shape");
+    }
+
+    const auto same_device =
+        destination_shard0.device_id == destination_shard1.device_id &&
+        destination_shard0.device_id == left_shard0.device_id &&
+        destination_shard0.device_id == left_shard1.device_id &&
+        destination_shard0.device_id == right_shard0.device_id &&
+        destination_shard0.device_id == right_shard1.device_id &&
+        destination_shard0.device_id == parameter_shard.device_id;
+    if (!same_device)
+    {
+        throw std::invalid_argument("launch_add_two_poly_shards: device mismatch");
+    }
+
+    const auto same_shape =
+        destination_shard0.limb_begin == destination_shard1.limb_begin &&
+        destination_shard0.limb_begin == left_shard0.limb_begin &&
+        destination_shard0.limb_begin == left_shard1.limb_begin &&
+        destination_shard0.limb_begin == right_shard0.limb_begin &&
+        destination_shard0.limb_begin == right_shard1.limb_begin &&
+        destination_shard0.limb_count == destination_shard1.limb_count &&
+        destination_shard0.limb_count == left_shard0.limb_count &&
+        destination_shard0.limb_count == left_shard1.limb_count &&
+        destination_shard0.limb_count == right_shard0.limb_count &&
+        destination_shard0.limb_count == right_shard1.limb_count &&
+        destination_shard0.coeff_begin == destination_shard1.coeff_begin &&
+        destination_shard0.coeff_begin == left_shard0.coeff_begin &&
+        destination_shard0.coeff_begin == left_shard1.coeff_begin &&
+        destination_shard0.coeff_begin == right_shard0.coeff_begin &&
+        destination_shard0.coeff_begin == right_shard1.coeff_begin &&
+        destination_shard0.coeff_count == destination_shard1.coeff_count &&
+        destination_shard0.coeff_count == left_shard0.coeff_count &&
+        destination_shard0.coeff_count == left_shard1.coeff_count &&
+        destination_shard0.coeff_count == right_shard0.coeff_count &&
+        destination_shard0.coeff_count == right_shard1.coeff_count;
+    if (!same_shape)
+    {
+        throw std::invalid_argument("launch_add_two_poly_shards: shard shape mismatch");
+    }
+
+    if (destination_shard0.coeff_count > degree)
+    {
+        throw std::invalid_argument("launch_add_two_poly_shards: coeff_count exceeds degree");
+    }
+
+    if (destination_shard0.limb_begin < parameter_shard.limb_begin)
+    {
+        throw std::invalid_argument(
+            "launch_add_two_poly_shards: parameter shard does not cover limb range");
+    }
+
+    const std::size_t modulus_offset =
+        destination_shard0.limb_begin - parameter_shard.limb_begin;
+    
+    if (modulus_offset + destination_shard0.limb_count > parameter_shard.q_primes.size())
+    {
+        throw std::invalid_argument("launch_add_two_poly_shards: q_primes does not cover limb range");
+    }
+
+    const std::size_t values_per_component =
+        destination_shard0.limb_count * destination_shard0.coeff_count;
+    const std::size_t total_count = values_per_component * 2;
+    if (total_count == 0)
+    {
+        return;
+    }
+
     gpu_check_cuda(
-        cudaDeviceSynchronize(),
-        "launch_add_poly_shard kernel sync");
+        cudaSetDevice(destination_shard0.device_id),
+        "launch_add_two_poly_shards cudaSetDevice");
+
+    constexpr int block_size = 256;
+    const int grid_size = static_cast<int>(
+        (total_count + block_size - 1) / block_size);
+
+    add_two_poly_shards_kernel<<<grid_size, block_size>>>(
+        destination_shard0.ptr,
+        destination_shard1.ptr,
+        left_shard0.ptr,
+        left_shard1.ptr,
+        right_shard0.ptr,
+        right_shard1.ptr,
+        parameter_shard.q_primes.data(),
+        modulus_offset,
+        destination_shard0.limb_count,
+        destination_shard0.coeff_count,
+        degree);
+
+    gpu_check_cuda(
+        cudaGetLastError(),
+        "launch_add_two_poly_shards kernel launch");
 }
 
 void launch_sub_poly_shard(

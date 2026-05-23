@@ -8,12 +8,62 @@ namespace poseidon
 {
 namespace gpu
 {
+namespace
+{
+
+template <typename LeftShard, typename RightShard>
+bool same_shard_placement(const LeftShard &left, const RightShard &right)
+{
+    return left.device_id == right.device_id &&
+           left.limb_begin == right.limb_begin &&
+           left.limb_count == right.limb_count &&
+           left.coeff_begin == right.coeff_begin &&
+           left.coeff_count == right.coeff_count;
+}
+
+const GpuParameterShard *find_parameter_shard(
+    const GpuLevelInfo &level_info,
+    const GpuPolyShardView &shard)
+{
+    for (const auto &candidate : level_info.shards)
+    {
+        const bool same_device = candidate.device_id == shard.device_id;
+        const bool covers_limb =
+            shard.limb_begin >= candidate.limb_begin &&
+            shard.limb_begin + shard.limb_count <=
+                candidate.limb_begin + candidate.limb_count;
+
+        if (same_device && covers_limb)
+        {
+            return &candidate;
+        }
+    }
+
+    return nullptr;
+}
+
+bool can_fuse_two_component_add_shards(
+    const GpuPolyShardView &dst0,
+    const GpuPolyShardView &dst1,
+    const GpuConstPolyShardView &lhs0,
+    const GpuConstPolyShardView &lhs1,
+    const GpuConstPolyShardView &rhs0,
+    const GpuConstPolyShardView &rhs1)
+{
+    return same_shard_placement(dst0, dst1) &&
+           same_shard_placement(dst0, lhs0) &&
+           same_shard_placement(dst0, lhs1) &&
+           same_shard_placement(dst0, rhs0) &&
+           same_shard_placement(dst0, rhs1);
+}
+
+}  // namespace
 
 GpuElementwiseHandler::GpuElementwiseHandler(const GpuParameterData &params)
     : params_(params)
 {}
 
-// 最顶层的加法，支持不同component密文的求和，低位求和，按component调用add_poly
+// 最顶层的加法，支持不同component密文的求和，低位求和。
 void GpuElementwiseHandler::add_ciphertext(
     GpuCiphertextView &destination_view,
     const GpuConstCiphertextView &left_view,
@@ -50,7 +100,78 @@ void GpuElementwiseHandler::add_ciphertext(
         throw std::invalid_argument("add_ciphertext: destination component count mismatch");
     }
 
-    for (std::size_t i = 0; i < common_count; ++i)
+    std::size_t processed_common_count = 0;
+    if (common_count >= 2)
+    {
+        bool can_fuse_c0_c1 =
+            destination_view.polys[0].shards.size() ==
+                destination_view.polys[1].shards.size() &&
+            destination_view.polys[0].shards.size() ==
+                left_view.polys[0].shards.size() &&
+            destination_view.polys[0].shards.size() ==
+                left_view.polys[1].shards.size() &&
+            destination_view.polys[0].shards.size() ==
+                right_view.polys[0].shards.size() &&
+            destination_view.polys[0].shards.size() ==
+                right_view.polys[1].shards.size();
+
+        if (can_fuse_c0_c1)
+        {
+            for (std::size_t shard_index = 0;
+                 shard_index < destination_view.polys[0].shards.size();
+                 ++shard_index)
+            {
+                const auto &dst0 = destination_view.polys[0].shards[shard_index];
+                const auto &dst1 = destination_view.polys[1].shards[shard_index];
+                const auto &lhs0 = left_view.polys[0].shards[shard_index];
+                const auto &lhs1 = left_view.polys[1].shards[shard_index];
+                const auto &rhs0 = right_view.polys[0].shards[shard_index];
+                const auto &rhs1 = right_view.polys[1].shards[shard_index];
+
+                if (!can_fuse_two_component_add_shards(
+                        dst0,
+                        dst1,
+                        lhs0,
+                        lhs1,
+                        rhs0,
+                        rhs1) ||
+                    find_parameter_shard(level_info, dst0) == nullptr)
+                {
+                    can_fuse_c0_c1 = false;
+                    break;
+                }
+            }
+        }
+
+        if (can_fuse_c0_c1)
+        {
+            for (std::size_t shard_index = 0;
+                 shard_index < destination_view.polys[0].shards.size();
+                 ++shard_index)
+            {
+                const auto &dst0 = destination_view.polys[0].shards[shard_index];
+                const auto &dst1 = destination_view.polys[1].shards[shard_index];
+                const auto &lhs0 = left_view.polys[0].shards[shard_index];
+                const auto &lhs1 = left_view.polys[1].shards[shard_index];
+                const auto &rhs0 = right_view.polys[0].shards[shard_index];
+                const auto &rhs1 = right_view.polys[1].shards[shard_index];
+                const auto *parameter_shard = find_parameter_shard(level_info, dst0);
+
+                kernel::launch_add_two_poly_shards(
+                    dst0,
+                    dst1,
+                    lhs0,
+                    lhs1,
+                    rhs0,
+                    rhs1,
+                    *parameter_shard,
+                    level_info.degree);
+            }
+            processed_common_count = 2;
+        }
+    }
+
+    for (std::size_t i = processed_common_count; i < common_count; ++i)
     {
         add_poly(destination_view.polys[i], left_view.polys[i], right_view.polys[i], level_info);
     }
@@ -250,21 +371,8 @@ void GpuElementwiseHandler::add_poly(
             throw std::invalid_argument("add_poly: shard placement mismatch");
         }
 
-        const GpuParameterShard *parameter_shard = nullptr;
-        for (const auto &candidate : level_info.shards)
-        {
-            const bool same_device = candidate.device_id == dst.device_id;
-            const bool covers_limb =
-                dst.limb_begin >= candidate.limb_begin &&
-                dst.limb_begin + dst.limb_count <=
-                    candidate.limb_begin + candidate.limb_count;
-
-            if (same_device && covers_limb)
-            {
-                parameter_shard = &candidate;
-                break;
-            }
-        }
+        const GpuParameterShard *parameter_shard =
+            find_parameter_shard(level_info, dst);
 
         if (parameter_shard == nullptr)
         {

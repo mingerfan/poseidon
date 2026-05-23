@@ -32,6 +32,24 @@ void launch_add_poly_shard(
     std::size_t degree);
 
 /**
+ * @brief Launch one kernel that adds two aligned ciphertext component shards.
+ *
+ * This is a small ciphertext-level fast path for common CKKS ciphertexts:
+ * - component 0 and component 1 have the same shard shape;
+ * - both components live on the same device;
+ * - one kernel processes both component shards.
+ */
+void launch_add_two_poly_shards(
+    const GpuPolyShardView &destination_shard0,
+    const GpuPolyShardView &destination_shard1,
+    const GpuConstPolyShardView &left_shard0,
+    const GpuConstPolyShardView &left_shard1,
+    const GpuConstPolyShardView &right_shard0,
+    const GpuConstPolyShardView &right_shard1,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+/**
  * @brief Launch modular subtraction kernel for one aligned RNS-poly shard.
  */
 void launch_sub_poly_shard(
