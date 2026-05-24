@@ -198,20 +198,65 @@ void GpuElementwiseHandler::sub_ciphertext(
     const GpuConstCiphertextView &right_view,
     const GpuLevelInfo &level_info) const
 {
-    // TODO:
-    // 1. Check physical placement compatibility.
-    // 2. Subtract common Poseidon components through sub_poly().
-    // 3. Handle extra components:
-    //    - extra left components are copied;
-    //    - extra right components are negated.
-    // 4. sub_poly() should eventually call kernel::launch_sub_poly_shard(...).
+    if (!(left_view.meta.parms_id == right_view.meta.parms_id) ||
+        !(left_view.meta.parms_id == destination_view.meta.parms_id))
+    {
+        throw std::invalid_argument("sub_ciphertext: parms_id mismatch");
+    }
 
-    (void)destination_view;
-    (void)left_view;
-    (void)right_view;
-    (void)level_info;
+    if (left_view.meta.is_ntt_form != right_view.meta.is_ntt_form ||
+        left_view.meta.is_ntt_form != destination_view.meta.is_ntt_form)
+    {
+        throw std::invalid_argument("sub_ciphertext: NTT form mismatch");
+    }
 
-    throw std::runtime_error("GpuElementwiseHandler::sub_ciphertext is not implemented yet");
+    if (left_view.meta.degree != right_view.meta.degree ||
+        left_view.meta.degree != destination_view.meta.degree ||
+        left_view.meta.q_count != right_view.meta.q_count ||
+        left_view.meta.q_count != destination_view.meta.q_count ||
+        left_view.meta.p_count != right_view.meta.p_count ||
+        left_view.meta.p_count != destination_view.meta.p_count)
+    {
+        throw std::invalid_argument("sub_ciphertext: shape mismatch");
+    }
+
+    const auto common_count = std::min(left_view.polys.size(), right_view.polys.size());
+    const auto result_count = std::max(left_view.polys.size(), right_view.polys.size());
+
+    if (destination_view.polys.size() != result_count)
+    {
+        throw std::invalid_argument("sub_ciphertext: destination component count mismatch");
+    }
+
+    for (std::size_t i = 0; i < common_count; ++i)
+    {
+        sub_poly(
+            destination_view.polys[i],
+            left_view.polys[i],
+            right_view.polys[i],
+            level_info);
+    }
+
+    if (left_view.polys.size() > right_view.polys.size())
+    {
+        for (std::size_t i = common_count; i < left_view.polys.size(); ++i)
+        {
+            copy_poly(
+                destination_view.polys[i],
+                left_view.polys[i],
+                level_info);
+        }
+    }
+    else
+    {
+        for (std::size_t i = common_count; i < right_view.polys.size(); ++i)
+        {
+            negate_poly(
+                destination_view.polys[i],
+                right_view.polys[i],
+                level_info);
+        }
+    }
 }
 
 void GpuElementwiseHandler::negate_ciphertext(
@@ -219,15 +264,37 @@ void GpuElementwiseHandler::negate_ciphertext(
     const GpuConstCiphertextView &source_view,
     const GpuLevelInfo &level_info) const
 {
-    // TODO:
-    // Negate every ciphertext component polynomial.
-    // negate_poly() should eventually call kernel::launch_negate_poly_shard(...).
+    if (!(source_view.meta.parms_id == destination_view.meta.parms_id))
+    {
+        throw std::invalid_argument("negate_ciphertext: parms_id mismatch");
+    }
 
-    (void)destination_view;
-    (void)source_view;
-    (void)level_info;
+    if (source_view.meta.is_ntt_form != destination_view.meta.is_ntt_form)
+    {
+        throw std::invalid_argument("negate_ciphertext: NTT form mismatch");
+    }
 
-    throw std::runtime_error("GpuElementwiseHandler::negate_ciphertext is not implemented yet");
+    if (source_view.meta.degree != destination_view.meta.degree ||
+        source_view.meta.q_count != destination_view.meta.q_count ||
+        source_view.meta.p_count != destination_view.meta.p_count)
+    {
+        throw std::invalid_argument("negate_ciphertext: shape mismatch");
+    }
+
+    const auto common_count = source_view.polys.size();
+
+    if (destination_view.polys.size() != source_view.polys.size())
+    {
+        throw std::invalid_argument("negate_ciphertext: component count mismatch");
+    }
+
+    for (std::size_t i = 0; i < common_count; ++i)
+    {
+        negate_poly(
+            destination_view.polys[i],
+            source_view.polys[i],
+            level_info);
+    }
 }
 
 void GpuElementwiseHandler::add_plain_to_ciphertext(
@@ -389,17 +456,42 @@ void GpuElementwiseHandler::sub_poly(
     const GpuConstRNSPolyView &right_poly,
     const GpuLevelInfo &level_info) const
 {
-    // TODO:
-    // 1. Validate shard alignment.
-    // 2. Find matching GpuParameterShard.
-    // 3. Call kernel::launch_sub_poly_shard(...).
+    if (destination_poly.shards.size() != left_poly.shards.size() ||
+        destination_poly.shards.size() != right_poly.shards.size())
+    {
+        throw std::invalid_argument("sub_poly: shard count mismatch");
+    }
 
-    (void)destination_poly;
-    (void)left_poly;
-    (void)right_poly;
-    (void)level_info;
+    for (std::size_t i = 0; i < destination_poly.shards.size(); ++i)
+    {
+        const auto &dst = destination_poly.shards[i];
+        const auto &lhs = left_poly.shards[i];
+        const auto &rhs = right_poly.shards[i];
 
-    throw std::runtime_error("GpuElementwiseHandler::sub_poly is not implemented yet");
+        if (dst.device_id != lhs.device_id ||
+            dst.device_id != rhs.device_id ||
+            dst.limb_begin != lhs.limb_begin ||
+            dst.limb_begin != rhs.limb_begin ||
+            dst.limb_count != lhs.limb_count ||
+            dst.limb_count != rhs.limb_count ||
+            dst.coeff_begin != lhs.coeff_begin ||
+            dst.coeff_begin != rhs.coeff_begin ||
+            dst.coeff_count != lhs.coeff_count ||
+            dst.coeff_count != rhs.coeff_count)
+        {
+            throw std::invalid_argument("sub_poly: shard placement mismatch");
+        }
+
+        const GpuParameterShard *parameter_shard =
+            find_parameter_shard(level_info, dst);
+
+        if (parameter_shard == nullptr)
+        {
+            throw std::invalid_argument("sub_poly: no matching parameter shard");
+        }
+
+        kernel::launch_sub_poly_shard(dst, lhs, rhs, *parameter_shard, level_info.degree);
+    }
 }
 
 void GpuElementwiseHandler::negate_poly(
@@ -407,16 +499,35 @@ void GpuElementwiseHandler::negate_poly(
     const GpuConstRNSPolyView &source_poly,
     const GpuLevelInfo &level_info) const
 {
-    // TODO:
-    // 1. Validate shard alignment.
-    // 2. Find matching GpuParameterShard.
-    // 3. Call kernel::launch_negate_poly_shard(...).
+    if (destination_poly.shards.size() != source_poly.shards.size())
+    {
+        throw std::invalid_argument("negate_poly: shard count mismatch");
+    }
 
-    (void)destination_poly;
-    (void)source_poly;
-    (void)level_info;
+    for (std::size_t i = 0; i < destination_poly.shards.size(); ++i)
+    {
+        const auto &dst = destination_poly.shards[i];
+        const auto &src = source_poly.shards[i];
 
-    throw std::runtime_error("GpuElementwiseHandler::negate_poly is not implemented yet");
+        if (dst.device_id != src.device_id ||
+            dst.limb_begin != src.limb_begin ||
+            dst.limb_count != src.limb_count ||
+            dst.coeff_begin != src.coeff_begin ||
+            dst.coeff_count != src.coeff_count)
+        {
+            throw std::invalid_argument("negate_poly: shard placement mismatch");
+        }
+
+        const GpuParameterShard *parameter_shard =
+            find_parameter_shard(level_info, dst);
+
+        if (parameter_shard == nullptr)
+        {
+            throw std::invalid_argument("negate_poly: no matching parameter shard");
+        }
+
+        kernel::launch_negate_poly_shard(dst, src, *parameter_shard, level_info.degree);
+    }
 }
 
 void GpuElementwiseHandler::copy_poly(

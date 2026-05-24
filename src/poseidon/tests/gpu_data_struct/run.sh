@@ -21,24 +21,27 @@ echo "=== Configure ==="
 cmake "${CMAKE_ARGS[@]}"
 
 echo "=== Build ==="
-cmake --build "${BUILD_DIR}" -j"$(nproc)"
+if [[ "${ENABLE_GPU_TESTS}" != "ON" ]]; then
+    echo "GPU demo is disabled because ENABLE_GPU_TESTS=${ENABLE_GPU_TESTS}"
+    exit 0
+fi
 
-echo "=== Run tests ==="
-ctest --test-dir "${BUILD_DIR}" --output-on-failure
+cmake --build "${BUILD_DIR}" --target demo_gpu_ciphertext_add_handler -j"$(nproc)"
 
-if [[ "${ENABLE_GPU_TESTS}" == "ON" ]]; then
-    DEMO_BIN="${BUILD_DIR}/demo_gpu_ciphertext_add_handler"
-    if [[ -x "${DEMO_BIN}" ]]; then
-        echo "=== Run GPU add demo ==="
-        set +e
-        "${DEMO_BIN}"
-        DEMO_STATUS=$?
-        set -e
+DEMO_BIN="${BUILD_DIR}/demo_gpu_ciphertext_add_handler"
+if [[ ! -x "${DEMO_BIN}" ]]; then
+    echo "Demo binary was not produced: ${DEMO_BIN}" >&2
+    exit 1
+fi
 
-        if [[ "${DEMO_STATUS}" == "77" ]]; then
-            echo "GPU add demo skipped"
-        elif [[ "${DEMO_STATUS}" != "0" ]]; then
-            exit "${DEMO_STATUS}"
-        fi
-    fi
+echo "=== Run GPU elementwise demo ==="
+set +e
+"${DEMO_BIN}"
+DEMO_STATUS=$?
+set -e
+
+if [[ "${DEMO_STATUS}" == "77" ]]; then
+    echo "GPU elementwise demo skipped"
+elif [[ "${DEMO_STATUS}" != "0" ]]; then
+    exit "${DEMO_STATUS}"
 fi

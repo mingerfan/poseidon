@@ -157,30 +157,137 @@ void GpuEvaluator::sub(
     const GpuCiphertextData &right_ciphertext,
     GpuCiphertextData &destination_ciphertext) const
 {
-    // TODO:
-    // Same high-level structure as add(), but call subtraction handler.
+    if (left_ciphertext.empty() || right_ciphertext.empty())
+    {
+        throw std::invalid_argument("GpuEvaluator::sub: empty ciphertext");
+    }
 
-    (void)left_ciphertext;
-    (void)right_ciphertext;
-    (void)destination_ciphertext;
+    if (!(left_ciphertext.meta.parms_id == right_ciphertext.meta.parms_id))
+    {
+        throw std::invalid_argument("GpuEvaluator::sub: parms_id mismatch");
+    }
 
-    throw std::runtime_error("GpuEvaluator::sub is not implemented yet");
+    if (left_ciphertext.meta.is_ntt_form != right_ciphertext.meta.is_ntt_form)
+    {
+        throw std::invalid_argument("GpuEvaluator::sub: NTT form mismatch");
+    }
+
+    if (left_ciphertext.meta.degree != right_ciphertext.meta.degree ||
+        left_ciphertext.meta.q_count != right_ciphertext.meta.q_count ||
+        left_ciphertext.meta.p_count != right_ciphertext.meta.p_count)
+    {
+        throw std::invalid_argument("GpuEvaluator::sub: shape mismatch");
+    }
+
+    if (!same_scale(left_ciphertext.meta.scale, right_ciphertext.meta.scale))
+    {
+        throw std::invalid_argument("GpuEvaluator::sub: scale mismatch");
+    }
+
+    if (left_ciphertext.meta.p_count != 0)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::sub: p limbs are not supported by sub kernel yet");
+    }
+
+    const std::size_t result_components =
+        std::max(left_ciphertext.size(), right_ciphertext.size());
+
+    const int device_id = left_ciphertext.fields_.at(0).device_id;
+    const auto &reference_layout = left_ciphertext.polys_.at(0);
+
+    if (left_ciphertext.meta.component_count != left_ciphertext.size() ||
+        right_ciphertext.meta.component_count != right_ciphertext.size())
+    {
+        throw std::invalid_argument("GpuEvaluator::sub: component metadata mismatch");
+    }
+
+    if (!all_components_use_layout(left_ciphertext, reference_layout) ||
+        !all_components_use_layout(right_ciphertext, reference_layout))
+    {
+        throw std::invalid_argument("GpuEvaluator::sub: shard layout mismatch");
+    }
+
+    GpuCiphertextData result =
+        GpuCiphertextData::allocate_single_device_sharded(
+            left_ciphertext.meta.degree,
+            left_ciphertext.meta.q_count,
+            result_components,
+            device_id,
+            reference_layout.shards,
+            left_ciphertext.meta.p_count);
+
+    result.meta = left_ciphertext.meta;
+    result.meta.component_count = result_components;
+
+    auto left_view = left_ciphertext.make_const_view();
+    auto right_view = right_ciphertext.make_const_view();
+    auto destination_view = result.make_view();
+
+    const auto &level_info = params_.get_level(left_ciphertext.meta.parms_id);
+
+    elementwise_handler_.sub_ciphertext(
+        destination_view,
+        left_view,
+        right_view,
+        level_info);
+
+    destination_ciphertext = std::move(result);
 }
 
 void GpuEvaluator::negate(
     const GpuCiphertextData &source_ciphertext,
     GpuCiphertextData &destination_ciphertext) const
 {
-    // TODO:
-    // 1. Check source metadata.
-    // 2. Prepare destination metadata and storage.
-    // 3. Create views.
-    // 4. Call elementwise_handler_.negate_ciphertext(...).
+    if (source_ciphertext.empty())
+    {
+        throw std::invalid_argument("GpuEvaluator::negate: empty ciphertext");
+    }
 
-    (void)source_ciphertext;
-    (void)destination_ciphertext;
+    if (source_ciphertext.meta.component_count != source_ciphertext.size())
+    {
+        throw std::invalid_argument("GpuEvaluator::negate: component metadata mismatch");
+    }
 
-    throw std::runtime_error("GpuEvaluator::negate is not implemented yet");
+    if (source_ciphertext.meta.p_count != 0)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::negate: p limbs are not supported by negate kernel yet");
+    }
+
+    const std::size_t result_components = source_ciphertext.size();
+
+    const int device_id = source_ciphertext.fields_.at(0).device_id;
+    const auto &reference_layout = source_ciphertext.polys_.at(0);
+
+    if (!all_components_use_layout(source_ciphertext, reference_layout))
+    {
+        throw std::invalid_argument("GpuEvaluator::negate: shard layout mismatch");
+    }
+
+    GpuCiphertextData result =
+        GpuCiphertextData::allocate_single_device_sharded(
+            source_ciphertext.meta.degree,
+            source_ciphertext.meta.q_count,
+            result_components,
+            device_id,
+            reference_layout.shards,
+            source_ciphertext.meta.p_count);
+
+    result.meta = source_ciphertext.meta;
+    result.meta.component_count = result_components;
+
+    auto source_view = source_ciphertext.make_const_view();
+    auto destination_view = result.make_view();
+
+    const auto &level_info = params_.get_level(source_ciphertext.meta.parms_id);
+
+    elementwise_handler_.negate_ciphertext(
+        destination_view,
+        source_view,
+        level_info);
+
+    destination_ciphertext = std::move(result);
 }
 
 void GpuEvaluator::add_plain(

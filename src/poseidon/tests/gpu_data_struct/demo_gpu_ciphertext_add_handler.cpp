@@ -224,7 +224,7 @@ int run_demo()
     const auto parms = make_demo_parameters();
     PoseidonContext context(parms);
 
-    std::cout << "===== GPU Ciphertext Add Evaluator Demo =====\n";
+    std::cout << "===== GPU Ciphertext Elementwise Evaluator Demo =====\n";
     std::cout << "scheme        = CKKS\n";
     std::cout << "degree        = " << parms.degree() << "\n";
     std::cout << "slots         = " << parms.slot() << "\n";
@@ -248,7 +248,9 @@ int run_demo()
     {
         std::cout << "slot[" << i << "] left=" << input0[i]
                   << " right=" << input1[i]
-                  << " expected_sum=" << input0[i] + input1[i] << "\n";
+                  << " expected_sum=" << input0[i] + input1[i]
+                  << " expected_sub=" << input0[i] - input1[i]
+                  << " expected_negate_left=" << -input0[i] << "\n";
     }
 
     Plaintext plain0;
@@ -295,6 +297,41 @@ int run_demo()
     print_first_words("gpu_result", gpu_result, 8);
     print_raw_comparison(cpu_result, gpu_result, 8);
 
+    std::cout << "\n[CPU/GPU evaluator sub]\n";
+    Ciphertext cpu_sub_result;
+    cpu_evaluator->sub(ct0, ct1, cpu_sub_result);
+
+    GpuCiphertextData gpu_sub_output;
+    gpu_evaluator.sub(gpu_ct0, gpu_ct1, gpu_sub_output);
+
+    Ciphertext gpu_sub_result;
+    GpuUploader::download_ciphertext(gpu_sub_output, gpu_sub_result, context);
+
+    print_cipher_meta("cpu_sub_result", cpu_sub_result);
+    print_cipher_meta("gpu_sub_result", gpu_sub_result);
+    print_first_words("cpu_sub_result", cpu_sub_result, 8);
+    print_first_words("gpu_sub_result", gpu_sub_result, 8);
+    print_raw_comparison(cpu_sub_result, gpu_sub_result, 8);
+
+    std::cout << "\n[CPU/GPU evaluator negate]\n";
+    Ciphertext cpu_negate_result = ct0;
+    for (std::size_t i = 0; i < cpu_negate_result.size(); ++i)
+    {
+        cpu_negate_result[i].negate();
+    }
+
+    GpuCiphertextData gpu_negate_output;
+    gpu_evaluator.negate(gpu_ct0, gpu_negate_output);
+
+    Ciphertext gpu_negate_result;
+    GpuUploader::download_ciphertext(gpu_negate_output, gpu_negate_result, context);
+
+    print_cipher_meta("cpu_negate_result", cpu_negate_result);
+    print_cipher_meta("gpu_negate_result", gpu_negate_result);
+    print_first_words("cpu_negate_result", cpu_negate_result, 8);
+    print_first_words("gpu_negate_result", gpu_negate_result, 8);
+    print_raw_comparison(cpu_negate_result, gpu_negate_result, 8);
+
     Plaintext cpu_plain_result;
     Plaintext gpu_plain_result;
     decryptor.decrypt(cpu_result, cpu_plain_result);
@@ -309,63 +346,93 @@ int run_demo()
     print_decoded_slots("gpu_result", gpu_slots, 8);
 
     constexpr int timing_iterations = 200;
-    std::cout << "\n[add operation timing]\n";
-    std::cout << "iterations              = " << timing_iterations << "\n";
-    std::cout << "included in timing       = top-level GpuEvaluator::add\n";
-    std::cout << "excluded from timing     = encode/encrypt/upload/download/decrypt/decode\n";
-
     Ciphertext cpu_timing_result;
-    cpu_evaluator->add(ct0, ct1, cpu_timing_result);
+    GpuCiphertextData gpu_timing_output;
 
-    const auto cpu_begin = std::chrono::steady_clock::now();
-    for (int i = 0; i < timing_iterations; ++i)
+    auto benchmark_operation =
+        [&](const std::string &name, auto cpu_once, auto gpu_once)
     {
-        cpu_evaluator->add(ct0, ct1, cpu_timing_result);
-    }
-    const auto cpu_end = std::chrono::steady_clock::now();
-    const double cpu_total_ms =
-        std::chrono::duration<double, std::milli>(cpu_end - cpu_begin).count();
+        std::cout << "\n[" << name << " operation timing]\n";
+        std::cout << "iterations              = " << timing_iterations << "\n";
+        std::cout << "included in timing       = top-level operation call\n";
+        std::cout << "excluded from timing     = encode/encrypt/upload/download/decrypt/decode\n";
 
-    gpu_check_cuda(cudaSetDevice(device_id), "timing cudaSetDevice");
-    gpu_evaluator.add(gpu_ct0, gpu_ct1, gpu_output);
-    gpu_check_cuda(cudaDeviceSynchronize(), "timing warmup sync");
+        cpu_once();
 
-    cudaEvent_t gpu_start = nullptr;
-    cudaEvent_t gpu_stop = nullptr;
-    gpu_check_cuda(cudaEventCreate(&gpu_start), "timing cudaEventCreate start");
-    gpu_check_cuda(cudaEventCreate(&gpu_stop), "timing cudaEventCreate stop");
+        const auto cpu_begin = std::chrono::steady_clock::now();
+        for (int i = 0; i < timing_iterations; ++i)
+        {
+            cpu_once();
+        }
+        const auto cpu_end = std::chrono::steady_clock::now();
+        const double cpu_total_ms =
+            std::chrono::duration<double, std::milli>(cpu_end - cpu_begin).count();
 
-    const auto gpu_wall_begin = std::chrono::steady_clock::now();
-    gpu_check_cuda(cudaEventRecord(gpu_start), "timing cudaEventRecord start");
-    for (int i = 0; i < timing_iterations; ++i)
-    {
-        gpu_evaluator.add(gpu_ct0, gpu_ct1, gpu_output);
-    }
-    gpu_check_cuda(cudaEventRecord(gpu_stop), "timing cudaEventRecord stop");
-    gpu_check_cuda(cudaEventSynchronize(gpu_stop), "timing cudaEventSynchronize stop");
-    const auto gpu_wall_end = std::chrono::steady_clock::now();
+        gpu_check_cuda(cudaSetDevice(device_id), "timing cudaSetDevice");
+        gpu_once();
+        gpu_check_cuda(cudaDeviceSynchronize(), "timing warmup sync");
 
-    float gpu_event_total_ms = 0.0F;
-    gpu_check_cuda(
-        cudaEventElapsedTime(&gpu_event_total_ms, gpu_start, gpu_stop),
-        "timing cudaEventElapsedTime");
+        cudaEvent_t gpu_start = nullptr;
+        cudaEvent_t gpu_stop = nullptr;
+        gpu_check_cuda(cudaEventCreate(&gpu_start), "timing cudaEventCreate start");
+        gpu_check_cuda(cudaEventCreate(&gpu_stop), "timing cudaEventCreate stop");
 
-    gpu_check_cuda(cudaEventDestroy(gpu_start), "timing cudaEventDestroy start");
-    gpu_check_cuda(cudaEventDestroy(gpu_stop), "timing cudaEventDestroy stop");
+        const auto gpu_wall_begin = std::chrono::steady_clock::now();
+        gpu_check_cuda(cudaEventRecord(gpu_start), "timing cudaEventRecord start");
+        for (int i = 0; i < timing_iterations; ++i)
+        {
+            gpu_once();
+        }
+        gpu_check_cuda(cudaEventRecord(gpu_stop), "timing cudaEventRecord stop");
+        gpu_check_cuda(cudaEventSynchronize(gpu_stop), "timing cudaEventSynchronize stop");
+        const auto gpu_wall_end = std::chrono::steady_clock::now();
 
-    const double gpu_wall_total_ms =
-        std::chrono::duration<double, std::milli>(gpu_wall_end - gpu_wall_begin).count();
+        float gpu_event_total_ms = 0.0F;
+        gpu_check_cuda(
+            cudaEventElapsedTime(&gpu_event_total_ms, gpu_start, gpu_stop),
+            "timing cudaEventElapsedTime");
 
-    std::cout << std::fixed << std::setprecision(6);
-    std::cout << "cpu evaluator.add total ms          = " << cpu_total_ms << "\n";
-    std::cout << "cpu evaluator.add avg ms            = "
-              << cpu_total_ms / timing_iterations << "\n";
-    std::cout << "gpu evaluator.add wall total ms     = " << gpu_wall_total_ms << "\n";
-    std::cout << "gpu evaluator.add wall avg ms       = "
-              << gpu_wall_total_ms / timing_iterations << "\n";
-    std::cout << "gpu evaluator.add cuda-event total ms = " << gpu_event_total_ms << "\n";
-    std::cout << "gpu evaluator.add cuda-event avg ms   = "
-              << gpu_event_total_ms / timing_iterations << "\n";
+        gpu_check_cuda(cudaEventDestroy(gpu_start), "timing cudaEventDestroy start");
+        gpu_check_cuda(cudaEventDestroy(gpu_stop), "timing cudaEventDestroy stop");
+
+        const double gpu_wall_total_ms =
+            std::chrono::duration<double, std::milli>(gpu_wall_end - gpu_wall_begin).count();
+        const double cpu_avg_ms = cpu_total_ms / timing_iterations;
+        const double gpu_wall_avg_ms = gpu_wall_total_ms / timing_iterations;
+        const double gpu_event_avg_ms = gpu_event_total_ms / timing_iterations;
+
+        std::cout << std::fixed << std::setprecision(6);
+        std::cout << "cpu total ms        = " << cpu_total_ms << "\n";
+        std::cout << "cpu avg ms          = " << cpu_avg_ms << "\n";
+        std::cout << "gpu wall total ms   = " << gpu_wall_total_ms << "\n";
+        std::cout << "gpu wall avg ms     = " << gpu_wall_avg_ms << "\n";
+        std::cout << "gpu event total ms  = " << gpu_event_total_ms << "\n";
+        std::cout << "gpu event avg ms    = " << gpu_event_avg_ms << "\n";
+        std::cout << "speedup wall        = " << cpu_avg_ms / gpu_wall_avg_ms << "x\n";
+        std::cout << "speedup cuda-event  = " << cpu_avg_ms / gpu_event_avg_ms << "x\n";
+    };
+
+    benchmark_operation(
+        "add",
+        [&]() { cpu_evaluator->add(ct0, ct1, cpu_timing_result); },
+        [&]() { gpu_evaluator.add(gpu_ct0, gpu_ct1, gpu_timing_output); });
+
+    benchmark_operation(
+        "sub",
+        [&]() { cpu_evaluator->sub(ct0, ct1, cpu_timing_result); },
+        [&]() { gpu_evaluator.sub(gpu_ct0, gpu_ct1, gpu_timing_output); });
+
+    benchmark_operation(
+        "negate",
+        [&]()
+        {
+            cpu_timing_result = ct0;
+            for (std::size_t i = 0; i < cpu_timing_result.size(); ++i)
+            {
+                cpu_timing_result[i].negate();
+            }
+        },
+        [&]() { gpu_evaluator.negate(gpu_ct0, gpu_timing_output); });
 
     std::cout << "\n===== DEMO FINISHED =====\n";
     return EXIT_SUCCESS;
