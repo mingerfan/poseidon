@@ -90,20 +90,22 @@ int check_cuda_runtime()
 
 poseidon::ParametersLiteral make_demo_parameters()
 {
-    return poseidon::ParametersLiteral(
+    poseidon::ParametersLiteral parms(
         CKKS,
-        /*log_n=*/12,
-        /*log_slots=*/11,
-        /*log_scale=*/10,
+        /*log_n=*/14,
+        /*log_slots=*/13,
+        /*log_scale=*/25,
         /*hamming_weight=*/0,
         /*q0_level=*/0,
         poseidon::Modulus(0),
-        std::vector<poseidon::Modulus>{
-            poseidon::Modulus(786433),
-            poseidon::Modulus(1032193),
-        },
+        std::vector<poseidon::Modulus>{},
         std::vector<poseidon::Modulus>{},
         poseidon::sec_level_type::none);
+
+    parms.set_log_modulus(
+        std::vector<std::uint32_t>(16, 30),
+        std::vector<std::uint32_t>{});
+    return parms;
 }
 
 void print_cipher_meta(const std::string &name, const poseidon::Ciphertext &cipher)
@@ -278,6 +280,7 @@ int run_demo()
     GpuParameterData gpu_params(context, device_id);
     auto gpu_ct0 = GpuUploader::upload_ciphertext(ct0, device_id);
     auto gpu_ct1 = GpuUploader::upload_ciphertext(ct1, device_id);
+    auto gpu_plain1 = GpuUploader::upload_plaintext(plain1, device_id);
 
     print_gpu_cipher_layout("gpu_ct0", gpu_ct0);
     print_gpu_cipher_layout("gpu_ct1", gpu_ct1);
@@ -331,6 +334,60 @@ int run_demo()
     print_first_words("cpu_negate_result", cpu_negate_result, 8);
     print_first_words("gpu_negate_result", gpu_negate_result, 8);
     print_raw_comparison(cpu_negate_result, gpu_negate_result, 8);
+
+    std::cout << "\n[CPU/GPU evaluator multiply_plain]\n";
+
+    Ciphertext cpu_multiply_plain_result;
+    cpu_evaluator->multiply_plain(ct0, plain1, cpu_multiply_plain_result);
+
+    GpuCiphertextData gpu_multiply_plain_output;
+    gpu_evaluator.multiply_plain(gpu_ct0, gpu_plain1, gpu_multiply_plain_output);
+
+    Ciphertext gpu_multiply_plain_result;
+    GpuUploader::download_ciphertext(
+        gpu_multiply_plain_output,
+        gpu_multiply_plain_result,
+        context);
+
+    print_cipher_meta("cpu_multiply_plain_result", cpu_multiply_plain_result);
+    print_cipher_meta("gpu_multiply_plain_result", gpu_multiply_plain_result);
+    print_first_words("cpu_multiply_plain_result", cpu_multiply_plain_result, 8);
+    print_first_words("gpu_multiply_plain_result", gpu_multiply_plain_result, 8);
+    print_raw_comparison(cpu_multiply_plain_result, gpu_multiply_plain_result, 8);
+
+    std::cout << "\n[CPU/GPU evaluator add_plain]\n";
+
+    Ciphertext cpu_add_plain_result;
+    cpu_evaluator->add_plain(ct0, plain1, cpu_add_plain_result);
+
+    GpuCiphertextData gpu_add_plain_output;
+    gpu_evaluator.add_plain(gpu_ct0, gpu_plain1, gpu_add_plain_output);
+
+    Ciphertext gpu_add_plain_result;
+    GpuUploader::download_ciphertext(gpu_add_plain_output, gpu_add_plain_result, context);
+
+    print_cipher_meta("cpu_add_plain_result", cpu_add_plain_result);
+    print_cipher_meta("gpu_add_plain_result", gpu_add_plain_result);
+    print_first_words("cpu_add_plain_result", cpu_add_plain_result, 8);
+    print_first_words("gpu_add_plain_result", gpu_add_plain_result, 8);
+    print_raw_comparison(cpu_add_plain_result, gpu_add_plain_result, 8);
+
+    std::cout << "\n[CPU/GPU evaluator sub_plain]\n";
+
+    Ciphertext cpu_sub_plain_result = ct0;
+    cpu_sub_plain_result[0].sub(plain1.poly(), cpu_sub_plain_result[0]);
+
+    GpuCiphertextData gpu_sub_plain_output;
+    gpu_evaluator.sub_plain(gpu_ct0, gpu_plain1, gpu_sub_plain_output);
+
+    Ciphertext gpu_sub_plain_result;
+    GpuUploader::download_ciphertext(gpu_sub_plain_output, gpu_sub_plain_result, context);
+
+    print_cipher_meta("cpu_sub_plain_result", cpu_sub_plain_result);
+    print_cipher_meta("gpu_sub_plain_result", gpu_sub_plain_result);
+    print_first_words("cpu_sub_plain_result", cpu_sub_plain_result, 8);
+    print_first_words("gpu_sub_plain_result", gpu_sub_plain_result, 8);
+    print_raw_comparison(cpu_sub_plain_result, gpu_sub_plain_result, 8);
 
     Plaintext cpu_plain_result;
     Plaintext gpu_plain_result;
@@ -433,6 +490,25 @@ int run_demo()
             }
         },
         [&]() { gpu_evaluator.negate(gpu_ct0, gpu_timing_output); });
+
+    benchmark_operation(
+        "add_plain",
+        [&]() { cpu_evaluator->add_plain(ct0, plain1, cpu_timing_result); },
+        [&]() { gpu_evaluator.add_plain(gpu_ct0, gpu_plain1, gpu_timing_output); });
+
+    benchmark_operation(
+        "sub_plain",
+        [&]()
+        {
+            cpu_timing_result = ct0;
+            cpu_timing_result[0].sub(plain1.poly(), cpu_timing_result[0]);
+        },
+        [&]() { gpu_evaluator.sub_plain(gpu_ct0, gpu_plain1, gpu_timing_output); });
+
+    benchmark_operation(
+        "multiply_plain",
+        [&]() { cpu_evaluator->multiply_plain(ct0, plain1, cpu_timing_result); },
+        [&]() { gpu_evaluator.multiply_plain(gpu_ct0, gpu_plain1, gpu_timing_output); });
 
     std::cout << "\n===== DEMO FINISHED =====\n";
     return EXIT_SUCCESS;

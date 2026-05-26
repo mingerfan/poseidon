@@ -35,6 +35,29 @@ std::vector<GpuWord> copy_moduli_to_gpu_words(
     return result;
 }
 
+GpuWide barrett_ratio_64(const Modulus &modulus)
+{
+    const auto value = modulus.value();
+    if (value == 0)
+    {
+        throw std::invalid_argument("GpuParameterData cannot build Barrett constant for zero modulus");
+    }
+
+    const auto numerator = static_cast<unsigned __int128>(1) << 64;
+    return static_cast<GpuWide>(numerator / value);
+}
+
+std::vector<GpuWide> copy_barrett_ratios(const std::vector<Modulus> &moduli)
+{
+    std::vector<GpuWide> result;
+    result.reserve(moduli.size());
+    for (const auto &modulus : moduli)
+    {
+        result.push_back(barrett_ratio_64(modulus));
+    }
+    return result;
+}
+
 }  // namespace
 
 GpuParameterData::GpuParameterData(const PoseidonContext &context, int device_id)
@@ -82,6 +105,8 @@ void GpuParameterData::build_from_poseidon_context(
         auto p_words = copy_moduli_to_gpu_words(
             p,
             "GpuParameterData only supports p primes that fit in GpuWord");
+        auto q_barrett_ratios = copy_barrett_ratios(q);
+        auto p_barrett_ratios = copy_barrett_ratios(p);
 
         shard.q_primes = DeviceVector<GpuWord>(q_words.size(), device_id);
         if (!q_words.empty())
@@ -93,6 +118,24 @@ void GpuParameterData::build_from_poseidon_context(
         if (!p_words.empty())
         {
             shard.p_primes.copy_from_host(p_words.data(), p_words.size());
+        }
+
+        shard.q_modulus_constants =
+            DeviceVector<GpuWide>(q_barrett_ratios.size(), device_id);
+        if (!q_barrett_ratios.empty())
+        {
+            shard.q_modulus_constants.copy_from_host(
+                q_barrett_ratios.data(),
+                q_barrett_ratios.size());
+        }
+
+        shard.p_modulus_constants =
+            DeviceVector<GpuWide>(p_barrett_ratios.size(), device_id);
+        if (!p_barrett_ratios.empty())
+        {
+            shard.p_modulus_constants.copy_from_host(
+                p_barrett_ratios.data(),
+                p_barrett_ratios.size());
         }
 
         level.shards.push_back(std::move(shard));

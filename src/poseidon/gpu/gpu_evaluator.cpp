@@ -295,20 +295,90 @@ void GpuEvaluator::add_plain(
     const GpuPlaintextData &source_plaintext,
     GpuCiphertextData &destination_ciphertext) const
 {
-    // TODO:
-    // 1. Check ciphertext/plaintext semantic compatibility.
-    // 2. Prepare destination metadata and storage.
-    // 3. Create views.
-    // 4. Call elementwise_handler_.add_plain_to_ciphertext(...).
-    //
-    // CKKS rule:
-    // - plaintext is added only to c0.
+    if (source_ciphertext.empty() || source_plaintext.empty())
+    {
+        throw std::invalid_argument("GpuEvaluator::add_plain: empty input");
+    }
 
-    (void)source_ciphertext;
-    (void)source_plaintext;
-    (void)destination_ciphertext;
+    if (!(source_ciphertext.meta.parms_id == source_plaintext.meta.parms_id))
+    {
+        throw std::invalid_argument("GpuEvaluator::add_plain: parms_id mismatch");
+    }
 
-    throw std::runtime_error("GpuEvaluator::add_plain is not implemented yet");
+    if (source_ciphertext.meta.is_ntt_form != source_plaintext.meta.is_ntt_form)
+    {
+        throw std::invalid_argument("GpuEvaluator::add_plain: NTT form mismatch");
+    }
+
+    // CKKS add_plain usually expects both ciphertext and plaintext in NTT form.
+    if (!source_ciphertext.meta.is_ntt_form)
+    {
+        throw std::invalid_argument("GpuEvaluator::add_plain: CKKS input must be in NTT form");
+    }
+
+    if (source_ciphertext.meta.degree != source_plaintext.meta.degree ||
+        source_ciphertext.meta.q_count != source_plaintext.meta.q_count ||
+        source_ciphertext.meta.p_count != source_plaintext.meta.p_count)
+    {
+        throw std::invalid_argument("GpuEvaluator::add_plain: shape mismatch");
+    }
+
+    if (!same_scale(source_ciphertext.meta.scale, source_plaintext.meta.scale))
+    {
+        throw std::invalid_argument("GpuEvaluator::add_plain: scale mismatch");
+    }
+
+    if (source_ciphertext.meta.p_count != 0)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::add_plain: p limbs are not supported by add_plain kernel yet");
+    }
+
+    if (source_ciphertext.meta.component_count != source_ciphertext.size())
+    {
+        throw std::invalid_argument("GpuEvaluator::add_plain: component metadata mismatch");
+    }
+
+    const std::size_t result_components = source_ciphertext.size();
+
+    const int device_id = source_ciphertext.fields_.at(0).device_id;
+    const auto &reference_layout = source_ciphertext.polys_.at(0);
+
+    if (!all_components_use_layout(source_ciphertext, reference_layout))
+    {
+        throw std::invalid_argument("GpuEvaluator::add_plain: ciphertext shard layout mismatch");
+    }
+
+    if (!same_logical_shard_layout(reference_layout, source_plaintext.poly_))
+    {
+        throw std::invalid_argument("GpuEvaluator::add_plain: plaintext shard layout mismatch");
+    }
+
+    GpuCiphertextData result =
+        GpuCiphertextData::allocate_single_device_sharded(
+            source_ciphertext.meta.degree,
+            source_ciphertext.meta.q_count,
+            result_components,
+            device_id,
+            reference_layout.shards,
+            source_ciphertext.meta.p_count);
+
+    result.meta = source_ciphertext.meta;
+    result.meta.component_count = result_components;
+
+    auto ciphertext_view = source_ciphertext.make_const_view();
+    auto plaintext_view = source_plaintext.make_const_view();
+    auto destination_view = result.make_view();
+
+    const auto &level_info = params_.get_level(source_ciphertext.meta.parms_id);
+
+    elementwise_handler_.add_plain_to_ciphertext(
+        destination_view,
+        ciphertext_view,
+        plaintext_view,
+        level_info);
+
+    destination_ciphertext = std::move(result);
 }
 
 void GpuEvaluator::sub_plain(
@@ -316,20 +386,89 @@ void GpuEvaluator::sub_plain(
     const GpuPlaintextData &source_plaintext,
     GpuCiphertextData &destination_ciphertext) const
 {
-    // TODO:
-    // 1. Check ciphertext/plaintext semantic compatibility.
-    // 2. Prepare destination metadata and storage.
-    // 3. Create views.
-    // 4. Call elementwise_handler_.sub_plain_from_ciphertext(...).
-    //
-    // CKKS rule:
-    // - plaintext is subtracted only from c0.
+    if (source_ciphertext.empty() || source_plaintext.empty())
+    {
+        throw std::invalid_argument("GpuEvaluator::sub_plain: empty input");
+    }
 
-    (void)source_ciphertext;
-    (void)source_plaintext;
-    (void)destination_ciphertext;
+    if (!(source_ciphertext.meta.parms_id == source_plaintext.meta.parms_id))
+    {
+        throw std::invalid_argument("GpuEvaluator::sub_plain: parms_id mismatch");
+    }
 
-    throw std::runtime_error("GpuEvaluator::sub_plain is not implemented yet");
+    if (source_ciphertext.meta.is_ntt_form != source_plaintext.meta.is_ntt_form)
+    {
+        throw std::invalid_argument("GpuEvaluator::sub_plain: NTT form mismatch");
+    }
+
+    if (!source_ciphertext.meta.is_ntt_form)
+    {
+        throw std::invalid_argument("GpuEvaluator::sub_plain: CKKS input must be in NTT form");
+    }
+
+    if (source_ciphertext.meta.degree != source_plaintext.meta.degree ||
+        source_ciphertext.meta.q_count != source_plaintext.meta.q_count ||
+        source_ciphertext.meta.p_count != source_plaintext.meta.p_count)
+    {
+        throw std::invalid_argument("GpuEvaluator::sub_plain: shape mismatch");
+    }
+
+    if (!same_scale(source_ciphertext.meta.scale, source_plaintext.meta.scale))
+    {
+        throw std::invalid_argument("GpuEvaluator::sub_plain: scale mismatch");
+    }
+
+    if (source_ciphertext.meta.p_count != 0)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::sub_plain: p limbs are not supported by sub_plain kernel yet");
+    }
+
+    if (source_ciphertext.meta.component_count != source_ciphertext.size())
+    {
+        throw std::invalid_argument("GpuEvaluator::sub_plain: component metadata mismatch");
+    }
+
+    const std::size_t result_components = source_ciphertext.size();
+
+    const int device_id = source_ciphertext.fields_.at(0).device_id;
+    const auto &reference_layout = source_ciphertext.polys_.at(0);
+
+    if (!all_components_use_layout(source_ciphertext, reference_layout))
+    {
+        throw std::invalid_argument("GpuEvaluator::sub_plain: ciphertext shard layout mismatch");
+    }
+
+    if (!same_logical_shard_layout(reference_layout, source_plaintext.poly_))
+    {
+        throw std::invalid_argument("GpuEvaluator::sub_plain: plaintext shard layout mismatch");
+    }
+
+    GpuCiphertextData result =
+        GpuCiphertextData::allocate_single_device_sharded(
+            source_ciphertext.meta.degree,
+            source_ciphertext.meta.q_count,
+            result_components,
+            device_id,
+            reference_layout.shards,
+            source_ciphertext.meta.p_count);
+
+    result.meta = source_ciphertext.meta;
+    result.meta.component_count = result_components;
+
+    auto ciphertext_view = source_ciphertext.make_const_view();
+    auto plaintext_view = source_plaintext.make_const_view();
+    auto destination_view = result.make_view();
+
+    const auto &level_info = params_.get_level(source_ciphertext.meta.parms_id);
+
+    elementwise_handler_.sub_plain_from_ciphertext(
+        destination_view,
+        ciphertext_view,
+        plaintext_view,
+        level_info);
+
+    destination_ciphertext = std::move(result);
 }
 
 void GpuEvaluator::multiply_plain(
@@ -337,19 +476,92 @@ void GpuEvaluator::multiply_plain(
     const GpuPlaintextData &source_plaintext,
     GpuCiphertextData &destination_ciphertext) const
 {
-    // TODO:
-    // 1. Check ciphertext/plaintext semantic compatibility.
-    // 2. Prepare destination metadata:
-    //    - destination scale = ciphertext scale * plaintext scale.
-    // 3. Prepare destination storage.
-    // 4. Create views.
-    // 5. Call elementwise_handler_.multiply_plain_with_ciphertext(...).
+    if (source_ciphertext.empty() || source_plaintext.empty())
+    {
+        throw std::invalid_argument("GpuEvaluator::multiply_plain: empty input");
+    }
 
-    (void)source_ciphertext;
-    (void)source_plaintext;
-    (void)destination_ciphertext;
+    if (!(source_ciphertext.meta.parms_id == source_plaintext.meta.parms_id))
+    {
+        throw std::invalid_argument("GpuEvaluator::multiply_plain: parms_id mismatch");
+    }
 
-    throw std::runtime_error("GpuEvaluator::multiply_plain is not implemented yet");
+    if (source_ciphertext.meta.is_ntt_form != source_plaintext.meta.is_ntt_form)
+    {
+        throw std::invalid_argument("GpuEvaluator::multiply_plain: NTT form mismatch");
+    }
+
+    if (!source_ciphertext.meta.is_ntt_form)
+    {
+        throw std::invalid_argument("GpuEvaluator::multiply_plain: CKKS input must be in NTT form");
+    }
+
+    if (source_ciphertext.meta.degree != source_plaintext.meta.degree ||
+        source_ciphertext.meta.q_count != source_plaintext.meta.q_count ||
+        source_ciphertext.meta.p_count != source_plaintext.meta.p_count)
+    {
+        throw std::invalid_argument("GpuEvaluator::multiply_plain: shape mismatch");
+    }
+
+    if (source_ciphertext.meta.p_count != 0)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::multiply_plain: p limbs are not supported yet");
+    }
+
+    if (source_ciphertext.meta.component_count != source_ciphertext.size())
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::multiply_plain: component metadata mismatch");
+    }
+
+    const int device_id = source_ciphertext.fields_.at(0).device_id;
+    const auto &reference_layout = source_ciphertext.polys_.at(0);
+
+    if (!all_components_use_layout(source_ciphertext, reference_layout))
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::multiply_plain: ciphertext shard layout mismatch");
+    }
+
+    if (!same_logical_shard_layout(reference_layout, source_plaintext.poly_))
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::multiply_plain: plaintext shard layout mismatch");
+    }
+
+    GpuCiphertextData result =
+        GpuCiphertextData::allocate_single_device_sharded(
+            source_ciphertext.meta.degree,
+            source_ciphertext.meta.q_count,
+            source_ciphertext.size(),
+            device_id,
+            reference_layout.shards,
+            source_ciphertext.meta.p_count);
+
+    result.meta = source_ciphertext.meta;
+    result.meta.component_count = source_ciphertext.size();
+    result.meta.scale =
+        source_ciphertext.meta.scale * source_plaintext.meta.scale;
+
+    if (!(result.meta.scale > 0.0) || !std::isfinite(result.meta.scale))
+    {
+        throw std::invalid_argument("GpuEvaluator::multiply_plain: invalid result scale");
+    }
+
+    auto ciphertext_view = source_ciphertext.make_const_view();
+    auto plaintext_view = source_plaintext.make_const_view();
+    auto destination_view = result.make_view();
+
+    const auto &level_info = params_.get_level(source_ciphertext.meta.parms_id);
+
+    elementwise_handler_.multiply_plain_with_ciphertext(
+        destination_view,
+        ciphertext_view,
+        plaintext_view,
+        level_info);
+
+    destination_ciphertext = std::move(result);
 }
 
 void GpuEvaluator::ntt_fwd(

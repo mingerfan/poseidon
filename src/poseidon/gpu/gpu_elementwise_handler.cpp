@@ -303,20 +303,55 @@ void GpuElementwiseHandler::add_plain_to_ciphertext(
     const GpuConstPlaintextView &plaintext_view,
     const GpuLevelInfo &level_info) const
 {
-    // TODO:
-    // CKKS add_plain:
-    // - destination.c0 = ciphertext.c0 + plaintext.poly;
-    // - destination.ci = ciphertext.ci for i > 0.
-    //
-    // c0 computation should eventually call add_poly().
-    // other components should eventually call copy_poly().
+     if (!(ciphertext_view.meta.parms_id == plaintext_view.meta.parms_id) ||
+        !(ciphertext_view.meta.parms_id == destination_view.meta.parms_id))
+    {
+        throw std::invalid_argument("add_plain_to_ciphertext: parms_id mismatch");
+    }
 
-    (void)destination_view;
-    (void)ciphertext_view;
-    (void)plaintext_view;
-    (void)level_info;
+    if (ciphertext_view.meta.is_ntt_form != plaintext_view.meta.is_ntt_form ||
+        ciphertext_view.meta.is_ntt_form != destination_view.meta.is_ntt_form)
+    {
+        throw std::invalid_argument("add_plain_to_ciphertext: NTT form mismatch");
+    }
 
-    throw std::runtime_error("GpuElementwiseHandler::add_plain_to_ciphertext is not implemented yet");
+    if (ciphertext_view.meta.degree != plaintext_view.meta.degree ||
+        ciphertext_view.meta.degree != destination_view.meta.degree ||
+        ciphertext_view.meta.q_count != plaintext_view.meta.q_count ||
+        ciphertext_view.meta.q_count != destination_view.meta.q_count ||
+        ciphertext_view.meta.p_count != plaintext_view.meta.p_count ||
+        ciphertext_view.meta.p_count != destination_view.meta.p_count)
+    {
+        throw std::invalid_argument("add_plain_to_ciphertext: shape mismatch");
+    }
+
+    if (ciphertext_view.polys.empty())
+    {
+        throw std::invalid_argument("add_plain_to_ciphertext: empty ciphertext");
+    }
+
+    if (destination_view.polys.size() != ciphertext_view.polys.size())
+    {
+        throw std::invalid_argument(
+            "add_plain_to_ciphertext: destination component count mismatch");
+    }
+
+    // CKKS rule:
+    // destination.c0 = ciphertext.c0 + plaintext
+    add_poly(
+        destination_view.polys[0],
+        ciphertext_view.polys[0],
+        plaintext_view.poly,
+        level_info);
+
+    // destination.ci = ciphertext.ci for i > 0
+    for (std::size_t i = 1; i < ciphertext_view.polys.size(); ++i)
+    {
+        copy_poly(
+            destination_view.polys[i],
+            ciphertext_view.polys[i],
+            level_info);
+    }
 }
 
 void GpuElementwiseHandler::sub_plain_from_ciphertext(
@@ -325,20 +360,55 @@ void GpuElementwiseHandler::sub_plain_from_ciphertext(
     const GpuConstPlaintextView &plaintext_view,
     const GpuLevelInfo &level_info) const
 {
-    // TODO:
-    // CKKS sub_plain:
-    // - destination.c0 = ciphertext.c0 - plaintext.poly;
-    // - destination.ci = ciphertext.ci for i > 0.
-    //
-    // c0 computation should eventually call sub_poly().
-    // other components should eventually call copy_poly().
+    if (!(ciphertext_view.meta.parms_id == plaintext_view.meta.parms_id) ||
+        !(ciphertext_view.meta.parms_id == destination_view.meta.parms_id))
+    {
+        throw std::invalid_argument("sub_plain_from_ciphertext: parms_id mismatch");
+    }
 
-    (void)destination_view;
-    (void)ciphertext_view;
-    (void)plaintext_view;
-    (void)level_info;
+    if (ciphertext_view.meta.is_ntt_form != plaintext_view.meta.is_ntt_form ||
+        ciphertext_view.meta.is_ntt_form != destination_view.meta.is_ntt_form)
+    {
+        throw std::invalid_argument("sub_plain_from_ciphertext: NTT form mismatch");
+    }
 
-    throw std::runtime_error("GpuElementwiseHandler::sub_plain_from_ciphertext is not implemented yet");
+    if (ciphertext_view.meta.degree != plaintext_view.meta.degree ||
+        ciphertext_view.meta.degree != destination_view.meta.degree ||
+        ciphertext_view.meta.q_count != plaintext_view.meta.q_count ||
+        ciphertext_view.meta.q_count != destination_view.meta.q_count ||
+        ciphertext_view.meta.p_count != plaintext_view.meta.p_count ||
+        ciphertext_view.meta.p_count != destination_view.meta.p_count)
+    {
+        throw std::invalid_argument("sub_plain_from_ciphertext: shape mismatch");
+    }
+
+    if (ciphertext_view.polys.empty())
+    {
+        throw std::invalid_argument("sub_plain_from_ciphertext: empty ciphertext");
+    }
+
+    if (destination_view.polys.size() != ciphertext_view.polys.size())
+    {
+        throw std::invalid_argument(
+            "sub_plain_from_ciphertext: destination component count mismatch");
+    }
+
+    // CKKS rule:
+    // destination.c0 = ciphertext.c0 - plaintext
+    sub_poly(
+        destination_view.polys[0],
+        ciphertext_view.polys[0],
+        plaintext_view.poly,
+        level_info);
+
+    // destination.ci = ciphertext.ci for i > 0
+    for (std::size_t i = 1; i < ciphertext_view.polys.size(); ++i)
+    {
+        copy_poly(
+            destination_view.polys[i],
+            ciphertext_view.polys[i],
+            level_info);
+    }
 }
 
 void GpuElementwiseHandler::multiply_plain_with_ciphertext(
@@ -347,19 +417,32 @@ void GpuElementwiseHandler::multiply_plain_with_ciphertext(
     const GpuConstPlaintextView &plaintext_view,
     const GpuLevelInfo &level_info) const
 {
-    // TODO:
-    // For every ciphertext component:
-    // - destination.ci = ciphertext.ci * plaintext.poly.
-    //
-    // Each component computation should eventually call multiply_plain_poly().
-    // multiply_plain_poly() should call kernel::launch_dyadic_product_poly_shard(...).
+    if (!(ciphertext_view.meta.parms_id == plaintext_view.meta.parms_id) ||
+        !(ciphertext_view.meta.parms_id == destination_view.meta.parms_id))
+    {
+        throw std::invalid_argument("multiply_plain_with_ciphertext: parms_id mismatch");
+    }
 
-    (void)destination_view;
-    (void)ciphertext_view;
-    (void)plaintext_view;
-    (void)level_info;
+    if (ciphertext_view.meta.is_ntt_form != plaintext_view.meta.is_ntt_form ||
+        ciphertext_view.meta.is_ntt_form != destination_view.meta.is_ntt_form)
+    {
+        throw std::invalid_argument("multiply_plain_with_ciphertext: NTT form mismatch");
+    }
 
-    throw std::runtime_error("GpuElementwiseHandler::multiply_plain_with_ciphertext is not implemented yet");
+    if (destination_view.polys.size() != ciphertext_view.polys.size())
+    {
+        throw std::invalid_argument(
+            "multiply_plain_with_ciphertext: destination component count mismatch");
+    }
+
+    for (std::size_t i = 0; i < ciphertext_view.polys.size(); ++i)
+    {
+        multiply_plain_poly(
+            destination_view.polys[i],
+            ciphertext_view.polys[i],
+            plaintext_view.poly,
+            level_info);
+    }
 }
 
 void GpuElementwiseHandler::multiply_ciphertext(
@@ -565,17 +648,47 @@ void GpuElementwiseHandler::multiply_plain_poly(
     const GpuConstRNSPolyView &plaintext_poly,
     const GpuLevelInfo &level_info) const
 {
-    // TODO:
-    // 1. Validate placement.
-    // 2. Find matching GpuParameterShard.
-    // 3. Call kernel::launch_dyadic_product_poly_shard(...).
+    if (destination_poly.shards.size() != ciphertext_poly.shards.size() ||
+        destination_poly.shards.size() != plaintext_poly.shards.size())
+    {
+        throw std::invalid_argument("multiply_plain_poly: shard count mismatch");
+    }
 
-    (void)destination_poly;
-    (void)ciphertext_poly;
-    (void)plaintext_poly;
-    (void)level_info;
+    for (std::size_t i = 0; i < destination_poly.shards.size(); ++i)
+    {
+        const auto &dst = destination_poly.shards[i];
+        const auto &ct = ciphertext_poly.shards[i];
+        const auto &plain = plaintext_poly.shards[i];
 
-    throw std::runtime_error("GpuElementwiseHandler::multiply_plain_poly is not implemented yet");
+        if (dst.device_id != ct.device_id ||
+            dst.device_id != plain.device_id ||
+            dst.limb_begin != ct.limb_begin ||
+            dst.limb_begin != plain.limb_begin ||
+            dst.limb_count != ct.limb_count ||
+            dst.limb_count != plain.limb_count ||
+            dst.coeff_begin != ct.coeff_begin ||
+            dst.coeff_begin != plain.coeff_begin ||
+            dst.coeff_count != ct.coeff_count ||
+            dst.coeff_count != plain.coeff_count)
+        {
+            throw std::invalid_argument("multiply_plain_poly: shard placement mismatch");
+        }
+
+        const GpuParameterShard *parameter_shard =
+            find_parameter_shard(level_info, dst);
+
+        if (parameter_shard == nullptr)
+        {
+            throw std::invalid_argument("multiply_plain_poly: no matching parameter shard");
+        }
+
+        kernel::launch_dyadic_product_poly_shard(
+            dst,
+            ct,
+            plain,
+            *parameter_shard,
+            level_info.degree);
+    }
 }
 
 void GpuElementwiseHandler::multiply_accumulate_poly(

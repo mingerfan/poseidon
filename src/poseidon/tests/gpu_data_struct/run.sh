@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BUILD_DIR="${BUILD_DIR:-${SCRIPT_DIR}/build}"
-BUILD_TYPE="${BUILD_TYPE:-Debug}"
+BUILD_TYPE="${BUILD_TYPE:-Release}"
 ENABLE_GPU_TESTS="${ENABLE_GPU_TESTS:-ON}"
 
 CMAKE_ARGS=(

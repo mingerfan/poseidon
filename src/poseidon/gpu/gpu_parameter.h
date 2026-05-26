@@ -49,8 +49,8 @@ struct GpuParameterShard
      * - inverse primes;
      * - rescale constants.
      */
-    DeviceVector<GpuWord> q_modulus_constants;
-    DeviceVector<GpuWord> p_modulus_constants;
+    DeviceVector<GpuWide> q_modulus_constants;
+    DeviceVector<GpuWide> p_modulus_constants;
 
     /**
      * @brief TODO NTT tables.
