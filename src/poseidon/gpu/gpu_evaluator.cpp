@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <algorithm>
 #include <cmath>
+#include <string>
 #include <utility>
 
 namespace poseidon
@@ -58,6 +59,40 @@ bool all_components_use_layout(
     }
 
     return true;
+}
+
+void validate_ntt_ciphertext_input(
+    const char *name,
+    const GpuCiphertextData &source_ciphertext,
+    bool expect_ntt_form)
+{
+    if (source_ciphertext.empty())
+    {
+        throw std::invalid_argument(std::string(name) + ": empty ciphertext");
+    }
+    if (source_ciphertext.fields_.empty())
+    {
+        throw std::invalid_argument(std::string(name) + ": empty ciphertext storage");
+    }
+    if (source_ciphertext.meta.component_count != source_ciphertext.size())
+    {
+        throw std::invalid_argument(std::string(name) + ": component metadata mismatch");
+    }
+    if (source_ciphertext.meta.is_ntt_form != expect_ntt_form)
+    {
+        throw std::invalid_argument(std::string(name) + ": NTT form mismatch");
+    }
+    if (source_ciphertext.meta.degree == 0 ||
+        source_ciphertext.meta.q_count + source_ciphertext.meta.p_count == 0)
+    {
+        throw std::invalid_argument(std::string(name) + ": invalid ciphertext shape");
+    }
+
+    const auto &reference_layout = source_ciphertext.polys_.at(0);
+    if (!all_components_use_layout(source_ciphertext, reference_layout))
+    {
+        throw std::invalid_argument(std::string(name) + ": shard layout mismatch");
+    }
 }
 
 }  // namespace
@@ -568,34 +603,76 @@ void GpuEvaluator::ntt_fwd(
     const GpuCiphertextData &source_ciphertext,
     GpuCiphertextData &destination_ciphertext) const
 {
-    // TODO:
-    // 1. Check source is not already in NTT form.
-    // 2. Prepare destination metadata with is_ntt_form = true.
-    // 3. Prepare destination storage.
-    // 4. Create views.
-    // 5. Call ntt_handler_.forward_ciphertext(...).
+    validate_ntt_ciphertext_input(
+        "GpuEvaluator::ntt_fwd",
+        source_ciphertext,
+        false);
 
-    (void)source_ciphertext;
-    (void)destination_ciphertext;
+    const int device_id = source_ciphertext.fields_.at(0).device_id;
+    const auto &reference_layout = source_ciphertext.polys_.at(0);
 
-    throw std::runtime_error("GpuEvaluator::ntt_fwd is not implemented yet");
+    GpuCiphertextData result =
+        GpuCiphertextData::allocate_single_device_sharded(
+            source_ciphertext.meta.degree,
+            source_ciphertext.meta.q_count,
+            source_ciphertext.size(),
+            device_id,
+            reference_layout.shards,
+            source_ciphertext.meta.p_count);
+
+    result.meta = source_ciphertext.meta;
+    result.meta.component_count = source_ciphertext.size();
+    result.meta.is_ntt_form = true;
+
+    auto source_view = source_ciphertext.make_const_view();
+    auto destination_view = result.make_view();
+
+    const auto &level_info = params_.get_level(source_ciphertext.meta.parms_id);
+
+    ntt_handler_.forward_ciphertext(
+        destination_view,
+        source_view,
+        level_info);
+
+    destination_ciphertext = std::move(result);
 }
 
 void GpuEvaluator::ntt_inv(
     const GpuCiphertextData &source_ciphertext,
     GpuCiphertextData &destination_ciphertext) const
 {
-    // TODO:
-    // 1. Check source is in NTT form.
-    // 2. Prepare destination metadata with is_ntt_form = false.
-    // 3. Prepare destination storage.
-    // 4. Create views.
-    // 5. Call ntt_handler_.inverse_ciphertext(...).
+    validate_ntt_ciphertext_input(
+        "GpuEvaluator::ntt_inv",
+        source_ciphertext,
+        true);
 
-    (void)source_ciphertext;
-    (void)destination_ciphertext;
+    const int device_id = source_ciphertext.fields_.at(0).device_id;
+    const auto &reference_layout = source_ciphertext.polys_.at(0);
 
-    throw std::runtime_error("GpuEvaluator::ntt_inv is not implemented yet");
+    GpuCiphertextData result =
+        GpuCiphertextData::allocate_single_device_sharded(
+            source_ciphertext.meta.degree,
+            source_ciphertext.meta.q_count,
+            source_ciphertext.size(),
+            device_id,
+            reference_layout.shards,
+            source_ciphertext.meta.p_count);
+
+    result.meta = source_ciphertext.meta;
+    result.meta.component_count = source_ciphertext.size();
+    result.meta.is_ntt_form = false;
+
+    auto source_view = source_ciphertext.make_const_view();
+    auto destination_view = result.make_view();
+
+    const auto &level_info = params_.get_level(source_ciphertext.meta.parms_id);
+
+    ntt_handler_.inverse_ciphertext(
+        destination_view,
+        source_view,
+        level_info);
+
+    destination_ciphertext = std::move(result);
 }
 
 void GpuEvaluator::multiply(
@@ -643,17 +720,93 @@ void GpuEvaluator::rescale(
     const GpuCiphertextData &source_ciphertext,
     GpuCiphertextData &destination_ciphertext) const
 {
-    // TODO:
-    // 1. Determine destination level and scale.
-    // 2. Prepare destination metadata and storage.
-    // 3. Query source and destination level info from params_.
-    // 4. Create views.
-    // 5. Call modswitch_handler_.rescale_ciphertext(...).
+    if (source_ciphertext.empty())
+    {
+        throw std::invalid_argument("GpuEvaluator::rescale: empty ciphertext");
+    }
+    if (source_ciphertext.fields_.empty())
+    {
+        throw std::invalid_argument("GpuEvaluator::rescale: empty ciphertext storage");
+    }
+    if (!source_ciphertext.meta.is_ntt_form)
+    {
+        throw std::invalid_argument("GpuEvaluator::rescale: CKKS input must be in NTT form");
+    }
+    if (source_ciphertext.meta.p_count != 0)
+    {
+        throw std::invalid_argument("GpuEvaluator::rescale: p limbs are not supported yet");
+    }
+    if (source_ciphertext.meta.q_count < 2)
+    {
+        throw std::invalid_argument("GpuEvaluator::rescale: cannot drop the last q modulus");
+    }
+    if (source_ciphertext.meta.component_count != source_ciphertext.size())
+    {
+        throw std::invalid_argument("GpuEvaluator::rescale: component metadata mismatch");
+    }
 
-    (void)source_ciphertext;
-    (void)destination_ciphertext;
+    const auto &source_level_info =
+        params_.get_level(source_ciphertext.meta.parms_id);
+    const auto &destination_level_info =
+        params_.get_next_level(source_ciphertext.meta.parms_id);
 
-    throw std::runtime_error("GpuEvaluator::rescale is not implemented yet");
+    if (source_level_info.q_count != source_ciphertext.meta.q_count ||
+        destination_level_info.q_count + 1 != source_level_info.q_count)
+    {
+        throw std::invalid_argument("GpuEvaluator::rescale: level q_count mismatch");
+    }
+    if (source_level_info.shards.empty() ||
+        source_level_info.shards.front().q_last == 0)
+    {
+        throw std::invalid_argument("GpuEvaluator::rescale: missing source q_last parameter");
+    }
+
+    const std::size_t destination_q_count =
+        source_ciphertext.meta.q_count - 1;
+    const int device_id = source_ciphertext.fields_.at(0).device_id;
+
+    GpuPolyShard destination_shard;
+    destination_shard.field_index = 0;
+    destination_shard.field_offset = 0;
+    destination_shard.limb_begin = 0;
+    destination_shard.limb_count = destination_q_count;
+    destination_shard.coeff_begin = 0;
+    destination_shard.coeff_count = source_ciphertext.meta.degree;
+
+    GpuCiphertextData result =
+        GpuCiphertextData::allocate_single_device_sharded(
+            source_ciphertext.meta.degree,
+            destination_q_count,
+            source_ciphertext.size(),
+            device_id,
+            std::vector<GpuPolyShard>{destination_shard},
+            0);
+
+    result.meta = source_ciphertext.meta;
+    result.meta.parms_id = destination_level_info.parms_id;
+    result.meta.q_count = destination_q_count;
+    result.meta.p_count = 0;
+    result.meta.component_count = source_ciphertext.size();
+    result.meta.is_ntt_form = true;
+    result.meta.scale =
+        source_ciphertext.meta.scale /
+        static_cast<double>(source_level_info.shards.front().q_last);
+
+    if (!(result.meta.scale > 0.0) || !std::isfinite(result.meta.scale))
+    {
+        throw std::invalid_argument("GpuEvaluator::rescale: invalid result scale");
+    }
+
+    auto source_view = source_ciphertext.make_const_view();
+    auto destination_view = result.make_view();
+
+    modswitch_handler_.rescale_ciphertext(
+        destination_view,
+        source_view,
+        source_level_info,
+        destination_level_info);
+
+    destination_ciphertext = std::move(result);
 }
 
 void GpuEvaluator::rescale_dynamic(

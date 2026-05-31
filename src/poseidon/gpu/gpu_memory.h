@@ -110,8 +110,8 @@ public:
         gpu_check_cuda(cudaSetDevice(device_id_), "cudaSetDevice");
         ptr_ = static_cast<T *>(
             rmm::mr::get_current_device_resource()->allocate(
-                rmm::cuda_stream_default,
-                bytes_));
+                bytes_,
+                rmm::cuda_stream_default));
     }
 
     void copy_from_host(const T *src, std::size_t count)
@@ -173,9 +173,9 @@ public:
         {
             gpu_check_cuda(cudaSetDevice(device_id_), "cudaSetDevice");
             rmm::mr::get_current_device_resource()->deallocate(
-                rmm::cuda_stream_default,
                 ptr_,
-                bytes_);
+                bytes_,
+                rmm::cuda_stream_default);
         }
         ptr_ = nullptr;
         size_ = 0;

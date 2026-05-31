@@ -228,7 +228,7 @@ __global__ void dyadic_product_poly_shard_kernel(
 /**
  * @brief CUDA kernel skeleton for dyadic multiply-accumulate.
  */
-__global__ void multiply_accumulate_poly_shard_kernel(
+[[maybe_unused]] __global__ void multiply_accumulate_poly_shard_kernel(
     GpuWord *destination_values,
     const GpuWord *left_values,
     const GpuWord *right_values,

@@ -1,0 +1,322 @@
+# Dependency list for https://github.com/rapidsai/dependency-file-generator
+files:
+  all:
+    output: conda
+    matrix:
+      cuda: ["11.8", "12.5"]
+      arch: [x86_64]
+    includes:
+      - build
+      - cython_build
+      - checks
+      - cuda
+      - cuda_version
+      - develop
+      - docs
+      - py_version
+      - rapids_build_skbuild
+      - run
+      - test_python
+  test_python:
+    output: none
+    includes:
+      - cuda_version
+      - py_version
+      - test_python
+  test_cpp:
+    output: none
+    includes:
+      - cuda_version
+      - test_cpp
+  checks:
+    output: none
+    includes:
+      - checks
+      - py_version
+  docs:
+    output: none
+    includes:
+      - cuda_version
+      - docs
+      - py_version
+  py_cpp_build:
+    output: pyproject
+    pyproject_dir: python/librmm
+    extras:
+      table: build-system
+    includes:
+      - rapids_build_skbuild
+  py_cpp_rapids_build:
+    output: pyproject
+    pyproject_dir: python/librmm
+    extras:
+      table: tool.rapids-build-backend
+      key: requires
+    includes:
+      - build
+  py_build:
+    output: pyproject
+    pyproject_dir: python/rmm
+    extras:
+      table: build-system
+    includes:
+      - rapids_build_skbuild
+  py_rapids_build:
+    output: pyproject
+    pyproject_dir: python/rmm
+    extras:
+      table: tool.rapids-build-backend
+      key: requires
+    includes:
+      - build
+      - cython_build
+  py_run:
+    output: pyproject
+    pyproject_dir: python/rmm
+    extras:
+      table: project
+    includes:
+      - run
+  py_optional_test:
+    output: pyproject
+    pyproject_dir: python/rmm
+    extras:
+      table: project.optional-dependencies
+      key: test
+    includes:
+      - test_python
+channels:
+  - rapidsai
+  - rapidsai-nightly
+  - conda-forge
+dependencies:
+  rapids_build_skbuild:
+    common:
+      - output_types: [conda, requirements, pyproject]
+        packages:
+          - rapids-build-backend>=0.3.0,<0.4.0.dev0
+      - output_types: conda
+        packages:
+          - scikit-build-core >=0.10.0
+      - output_types: [requirements, pyproject]
+        packages:
+          - scikit-build-core[pyproject]>=0.10.0
+  build:
+    common:
+      - output_types: [conda, requirements, pyproject]
+        packages:
+          - &cmake_ver cmake>=3.26.4,!=3.30.0
+          - ninja
+      - output_types: conda
+        packages:
+          - c-compiler
+          - cxx-compiler
+          - fmt>=11.0.2,<12
+          - spdlog>=1.14.1,<1.15
+    specific:
+      - output_types: conda
+        matrices:
+          - matrix:
+              arch: x86_64
+            packages:
+              - gcc_linux-64=11.*
+              - sysroot_linux-64==2.17
+          - matrix:
+              arch: aarch64
+            packages:
+              - gcc_linux-aarch64=11.*
+              - sysroot_linux-aarch64==2.17
+      - output_types: conda
+        matrices:
+          - matrix:
+              arch: x86_64
+              cuda: "11.8"
+            packages:
+              - nvcc_linux-64=11.8
+          - matrix:
+              arch: aarch64
+              cuda: "11.8"
+            packages:
+              - nvcc_linux-aarch64=11.8
+          - matrix:
+              cuda: "12.*"
+            packages:
+              - cuda-nvcc
+  cython_build:
+    common:
+      - output_types: [conda, requirements, pyproject]
+        packages:
+          - cython>=3.0.0
+    specific:
+      - output_types: [conda, requirements, pyproject]
+        matrices:
+          - matrix:
+              cuda: "12.*"
+            packages:
+              - &cuda_python12 cuda-python>=12.0,<13.0a0,<=12.6.0
+          - matrix: # All CUDA 11 versions
+            packages:
+              - &cuda_python11 cuda-python>=11.7.1,<12.0a0,<=11.8.3
+      - output_types: [requirements, pyproject]
+        matrices:
+            - matrix:
+                cuda: "12.*"
+                cuda_suffixed: "true"
+              packages:
+                - librmm-cu12==24.12.*
+            - matrix:
+                cuda: "11.*"
+                cuda_suffixed: "true"
+              packages:
+                - librmm-cu11==24.12.*
+            - matrix: null
+              packages:
+                - librmm==24.12.*
+  checks:
+    common:
+      - output_types: [conda, requirements]
+        packages:
+          - pre-commit
+          # pre-commit requires identify minimum version 1.0, but clang-format requires textproto support and that was
+          # added in 2.5.20, so we need to call out the minimum version needed for our plugins
+          - identify>=2.5.20
+      - output_types: conda
+        packages:
+          - &doxygen doxygen=1.9.1
+  cuda_version:
+    specific:
+      - output_types: conda
+        matrices:
+          - matrix:
+              cuda: "11.2"
+            packages:
+              - cuda-version=11.2
+          - matrix:
+              cuda: "11.4"
+            packages:
+              - cuda-version=11.4
+          - matrix:
+              cuda: "11.5"
+            packages:
+              - cuda-version=11.5
+          - matrix:
+              cuda: "11.6"
+            packages:
+              - cuda-version=11.6
+          - matrix:
+              cuda: "11.8"
+            packages:
+              - cuda-version=11.8
+          - matrix:
+              cuda: "12.0"
+            packages:
+              - cuda-version=12.0
+          - matrix:
+              cuda: "12.2"
+            packages:
+              - cuda-version=12.2
+          - matrix:
+              cuda: "12.5"
+            packages:
+              - cuda-version=12.5
+  cuda:
+    specific:
+      - output_types: conda
+        matrices:
+          - matrix:
+              cuda: "11.*"
+            packages:
+              - cudatoolkit
+          - matrix:
+              cuda: "12.*"
+            packages:
+  develop:
+    common:
+      - output_types: conda
+        packages:
+          - clang==16.0.6
+          - clang-tools==16.0.6
+          - gcovr>=5.0
+  docs:
+    common:
+      - output_types: conda
+        packages:
+          - breathe>=4.35.0
+          - *doxygen
+          - graphviz
+          - ipython
+          - make
+          - nbsphinx
+          - numpydoc
+          - sphinx
+          - sphinx_rtd_theme
+          - sphinx-copybutton
+          - sphinx-markdown-tables
+  py_version:
+    specific:
+      - output_types: conda
+        matrices:
+          - matrix:
+              py: "3.10"
+            packages:
+              - python=3.10
+          - matrix:
+              py: "3.11"
+            packages:
+              - python=3.11
+          - matrix:
+              py: "3.12"
+            packages:
+              - python=3.12
+          - matrix:
+            packages:
+              - python>=3.10,<3.13
+  run:
+    common:
+      - output_types: [conda, requirements, pyproject]
+        packages:
+          - numba>=0.57
+          - numpy>=1.23,<3.0a0
+    specific:
+      - output_types: [conda, requirements, pyproject]
+        matrices:
+          - matrix:
+              cuda: "12.*"
+            packages:
+              - *cuda_python12
+          - matrix: # All CUDA 11 versions
+            packages:
+              - *cuda_python11
+  test_cpp:
+    common:
+      - output_types: conda
+        packages:
+          - *cmake_ver
+  test_python:
+    common:
+      - output_types: [conda, requirements, pyproject]
+        packages:
+          - pytest
+          - pytest-cov
+    specific:
+      - output_types: conda
+        matrices:
+          # Needed for numba in tests on CUDA 12+ since Conda CI environments
+          # do not have a CUDA compiler preinstalled. Wheel tests are run on
+          # images that supply a CUDA compiler.
+          - matrix:
+              cuda: "12.*"
+            packages:
+              - cuda-nvcc
+          - matrix:
+            packages:
+      - output_types: [conda, requirements]
+        # Define additional constraints for testing with oldest dependencies.
+        matrices:
+          - matrix:
+              dependencies: "oldest"
+            packages:
+              - numba==0.57.*
+              - numpy==1.23.*
+          - matrix:
+            packages:

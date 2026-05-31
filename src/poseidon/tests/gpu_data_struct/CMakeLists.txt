@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.26.4)
 
 project(PoseidonGpuDataStructTests LANGUAGES CXX C)
 
@@ -40,9 +40,41 @@ if(POSEIDON_GPU_DATA_STRUCT_ENABLE_GPU_TESTS)
     enable_language(CUDA)
     set(CMAKE_CUDA_STANDARD 17)
     set(CMAKE_CUDA_STANDARD_REQUIRED ON)
+    if(NOT CMAKE_CUDA_ARCHITECTURES)
+        set(CMAKE_CUDA_ARCHITECTURES 70 CACHE STRING
+            "CUDA architectures for GPU data-structure tests" FORCE)
+    endif()
 
     find_package(CUDAToolkit REQUIRED)
-    find_package(rmm CONFIG REQUIRED)
+
+    set(POSEIDON_THIRD_PARTY_DIR "${POSEIDON_ROOT}/third_party" CACHE PATH
+        "Path to bundled third-party dependencies")
+    set(POSEIDON_BUNDLED_RMM_DIR "${POSEIDON_THIRD_PARTY_DIR}/rmm" CACHE PATH
+        "Path to bundled RMM source")
+
+    if(EXISTS "${POSEIDON_BUNDLED_RMM_DIR}/CMakeLists.txt")
+        message(STATUS "RMM: using bundled source at ${POSEIDON_BUNDLED_RMM_DIR}")
+        set(CPM_SOURCE_CACHE "${POSEIDON_THIRD_PARTY_DIR}/cpm" CACHE PATH
+            "Bundled CPM cache for offline RAPIDS/RMM configuration" FORCE)
+        set(BUILD_TESTS OFF CACHE BOOL "" FORCE)
+        set(BUILD_BENCHMARKS OFF CACHE BOOL "" FORCE)
+        set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+        set(RMM_NVTX OFF CACHE BOOL "" FORCE)
+        set(USE_NVTX OFF CACHE BOOL "" FORCE)
+        set(RMM_LOGGING_LEVEL "OFF" CACHE STRING "" FORCE)
+        set(FMT_INSTALL OFF CACHE BOOL "" FORCE)
+        set(SPDLOG_INSTALL OFF CACHE BOOL "" FORCE)
+        set(SPDLOG_FMT_EXTERNAL_HO ON CACHE BOOL "" FORCE)
+        add_subdirectory(
+            "${POSEIDON_BUNDLED_RMM_DIR}"
+            "${CMAKE_BINARY_DIR}/third_party/rmm"
+            EXCLUDE_FROM_ALL)
+    else()
+        message(FATAL_ERROR
+            "Bundled RMM was not found at ${POSEIDON_BUNDLED_RMM_DIR}. "
+            "For offline builds, copy RMM and its vendored dependencies into "
+            "${POSEIDON_THIRD_PARTY_DIR}; otherwise install RMM and adjust this CMake file.")
+    endif()
 
     set(POSEIDON_GPU_DATA_STRUCT_SOURCES
         "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_ciphertext.cpp"
@@ -58,6 +90,8 @@ if(POSEIDON_GPU_DATA_STRUCT_ENABLE_GPU_TESTS)
         "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_modswitch_handler.cpp"
         "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_ntt_handler.cpp"
         "${POSEIDON_ROOT}/src/poseidon/gpu/kernels/gpu_elementwise_kernels.cu"
+        "${POSEIDON_ROOT}/src/poseidon/gpu/kernels/gpu_ntt_kernels.cu"
+        "${POSEIDON_ROOT}/src/poseidon/gpu/kernels/gpu_rescale_kernels.cu"
     )
 
     add_executable(test_gpu_data_struct_generation

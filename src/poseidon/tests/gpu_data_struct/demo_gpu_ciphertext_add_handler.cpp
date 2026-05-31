@@ -355,6 +355,27 @@ int run_demo()
     print_first_words("gpu_multiply_plain_result", gpu_multiply_plain_result, 8);
     print_raw_comparison(cpu_multiply_plain_result, gpu_multiply_plain_result, 8);
 
+    std::cout << "\n[CPU/GPU evaluator rescale]\n";
+
+    Ciphertext cpu_rescale_result;
+    cpu_evaluator->rescale(cpu_multiply_plain_result, cpu_rescale_result);
+
+    GpuCiphertextData gpu_rescale_output;
+    gpu_evaluator.rescale(gpu_multiply_plain_output, gpu_rescale_output);
+    gpu_check_cuda(cudaDeviceSynchronize(), "GpuEvaluator::rescale sync");
+
+    Ciphertext gpu_rescale_result;
+    GpuUploader::download_ciphertext(
+        gpu_rescale_output,
+        gpu_rescale_result,
+        context);
+
+    print_cipher_meta("cpu_rescale_result", cpu_rescale_result);
+    print_cipher_meta("gpu_rescale_result", gpu_rescale_result);
+    print_first_words("cpu_rescale_result", cpu_rescale_result, 8);
+    print_first_words("gpu_rescale_result", gpu_rescale_result, 8);
+    print_raw_comparison(cpu_rescale_result, gpu_rescale_result, 8);
+
     std::cout << "\n[CPU/GPU evaluator add_plain]\n";
 
     Ciphertext cpu_add_plain_result;
@@ -388,6 +409,42 @@ int run_demo()
     print_first_words("cpu_sub_plain_result", cpu_sub_plain_result, 8);
     print_first_words("gpu_sub_plain_result", gpu_sub_plain_result, 8);
     print_raw_comparison(cpu_sub_plain_result, gpu_sub_plain_result, 8);
+
+    std::cout << "\n[CPU/GPU evaluator ntt_inv]\n";
+
+    Ciphertext cpu_ntt_inv_result;
+    cpu_evaluator->ntt_inv(ct0, cpu_ntt_inv_result);
+
+    GpuCiphertextData gpu_ntt_inv_output;
+    gpu_evaluator.ntt_inv(gpu_ct0, gpu_ntt_inv_output);
+    gpu_check_cuda(cudaDeviceSynchronize(), "GpuEvaluator::ntt_inv sync");
+
+    Ciphertext gpu_ntt_inv_result;
+    GpuUploader::download_ciphertext(gpu_ntt_inv_output, gpu_ntt_inv_result, context);
+
+    print_cipher_meta("cpu_ntt_inv_result", cpu_ntt_inv_result);
+    print_cipher_meta("gpu_ntt_inv_result", gpu_ntt_inv_result);
+    print_first_words("cpu_ntt_inv_result", cpu_ntt_inv_result, 8);
+    print_first_words("gpu_ntt_inv_result", gpu_ntt_inv_result, 8);
+    print_raw_comparison(cpu_ntt_inv_result, gpu_ntt_inv_result, 8);
+
+    std::cout << "\n[CPU/GPU evaluator ntt_fwd roundtrip]\n";
+
+    Ciphertext cpu_ntt_fwd_result;
+    cpu_evaluator->ntt_fwd(cpu_ntt_inv_result, cpu_ntt_fwd_result);
+
+    GpuCiphertextData gpu_ntt_fwd_output;
+    gpu_evaluator.ntt_fwd(gpu_ntt_inv_output, gpu_ntt_fwd_output);
+    gpu_check_cuda(cudaDeviceSynchronize(), "GpuEvaluator::ntt_fwd sync");
+
+    Ciphertext gpu_ntt_fwd_result;
+    GpuUploader::download_ciphertext(gpu_ntt_fwd_output, gpu_ntt_fwd_result, context);
+
+    print_cipher_meta("cpu_ntt_fwd_result", cpu_ntt_fwd_result);
+    print_cipher_meta("gpu_ntt_fwd_result", gpu_ntt_fwd_result);
+    print_first_words("cpu_ntt_fwd_result", cpu_ntt_fwd_result, 8);
+    print_first_words("gpu_ntt_fwd_result", gpu_ntt_fwd_result, 8);
+    print_raw_comparison(cpu_ntt_fwd_result, gpu_ntt_fwd_result, 8);
 
     Plaintext cpu_plain_result;
     Plaintext gpu_plain_result;
@@ -509,6 +566,21 @@ int run_demo()
         "multiply_plain",
         [&]() { cpu_evaluator->multiply_plain(ct0, plain1, cpu_timing_result); },
         [&]() { gpu_evaluator.multiply_plain(gpu_ct0, gpu_plain1, gpu_timing_output); });
+
+    benchmark_operation(
+        "rescale",
+        [&]() { cpu_evaluator->rescale(cpu_multiply_plain_result, cpu_timing_result); },
+        [&]() { gpu_evaluator.rescale(gpu_multiply_plain_output, gpu_timing_output); });
+
+    benchmark_operation(
+        "ntt_inv",
+        [&]() { cpu_evaluator->ntt_inv(ct0, cpu_timing_result); },
+        [&]() { gpu_evaluator.ntt_inv(gpu_ct0, gpu_timing_output); });
+
+    benchmark_operation(
+        "ntt_fwd",
+        [&]() { cpu_evaluator->ntt_fwd(cpu_ntt_inv_result, cpu_timing_result); },
+        [&]() { gpu_evaluator.ntt_fwd(gpu_ntt_inv_output, gpu_timing_output); });
 
     std::cout << "\n===== DEMO FINISHED =====\n";
     return EXIT_SUCCESS;

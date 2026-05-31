@@ -159,7 +159,7 @@ MemoryPoolItem *MemoryPoolHeadMT::get()
             new_alloc.free = new_size - 1;
             new_alloc.head_ptr = new_alloc.data_ptr + item_byte_count_;
             allocs_.push_back(new_alloc);
-            item_count_ += new_size;
+            item_count_ = item_count_ + new_size;
             new_item = new MemoryPoolItem(new_alloc.data_ptr);
         }
 

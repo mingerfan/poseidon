@@ -276,7 +276,7 @@ POSEIDON_NODISCARD inline constexpr bool fits_in(S value POSEIDON_MAYBE_UNUSED) 
     POSEIDON_IF_CONSTEXPR(std::is_integral<T>::value && std::is_integral<S>::value)
     {
         // Both integer types
-        if (value >= 0)
+        if (std::is_unsigned<S>::value || value >= 0)
         {
             // Non-negative number; compare as std::uint64_t
             // Cannot use unsigned_leq with C++14 for lack of `if constexpr'

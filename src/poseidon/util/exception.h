@@ -19,7 +19,7 @@ public:
 
     const char *what() const noexcept { return comb_message_.c_str(); }
 
-    const uint32_t GetLineNum() { return line_num_; }
+    uint32_t GetLineNum() { return line_num_; }
 
     const std::string &GetFileNum() { return filename_; }
 
