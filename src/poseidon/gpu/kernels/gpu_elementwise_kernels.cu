@@ -227,8 +227,9 @@ __global__ void dyadic_product_poly_shard_kernel(
 
 /**
  * @brief CUDA kernel skeleton for dyadic multiply-accumulate.
+ * 简单来说就是进行result.c1 += a1 * b0这一步的操作，其中result.c1是对a0和b0的乘积，也就是构建密文密文乘的d1=a0 * b1 + a1 * b0的kernel实现
  */
-[[maybe_unused]] __global__ void multiply_accumulate_poly_shard_kernel(
+__global__ void multiply_accumulate_poly_shard_kernel(
     GpuWord *destination_values,
     const GpuWord *left_values,
     const GpuWord *right_values,
@@ -238,18 +239,31 @@ __global__ void dyadic_product_poly_shard_kernel(
     std::size_t coeff_count,
     std::size_t degree)
 {
-    // TODO:
-    // destination = destination + left * right mod q
-    //
-    // Used by ciphertext-ciphertext multiplication component convolution.
+    const std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    const std::size_t total = limb_count * coeff_count;
 
-    (void)destination_values;
-    (void)left_values;
-    (void)right_values;
-    (void)q_primes;
-    (void)q_modulus_constants;
-    (void)limb_count;
-    (void)coeff_count;
+    if (tid >= total)
+    {
+        return;
+    }
+
+    const std::size_t local_limb = tid / coeff_count;
+    const std::size_t offset = tid;
+
+    const GpuWord modulus = q_primes[local_limb];
+    const GpuWide barrett_ratio = q_modulus_constants[local_limb];
+
+    const GpuWord product = barrett_reduce_u64_u32(
+        static_cast<GpuWide>(left_values[offset]) *
+            static_cast<GpuWide>(right_values[offset]),
+        modulus,
+        barrett_ratio);
+    const GpuWide sum =
+        static_cast<GpuWide>(destination_values[offset]) +
+        static_cast<GpuWide>(product);
+
+    destination_values[offset] = static_cast<GpuWord>(
+        sum >= modulus ? sum - modulus : sum);
     (void)degree;
 }
 
@@ -818,6 +832,9 @@ void launch_dyadic_product_poly_shard(
         "launch_dyadic_product_poly_shard kernel launch");
 }
 
+/**
+ * @brief 用来发射对应乘加kernel。首先进行输入格式检查，
+ */
 void launch_multiply_accumulate_poly_shard(
     const GpuPolyShardView &destination_shard,
     const GpuConstPolyShardView &left_shard,
@@ -825,23 +842,106 @@ void launch_multiply_accumulate_poly_shard(
     const GpuParameterShard &parameter_shard,
     std::size_t degree)
 {
-    // TODO:
-    // Host-side launcher for dyadic modular multiply-accumulate.
-    //
-    // It should launch multiply_accumulate_poly_shard_kernel with:
-    // - destination_shard.ptr
-    // - left_shard.ptr
-    // - right_shard.ptr
-    // - parameter_shard.q_primes.data()
-    // - parameter_shard.q_modulus_constants.data()
+    if (destination_shard.ptr == nullptr ||
+        left_shard.ptr == nullptr ||
+        right_shard.ptr == nullptr)
+    {
+        throw std::invalid_argument("launch_multiply_accumulate_poly_shard: null data pointer");
+    }
 
-    (void)destination_shard;
-    (void)left_shard;
-    (void)right_shard;
-    (void)parameter_shard;
-    (void)degree;
+    if (parameter_shard.q_primes.data() == nullptr)
+    {
+        throw std::invalid_argument("launch_multiply_accumulate_poly_shard: null q_primes pointer");
+    }
+    if (parameter_shard.q_modulus_constants.data() == nullptr)
+    {
+        throw std::invalid_argument(
+            "launch_multiply_accumulate_poly_shard: null q_modulus_constants pointer");
+    }
 
-    throw std::runtime_error("kernel::launch_multiply_accumulate_poly_shard is not implemented yet");
+    if (degree == 0 ||
+        destination_shard.limb_count == 0 ||
+        destination_shard.coeff_count == 0)
+    {
+        throw std::invalid_argument("launch_multiply_accumulate_poly_shard: empty shard shape");
+    }
+
+    if (destination_shard.device_id != left_shard.device_id ||
+        destination_shard.device_id != right_shard.device_id ||
+        destination_shard.device_id != parameter_shard.device_id)
+    {
+        throw std::invalid_argument("launch_multiply_accumulate_poly_shard: device mismatch");
+    }
+
+    if (destination_shard.limb_begin != left_shard.limb_begin ||
+        destination_shard.limb_begin != right_shard.limb_begin ||
+        destination_shard.limb_count != left_shard.limb_count ||
+        destination_shard.limb_count != right_shard.limb_count ||
+        destination_shard.coeff_begin != left_shard.coeff_begin ||
+        destination_shard.coeff_begin != right_shard.coeff_begin ||
+        destination_shard.coeff_count != left_shard.coeff_count ||
+        destination_shard.coeff_count != right_shard.coeff_count)
+    {
+        throw std::invalid_argument(
+            "launch_multiply_accumulate_poly_shard: shard shape mismatch");
+    }
+
+    if (destination_shard.coeff_count > degree)
+    {
+        throw std::invalid_argument(
+            "launch_multiply_accumulate_poly_shard: coeff_count exceeds degree");
+    }
+
+    if (destination_shard.limb_begin < parameter_shard.limb_begin)
+    {
+        throw std::invalid_argument(
+            "launch_multiply_accumulate_poly_shard: parameter shard does not cover limb range");
+    }
+
+    const std::size_t modulus_offset =
+        destination_shard.limb_begin - parameter_shard.limb_begin;
+
+    if (modulus_offset + destination_shard.limb_count >
+        parameter_shard.q_primes.size())
+    {
+        throw std::invalid_argument(
+            "launch_multiply_accumulate_poly_shard: q_primes does not cover limb range");
+    }
+    if (modulus_offset + destination_shard.limb_count >
+        parameter_shard.q_modulus_constants.size())
+    {
+        throw std::invalid_argument(
+            "launch_multiply_accumulate_poly_shard: q_modulus_constants does not cover limb range");
+    }
+
+    const std::size_t total_count =
+        destination_shard.limb_count * destination_shard.coeff_count;
+    if (total_count == 0)
+    {
+        return;
+    }
+
+    gpu_check_cuda(
+        cudaSetDevice(destination_shard.device_id),
+        "launch_multiply_accumulate_poly_shard cudaSetDevice");
+
+    constexpr int block_size = 256;
+    const int grid_size =
+        static_cast<int>((total_count + block_size - 1) / block_size);
+
+    multiply_accumulate_poly_shard_kernel<<<grid_size, block_size>>>(
+        destination_shard.ptr,
+        left_shard.ptr,
+        right_shard.ptr,
+        parameter_shard.q_primes.data() + modulus_offset,
+        parameter_shard.q_modulus_constants.data() + modulus_offset,
+        destination_shard.limb_count,
+        destination_shard.coeff_count,
+        degree);
+
+    gpu_check_cuda(
+        cudaGetLastError(),
+        "launch_multiply_accumulate_poly_shard kernel launch");
 }
 
 }  // namespace kernel

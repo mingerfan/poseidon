@@ -675,45 +675,100 @@ void GpuEvaluator::ntt_inv(
     destination_ciphertext = std::move(result);
 }
 
+/**
+ * @brief 用户端顶层算子，进行必要的输入检查，构建结果临时缓存，调用multiply_ciphertext
+ */
 void GpuEvaluator::multiply(
     const GpuCiphertextData &left_ciphertext,
     const GpuCiphertextData &right_ciphertext,
     GpuCiphertextData &destination_ciphertext) const
 {
-    // TODO:
-    // 1. Check ciphertext semantic compatibility.
-    // 2. Prepare destination metadata:
-    //    - destination component count = left_count + right_count - 1.
-    //    - destination scale = left scale * right scale.
-    // 3. Prepare destination storage.
-    // 4. Create views.
-    // 5. Call elementwise_handler_.multiply_ciphertext(...).
-    //
-    // Note:
-    // - This corresponds to Cheddar-style Tensor operation,
-    //   but must be implemented using Poseidon's polys[index] model.
+    if (left_ciphertext.empty() || right_ciphertext.empty())
+    {
+        throw std::invalid_argument("GpuEvaluator::multiply: empty ciphertext");
+    }
+    if (left_ciphertext.fields_.empty() || right_ciphertext.fields_.empty())
+    {
+        throw std::invalid_argument("GpuEvaluator::multiply: empty ciphertext storage");
+    }
 
-    (void)left_ciphertext;
-    (void)right_ciphertext;
-    (void)destination_ciphertext;
+    if (!(left_ciphertext.meta.parms_id == right_ciphertext.meta.parms_id))
+    {
+        throw std::invalid_argument("GpuEvaluator::multiply: parms_id mismatch");
+    }
+    if (!left_ciphertext.meta.is_ntt_form ||
+        !right_ciphertext.meta.is_ntt_form)
+    {
+        throw std::invalid_argument("GpuEvaluator::multiply: CKKS inputs must be in NTT form");
+    }
+    if (left_ciphertext.meta.degree != right_ciphertext.meta.degree ||
+        left_ciphertext.meta.q_count != right_ciphertext.meta.q_count ||
+        left_ciphertext.meta.p_count != right_ciphertext.meta.p_count)
+    {
+        throw std::invalid_argument("GpuEvaluator::multiply: shape mismatch");
+    }
+    if (left_ciphertext.meta.p_count != 0)
+    {
+        throw std::invalid_argument("GpuEvaluator::multiply: p limbs are not supported yet");
+    }
+    if (left_ciphertext.meta.component_count != left_ciphertext.size() ||
+        right_ciphertext.meta.component_count != right_ciphertext.size())
+    {
+        throw std::invalid_argument("GpuEvaluator::multiply: component metadata mismatch");
+    }
 
-    throw std::runtime_error("GpuEvaluator::multiply is not implemented yet");
+    const int device_id = left_ciphertext.fields_.at(0).device_id;
+    const auto &reference_layout = left_ciphertext.polys_.at(0);
+
+    if (!all_components_use_layout(left_ciphertext, reference_layout) ||
+        !all_components_use_layout(right_ciphertext, reference_layout))
+    {
+        throw std::invalid_argument("GpuEvaluator::multiply: shard layout mismatch");
+    }
+
+    const std::size_t result_components =
+        left_ciphertext.size() + right_ciphertext.size() - 1;
+
+    GpuCiphertextData result =
+        GpuCiphertextData::allocate_single_device_sharded(
+            left_ciphertext.meta.degree,
+            left_ciphertext.meta.q_count,
+            result_components,
+            device_id,
+            reference_layout.shards,
+            left_ciphertext.meta.p_count);
+
+    result.meta = left_ciphertext.meta;
+    result.meta.component_count = result_components;
+    result.meta.is_ntt_form = true;
+    result.meta.scale =
+        left_ciphertext.meta.scale * right_ciphertext.meta.scale;
+
+    if (!(result.meta.scale > 0.0) || !std::isfinite(result.meta.scale))
+    {
+        throw std::invalid_argument("GpuEvaluator::multiply: invalid result scale");
+    }
+
+    auto left_view = left_ciphertext.make_const_view();
+    auto right_view = right_ciphertext.make_const_view();
+    auto destination_view = result.make_view();
+
+    const auto &level_info = params_.get_level(left_ciphertext.meta.parms_id);
+
+    elementwise_handler_.multiply_ciphertext(
+        destination_view,
+        left_view,
+        right_view,
+        level_info);
+
+    destination_ciphertext = std::move(result);
 }
 
 void GpuEvaluator::square(
     const GpuCiphertextData &source_ciphertext,
     GpuCiphertextData &destination_ciphertext) const
 {
-    // TODO:
-    // 1. Check source metadata.
-    // 2. Prepare destination metadata and storage.
-    // 3. Create views.
-    // 4. Call elementwise_handler_.square_ciphertext(...).
-
-    (void)source_ciphertext;
-    (void)destination_ciphertext;
-
-    throw std::runtime_error("GpuEvaluator::square is not implemented yet");
+    multiply(source_ciphertext, source_ciphertext, destination_ciphertext);
 }
 
 void GpuEvaluator::rescale(

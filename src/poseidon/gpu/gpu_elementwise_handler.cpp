@@ -445,31 +445,98 @@ void GpuElementwiseHandler::multiply_plain_with_ciphertext(
     }
 }
 
+/**
+ * @brief 真正构建d0 d1 d2的位置，再根据计算需求调用底层的kernel算子
+ */
 void GpuElementwiseHandler::multiply_ciphertext(
     GpuCiphertextView &destination_view,
     const GpuConstCiphertextView &left_view,
     const GpuConstCiphertextView &right_view,
     const GpuLevelInfo &level_info) const
 {
-    // TODO:
-    // Implement Poseidon component-vector convolution:
-    //
-    // for each left component index:
-    //   for each right component index:
-    //     destination component at index sum receives product accumulation.
-    //
-    // Each product accumulation should eventually call multiply_accumulate_poly().
-    // multiply_accumulate_poly() should call
-    // kernel::launch_multiply_accumulate_poly_shard(...).
-    //
-    // This corresponds to Cheddar-style Tensor, but must use polys[index].
+    if (!(left_view.meta.parms_id == right_view.meta.parms_id) ||
+        !(left_view.meta.parms_id == destination_view.meta.parms_id) ||
+        !(left_view.meta.parms_id == level_info.parms_id))
+    {
+        throw std::invalid_argument("multiply_ciphertext: parms_id mismatch");
+    }
 
-    (void)destination_view;
-    (void)left_view;
-    (void)right_view;
-    (void)level_info;
+    if (!left_view.meta.is_ntt_form ||
+        !right_view.meta.is_ntt_form ||
+        !destination_view.meta.is_ntt_form)
+    {
+        throw std::invalid_argument("multiply_ciphertext: CKKS inputs must be in NTT form");
+    }
 
-    throw std::runtime_error("GpuElementwiseHandler::multiply_ciphertext is not implemented yet");
+    if (left_view.meta.degree != right_view.meta.degree ||
+        left_view.meta.degree != destination_view.meta.degree ||
+        left_view.meta.degree != level_info.degree ||
+        left_view.meta.q_count != right_view.meta.q_count ||
+        left_view.meta.q_count != destination_view.meta.q_count ||
+        left_view.meta.q_count != level_info.q_count ||
+        left_view.meta.p_count != right_view.meta.p_count ||
+        left_view.meta.p_count != destination_view.meta.p_count ||
+        left_view.meta.p_count != level_info.p_count)
+    {
+        throw std::invalid_argument("multiply_ciphertext: shape mismatch");
+    }
+
+    if (left_view.meta.p_count != 0)
+    {
+        throw std::invalid_argument("multiply_ciphertext: p limbs are not supported yet");
+    }
+
+    if (left_view.polys.empty() || right_view.polys.empty())
+    {
+        throw std::invalid_argument("multiply_ciphertext: empty ciphertext");
+    }
+
+    const std::size_t result_count =
+        left_view.polys.size() + right_view.polys.size() - 1;
+    if (destination_view.polys.size() != result_count)
+    {
+        throw std::invalid_argument(
+            "multiply_ciphertext: destination component count mismatch");
+    }
+
+    for (std::size_t dest_component = 0;
+         dest_component < result_count;
+         ++dest_component)
+    {
+        const std::size_t left_first =
+            dest_component >= right_view.polys.size()
+                ? dest_component - right_view.polys.size() + 1
+                : 0;
+        const std::size_t left_last =
+            std::min(dest_component, left_view.polys.size() - 1);
+
+        bool first_product = true;
+        for (std::size_t left_component = left_first;
+             left_component <= left_last;
+             ++left_component)
+        {
+            const std::size_t right_component =
+                dest_component - left_component;
+
+            if (first_product)
+            {
+                multiply_plain_poly(
+                    destination_view.polys[dest_component],
+                    left_view.polys[left_component],
+                    right_view.polys[right_component],
+                    level_info);
+                first_product = false;
+            }
+            else
+            {
+                multiply_accumulate_poly(
+                    destination_view.polys[dest_component],
+                    left_view.polys[left_component],
+                    right_view.polys[right_component],
+                    level_info);
+            }
+        }
+    }
 }
 
 void GpuElementwiseHandler::square_ciphertext(
@@ -697,17 +764,39 @@ void GpuElementwiseHandler::multiply_accumulate_poly(
     const GpuConstRNSPolyView &right_poly,
     const GpuLevelInfo &level_info) const
 {
-    // TODO:
-    // 1. Validate shard placement.
-    // 2. Find matching GpuParameterShard.
-    // 3. Call kernel::launch_multiply_accumulate_poly_shard(...).
+    if (destination_poly.shards.size() != left_poly.shards.size() ||
+        destination_poly.shards.size() != right_poly.shards.size())
+    {
+        throw std::invalid_argument("multiply_accumulate_poly: shard count mismatch");
+    }
 
-    (void)destination_poly;
-    (void)left_poly;
-    (void)right_poly;
-    (void)level_info;
+    for (std::size_t i = 0; i < destination_poly.shards.size(); ++i)
+    {
+        const auto &dst = destination_poly.shards[i];
+        const auto &lhs = left_poly.shards[i];
+        const auto &rhs = right_poly.shards[i];
 
-    throw std::runtime_error("GpuElementwiseHandler::multiply_accumulate_poly is not implemented yet");
+        if (!same_shard_placement(dst, lhs) ||
+            !same_shard_placement(dst, rhs))
+        {
+            throw std::invalid_argument("multiply_accumulate_poly: shard placement mismatch");
+        }
+
+        const GpuParameterShard *parameter_shard =
+            find_parameter_shard(level_info, dst);
+
+        if (parameter_shard == nullptr)
+        {
+            throw std::invalid_argument("multiply_accumulate_poly: no matching parameter shard");
+        }
+
+        kernel::launch_multiply_accumulate_poly_shard(
+            dst,
+            lhs,
+            rhs,
+            *parameter_shard,
+            level_info.degree);
+    }
 }
 
 }  // namespace gpu
