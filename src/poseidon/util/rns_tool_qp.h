@@ -4,6 +4,7 @@
 #include "poseidon/basics/util/polyarithsmallmod.h"
 #include "poseidon/basics/util/polycore.h"
 #include "poseidon/basics/util/rns.h"
+#include <stdexcept>
 #include <unordered_map>
 
 using namespace std;
@@ -44,11 +45,39 @@ public:
                   MemoryPoolHandle pool) const;
     POSEIDON_NODISCARD inline auto p_mod_qi() const noexcept { return prod_p_mod_qi_.get(); }
 
+    POSEIDON_NODISCARD inline auto p_inv_mod_qi() const noexcept
+    {
+        return prod_p_inv_mod_qi_.get();
+    }
+
     POSEIDON_NODISCARD inline auto base_q() const noexcept { return base_q_.get(); }
 
     POSEIDON_NODISCARD inline auto base_p() const noexcept { return base_p_.get(); }
 
     POSEIDON_NODISCARD inline auto base_qp() const noexcept { return base_qp_.get(); }
+
+    POSEIDON_NODISCARD inline const BaseConverter &base_p_to_q_conv() const
+    {
+        if (base_p_to_q_conv_.get() == nullptr)
+        {
+            throw std::logic_error("base_p_to_q_conv is not initialized");
+        }
+        return *base_p_to_q_conv_;
+    }
+
+    POSEIDON_NODISCARD inline std::size_t decomp_count() const noexcept
+    {
+        return rnstool_decomp_.size();
+    }
+
+    POSEIDON_NODISCARD inline const auto &decomp(std::size_t index) const
+    {
+        if (index >= rnstool_decomp_.size())
+        {
+            throw std::out_of_range("decomp index is out of range");
+        }
+        return rnstool_decomp_[index];
+    }
 
 private:
     class RNSToolInter
@@ -73,6 +102,11 @@ private:
         POSEIDON_NODISCARD inline const Pointer<BaseConverter> &obase_p_conv() const
         {
             return obase_p_conv_;
+        }
+
+        POSEIDON_NODISCARD inline bool has_base_conversion() const noexcept
+        {
+            return obase_p_conv_.get() != nullptr;
         }
 
     private:

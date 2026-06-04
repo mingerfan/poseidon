@@ -69,6 +69,42 @@ struct GpuParameterShard
     DeviceVector<GpuWord> inv_q_last_mod_q;
 
     /**
+     * @brief HYBRID key-switch base-conversion constants.
+     *
+     * For each decomposition block d:
+     * - hybrid_decomp_start/end describe the Q_i limb range;
+     * - hybrid_q_conv_matrix_offsets[d] points to a flattened matrix for
+     *   converting Q_i to the other Q limbs. Rows are in q-limb order and
+     *   each row has base_p_count columns. Rows inside Q_i are zero-filled;
+     * - hybrid_p_conv_matrix_offsets[d] points to a flattened matrix for
+     *   converting Q_i to all P limbs. Each row has base_p_count columns.
+     * - hybrid_moddown_p_to_q_matrix stores the global P -> Q converter used
+     *   by HYBRID ModDown. Rows are in q-limb order and each row has
+     *   base_p_count columns.
+     * - hybrid_qi_inv_punctured stores the per-decomposition input weights
+     *   used before Q_i base conversion. It is padded to base_p_count columns
+     *   per decomposition block;
+     * - hybrid_p_inv_punctured stores the input weights for P -> Q ModDown.
+     *
+     * The last decomposition can be smaller than base_p_count; unused columns
+     * are zero-filled.
+     */
+    std::size_t hybrid_base_q_count = 0;
+    std::size_t hybrid_base_p_count = 0;
+    std::size_t hybrid_decomp_count = 0;
+    DeviceVector<GpuWord> hybrid_decomp_start;
+    DeviceVector<GpuWord> hybrid_decomp_end;
+    DeviceVector<GpuWord> hybrid_p_mod_q;
+    DeviceVector<GpuWord> hybrid_inv_p_mod_q;
+    DeviceVector<GpuWord> hybrid_q_conv_matrix_offsets;
+    DeviceVector<GpuWord> hybrid_p_conv_matrix_offsets;
+    DeviceVector<GpuWord> hybrid_q_conv_matrices;
+    DeviceVector<GpuWord> hybrid_p_conv_matrices;
+    DeviceVector<GpuWord> hybrid_moddown_p_to_q_matrix;
+    DeviceVector<GpuWord> hybrid_qi_inv_punctured;
+    DeviceVector<GpuWord> hybrid_p_inv_punctured;
+
+    /**
      * @brief NTT tables for q/p RNS limbs.
      *
      * Root tables are stored as [limb][degree] operands copied from Poseidon's

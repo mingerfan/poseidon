@@ -100,6 +100,7 @@ void validate_ntt_ciphertext_input(
 GpuEvaluator::GpuEvaluator(const GpuParameterData &params)
     : params_(params),
       elementwise_handler_(params),
+      keyswitch_handler_(params),
       ntt_handler_(params),
       modswitch_handler_(params)
 {}
@@ -900,30 +901,82 @@ void GpuEvaluator::drop_modulus(
     throw std::runtime_error("GpuEvaluator::drop_modulus is not implemented yet");
 }
 
+/* GpuEvaluator::multiply(...) -> 输出 3 component: d0, d1, d2 */
 void GpuEvaluator::relinearize(
     const GpuCiphertextData &source_ciphertext,
     const GpuRelinKeysData &relin_keys,
     GpuCiphertextData &destination_ciphertext) const
 {
-    // TODO:
-    // GPU relinearization.
-    //
-    // Current framework decision:
-    // - keep this as a top-level TODO for now;
-    // - introduce a dedicated key-switch handler only after Poseidon key-switch
-    //   layout is fully mapped.
-    //
-    // Expected future logic:
-    // - check source component count;
-    // - check relin key compatibility;
-    // - prepare destination with two components;
-    // - run GPU key-switch pipeline.
+    if (source_ciphertext.empty())
+    {
+        throw std::invalid_argument("GpuEvaluator::relinearize: empty ciphertext");
+    }
+    if (source_ciphertext.fields_.empty())
+    {
+        throw std::invalid_argument("GpuEvaluator::relinearize: empty ciphertext storage");
+    }
+    if (relin_keys.empty())
+    {
+        throw std::invalid_argument("GpuEvaluator::relinearize: empty relin keys");
+    }
+    if (!source_ciphertext.meta.is_ntt_form)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::relinearize: CKKS ciphertext must be in NTT form");
+    }
+    if (source_ciphertext.meta.component_count != source_ciphertext.size())
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::relinearize: component metadata mismatch");
+    }
+    /* 重线性化只支持输入分量个数为3 */
+    if (source_ciphertext.size() != 3)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::relinearize: first HYBRID implementation expects a size-3 ciphertext");
+    }
+    if (source_ciphertext.meta.p_count != 0)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::relinearize: input ciphertext p limbs are not supported");
+    }
 
-    (void)source_ciphertext;
-    (void)relin_keys;
-    (void)destination_ciphertext;
+    const int device_id = source_ciphertext.fields_.at(0).device_id;
+    const auto &reference_layout = source_ciphertext.polys_.at(0);
+    if (!all_components_use_layout(source_ciphertext, reference_layout))
+    {
+        throw std::invalid_argument("GpuEvaluator::relinearize: shard layout mismatch");
+    }
 
-    throw std::runtime_error("GpuEvaluator::relinearize is not implemented yet");
+    /* 分配临时结果缓存，只允许2个分量存在 */
+    GpuCiphertextData result =
+        GpuCiphertextData::allocate_single_device_sharded(
+            source_ciphertext.meta.degree,
+            source_ciphertext.meta.q_count,
+            2,
+            device_id,
+            reference_layout.shards,
+            source_ciphertext.meta.p_count);
+
+    /* 输出仍在同一层级，但重线性化后只保留2个密文分量 */
+    result.meta = source_ciphertext.meta;
+    result.meta.component_count = 2;
+    result.meta.is_ntt_form = true;
+
+    auto source_view = source_ciphertext.make_const_view();
+    auto destination_view = result.make_view();
+    auto relin_keys_view = relin_keys.make_const_view();
+    const auto &level_info = params_.get_level(source_ciphertext.meta.parms_id);
+
+    /* 通过dnum分解的方式进行重线性化 */
+    keyswitch_handler_.relinearize_hybrid_ciphertext(
+        destination_view,
+        source_view,
+        relin_keys_view,
+        relin_keys,
+        level_info);
+
+    destination_ciphertext = std::move(result);
 }
 
 void GpuEvaluator::rotate(

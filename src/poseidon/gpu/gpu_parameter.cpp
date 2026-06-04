@@ -2,6 +2,7 @@
 
 #include "poseidon/basics/util/ntt.h"
 #include "poseidon/poseidon_context.h"
+#include "poseidon/util/rns_tool_qp.h"
 
 #include <cstdint>
 #include <limits>
@@ -33,6 +34,17 @@ std::vector<GpuWord> copy_moduli_to_gpu_words(
     for (const auto &modulus : moduli)
     {
         result.push_back(checked_gpu_word(modulus.value(), what));
+    }
+    return result;
+}
+
+std::vector<Modulus> copy_rns_base_moduli(const util::RNSBase &base)
+{
+    std::vector<Modulus> result;
+    result.reserve(base.size());
+    for (std::size_t i = 0; i < base.size(); ++i)
+    {
+        result.push_back(base.base()[i]);
     }
     return result;
 }
@@ -170,6 +182,216 @@ std::vector<GpuWord> compute_half_q_last_mod_q(
     return result;
 }
 
+std::vector<GpuWord> copy_mod_operand_array(
+    const util::MultiplyUIntModOperand *operands,
+    std::size_t count,
+    const char *what)
+{
+    std::vector<GpuWord> result(count);
+    for (std::size_t i = 0; i < count; ++i)
+    {
+        result[i] = checked_gpu_word(operands[i].operand, what);
+    }
+    return result;
+}
+
+void append_base_converter_matrix_padded(
+    const util::BaseConverter &converter,
+    std::size_t padded_input_size,
+    std::vector<GpuWord> &destination,
+    const char *what)
+{
+    for (std::size_t row = 0; row < converter.obase_size(); ++row)
+    {
+        const auto *row_values = converter.base_change_matrix_row(row);
+        for (std::size_t col = 0; col < padded_input_size; ++col)
+        {
+            const std::uint64_t value =
+                col < converter.ibase_size() ? row_values[col] : 0;
+            destination.push_back(checked_gpu_word(value, what));
+        }
+    }
+}
+
+void copy_hybrid_key_switch_tables(
+    const util::RNSToolQP *rns_qp,
+    GpuParameterShard &shard,
+    int device_id)
+{
+    if (rns_qp == nullptr || rns_qp->base_q() == nullptr || rns_qp->base_p() == nullptr)
+    {
+        return;
+    }
+
+    const std::size_t base_q_size = rns_qp->base_q()->size();
+    const std::size_t base_p_size = rns_qp->base_p()->size();
+    const std::size_t decomp_count = rns_qp->decomp_count();
+    if (base_q_size == 0 || base_p_size == 0 || decomp_count == 0)
+    {
+        return;
+    }
+    if (base_q_size > std::numeric_limits<GpuWord>::max() ||
+        base_p_size > std::numeric_limits<GpuWord>::max() ||
+        decomp_count > std::numeric_limits<GpuWord>::max())
+    {
+        throw std::invalid_argument("GpuParameterData HYBRID table shape does not fit GpuWord");
+    }
+
+    shard.hybrid_base_q_count = base_q_size;
+    shard.hybrid_base_p_count = base_p_size;
+    shard.hybrid_decomp_count = decomp_count;
+
+    std::vector<GpuWord> decomp_start(decomp_count);
+    std::vector<GpuWord> decomp_end(decomp_count);
+    std::vector<GpuWord> q_matrix_offsets(decomp_count + 1);
+    std::vector<GpuWord> p_matrix_offsets(decomp_count + 1);
+    std::vector<GpuWord> q_matrices;
+    std::vector<GpuWord> p_matrices;
+    std::vector<GpuWord> moddown_p_to_q_matrix;
+    std::vector<GpuWord> qi_inv_punctured(decomp_count * base_p_size, 0);
+
+    for (std::size_t decomp_index = 0; decomp_index < decomp_count; ++decomp_index)
+    {
+        const auto &decomp = rns_qp->decomp(decomp_index);
+        const std::size_t start = decomp.base_start_idx();
+        const std::size_t end = decomp.base_last_idx();
+        decomp_start[decomp_index] = checked_gpu_word(
+            start,
+            "GpuParameterData HYBRID decomp start does not fit GpuWord");
+        decomp_end[decomp_index] = checked_gpu_word(
+            end,
+            "GpuParameterData HYBRID decomp end does not fit GpuWord");
+        q_matrix_offsets[decomp_index] = checked_gpu_word(
+            q_matrices.size(),
+            "GpuParameterData HYBRID q matrix offset does not fit GpuWord");
+        p_matrix_offsets[decomp_index] = checked_gpu_word(
+            p_matrices.size(),
+            "GpuParameterData HYBRID p matrix offset does not fit GpuWord");
+
+        if (!decomp.has_base_conversion())
+        {
+            qi_inv_punctured[decomp_index * base_p_size] = 1;
+            q_matrices.resize(q_matrices.size() + base_q_size * base_p_size, 0);
+            p_matrices.resize(p_matrices.size() + base_p_size * base_p_size, 0);
+            continue;
+        }
+
+        const auto &decomp_ibase = decomp.obase_p_conv()->ibase();
+        const auto *decomp_inv_punctured =
+            decomp_ibase.inv_punctured_prod_mod_base_array();
+        for (std::size_t col = 0; col < decomp_ibase.size(); ++col)
+        {
+            qi_inv_punctured[decomp_index * base_p_size + col] = checked_gpu_word(
+                decomp_inv_punctured[col].operand,
+                "GpuParameterData HYBRID Q_i inv punctured constant does not fit GpuWord");
+        }
+
+        const auto &q_conv_map = decomp.single_obase_q_conv_map();
+        for (std::size_t q_limb = 0; q_limb < base_q_size; ++q_limb)
+        {
+            const bool limb_in_decomp = q_limb >= start && q_limb < end;
+            if (limb_in_decomp)
+            {
+                for (std::size_t col = 0; col < base_p_size; ++col)
+                {
+                    q_matrices.push_back(0);
+                }
+                continue;
+            }
+
+            const auto found = q_conv_map.find(q_limb);
+            if (found == q_conv_map.end() || found->second.get() == nullptr)
+            {
+                throw std::invalid_argument("GpuParameterData missing HYBRID q conversion row");
+            }
+            append_base_converter_matrix_padded(
+                *found->second,
+                base_p_size,
+                q_matrices,
+                "GpuParameterData HYBRID q conversion constant does not fit GpuWord");
+        }
+
+        append_base_converter_matrix_padded(
+            *decomp.obase_p_conv(),
+            base_p_size,
+            p_matrices,
+            "GpuParameterData HYBRID p conversion constant does not fit GpuWord");
+    }
+
+    q_matrix_offsets[decomp_count] = checked_gpu_word(
+        q_matrices.size(),
+        "GpuParameterData HYBRID q matrix final offset does not fit GpuWord");
+    p_matrix_offsets[decomp_count] = checked_gpu_word(
+        p_matrices.size(),
+        "GpuParameterData HYBRID p matrix final offset does not fit GpuWord");
+
+    auto p_mod_q = copy_mod_operand_array(
+        rns_qp->p_mod_qi(),
+        base_q_size,
+        "GpuParameterData HYBRID p_mod_q constant does not fit GpuWord");
+    auto inv_p_mod_q = copy_mod_operand_array(
+        rns_qp->p_inv_mod_qi(),
+        base_q_size,
+        "GpuParameterData HYBRID inv_p_mod_q constant does not fit GpuWord");
+    auto p_inv_punctured = copy_mod_operand_array(
+        rns_qp->base_p()->inv_punctured_prod_mod_base_array(),
+        base_p_size,
+        "GpuParameterData HYBRID P inv punctured constant does not fit GpuWord");
+    append_base_converter_matrix_padded(
+        rns_qp->base_p_to_q_conv(),
+        base_p_size,
+        moddown_p_to_q_matrix,
+        "GpuParameterData HYBRID moddown P-to-Q conversion constant does not fit GpuWord");
+
+    shard.hybrid_decomp_start = DeviceVector<GpuWord>(decomp_start.size(), device_id);
+    shard.hybrid_decomp_end = DeviceVector<GpuWord>(decomp_end.size(), device_id);
+    shard.hybrid_p_mod_q = DeviceVector<GpuWord>(p_mod_q.size(), device_id);
+    shard.hybrid_inv_p_mod_q = DeviceVector<GpuWord>(inv_p_mod_q.size(), device_id);
+    shard.hybrid_q_conv_matrix_offsets =
+        DeviceVector<GpuWord>(q_matrix_offsets.size(), device_id);
+    shard.hybrid_p_conv_matrix_offsets =
+        DeviceVector<GpuWord>(p_matrix_offsets.size(), device_id);
+    shard.hybrid_q_conv_matrices = DeviceVector<GpuWord>(q_matrices.size(), device_id);
+    shard.hybrid_p_conv_matrices = DeviceVector<GpuWord>(p_matrices.size(), device_id);
+    shard.hybrid_moddown_p_to_q_matrix =
+        DeviceVector<GpuWord>(moddown_p_to_q_matrix.size(), device_id);
+    shard.hybrid_qi_inv_punctured =
+        DeviceVector<GpuWord>(qi_inv_punctured.size(), device_id);
+    shard.hybrid_p_inv_punctured =
+        DeviceVector<GpuWord>(p_inv_punctured.size(), device_id);
+
+    shard.hybrid_decomp_start.copy_from_host(decomp_start.data(), decomp_start.size());
+    shard.hybrid_decomp_end.copy_from_host(decomp_end.data(), decomp_end.size());
+    shard.hybrid_p_mod_q.copy_from_host(p_mod_q.data(), p_mod_q.size());
+    shard.hybrid_inv_p_mod_q.copy_from_host(inv_p_mod_q.data(), inv_p_mod_q.size());
+    shard.hybrid_qi_inv_punctured.copy_from_host(
+        qi_inv_punctured.data(),
+        qi_inv_punctured.size());
+    shard.hybrid_p_inv_punctured.copy_from_host(
+        p_inv_punctured.data(),
+        p_inv_punctured.size());
+    shard.hybrid_q_conv_matrix_offsets.copy_from_host(
+        q_matrix_offsets.data(),
+        q_matrix_offsets.size());
+    shard.hybrid_p_conv_matrix_offsets.copy_from_host(
+        p_matrix_offsets.data(),
+        p_matrix_offsets.size());
+    if (!q_matrices.empty())
+    {
+        shard.hybrid_q_conv_matrices.copy_from_host(q_matrices.data(), q_matrices.size());
+    }
+    if (!p_matrices.empty())
+    {
+        shard.hybrid_p_conv_matrices.copy_from_host(p_matrices.data(), p_matrices.size());
+    }
+    if (!moddown_p_to_q_matrix.empty())
+    {
+        shard.hybrid_moddown_p_to_q_matrix.copy_from_host(
+            moddown_p_to_q_matrix.data(),
+            moddown_p_to_q_matrix.size());
+    }
+}
+
 }  // namespace
 
 GpuParameterData::GpuParameterData(const PoseidonContext &context, int device_id)
@@ -202,6 +424,12 @@ void GpuParameterData::build_from_poseidon_context(
         const auto &parms = context_data->parms();
         const auto &q = parms.q();
         const auto &p = parms.p();
+        const auto *rns_qp = context_data->qp_rns_tool();
+        std::vector<Modulus> parameter_p = p;
+        if (parameter_p.empty() && rns_qp != nullptr && rns_qp->base_p() != nullptr)
+        {
+            parameter_p = copy_rns_base_moduli(*rns_qp->base_p());
+        }
 
         GpuLevelInfo level;
         level.parms_id = context_data->parms_id();
@@ -212,7 +440,7 @@ void GpuParameterData::build_from_poseidon_context(
         GpuParameterShard shard;
         shard.device_id = device_id;
         shard.limb_begin = 0;
-        shard.limb_count = level.q_count + level.p_count;
+        shard.limb_count = level.q_count + parameter_p.size();
         if (!q.empty())
         {
             shard.q_last = checked_gpu_word(
@@ -225,10 +453,10 @@ void GpuParameterData::build_from_poseidon_context(
             q,
             "GpuParameterData only supports q primes that fit in GpuWord");
         auto p_words = copy_moduli_to_gpu_words(
-            p,
+            parameter_p,
             "GpuParameterData only supports p primes that fit in GpuWord");
         auto q_barrett_ratios = copy_barrett_ratios(q);
-        auto p_barrett_ratios = copy_barrett_ratios(p);
+        auto p_barrett_ratios = copy_barrett_ratios(parameter_p);
         auto rns_words = concatenate_vectors(q_words, p_words);
         auto rns_barrett_ratios =
             concatenate_vectors(q_barrett_ratios, p_barrett_ratios);
@@ -241,7 +469,7 @@ void GpuParameterData::build_from_poseidon_context(
             false);
         auto p_ntt_roots = copy_ntt_root_operands(
             p_ntt_tables,
-            p.size(),
+            parameter_p.size(),
             level.degree,
             false);
         auto q_intt_roots = copy_ntt_root_operands(
@@ -251,7 +479,7 @@ void GpuParameterData::build_from_poseidon_context(
             true);
         auto p_intt_roots = copy_ntt_root_operands(
             p_ntt_tables,
-            p.size(),
+            parameter_p.size(),
             level.degree,
             true);
         auto q_inv_degree = copy_inv_degree_operands(
@@ -259,7 +487,7 @@ void GpuParameterData::build_from_poseidon_context(
             q.size());
         auto p_inv_degree = copy_inv_degree_operands(
             p_ntt_tables,
-            p.size());
+            parameter_p.size());
         auto rns_ntt_roots =
             concatenate_vectors(q_ntt_roots, p_ntt_roots);
         auto rns_intt_roots =
@@ -363,6 +591,8 @@ void GpuParameterData::build_from_poseidon_context(
                 rns_inv_degree.data(),
                 rns_inv_degree.size());
         }
+
+        copy_hybrid_key_switch_tables(rns_qp, shard, device_id);
 
         level.shards.push_back(std::move(shard));
         levels_.push_back(std::move(level));

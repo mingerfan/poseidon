@@ -5,6 +5,22 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BUILD_DIR="${BUILD_DIR:-${SCRIPT_DIR}/build}"
 BUILD_TYPE="${BUILD_TYPE:-Release}"
 ENABLE_GPU_TESTS="${ENABLE_GPU_TESTS:-ON}"
+RUN_NSYS_MULTIPLY_PLAIN="${RUN_NSYS_MULTIPLY_PLAIN:-0}"
+POSEIDON_NSYS_DEGREE="${POSEIDON_NSYS_DEGREE:-16384}"
+POSEIDON_NSYS_Q_COUNT="${POSEIDON_NSYS_Q_COUNT:-16}"
+POSEIDON_NSYS_Q_SWEEP="${POSEIDON_NSYS_Q_SWEEP:-}"
+POSEIDON_NSYS_ITERATIONS="${POSEIDON_NSYS_ITERATIONS:-200}"
+POSEIDON_NSYS_WARMUP="${POSEIDON_NSYS_WARMUP:-5}"
+NSYS_OUTPUT="${NSYS_OUTPUT:-${BUILD_DIR}/nsys_mp_q${POSEIDON_NSYS_Q_COUNT}}"
+DEFAULT_NSYS_BIN="${HOME}/tools/nsight-systems/nsight_systems-linux-x86_64-2025.6.3.541-archive/target-linux-x64/nsys"
+if [[ -z "${NSYS_BIN:-}" && -x "${DEFAULT_NSYS_BIN}" ]]; then
+    NSYS_BIN="${DEFAULT_NSYS_BIN}"
+else
+    NSYS_BIN="${NSYS_BIN:-nsys}"
+fi
+NSYS_TRACE="${NSYS_TRACE:-cuda-sw,nvtx}"
+NSYS_CAPTURE_RANGE="${NSYS_CAPTURE_RANGE:-cudaProfilerApi}"
+NSYS_CAPTURE_RANGE_END="${NSYS_CAPTURE_RANGE_END:-stop}"
 
 CMAKE_ARGS=(
     -S "${SCRIPT_DIR}"
@@ -36,7 +52,31 @@ fi
 
 echo "=== Run GPU elementwise demo ==="
 set +e
-"${DEMO_BIN}"
+if [[ "${RUN_NSYS_MULTIPLY_PLAIN}" != "0" ]]; then
+    echo "Using nsys: ${NSYS_BIN}"
+    "${NSYS_BIN}" --version
+    POSEIDON_NSYS_MULTIPLY_PLAIN=1 \
+    POSEIDON_NSYS_DEGREE="${POSEIDON_NSYS_DEGREE}" \
+    POSEIDON_NSYS_Q_COUNT="${POSEIDON_NSYS_Q_COUNT}" \
+    POSEIDON_NSYS_Q_SWEEP="${POSEIDON_NSYS_Q_SWEEP}" \
+    POSEIDON_NSYS_ITERATIONS="${POSEIDON_NSYS_ITERATIONS}" \
+    POSEIDON_NSYS_WARMUP="${POSEIDON_NSYS_WARMUP}" \
+    "${NSYS_BIN}" profile \
+        --trace="${NSYS_TRACE}" \
+        --capture-range="${NSYS_CAPTURE_RANGE}" \
+        --capture-range-end="${NSYS_CAPTURE_RANGE_END}" \
+        --cuda-um-cpu-page-faults=false \
+        --cuda-um-gpu-page-faults=false \
+        --sample=none \
+        --cpuctxsw=none \
+        --export=sqlite \
+        --force-overwrite=true \
+        --stats=true \
+        -o "${NSYS_OUTPUT}" \
+        "${DEMO_BIN}"
+else
+    "${DEMO_BIN}"
+fi
 DEMO_STATUS=$?
 set -e
 

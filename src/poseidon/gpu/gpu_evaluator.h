@@ -6,6 +6,7 @@
 #include "poseidon/gpu/gpu_parameter.h"
 
 #include "poseidon/gpu/gpu_elementwise_handler.h"
+#include "poseidon/gpu/gpu_keyswitch_handler.h"
 #include "poseidon/gpu/gpu_ntt_handler.h"
 #include "poseidon/gpu/gpu_modswitch_handler.h"
 
@@ -100,10 +101,8 @@ public:
     /**
      * @brief Relinearize ciphertext.
      *
-     * Current stage:
-     * - kept as top-level TODO.
-     * - a dedicated key-switch handler can be introduced after Poseidon's
-     *   key-switching layout is fully mapped.
+     * Dispatches size-3 CKKS ciphertexts to the HYBRID key-switch handler and
+     * writes a size-2 ciphertext in NTT form.
      */
     void relinearize(
         const GpuCiphertextData &source_ciphertext,
@@ -138,6 +137,7 @@ private:
     const GpuParameterData &params_;
 
     GpuElementwiseHandler elementwise_handler_;
+    GpuKeySwitchHandler keyswitch_handler_;
     GpuNTTHandler ntt_handler_;
     GpuModSwitchHandler modswitch_handler_;
 };

@@ -139,6 +139,16 @@ public:
 
     POSEIDON_NODISCARD inline const RNSBase &obase() const noexcept { return obase_; }
 
+    POSEIDON_NODISCARD inline const std::uint64_t *base_change_matrix_row(
+        std::size_t obase_index) const
+    {
+        if (obase_index >= obase_.size())
+        {
+            throw std::out_of_range("obase_index is out of range");
+        }
+        return base_change_matrix_[obase_index].get();
+    }
+
     void fast_convert(ConstCoeffIter in, CoeffIter out, MemoryPoolHandle pool) const;
 
     void fast_convert_array(ConstRNSIter in, RNSIter out, MemoryPoolHandle pool) const;
