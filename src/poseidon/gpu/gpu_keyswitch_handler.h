@@ -4,6 +4,8 @@
 #include "poseidon/gpu/gpu_key.h"
 #include "poseidon/gpu/gpu_parameter.h"
 
+#include <cstddef>
+
 namespace poseidon
 {
 namespace gpu
@@ -13,7 +15,7 @@ namespace gpu
  * @brief GPU key-switching operations.
  *
  * Current scope:
- * - CKKS HYBRID relinearization framework;
+ * - CKKS HYBRID key-switching framework;
  * - single-GPU, full-coefficient, q-only input ciphertexts;
  * - key layout lookup and operation validation.
  *
@@ -30,6 +32,14 @@ public:
         const GpuConstCiphertextView &source_view,
         const GpuConstEvaluationKeyView &relin_keys_view,
         const GpuEvaluationKeyData &relin_keys_data,
+        const GpuLevelInfo &level_info) const;
+
+    void switch_key_hybrid_ciphertext(
+        GpuCiphertextView &destination_view,
+        const GpuConstRNSPolyView &switch_poly_ntt,
+        const GpuConstEvaluationKeyView &switch_keys_view,
+        const GpuEvaluationKeyData &switch_keys_data,
+        std::size_t key_index,
         const GpuLevelInfo &level_info) const;
 
 private:

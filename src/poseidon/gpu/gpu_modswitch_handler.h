@@ -26,6 +26,7 @@ class GpuModSwitchHandler
 {
 public:
     explicit GpuModSwitchHandler(const GpuParameterData &params);
+    ~GpuModSwitchHandler();
 
     /**
      * @brief GPU rescale from source level to destination level.
@@ -59,7 +60,22 @@ public:
         const GpuLevelInfo &destination_level_info) const;
 
 private:
+    struct RescaleScratch
+    {
+        DeviceVector<GpuWord> q_last;
+        DeviceVector<GpuWord> correction;
+        std::size_t q_last_capacity = 0;
+        std::size_t correction_capacity = 0;
+        int device_id = -1;
+    };
+
+    void ensure_rescale_scratch(
+        std::size_t degree,
+        std::size_t destination_q_count,
+        int device_id) const;
+
     const GpuParameterData &params_;
+    mutable RescaleScratch rescale_scratch_;
 };
 
 }  // namespace gpu

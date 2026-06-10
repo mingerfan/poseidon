@@ -112,9 +112,10 @@ public:
     /**
      * @brief Rotate ciphertext.
      *
-     * Current stage:
-     * - kept as top-level TODO.
-     * - key-switching handler split is postponed.
+     * First CKKS implementation:
+     * - apply NTT-domain Galois permutation to c0/c1;
+     * - key-switch the permuted c1 with the uploaded Galois key;
+     * - currently requires the direct Galois key for the requested step.
      */
     void rotate(
         const GpuCiphertextData &source_ciphertext,
@@ -125,8 +126,9 @@ public:
     /**
      * @brief Conjugate ciphertext.
      *
-     * Current stage:
-     * - kept as top-level TODO.
+     * First CKKS implementation:
+     * - apply NTT-domain conjugation Galois permutation to c0/c1;
+     * - key-switch the permuted c1 with the uploaded conjugation key.
      */
     void conjugate(
         const GpuCiphertextData &source_ciphertext,

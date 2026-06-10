@@ -3,8 +3,12 @@
 #include "poseidon/gpu/kernels/gpu_ntt_kernels.h"
 #include "poseidon/gpu/kernels/gpu_rescale_kernels.h"
 
+#include <nvtx3/nvToolsExt.h>
+
+#include <limits>
 #include <stdexcept>
 #include <string>
+#include <utility>
 
 namespace poseidon
 {
@@ -12,6 +16,27 @@ namespace gpu
 {
 namespace
 {
+
+class NvtxRange
+{
+public:
+    explicit NvtxRange(std::string name)
+        : name_(std::move(name))
+    {
+        nvtxRangePushA(name_.c_str());
+    }
+
+    NvtxRange(const NvtxRange &) = delete;
+    NvtxRange &operator=(const NvtxRange &) = delete;
+
+    ~NvtxRange()
+    {
+        nvtxRangePop();
+    }
+
+private:
+    std::string name_;
+};
 
 const GpuParameterShard *find_parameter_shard(
     const GpuLevelInfo &level_info,
@@ -160,20 +185,17 @@ void rescale_poly(
     const GpuConstPolyShardView &source_shard,
     const GpuParameterShard &parameter_shard,
     std::size_t source_q_count,
-    std::size_t degree)
+    std::size_t degree,
+    GpuWord *scratch_q_last,
+    GpuWord *scratch_correction)
 {
     const std::size_t destination_q_count = source_q_count - 1;
     const std::size_t q_last_limb = source_q_count - 1;
     const int device_id = destination_shard.device_id;
 
-    DeviceVector<GpuWord> scratch_q_last(degree, device_id);
-    DeviceVector<GpuWord> scratch_correction(
-        destination_q_count * degree,
-        device_id);
-
     GpuPolyShardView q_last_coeff_shard;
     q_last_coeff_shard.device_id = device_id;
-    q_last_coeff_shard.ptr = scratch_q_last.data();
+    q_last_coeff_shard.ptr = scratch_q_last;
     q_last_coeff_shard.limb_begin = q_last_limb;
     q_last_coeff_shard.limb_count = 1;
     q_last_coeff_shard.coeff_begin = 0;
@@ -185,31 +207,40 @@ void rescale_poly(
         1,
         degree);
 
-    kernel::launch_inverse_ntt_poly_shard(
-        q_last_coeff_shard,
-        q_last_ntt_source,
-        parameter_shard,
-        degree);
+    {
+        NvtxRange range("rescale.intt_q_last");
+        kernel::launch_inverse_ntt_poly_shard(
+            q_last_coeff_shard,
+            q_last_ntt_source,
+            parameter_shard,
+            degree);
+    }
 
     GpuPolyShardView correction_shard;
     correction_shard.device_id = device_id;
-    correction_shard.ptr = scratch_correction.data();
+    correction_shard.ptr = scratch_correction;
     correction_shard.limb_begin = 0;
     correction_shard.limb_count = destination_q_count;
     correction_shard.coeff_begin = 0;
     correction_shard.coeff_count = degree;
 
-    kernel::launch_build_q_last_rescale_correction_poly_shard(
-        correction_shard,
-        make_const_shard_view(q_last_coeff_shard),
-        parameter_shard,
-        degree);
+    {
+        NvtxRange range("rescale.build_correction");
+        kernel::launch_build_q_last_rescale_correction_poly_shard(
+            correction_shard,
+            make_const_shard_view(q_last_coeff_shard),
+            parameter_shard,
+            degree);
+    }
 
-    kernel::launch_forward_ntt_poly_shard(
-        correction_shard,
-        make_const_shard_view(correction_shard),
-        parameter_shard,
-        degree);
+    {
+        NvtxRange range("rescale.forward_ntt_correction");
+        kernel::launch_forward_ntt_poly_shard(
+            correction_shard,
+            make_const_shard_view(correction_shard),
+            parameter_shard,
+            degree);
+    }
 
     const auto source_without_q_last = make_source_limb_range(
         source_shard,
@@ -217,19 +248,15 @@ void rescale_poly(
         destination_q_count,
         degree);
 
-    kernel::launch_apply_q_last_rescale_correction_poly_shard(
-        destination_shard,
-        source_without_q_last,
-        make_const_shard_view(correction_shard),
-        parameter_shard,
-        degree);
-
-    gpu_check_cuda(
-        cudaSetDevice(device_id),
-        "GpuModSwitchHandler::rescale_ciphertext cudaSetDevice before sync");
-    gpu_check_cuda(
-        cudaDeviceSynchronize(),
-        "GpuModSwitchHandler::rescale_ciphertext scratch lifetime sync");
+    {
+        NvtxRange range("rescale.apply_correction");
+        kernel::launch_apply_q_last_rescale_correction_poly_shard(
+            destination_shard,
+            source_without_q_last,
+            make_const_shard_view(correction_shard),
+            parameter_shard,
+            degree);
+    }
 }
 
 }  // namespace
@@ -238,12 +265,73 @@ GpuModSwitchHandler::GpuModSwitchHandler(const GpuParameterData &params)
     : params_(params)
 {}
 
+GpuModSwitchHandler::~GpuModSwitchHandler()
+{
+    try
+    {
+        if (rescale_scratch_.device_id >= 0 &&
+            (rescale_scratch_.q_last_capacity != 0 ||
+             rescale_scratch_.correction_capacity != 0))
+        {
+            cudaSetDevice(rescale_scratch_.device_id);
+            cudaDeviceSynchronize();
+        }
+    }
+    catch (...)
+    {}
+}
+
+void GpuModSwitchHandler::ensure_rescale_scratch(
+    std::size_t degree,
+    std::size_t destination_q_count,
+    int device_id) const
+{
+    NvtxRange range("rescale.ensure_scratch");
+    if (destination_q_count != 0 &&
+        degree > std::numeric_limits<std::size_t>::max() / destination_q_count)
+    {
+        throw std::overflow_error(
+            "GpuModSwitchHandler::ensure_rescale_scratch: scratch size overflow");
+    }
+
+    const std::size_t q_last_size = degree;
+    const std::size_t correction_size = destination_q_count * degree;
+    const bool need_reallocate =
+        rescale_scratch_.device_id != device_id ||
+        rescale_scratch_.q_last_capacity < q_last_size ||
+        rescale_scratch_.correction_capacity < correction_size;
+
+    if (!need_reallocate)
+    {
+        return;
+    }
+
+    if (rescale_scratch_.device_id >= 0 &&
+        (rescale_scratch_.q_last_capacity != 0 ||
+         rescale_scratch_.correction_capacity != 0))
+    {
+        gpu_check_cuda(
+            cudaSetDevice(rescale_scratch_.device_id),
+            "GpuModSwitchHandler::ensure_rescale_scratch cudaSetDevice before realloc");
+        gpu_check_cuda(
+            cudaDeviceSynchronize(),
+            "GpuModSwitchHandler::ensure_rescale_scratch realloc sync");
+    }
+
+    rescale_scratch_.q_last.allocate(q_last_size, device_id);
+    rescale_scratch_.correction.allocate(correction_size, device_id);
+    rescale_scratch_.q_last_capacity = q_last_size;
+    rescale_scratch_.correction_capacity = correction_size;
+    rescale_scratch_.device_id = device_id;
+}
+
 void GpuModSwitchHandler::rescale_ciphertext(
     GpuCiphertextView &destination_view,
     const GpuConstCiphertextView &source_view,
     const GpuLevelInfo &source_level_info,
     const GpuLevelInfo &destination_level_info) const
 {
+    NvtxRange range("modswitch.rescale");
     validate_rescale_ciphertext_shape(
         destination_view,
         source_view,
@@ -253,6 +341,12 @@ void GpuModSwitchHandler::rescale_ciphertext(
     const std::size_t degree = source_view.meta.degree;
     const std::size_t source_q_count = source_view.meta.q_count;
     const std::size_t destination_q_count = destination_view.meta.q_count;
+    const int device_id = destination_view.polys.front().shards.front().device_id;
+
+    ensure_rescale_scratch(
+        degree,
+        destination_q_count,
+        device_id);
 
     for (std::size_t i = 0; i < source_view.polys.size(); ++i)
     {
@@ -284,12 +378,18 @@ void GpuModSwitchHandler::rescale_ciphertext(
                 "GpuModSwitchHandler::rescale_ciphertext: no matching source parameter shard");
         }
 
-        rescale_poly(
-            destination_shard,
-            source_shard,
-            *parameter_shard,
-            source_q_count,
-            degree);
+        {
+            NvtxRange component_range(
+                "rescale.component[" + std::to_string(i) + "]");
+            rescale_poly(
+                destination_shard,
+                source_shard,
+                *parameter_shard,
+                source_q_count,
+                degree,
+                rescale_scratch_.q_last.data(),
+                rescale_scratch_.correction.data());
+        }
     }
 }
 

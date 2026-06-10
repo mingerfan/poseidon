@@ -249,6 +249,7 @@ __global__ void inverse_ntt_stage_kernel(
         barrett_ratio);
 }
 
+/* INTT最后的归一化 */
 __global__ void multiply_inv_degree_kernel(
     GpuWord *values,
     const GpuWord *rns_primes,

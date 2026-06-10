@@ -2,8 +2,10 @@
 
 #include "poseidon/gpu/gpu_memory.h"
 #include "poseidon/gpu/gpu_parameter.h"
+#include "poseidon/gpu/gpu_rns_poly.h"
 
 #include <cstddef>
+#include <cstdint>
 
 namespace poseidon
 {
@@ -40,6 +42,18 @@ void launch_hybrid_multiply_accumulate(
     const GpuParameterShard &parameter_shard,
     std::size_t degree);
 
+void launch_hybrid_multiply_accumulate_two_components(
+    GpuWord *accum_q0,
+    GpuWord *accum_p0,
+    GpuWord *accum_q1,
+    GpuWord *accum_p1,
+    const GpuWord *modup_q,
+    const GpuWord *modup_p,
+    const GpuWord *key_qp0,
+    const GpuWord *key_qp1,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
 void launch_hybrid_moddown(
     GpuWord *accum_q,
     const GpuWord *accum_p,
@@ -60,6 +74,12 @@ void launch_hybrid_apply_moddown_ntt(
     const GpuWord *converted_q0,
     const GpuWord *converted_q1,
     const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+void launch_apply_galois_ntt_poly_shard(
+    const GpuPolyShardView &destination_shard,
+    const GpuConstPolyShardView &source_shard,
+    std::uint32_t galois_elt,
     std::size_t degree);
 
 }  // namespace kernel

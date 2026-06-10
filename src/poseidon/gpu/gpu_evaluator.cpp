@@ -1,8 +1,11 @@
 #include "poseidon/gpu/gpu_evaluator.h"
+#include "poseidon/gpu/kernels/gpu_keyswitch_kernels.h"
 
 #include <stdexcept>
 #include <algorithm>
 #include <cmath>
+#include <cstdint>
+#include <limits>
 #include <string>
 #include <utility>
 
@@ -61,6 +64,15 @@ bool all_components_use_layout(
     return true;
 }
 
+std::size_t checked_mul(std::size_t a, std::size_t b, const char *what)
+{
+    if (a != 0 && b > std::numeric_limits<std::size_t>::max() / a)
+    {
+        throw std::overflow_error(what);
+    }
+    return a * b;
+}
+
 void validate_ntt_ciphertext_input(
     const char *name,
     const GpuCiphertextData &source_ciphertext,
@@ -93,6 +105,139 @@ void validate_ntt_ciphertext_input(
     {
         throw std::invalid_argument(std::string(name) + ": shard layout mismatch");
     }
+}
+
+void zero_poly(
+    GpuRNSPolyView &poly,
+    const char *name)
+{
+    for (const auto &shard : poly.shards)
+    {
+        const std::size_t word_count = checked_mul(
+            shard.limb_count,
+            shard.coeff_count,
+            "GpuEvaluator zero word count overflow");
+        gpu_check_cuda(cudaSetDevice(shard.device_id), name);
+        gpu_check_cuda(
+            cudaMemset(
+                shard.ptr,
+                0,
+                word_count * sizeof(GpuWord)),
+            name);
+    }
+}
+
+void copy_poly(
+    GpuRNSPolyView &destination,
+    const GpuConstRNSPolyView &source,
+    const char *name)
+{
+    if (destination.shards.size() != source.shards.size())
+    {
+        throw std::invalid_argument(std::string(name) + ": shard count mismatch");
+    }
+
+    for (std::size_t i = 0; i < destination.shards.size(); ++i)
+    {
+        const auto &dst = destination.shards[i];
+        const auto &src = source.shards[i];
+        if (dst.device_id != src.device_id ||
+            dst.limb_begin != src.limb_begin ||
+            dst.limb_count != src.limb_count ||
+            dst.coeff_begin != src.coeff_begin ||
+            dst.coeff_count != src.coeff_count)
+        {
+            throw std::invalid_argument(std::string(name) + ": shard placement mismatch");
+        }
+
+        const std::size_t word_count = checked_mul(
+            dst.limb_count,
+            dst.coeff_count,
+            "GpuEvaluator copy word count overflow");
+        gpu_check_cuda(cudaSetDevice(dst.device_id), name);
+        gpu_check_cuda(
+            cudaMemcpy(
+                dst.ptr,
+                src.ptr,
+                word_count * sizeof(GpuWord),
+                cudaMemcpyDeviceToDevice),
+            name);
+    }
+}
+
+std::uint32_t galois_elt_from_rotation_step(
+    std::size_t degree,
+    int step)
+{
+    if (degree == 0 || degree > static_cast<std::size_t>(
+            std::numeric_limits<std::uint32_t>::max() / 2))
+    {
+        throw std::invalid_argument("GpuEvaluator::rotate: invalid degree");
+    }
+    if ((degree & (degree - 1)) != 0)
+    {
+        throw std::invalid_argument("GpuEvaluator::rotate: degree must be a power of two");
+    }
+
+    const std::uint32_t n = static_cast<std::uint32_t>(degree);
+    const std::uint32_t m32 = n << 1;
+    const std::uint64_t m = static_cast<std::uint64_t>(m32);
+
+    if (step == 0)
+    {
+        return m32 - 1;
+    }
+
+    const bool negative = step < 0;
+    const std::int64_t signed_step = static_cast<std::int64_t>(step);
+    const std::uint64_t abs_step = negative
+        ? static_cast<std::uint64_t>(-signed_step)
+        : static_cast<std::uint64_t>(signed_step);
+
+    if (abs_step >= (static_cast<std::uint64_t>(n) >> 1))
+    {
+        throw std::invalid_argument("GpuEvaluator::rotate: step count too large");
+    }
+
+    std::uint32_t rotation_count = static_cast<std::uint32_t>(abs_step);
+    if (negative)
+    {
+        rotation_count = (n >> 1) - rotation_count;
+    }
+
+    /* 与 Poseidon::util::GaloisTool::generator_ 保持一致。 */
+    constexpr std::uint64_t generator = 5;
+    std::uint64_t galois_elt = 1;
+    while (rotation_count-- != 0)
+    {
+        galois_elt *= generator;
+        galois_elt &= m - 1;
+    }
+    return static_cast<std::uint32_t>(galois_elt);
+}
+
+std::size_t galois_key_index(std::uint32_t galois_elt)
+{
+    if ((galois_elt & 1U) == 0U)
+    {
+        throw std::invalid_argument("GpuEvaluator::rotate: invalid Galois element");
+    }
+    return static_cast<std::size_t>((galois_elt - 1U) >> 1U);
+}
+
+std::uint32_t galois_elt_for_conjugation(std::size_t degree)
+{
+    if (degree == 0 || degree > static_cast<std::size_t>(
+            std::numeric_limits<std::uint32_t>::max() / 2))
+    {
+        throw std::invalid_argument("GpuEvaluator::conjugate: invalid degree");
+    }
+    if ((degree & (degree - 1)) != 0)
+    {
+        throw std::invalid_argument("GpuEvaluator::conjugate: degree must be a power of two");
+    }
+
+    return static_cast<std::uint32_t>((static_cast<std::uint64_t>(degree) << 1) - 1);
 }
 
 }  // namespace
@@ -979,31 +1124,117 @@ void GpuEvaluator::relinearize(
     destination_ciphertext = std::move(result);
 }
 
+/*顶层旋转操作入口*/
 void GpuEvaluator::rotate(
     const GpuCiphertextData &source_ciphertext,
     int step,
     const GpuGaloisKeysData &galois_keys,
     GpuCiphertextData &destination_ciphertext) const
 {
-    // TODO:
-    // GPU rotation.
-    //
-    // Current framework decision:
-    // - keep this as a top-level TODO for now;
-    // - introduce a dedicated key-switch handler only after Poseidon key-switch
-    //   layout is fully mapped.
-    //
-    // Expected future logic:
-    // - select Galois key by rotation step;
-    // - apply automorphism/permutation;
-    // - run GPU key-switch pipeline.
+    validate_ntt_ciphertext_input(
+        "GpuEvaluator::rotate",
+        source_ciphertext,
+        true);
+    if (source_ciphertext.size() != 2)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::rotate: first implementation expects a size-2 ciphertext");
+    }
+    if (source_ciphertext.meta.p_count != 0)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::rotate: input ciphertext p limbs are not supported");
+    }
+    if (source_ciphertext.polys_.at(0).shards.size() != 1)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::rotate: first implementation requires one full shard");
+    }
 
-    (void)source_ciphertext;
-    (void)step;
-    (void)galois_keys;
-    (void)destination_ciphertext;
+    const int device_id = source_ciphertext.fields_.at(0).device_id;
+    const auto &reference_layout = source_ciphertext.polys_.at(0);
+    const auto &level_info = params_.get_level(source_ciphertext.meta.parms_id);
 
-    throw std::runtime_error("GpuEvaluator::rotate is not implemented yet");
+    GpuCiphertextData result =
+        GpuCiphertextData::allocate_single_device_sharded(
+            source_ciphertext.meta.degree,
+            source_ciphertext.meta.q_count,
+            2,
+            device_id,
+            reference_layout.shards,
+            source_ciphertext.meta.p_count);
+
+    result.meta = source_ciphertext.meta;
+    result.meta.component_count = 2;
+    result.meta.is_ntt_form = true;
+
+    auto source_view = source_ciphertext.make_const_view();
+    auto destination_view = result.make_view();
+
+    /*step为0说明没有旋转，直接保持不变*/
+    if (step == 0)
+    {
+        copy_poly(
+            destination_view.polys[0],
+            source_view.polys[0],
+            "GpuEvaluator::rotate copy c0");
+        copy_poly(
+            destination_view.polys[1],
+            source_view.polys[1],
+            "GpuEvaluator::rotate copy c1");
+        destination_ciphertext = std::move(result);
+        return;
+    }
+
+    if (galois_keys.empty())
+    {
+        throw std::invalid_argument("GpuEvaluator::rotate: empty galois keys");
+    }
+
+    /*step不为0的情况，step表示左旋转位数，galois_elt_from_rotation_step负责把step转换成密文的Galois element形态。*/
+    const std::uint32_t galois_elt = galois_elt_from_rotation_step(source_ciphertext.meta.degree, step);
+    /*选择密钥，因为不同的step对应不同的旋转密钥，所以galois_key_index选择对应的高斯密钥*/
+    const std::size_t key_index = galois_key_index(galois_elt);
+
+    GpuCiphertextData rotated_c1 =
+        GpuCiphertextData::allocate_single_device_sharded(
+            source_ciphertext.meta.degree,
+            source_ciphertext.meta.q_count,
+            1,
+            device_id,
+            reference_layout.shards,
+            source_ciphertext.meta.p_count);
+    rotated_c1.meta = source_ciphertext.meta;
+    rotated_c1.meta.component_count = 1;
+    rotated_c1.meta.is_ntt_form = true;
+
+    auto rotated_c1_view = rotated_c1.make_view();
+
+    kernel::launch_apply_galois_ntt_poly_shard(
+        destination_view.polys[0].shards.front(),
+        source_view.polys[0].shards.front(),
+        galois_elt,
+        source_ciphertext.meta.degree);
+    kernel::launch_apply_galois_ntt_poly_shard(
+        rotated_c1_view.polys[0].shards.front(),
+        source_view.polys[1].shards.front(),
+        galois_elt,
+        source_ciphertext.meta.degree);
+
+    /* c1 先清零，后续 switch-key 会把 rotated_c1 * galois_key 累加进去。 */
+    zero_poly(destination_view.polys[1], "GpuEvaluator::rotate zero c1");
+
+    auto rotated_c1_const_view = rotated_c1.make_const_view();
+    auto galois_keys_view = galois_keys.make_const_view();
+    keyswitch_handler_.switch_key_hybrid_ciphertext(
+        destination_view,
+        rotated_c1_const_view.polys[0],
+        galois_keys_view,
+        galois_keys,
+        key_index,
+        level_info);
+
+    destination_ciphertext = std::move(result);
 }
 
 void GpuEvaluator::conjugate(
@@ -1011,19 +1242,91 @@ void GpuEvaluator::conjugate(
     const GpuGaloisKeysData &galois_keys,
     GpuCiphertextData &destination_ciphertext) const
 {
-    // TODO:
-    // GPU conjugation.
-    //
-    // Current framework decision:
-    // - keep this as a top-level TODO for now;
-    // - introduce a dedicated key-switch handler only after Poseidon key-switch
-    //   layout is fully mapped.
+    validate_ntt_ciphertext_input(
+        "GpuEvaluator::conjugate",
+        source_ciphertext,
+        true);
+    if (source_ciphertext.size() != 2)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::conjugate: first implementation expects a size-2 ciphertext");
+    }
+    if (source_ciphertext.meta.p_count != 0)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::conjugate: input ciphertext p limbs are not supported");
+    }
+    if (source_ciphertext.polys_.at(0).shards.size() != 1)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::conjugate: first implementation requires one full shard");
+    }
+    if (galois_keys.empty())
+    {
+        throw std::invalid_argument("GpuEvaluator::conjugate: empty galois keys");
+    }
 
-    (void)source_ciphertext;
-    (void)galois_keys;
-    (void)destination_ciphertext;
+    const int device_id = source_ciphertext.fields_.at(0).device_id;
+    const auto &reference_layout = source_ciphertext.polys_.at(0);
+    const auto &level_info = params_.get_level(source_ciphertext.meta.parms_id);
 
-    throw std::runtime_error("GpuEvaluator::conjugate is not implemented yet");
+    GpuCiphertextData result =
+        GpuCiphertextData::allocate_single_device_sharded(
+            source_ciphertext.meta.degree,
+            source_ciphertext.meta.q_count,
+            2,
+            device_id,
+            reference_layout.shards,
+            source_ciphertext.meta.p_count);
+
+    result.meta = source_ciphertext.meta;
+    result.meta.component_count = 2;
+    result.meta.is_ntt_form = true;
+
+    const std::uint32_t galois_elt =
+        galois_elt_for_conjugation(source_ciphertext.meta.degree);
+    const std::size_t key_index = galois_key_index(galois_elt);
+
+    GpuCiphertextData conjugated_c1 =
+        GpuCiphertextData::allocate_single_device_sharded(
+            source_ciphertext.meta.degree,
+            source_ciphertext.meta.q_count,
+            1,
+            device_id,
+            reference_layout.shards,
+            source_ciphertext.meta.p_count);
+    conjugated_c1.meta = source_ciphertext.meta;
+    conjugated_c1.meta.component_count = 1;
+    conjugated_c1.meta.is_ntt_form = true;
+
+    auto source_view = source_ciphertext.make_const_view();
+    auto destination_view = result.make_view();
+    auto conjugated_c1_view = conjugated_c1.make_view();
+
+    kernel::launch_apply_galois_ntt_poly_shard(
+        destination_view.polys[0].shards.front(),
+        source_view.polys[0].shards.front(),
+        galois_elt,
+        source_ciphertext.meta.degree);
+    kernel::launch_apply_galois_ntt_poly_shard(
+        conjugated_c1_view.polys[0].shards.front(),
+        source_view.polys[1].shards.front(),
+        galois_elt,
+        source_ciphertext.meta.degree);
+
+    zero_poly(destination_view.polys[1], "GpuEvaluator::conjugate zero c1");
+
+    auto conjugated_c1_const_view = conjugated_c1.make_const_view();
+    auto galois_keys_view = galois_keys.make_const_view();
+    keyswitch_handler_.switch_key_hybrid_ciphertext(
+        destination_view,
+        conjugated_c1_const_view.polys[0],
+        galois_keys_view,
+        galois_keys,
+        key_index,
+        level_info);
+
+    destination_ciphertext = std::move(result);
 }
 
 }  // namespace gpu

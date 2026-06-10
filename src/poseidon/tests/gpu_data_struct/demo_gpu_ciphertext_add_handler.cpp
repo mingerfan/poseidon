@@ -40,6 +40,23 @@ namespace
 constexpr int kSkip = 77;
 constexpr bool kRunCorrectnessChecks = false;
 
+class NvtxRange
+{
+public:
+    explicit NvtxRange(const char *name)
+    {
+        nvtxRangePushA(name);
+    }
+
+    NvtxRange(const NvtxRange &) = delete;
+    NvtxRange &operator=(const NvtxRange &) = delete;
+
+    ~NvtxRange()
+    {
+        nvtxRangePop();
+    }
+};
+
 bool env_flag_enabled(const char *name)
 {
     const char *value = std::getenv(name);
@@ -214,7 +231,8 @@ int log2_degree(std::size_t degree)
 
 poseidon::ParametersLiteral make_benchmark_parameters(
     std::size_t degree,
-    std::size_t q_count)
+    std::size_t q_count,
+    std::size_t p_count = 0)
 {
     const int log_n = log2_degree(degree);
     poseidon::ParametersLiteral parms(
@@ -231,7 +249,7 @@ poseidon::ParametersLiteral make_benchmark_parameters(
 
     parms.set_log_modulus(
         std::vector<std::uint32_t>(q_count, 30),
-        std::vector<std::uint32_t>{});
+        std::vector<std::uint32_t>(p_count, 30));
     return parms;
 }
 
@@ -974,6 +992,193 @@ int run_nsys_multiply_plain_probe()
     return EXIT_SUCCESS;
 }
 
+struct NsysMultiplyRelinRescaleCase
+{
+    std::size_t degree = 0;
+    std::size_t q_count = 0;
+    std::size_t p_count = 0;
+    std::unique_ptr<poseidon::PoseidonContext> context;
+    std::unique_ptr<poseidon::gpu::GpuParameterData> gpu_params;
+    std::unique_ptr<poseidon::gpu::GpuEvaluator> evaluator;
+    poseidon::gpu::GpuCiphertextData gpu_ct0;
+    poseidon::gpu::GpuCiphertextData gpu_ct1;
+    poseidon::gpu::GpuRelinKeysData gpu_relin_keys;
+    poseidon::gpu::GpuCiphertextData gpu_multiply_result;
+    poseidon::gpu::GpuCiphertextData gpu_relinearize_result;
+    poseidon::gpu::GpuCiphertextData gpu_result;
+
+    void run_once()
+    {
+        {
+            NvtxRange range("chain.multiply");
+            evaluator->multiply(gpu_ct0, gpu_ct1, gpu_multiply_result);
+        }
+        {
+            NvtxRange range("chain.relinearize");
+            evaluator->relinearize(
+                gpu_multiply_result,
+                gpu_relin_keys,
+                gpu_relinearize_result);
+        }
+        {
+            NvtxRange range("chain.rescale");
+            evaluator->rescale(gpu_relinearize_result, gpu_result);
+        }
+    }
+};
+
+NsysMultiplyRelinRescaleCase prepare_nsys_multiply_relin_rescale_case(
+    std::size_t degree,
+    std::size_t q_count,
+    std::size_t p_count,
+    int device_id)
+{
+    using namespace poseidon;
+    using namespace poseidon::gpu;
+
+    if (p_count == 0)
+    {
+        throw std::invalid_argument(
+            "POSEIDON_NSYS_P_COUNT must be greater than zero for relinearize");
+    }
+
+    NsysMultiplyRelinRescaleCase result;
+    result.degree = degree;
+    result.q_count = q_count;
+    result.p_count = p_count;
+
+    const auto parms = make_benchmark_parameters(degree, q_count, p_count);
+    result.context = std::make_unique<PoseidonContext>(parms);
+
+    KeyGenerator keygen(*result.context);
+    PublicKey public_key;
+    keygen.create_public_key(public_key);
+    RelinKeys relin_keys;
+    keygen.create_relin_keys(relin_keys);
+
+    CKKSEncoder encoder(*result.context);
+    Encryptor encryptor(*result.context, public_key, keygen.secret_key());
+
+    Plaintext plain0;
+    Plaintext plain1;
+    encoder.encode(std::vector<double>{1.0, 2.0, 3.0, 4.0}, parms.scale(), plain0);
+    encoder.encode(std::vector<double>{5.0, 6.0, 7.0, 8.0}, parms.scale(), plain1);
+
+    Ciphertext ct0;
+    Ciphertext ct1;
+    encryptor.encrypt(plain0, ct0);
+    encryptor.encrypt(plain1, ct1);
+
+    result.gpu_params = std::make_unique<GpuParameterData>(*result.context, device_id);
+    result.evaluator = std::make_unique<GpuEvaluator>(*result.gpu_params);
+    result.gpu_ct0 = GpuUploader::upload_ciphertext(ct0, device_id);
+    result.gpu_ct1 = GpuUploader::upload_ciphertext(ct1, device_id);
+    result.gpu_relin_keys = GpuUploader::upload_relin_keys(relin_keys, device_id);
+
+    return result;
+}
+
+int run_nsys_multiply_relin_rescale_probe()
+{
+    using poseidon::gpu::gpu_check_cuda;
+
+    const int device_id = 0;
+    RmmPoolScope rmm_scope(device_id);
+
+    const std::size_t degree =
+        env_size_or("POSEIDON_NSYS_DEGREE", 65536);
+    const std::size_t q_count =
+        env_size_or("POSEIDON_NSYS_Q_COUNT", 32);
+    const std::size_t p_count =
+        env_size_or("POSEIDON_NSYS_P_COUNT", 6);
+    const std::size_t timing_iterations =
+        env_size_or("POSEIDON_NSYS_ITERATIONS", 10);
+    const std::size_t warmup_iterations =
+        env_size_or("POSEIDON_NSYS_WARMUP", 1);
+
+    if (timing_iterations == 0)
+    {
+        throw std::invalid_argument(
+            "POSEIDON_NSYS_ITERATIONS must be greater than zero");
+    }
+
+    auto current_case = prepare_nsys_multiply_relin_rescale_case(
+        degree,
+        q_count,
+        p_count,
+        device_id);
+
+    gpu_check_cuda(
+        cudaSetDevice(device_id),
+        "nsys multiply_relinearize_rescale cudaSetDevice");
+    for (std::size_t i = 0; i < warmup_iterations; ++i)
+    {
+        current_case.run_once();
+    }
+    gpu_check_cuda(
+        cudaDeviceSynchronize(),
+        "nsys multiply_relinearize_rescale warmup synchronize");
+
+    const std::string range_name =
+        "multiply_relinearize_rescale N=" + std::to_string(degree) +
+        " q=" + std::to_string(q_count) +
+        " p=" + std::to_string(p_count);
+
+    std::cout << "\n[nsys multiply + relinearize + rescale probe]\n";
+    std::cout << "degree                 = " << degree << "\n";
+    std::cout << "q_count                = " << q_count << "\n";
+    std::cout << "p_count                = " << p_count << "\n";
+    std::cout << "warmup iterations      = " << warmup_iterations << "\n";
+    std::cout << "timing iterations      = " << timing_iterations << "\n";
+    std::cout << "included in capture    = GpuEvaluator::multiply + relinearize + rescale\n";
+    std::cout << "excluded from capture  = context/keygen/encode/encrypt/upload/warmup/download\n";
+    std::cout << "capture range          = cudaProfilerStart/Stop\n";
+    std::cout << "nvtx range             = " << range_name << "\n";
+
+    cudaEvent_t gpu_start = nullptr;
+    cudaEvent_t gpu_stop = nullptr;
+    gpu_check_cuda(cudaEventCreate(&gpu_start), "nsys cudaEventCreate start");
+    gpu_check_cuda(cudaEventCreate(&gpu_stop), "nsys cudaEventCreate stop");
+
+    gpu_check_cuda(cudaProfilerStart(), "nsys cudaProfilerStart");
+    nvtxRangePushA(range_name.c_str());
+    const auto wall_begin = std::chrono::steady_clock::now();
+    gpu_check_cuda(cudaEventRecord(gpu_start), "nsys cudaEventRecord start");
+    for (std::size_t i = 0; i < timing_iterations; ++i)
+    {
+        current_case.run_once();
+    }
+    gpu_check_cuda(cudaEventRecord(gpu_stop), "nsys cudaEventRecord stop");
+    gpu_check_cuda(
+        cudaEventSynchronize(gpu_stop),
+        "nsys cudaEventSynchronize stop");
+    const auto wall_end = std::chrono::steady_clock::now();
+    nvtxRangePop();
+    gpu_check_cuda(cudaProfilerStop(), "nsys cudaProfilerStop");
+
+    float gpu_event_total_ms = 0.0F;
+    gpu_check_cuda(
+        cudaEventElapsedTime(&gpu_event_total_ms, gpu_start, gpu_stop),
+        "nsys cudaEventElapsedTime");
+
+    gpu_check_cuda(cudaEventDestroy(gpu_start), "nsys cudaEventDestroy start");
+    gpu_check_cuda(cudaEventDestroy(gpu_stop), "nsys cudaEventDestroy stop");
+
+    const double wall_total_ms =
+        std::chrono::duration<double, std::milli>(wall_end - wall_begin).count();
+    const double wall_avg_ms = wall_total_ms / timing_iterations;
+    const double event_avg_ms =
+        static_cast<double>(gpu_event_total_ms) / timing_iterations;
+
+    std::cout << std::fixed << std::setprecision(6);
+    std::cout << "gpu wall total ms      = " << wall_total_ms << "\n";
+    std::cout << "gpu wall avg ms        = " << wall_avg_ms << "\n";
+    std::cout << "gpu event total ms     = " << gpu_event_total_ms << "\n";
+    std::cout << "gpu event avg ms       = " << event_avg_ms << "\n";
+
+    return EXIT_SUCCESS;
+}
+
 int run_demo()
 {
     using namespace poseidon;
@@ -999,6 +1204,14 @@ int run_demo()
     keygen.create_public_key(public_key);
     RelinKeys relin_keys;
     keygen.create_relin_keys(relin_keys);
+    constexpr int rotate_step = 1;
+    GaloisKeys galois_keys;
+    const auto galois_tool = context.crt_context()->galois_tool();
+    keygen.create_galois_keys(
+        std::vector<std::uint32_t>{
+            galois_tool->get_elt_from_step(rotate_step),
+            galois_tool->get_elt_from_step(0)},
+        galois_keys);
 
     CKKSEncoder encoder(context);
     Encryptor encryptor(context, public_key, keygen.secret_key());
@@ -1035,6 +1248,7 @@ int run_demo()
     auto gpu_ct1 = GpuUploader::upload_ciphertext(ct1, device_id);
     auto gpu_plain1 = GpuUploader::upload_plaintext(plain1, device_id);
     auto gpu_relin_keys = GpuUploader::upload_relin_keys(relin_keys, device_id);
+    auto gpu_galois_keys = GpuUploader::upload_galois_keys(galois_keys, device_id);
 
     GpuEvaluator gpu_evaluator(gpu_params);
 
@@ -1096,6 +1310,73 @@ int run_demo()
     {
         throw std::runtime_error(
             "GPU multiply + relinearize + rescale correctness check failed");
+    }
+
+    std::cout << "\n[rotate correctness]\n";
+    std::cout << "rotate step = " << rotate_step << "\n";
+    Ciphertext cpu_rotate_result;
+    cpu_evaluator->rotate(
+        ct0,
+        cpu_rotate_result,
+        rotate_step,
+        galois_keys);
+
+    GpuCiphertextData gpu_rotate_output;
+    gpu_evaluator.rotate(
+        gpu_ct0,
+        rotate_step,
+        gpu_galois_keys,
+        gpu_rotate_output);
+    gpu_check_cuda(
+        cudaDeviceSynchronize(),
+        "GpuEvaluator::rotate correctness sync");
+
+    Ciphertext gpu_rotate_download;
+    GpuUploader::download_ciphertext(
+        gpu_rotate_output,
+        gpu_rotate_download,
+        context);
+
+    std::cout << "\n[rotate raw comparison]\n";
+    const bool rotate_raw_equal = print_raw_comparison(
+        cpu_rotate_result,
+        gpu_rotate_download,
+        8);
+    if (!rotate_raw_equal)
+    {
+        throw std::runtime_error("GPU rotate correctness check failed");
+    }
+
+    std::cout << "\n[conjugate correctness]\n";
+    Ciphertext cpu_conjugate_result;
+    cpu_evaluator->conjugate(
+        ct0,
+        galois_keys,
+        cpu_conjugate_result);
+
+    GpuCiphertextData gpu_conjugate_output;
+    gpu_evaluator.conjugate(
+        gpu_ct0,
+        gpu_galois_keys,
+        gpu_conjugate_output);
+    gpu_check_cuda(
+        cudaDeviceSynchronize(),
+        "GpuEvaluator::conjugate correctness sync");
+
+    Ciphertext gpu_conjugate_download;
+    GpuUploader::download_ciphertext(
+        gpu_conjugate_output,
+        gpu_conjugate_download,
+        context);
+
+    std::cout << "\n[conjugate raw comparison]\n";
+    const bool conjugate_raw_equal = print_raw_comparison(
+        cpu_conjugate_result,
+        gpu_conjugate_download,
+        8);
+    if (!conjugate_raw_equal)
+    {
+        throw std::runtime_error("GPU conjugate correctness check failed");
     }
 
     Ciphertext cpu_multiply_plain_result;
@@ -1254,6 +1535,42 @@ int run_demo()
         [&]() { gpu_evaluator.multiply_plain(gpu_ct0, gpu_plain1, gpu_timing_output); });
 
     benchmark_operation(
+        "rotate",
+        [&]()
+        {
+            cpu_evaluator->rotate(
+                ct0,
+                cpu_timing_result,
+                rotate_step,
+                galois_keys);
+        },
+        [&]()
+        {
+            gpu_evaluator.rotate(
+                gpu_ct0,
+                rotate_step,
+                gpu_galois_keys,
+                gpu_timing_output);
+        });
+
+    benchmark_operation(
+        "conjugate",
+        [&]()
+        {
+            cpu_evaluator->conjugate(
+                ct0,
+                galois_keys,
+                cpu_timing_result);
+        },
+        [&]()
+        {
+            gpu_evaluator.conjugate(
+                gpu_ct0,
+                gpu_galois_keys,
+                gpu_timing_output);
+        });
+
+    benchmark_operation(
         "rescale",
         [&]() { cpu_evaluator->rescale(cpu_multiply_plain_result, cpu_timing_result); },
         [&]() { gpu_evaluator.rescale(gpu_multiply_plain_output, gpu_timing_output); });
@@ -1286,6 +1603,10 @@ int main()
 
     try
     {
+        if (env_flag_enabled("POSEIDON_NSYS_MUL_RELIN_RESCALE"))
+        {
+            return run_nsys_multiply_relin_rescale_probe();
+        }
         if (env_flag_enabled("POSEIDON_NSYS_MULTIPLY_PLAIN"))
         {
             return run_nsys_multiply_plain_probe();

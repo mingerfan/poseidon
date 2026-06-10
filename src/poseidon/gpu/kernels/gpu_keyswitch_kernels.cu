@@ -1,5 +1,7 @@
 #include "poseidon/gpu/kernels/gpu_keyswitch_kernels.h"
 
+#include <cstdint>
+#include <limits>
 #include <stdexcept>
 #include <string>
 
@@ -74,6 +76,48 @@ __device__ __forceinline__ GpuWord reduce_to_modulus(
     return value < modulus
         ? value
         : barrett_reduce_u64_u32(value, modulus, barrett_ratio);
+}
+
+__device__ __forceinline__ std::uint32_t reverse_bits_limited(
+    std::uint32_t value,
+    unsigned int bit_count)
+{
+    return __brev(value) >> (32U - bit_count);
+}
+
+__global__ void apply_galois_ntt_poly_shard_kernel(
+    GpuWord *destination,
+    const GpuWord *source,
+    std::uint32_t galois_elt,
+    std::size_t limb_count,
+    std::size_t degree,
+    unsigned int degree_power)
+{
+    const std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    const std::size_t total = limb_count * degree;
+    if (tid >= total)
+    {
+        return;
+    }
+
+    const std::size_t limb = tid / degree;
+    const std::uint32_t coeff =
+        static_cast<std::uint32_t>(tid - limb * degree);
+    const std::uint32_t degree_u32 = static_cast<std::uint32_t>(degree);
+    const std::uint32_t degree_minus_one = degree_u32 - 1;
+
+    const std::uint32_t reversed =
+        reverse_bits_limited(degree_u32 + coeff, degree_power + 1);
+    const std::uint64_t index_raw =
+        (static_cast<std::uint64_t>(galois_elt) *
+         static_cast<std::uint64_t>(reversed)) >> 1;
+    const std::uint32_t source_coeff =
+        reverse_bits_limited(
+            static_cast<std::uint32_t>(index_raw & degree_minus_one),
+            degree_power);
+
+    destination[limb * degree + coeff] =
+        source[limb * degree + source_coeff];
 }
 
 __global__ void hybrid_modup_qp_kernel(
@@ -317,6 +361,67 @@ __global__ void hybrid_multiply_accumulate_kernel(
         add_mod(accum[local_offset], product, modulus);
 }
 
+__global__ void hybrid_multiply_accumulate_two_components_kernel(
+    GpuWord *accum_q0,
+    GpuWord *accum_p0,
+    GpuWord *accum_q1,
+    GpuWord *accum_p1,
+    const GpuWord *modup_q,
+    const GpuWord *modup_p,
+    const GpuWord *key_qp0,
+    const GpuWord *key_qp1,
+    const GpuWord *rns_primes,
+    const GpuWide *rns_modulus_constants,
+    std::size_t base_q_size,
+    std::size_t base_p_size,
+    std::size_t degree)
+{
+    const std::size_t q_word_count = base_q_size * degree;
+    const std::size_t p_word_count = base_p_size * degree;
+    const std::size_t total = q_word_count + p_word_count;
+    const std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    if (tid >= total)
+    {
+        return;
+    }
+
+    GpuWord *accum0 = accum_q0;
+    GpuWord *accum1 = accum_q1;
+    const GpuWord *modup = modup_q;
+    std::size_t local_offset = tid;
+    std::size_t table_limb = tid / degree;
+    std::size_t key_offset = tid;
+
+    if (tid >= q_word_count)
+    {
+        local_offset = tid - q_word_count;
+        accum0 = accum_p0;
+        accum1 = accum_p1;
+        modup = modup_p;
+        table_limb = base_q_size + local_offset / degree;
+        key_offset = q_word_count + local_offset;
+    }
+
+    const GpuWord modulus = rns_primes[table_limb];
+    const GpuWide barrett_ratio = rns_modulus_constants[table_limb];
+    const GpuWord value = modup[local_offset];
+    const GpuWord product0 = mul_mod(
+        value,
+        key_qp0[key_offset],
+        modulus,
+        barrett_ratio);
+    const GpuWord product1 = mul_mod(
+        value,
+        key_qp1[key_offset],
+        modulus,
+        barrett_ratio);
+
+    accum0[local_offset] =
+        add_mod(accum0[local_offset], product0, modulus);
+    accum1[local_offset] =
+        add_mod(accum1[local_offset], product1, modulus);
+}
+
 __global__ void hybrid_moddown_kernel(
     GpuWord *accum_q,
     const GpuWord *accum_p,
@@ -514,6 +619,22 @@ void validate_hybrid_tables(
     }
 }
 
+unsigned int checked_log2_degree(std::size_t degree, const char *name)
+{
+    if (degree < 2 || (degree & (degree - 1)) != 0)
+    {
+        throw std::invalid_argument(std::string(name) + ": degree must be a power of two");
+    }
+
+    unsigned int result = 0;
+    while (degree > 1)
+    {
+        degree >>= 1;
+        ++result;
+    }
+    return result;
+}
+
 }  // namespace
 
 void launch_hybrid_modup_decomposition(
@@ -700,6 +821,60 @@ void launch_hybrid_multiply_accumulate(
         "launch_hybrid_multiply_accumulate kernel launch");
 }
 
+void launch_hybrid_multiply_accumulate_two_components(
+    GpuWord *accum_q0,
+    GpuWord *accum_p0,
+    GpuWord *accum_q1,
+    GpuWord *accum_p1,
+    const GpuWord *modup_q,
+    const GpuWord *modup_p,
+    const GpuWord *key_qp0,
+    const GpuWord *key_qp1,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    validate_hybrid_tables(
+        "launch_hybrid_multiply_accumulate_two_components",
+        parameter_shard,
+        degree);
+    if (accum_q0 == nullptr || accum_p0 == nullptr ||
+        accum_q1 == nullptr || accum_p1 == nullptr ||
+        modup_q == nullptr || modup_p == nullptr ||
+        key_qp0 == nullptr || key_qp1 == nullptr)
+    {
+        throw std::invalid_argument(
+            "launch_hybrid_multiply_accumulate_two_components: null data pointer");
+    }
+
+    gpu_check_cuda(
+        cudaSetDevice(parameter_shard.device_id),
+        "launch_hybrid_multiply_accumulate_two_components cudaSetDevice");
+
+    const std::size_t base_q_size = parameter_shard.hybrid_base_q_count;
+    const std::size_t base_p_size = parameter_shard.hybrid_base_p_count;
+    const std::size_t total = (base_q_size + base_p_size) * degree;
+    constexpr int block_size = 256;
+    const int grid_size = static_cast<int>((total + block_size - 1) / block_size);
+
+    hybrid_multiply_accumulate_two_components_kernel<<<grid_size, block_size>>>(
+        accum_q0,
+        accum_p0,
+        accum_q1,
+        accum_p1,
+        modup_q,
+        modup_p,
+        key_qp0,
+        key_qp1,
+        parameter_shard.rns_primes.data(),
+        parameter_shard.rns_modulus_constants.data(),
+        base_q_size,
+        base_p_size,
+        degree);
+    gpu_check_cuda(
+        cudaGetLastError(),
+        "launch_hybrid_multiply_accumulate_two_components kernel launch");
+}
+
 void launch_hybrid_moddown(
     GpuWord *accum_q,
     const GpuWord *accum_p,
@@ -826,6 +1001,74 @@ void launch_hybrid_apply_moddown_ntt(
     gpu_check_cuda(
         cudaGetLastError(),
         "launch_hybrid_apply_moddown_ntt kernel launch");
+}
+
+void launch_apply_galois_ntt_poly_shard(
+    const GpuPolyShardView &destination_shard,
+    const GpuConstPolyShardView &source_shard,
+    std::uint32_t galois_elt,
+    std::size_t degree)
+{
+    if (destination_shard.ptr == nullptr || source_shard.ptr == nullptr)
+    {
+        throw std::invalid_argument("launch_apply_galois_ntt_poly_shard: null data pointer");
+    }
+    if (destination_shard.ptr == source_shard.ptr)
+    {
+        throw std::invalid_argument(
+            "launch_apply_galois_ntt_poly_shard: in-place permutation is not supported");
+    }
+    if (destination_shard.device_id != source_shard.device_id)
+    {
+        throw std::invalid_argument("launch_apply_galois_ntt_poly_shard: device mismatch");
+    }
+    if (destination_shard.limb_begin != source_shard.limb_begin ||
+        destination_shard.limb_count != source_shard.limb_count ||
+        destination_shard.coeff_begin != source_shard.coeff_begin ||
+        destination_shard.coeff_count != source_shard.coeff_count)
+    {
+        throw std::invalid_argument("launch_apply_galois_ntt_poly_shard: shard shape mismatch");
+    }
+    if (destination_shard.coeff_begin != 0 ||
+        destination_shard.coeff_count != degree ||
+        destination_shard.limb_count == 0)
+    {
+        throw std::invalid_argument(
+            "launch_apply_galois_ntt_poly_shard: only full coefficient shards are supported");
+    }
+    if (degree > static_cast<std::size_t>(std::numeric_limits<std::uint32_t>::max() / 2))
+    {
+        throw std::overflow_error("launch_apply_galois_ntt_poly_shard: degree is too large");
+    }
+
+    const std::uint64_t m = static_cast<std::uint64_t>(degree) << 1;
+    if ((galois_elt & 1U) == 0U || static_cast<std::uint64_t>(galois_elt) >= m)
+    {
+        throw std::invalid_argument("launch_apply_galois_ntt_poly_shard: invalid Galois element");
+    }
+
+    const unsigned int degree_power =
+        checked_log2_degree(degree, "launch_apply_galois_ntt_poly_shard");
+
+    gpu_check_cuda(
+        cudaSetDevice(destination_shard.device_id),
+        "launch_apply_galois_ntt_poly_shard cudaSetDevice");
+
+    const std::size_t total = destination_shard.limb_count * degree;
+    constexpr int block_size = 256;
+    const int grid_size = static_cast<int>(
+        (total + block_size - 1) / block_size);
+
+    apply_galois_ntt_poly_shard_kernel<<<grid_size, block_size>>>(
+        destination_shard.ptr,
+        source_shard.ptr,
+        galois_elt,
+        destination_shard.limb_count,
+        degree,
+        degree_power);
+    gpu_check_cuda(
+        cudaGetLastError(),
+        "launch_apply_galois_ntt_poly_shard kernel launch");
 }
 
 }  // namespace kernel
