@@ -2,9 +2,12 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BUILD_DIR="${BUILD_DIR:-${SCRIPT_DIR}/build}"
+DEFAULT_BUILD_DIR="${SCRIPT_DIR}/build"
+BUILD_DIR="${BUILD_DIR:-${DEFAULT_BUILD_DIR}}"
 BUILD_TYPE="${BUILD_TYPE:-Release}"
 ENABLE_GPU_TESTS="${ENABLE_GPU_TESTS:-ON}"
+CMAKE_BIN="${CMAKE_BIN:-}"
+POSEIDON_CLEAN_STALE_BUILD="${POSEIDON_CLEAN_STALE_BUILD:-ON}"
 RUN_NSYS_MULTIPLY_PLAIN="${RUN_NSYS_MULTIPLY_PLAIN:-0}"
 RUN_NSYS_MUL_RELIN_RESCALE="${RUN_NSYS_MUL_RELIN_RESCALE:-0}"
 POSEIDON_NSYS_DEGREE="${POSEIDON_NSYS_DEGREE:-16384}"
@@ -30,6 +33,40 @@ NSYS_TRACE="${NSYS_TRACE:-cuda-sw,nvtx}"
 NSYS_CAPTURE_RANGE="${NSYS_CAPTURE_RANGE:-cudaProfilerApi}"
 NSYS_CAPTURE_RANGE_END="${NSYS_CAPTURE_RANGE_END:-stop}"
 
+if [[ -z "${CMAKE_BIN}" ]]; then
+    if command -v cmake >/dev/null 2>&1; then
+        CMAKE_BIN="$(command -v cmake)"
+    elif [[ -n "${CONDA_PREFIX:-}" && -x "${CONDA_PREFIX}/bin/cmake" ]]; then
+        CMAKE_BIN="${CONDA_PREFIX}/bin/cmake"
+    else
+        echo "CMake was not found in PATH." >&2
+        echo "Install CMake on the offline machine, activate the environment that provides it," >&2
+        echo "or run with CMAKE_BIN=/absolute/path/to/cmake ./run.sh" >&2
+        exit 127
+    fi
+fi
+
+if [[ -f "${BUILD_DIR}/CMakeCache.txt" ]]; then
+    CACHE_SOURCE_DIR="$(
+        sed -n 's/^CMAKE_HOME_DIRECTORY:INTERNAL=//p' \
+            "${BUILD_DIR}/CMakeCache.txt" | tail -n 1
+    )"
+    if [[ -n "${CACHE_SOURCE_DIR}" && "${CACHE_SOURCE_DIR}" != "${SCRIPT_DIR}" ]]; then
+        if [[ "${POSEIDON_CLEAN_STALE_BUILD}" != "0" && "${BUILD_DIR}" == "${DEFAULT_BUILD_DIR}" ]]; then
+            echo "Removing stale copied CMake build directory: ${BUILD_DIR}"
+            echo "Cached source directory was: ${CACHE_SOURCE_DIR}"
+            "${CMAKE_BIN}" -E rm -rf "${BUILD_DIR}"
+        else
+            echo "Stale CMake cache detected in ${BUILD_DIR}" >&2
+            echo "Cached source directory was: ${CACHE_SOURCE_DIR}" >&2
+            echo "Current source directory is: ${SCRIPT_DIR}" >&2
+            echo "Remove the build directory, set BUILD_DIR to a fresh path, or enable" >&2
+            echo "POSEIDON_CLEAN_STALE_BUILD=ON for the default build directory." >&2
+            exit 2
+        fi
+    fi
+fi
+
 CMAKE_ARGS=(
     -S "${SCRIPT_DIR}"
     -B "${BUILD_DIR}"
@@ -42,7 +79,9 @@ if [[ -n "${CONDA_PREFIX:-}" ]]; then
 fi
 
 echo "=== Configure ==="
-cmake "${CMAKE_ARGS[@]}"
+echo "Using cmake: ${CMAKE_BIN}"
+"${CMAKE_BIN}" --version
+"${CMAKE_BIN}" "${CMAKE_ARGS[@]}"
 
 echo "=== Build ==="
 if [[ "${ENABLE_GPU_TESTS}" != "ON" ]]; then
@@ -50,7 +89,7 @@ if [[ "${ENABLE_GPU_TESTS}" != "ON" ]]; then
     exit 0
 fi
 
-cmake --build "${BUILD_DIR}" --target demo_gpu_ciphertext_add_handler -j"$(nproc)"
+"${CMAKE_BIN}" --build "${BUILD_DIR}" --target demo_gpu_ciphertext_add_handler -j"$(nproc)"
 
 DEMO_BIN="${BUILD_DIR}/demo_gpu_ciphertext_add_handler"
 if [[ ! -x "${DEMO_BIN}" ]]; then

@@ -6,12 +6,14 @@
 #include "poseidon/gpu/gpu_ciphertext.h"
 #include "poseidon/gpu/gpu_elementwise_handler.h"
 #include "poseidon/gpu/gpu_evaluator.h"
+#include "poseidon/gpu/gpu_ntt_handler.h"
 #include "poseidon/gpu/gpu_parameter.h"
 #include "poseidon/gpu/gpu_uploader.h"
 #include "poseidon/keygenerator.h"
 #include "poseidon/parameters_literal.h"
 #include "poseidon/plaintext.h"
 #include "poseidon/poseidon_context.h"
+#include "poseidon/basics/randomgen.h"
 
 #include <cuda_profiler_api.h>
 #include <cuda_runtime_api.h>
@@ -39,6 +41,52 @@ namespace
 
 constexpr int kSkip = 77;
 constexpr bool kRunCorrectnessChecks = false;
+constexpr bool kRunOperationTimingSummary = false;
+constexpr const char *kNttAlgorithmEnv = "POSEIDON_NTT_ALGO";
+constexpr const char *kNttFusionStagesEnv = "POSEIDON_NTT_FUSION_STAGES";
+
+constexpr poseidon::prng_seed_type kBenchmarkPrngSeed{
+    0x2f4a8d3c1b765e90ULL,
+    0x6c91e2b47a035fd8ULL,
+    0x13579bdf2468ace0ULL,
+    0xfedcba9876543210ULL,
+    0x0badf00d5eed1234ULL,
+    0x89abcdef01234567ULL,
+    0x55aa55aa33cc33ccULL,
+    0xc001d00dcafebeefULL};
+
+class BenchmarkPrngFactory final : public poseidon::UniformRandomGeneratorFactory
+{
+public:
+    explicit BenchmarkPrngFactory(poseidon::prng_seed_type seed)
+        : poseidon::UniformRandomGeneratorFactory(seed), base_seed_(seed)
+    {
+    }
+
+protected:
+    POSEIDON_NODISCARD auto create_impl(poseidon::prng_seed_type seed)
+        -> std::shared_ptr<poseidon::UniformRandomGenerator> override
+    {
+        const std::uint64_t stream = stream_index_++;
+        for (std::size_t i = 0; i < seed.size(); ++i)
+        {
+            seed[i] = base_seed_[i] ^
+                      (0x9e3779b97f4a7c15ULL *
+                       (stream + static_cast<std::uint64_t>(i) + 1));
+        }
+        return std::make_shared<poseidon::Blake2xbPRNG>(seed);
+    }
+
+private:
+    poseidon::prng_seed_type base_seed_;
+    std::uint64_t stream_index_ = 0;
+};
+
+void use_benchmark_randomness(poseidon::PoseidonContext &context)
+{
+    context.set_random_generator(
+        std::make_shared<BenchmarkPrngFactory>(kBenchmarkPrngSeed));
+}
 
 class NvtxRange
 {
@@ -81,6 +129,43 @@ std::size_t env_size_or(const char *name, std::size_t fallback)
     return static_cast<std::size_t>(std::stoull(value));
 }
 
+class ScopedEnvironmentValue
+{
+public:
+    ScopedEnvironmentValue(const char *name, const char *value)
+        : name_(name)
+    {
+        const char *previous = std::getenv(name_.c_str());
+        if (previous != nullptr)
+        {
+            previous_ = previous;
+        }
+        if (::setenv(name_.c_str(), value, 1) != 0)
+        {
+            throw std::runtime_error("failed to set environment variable " + name_);
+        }
+    }
+
+    ScopedEnvironmentValue(const ScopedEnvironmentValue &) = delete;
+    ScopedEnvironmentValue &operator=(const ScopedEnvironmentValue &) = delete;
+
+    ~ScopedEnvironmentValue()
+    {
+        if (previous_.has_value())
+        {
+            (void)::setenv(name_.c_str(), previous_->c_str(), 1);
+        }
+        else
+        {
+            (void)::unsetenv(name_.c_str());
+        }
+    }
+
+private:
+    std::string name_;
+    std::optional<std::string> previous_;
+};
+
 std::vector<std::size_t> env_size_list_or_empty(const char *name)
 {
     const char *value = std::getenv(name);
@@ -120,6 +205,29 @@ struct TimingResult
     double gpu_event_avg_ms = 0.0;
     double wall_speedup = 0.0;
     double event_speedup = 0.0;
+};
+
+struct OperationTimingRow
+{
+    std::string operation;
+    TimingResult timing;
+};
+
+struct GpuSampleStats
+{
+    double avg_ms = 0.0;
+    double min_ms = 0.0;
+    double median_ms = 0.0;
+    double p90_ms = 0.0;
+    double max_ms = 0.0;
+};
+
+struct NttTimingRow
+{
+    std::string operation;
+    std::string mode;
+    GpuSampleStats timing;
+    bool correct = false;
 };
 
 struct SweepBenchmarkRow
@@ -349,6 +457,36 @@ poseidon::ParametersLiteral make_benchmark_parameters(
     return mismatch_count == 0 && cpu_total == gpu_total;
 }
 
+bool ciphertext_raw_equal(
+    const poseidon::Ciphertext &expected,
+    const poseidon::Ciphertext &actual)
+{
+    const std::size_t expected_total =
+        expected.size() * expected.poly_modulus_degree() *
+        expected.coeff_modulus_size();
+    const std::size_t actual_total =
+        actual.size() * actual.poly_modulus_degree() *
+        actual.coeff_modulus_size();
+
+    if (expected_total != actual_total)
+    {
+        return false;
+    }
+
+    for (std::size_t i = 0; i < expected_total; ++i)
+    {
+        if (expected.data()[i] != actual.data()[i])
+        {
+            return false;
+        }
+    }
+    return expected.is_ntt_form() == actual.is_ntt_form() &&
+           expected.parms_id() == actual.parms_id() &&
+           expected.size() == actual.size() &&
+           expected.poly_modulus_degree() == actual.poly_modulus_degree() &&
+           expected.coeff_modulus_size() == actual.coeff_modulus_size();
+}
+
 [[maybe_unused]] void print_decoded_slots(
     const std::string &name,
     const std::vector<double> &slots,
@@ -369,7 +507,8 @@ TimingResult benchmark_cpu_gpu_average(
     int timing_iterations,
     CpuOnce cpu_once,
     GpuOnce gpu_once,
-    const char *name)
+    const char *name,
+    std::size_t gpu_warmup_iterations = 1)
 {
     cpu_once();
 
@@ -383,7 +522,10 @@ TimingResult benchmark_cpu_gpu_average(
         std::chrono::duration<double, std::milli>(cpu_end - cpu_begin).count();
 
     poseidon::gpu::gpu_check_cuda(cudaSetDevice(device_id), name);
-    gpu_once();
+    for (std::size_t i = 0; i < gpu_warmup_iterations; ++i)
+    {
+        gpu_once();
+    }
     poseidon::gpu::gpu_check_cuda(cudaDeviceSynchronize(), name);
 
     cudaEvent_t gpu_start = nullptr;
@@ -418,6 +560,256 @@ TimingResult benchmark_cpu_gpu_average(
     result.wall_speedup = result.cpu_avg_ms / result.gpu_wall_avg_ms;
     result.event_speedup = result.cpu_avg_ms / result.gpu_event_avg_ms;
     return result;
+}
+
+template <typename GpuOnce>
+GpuSampleStats benchmark_gpu_event_samples(
+    int device_id,
+    int timing_iterations,
+    GpuOnce gpu_once,
+    const char *name,
+    std::size_t gpu_warmup_iterations)
+{
+    poseidon::gpu::gpu_check_cuda(cudaSetDevice(device_id), name);
+    for (std::size_t i = 0; i < gpu_warmup_iterations; ++i)
+    {
+        gpu_once();
+    }
+    poseidon::gpu::gpu_check_cuda(cudaDeviceSynchronize(), name);
+
+    cudaEvent_t gpu_start = nullptr;
+    cudaEvent_t gpu_stop = nullptr;
+    poseidon::gpu::gpu_check_cuda(cudaEventCreate(&gpu_start), name);
+    poseidon::gpu::gpu_check_cuda(cudaEventCreate(&gpu_stop), name);
+
+    std::vector<double> samples;
+    samples.reserve(static_cast<std::size_t>(timing_iterations));
+    for (int i = 0; i < timing_iterations; ++i)
+    {
+        poseidon::gpu::gpu_check_cuda(cudaEventRecord(gpu_start), name);
+        gpu_once();
+        poseidon::gpu::gpu_check_cuda(cudaEventRecord(gpu_stop), name);
+        poseidon::gpu::gpu_check_cuda(cudaEventSynchronize(gpu_stop), name);
+
+        float elapsed_ms = 0.0F;
+        poseidon::gpu::gpu_check_cuda(
+            cudaEventElapsedTime(&elapsed_ms, gpu_start, gpu_stop),
+            name);
+        samples.push_back(static_cast<double>(elapsed_ms));
+    }
+
+    poseidon::gpu::gpu_check_cuda(cudaEventDestroy(gpu_start), name);
+    poseidon::gpu::gpu_check_cuda(cudaEventDestroy(gpu_stop), name);
+
+    std::vector<double> sorted = samples;
+    std::sort(sorted.begin(), sorted.end());
+
+    double total_ms = 0.0;
+    for (double sample : samples)
+    {
+        total_ms += sample;
+    }
+
+    const std::size_t count = sorted.size();
+    const std::size_t median_index = count / 2;
+    const std::size_t p90_index =
+        std::min(count - 1, ((count * 9 + 9) / 10) - 1);
+
+    GpuSampleStats result;
+    result.avg_ms = total_ms / static_cast<double>(count);
+    result.min_ms = sorted.front();
+    result.median_ms = count % 2 == 0
+        ? (sorted[median_index - 1] + sorted[median_index]) / 2.0
+        : sorted[median_index];
+    result.p90_ms = sorted[p90_index];
+    result.max_ms = sorted.back();
+    return result;
+}
+
+std::string format_fixed(double value, int precision)
+{
+    std::ostringstream stream;
+    stream << std::fixed << std::setprecision(precision) << value;
+    return stream.str();
+}
+
+std::string format_speedup(double value)
+{
+    return format_fixed(value, 2) + "x";
+}
+
+void print_operation_timing_table(
+    const std::vector<OperationTimingRow> &rows,
+    std::size_t degree,
+    std::size_t q_count,
+    std::size_t p_count,
+    int timing_iterations,
+    std::size_t warmup_iterations)
+{
+    constexpr int op_width = 31;
+    constexpr int cpu_width = 14;
+    constexpr int wall_width = 19;
+    constexpr int event_width = 20;
+    constexpr int wall_speedup_width = 14;
+    constexpr int event_speedup_width = 15;
+
+    const auto print_border = [&]()
+    {
+        std::cout << '+'
+                  << std::string(op_width + 2, '-')
+                  << '+'
+                  << std::string(cpu_width + 2, '-')
+                  << '+'
+                  << std::string(wall_width + 2, '-')
+                  << '+'
+                  << std::string(event_width + 2, '-')
+                  << '+'
+                  << std::string(wall_speedup_width + 2, '-')
+                  << '+'
+                  << std::string(event_speedup_width + 2, '-')
+                  << "+\n";
+    };
+
+    const auto print_row = [&](
+        const std::string &operation,
+        const std::string &cpu_avg,
+        const std::string &gpu_wall_avg,
+        const std::string &gpu_event_avg,
+        const std::string &wall_speedup,
+        const std::string &event_speedup)
+    {
+        std::cout << "| " << std::left << std::setw(op_width) << operation
+                  << " | " << std::right << std::setw(cpu_width) << cpu_avg
+                  << " | " << std::right << std::setw(wall_width) << gpu_wall_avg
+                  << " | " << std::right << std::setw(event_width) << gpu_event_avg
+                  << " | " << std::right << std::setw(wall_speedup_width) << wall_speedup
+                  << " | " << std::right << std::setw(event_speedup_width) << event_speedup
+                  << " |\n";
+    };
+
+    std::cout << "\n[operation timing summary]\n";
+    print_border();
+    print_row(
+        "operation",
+        "CPU avg (ms)",
+        "GPU wall avg (ms)",
+        "GPU event avg (ms)",
+        "wall speedup",
+        "event speedup");
+    print_border();
+    for (const auto &row : rows)
+    {
+        print_row(
+            row.operation,
+            format_fixed(row.timing.cpu_avg_ms, 6),
+            format_fixed(row.timing.gpu_wall_avg_ms, 6),
+            format_fixed(row.timing.gpu_event_avg_ms, 6),
+            format_speedup(row.timing.wall_speedup),
+            format_speedup(row.timing.event_speedup));
+    }
+    print_border();
+
+    std::cout << "parameters: CKKS, degree=" << degree
+              << ", q=" << q_count
+              << ", p=" << p_count
+              << ", iterations=" << timing_iterations
+              << ", warmup=" << warmup_iterations
+              << " average\n";
+    std::cout << "benchmark input: deterministic key/encrypt randomness\n";
+    std::cout << "excluded from timing: encode/encrypt/upload/download/decrypt/decode\n";
+    std::cout << "ntt variants: ntt_inv/ntt_fwd use fusion=1; see NTT table for fusion sweep\n";
+}
+
+void print_ntt_timing_table(
+    const std::vector<NttTimingRow> &rows,
+    std::size_t degree,
+    std::size_t q_count,
+    std::size_t p_count,
+    int timing_iterations,
+    std::size_t warmup_iterations)
+{
+    constexpr int op_width = 12;
+    constexpr int mode_width = 8;
+    constexpr int value_width = 13;
+    constexpr int correct_width = 7;
+
+    const auto print_border = [&]()
+    {
+        std::cout << '+'
+                  << std::string(op_width + 2, '-')
+                  << '+'
+                  << std::string(mode_width + 2, '-')
+                  << '+'
+                  << std::string(value_width + 2, '-')
+                  << '+'
+                  << std::string(value_width + 2, '-')
+                  << '+'
+                  << std::string(value_width + 2, '-')
+                  << '+'
+                  << std::string(value_width + 2, '-')
+                  << '+'
+                  << std::string(value_width + 2, '-')
+                  << '+'
+                  << std::string(correct_width + 2, '-')
+                  << "+\n";
+    };
+
+    const auto print_row = [&](
+        const std::string &operation,
+        const std::string &mode,
+        const std::string &avg,
+        const std::string &min,
+        const std::string &median,
+        const std::string &p90,
+        const std::string &max,
+        const std::string &correct)
+    {
+        std::cout << "| " << std::left << std::setw(op_width) << operation
+                  << " | " << std::right << std::setw(mode_width) << mode
+                  << " | " << std::right << std::setw(value_width) << avg
+                  << " | " << std::right << std::setw(value_width) << min
+                  << " | " << std::right << std::setw(value_width) << median
+                  << " | " << std::right << std::setw(value_width) << p90
+                  << " | " << std::right << std::setw(value_width) << max
+                  << " | " << std::right << std::setw(correct_width) << correct
+                  << " |\n";
+    };
+
+    std::cout << "\n[NTT mode timing summary]\n";
+    print_border();
+    print_row(
+        "operation",
+        "mode",
+        "avg (ms)",
+        "min (ms)",
+        "median (ms)",
+        "p90 (ms)",
+        "max (ms)",
+        "correct");
+    print_border();
+    for (const auto &row : rows)
+    {
+        print_row(
+            row.operation,
+            row.mode,
+            format_fixed(row.timing.avg_ms, 6),
+            format_fixed(row.timing.min_ms, 6),
+            format_fixed(row.timing.median_ms, 6),
+            format_fixed(row.timing.p90_ms, 6),
+            format_fixed(row.timing.max_ms, 6),
+            row.correct ? "OK" : "FAIL");
+    }
+    print_border();
+
+    std::cout << "parameters: CKKS, degree=" << degree
+              << ", q=" << q_count
+              << ", p=" << p_count
+              << ", iterations=" << timing_iterations
+              << ", warmup=" << warmup_iterations
+              << " per NTT mode\n";
+    std::cout << "benchmark scope: preallocated GpuCiphertextData + GpuNTTHandler only\n";
+    std::cout << "correct: raw residues and metadata compared with CPU NTT result\n";
+    std::cout << "algorithm: stage/fused2/fused3/fused4/fourstep are selected by POSEIDON_NTT_ALGO\n";
 }
 
 void append_sweep_row(
@@ -520,6 +912,7 @@ void run_sweep_benchmark_case(
 
     const auto parms = make_benchmark_parameters(degree, q_count);
     PoseidonContext context(parms);
+    use_benchmark_randomness(context);
 
     KeyGenerator keygen(context);
     PublicKey public_key;
@@ -749,6 +1142,7 @@ NsysMultiplyPlainCase prepare_nsys_multiply_plain_case(
 
     const auto parms = make_benchmark_parameters(degree, q_count);
     result.context = std::make_unique<PoseidonContext>(parms);
+    use_benchmark_randomness(*result.context);
 
     KeyGenerator keygen(*result.context);
     PublicKey public_key;
@@ -1049,6 +1443,7 @@ NsysMultiplyRelinRescaleCase prepare_nsys_multiply_relin_rescale_case(
 
     const auto parms = make_benchmark_parameters(degree, q_count, p_count);
     result.context = std::make_unique<PoseidonContext>(parms);
+    use_benchmark_randomness(*result.context);
 
     KeyGenerator keygen(*result.context);
     PublicKey public_key;
@@ -1189,6 +1584,7 @@ int run_demo()
 
     const auto parms = make_demo_parameters();
     PoseidonContext context(parms);
+    use_benchmark_randomness(context);
 
     std::cout << "===== GPU Ciphertext Elementwise Evaluator Demo =====\n";
     std::cout << "scheme        = CKKS\n";
@@ -1257,126 +1653,129 @@ int run_demo()
         // Re-enable detailed CPU/GPU residue and decode checks here when needed.
     }
 
-    std::cout << "\n[multiply + relinearize + rescale correctness]\n";
-    Ciphertext cpu_multiply_result;
-    Ciphertext cpu_relinearize_result;
-    Ciphertext cpu_multiply_relin_rescale_result;
-    cpu_evaluator->multiply(ct0, ct1, cpu_multiply_result);
-    cpu_evaluator->relinearize(
-        cpu_multiply_result,
-        cpu_relinearize_result,
-        relin_keys);
-    cpu_evaluator->rescale(
-        cpu_relinearize_result,
-        cpu_multiply_relin_rescale_result);
-
-    GpuCiphertextData gpu_multiply_result;
-    GpuCiphertextData gpu_relinearize_result;
-    GpuCiphertextData gpu_multiply_relin_rescale_output;
-    gpu_evaluator.multiply(gpu_ct0, gpu_ct1, gpu_multiply_result);
-    gpu_evaluator.relinearize(
-        gpu_multiply_result,
-        gpu_relin_keys,
-        gpu_relinearize_result);
-    gpu_evaluator.rescale(
-        gpu_relinearize_result,
-        gpu_multiply_relin_rescale_output);
-    gpu_check_cuda(
-        cudaDeviceSynchronize(),
-        "GpuEvaluator::multiply_relinearize_rescale correctness sync");
-
-    Ciphertext gpu_relinearize_download;
-    Ciphertext gpu_multiply_relin_rescale_download;
-    GpuUploader::download_ciphertext(
-        gpu_relinearize_result,
-        gpu_relinearize_download,
-        context);
-    GpuUploader::download_ciphertext(
-        gpu_multiply_relin_rescale_output,
-        gpu_multiply_relin_rescale_download,
-        context);
-
-    std::cout << "\n[multiply + relinearize raw comparison]\n";
-    const bool relin_raw_equal = print_raw_comparison(
-        cpu_relinearize_result,
-        gpu_relinearize_download,
-        8);
-    std::cout << "\n[multiply + relinearize + rescale raw comparison]\n";
-    const bool rescale_raw_equal = print_raw_comparison(
-        cpu_multiply_relin_rescale_result,
-        gpu_multiply_relin_rescale_download,
-        8);
-    if (!relin_raw_equal || !rescale_raw_equal)
+    if constexpr (kRunCorrectnessChecks)
     {
-        throw std::runtime_error(
-            "GPU multiply + relinearize + rescale correctness check failed");
-    }
+        std::cout << "\n[multiply + relinearize + rescale correctness]\n";
+        Ciphertext cpu_multiply_result;
+        Ciphertext cpu_relinearize_result;
+        Ciphertext cpu_multiply_relin_rescale_result;
+        cpu_evaluator->multiply(ct0, ct1, cpu_multiply_result);
+        cpu_evaluator->relinearize(
+            cpu_multiply_result,
+            cpu_relinearize_result,
+            relin_keys);
+        cpu_evaluator->rescale(
+            cpu_relinearize_result,
+            cpu_multiply_relin_rescale_result);
 
-    std::cout << "\n[rotate correctness]\n";
-    std::cout << "rotate step = " << rotate_step << "\n";
-    Ciphertext cpu_rotate_result;
-    cpu_evaluator->rotate(
-        ct0,
-        cpu_rotate_result,
-        rotate_step,
-        galois_keys);
+        GpuCiphertextData gpu_multiply_result;
+        GpuCiphertextData gpu_relinearize_result;
+        GpuCiphertextData gpu_multiply_relin_rescale_output;
+        gpu_evaluator.multiply(gpu_ct0, gpu_ct1, gpu_multiply_result);
+        gpu_evaluator.relinearize(
+            gpu_multiply_result,
+            gpu_relin_keys,
+            gpu_relinearize_result);
+        gpu_evaluator.rescale(
+            gpu_relinearize_result,
+            gpu_multiply_relin_rescale_output);
+        gpu_check_cuda(
+            cudaDeviceSynchronize(),
+            "GpuEvaluator::multiply_relinearize_rescale correctness sync");
 
-    GpuCiphertextData gpu_rotate_output;
-    gpu_evaluator.rotate(
-        gpu_ct0,
-        rotate_step,
-        gpu_galois_keys,
-        gpu_rotate_output);
-    gpu_check_cuda(
-        cudaDeviceSynchronize(),
-        "GpuEvaluator::rotate correctness sync");
+        Ciphertext gpu_relinearize_download;
+        Ciphertext gpu_multiply_relin_rescale_download;
+        GpuUploader::download_ciphertext(
+            gpu_relinearize_result,
+            gpu_relinearize_download,
+            context);
+        GpuUploader::download_ciphertext(
+            gpu_multiply_relin_rescale_output,
+            gpu_multiply_relin_rescale_download,
+            context);
 
-    Ciphertext gpu_rotate_download;
-    GpuUploader::download_ciphertext(
-        gpu_rotate_output,
-        gpu_rotate_download,
-        context);
+        std::cout << "\n[multiply + relinearize raw comparison]\n";
+        const bool relin_raw_equal = print_raw_comparison(
+            cpu_relinearize_result,
+            gpu_relinearize_download,
+            8);
+        std::cout << "\n[multiply + relinearize + rescale raw comparison]\n";
+        const bool rescale_raw_equal = print_raw_comparison(
+            cpu_multiply_relin_rescale_result,
+            gpu_multiply_relin_rescale_download,
+            8);
+        if (!relin_raw_equal || !rescale_raw_equal)
+        {
+            throw std::runtime_error(
+                "GPU multiply + relinearize + rescale correctness check failed");
+        }
 
-    std::cout << "\n[rotate raw comparison]\n";
-    const bool rotate_raw_equal = print_raw_comparison(
-        cpu_rotate_result,
-        gpu_rotate_download,
-        8);
-    if (!rotate_raw_equal)
-    {
-        throw std::runtime_error("GPU rotate correctness check failed");
-    }
+        std::cout << "\n[rotate correctness]\n";
+        std::cout << "rotate step = " << rotate_step << "\n";
+        Ciphertext cpu_rotate_result;
+        cpu_evaluator->rotate(
+            ct0,
+            cpu_rotate_result,
+            rotate_step,
+            galois_keys);
 
-    std::cout << "\n[conjugate correctness]\n";
-    Ciphertext cpu_conjugate_result;
-    cpu_evaluator->conjugate(
-        ct0,
-        galois_keys,
-        cpu_conjugate_result);
+        GpuCiphertextData gpu_rotate_output;
+        gpu_evaluator.rotate(
+            gpu_ct0,
+            rotate_step,
+            gpu_galois_keys,
+            gpu_rotate_output);
+        gpu_check_cuda(
+            cudaDeviceSynchronize(),
+            "GpuEvaluator::rotate correctness sync");
 
-    GpuCiphertextData gpu_conjugate_output;
-    gpu_evaluator.conjugate(
-        gpu_ct0,
-        gpu_galois_keys,
-        gpu_conjugate_output);
-    gpu_check_cuda(
-        cudaDeviceSynchronize(),
-        "GpuEvaluator::conjugate correctness sync");
+        Ciphertext gpu_rotate_download;
+        GpuUploader::download_ciphertext(
+            gpu_rotate_output,
+            gpu_rotate_download,
+            context);
 
-    Ciphertext gpu_conjugate_download;
-    GpuUploader::download_ciphertext(
-        gpu_conjugate_output,
-        gpu_conjugate_download,
-        context);
+        std::cout << "\n[rotate raw comparison]\n";
+        const bool rotate_raw_equal = print_raw_comparison(
+            cpu_rotate_result,
+            gpu_rotate_download,
+            8);
+        if (!rotate_raw_equal)
+        {
+            throw std::runtime_error("GPU rotate correctness check failed");
+        }
 
-    std::cout << "\n[conjugate raw comparison]\n";
-    const bool conjugate_raw_equal = print_raw_comparison(
-        cpu_conjugate_result,
-        gpu_conjugate_download,
-        8);
-    if (!conjugate_raw_equal)
-    {
-        throw std::runtime_error("GPU conjugate correctness check failed");
+        std::cout << "\n[conjugate correctness]\n";
+        Ciphertext cpu_conjugate_result;
+        cpu_evaluator->conjugate(
+            ct0,
+            galois_keys,
+            cpu_conjugate_result);
+
+        GpuCiphertextData gpu_conjugate_output;
+        gpu_evaluator.conjugate(
+            gpu_ct0,
+            gpu_galois_keys,
+            gpu_conjugate_output);
+        gpu_check_cuda(
+            cudaDeviceSynchronize(),
+            "GpuEvaluator::conjugate correctness sync");
+
+        Ciphertext gpu_conjugate_download;
+        GpuUploader::download_ciphertext(
+            gpu_conjugate_output,
+            gpu_conjugate_download,
+            context);
+
+        std::cout << "\n[conjugate raw comparison]\n";
+        const bool conjugate_raw_equal = print_raw_comparison(
+            cpu_conjugate_result,
+            gpu_conjugate_download,
+            8);
+        if (!conjugate_raw_equal)
+        {
+            throw std::runtime_error("GPU conjugate correctness check failed");
+        }
     }
 
     Ciphertext cpu_multiply_plain_result;
@@ -1390,200 +1789,357 @@ int run_demo()
 
     Ciphertext cpu_ntt_inv_result;
     cpu_evaluator->ntt_inv(ct0, cpu_ntt_inv_result);
+    Ciphertext cpu_ntt_fwd_result;
+    cpu_evaluator->ntt_fwd(cpu_ntt_inv_result, cpu_ntt_fwd_result);
 
     GpuCiphertextData gpu_ntt_inv_output;
-    gpu_evaluator.ntt_inv(gpu_ct0, gpu_ntt_inv_output);
+    {
+        ScopedEnvironmentValue ntt_algorithm(kNttAlgorithmEnv, "stage");
+        ScopedEnvironmentValue ntt_fusion(kNttFusionStagesEnv, "1");
+        gpu_evaluator.ntt_inv(gpu_ct0, gpu_ntt_inv_output);
+    }
     gpu_check_cuda(
         cudaDeviceSynchronize(),
         "GpuEvaluator::ntt_inv precompute sync");
 
-    constexpr int timing_iterations = 20;
-    Ciphertext cpu_timing_result;
-    Ciphertext cpu_chain_multiply_result;
-    Ciphertext cpu_chain_relinearize_result;
-    GpuCiphertextData gpu_timing_output;
-    GpuCiphertextData gpu_chain_multiply_output;
-    GpuCiphertextData gpu_chain_relinearize_output;
-
-    auto benchmark_operation =
-        [&](const std::string &name, auto cpu_once, auto gpu_once)
+    const int timing_iterations =
+        static_cast<int>(env_size_or("POSEIDON_DEMO_ITERATIONS", 40));
+    const std::size_t warmup_iterations =
+        env_size_or("POSEIDON_DEMO_WARMUP", 40);
+    if (timing_iterations <= 0)
     {
-        std::cout << "\n[" << name << " operation timing]\n";
-        std::cout << "iterations              = " << timing_iterations << "\n";
-        std::cout << "included in timing       = top-level operation call\n";
-        std::cout << "excluded from timing     = encode/encrypt/upload/download/decrypt/decode\n";
+        throw std::invalid_argument(
+            "POSEIDON_DEMO_ITERATIONS must be greater than zero");
+    }
+    if constexpr (kRunOperationTimingSummary)
+    {
+        Ciphertext cpu_timing_result;
+        Ciphertext cpu_chain_multiply_result;
+        Ciphertext cpu_chain_relinearize_result;
+        GpuCiphertextData gpu_timing_output;
+        GpuCiphertextData gpu_chain_multiply_output;
+        GpuCiphertextData gpu_chain_relinearize_output;
+        std::vector<OperationTimingRow> timing_rows;
 
-        cpu_once();
-
-        const auto cpu_begin = std::chrono::steady_clock::now();
-        for (int i = 0; i < timing_iterations; ++i)
+        auto benchmark_operation =
+            [&](const std::string &name, auto cpu_once, auto gpu_once)
         {
-            cpu_once();
-        }
-        const auto cpu_end = std::chrono::steady_clock::now();
-        const double cpu_total_ms =
-            std::chrono::duration<double, std::milli>(cpu_end - cpu_begin).count();
+            timing_rows.push_back(
+                OperationTimingRow{
+                    name,
+                    benchmark_cpu_gpu_average(
+                        device_id,
+                        timing_iterations,
+                        cpu_once,
+                        gpu_once,
+                        name.c_str(),
+                        warmup_iterations)});
+        };
 
-        gpu_check_cuda(cudaSetDevice(device_id), "timing cudaSetDevice");
-        gpu_once();
-        gpu_check_cuda(cudaDeviceSynchronize(), "timing warmup sync");
-
-        cudaEvent_t gpu_start = nullptr;
-        cudaEvent_t gpu_stop = nullptr;
-        gpu_check_cuda(cudaEventCreate(&gpu_start), "timing cudaEventCreate start");
-        gpu_check_cuda(cudaEventCreate(&gpu_stop), "timing cudaEventCreate stop");
-
-        const auto gpu_wall_begin = std::chrono::steady_clock::now();
-        gpu_check_cuda(cudaEventRecord(gpu_start), "timing cudaEventRecord start");
-        for (int i = 0; i < timing_iterations; ++i)
+        auto benchmark_ntt_operation =
+            [&](const std::string &name,
+                const char *fusion_stages,
+                auto cpu_once,
+                auto gpu_once)
         {
-            gpu_once();
-        }
-        gpu_check_cuda(cudaEventRecord(gpu_stop), "timing cudaEventRecord stop");
-        gpu_check_cuda(cudaEventSynchronize(gpu_stop), "timing cudaEventSynchronize stop");
-        const auto gpu_wall_end = std::chrono::steady_clock::now();
+            const std::string algorithm =
+                std::string(fusion_stages) == "1" ? "stage" : "fused";
+            ScopedEnvironmentValue ntt_algorithm(
+                kNttAlgorithmEnv,
+                algorithm.c_str());
+            ScopedEnvironmentValue ntt_fusion(kNttFusionStagesEnv, fusion_stages);
+            benchmark_operation(name, cpu_once, gpu_once);
+        };
 
-        float gpu_event_total_ms = 0.0F;
-        gpu_check_cuda(
-            cudaEventElapsedTime(&gpu_event_total_ms, gpu_start, gpu_stop),
-            "timing cudaEventElapsedTime");
+        benchmark_operation(
+            "multiply_relinearize_rescale",
+            [&]()
+            {
+                cpu_evaluator->multiply(ct0, ct1, cpu_chain_multiply_result);
+                cpu_evaluator->relinearize(
+                    cpu_chain_multiply_result,
+                    cpu_chain_relinearize_result,
+                    relin_keys);
+                cpu_evaluator->rescale(
+                    cpu_chain_relinearize_result,
+                    cpu_timing_result);
+            },
+            [&]()
+            {
+                gpu_evaluator.multiply(gpu_ct0, gpu_ct1, gpu_chain_multiply_output);
+                gpu_evaluator.relinearize(
+                    gpu_chain_multiply_output,
+                    gpu_relin_keys,
+                    gpu_chain_relinearize_output);
+                gpu_evaluator.rescale(
+                    gpu_chain_relinearize_output,
+                    gpu_timing_output);
+            });
 
-        gpu_check_cuda(cudaEventDestroy(gpu_start), "timing cudaEventDestroy start");
-        gpu_check_cuda(cudaEventDestroy(gpu_stop), "timing cudaEventDestroy stop");
+        benchmark_operation(
+            "add",
+            [&]() { cpu_evaluator->add(ct0, ct1, cpu_timing_result); },
+            [&]() { gpu_evaluator.add(gpu_ct0, gpu_ct1, gpu_timing_output); });
 
-        const double gpu_wall_total_ms =
-            std::chrono::duration<double, std::milli>(gpu_wall_end - gpu_wall_begin).count();
-        const double cpu_avg_ms = cpu_total_ms / timing_iterations;
-        const double gpu_wall_avg_ms = gpu_wall_total_ms / timing_iterations;
-        const double gpu_event_avg_ms = gpu_event_total_ms / timing_iterations;
+        benchmark_operation(
+            "sub",
+            [&]() { cpu_evaluator->sub(ct0, ct1, cpu_timing_result); },
+            [&]() { gpu_evaluator.sub(gpu_ct0, gpu_ct1, gpu_timing_output); });
 
-        std::cout << std::fixed << std::setprecision(6);
-        std::cout << "cpu total ms        = " << cpu_total_ms << "\n";
-        std::cout << "cpu avg ms          = " << cpu_avg_ms << "\n";
-        std::cout << "gpu wall total ms   = " << gpu_wall_total_ms << "\n";
-        std::cout << "gpu wall avg ms     = " << gpu_wall_avg_ms << "\n";
-        std::cout << "gpu event total ms  = " << gpu_event_total_ms << "\n";
-        std::cout << "gpu event avg ms    = " << gpu_event_avg_ms << "\n";
-        std::cout << "speedup wall        = " << cpu_avg_ms / gpu_wall_avg_ms << "x\n";
-        std::cout << "speedup cuda-event  = " << cpu_avg_ms / gpu_event_avg_ms << "x\n";
+        benchmark_operation(
+            "negate",
+            [&]()
+            {
+                cpu_timing_result = ct0;
+                for (std::size_t i = 0; i < cpu_timing_result.size(); ++i)
+                {
+                    cpu_timing_result[i].negate();
+                }
+            },
+            [&]() { gpu_evaluator.negate(gpu_ct0, gpu_timing_output); });
+
+        benchmark_operation(
+            "add_plain",
+            [&]() { cpu_evaluator->add_plain(ct0, plain1, cpu_timing_result); },
+            [&]() { gpu_evaluator.add_plain(gpu_ct0, gpu_plain1, gpu_timing_output); });
+
+        benchmark_operation(
+            "sub_plain",
+            [&]()
+            {
+                cpu_timing_result = ct0;
+                cpu_timing_result[0].sub(plain1.poly(), cpu_timing_result[0]);
+            },
+            [&]() { gpu_evaluator.sub_plain(gpu_ct0, gpu_plain1, gpu_timing_output); });
+
+        benchmark_operation(
+            "multiply_plain",
+            [&]() { cpu_evaluator->multiply_plain(ct0, plain1, cpu_timing_result); },
+            [&]() { gpu_evaluator.multiply_plain(gpu_ct0, gpu_plain1, gpu_timing_output); });
+
+        benchmark_operation(
+            "rotate",
+            [&]()
+            {
+                cpu_evaluator->rotate(
+                    ct0,
+                    cpu_timing_result,
+                    rotate_step,
+                    galois_keys);
+            },
+            [&]()
+            {
+                gpu_evaluator.rotate(
+                    gpu_ct0,
+                    rotate_step,
+                    gpu_galois_keys,
+                    gpu_timing_output);
+            });
+
+        benchmark_operation(
+            "conjugate",
+            [&]()
+            {
+                cpu_evaluator->conjugate(
+                    ct0,
+                    galois_keys,
+                    cpu_timing_result);
+            },
+            [&]()
+            {
+                gpu_evaluator.conjugate(
+                    gpu_ct0,
+                    gpu_galois_keys,
+                    gpu_timing_output);
+            });
+
+        benchmark_operation(
+            "rescale",
+            [&]() { cpu_evaluator->rescale(cpu_multiply_plain_result, cpu_timing_result); },
+            [&]() { gpu_evaluator.rescale(gpu_multiply_plain_output, gpu_timing_output); });
+
+        benchmark_ntt_operation(
+            "ntt_inv",
+            "1",
+            [&]() { cpu_evaluator->ntt_inv(ct0, cpu_timing_result); },
+            [&]() { gpu_evaluator.ntt_inv(gpu_ct0, gpu_timing_output); });
+
+        benchmark_ntt_operation(
+            "ntt_fwd",
+            "1",
+            [&]() { cpu_evaluator->ntt_fwd(cpu_ntt_inv_result, cpu_timing_result); },
+            [&]() { gpu_evaluator.ntt_fwd(gpu_ntt_inv_output, gpu_timing_output); });
+
+        print_operation_timing_table(
+            timing_rows,
+            parms.degree(),
+            parms.q().size(),
+            parms.p().size(),
+            timing_iterations,
+            warmup_iterations);
+    }
+
+    GpuNTTHandler ntt_handler(gpu_params);
+    auto gpu_ntt_fwd_source =
+        GpuUploader::upload_ciphertext(cpu_ntt_inv_result, device_id);
+
+    auto allocate_ntt_destination =
+        [&](const GpuCiphertextData &source_ciphertext, bool is_ntt_form)
+    {
+        const auto &reference_layout = source_ciphertext.polys_.at(0);
+        GpuCiphertextData destination =
+            GpuCiphertextData::allocate_single_device_sharded(
+                source_ciphertext.meta.degree,
+                source_ciphertext.meta.q_count,
+                source_ciphertext.size(),
+                device_id,
+                reference_layout.shards,
+                source_ciphertext.meta.p_count);
+        destination.meta = source_ciphertext.meta;
+        destination.meta.component_count = source_ciphertext.size();
+        destination.meta.is_ntt_form = is_ntt_form;
+        return destination;
     };
 
-    benchmark_operation(
-        "multiply_relinearize_rescale",
-        [&]()
-        {
-            cpu_evaluator->multiply(ct0, ct1, cpu_chain_multiply_result);
-            cpu_evaluator->relinearize(
-                cpu_chain_multiply_result,
-                cpu_chain_relinearize_result,
-                relin_keys);
-            cpu_evaluator->rescale(
-                cpu_chain_relinearize_result,
-                cpu_timing_result);
-        },
-        [&]()
-        {
-            gpu_evaluator.multiply(gpu_ct0, gpu_ct1, gpu_chain_multiply_output);
-            gpu_evaluator.relinearize(
-                gpu_chain_multiply_output,
-                gpu_relin_keys,
-                gpu_chain_relinearize_output);
-            gpu_evaluator.rescale(
-                gpu_chain_relinearize_output,
-                gpu_timing_output);
-        });
+    GpuCiphertextData ntt_inv_destination =
+        allocate_ntt_destination(gpu_ct0, false);
+    GpuCiphertextData ntt_fwd_destination =
+        allocate_ntt_destination(gpu_ntt_fwd_source, true);
 
-    benchmark_operation(
-        "add",
-        [&]() { cpu_evaluator->add(ct0, ct1, cpu_timing_result); },
-        [&]() { gpu_evaluator.add(gpu_ct0, gpu_ct1, gpu_timing_output); });
+    auto ntt_inv_source_view = gpu_ct0.make_const_view();
+    auto ntt_inv_destination_view = ntt_inv_destination.make_view();
+    auto ntt_fwd_source_view = gpu_ntt_fwd_source.make_const_view();
+    auto ntt_fwd_destination_view = ntt_fwd_destination.make_view();
+    const auto &ntt_inv_level_info =
+        gpu_params.get_level(gpu_ct0.meta.parms_id);
+    const auto &ntt_fwd_level_info =
+        gpu_params.get_level(gpu_ntt_fwd_source.meta.parms_id);
 
-    benchmark_operation(
-        "sub",
-        [&]() { cpu_evaluator->sub(ct0, ct1, cpu_timing_result); },
-        [&]() { gpu_evaluator.sub(gpu_ct0, gpu_ct1, gpu_timing_output); });
+    std::vector<NttTimingRow> ntt_timing_rows;
+    auto benchmark_ntt_mode =
+        [&](const std::string &operation,
+            const std::string &mode,
+            const std::string &algorithm,
+            const std::string &fusion_stages,
+            const Ciphertext &cpu_reference,
+            const GpuCiphertextData &gpu_destination,
+            auto gpu_once)
+    {
+        const std::string timing_name = operation + "_" + mode;
+        ScopedEnvironmentValue ntt_algorithm(
+            kNttAlgorithmEnv,
+            algorithm.c_str());
+        ScopedEnvironmentValue ntt_fusion(
+            kNttFusionStagesEnv,
+            fusion_stages.c_str());
 
-    benchmark_operation(
-        "negate",
-        [&]()
-        {
-            cpu_timing_result = ct0;
-            for (std::size_t i = 0; i < cpu_timing_result.size(); ++i)
+        gpu_once();
+        gpu_check_cuda(
+            cudaDeviceSynchronize(),
+            (timing_name + "_correctness").c_str());
+        Ciphertext gpu_download;
+        GpuUploader::download_ciphertext(
+            gpu_destination,
+            gpu_download,
+            context);
+        const bool correct =
+            ciphertext_raw_equal(cpu_reference, gpu_download);
+
+        ntt_timing_rows.push_back(
+            NttTimingRow{
+                operation,
+                mode,
+                benchmark_gpu_event_samples(
+                    device_id,
+                    timing_iterations,
+                    gpu_once,
+                    timing_name.c_str(),
+                    warmup_iterations),
+                correct});
+    };
+
+    const int ntt_fusion_modes[] = {1, 2, 3, 4};
+    for (int fusion_stages : ntt_fusion_modes)
+    {
+        const std::string fusion_text = std::to_string(fusion_stages);
+        const std::string algorithm =
+            fusion_stages == 1 ? "stage" : "fused";
+        const std::string mode =
+            fusion_stages == 1 ? "stage" : "fused" + fusion_text;
+        benchmark_ntt_mode(
+            "ntt_inv",
+            mode,
+            algorithm,
+            fusion_text,
+            cpu_ntt_inv_result,
+            ntt_inv_destination,
+            [&]()
             {
-                cpu_timing_result[i].negate();
-            }
-        },
-        [&]() { gpu_evaluator.negate(gpu_ct0, gpu_timing_output); });
-
-    benchmark_operation(
-        "add_plain",
-        [&]() { cpu_evaluator->add_plain(ct0, plain1, cpu_timing_result); },
-        [&]() { gpu_evaluator.add_plain(gpu_ct0, gpu_plain1, gpu_timing_output); });
-
-    benchmark_operation(
-        "sub_plain",
-        [&]()
-        {
-            cpu_timing_result = ct0;
-            cpu_timing_result[0].sub(plain1.poly(), cpu_timing_result[0]);
-        },
-        [&]() { gpu_evaluator.sub_plain(gpu_ct0, gpu_plain1, gpu_timing_output); });
-
-    benchmark_operation(
-        "multiply_plain",
-        [&]() { cpu_evaluator->multiply_plain(ct0, plain1, cpu_timing_result); },
-        [&]() { gpu_evaluator.multiply_plain(gpu_ct0, gpu_plain1, gpu_timing_output); });
-
-    benchmark_operation(
-        "rotate",
-        [&]()
-        {
-            cpu_evaluator->rotate(
-                ct0,
-                cpu_timing_result,
-                rotate_step,
-                galois_keys);
-        },
-        [&]()
-        {
-            gpu_evaluator.rotate(
-                gpu_ct0,
-                rotate_step,
-                gpu_galois_keys,
-                gpu_timing_output);
-        });
-
-    benchmark_operation(
-        "conjugate",
-        [&]()
-        {
-            cpu_evaluator->conjugate(
-                ct0,
-                galois_keys,
-                cpu_timing_result);
-        },
-        [&]()
-        {
-            gpu_evaluator.conjugate(
-                gpu_ct0,
-                gpu_galois_keys,
-                gpu_timing_output);
-        });
-
-    benchmark_operation(
-        "rescale",
-        [&]() { cpu_evaluator->rescale(cpu_multiply_plain_result, cpu_timing_result); },
-        [&]() { gpu_evaluator.rescale(gpu_multiply_plain_output, gpu_timing_output); });
-
-    benchmark_operation(
+                ntt_handler.inverse_ciphertext(
+                    ntt_inv_destination_view,
+                    ntt_inv_source_view,
+                    ntt_inv_level_info);
+            });
+    }
+    benchmark_ntt_mode(
         "ntt_inv",
-        [&]() { cpu_evaluator->ntt_inv(ct0, cpu_timing_result); },
-        [&]() { gpu_evaluator.ntt_inv(gpu_ct0, gpu_timing_output); });
+        "fourstep",
+        "fourstep",
+        "1",
+        cpu_ntt_inv_result,
+        ntt_inv_destination,
+        [&]()
+        {
+            ntt_handler.inverse_ciphertext(
+                ntt_inv_destination_view,
+                ntt_inv_source_view,
+                ntt_inv_level_info);
+        });
 
-    benchmark_operation(
+    for (int fusion_stages : ntt_fusion_modes)
+    {
+        const std::string fusion_text = std::to_string(fusion_stages);
+        const std::string algorithm =
+            fusion_stages == 1 ? "stage" : "fused";
+        const std::string mode =
+            fusion_stages == 1 ? "stage" : "fused" + fusion_text;
+        benchmark_ntt_mode(
+            "ntt_fwd",
+            mode,
+            algorithm,
+            fusion_text,
+            cpu_ntt_fwd_result,
+            ntt_fwd_destination,
+            [&]()
+            {
+                ntt_handler.forward_ciphertext(
+                    ntt_fwd_destination_view,
+                    ntt_fwd_source_view,
+                    ntt_fwd_level_info);
+            });
+    }
+    benchmark_ntt_mode(
         "ntt_fwd",
-        [&]() { cpu_evaluator->ntt_fwd(cpu_ntt_inv_result, cpu_timing_result); },
-        [&]() { gpu_evaluator.ntt_fwd(gpu_ntt_inv_output, gpu_timing_output); });
+        "fourstep",
+        "fourstep",
+        "1",
+        cpu_ntt_fwd_result,
+        ntt_fwd_destination,
+        [&]()
+        {
+            ntt_handler.forward_ciphertext(
+                ntt_fwd_destination_view,
+                ntt_fwd_source_view,
+                ntt_fwd_level_info);
+        });
+
+    print_ntt_timing_table(
+        ntt_timing_rows,
+        parms.degree(),
+        parms.q().size(),
+        parms.p().size(),
+        timing_iterations,
+        warmup_iterations);
 
     // run_parameter_sweep_benchmarks(device_id);
 
