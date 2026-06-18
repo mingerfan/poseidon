@@ -258,123 +258,171 @@ __global__ void s8_wmma_gemm_kernel(
 	#endif
 	}
 
-	__device__ std::uint32_t pow2_mod_device(int shift, std::uint32_t modulus);
+	constexpr int kTensorCoreU32Pow2FactorCount =
+    2 * kTensorCoreU32SegmentCount - 1;
+constexpr int kTensorCoreTileElements = kWmmaM * kWmmaN;
+constexpr int kTensorCoreTileElementsPerLane =
+    (kTensorCoreTileElements + 31) / 32;
+
+__device__ __forceinline__ void build_u32_segment_pow2_factors(
+    std::uint32_t *factors,
+    std::uint32_t modulus)
+{
+    const std::uint32_t byte_radix_mod =
+        static_cast<std::uint32_t>(256ull % modulus);
+    factors[0] = static_cast<std::uint32_t>(1ull % modulus);
+#pragma unroll
+    for (int i = 1; i < kTensorCoreU32Pow2FactorCount; ++i)
+    {
+        factors[i] = static_cast<std::uint32_t>(
+            (static_cast<std::uint64_t>(factors[i - 1]) * byte_radix_mod) %
+            modulus);
+    }
+}
+
+__device__ __forceinline__ void lazy_add_u64_mod_term(
+    std::uint64_t &acc,
+    std::uint64_t term,
+    std::uint32_t modulus)
+{
+    if (acc > ~static_cast<std::uint64_t>(0) - term)
+    {
+        acc %= modulus;
+    }
+    acc += term;
+}
 
 	__global__ void u8_wmma_mod_gemm_kernel(
-	    const std::uint8_t *a_segments,
-	    const std::uint8_t *b_segments_col_major,
-	    std::uint32_t *c,
-	    int m,
-	    int n,
-	    int k,
-	    const std::uint32_t *modulus_ptr)
-	{
+    const std::uint8_t *a_segments,
+    const std::uint8_t *b_segments_col_major,
+    std::uint32_t *c,
+    int m,
+    int n,
+    int k,
+    const std::uint32_t *modulus_ptr)
+{
 #if defined(__CUDA_ARCH__) && (__CUDA_ARCH__ >= 750)
-	    constexpr int kWarpTilesPerBlock =
-	        (128 / 32) * 4;
-	    __shared__ int tile_storage[kWarpTilesPerBlock][kWmmaM * kWmmaN];
+    constexpr int kWarpTilesPerBlock =
+        (128 / 32) * 4;
+    __shared__ int tile_storage[kWarpTilesPerBlock][kTensorCoreTileElements];
+    __shared__ std::uint32_t
+        factor_storage[kWarpTilesPerBlock][kTensorCoreU32Pow2FactorCount];
 
-	    const int warp_x = threadIdx.x / warpSize;
-	    const int lane = threadIdx.x % warpSize;
-	    const int warp_in_block = threadIdx.y * (blockDim.x / warpSize) + warp_x;
-	    const int warp_m = (blockIdx.x * blockDim.x + threadIdx.x) / warpSize;
-	    const int warp_n = blockIdx.y * blockDim.y + threadIdx.y;
-	    const int row = warp_m * kWmmaM;
-	    const int col = warp_n * kWmmaN;
+    const int warp_x = threadIdx.x / warpSize;
+    const int lane = threadIdx.x % warpSize;
+    const int warp_in_block = threadIdx.y * (blockDim.x / warpSize) + warp_x;
+    const int warp_m = (blockIdx.x * blockDim.x + threadIdx.x) / warpSize;
+    const int warp_n = blockIdx.y * blockDim.y + threadIdx.y;
+    const int row = warp_m * kWmmaM;
+    const int col = warp_n * kWmmaN;
 
-	    if (row >= m || col >= n)
-	    {
-	        return;
-	    }
+    if (row >= m || col >= n)
+    {
+        return;
+    }
 
-	    const std::uint32_t modulus = *modulus_ptr;
-	    const std::size_t total_a =
-	        static_cast<std::size_t>(m) * static_cast<std::size_t>(k);
-	    const std::size_t total_b =
-	        static_cast<std::size_t>(n) * static_cast<std::size_t>(k);
-	    int *tile = tile_storage[warp_in_block];
+    const std::uint32_t modulus = *modulus_ptr;
+    const std::size_t total_a =
+        static_cast<std::size_t>(m) * static_cast<std::size_t>(k);
+    const std::size_t total_b =
+        static_cast<std::size_t>(n) * static_cast<std::size_t>(k);
+    int *tile = tile_storage[warp_in_block];
+    std::uint32_t *factors = factor_storage[warp_in_block];
 
-	    fragment<matrix_a, kWmmaM, kWmmaN, kWmmaK, std::uint8_t, row_major> a_frag;
-	    fragment<matrix_b, kWmmaM, kWmmaN, kWmmaK, std::uint8_t, col_major> b_frag;
-	    fragment<accumulator, kWmmaM, kWmmaN, kWmmaK, int> acc_frag;
+    if (lane == 0)
+    {
+        build_u32_segment_pow2_factors(factors, modulus);
+    }
+    __syncwarp();
 
-	    bool first = true;
-	    for (int a_segment = 0; a_segment < kTensorCoreU32SegmentCount;
-	         ++a_segment)
-	    {
-	        for (int b_segment = 0; b_segment < kTensorCoreU32SegmentCount;
-	             ++b_segment)
-	        {
-	            const std::uint8_t *a_base =
-	                a_segments + static_cast<std::size_t>(a_segment) * total_a;
-	            const std::uint8_t *b_base =
-	                b_segments_col_major +
-	                static_cast<std::size_t>(b_segment) * total_b;
+    std::uint64_t lane_acc[kTensorCoreTileElementsPerLane];
+#pragma unroll
+    for (int i = 0; i < kTensorCoreTileElementsPerLane; ++i)
+    {
+        lane_acc[i] = 0;
+    }
 
-	            fill_fragment(acc_frag, 0);
-	            for (int kk = 0; kk < k; kk += kWmmaK)
-	            {
-	                load_matrix_sync(
-	                    a_frag,
-	                    a_base + static_cast<std::size_t>(row) * k + kk,
-	                    k);
-	                load_matrix_sync(
-	                    b_frag,
-	                    b_base + static_cast<std::size_t>(col) * k + kk,
-	                    k);
-	                mma_sync(acc_frag, a_frag, b_frag, acc_frag);
-	            }
+    fragment<matrix_a, kWmmaM, kWmmaN, kWmmaK, std::uint8_t, row_major> a_frag;
+    fragment<matrix_b, kWmmaM, kWmmaN, kWmmaK, std::uint8_t, col_major> b_frag;
+    fragment<accumulator, kWmmaM, kWmmaN, kWmmaK, int> acc_frag;
 
-	            store_matrix_sync(tile, acc_frag, kWmmaN, mem_row_major);
-	            __syncwarp();
+    for (int a_segment = 0; a_segment < kTensorCoreU32SegmentCount;
+         ++a_segment)
+    {
+        for (int b_segment = 0; b_segment < kTensorCoreU32SegmentCount;
+             ++b_segment)
+        {
+            const std::uint8_t *a_base =
+                a_segments + static_cast<std::size_t>(a_segment) * total_a;
+            const std::uint8_t *b_base =
+                b_segments_col_major +
+                static_cast<std::size_t>(b_segment) * total_b;
 
-	            const std::uint32_t factor =
-	                pow2_mod_device((a_segment + b_segment) * 8, modulus);
-	            for (int elem = lane; elem < kWmmaM * kWmmaN; elem += warpSize)
-	            {
-	                const int local_row = elem / kWmmaN;
-	                const int local_col = elem - local_row * kWmmaN;
-	                const int global_row = row + local_row;
-	                const int global_col = col + local_col;
-	                if (global_row < m && global_col < n)
-	                {
-	                    const std::uint32_t term =
-	                        static_cast<std::uint32_t>(
-	                            (static_cast<std::uint64_t>(
-	                                 static_cast<std::uint32_t>(tile[elem])) *
-	                             factor) %
-	                            modulus);
-	                    const std::size_t c_index =
-	                        static_cast<std::size_t>(global_row) * n +
-	                        static_cast<std::size_t>(global_col);
-	                    if (first)
-	                    {
-	                        c[c_index] = term;
-	                    }
-	                    else
-	                    {
-	                        const std::uint64_t sum =
-	                            static_cast<std::uint64_t>(c[c_index]) + term;
-	                        c[c_index] = static_cast<std::uint32_t>(
-	                            sum >= modulus ? sum - modulus : sum);
-	                    }
-	                }
-	            }
-	            __syncwarp();
-	            first = false;
-	        }
-	    }
+            fill_fragment(acc_frag, 0);
+            for (int kk = 0; kk < k; kk += kWmmaK)
+            {
+                load_matrix_sync(
+                    a_frag,
+                    a_base + static_cast<std::size_t>(row) * k + kk,
+                    k);
+                load_matrix_sync(
+                    b_frag,
+                    b_base + static_cast<std::size_t>(col) * k + kk,
+                    k);
+                mma_sync(acc_frag, a_frag, b_frag, acc_frag);
+            }
+
+            store_matrix_sync(tile, acc_frag, kWmmaN, mem_row_major);
+            __syncwarp();
+
+            const std::uint32_t factor = factors[a_segment + b_segment];
+#pragma unroll
+            for (int slot = 0; slot < kTensorCoreTileElementsPerLane; ++slot)
+            {
+                const int elem = lane + slot * warpSize;
+                if (elem < kTensorCoreTileElements)
+                {
+                    const std::uint64_t term =
+                        static_cast<std::uint64_t>(
+                            static_cast<std::uint32_t>(tile[elem])) *
+                        static_cast<std::uint64_t>(factor);
+                    lazy_add_u64_mod_term(lane_acc[slot], term, modulus);
+                }
+            }
+            __syncwarp();
+        }
+    }
+
+#pragma unroll
+    for (int slot = 0; slot < kTensorCoreTileElementsPerLane; ++slot)
+    {
+        const int elem = lane + slot * warpSize;
+        if (elem < kTensorCoreTileElements)
+        {
+            const int local_row = elem / kWmmaN;
+            const int local_col = elem - local_row * kWmmaN;
+            const int global_row = row + local_row;
+            const int global_col = col + local_col;
+            if (global_row < m && global_col < n)
+            {
+                const std::size_t c_index =
+                    static_cast<std::size_t>(global_row) * n +
+                    static_cast<std::size_t>(global_col);
+                c[c_index] = static_cast<std::uint32_t>(lane_acc[slot] % modulus);
+            }
+        }
+    }
 #else
-	    (void)a_segments;
-	    (void)b_segments_col_major;
-	    (void)c;
-	    (void)m;
-	    (void)n;
-	    (void)k;
-	    (void)modulus_ptr;
-	    asm("trap;");
-	#endif
-		}
+    (void)a_segments;
+    (void)b_segments_col_major;
+    (void)c;
+    (void)m;
+    (void)n;
+    (void)k;
+    (void)modulus_ptr;
+    asm("trap;");
+#endif
+}
 
     __global__ void u8_wmma_mod_batched_gemm_kernel(
         const std::uint8_t *a_segments,
@@ -389,7 +437,9 @@ __global__ void s8_wmma_gemm_kernel(
 #if defined(__CUDA_ARCH__) && (__CUDA_ARCH__ >= 750)
         constexpr int kWarpTilesPerBlock =
             (128 / 32) * 4;
-        __shared__ int tile_storage[kWarpTilesPerBlock][kWmmaM * kWmmaN];
+        __shared__ int tile_storage[kWarpTilesPerBlock][kTensorCoreTileElements];
+        __shared__ std::uint32_t
+            factor_storage[kWarpTilesPerBlock][kTensorCoreU32Pow2FactorCount];
 
         const int batch = static_cast<int>(blockIdx.z);
         if (batch >= batch_count)
@@ -423,12 +473,25 @@ __global__ void s8_wmma_gemm_kernel(
         const std::size_t total_b =
             static_cast<std::size_t>(batch_count) * per_batch_b;
         int *tile = tile_storage[warp_in_block];
+        std::uint32_t *factors = factor_storage[warp_in_block];
+
+        if (lane == 0)
+        {
+            build_u32_segment_pow2_factors(factors, modulus);
+        }
+        __syncwarp();
+
+        std::uint64_t lane_acc[kTensorCoreTileElementsPerLane];
+#pragma unroll
+        for (int i = 0; i < kTensorCoreTileElementsPerLane; ++i)
+        {
+            lane_acc[i] = 0;
+        }
 
         fragment<matrix_a, kWmmaM, kWmmaN, kWmmaK, std::uint8_t, row_major> a_frag;
         fragment<matrix_b, kWmmaM, kWmmaN, kWmmaK, std::uint8_t, col_major> b_frag;
         fragment<accumulator, kWmmaM, kWmmaN, kWmmaK, int> acc_frag;
 
-        bool first = true;
         for (int a_segment = 0; a_segment < kTensorCoreU32SegmentCount;
              ++a_segment)
         {
@@ -460,41 +523,42 @@ __global__ void s8_wmma_gemm_kernel(
                 store_matrix_sync(tile, acc_frag, kWmmaN, mem_row_major);
                 __syncwarp();
 
-                const std::uint32_t factor =
-                    pow2_mod_device((a_segment + b_segment) * 8, modulus);
-                for (int elem = lane; elem < kWmmaM * kWmmaN; elem += warpSize)
+                const std::uint32_t factor = factors[a_segment + b_segment];
+#pragma unroll
+                for (int slot = 0; slot < kTensorCoreTileElementsPerLane; ++slot)
                 {
-                    const int local_row = elem / kWmmaN;
-                    const int local_col = elem - local_row * kWmmaN;
-                    const int global_row = row + local_row;
-                    const int global_col = col + local_col;
-                    if (global_row < m && global_col < n)
+                    const int elem = lane + slot * warpSize;
+                    if (elem < kTensorCoreTileElements)
                     {
-                        const std::uint32_t term =
-                            static_cast<std::uint32_t>(
-                                (static_cast<std::uint64_t>(
-                                     static_cast<std::uint32_t>(tile[elem])) *
-                                 factor) %
-                                modulus);
-                        const std::size_t c_index =
-                            static_cast<std::size_t>(batch) * per_batch_c +
-                            static_cast<std::size_t>(global_row) * n +
-                            static_cast<std::size_t>(global_col);
-                        if (first)
-                        {
-                            c[c_index] = term;
-                        }
-                        else
-                        {
-                            const std::uint64_t sum =
-                                static_cast<std::uint64_t>(c[c_index]) + term;
-                            c[c_index] = static_cast<std::uint32_t>(
-                                sum >= modulus ? sum - modulus : sum);
-                        }
+                        const std::uint64_t term =
+                            static_cast<std::uint64_t>(
+                                static_cast<std::uint32_t>(tile[elem])) *
+                            static_cast<std::uint64_t>(factor);
+                        lazy_add_u64_mod_term(lane_acc[slot], term, modulus);
                     }
                 }
                 __syncwarp();
-                first = false;
+            }
+        }
+
+#pragma unroll
+        for (int slot = 0; slot < kTensorCoreTileElementsPerLane; ++slot)
+        {
+            const int elem = lane + slot * warpSize;
+            if (elem < kTensorCoreTileElements)
+            {
+                const int local_row = elem / kWmmaN;
+                const int local_col = elem - local_row * kWmmaN;
+                const int global_row = row + local_row;
+                const int global_col = col + local_col;
+                if (global_row < m && global_col < n)
+                {
+                    const std::size_t c_index =
+                        static_cast<std::size_t>(batch) * per_batch_c +
+                        static_cast<std::size_t>(global_row) * n +
+                        static_cast<std::size_t>(global_col);
+                    c[c_index] = static_cast<std::uint32_t>(lane_acc[slot] % modulus);
+                }
             }
         }
 #else
@@ -790,17 +854,6 @@ __global__ void fuse_low32_partial_kernel(
     }
 }
 
-__device__ std::uint32_t pow2_mod_device(int shift, std::uint32_t modulus)
-{
-    std::uint32_t result = 1 % modulus;
-    for (int i = 0; i < shift; ++i)
-    {
-        const std::uint64_t doubled =
-            static_cast<std::uint64_t>(result) << 1;
-        result = static_cast<std::uint32_t>(doubled % modulus);
-    }
-    return result;
-}
 
 void launch_s8_wmma_unchecked(
     const std::int8_t *a,
