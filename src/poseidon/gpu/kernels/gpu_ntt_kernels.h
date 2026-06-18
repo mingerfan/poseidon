@@ -12,6 +12,21 @@ namespace gpu
 namespace kernel
 {
 
+struct NttStageProfileSnapshot
+{
+    static constexpr std::size_t kMaxStageCount = 16;
+
+    std::size_t stage_count = 0;
+    double stage_total_ms[kMaxStageCount] = {};
+    std::size_t stage_event_count[kMaxStageCount] = {};
+};
+
+void reset_ntt_stage_profile();
+
+void set_ntt_stage_profile_enabled(bool enabled);
+
+NttStageProfileSnapshot get_ntt_stage_profile_snapshot();
+
 /**
  * @brief Launch a simple Barrett-based forward NTT for one aligned RNS-poly shard.
  *
@@ -38,6 +53,22 @@ void launch_inverse_ntt_poly_shard(
     const GpuConstPolyShardView &source_shard,
     const GpuParameterShard &parameter_shard,
     std::size_t degree);
+
+void launch_forward_ntt_components_shard_tensor(
+    const GpuPolyShardView &first_destination_shard,
+    const GpuConstPolyShardView &first_source_shard,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree,
+    std::size_t component_count,
+    std::size_t component_stride);
+
+void launch_inverse_ntt_components_shard_tensor(
+    const GpuPolyShardView &first_destination_shard,
+    const GpuConstPolyShardView &first_source_shard,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree,
+    std::size_t component_count,
+    std::size_t component_stride);
 
 }  // namespace kernel
 }  // namespace gpu

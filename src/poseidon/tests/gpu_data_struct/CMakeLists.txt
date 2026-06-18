@@ -41,7 +41,7 @@ if(POSEIDON_GPU_DATA_STRUCT_ENABLE_GPU_TESTS)
     set(CMAKE_CUDA_STANDARD 17)
     set(CMAKE_CUDA_STANDARD_REQUIRED ON)
     if(NOT CMAKE_CUDA_ARCHITECTURES)
-        set(CMAKE_CUDA_ARCHITECTURES 70 CACHE STRING
+        set(CMAKE_CUDA_ARCHITECTURES 75 CACHE STRING
             "CUDA architectures for GPU data-structure tests" FORCE)
     endif()
 
@@ -90,6 +90,7 @@ if(POSEIDON_GPU_DATA_STRUCT_ENABLE_GPU_TESTS)
         "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_keyswitch_handler.cpp"
         "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_modswitch_handler.cpp"
         "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_ntt_handler.cpp"
+        "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_tensor_core_gemm.cu"
         "${POSEIDON_ROOT}/src/poseidon/gpu/kernels/gpu_elementwise_kernels.cu"
         "${POSEIDON_ROOT}/src/poseidon/gpu/kernels/gpu_keyswitch_kernels.cu"
         "${POSEIDON_ROOT}/src/poseidon/gpu/kernels/gpu_ntt_kernels.cu"
@@ -127,4 +128,10 @@ if(POSEIDON_GPU_DATA_STRUCT_ENABLE_GPU_TESTS)
             CUDA::cudart
             rmm::rmm
     )
+    target_compile_options(demo_gpu_ciphertext_add_handler
+        PRIVATE
+            $<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>
+    )
+    set_target_properties(demo_gpu_ciphertext_add_handler PROPERTIES
+        CUDA_ARCHITECTURES 75)
 endif()

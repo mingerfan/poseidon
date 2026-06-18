@@ -47,6 +47,7 @@ target_link_libraries(poseidon_gpu_tensor_core_gemm
 set_target_properties(poseidon_gpu_tensor_core_gemm PROPERTIES
     CUDA_SEPARABLE_COMPILATION OFF
     POSITION_INDEPENDENT_CODE ON
+    CUDA_ARCHITECTURES 75
 )
 
 add_executable(tensor_core_gemm_test

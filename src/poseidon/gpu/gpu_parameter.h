@@ -114,6 +114,27 @@ struct GpuParameterShard
     DeviceVector<GpuWord> ntt_tables;
     DeviceVector<GpuWord> intt_tables;
     DeviceVector<GpuWord> inv_degree_modulo;
+
+    /**
+     * @brief Experimental fused butterfly/TAM matrices for NTT/INTT.
+     *
+     * For a configured fusion depth F, each schedule entry stores one batch of
+     * K-by-K matrices where K = 2^stage_count for that entry. Matrices are
+     * flattened in [limb][outer_group][row][col] order, with row-major rows.
+     * stage_offsets are element offsets into the flattened matrix array and
+     * therefore contain stage_count.size() + 1 entries.
+     */
+    std::size_t ntt_fused_matrix_fusion_stages = 0;
+    DeviceVector<GpuWord> ntt_fused_matrix_stage_counts;
+    DeviceVector<GpuWide> ntt_fused_matrix_group_counts;
+    DeviceVector<GpuWide> ntt_fused_matrix_stage_offsets;
+    DeviceVector<GpuWord> ntt_fused_matrices;
+
+    std::size_t intt_fused_matrix_fusion_stages = 0;
+    DeviceVector<GpuWord> intt_fused_matrix_stage_counts;
+    DeviceVector<GpuWide> intt_fused_matrix_group_counts;
+    DeviceVector<GpuWide> intt_fused_matrix_stage_offsets;
+    DeviceVector<GpuWord> intt_fused_matrices;
 };
 
 /**

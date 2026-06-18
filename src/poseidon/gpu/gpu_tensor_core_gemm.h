@@ -128,5 +128,33 @@ void launch_tensor_core_u32_low32_gemm(
     const TensorCoreU32GemmWorkspace &workspace,
     cudaStream_t stream = nullptr);
 
+void launch_tensor_core_u32_mod_gemm_device_modulus(
+    const std::uint32_t *a_row_major,
+    const std::uint32_t *b_col_major,
+    std::uint32_t *c_row_major,
+    GpuGemmShape shape,
+    const std::uint32_t *modulus,
+    const TensorCoreU32GemmWorkspace &workspace,
+    cudaStream_t stream = nullptr);
+
+void launch_tensor_core_u32_mod_batched_gemm_from_segments(
+    const std::uint8_t *a_segments,
+    const std::uint8_t *b_segments_col_major,
+    std::uint32_t *c_row_major,
+    GpuGemmShape per_batch_shape,
+    int batch_count,
+    const std::uint32_t *modulus,
+    cudaStream_t stream = nullptr);
+
+void launch_tensor_core_u32_mod_batched_gemm_device_modulus(
+    const std::uint32_t *a_row_major,
+    const std::uint32_t *b_col_major,
+    std::uint32_t *c_row_major,
+    GpuGemmShape per_batch_shape,
+    int batch_count,
+    const std::uint32_t *modulus,
+    const TensorCoreU32GemmWorkspace &workspace,
+    cudaStream_t stream = nullptr);
+
 }  // namespace gpu
 }  // namespace poseidon

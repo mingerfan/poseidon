@@ -1,6 +1,7 @@
 #include "poseidon/gpu/gpu_ntt_handler.h"
 #include "poseidon/gpu/kernels/gpu_ntt_kernels.h"
 
+#include <cstdlib>
 #include <stdexcept>
 #include <string>
 
@@ -40,6 +41,155 @@ const GpuParameterShard *find_parameter_shard(
     }
 
     return nullptr;
+}
+
+bool requested_tensor_ntt_algorithm()
+{
+    const char *raw = std::getenv("POSEIDON_NTT_ALGO");
+    if (raw == nullptr || raw[0] == '\0')
+    {
+        return false;
+    }
+
+    const std::string value(raw);
+    return value == "tensor" || value == "tensor_core" ||
+           value == "tam_tensor" || value == "matrix";
+}
+
+bool tensor_ciphertext_batch_layout_supported(
+    const GpuCiphertextView &destination_view,
+    const GpuConstCiphertextView &source_view,
+    std::size_t shard_index,
+    std::size_t degree,
+    std::size_t &component_stride)
+{
+    const std::size_t component_count = destination_view.polys.size();
+    if (component_count < 2 || source_view.polys.size() != component_count)
+    {
+        return false;
+    }
+    for (std::size_t component = 0; component < component_count; ++component)
+    {
+        if (destination_view.polys[component].shards.size() <= shard_index ||
+            source_view.polys[component].shards.size() <= shard_index)
+        {
+            return false;
+        }
+    }
+
+    const auto &first_destination =
+        destination_view.polys[0].shards[shard_index];
+    const auto &first_source =
+        source_view.polys[0].shards[shard_index];
+    if (!same_shard_placement(first_destination, first_source))
+    {
+        return false;
+    }
+
+    component_stride = first_destination.limb_count * degree;
+    for (std::size_t component = 1; component < component_count; ++component)
+    {
+        const auto &destination =
+            destination_view.polys[component].shards[shard_index];
+        const auto &source = source_view.polys[component].shards[shard_index];
+        if (!same_shard_placement(first_destination, destination) ||
+            !same_shard_placement(first_source, source))
+        {
+            return false;
+        }
+        if (destination.ptr !=
+                first_destination.ptr + component * component_stride ||
+            source.ptr != first_source.ptr + component * component_stride)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool launch_tensor_ciphertext_batch(
+    GpuCiphertextView &destination_view,
+    const GpuConstCiphertextView &source_view,
+    const GpuLevelInfo &level_info,
+    bool inverse)
+{
+    if (!requested_tensor_ntt_algorithm() || destination_view.polys.empty())
+    {
+        return false;
+    }
+
+    const std::size_t shard_count = destination_view.polys[0].shards.size();
+    if (shard_count == 0)
+    {
+        return false;
+    }
+    for (std::size_t component = 0; component < destination_view.polys.size();
+         ++component)
+    {
+        if (destination_view.polys[component].shards.size() != shard_count ||
+            source_view.polys[component].shards.size() != shard_count)
+        {
+            return false;
+        }
+    }
+
+    for (std::size_t shard_index = 0; shard_index < shard_count; ++shard_index)
+    {
+        std::size_t component_stride = 0;
+        if (!tensor_ciphertext_batch_layout_supported(
+                destination_view,
+                source_view,
+                shard_index,
+                level_info.degree,
+                component_stride))
+        {
+            return false;
+        }
+    }
+
+    for (std::size_t shard_index = 0; shard_index < shard_count; ++shard_index)
+    {
+        std::size_t component_stride = 0;
+        (void)tensor_ciphertext_batch_layout_supported(
+            destination_view,
+            source_view,
+            shard_index,
+            level_info.degree,
+            component_stride);
+
+        const auto &destination_shard =
+            destination_view.polys[0].shards[shard_index];
+        const auto &source_shard = source_view.polys[0].shards[shard_index];
+        const auto *parameter_shard =
+            find_parameter_shard(level_info, destination_shard);
+        if (parameter_shard == nullptr)
+        {
+            throw std::invalid_argument(
+                "GpuNTTHandler tensor ciphertext batch: no matching parameter shard");
+        }
+
+        if (inverse)
+        {
+            kernel::launch_inverse_ntt_components_shard_tensor(
+                destination_shard,
+                source_shard,
+                *parameter_shard,
+                level_info.degree,
+                destination_view.polys.size(),
+                component_stride);
+        }
+        else
+        {
+            kernel::launch_forward_ntt_components_shard_tensor(
+                destination_shard,
+                source_shard,
+                *parameter_shard,
+                level_info.degree,
+                destination_view.polys.size(),
+                component_stride);
+        }
+    }
+    return true;
 }
 
 void validate_ciphertext_ntt_shape(
@@ -121,6 +271,15 @@ void GpuNTTHandler::forward_ciphertext(
             "GpuNTTHandler::forward_ciphertext: NTT form mismatch");
     }
 
+    if (launch_tensor_ciphertext_batch(
+            destination_view,
+            source_view,
+            level_info,
+            false))
+    {
+        return;
+    }
+
     // 遍历每一个component，每个component进行一次
     for (std::size_t i = 0; i < destination_view.polys.size(); ++i)
     {
@@ -143,6 +302,15 @@ void GpuNTTHandler::inverse_ciphertext(
     {
         throw std::invalid_argument(
             "GpuNTTHandler::inverse_ciphertext: NTT form mismatch");
+    }
+
+    if (launch_tensor_ciphertext_batch(
+            destination_view,
+            source_view,
+            level_info,
+            true))
+    {
+        return;
     }
 
     for (std::size_t i = 0; i < destination_view.polys.size(); ++i)

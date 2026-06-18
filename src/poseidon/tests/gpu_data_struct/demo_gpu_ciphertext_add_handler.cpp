@@ -8,7 +8,9 @@
 #include "poseidon/gpu/gpu_evaluator.h"
 #include "poseidon/gpu/gpu_ntt_handler.h"
 #include "poseidon/gpu/gpu_parameter.h"
+#include "poseidon/gpu/gpu_tensor_core_gemm.h"
 #include "poseidon/gpu/gpu_uploader.h"
+#include "poseidon/gpu/kernels/gpu_ntt_kernels.h"
 #include "poseidon/keygenerator.h"
 #include "poseidon/parameters_literal.h"
 #include "poseidon/plaintext.h"
@@ -44,6 +46,14 @@ constexpr bool kRunCorrectnessChecks = false;
 constexpr bool kRunOperationTimingSummary = false;
 constexpr const char *kNttAlgorithmEnv = "POSEIDON_NTT_ALGO";
 constexpr const char *kNttFusionStagesEnv = "POSEIDON_NTT_FUSION_STAGES";
+constexpr const char *kNttFusedMatrixStagesEnv =
+    "POSEIDON_NTT_FUSED_MATRIX_STAGES";
+constexpr const char *kNttFusedMatrixCacheDirEnv =
+    "POSEIDON_NTT_FUSED_MATRIX_CACHE_DIR";
+constexpr const char *kNttFusedMatrixProgressEnv =
+    "POSEIDON_NTT_FUSED_MATRIX_PROGRESS";
+constexpr const char *kDefaultNttFusedMatrixCacheDir =
+    "/tmp/poseidon_ntt_tam_cache";
 
 constexpr poseidon::prng_seed_type kBenchmarkPrngSeed{
     0x2f4a8d3c1b765e90ULL,
@@ -166,6 +176,55 @@ private:
     std::optional<std::string> previous_;
 };
 
+class ScopedDefaultEnvironmentValue
+{
+public:
+    ScopedDefaultEnvironmentValue(const char *name, const char *value)
+    {
+        const char *previous = std::getenv(name);
+        if (previous == nullptr || previous[0] == '\0')
+        {
+            scoped_.emplace(name, value);
+        }
+    }
+
+private:
+    std::optional<ScopedEnvironmentValue> scoped_;
+};
+
+std::string env_string_or(const char *name, const char *fallback)
+{
+    const char *value = std::getenv(name);
+    if (value == nullptr || value[0] == '\0')
+    {
+        return fallback;
+    }
+    return value;
+}
+
+void print_progress_bar(
+    const std::string &label,
+    std::size_t current,
+    std::size_t total,
+    const std::string &detail)
+{
+    constexpr std::size_t width = 28;
+    const std::size_t clamped = std::min(current, total);
+    const std::size_t filled = total == 0 ? width : clamped * width / total;
+
+    std::cout << "\r" << label << " [";
+    for (std::size_t i = 0; i < width; ++i)
+    {
+        std::cout << (i < filled ? '#' : '.');
+    }
+    std::cout << "] " << clamped << "/" << total << " " << detail
+              << std::flush;
+    if (clamped == total)
+    {
+        std::cout << "\n";
+    }
+}
+
 std::vector<std::size_t> env_size_list_or_empty(const char *name)
 {
     const char *value = std::getenv(name);
@@ -222,12 +281,15 @@ struct GpuSampleStats
     double max_ms = 0.0;
 };
 
+GpuSampleStats summarize_gpu_samples(const std::vector<double> &samples);
+
 struct NttTimingRow
 {
     std::string operation;
     std::string mode;
     GpuSampleStats timing;
-    bool correct = false;
+    std::string correct;
+    bool detail = false;
 };
 
 struct SweepBenchmarkRow
@@ -601,6 +663,16 @@ GpuSampleStats benchmark_gpu_event_samples(
     poseidon::gpu::gpu_check_cuda(cudaEventDestroy(gpu_start), name);
     poseidon::gpu::gpu_check_cuda(cudaEventDestroy(gpu_stop), name);
 
+    return summarize_gpu_samples(samples);
+}
+
+GpuSampleStats summarize_gpu_samples(const std::vector<double> &samples)
+{
+    if (samples.empty())
+    {
+        return GpuSampleStats{};
+    }
+
     std::vector<double> sorted = samples;
     std::sort(sorted.begin(), sorted.end());
 
@@ -623,6 +695,58 @@ GpuSampleStats benchmark_gpu_event_samples(
         : sorted[median_index];
     result.p90_ms = sorted[p90_index];
     result.max_ms = sorted.back();
+    return result;
+}
+
+template <typename GpuOnce>
+std::vector<GpuSampleStats> benchmark_ntt_stage_profile_samples(
+    int device_id,
+    int timing_iterations,
+    GpuOnce gpu_once,
+    const char *name,
+    std::size_t gpu_warmup_iterations,
+    std::size_t phase_count)
+{
+    poseidon::gpu::gpu_check_cuda(cudaSetDevice(device_id), name);
+    poseidon::gpu::kernel::set_ntt_stage_profile_enabled(false);
+    poseidon::gpu::kernel::reset_ntt_stage_profile();
+    for (std::size_t i = 0; i < gpu_warmup_iterations; ++i)
+    {
+        gpu_once();
+    }
+    poseidon::gpu::gpu_check_cuda(cudaDeviceSynchronize(), name);
+
+    phase_count = std::min(
+        phase_count,
+        poseidon::gpu::kernel::NttStageProfileSnapshot::kMaxStageCount);
+    std::vector<std::vector<double>> phase_samples(phase_count);
+    for (auto &samples : phase_samples)
+    {
+        samples.reserve(static_cast<std::size_t>(timing_iterations));
+    }
+
+    for (int i = 0; i < timing_iterations; ++i)
+    {
+        poseidon::gpu::kernel::reset_ntt_stage_profile();
+        poseidon::gpu::kernel::set_ntt_stage_profile_enabled(true);
+        gpu_once();
+        poseidon::gpu::gpu_check_cuda(cudaDeviceSynchronize(), name);
+        poseidon::gpu::kernel::set_ntt_stage_profile_enabled(false);
+        const auto snapshot =
+            poseidon::gpu::kernel::get_ntt_stage_profile_snapshot();
+        for (std::size_t phase = 0; phase < phase_count; ++phase)
+        {
+            phase_samples[phase].push_back(snapshot.stage_total_ms[phase]);
+        }
+    }
+    poseidon::gpu::kernel::reset_ntt_stage_profile();
+
+    std::vector<GpuSampleStats> result;
+    result.reserve(phase_count);
+    for (const auto &samples : phase_samples)
+    {
+        result.push_back(summarize_gpu_samples(samples));
+    }
     return result;
 }
 
@@ -789,15 +913,16 @@ void print_ntt_timing_table(
     print_border();
     for (const auto &row : rows)
     {
+        const bool skipped = row.correct == "SKIP";
         print_row(
             row.operation,
             row.mode,
-            format_fixed(row.timing.avg_ms, 6),
-            format_fixed(row.timing.min_ms, 6),
-            format_fixed(row.timing.median_ms, 6),
-            format_fixed(row.timing.p90_ms, 6),
-            format_fixed(row.timing.max_ms, 6),
-            row.correct ? "OK" : "FAIL");
+            skipped ? "-" : format_fixed(row.timing.avg_ms, 6),
+            skipped ? "-" : format_fixed(row.timing.min_ms, 6),
+            skipped ? "-" : format_fixed(row.timing.median_ms, 6),
+            skipped ? "-" : format_fixed(row.timing.p90_ms, 6),
+            skipped ? "-" : format_fixed(row.timing.max_ms, 6),
+            row.correct);
     }
     print_border();
 
@@ -809,7 +934,8 @@ void print_ntt_timing_table(
               << " per NTT mode\n";
     std::cout << "benchmark scope: preallocated GpuCiphertextData + GpuNTTHandler only\n";
     std::cout << "correct: raw residues and metadata compared with CPU NTT result\n";
-    std::cout << "algorithm: stage/fused2/fused3/fused4/fourstep are selected by POSEIDON_NTT_ALGO\n";
+    std::cout << "algorithm: stage/fused2/fused3/fused4/fourstep/tensor are selected by POSEIDON_NTT_ALGO\n";
+    std::cout << "phase rows: extra profiled pass; phase0..phase3 split FD=4 chunks and exclude outer copy/final INTT normalization\n";
 }
 
 void append_sweep_row(
@@ -1639,7 +1765,14 @@ int run_demo()
     encryptor.encrypt(plain1, ct1);
 
     auto cpu_evaluator = PoseidonFactory::get_instance()->create_ckks_evaluator(context);
-    GpuParameterData gpu_params(context, device_id);
+    GpuParameterData gpu_params;
+    {
+        std::cout << "[NTT setup] building regular GPU parameters without TAM matrices\n";
+        ScopedEnvironmentValue ntt_fused_matrix_stages(
+            kNttFusedMatrixStagesEnv,
+            "0");
+        gpu_params.build_from_poseidon_context(context, device_id);
+    }
     auto gpu_ct0 = GpuUploader::upload_ciphertext(ct0, device_id);
     auto gpu_ct1 = GpuUploader::upload_ciphertext(ct1, device_id);
     auto gpu_plain1 = GpuUploader::upload_plaintext(plain1, device_id);
@@ -2016,6 +2149,13 @@ int run_demo()
         gpu_params.get_level(gpu_ntt_fwd_source.meta.parms_id);
 
     std::vector<NttTimingRow> ntt_timing_rows;
+    const bool tensor_ntt_supported =
+        poseidon::gpu::supports_tensor_core_integer_gemm(device_id);
+    constexpr std::size_t regular_ntt_row_count = 10;
+    constexpr std::size_t tensor_ntt_row_count = 2;
+    const std::size_t ntt_progress_total =
+        regular_ntt_row_count + tensor_ntt_row_count;
+    std::size_t ntt_progress_current = 0;
     auto benchmark_ntt_mode =
         [&](const std::string &operation,
             const std::string &mode,
@@ -2026,6 +2166,12 @@ int run_demo()
             auto gpu_once)
     {
         const std::string timing_name = operation + "_" + mode;
+        ++ntt_progress_current;
+        print_progress_bar(
+            "[NTT timing]",
+            ntt_progress_current,
+            ntt_progress_total,
+            timing_name);
         ScopedEnvironmentValue ntt_algorithm(
             kNttAlgorithmEnv,
             algorithm.c_str());
@@ -2055,7 +2201,47 @@ int run_demo()
                     gpu_once,
                     timing_name.c_str(),
                     warmup_iterations),
-                correct});
+                correct ? "OK" : "FAIL"});
+
+        if (mode == "fused4" || mode == "tensor")
+        {
+            const std::string profile_name = timing_name + "_phase_profile";
+            const auto phase_stats =
+                benchmark_ntt_stage_profile_samples(
+                    device_id,
+                    timing_iterations,
+                    gpu_once,
+                    profile_name.c_str(),
+                    warmup_iterations,
+                    4);
+            for (std::size_t phase = 0; phase < phase_stats.size(); ++phase)
+            {
+                ntt_timing_rows.push_back(
+                    NttTimingRow{
+                        "  phase" + std::to_string(phase),
+                        mode,
+                        phase_stats[phase],
+                        "",
+                        true});
+            }
+        }
+    };
+
+    auto append_skipped_ntt_mode =
+        [&](const std::string &operation, const std::string &mode)
+    {
+        ++ntt_progress_current;
+        print_progress_bar(
+            "[NTT timing]",
+            ntt_progress_current,
+            ntt_progress_total,
+            operation + "_" + mode + " skipped");
+        ntt_timing_rows.push_back(
+            NttTimingRow{
+                operation,
+                mode,
+                GpuSampleStats{},
+                "SKIP"});
     };
 
     const int ntt_fusion_modes[] = {1, 2, 3, 4};
@@ -2132,6 +2318,69 @@ int run_demo()
                 ntt_fwd_source_view,
                 ntt_fwd_level_info);
         });
+
+    if (tensor_ntt_supported)
+    {
+        const auto tam_cache_dir = env_string_or(
+            kNttFusedMatrixCacheDirEnv,
+            kDefaultNttFusedMatrixCacheDir);
+        std::cout << "\n[NTT setup] building tensor GPU parameters with TAM matrices\n"
+                  << "[NTT setup] TAM cache dir: " << tam_cache_dir << "\n";
+
+        GpuParameterData tensor_gpu_params;
+        {
+            ScopedEnvironmentValue ntt_fused_matrix_stages(
+                kNttFusedMatrixStagesEnv,
+                "4");
+            ScopedDefaultEnvironmentValue ntt_fused_matrix_cache_dir(
+                kNttFusedMatrixCacheDirEnv,
+                tam_cache_dir.c_str());
+            ScopedDefaultEnvironmentValue ntt_fused_matrix_progress(
+                kNttFusedMatrixProgressEnv,
+                "1");
+            tensor_gpu_params.build_from_poseidon_context(context, device_id);
+        }
+
+        GpuNTTHandler tensor_ntt_handler(tensor_gpu_params);
+        const auto &tensor_ntt_inv_level_info =
+            tensor_gpu_params.get_level(gpu_ct0.meta.parms_id);
+        const auto &tensor_ntt_fwd_level_info =
+            tensor_gpu_params.get_level(gpu_ntt_fwd_source.meta.parms_id);
+
+        benchmark_ntt_mode(
+            "ntt_inv",
+            "tensor",
+            "tensor",
+            "4",
+            cpu_ntt_inv_result,
+            ntt_inv_destination,
+            [&]()
+            {
+                tensor_ntt_handler.inverse_ciphertext(
+                    ntt_inv_destination_view,
+                    ntt_inv_source_view,
+                    tensor_ntt_inv_level_info);
+            });
+        benchmark_ntt_mode(
+            "ntt_fwd",
+            "tensor",
+            "tensor",
+            "4",
+            cpu_ntt_fwd_result,
+            ntt_fwd_destination,
+            [&]()
+            {
+                tensor_ntt_handler.forward_ciphertext(
+                    ntt_fwd_destination_view,
+                    ntt_fwd_source_view,
+                    tensor_ntt_fwd_level_info);
+            });
+    }
+    else
+    {
+        append_skipped_ntt_mode("ntt_inv", "tensor");
+        append_skipped_ntt_mode("ntt_fwd", "tensor");
+    }
 
     print_ntt_timing_table(
         ntt_timing_rows,
