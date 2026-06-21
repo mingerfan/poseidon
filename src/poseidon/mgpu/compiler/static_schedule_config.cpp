@@ -76,6 +76,22 @@ bool read_bool(
     return true;
 }
 
+void reject_require_ready_conflict(
+    StaticScheduleExecutionConfigParseResult &result, const Json &preflight,
+    const char *field)
+{
+    const auto iter = preflight.find(field);
+    if (iter == preflight.end() || !iter->is_boolean() ||
+        iter->get<bool>())
+    {
+        return;
+    }
+
+    add_diagnostic(
+        result, std::string("/preflight/") + field,
+        std::string("require_ready=true requires ") + field + "=true");
+}
+
 bool read_optional_int(
     StaticScheduleExecutionConfigParseResult &result, const Json &object,
     const char *field, std::optional<int> &value, const std::string &path)
@@ -284,6 +300,14 @@ void parse_preflight(
         result, preflight, "communication_execution",
         config.communication_execution_preflight, "/preflight");
     read_bool(result, preflight, "require_ready", config.require_ready, "/preflight");
+
+    if (config.require_ready)
+    {
+        reject_require_ready_conflict(result, preflight, "opcode_summary");
+        reject_require_ready_conflict(result, preflight, "poseidon_gpu_preflight");
+        reject_require_ready_conflict(result, preflight, "communication_plan");
+        reject_require_ready_conflict(result, preflight, "communication_execution");
+    }
 }
 
 void parse_execution_backends(

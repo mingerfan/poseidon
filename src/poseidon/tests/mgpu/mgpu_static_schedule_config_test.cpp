@@ -181,6 +181,39 @@ void test_require_ready_enables_hard_gate_checks()
         "require_ready should enable communication execution preflight");
 }
 
+void test_require_ready_rejects_explicitly_disabled_hard_gate_checks()
+{
+    const char *json = R"json(
+{
+  "version": 1,
+  "device_count": 2,
+  "preflight": {
+    "opcode_summary": false,
+    "poseidon_gpu_preflight": false,
+    "communication_plan": false,
+    "communication_execution": false,
+    "require_ready": true
+  }
+}
+)json";
+
+    const StaticScheduleExecutionConfigParseResult result =
+        parse_static_schedule_execution_config_json(json);
+    require(!result.ok(), "require_ready conflicts should fail");
+    require_contains(
+        result.format_diagnostics(),
+        "/preflight/opcode_summary: require_ready=true requires opcode_summary=true");
+    require_contains(
+        result.format_diagnostics(),
+        "/preflight/poseidon_gpu_preflight: require_ready=true requires poseidon_gpu_preflight=true");
+    require_contains(
+        result.format_diagnostics(),
+        "/preflight/communication_plan: require_ready=true requires communication_plan=true");
+    require_contains(
+        result.format_diagnostics(),
+        "/preflight/communication_execution: require_ready=true requires communication_execution=true");
+}
+
 void test_single_node_zero_devices_per_node_defaults_to_device_count()
 {
     const char *json = R"json(
@@ -481,6 +514,7 @@ int main(int argc, char **argv)
         test_parse_single_node_eight_gpu_config();
         test_parse_cluster_preview_config();
         test_require_ready_enables_hard_gate_checks();
+        test_require_ready_rejects_explicitly_disabled_hard_gate_checks();
         test_single_node_zero_devices_per_node_defaults_to_device_count();
         test_config_json_round_trip();
         test_config_json_round_trip_preserves_unset_optional_devices();
