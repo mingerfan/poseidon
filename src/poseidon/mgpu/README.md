@@ -40,7 +40,8 @@ keeps Dacapo source-only with respect to the normal Poseidon build.
 `poseidon_mgpu_external_hevm_artifact_tests` is a skipped-by-default CTest for
 real Dacapo `.hevm + .cst` output, including ResNet20 artifacts. It loads the
 files, runs static placement and copy insertion, builds the HEVM I/O plan, and
-prints schedule/device summaries. It does not execute GPU operators.
+prints schedule/device summaries plus a Poseidon GPU executor preflight. It
+does not execute GPU operators.
 
 ```bash
 POSEIDON_MGPU_EXTERNAL_HEVM=/path/to/model.hevm \
@@ -58,3 +59,23 @@ Optional environment variables:
 - `POSEIDON_MGPU_EXTERNAL_DEFAULT_DEVICE`
 - `POSEIDON_MGPU_EXTERNAL_ROUND_ROBIN_COMPUTE=1`
 - `POSEIDON_MGPU_EXTERNAL_DEBUG_DUMP=1`
+
+The dump tool can run the same preflight without CTest:
+
+```bash
+poseidon_mgpu_dacapo_hevm_dump \
+  --hevm /path/to/model.hevm \
+  --constants /path/to/model.cst \
+  --devices 8 \
+  --compute-devices 0,1,2,3,4,5,6,7 \
+  --poseidon-gpu-preflight \
+  --preflight-comm-available \
+  --preflight-relin-keys \
+  --preflight-galois-keys \
+  --summary-json \
+  --no-schedule
+```
+
+Preflight is CPU-only. It reports whether the schedule needs the mgpu
+communication layer, relinearization keys, Galois keys, or unsupported
+Poseidon GPU operations such as bootstrap fallback before attempting execution.

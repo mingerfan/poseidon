@@ -160,6 +160,11 @@ Dacapo artifact debugging:
   `POSEIDON_MGPU_EXTERNAL_DOWNLOAD_DEVICE`,
   `POSEIDON_MGPU_EXTERNAL_ROUND_ROBIN_COMPUTE`, and
   `POSEIDON_MGPU_EXTERNAL_DEBUG_DUMP`.
+- Use the CPU-only Poseidon GPU preflight before execution on real artifacts.
+  It reports required communication, RelinKeys, GaloisKeys, invalid devices,
+  and unsupported executor ops without linking CUDA/RMM. The dump tool exposes
+  this through `--poseidon-gpu-preflight`, `--preflight-comm-available`,
+  `--preflight-relin-keys`, and `--preflight-galois-keys`.
 
 ## 5. Test Plan
 
@@ -177,6 +182,7 @@ Dacapo artifact debugging:
 | Placement configuration tests | Upload, compute-device list, and download placement must all trigger explicit copies when devices differ. |
 | Artifact dump tool smoke | Build the optional tool and run it on mock `.hevm + .cst` artifacts with upload/compute/download device options. |
 | External artifact test | Skips by default; when env vars point at real ResNet20 `.hevm + .cst`, load artifacts, run placement/copy insertion, build HEVM I/O plan, and print schedule summaries. |
+| Poseidon GPU preflight tests | CPU-only checks report required comm/keys and unsupported GPU executor operations before attempting GPU execution. |
 
 ## 6. Phases
 
@@ -188,7 +194,7 @@ Dacapo artifact debugging:
 | 3 | `GpuComm` and CUDA peer-copy backend | Same-device tests pass; multi-GPU tests skip or pass. |
 | 4 | Static placement and copy insertion | Handwritten small graph verifies inserted copies. |
 | 5 | Add Dacapo submodule and JSON/HEVM adapters | Adapter tests use small captured/mock Dacapo input. |
-| 6 | ResNet20 static schedule path | Artifact load/dump works; skipped-by-default external artifact CTest validates real `.hevm + .cst`; single-GPU fallback works; multi-GPU run validates on cluster. |
+| 6 | ResNet20 static schedule path | Artifact load/dump works; skipped-by-default external artifact CTest validates real `.hevm + .cst`; CPU-only preflight reports GPU executor readiness; single-GPU fallback works; multi-GPU run validates on cluster. |
 | 7 | Cluster communication planning | NCCL/MPI interface is introduced only after single-node path is stable. |
 
 On a single-GPU development machine, complete Phases 0-4 with same-device copy

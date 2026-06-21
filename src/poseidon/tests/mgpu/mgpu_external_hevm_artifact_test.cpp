@@ -1,6 +1,7 @@
 #include "poseidon/mgpu/compiler/dacapo_artifacts.h"
 #include "poseidon/mgpu/ir/schedule_summary.h"
 #include "poseidon/mgpu/runtime/hevm_io_binding.h"
+#include "poseidon/mgpu/runtime/poseidon_gpu_schedule_preflight.h"
 
 #include <cstdlib>
 #include <iostream>
@@ -202,6 +203,16 @@ int main()
         std::cout << "constants: " << artifacts.constants.values.size() << '\n';
         print_io_summary(io_plan.plan);
         std::cout << dump_schedule_summary(summary);
+        const PoseidonGpuSchedulePreflightResult preflight =
+            preflight_poseidon_gpu_schedule(
+                artifacts.schedule,
+                PoseidonGpuSchedulePreflightOptions{
+                    options.device_count,
+                    /*copy_ops_have_comm=*/true,
+                    /*relin_keys_available=*/true,
+                    /*galois_keys_available=*/true,
+                });
+        std::cout << dump_poseidon_gpu_schedule_preflight(preflight);
         if (!artifacts.debug_dump.empty())
         {
             std::cout << '\n' << artifacts.debug_dump;

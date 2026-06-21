@@ -1,6 +1,7 @@
 #include "poseidon/mgpu/compiler/dacapo_artifacts.h"
 #include "poseidon/mgpu/ir/schedule_summary.h"
 #include "poseidon/mgpu/runtime/hevm_io_binding.h"
+#include "poseidon/mgpu/runtime/poseidon_gpu_schedule_preflight.h"
 #include "poseidon/util/json.h"
 
 #include <cstdlib>
@@ -27,6 +28,10 @@ struct ToolOptions
     bool round_robin_compute = false;
     bool dump_schedule = true;
     bool summary_json = false;
+    bool poseidon_gpu_preflight = false;
+    bool preflight_comm_available = false;
+    bool preflight_relin_keys_available = false;
+    bool preflight_galois_keys_available = false;
 };
 
 void print_usage(std::ostream &stream)
@@ -37,6 +42,10 @@ void print_usage(std::ostream &stream)
            "[--compute-devices a,b,c] "
            "[--upload-device N] "
            "[--download-device N] "
+           "[--poseidon-gpu-preflight] "
+           "[--preflight-comm-available] "
+           "[--preflight-relin-keys] "
+           "[--preflight-galois-keys] "
            "[--summary-json] "
            "[--no-schedule]\n";
 }
@@ -176,6 +185,29 @@ ToolOptions parse_args(int argc, char **argv)
             options.summary_json = true;
             continue;
         }
+        if (arg == "--poseidon-gpu-preflight")
+        {
+            options.poseidon_gpu_preflight = true;
+            continue;
+        }
+        if (arg == "--preflight-comm-available")
+        {
+            options.preflight_comm_available = true;
+            options.poseidon_gpu_preflight = true;
+            continue;
+        }
+        if (arg == "--preflight-relin-keys")
+        {
+            options.preflight_relin_keys_available = true;
+            options.poseidon_gpu_preflight = true;
+            continue;
+        }
+        if (arg == "--preflight-galois-keys")
+        {
+            options.preflight_galois_keys_available = true;
+            options.poseidon_gpu_preflight = true;
+            continue;
+        }
 
         throw std::invalid_argument("unknown argument: " + arg);
     }
@@ -225,6 +257,53 @@ StaticSchedulePipelineOptions make_pipeline_options(const ToolOptions &tool_opti
     return options;
 }
 
+nlohmann::json parse_json_object(const std::string &text)
+{
+    return nlohmann::json::parse(text);
+}
+
+nlohmann::json optional_preflight_json(
+    const ToolOptions &tool_options,
+    const MgpuSchedule &schedule)
+{
+    if (!tool_options.poseidon_gpu_preflight)
+    {
+        return nullptr;
+    }
+
+    const PoseidonGpuSchedulePreflightResult result =
+        preflight_poseidon_gpu_schedule(
+            schedule,
+            PoseidonGpuSchedulePreflightOptions{
+                tool_options.device_count,
+                tool_options.preflight_comm_available,
+                tool_options.preflight_relin_keys_available,
+                tool_options.preflight_galois_keys_available,
+            });
+    return parse_json_object(poseidon_gpu_schedule_preflight_to_json(result, -1));
+}
+
+void print_optional_preflight(
+    const ToolOptions &tool_options,
+    const MgpuSchedule &schedule)
+{
+    if (!tool_options.poseidon_gpu_preflight)
+    {
+        return;
+    }
+
+    const PoseidonGpuSchedulePreflightResult result =
+        preflight_poseidon_gpu_schedule(
+            schedule,
+            PoseidonGpuSchedulePreflightOptions{
+                tool_options.device_count,
+                tool_options.preflight_comm_available,
+                tool_options.preflight_relin_keys_available,
+                tool_options.preflight_galois_keys_available,
+            });
+    dump_poseidon_gpu_schedule_preflight(std::cout, result);
+}
+
 void print_io_summary(const HevmIoBindingPlan &plan)
 {
     std::cout << "hevm_io:\n";
@@ -265,11 +344,12 @@ void print_text_summary(
 
 nlohmann::json make_tool_summary_json(
     const MgpuScheduleSummary &summary, std::size_t constant_count,
-    const HevmIoBindingPlan &io_plan, std::optional<std::string> debug_dump)
+    const HevmIoBindingPlan &io_plan, nlohmann::json preflight,
+    std::optional<std::string> debug_dump)
 {
     nlohmann::json root;
     root["version"] = 1;
-    root["schedule"] = nlohmann::json::parse(schedule_summary_to_json(summary, -1));
+    root["schedule"] = parse_json_object(schedule_summary_to_json(summary, -1));
     root["constants"] = nlohmann::json{
         { "vectors", constant_count },
     };
@@ -278,6 +358,10 @@ nlohmann::json make_tool_summary_json(
         { "plaintext_constants", io_plan.plain_inputs.size() },
         { "results", io_plan.results.size() },
     };
+    if (!preflight.is_null())
+    {
+        root["poseidon_gpu_preflight"] = std::move(preflight);
+    }
     if (debug_dump.has_value())
     {
         root["debug_dump"] = *debug_dump;
@@ -321,15 +405,18 @@ int main(int argc, char **argv)
             const std::optional<std::string> debug_dump =
                 tool_options.dump_schedule ? std::optional<std::string>(artifacts.debug_dump)
                                            : std::nullopt;
+            nlohmann::json preflight =
+                optional_preflight_json(tool_options, artifacts.schedule);
             std::cout << make_tool_summary_json(
                              summary, artifacts.constants.values.size(), io_plan.plan,
-                             debug_dump)
+                             std::move(preflight), debug_dump)
                              .dump(2)
                       << '\n';
         }
         else
         {
             print_text_summary(summary, artifacts.constants.values.size(), io_plan.plan);
+            print_optional_preflight(tool_options, artifacts.schedule);
 
             if (tool_options.dump_schedule)
             {

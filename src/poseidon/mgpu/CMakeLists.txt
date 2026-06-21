@@ -18,6 +18,7 @@ add_library(poseidon_mgpu STATIC
     runtime/hevm_static_execution_plan.cpp
     runtime/io_binding_handler.cpp
     runtime/object_store.cpp
+    runtime/poseidon_gpu_schedule_preflight.cpp
     runtime/schedule_interpreter.cpp
     runtime/static_schedule_executor.cpp
 )
@@ -107,6 +108,10 @@ if(POSEIDON_BUILD_MGPU_TESTS)
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_hevm_static_execution_plan_test.cpp
     )
 
+    add_executable(poseidon_mgpu_poseidon_gpu_preflight_tests
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_poseidon_gpu_preflight_test.cpp
+    )
+
     add_executable(poseidon_mgpu_static_placement_tests
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_static_placement_test.cpp
     )
@@ -190,6 +195,11 @@ if(POSEIDON_BUILD_MGPU_TESTS)
     )
 
     target_link_libraries(poseidon_mgpu_hevm_static_execution_plan_tests
+        PRIVATE
+            poseidon_mgpu
+    )
+
+    target_link_libraries(poseidon_mgpu_poseidon_gpu_preflight_tests
         PRIVATE
             poseidon_mgpu
     )
@@ -284,6 +294,11 @@ if(POSEIDON_BUILD_MGPU_TESTS)
     add_test(
         NAME poseidon_mgpu_hevm_static_execution_plan_tests
         COMMAND poseidon_mgpu_hevm_static_execution_plan_tests
+    )
+
+    add_test(
+        NAME poseidon_mgpu_poseidon_gpu_preflight_tests
+        COMMAND poseidon_mgpu_poseidon_gpu_preflight_tests
     )
 
     add_test(
