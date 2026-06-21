@@ -381,6 +381,27 @@ ToolOptions parse_args(int argc, char **argv)
     {
         throw std::invalid_argument("--download-device must be in [0, devices)");
     }
+    for (std::size_t i = 0;
+         i < options.config.pipeline.placement.compute_devices.size(); ++i)
+    {
+        const int compute_device =
+            options.config.pipeline.placement.compute_devices[i];
+        if (compute_device < 0 ||
+            compute_device >= options.config.pipeline.device_count)
+        {
+            throw std::invalid_argument(
+                "--compute-devices entries must be in [0, devices)");
+        }
+        for (std::size_t j = 0; j < i; ++j)
+        {
+            if (options.config.pipeline.placement.compute_devices[j] ==
+                compute_device)
+            {
+                throw std::invalid_argument(
+                    "--compute-devices must not contain duplicate device ids");
+            }
+        }
+    }
     if (options.config.node_count <= 0)
     {
         throw std::invalid_argument("--nodes must be positive");

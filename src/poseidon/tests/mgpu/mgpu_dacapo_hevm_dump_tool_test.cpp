@@ -285,6 +285,79 @@ void test_config_file_template_report(
     require_contains(summary_text, "\"copy_cipher\": 2");
 }
 
+void test_config_file_command_line_overrides(
+    const std::string &tool_path, const std::string &config_dir)
+{
+    TempDir temp;
+    const std::string hevm_path = temp.path("mock.hevm");
+    const std::string constants_path = temp.path("mock.cst");
+    const std::string summary_path = temp.path("summary.json");
+    const std::string stdout_path = temp.path("stdout.txt");
+    const std::string config_path =
+        (std::filesystem::path(config_dir) / "single_node_8gpu.json").string();
+    write_binary_file(hevm_path, make_two_compute_hevm_binary());
+    write_binary_file(constants_path, make_constant_file());
+
+    const std::string command =
+        shell_quote(tool_path) +
+        " --config " + shell_quote(config_path) +
+        " --devices 2"
+        " --compute-devices 0,1"
+        " --execution-cuda-peer-available"
+        " --hevm " + shell_quote(hevm_path) +
+        " --constants " + shell_quote(constants_path) +
+        " --write-summary-json " + shell_quote(summary_path) +
+        " --no-schedule > " + shell_quote(stdout_path);
+
+    const int exit_code = std::system(command.c_str());
+    require(exit_code == 0, "dump tool override command failed: " + command);
+
+    const std::string summary_text = read_text_file(summary_path);
+
+    require_contains(summary_text, "\"device_count\": 2");
+    require_contains(summary_text, "\"compute_devices\": [\n        0,\n        1\n      ]");
+    require_contains(summary_text, "\"execution_gate\"");
+    require_contains(summary_text, "\"status\": \"ready\"");
+    require_contains(summary_text, "\"cuda_peer\": true");
+    require_contains(summary_text, "\"copy_plain\": 1");
+    require_contains(summary_text, "\"copy_cipher\": 2");
+}
+
+void test_config_file_rejects_stale_cli_compute_devices(
+    const std::string &tool_path, const std::string &config_dir)
+{
+    TempDir temp;
+    const std::string hevm_path = temp.path("mock.hevm");
+    const std::string constants_path = temp.path("mock.cst");
+    const std::string stdout_path = temp.path("stdout.txt");
+    const std::string stderr_path = temp.path("stderr.txt");
+    const std::string config_path =
+        (std::filesystem::path(config_dir) / "single_node_8gpu.json").string();
+    write_binary_file(hevm_path, make_hevm_binary());
+    write_binary_file(constants_path, make_constant_file());
+
+    const std::string command =
+        shell_quote(tool_path) +
+        " --config " + shell_quote(config_path) +
+        " --devices 2"
+        " --hevm " + shell_quote(hevm_path) +
+        " --constants " + shell_quote(constants_path) +
+        " --no-schedule > " + shell_quote(stdout_path) +
+        " 2> " + shell_quote(stderr_path);
+
+    const int exit_code = std::system(command.c_str());
+    require(
+        exit_code != 0,
+        "stale compute-device override command should fail: " + command);
+
+    const std::string stdout_text = read_text_file(stdout_path);
+    const std::string stderr_text = read_text_file(stderr_path);
+
+    require_not_contains(stdout_text, "mgpu.schedule");
+    require_contains(
+        stderr_text, "--compute-devices entries must be in [0, devices)");
+}
+
 void test_failure_report_for_unsupported_opcode(const std::string &tool_path)
 {
     TempDir temp;
@@ -441,6 +514,8 @@ int main(int argc, char **argv)
         require(argc == 3, "expected dump tool path and mgpu config directory");
         test_write_schedule_and_report(argv[1]);
         test_config_file_template_report(argv[1], argv[2]);
+        test_config_file_command_line_overrides(argv[1], argv[2]);
+        test_config_file_rejects_stale_cli_compute_devices(argv[1], argv[2]);
         test_failure_report_for_unsupported_opcode(argv[1]);
         test_failure_report_for_missing_hevm_file(argv[1]);
         test_failure_report_for_missing_constants_file(argv[1]);
