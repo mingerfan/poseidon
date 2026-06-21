@@ -47,6 +47,10 @@ if(POSEIDON_BUILD_MGPU_TOOLS)
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/mgpu/tools/dacapo_hevm_dump.cpp
     )
 
+    add_executable(poseidon_mgpu_resnet20_artifact_check
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/mgpu/tools/resnet20_artifact_check.cpp
+    )
+
     target_link_libraries(poseidon_mgpu_dacapo_hevm_dump
         PRIVATE
             poseidon_mgpu
@@ -70,6 +74,20 @@ if(POSEIDON_BUILD_MGPU_TOOLS)
             COMMAND poseidon_mgpu_dacapo_hevm_dump_tool_tests
                     $<TARGET_FILE:poseidon_mgpu_dacapo_hevm_dump>
                     ${POSEIDON_INCLUDES_DIR}/src/poseidon/mgpu/configs
+        )
+
+        add_executable(poseidon_mgpu_resnet20_artifact_check_tool_tests
+            ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_resnet20_artifact_check_tool_test.cpp
+        )
+
+        add_dependencies(
+            poseidon_mgpu_resnet20_artifact_check_tool_tests
+            poseidon_mgpu_resnet20_artifact_check)
+
+        add_test(
+            NAME poseidon_mgpu_resnet20_artifact_check_tool_tests
+            COMMAND poseidon_mgpu_resnet20_artifact_check_tool_tests
+                    $<TARGET_FILE:poseidon_mgpu_resnet20_artifact_check>
         )
     endif()
 endif()

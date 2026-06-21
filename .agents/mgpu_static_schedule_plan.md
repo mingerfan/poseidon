@@ -49,6 +49,7 @@
 | Interpreter | Execute the verified schedule in order. |
 | Dumper | Emit MLIR-like readable text for debugging. |
 | Dacapo HEVM dump tool | Load `.hevm + .cst`, run placement/copy insertion, and print schedule/I/O summaries for debugging real artifacts. |
+| ResNet20 artifact path check tool | CPU-only helper that checks Dacapo's expected ResNet20 `.hevm + .cst` paths and prints a repeatable dump-tool preflight command. |
 
 ## 4. Interface Plan
 
@@ -159,6 +160,11 @@ Runtime IO binding:
 Dacapo artifact debugging:
 
 - `POSEIDON_BUILD_MGPU_TOOLS=ON` builds `poseidon_mgpu_dacapo_hevm_dump`.
+- `POSEIDON_BUILD_MGPU_TOOLS=ON` also builds
+  `poseidon_mgpu_resnet20_artifact_check`, a CPU-only helper that verifies the
+  expected ResNet20 artifact paths under `DACAPO_ROOT` or `--dacapo-root` and
+  prints the next `poseidon_mgpu_dacapo_hevm_dump` command. It must not parse
+  HEVM, link Dacapo/MLIR, load CUDA/RMM, or execute GPU operators.
 - The dump tool accepts `--hevm`, `--constants`, `--config`, `--devices`,
   `--default-device`, `--upload-device`, `--compute-devices`,
   `--download-device`, `--round-robin-compute`, `--summary-json`, and
