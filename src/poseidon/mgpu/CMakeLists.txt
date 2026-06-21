@@ -1,5 +1,6 @@
 add_library(poseidon_mgpu STATIC
     comm/gpu_comm.cpp
+    comm/gpu_object_copy.cpp
     compiler/copy_insertion.cpp
     compiler/dacapo_adapter.cpp
     compiler/schedule_verifier.cpp
@@ -34,6 +35,10 @@ if(POSEIDON_BUILD_MGPU_TESTS)
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_copy_insertion_test.cpp
     )
 
+    add_executable(poseidon_mgpu_object_copy_tests
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_object_copy_test.cpp
+    )
+
     add_executable(poseidon_mgpu_dacapo_adapter_tests
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_dacapo_adapter_test.cpp
     )
@@ -61,6 +66,11 @@ if(POSEIDON_BUILD_MGPU_TESTS)
     )
 
     target_link_libraries(poseidon_mgpu_copy_insertion_tests
+        PRIVATE
+            poseidon_mgpu
+    )
+
+    target_link_libraries(poseidon_mgpu_object_copy_tests
         PRIVATE
             poseidon_mgpu
     )
@@ -98,6 +108,11 @@ if(POSEIDON_BUILD_MGPU_TESTS)
     add_test(
         NAME poseidon_mgpu_copy_insertion_tests
         COMMAND poseidon_mgpu_copy_insertion_tests
+    )
+
+    add_test(
+        NAME poseidon_mgpu_object_copy_tests
+        COMMAND poseidon_mgpu_object_copy_tests
     )
 
     add_test(

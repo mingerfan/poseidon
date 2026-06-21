@@ -147,4 +147,23 @@ void CudaPeerComm::copy_buffer(const CudaPeerCopyRequest &request) const
     copy_with_host_staging(request);
 }
 
+void CudaPeerComm::copy_object(const GpuObjectCopyRequest &request) const
+{
+    const GpuObjectCopyValidationResult validation =
+        validate_full_object_copy_request(request);
+    if (!validation.ok())
+    {
+        throw std::invalid_argument(validation.format_errors());
+    }
+
+    const GpuObjectBufferCopy &buffer = request.buffers[0];
+    copy_buffer(CudaPeerCopyRequest{
+        buffer.source,
+        buffer.destination,
+        buffer.bytes,
+        buffer.source_device,
+        buffer.destination_device,
+    });
+}
+
 }  // namespace poseidon::mgpu

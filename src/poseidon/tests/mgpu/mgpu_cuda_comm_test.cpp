@@ -86,6 +86,55 @@ void test_same_device_copy()
     check_cuda(cudaFree(source), "cudaFree source");
 }
 
+void test_same_device_object_copy()
+{
+    CudaPeerComm comm;
+    int *source = nullptr;
+    int *destination = nullptr;
+    const int input = 24680;
+    int output = 0;
+
+    check_cuda(cudaSetDevice(0), "cudaSetDevice");
+    check_cuda(cudaMalloc(reinterpret_cast<void **>(&source), sizeof(int)), "cudaMalloc source");
+    check_cuda(
+        cudaMalloc(reinterpret_cast<void **>(&destination), sizeof(int)),
+        "cudaMalloc destination");
+
+    try
+    {
+        check_cuda(
+            cudaMemcpy(source, &input, sizeof(int), cudaMemcpyHostToDevice),
+            "cudaMemcpy host to device");
+
+        GpuObjectCopyRequest request;
+        request.source_id = 1;
+        request.destination_id = 2;
+        request.kind = MgpuValueKind::Ciphertext;
+        request.buffers.push_back(GpuObjectBufferCopy{
+            source,
+            destination,
+            sizeof(int),
+            0,
+            0,
+        });
+
+        comm.copy_object(request);
+        check_cuda(
+            cudaMemcpy(&output, destination, sizeof(int), cudaMemcpyDeviceToHost),
+            "cudaMemcpy device to host");
+        require(output == input, "same-device CUDA object copy result mismatch");
+    }
+    catch (...)
+    {
+        cudaFree(destination);
+        cudaFree(source);
+        throw;
+    }
+
+    check_cuda(cudaFree(destination), "cudaFree destination");
+    check_cuda(cudaFree(source), "cudaFree source");
+}
+
 void test_cross_device_copy_if_available(int device_count)
 {
     if (device_count < 2)
@@ -142,6 +191,7 @@ int main()
     {
         const int device_count = visible_device_count_or_skip();
         test_same_device_copy();
+        test_same_device_object_copy();
         test_cross_device_copy_if_available(device_count);
     }
     catch (const std::exception &ex)

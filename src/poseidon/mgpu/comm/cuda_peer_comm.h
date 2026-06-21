@@ -1,5 +1,7 @@
 #pragma once
 
+#include "poseidon/mgpu/comm/gpu_object_copy.h"
+
 #include <cstddef>
 
 namespace poseidon::mgpu
@@ -21,6 +23,7 @@ public:
     static bool can_access_peer(int destination_device, int source_device);
 
     void copy_buffer(const CudaPeerCopyRequest &request) const;
+    void copy_object(const GpuObjectCopyRequest &request) const;
 };
 
 }  // namespace poseidon::mgpu
