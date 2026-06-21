@@ -1,4 +1,5 @@
 #include "poseidon/mgpu/runtime/hevm_static_execution_plan.h"
+#include "poseidon/mgpu/ir/schedule.h"
 #include "poseidon/parameters_literal.h"
 #include "poseidon/plaintext.h"
 #include "poseidon/poseidon_context.h"
@@ -22,6 +23,11 @@ using namespace poseidon::mgpu;
 
 namespace
 {
+
+MgpuValueRef value(ValueId id)
+{
+    return MgpuValueRef{ id };
+}
 
 void require(bool condition, const std::string &message)
 {
@@ -212,6 +218,46 @@ void test_propagates_artifact_load_errors()
     require_contains(result.format_diagnostics(), "failed to open Dacapo artifact file");
 }
 
+void test_propagates_io_binding_errors()
+{
+    DacapoHevmArtifactResult artifacts;
+    artifacts.schedule.ops.push_back(MgpuOp{
+        MgpuOpKind::UploadCipher,
+        0,
+        {},
+        { value(1) },
+        {},
+        { { "hevm_arg_index", 0 },
+          { "hevm_arg_scale", 20 },
+          { "hevm_arg_level", 2 },
+          { "hevm_init_level", 2 } },
+    });
+    artifacts.schedule.ops.push_back(MgpuOp{
+        MgpuOpKind::Download,
+        0,
+        { value(1) },
+        {},
+        {},
+        { { "hevm_result_index", 0 },
+          { "hevm_result_register", 0 },
+          { "hevm_result_scale", 20 } },
+    });
+    artifacts.debug_dump = dump_schedule(artifacts.schedule);
+
+    const PoseidonContext context(make_ckks_test_parameters());
+    const HevmStaticExecutionPlanResult result =
+        prepare_hevm_static_execution_plan(context, artifacts);
+
+    require(!result.ok(), "incomplete HEVM result metadata should fail");
+    require(result.plan.schedule.ops.empty(), "failed plan should not return a schedule");
+    require(
+        result.plan.encoded_plaintexts.empty(),
+        "failed plan should not return encoded plaintexts");
+    require_contains(result.format_diagnostics(), "hevm_io_binding");
+    require_contains(result.format_diagnostics(), "missing HEVM integer attribute");
+    require_contains(result.format_diagnostics(), "hevm_result_level");
+}
+
 void test_propagates_plaintext_encoding_errors()
 {
     TempDir temp;
@@ -236,6 +282,7 @@ int main()
     {
         test_prepares_static_execution_plan_from_files();
         test_propagates_artifact_load_errors();
+        test_propagates_io_binding_errors();
         test_propagates_plaintext_encoding_errors();
     }
     catch (const std::exception &ex)
