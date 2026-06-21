@@ -289,6 +289,8 @@ Dacapo artifact debugging:
   `.hevm + .cst` artifact to exercise the same external artifact path,
   preflight flags, and non-trivial topology on machines without ResNet20
   artifacts.
+- External cluster-preview mock tests must assert the effective 4x8 topology
+  fields as well as the missing inter-node backend diagnostics.
 - `poseidon_mgpu_external_hevm_rich_mock_artifact_tests` uses a generated
   artifact with rotate, ciphertext add/multiply, rescale, plaintext add,
   explicit copy insertion, GaloisKeys preflight, and readiness gating. It must

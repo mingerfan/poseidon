@@ -701,6 +701,13 @@ void validate_external_config_expectations(
                 parse_int("POSEIDON_MGPU_EXTERNAL_EXPECT_DEVICE_COUNT", expected),
             "external HEVM effective device_count expectation mismatch");
     }
+    if (const char *expected = get_env("POSEIDON_MGPU_EXTERNAL_EXPECT_NODES"))
+    {
+        require(
+            config.node_count ==
+                parse_int("POSEIDON_MGPU_EXTERNAL_EXPECT_NODES", expected),
+            "external HEVM effective node_count expectation mismatch");
+    }
     if (const char *expected =
             get_env("POSEIDON_MGPU_EXTERNAL_EXPECT_DEVICES_PER_NODE"))
     {

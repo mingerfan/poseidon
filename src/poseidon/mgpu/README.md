@@ -300,8 +300,9 @@ covered without a real ResNet20 artifact.
 `poseidon_mgpu_external_hevm_cluster_preview_mock_artifact_tests` uses the
 bundled `cluster_4x8_node_spread_preview.json` and asserts that inter-node
 routes are reported as not-ready while `inter_node` execution remains
-unavailable. This is diagnostic coverage only; it does not add or require a
-cluster transport.
+unavailable. It also checks the effective 32-device, 4-node, 8-devices-per-node
+topology from the config. This is diagnostic coverage only; it does not add or
+require a cluster transport.
 
 `poseidon_mgpu_external_hevm_report_mock_artifact_tests` writes the shared JSON
 report and readable schedule dump from the external artifact CTest path,
