@@ -9,6 +9,7 @@
 #include "poseidon/mgpu/runtime/hevm_io_binding.h"
 #include "poseidon/mgpu/runtime/poseidon_gpu_schedule_preflight.h"
 #include "poseidon/tests/mgpu/hevm_test_utils.h"
+#include "poseidon/util/json.h"
 
 #include <chrono>
 #include <cstdint>
@@ -30,6 +31,7 @@ namespace
 {
 
 constexpr int kSkip = 77;
+using Json = nlohmann::json;
 
 MgpuTopology make_external_topology(const StaticScheduleExecutionConfig &config);
 
@@ -309,6 +311,39 @@ void validate_constant_indices(
                 " parsed constants");
         }
     }
+}
+
+void validate_report_json_file(
+    const std::string &path, const StaticScheduleExecutionConfig &config,
+    const MgpuScheduleSummary &summary, const HevmIoBindingPlan &io_plan,
+    const HevmArtifactReadinessResult &readiness)
+{
+    const Json report = Json::parse(read_text_file(path));
+    require(report.at("version").get<int>() == 1, "external report version mismatch");
+    require(
+        report.at("execution_gate").at("ok").get<bool>() == readiness.ok(),
+        "external report execution gate does not match readiness");
+    require(
+        report.at("execution_config").at("device_count").get<int>() ==
+            config.pipeline.device_count,
+        "external report device_count mismatch");
+    require(
+        report.at("schedule").at("total_ops").get<std::size_t>() == summary.total_ops,
+        "external report schedule total_ops mismatch");
+    require(
+        report.at("hevm_io").at("cipher_inputs").get<std::size_t>() ==
+            io_plan.cipher_inputs.size(),
+        "external report cipher input count mismatch");
+    require(
+        report.at("hevm_io").at("results").get<std::size_t>() ==
+            io_plan.results.size(),
+        "external report result count mismatch");
+    require(
+        report.at("poseidon_gpu_execution_preflight").at("ok").is_boolean(),
+        "external report missing aggregate execution preflight");
+    require(
+        report.at("hevm_artifact_readiness").at("ok").get<bool>() == readiness.ok(),
+        "external report readiness mismatch");
 }
 
 void print_opcode_summary(const DacapoHevmOpcodeSummary &summary)
@@ -673,6 +708,8 @@ int main()
             report.debug_dump = debug_dump;
             write_text_file(
                 report_path, hevm_artifact_report_to_json(report, 2) + "\n");
+            validate_report_json_file(
+                report_path, config, summary, io_plan.plan, readiness);
             std::cout << "external_report_json: " << report_path << '\n';
         }
 
