@@ -28,4 +28,5 @@ poseidon_mgpu_dacapo_hevm_dump \
   --no-schedule
 ```
 
-Command-line flags passed after `--config` override the file.
+Explicit command-line placement, topology, preflight, and backend flags override
+the file independent of argument order.

@@ -221,6 +221,39 @@ void test_hevm_binary_translates_negate()
     require(result.schedule.ops[1].outputs[0].id == 2, "HEVM negate output mismatch");
 }
 
+void test_hevm_binary_translates_ciphertext_arithmetic()
+{
+    const std::string hevm = test::make_hevm_binary(
+        2, 1, 4, 0, { 3 },
+        {
+            test::HevmOpRecord{ 6, 2, 0, 1 },
+            test::HevmOpRecord{ 8, 3, 2, 1 },
+        });
+
+    const DacapoAdapterResult result = translate_dacapo_schedule(
+        hevm, DacapoAdapterOptions{ DacapoInputFormat::HevmBinary });
+
+    require(result.ok(), "HEVM ciphertext arithmetic should translate:\n" +
+                             result.format_diagnostics());
+    require(result.schedule.ops.size() == 5, "HEVM ciphertext op count mismatch");
+    require(result.schedule.ops[0].kind == MgpuOpKind::UploadCipher, "arg0 kind mismatch");
+    require(result.schedule.ops[0].outputs[0].id == 1, "arg0 value id mismatch");
+    require(result.schedule.ops[1].kind == MgpuOpKind::UploadCipher, "arg1 kind mismatch");
+    require(result.schedule.ops[1].outputs[0].id == 2, "arg1 value id mismatch");
+    require(result.schedule.ops[2].kind == MgpuOpKind::Add, "HEVM addcc kind mismatch");
+    require(result.schedule.ops[2].inputs[0].id == 1, "HEVM addcc lhs mismatch");
+    require(result.schedule.ops[2].inputs[1].id == 2, "HEVM addcc rhs mismatch");
+    require(result.schedule.ops[2].outputs[0].id == 3, "HEVM addcc output mismatch");
+    require(
+        result.schedule.ops[3].kind == MgpuOpKind::Multiply,
+        "HEVM mulcc kind mismatch");
+    require(result.schedule.ops[3].inputs[0].id == 3, "HEVM mulcc lhs mismatch");
+    require(result.schedule.ops[3].inputs[1].id == 2, "HEVM mulcc rhs mismatch");
+    require(result.schedule.ops[3].outputs[0].id == 4, "HEVM mulcc output mismatch");
+    require(result.schedule.ops[4].kind == MgpuOpKind::Download, "result kind mismatch");
+    require(result.schedule.ops[4].inputs[0].id == 4, "result input mismatch");
+}
+
 void test_hevm_opcode_summary_counts_supported_and_unsupported_ops()
 {
     const std::string hevm = test::make_hevm_binary(
@@ -337,6 +370,7 @@ int main()
         test_hevm_binary_translates_rotate_attributes();
         test_hevm_binary_translates_bootstrap_target_level();
         test_hevm_binary_translates_negate();
+        test_hevm_binary_translates_ciphertext_arithmetic();
         test_hevm_opcode_summary_counts_supported_and_unsupported_ops();
         test_hevm_opcode_summary_reports_bad_magic();
         test_hevm_binary_reports_unsupported_opcode();
