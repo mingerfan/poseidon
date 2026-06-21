@@ -1,5 +1,6 @@
 #include "poseidon/mgpu/compiler/schedule_verifier.h"
 #include "poseidon/mgpu/ir/schedule.h"
+#include "poseidon/mgpu/ir/schedule_summary.h"
 
 #include <cstdlib>
 #include <iostream>
@@ -154,6 +155,60 @@ void test_integer_attribute_dump()
         "#1 [%2] = mgpu.rotate device=0 inputs=[%1] attrs={level=4, rotate_step=-3}");
 }
 
+std::size_t count_for_kind(const MgpuScheduleSummary &summary, MgpuOpKind kind)
+{
+    for (const MgpuOpKindCount &count : summary.op_counts)
+    {
+        if (count.kind == kind)
+        {
+            return count.count;
+        }
+    }
+    throw std::runtime_error("missing op kind count");
+}
+
+void test_schedule_summary()
+{
+    const MgpuScheduleSummary summary = summarize_schedule(make_valid_two_device_schedule(), 2);
+    require(summary.total_ops == 6, "summary total op count mismatch");
+    require(summary.upload_ops == 2, "summary upload count mismatch");
+    require(summary.copy_ops == 1, "summary copy count mismatch");
+    require(summary.compute_ops == 2, "summary compute count mismatch");
+    require(summary.download_ops == 1, "summary download count mismatch");
+    require(count_for_kind(summary, MgpuOpKind::CopyCipher) == 1, "copy count mismatch");
+    require(count_for_kind(summary, MgpuOpKind::Rescale) == 1, "rescale count mismatch");
+    require(summary.device_op_counts.size() == 2, "summary device count size mismatch");
+    require(summary.device_op_counts[0].count == 3, "device 0 count mismatch");
+    require(summary.device_op_counts[1].count == 3, "device 1 count mismatch");
+
+    const std::string text = dump_schedule_summary(summary);
+    require_contains(text, "schedule_ops: 6");
+    require_contains(text, "copy_cipher: 1");
+    require_contains(text, "device 1: 3");
+
+    const std::string json = schedule_summary_to_json(summary);
+    require_contains(json, "\"total_ops\": 6");
+    require_contains(json, "\"copy_cipher\": 1");
+    require_contains(json, "\"device_id\": 1");
+}
+
+void test_schedule_summary_device_anomalies()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, -1, {}, { value(1) }));
+    schedule.ops.push_back(op(MgpuOpKind::Download, 5, { value(1) }, {}));
+
+    const MgpuScheduleSummary summary = summarize_schedule(schedule, 2);
+    require(summary.unassigned_device_ops == 1, "unassigned device count mismatch");
+    require(summary.invalid_device_ops == 1, "invalid device count mismatch");
+    require(summary.device_op_counts[0].count == 0, "device 0 should not receive invalid ops");
+    require(summary.device_op_counts[1].count == 0, "device 1 should not receive invalid ops");
+
+    const std::string text = dump_schedule_summary(summary);
+    require_contains(text, "unassigned: 1");
+    require_contains(text, "invalid: 1");
+}
+
 void test_required_static_attributes()
 {
     MgpuSchedule valid;
@@ -244,6 +299,8 @@ int main()
         test_add_plain_schedule();
         test_negate_schedule();
         test_integer_attribute_dump();
+        test_schedule_summary();
+        test_schedule_summary_device_anomalies();
         test_required_static_attributes();
         test_invalid_device();
         test_missing_input();

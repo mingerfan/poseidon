@@ -11,6 +11,7 @@ add_library(poseidon_mgpu STATIC
     compiler/static_schedule_pipeline.cpp
     ir/schedule.cpp
     ir/schedule_json.cpp
+    ir/schedule_summary.cpp
     runtime/comm_schedule_handler.cpp
     runtime/hevm_io_binding.cpp
     runtime/hevm_plaintext_encoding.cpp

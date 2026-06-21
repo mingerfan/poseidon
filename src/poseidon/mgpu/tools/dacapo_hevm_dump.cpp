@@ -1,12 +1,13 @@
 #include "poseidon/mgpu/compiler/dacapo_artifacts.h"
+#include "poseidon/mgpu/ir/schedule_summary.h"
 #include "poseidon/mgpu/runtime/hevm_io_binding.h"
+#include "poseidon/util/json.h"
 
 #include <cstdlib>
 #include <iostream>
 #include <optional>
 #include <stdexcept>
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 using namespace poseidon::mgpu;
@@ -25,6 +26,7 @@ struct ToolOptions
     std::optional<int> download_device;
     bool round_robin_compute = false;
     bool dump_schedule = true;
+    bool summary_json = false;
 };
 
 void print_usage(std::ostream &stream)
@@ -35,6 +37,7 @@ void print_usage(std::ostream &stream)
            "[--compute-devices a,b,c] "
            "[--upload-device N] "
            "[--download-device N] "
+           "[--summary-json] "
            "[--no-schedule]\n";
 }
 
@@ -168,6 +171,11 @@ ToolOptions parse_args(int argc, char **argv)
             options.dump_schedule = false;
             continue;
         }
+        if (arg == "--summary-json")
+        {
+            options.summary_json = true;
+            continue;
+        }
 
         throw std::invalid_argument("unknown argument: " + arg);
     }
@@ -217,66 +225,64 @@ StaticSchedulePipelineOptions make_pipeline_options(const ToolOptions &tool_opti
     return options;
 }
 
-void print_op_counts(const MgpuSchedule &schedule)
-{
-    std::unordered_map<MgpuOpKind, std::size_t> counts;
-    for (const MgpuOp &op : schedule.ops)
-    {
-        ++counts[op.kind];
-    }
-
-    std::cout << "op_counts:\n";
-    for (const MgpuOpKind kind : {
-             MgpuOpKind::UploadCipher,
-             MgpuOpKind::UploadPlain,
-             MgpuOpKind::CopyCipher,
-             MgpuOpKind::CopyPlain,
-             MgpuOpKind::Add,
-             MgpuOpKind::AddPlain,
-             MgpuOpKind::Sub,
-             MgpuOpKind::Negate,
-             MgpuOpKind::Multiply,
-             MgpuOpKind::MultiplyPlain,
-             MgpuOpKind::Relinearize,
-             MgpuOpKind::Rescale,
-             MgpuOpKind::Rotate,
-             MgpuOpKind::BootstrapFallback,
-             MgpuOpKind::Download,
-         })
-    {
-        const auto iter = counts.find(kind);
-        if (iter != counts.end() && iter->second > 0)
-        {
-            std::cout << "  " << to_string(kind) << ": " << iter->second << '\n';
-        }
-    }
-}
-
-void print_device_counts(const MgpuSchedule &schedule, int device_count)
-{
-    std::vector<std::size_t> counts(static_cast<std::size_t>(device_count), 0);
-    for (const MgpuOp &op : schedule.ops)
-    {
-        if (op.device_id >= 0 && op.device_id < device_count)
-        {
-            ++counts[static_cast<std::size_t>(op.device_id)];
-        }
-    }
-
-    std::cout << "device_op_counts:\n";
-    for (int device = 0; device < device_count; ++device)
-    {
-        std::cout << "  device " << device << ": "
-                  << counts[static_cast<std::size_t>(device)] << '\n';
-    }
-}
-
 void print_io_summary(const HevmIoBindingPlan &plan)
 {
     std::cout << "hevm_io:\n";
     std::cout << "  cipher_inputs: " << plan.cipher_inputs.size() << '\n';
     std::cout << "  plaintext_constants: " << plan.plain_inputs.size() << '\n';
     std::cout << "  results: " << plan.results.size() << '\n';
+}
+
+void print_text_summary(
+    const MgpuScheduleSummary &summary, std::size_t constant_count,
+    const HevmIoBindingPlan &io_plan)
+{
+    std::cout << "schedule_ops: " << summary.total_ops << '\n';
+    std::cout << "constants: " << constant_count << '\n';
+    print_io_summary(io_plan);
+    std::cout << "op_counts:\n";
+    for (const MgpuOpKindCount &count : summary.op_counts)
+    {
+        if (count.count > 0)
+        {
+            std::cout << "  " << to_string(count.kind) << ": " << count.count << '\n';
+        }
+    }
+    std::cout << "device_op_counts:\n";
+    for (const MgpuDeviceOpCount &count : summary.device_op_counts)
+    {
+        std::cout << "  device " << count.device_id << ": " << count.count << '\n';
+    }
+    if (summary.unassigned_device_ops > 0)
+    {
+        std::cout << "  unassigned: " << summary.unassigned_device_ops << '\n';
+    }
+    if (summary.invalid_device_ops > 0)
+    {
+        std::cout << "  invalid: " << summary.invalid_device_ops << '\n';
+    }
+}
+
+nlohmann::json make_tool_summary_json(
+    const MgpuScheduleSummary &summary, std::size_t constant_count,
+    const HevmIoBindingPlan &io_plan, std::optional<std::string> debug_dump)
+{
+    nlohmann::json root;
+    root["version"] = 1;
+    root["schedule"] = nlohmann::json::parse(schedule_summary_to_json(summary, -1));
+    root["constants"] = nlohmann::json{
+        { "vectors", constant_count },
+    };
+    root["hevm_io"] = nlohmann::json{
+        { "cipher_inputs", io_plan.cipher_inputs.size() },
+        { "plaintext_constants", io_plan.plain_inputs.size() },
+        { "results", io_plan.results.size() },
+    };
+    if (debug_dump.has_value())
+    {
+        root["debug_dump"] = *debug_dump;
+    }
+    return root;
 }
 
 }  // namespace
@@ -307,15 +313,28 @@ int main(int argc, char **argv)
             return EXIT_FAILURE;
         }
 
-        std::cout << "schedule_ops: " << artifacts.schedule.ops.size() << '\n';
-        std::cout << "constants: " << artifacts.constants.values.size() << '\n';
-        print_io_summary(io_plan.plan);
-        print_op_counts(artifacts.schedule);
-        print_device_counts(artifacts.schedule, tool_options.device_count);
+        const MgpuScheduleSummary summary =
+            summarize_schedule(artifacts.schedule, tool_options.device_count);
 
-        if (tool_options.dump_schedule)
+        if (tool_options.summary_json)
         {
-            std::cout << "\n" << artifacts.debug_dump;
+            const std::optional<std::string> debug_dump =
+                tool_options.dump_schedule ? std::optional<std::string>(artifacts.debug_dump)
+                                           : std::nullopt;
+            std::cout << make_tool_summary_json(
+                             summary, artifacts.constants.values.size(), io_plan.plan,
+                             debug_dump)
+                             .dump(2)
+                      << '\n';
+        }
+        else
+        {
+            print_text_summary(summary, artifacts.constants.values.size(), io_plan.plan);
+
+            if (tool_options.dump_schedule)
+            {
+                std::cout << "\n" << artifacts.debug_dump;
+            }
         }
     }
     catch (const std::exception &ex)
