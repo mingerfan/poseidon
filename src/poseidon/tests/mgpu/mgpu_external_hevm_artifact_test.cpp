@@ -1,11 +1,14 @@
 #include "poseidon/mgpu/compiler/dacapo_artifacts.h"
+#include "poseidon/mgpu/comm/topology.h"
 #include "poseidon/mgpu/ir/schedule_summary.h"
 #include "poseidon/mgpu/runtime/hevm_io_binding.h"
 #include "poseidon/mgpu/runtime/poseidon_gpu_schedule_preflight.h"
 
 #include <cstdlib>
+#include <fstream>
 #include <iostream>
 #include <optional>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -102,6 +105,23 @@ void require(bool condition, const std::string &message)
     }
 }
 
+std::string read_binary_file(const std::string &path)
+{
+    std::ifstream stream(path, std::ios::binary);
+    if (!stream)
+    {
+        throw std::runtime_error("failed to open external HEVM file: " + path);
+    }
+
+    std::ostringstream buffer;
+    buffer << stream.rdbuf();
+    if (stream.bad())
+    {
+        throw std::runtime_error("failed to read external HEVM file: " + path);
+    }
+    return buffer.str();
+}
+
 void validate_constant_indices(
     const HevmIoBindingPlan &plan, const DacapoConstantTable &constants)
 {
@@ -114,6 +134,19 @@ void validate_constant_indices(
                 " is out of range for " + std::to_string(constants.values.size()) +
                 " parsed constants");
         }
+    }
+}
+
+void print_opcode_summary(const DacapoHevmOpcodeSummary &summary)
+{
+    std::cout << "hevm_opcode_summary:\n";
+    std::cout << "  operations: " << summary.operation_count << '\n';
+    std::cout << "  allocs: " << summary.alloc_count << '\n';
+    for (const DacapoHevmOpcodeCount &count : summary.opcode_counts)
+    {
+        std::cout << "  opcode " << count.opcode << " " << count.name << ": "
+                  << count.count << " supported="
+                  << (count.supported ? "true" : "false") << '\n';
     }
 }
 
@@ -176,6 +209,13 @@ int main()
         const StaticSchedulePipelineOptions options = make_pipeline_options();
         require(options.device_count > 0, "POSEIDON_MGPU_EXTERNAL_DEVICE_COUNT must be positive");
 
+        const DacapoHevmOpcodeSummary opcode_summary =
+            summarize_hevm_opcodes(read_binary_file(hevm_path));
+        require(
+            opcode_summary.ok(),
+            "external HEVM opcode summary failed:\n" + opcode_summary.format_diagnostics());
+        print_opcode_summary(opcode_summary);
+
         const DacapoHevmArtifactResult artifacts =
             prepare_dacapo_hevm_artifacts_from_files(
                 DacapoHevmArtifactPaths{ hevm_path, constants_path }, options);
@@ -211,8 +251,17 @@ int main()
                     /*copy_ops_have_comm=*/true,
                     /*relin_keys_available=*/true,
                     /*galois_keys_available=*/true,
-                });
+        });
         std::cout << dump_poseidon_gpu_schedule_preflight(preflight);
+
+        const MgpuCommunicationPlan communication_plan =
+            plan_schedule_communication(
+                artifacts.schedule, make_single_node_topology(options.device_count));
+        require(
+            communication_plan.ok(),
+            "external HEVM communication plan failed:\n" +
+                communication_plan.format_diagnostics());
+        std::cout << dump_communication_plan(communication_plan);
         if (!artifacts.debug_dump.empty())
         {
             std::cout << '\n' << artifacts.debug_dump;
