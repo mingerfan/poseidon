@@ -196,7 +196,9 @@ Dacapo artifact debugging:
   `POSEIDON_MGPU_RESNET20_ALLOW_NOT_READY=1` only as an explicit
   diagnostic-collection mode; that mode must still require a not-ready JSON
   report, cover both hard-gate failures and zero-exit not-ready planning
-  previews, and must not be treated as execution readiness.
+  previews, and must not be treated as execution readiness. Mock variants must
+  also assert config-driven placement/topology override fields in the durable
+  JSON report so single-GPU development catches wrapper drift.
 - The dump tool accepts `--hevm`, `--constants`, `--config`, `--devices`,
   `--default-device`, `--upload-device`, `--compute-devices`,
   `--download-device`, `--round-robin-compute`, `--summary-json`, and

@@ -184,7 +184,10 @@ if(POSEIDON_BUILD_MGPU_TOOLS)
         set(POSEIDON_MGPU_RESNET20_DUMP_PREFLIGHT_CLUSTER_PREVIEW_MOCK_ENV
             "POSEIDON_MGPU_RESNET20_MOCK_ARTIFACTS=1"
             "POSEIDON_MGPU_RESNET20_ALLOW_NOT_READY=1"
-            "POSEIDON_MGPU_RESNET20_CONFIG=${POSEIDON_INCLUDES_DIR}/src/poseidon/mgpu/configs/cluster_4x8_node_spread_preview.json")
+            "POSEIDON_MGPU_RESNET20_CONFIG=${POSEIDON_INCLUDES_DIR}/src/poseidon/mgpu/configs/cluster_4x8_node_spread_preview.json"
+            "POSEIDON_MGPU_RESNET20_EXPECT_DEVICE_COUNT=32"
+            "POSEIDON_MGPU_RESNET20_EXPECT_NODES=4"
+            "POSEIDON_MGPU_RESNET20_EXPECT_DEVICES_PER_NODE=8")
         set_tests_properties(
             poseidon_mgpu_resnet20_dump_preflight_cluster_preview_mock_tests
             PROPERTIES
@@ -202,6 +205,7 @@ if(POSEIDON_BUILD_MGPU_TOOLS)
             "POSEIDON_MGPU_RESNET20_COMPUTE_DEVICES=0,1"
             "POSEIDON_MGPU_RESNET20_DEVICES_PER_NODE=2"
             "POSEIDON_MGPU_RESNET20_EXPECT_DEVICE_COUNT=2"
+            "POSEIDON_MGPU_RESNET20_EXPECT_DEVICES_PER_NODE=2"
             "POSEIDON_MGPU_RESNET20_EXPECT_COMPUTE_DEVICES=0,1")
         set_tests_properties(
             poseidon_mgpu_resnet20_dump_preflight_config_override_mock_tests

@@ -422,9 +422,10 @@ otherwise uses temporary outputs. Set `POSEIDON_MGPU_RESNET20_DACAPO_ROOT` or
 a bundled config template; explicit `POSEIDON_MGPU_RESNET20_DEVICE_COUNT`,
 `POSEIDON_MGPU_RESNET20_COMPUTE_DEVICES`, placement, topology, preflight,
 backend, and `POSEIDON_MGPU_RESNET20_REQUIRE_READY` variables are appended as
-dump-tool overrides after that config. The mock variants cover both the
-default wrapper path and config-plus-override path on machines without real
-Dacapo output. During early artifact bring-up, set
+dump-tool overrides after that config. The mock variants cover the default
+wrapper path, config-plus-placement/topology override path, and cluster-preview
+topology report path on machines without real Dacapo output. During early
+artifact bring-up, set
 `POSEIDON_MGPU_RESNET20_ALLOW_NOT_READY=1` to treat a not-ready dump-tool
 result as a successful diagnostic collection as long as the JSON report was
 written with `execution_gate.status = "not_ready"`. This also covers planning

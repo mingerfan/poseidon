@@ -172,6 +172,17 @@ void require_summary_expectations(const std::string &summary)
             summary,
             "\"device_count\": " + std::string(device_count));
     }
+    if (const char *nodes = get_env("POSEIDON_MGPU_RESNET20_EXPECT_NODES"))
+    {
+        require_contains(summary, "\"nodes\": " + std::string(nodes));
+    }
+    if (const char *devices_per_node =
+            get_env("POSEIDON_MGPU_RESNET20_EXPECT_DEVICES_PER_NODE"))
+    {
+        require_contains(
+            summary,
+            "\"devices_per_node\": " + std::string(devices_per_node));
+    }
     if (const char *compute_devices =
             get_env("POSEIDON_MGPU_RESNET20_EXPECT_COMPUTE_DEVICES"))
     {
