@@ -132,6 +132,7 @@ void test_preflight_diagnostics_are_propagated()
             continue;
         }
         found_route_diagnostic = true;
+        require(diagnostic.at("has_route").get<bool>(), "has_route should be true");
         require(diagnostic.at("route_index").get<int>() == 1, "route index missing");
         require(
             diagnostic.at("transport").get<std::string>() == "inter_node",
@@ -229,6 +230,9 @@ void test_plan_level_communication_execution_diagnostic_omits_route_metadata()
     require(
         !diagnostic.contains("route_index"),
         "plan-level diagnostic should omit route_index");
+    require(
+        !diagnostic.at("has_route").get<bool>(),
+        "plan-level diagnostic should record has_route=false");
     require(
         !diagnostic.contains("transport"),
         "plan-level diagnostic should omit transport");

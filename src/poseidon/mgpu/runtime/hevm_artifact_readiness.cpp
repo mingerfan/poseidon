@@ -59,6 +59,7 @@ Json diagnostics_to_json(
             { "stage", diagnostic.stage },
             { "location", diagnostic.location },
             { "message", diagnostic.message },
+            { "has_route", diagnostic.has_route },
         };
         if (diagnostic.has_route)
         {

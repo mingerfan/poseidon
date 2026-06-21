@@ -245,6 +245,13 @@ void test_report_execution_gate_reports_not_ready()
         report.at("execution_gate")
                 .at("diagnostics")
                 .at(0)
+                .at("has_route")
+                .get<bool>(),
+        "execution gate route diagnostic should record has_route=true");
+    require(
+        report.at("execution_gate")
+                .at("diagnostics")
+                .at(0)
                 .at("route_index")
                 .get<int>() == 0,
         "execution gate route index missing");
@@ -328,6 +335,13 @@ void test_report_execution_gate_without_readiness_keeps_structured_diagnostics()
         report.at("execution_gate")
                 .at("diagnostics")
                 .at(0)
+                .at("has_route")
+                .get<bool>(),
+        "execution gate fallback diagnostic should record has_route=true");
+    require(
+        report.at("execution_gate")
+                .at("diagnostics")
+                .at(0)
                 .at("route_index")
                 .get<int>() == 0,
         "execution gate fallback route index missing");
@@ -386,6 +400,13 @@ void test_report_execution_gate_requires_gate_input()
                 .at("stage")
                 .get<std::string>() == "execution_gate",
         "missing gate input diagnostic stage mismatch");
+    require(
+        report.at("execution_gate")
+                .at("diagnostics")
+                .at(0)
+                .at("has_route")
+                .get<bool>() == false,
+        "missing gate input diagnostic should record has_route=false");
     require(
         report.at("execution_gate")
                 .at("diagnostics")
@@ -503,6 +524,9 @@ void test_failure_report_execution_gate_preserves_route_metadata()
         diagnostic.at("stage").get<std::string>() ==
             "communication_execution_preflight",
         "failure report route diagnostic stage mismatch");
+    require(
+        diagnostic.at("has_route").get<bool>(),
+        "failure report route diagnostic should record has_route=true");
     require(
         diagnostic.at("route_index").get<int>() == 3,
         "failure report route index missing");

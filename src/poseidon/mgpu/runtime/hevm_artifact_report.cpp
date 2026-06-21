@@ -99,6 +99,7 @@ Json readiness_diagnostic_to_json(
         { "stage", diagnostic.stage },
         { "location", diagnostic.location },
         { "message", diagnostic.message },
+        { "has_route", diagnostic.has_route },
     };
     if (diagnostic.has_route)
     {
@@ -122,6 +123,7 @@ Json execution_preflight_diagnostics_to_json(
             { "stage", "schedule_verification" },
             { "location", error.op_index },
             { "message", error.message },
+            { "has_route", false },
         });
     }
 
@@ -132,6 +134,7 @@ Json execution_preflight_diagnostics_to_json(
             { "stage", "poseidon_gpu_preflight" },
             { "location", diagnostic.op_index },
             { "message", diagnostic.message },
+            { "has_route", false },
         });
     }
 
@@ -144,6 +147,7 @@ Json execution_preflight_diagnostics_to_json(
                 { "stage", "communication_plan" },
                 { "location", diagnostic.op_index },
                 { "message", diagnostic.message },
+                { "has_route", false },
             });
         }
     }
@@ -157,6 +161,7 @@ Json execution_preflight_diagnostics_to_json(
                 { "stage", "communication_execution_preflight" },
                 { "location", diagnostic.route_index },
                 { "message", diagnostic.message },
+                { "has_route", diagnostic.has_route },
             };
             if (diagnostic.has_route)
             {
@@ -205,6 +210,7 @@ Json artifact_failure_gate_diagnostics_to_json(
             { "path", diagnostic.path },
             { "location", diagnostic.location },
             { "message", diagnostic.message },
+            { "has_route", false },
         });
     }
     return root;
@@ -254,6 +260,7 @@ Json execution_gate_to_json(const HevmArtifactReportInput &input)
         root["diagnostics"].push_back(Json{
             { "stage", "execution_gate" },
             { "location", 0 },
+            { "has_route", false },
             { "message",
               "HEVM artifact report has no readiness or execution preflight result" },
         });
