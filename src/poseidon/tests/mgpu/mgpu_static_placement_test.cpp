@@ -102,6 +102,27 @@ void test_round_robin_compute_policy()
     require(result.schedule.ops[3].device_id == 0, "third compute should wrap to device 0");
 }
 
+void test_round_robin_compute_starts_at_default_device()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, kUnassignedDevice, {}, { value(1) }));
+    schedule.ops.push_back(op(MgpuOpKind::Relinearize, kUnassignedDevice, { value(1) }, { value(2) }));
+    schedule.ops.push_back(op(MgpuOpKind::Rescale, kUnassignedDevice, { value(2) }, { value(3) }));
+    schedule.ops.push_back(op(MgpuOpKind::Rotate, kUnassignedDevice, { value(3) }, { value(4) }));
+
+    StaticPlacementOptions options;
+    options.device_count = 2;
+    options.default_device = 1;
+    options.policy = StaticPlacementPolicy::RoundRobinCompute;
+
+    const StaticPlacementResult result = place_static_schedule(schedule, options);
+    require(result.ok(), "round-robin placement failed:\n" + result.format_diagnostics());
+    require(result.schedule.ops[0].device_id == 1, "upload should use default device");
+    require(result.schedule.ops[1].device_id == 1, "first compute should start at default device");
+    require(result.schedule.ops[2].device_id == 0, "second compute should wrap to device 0");
+    require(result.schedule.ops[3].device_id == 1, "third compute should return to device 1");
+}
+
 void test_unassigned_copy_is_diagnostic()
 {
     MgpuSchedule schedule;
@@ -140,6 +161,7 @@ int main()
         test_single_device_places_unassigned_ops();
         test_preserves_existing_devices();
         test_round_robin_compute_policy();
+        test_round_robin_compute_starts_at_default_device();
         test_unassigned_copy_is_diagnostic();
         test_invalid_existing_device_is_diagnostic();
     }

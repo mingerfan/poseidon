@@ -199,6 +199,7 @@ StaticPlacementResult place_static_schedule(
         add_diagnostic(result, 0, stream.str());
         return result;
     }
+    next_compute_device = static_cast<std::size_t>(options.default_device);
 
     for (std::size_t op_index = 0; op_index < schedule.ops.size(); ++op_index)
     {
