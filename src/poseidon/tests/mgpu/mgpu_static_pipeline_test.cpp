@@ -195,6 +195,13 @@ void test_pipeline_prepares_hevm_binary_input()
             test::HevmOpRecord{ 0, 0, 0, test::make_hevm_encode_attr(4, 40) },
             test::HevmOpRecord{ 9, 1, 0, 0 },
             test::HevmOpRecord{ 1, 2, 1, static_cast<std::uint16_t>(-1) },
+        },
+        test::HevmConfigMetadata{
+            { 45 },
+            { 12 },
+            { 40 },
+            { 8 },
+            16,
         });
 
     StaticSchedulePipelineOptions options;
@@ -207,6 +214,16 @@ void test_pipeline_prepares_hevm_binary_input()
 
     require(result.ok(), "Dacapo HEVM pipeline failed:\n" + result.format_diagnostics());
     require(result.schedule.ops.size() == 6, "expected one inserted copy");
+    require(result.schedule.ops[0].kind == MgpuOpKind::UploadCipher, "expected HEVM arg op");
+    require(
+        result.schedule.ops[0].integer_attributes.at("hevm_arg_scale") == 45,
+        "HEVM arg scale metadata should survive pipeline");
+    require(
+        result.schedule.ops[0].integer_attributes.at("hevm_arg_level") == 12,
+        "HEVM arg level metadata should survive pipeline");
+    require(
+        result.schedule.ops[0].integer_attributes.at("hevm_init_level") == 16,
+        "HEVM init level metadata should survive pipeline");
     require(result.schedule.ops[1].kind == MgpuOpKind::UploadPlain, "expected HEVM encode op");
     require(
         result.schedule.ops[1].integer_attributes.at("encode_level") == 4,
@@ -222,10 +239,18 @@ void test_pipeline_prepares_hevm_binary_input()
     require(result.schedule.ops[5].kind == MgpuOpKind::Download,
             "last HEVM op should remain download");
     require(
+        result.schedule.ops[5].integer_attributes.at("hevm_result_scale") == 40,
+        "HEVM result scale metadata should survive pipeline");
+    require(
+        result.schedule.ops[5].integer_attributes.at("hevm_result_level") == 8,
+        "HEVM result level metadata should survive pipeline");
+    require(
         result.schedule.ops[4].inputs[0].id == result.schedule.ops[3].outputs[0].id,
         "rotate should consume the copied mulcp result");
     require_contains(result.debug_dump, "mgpu.multiply_plain");
     require_contains(result.debug_dump, "attrs={rotate_step=-1}");
+    require_contains(result.debug_dump, "hevm_arg_scale=45");
+    require_contains(result.debug_dump, "hevm_result_level=8");
     require_contains(result.debug_dump, "name=\"auto_copy\"");
 }
 
