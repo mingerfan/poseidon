@@ -75,6 +75,28 @@ StaticSchedulePipelineResult prepare_two_result_hevm_schedule()
         DacapoAdapterOptions{ DacapoInputFormat::HevmBinary }, options);
 }
 
+StaticSchedulePipelineResult prepare_plain_input_hevm_schedule()
+{
+    const std::string hevm = test::make_hevm_binary(
+        1, 1, 1, 1, { 0 },
+        {
+            test::HevmOpRecord{ 0, 0, 7, test::make_hevm_encode_attr(4, 40) },
+        },
+        test::HevmConfigMetadata{
+            { 45 },
+            { 12 },
+            { 45 },
+            { 12 },
+            16,
+        });
+
+    StaticSchedulePipelineOptions options;
+    options.device_count = 1;
+
+    return prepare_dacapo_static_schedule(
+        hevm, DacapoAdapterOptions{ DacapoInputFormat::HevmBinary }, options);
+}
+
 void test_builds_plan_and_binds_cipher_inputs_by_hevm_index()
 {
     const StaticSchedulePipelineResult pipeline = prepare_two_result_hevm_schedule();
@@ -121,6 +143,40 @@ void test_builds_plan_and_binds_cipher_inputs_by_hevm_index()
     const auto result_1 = std::static_pointer_cast<std::string>(raw_results[1]);
     require(*result_0 == "cipher_arg_1", "HEVM result 0 should map to register 1");
     require(*result_1 == "cipher_arg_0", "HEVM result 1 should map to register 0");
+}
+
+void test_binds_plain_inputs_by_hevm_constant_index()
+{
+    const StaticSchedulePipelineResult pipeline = prepare_plain_input_hevm_schedule();
+    require(pipeline.ok(), "pipeline failed:\n" + pipeline.format_diagnostics());
+
+    const HevmIoBindingPlanResult plan_result =
+        build_hevm_io_binding_plan(pipeline.schedule);
+    require(plan_result.ok(), "HEVM IO plan failed:\n" + plan_result.format_diagnostics());
+
+    const HevmIoBindingPlan &plan = plan_result.plan;
+    require(plan.cipher_inputs.size() == 1, "expected one HEVM cipher input");
+    require(plan.plain_inputs.size() == 1, "expected one HEVM plaintext input");
+    require(plan.plain_inputs[0].register_id == 0, "plain register metadata mismatch");
+    require(plan.plain_inputs[0].constant_index == 7, "constant index metadata mismatch");
+    require(plan.plain_inputs[0].level == 4, "plain encode level metadata mismatch");
+    require(plan.plain_inputs[0].scale == 40, "plain encode scale metadata mismatch");
+
+    IoBindingScheduleHandler io;
+    bind_hevm_cipher_inputs(io, plan, { string_object("cipher_arg_0") });
+    bind_hevm_plain_inputs_by_constant_index(
+        io, plan,
+        {
+            { 7, string_object("plain_const_7") },
+        });
+
+    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 1 });
+    const ScheduleExecutionResult execution = interpreter.run(pipeline.schedule, io);
+    require(execution.ok(), "interpreter failed:\n" + execution.format_errors());
+
+    const auto uploaded_plain =
+        execution.object_store.object_as<std::string>(plan.plain_inputs[0].value_id);
+    require(*uploaded_plain == "plain_const_7", "plain upload object mismatch");
 }
 
 void test_reports_duplicate_hevm_input_indices()
@@ -187,6 +243,28 @@ void test_bind_rejects_input_count_mismatch()
     throw std::runtime_error("input count mismatch should throw");
 }
 
+void test_plain_bind_rejects_missing_constant()
+{
+    const StaticSchedulePipelineResult pipeline = prepare_plain_input_hevm_schedule();
+    require(pipeline.ok(), "pipeline failed:\n" + pipeline.format_diagnostics());
+    const HevmIoBindingPlanResult plan_result =
+        build_hevm_io_binding_plan(pipeline.schedule);
+    require(plan_result.ok(), "HEVM IO plan failed:\n" + plan_result.format_diagnostics());
+
+    IoBindingScheduleHandler io;
+    try
+    {
+        bind_hevm_plain_inputs_by_constant_index(io, plan_result.plan, {});
+    }
+    catch (const std::invalid_argument &ex)
+    {
+        require_contains(ex.what(), "missing HEVM plaintext object for constant index 7");
+        return;
+    }
+
+    throw std::runtime_error("missing plaintext constant should throw");
+}
+
 }  // namespace
 
 int main()
@@ -194,9 +272,11 @@ int main()
     try
     {
         test_builds_plan_and_binds_cipher_inputs_by_hevm_index();
+        test_binds_plain_inputs_by_hevm_constant_index();
         test_reports_duplicate_hevm_input_indices();
         test_reports_incomplete_hevm_metadata();
         test_bind_rejects_input_count_mismatch();
+        test_plain_bind_rejects_missing_constant();
     }
     catch (const std::exception &ex)
     {

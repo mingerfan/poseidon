@@ -128,6 +128,12 @@ void test_hevm_binary_translates_supported_ops()
     require(
         result.schedule.ops[1].integer_attributes.at("encode_scale") == 40,
         "HEVM encode scale mismatch");
+    require(
+        result.schedule.ops[1].integer_attributes.at("hevm_plain_register") == 0,
+        "HEVM plain register metadata mismatch");
+    require(
+        result.schedule.ops[1].integer_attributes.at("hevm_constant_index") == 0,
+        "HEVM constant index metadata mismatch");
     require(result.schedule.ops[2].kind == MgpuOpKind::MultiplyPlain, "HEVM mulcp mismatch");
     require(result.schedule.ops[2].inputs[0].id == 1, "HEVM mulcp cipher input mismatch");
     require(result.schedule.ops[2].inputs[1].id == 2, "HEVM mulcp plain input mismatch");

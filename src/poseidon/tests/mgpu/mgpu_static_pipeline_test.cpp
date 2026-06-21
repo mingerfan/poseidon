@@ -231,6 +231,9 @@ void test_pipeline_prepares_hevm_binary_input()
     require(
         result.schedule.ops[1].integer_attributes.at("encode_scale") == 40,
         "HEVM encode scale should survive pipeline");
+    require(
+        result.schedule.ops[1].integer_attributes.at("hevm_constant_index") == 0,
+        "HEVM constant index should survive pipeline");
     require(result.schedule.ops[3].kind == MgpuOpKind::CopyCipher,
             "rotate should receive copied ciphertext");
     require(
@@ -249,6 +252,7 @@ void test_pipeline_prepares_hevm_binary_input()
         "rotate should consume the copied mulcp result");
     require_contains(result.debug_dump, "mgpu.multiply_plain");
     require_contains(result.debug_dump, "attrs={rotate_step=-1}");
+    require_contains(result.debug_dump, "hevm_constant_index=0");
     require_contains(result.debug_dump, "hevm_arg_scale=45");
     require_contains(result.debug_dump, "hevm_result_level=8");
     require_contains(result.debug_dump, "name=\"auto_copy\"");

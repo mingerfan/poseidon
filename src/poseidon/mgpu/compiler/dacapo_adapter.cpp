@@ -427,6 +427,12 @@ DacapoAdapterResult translate_hevm_binary(std::string_view input)
                 MgpuOpKind::UploadPlain, {}, { value(output_id) }, "hevm_encode");
             op.integer_attributes.emplace("encode_level", rhs >> 10);
             op.integer_attributes.emplace("encode_scale", rhs & 0x3FF);
+            if (!set_u64_attr(result, op, offset + 2, "hevm_plain_register", dst) ||
+                !set_u64_attr(result, op, offset + 4, "hevm_constant_index", lhs))
+            {
+                result.schedule.ops.clear();
+                return result;
+            }
             result.schedule.ops.push_back(std::move(op));
             break;
         }
