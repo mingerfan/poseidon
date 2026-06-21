@@ -3,14 +3,20 @@
 #include "poseidon/mgpu/ir/schedule_summary.h"
 #include "poseidon/mgpu/runtime/hevm_io_binding.h"
 #include "poseidon/mgpu/runtime/poseidon_gpu_schedule_preflight.h"
+#include "poseidon/tests/mgpu/hevm_test_utils.h"
 
+#include <chrono>
+#include <cstdint>
 #include <cstdlib>
+#include <cstring>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <optional>
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <system_error>
 #include <vector>
 
 using namespace poseidon::mgpu;
@@ -19,6 +25,35 @@ namespace
 {
 
 constexpr int kSkip = 77;
+
+class TempDir
+{
+public:
+    TempDir()
+    {
+        const auto tick = std::chrono::steady_clock::now().time_since_epoch().count();
+        path_ = std::filesystem::temp_directory_path() /
+                ("poseidon_mgpu_external_hevm_artifact_test_" + std::to_string(tick));
+        std::filesystem::create_directories(path_);
+    }
+
+    TempDir(const TempDir &) = delete;
+    TempDir &operator=(const TempDir &) = delete;
+
+    ~TempDir()
+    {
+        std::error_code ignored;
+        std::filesystem::remove_all(path_, ignored);
+    }
+
+    std::string path(const std::string &name) const
+    {
+        return (path_ / name).string();
+    }
+
+private:
+    std::filesystem::path path_;
+};
 
 const char *get_env(const char *name)
 {
@@ -97,6 +132,25 @@ std::vector<int> parse_device_list(const char *name)
     return devices;
 }
 
+void append_i64(std::string &output, std::int64_t value)
+{
+    const auto bits = static_cast<std::uint64_t>(value);
+    for (int i = 0; i < 8; ++i)
+    {
+        output.push_back(static_cast<char>((bits >> (8 * i)) & 0xFF));
+    }
+}
+
+void append_double(std::string &output, double value)
+{
+    std::uint64_t bits = 0;
+    std::memcpy(&bits, &value, sizeof(bits));
+    for (int i = 0; i < 8; ++i)
+    {
+        output.push_back(static_cast<char>((bits >> (8 * i)) & 0xFF));
+    }
+}
+
 void require(bool condition, const std::string &message)
 {
     if (!condition)
@@ -120,6 +174,49 @@ std::string read_binary_file(const std::string &path)
         throw std::runtime_error("failed to read external HEVM file: " + path);
     }
     return buffer.str();
+}
+
+void write_binary_file(const std::string &path, const std::string &contents)
+{
+    std::ofstream stream(path, std::ios::binary);
+    if (!stream)
+    {
+        throw std::runtime_error("failed to create mock external HEVM artifact: " + path);
+    }
+    stream.write(contents.data(), static_cast<std::streamsize>(contents.size()));
+    if (!stream)
+    {
+        throw std::runtime_error("failed to write mock external HEVM artifact: " + path);
+    }
+}
+
+std::string make_mock_hevm_binary()
+{
+    return test::make_hevm_binary(
+        1, 1, 2, 1, { 1 },
+        {
+            test::HevmOpRecord{ 0, 0, 0, test::make_hevm_encode_attr(2, 20) },
+            test::HevmOpRecord{ 9, 1, 0, 0 },
+        },
+        test::HevmConfigMetadata{
+            { 20 },
+            { 2 },
+            { 40 },
+            { 2 },
+            2,
+        });
+}
+
+std::string make_mock_constant_file()
+{
+    std::string output;
+    append_i64(output, 1);
+    append_i64(output, 4);
+    append_double(output, 0.5);
+    append_double(output, -1.0);
+    append_double(output, 2.0);
+    append_double(output, 3.5);
+    return output;
 }
 
 void validate_constant_indices(
@@ -186,21 +283,85 @@ void print_io_summary(const HevmIoBindingPlan &plan)
     std::cout << "  results: " << plan.results.size() << '\n';
 }
 
+PoseidonGpuSchedulePreflightOptions make_preflight_options(
+    const StaticSchedulePipelineOptions &options)
+{
+    return PoseidonGpuSchedulePreflightOptions{
+        options.device_count,
+        parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_PREFLIGHT_COMM_AVAILABLE")),
+        parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_PREFLIGHT_RELIN_KEYS")),
+        parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_PREFLIGHT_GALOIS_KEYS")),
+    };
+}
+
+MgpuTopology make_external_topology(const StaticSchedulePipelineOptions &options)
+{
+    int node_count = 1;
+    if (const char *nodes = get_env("POSEIDON_MGPU_EXTERNAL_NODES"))
+    {
+        node_count = parse_int("POSEIDON_MGPU_EXTERNAL_NODES", nodes);
+    }
+
+    int devices_per_node = 0;
+    if (const char *devices = get_env("POSEIDON_MGPU_EXTERNAL_DEVICES_PER_NODE"))
+    {
+        devices_per_node =
+            parse_int("POSEIDON_MGPU_EXTERNAL_DEVICES_PER_NODE", devices);
+    }
+
+    require(node_count > 0, "POSEIDON_MGPU_EXTERNAL_NODES must be positive");
+    require(
+        devices_per_node >= 0,
+        "POSEIDON_MGPU_EXTERNAL_DEVICES_PER_NODE must be non-negative");
+
+    if (node_count == 1 && devices_per_node == 0)
+    {
+        return make_single_node_topology(options.device_count);
+    }
+
+    if (devices_per_node == 0)
+    {
+        devices_per_node = options.device_count;
+    }
+    require(
+        node_count * devices_per_node >= options.device_count,
+        "external HEVM topology has fewer logical devices than device_count");
+    return make_uniform_cluster_topology(node_count, devices_per_node);
+}
+
 }  // namespace
 
 int main()
 {
     try
     {
-        const char *hevm_path = get_env("POSEIDON_MGPU_EXTERNAL_HEVM");
-        const char *constants_path = get_env("POSEIDON_MGPU_EXTERNAL_CST");
-        if (hevm_path == nullptr && constants_path == nullptr)
+        const bool use_mock_artifact =
+            parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_MOCK_ARTIFACT"));
+        std::optional<TempDir> mock_temp;
+        std::string hevm_path = get_env("POSEIDON_MGPU_EXTERNAL_HEVM") == nullptr
+                                    ? ""
+                                    : get_env("POSEIDON_MGPU_EXTERNAL_HEVM");
+        std::string constants_path = get_env("POSEIDON_MGPU_EXTERNAL_CST") == nullptr
+                                         ? ""
+                                         : get_env("POSEIDON_MGPU_EXTERNAL_CST");
+
+        if (use_mock_artifact)
+        {
+            mock_temp.emplace();
+            hevm_path = mock_temp->path("mock_resnet20.hevm");
+            constants_path = mock_temp->path("mock_resnet20.cst");
+            write_binary_file(hevm_path, make_mock_hevm_binary());
+            write_binary_file(constants_path, make_mock_constant_file());
+        }
+
+        if (hevm_path.empty() && constants_path.empty())
         {
             std::cout << "skipping external HEVM artifact test; set "
-                      << "POSEIDON_MGPU_EXTERNAL_HEVM and POSEIDON_MGPU_EXTERNAL_CST\n";
+                      << "POSEIDON_MGPU_EXTERNAL_HEVM and POSEIDON_MGPU_EXTERNAL_CST "
+                      << "or POSEIDON_MGPU_EXTERNAL_MOCK_ARTIFACT=1\n";
             return kSkip;
         }
-        if (hevm_path == nullptr || constants_path == nullptr)
+        if (hevm_path.empty() || constants_path.empty())
         {
             throw std::invalid_argument(
                 "POSEIDON_MGPU_EXTERNAL_HEVM and POSEIDON_MGPU_EXTERNAL_CST must be set together");
@@ -245,18 +406,11 @@ int main()
         std::cout << dump_schedule_summary(summary);
         const PoseidonGpuSchedulePreflightResult preflight =
             preflight_poseidon_gpu_schedule(
-                artifacts.schedule,
-                PoseidonGpuSchedulePreflightOptions{
-                    options.device_count,
-                    /*copy_ops_have_comm=*/true,
-                    /*relin_keys_available=*/true,
-                    /*galois_keys_available=*/true,
-        });
+                artifacts.schedule, make_preflight_options(options));
         std::cout << dump_poseidon_gpu_schedule_preflight(preflight);
 
         const MgpuCommunicationPlan communication_plan =
-            plan_schedule_communication(
-                artifacts.schedule, make_single_node_topology(options.device_count));
+            plan_schedule_communication(artifacts.schedule, make_external_topology(options));
         require(
             communication_plan.ok(),
             "external HEVM communication plan failed:\n" +

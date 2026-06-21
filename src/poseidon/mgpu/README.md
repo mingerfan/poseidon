@@ -116,6 +116,9 @@ POSEIDON_MGPU_EXTERNAL_DEVICE_COUNT=8 \
 POSEIDON_MGPU_EXTERNAL_UPLOAD_DEVICE=0 \
 POSEIDON_MGPU_EXTERNAL_COMPUTE_DEVICES=0,1,2,3,4,5,6,7 \
 POSEIDON_MGPU_EXTERNAL_DOWNLOAD_DEVICE=0 \
+POSEIDON_MGPU_EXTERNAL_PREFLIGHT_COMM_AVAILABLE=1 \
+POSEIDON_MGPU_EXTERNAL_PREFLIGHT_RELIN_KEYS=1 \
+POSEIDON_MGPU_EXTERNAL_PREFLIGHT_GALOIS_KEYS=1 \
 ctest --test-dir /tmp/poseidon-mgpu-tools --output-on-failure \
   -R '^poseidon_mgpu_external_hevm_artifact_tests$'
 ```
@@ -158,6 +161,16 @@ Optional environment variables:
 - `POSEIDON_MGPU_EXTERNAL_DEFAULT_DEVICE`
 - `POSEIDON_MGPU_EXTERNAL_ROUND_ROBIN_COMPUTE=1`
 - `POSEIDON_MGPU_EXTERNAL_DEBUG_DUMP=1`
+- `POSEIDON_MGPU_EXTERNAL_PREFLIGHT_COMM_AVAILABLE=1`
+- `POSEIDON_MGPU_EXTERNAL_PREFLIGHT_RELIN_KEYS=1`
+- `POSEIDON_MGPU_EXTERNAL_PREFLIGHT_GALOIS_KEYS=1`
+- `POSEIDON_MGPU_EXTERNAL_NODES=4`
+- `POSEIDON_MGPU_EXTERNAL_DEVICES_PER_NODE=8`
+
+`poseidon_mgpu_external_hevm_mock_artifact_tests` exercises the same CTest
+binary with a generated mock `.hevm + .cst` artifact, preflight availability
+flags, and a 2x2 topology. It is intended to keep the artifact diagnostics path
+covered on machines that do not have a real ResNet20 artifact yet.
 
 The dump tool can run the same preflight without CTest:
 

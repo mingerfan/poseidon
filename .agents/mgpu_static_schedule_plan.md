@@ -159,8 +159,17 @@ Dacapo artifact debugging:
   `POSEIDON_MGPU_EXTERNAL_UPLOAD_DEVICE`,
   `POSEIDON_MGPU_EXTERNAL_COMPUTE_DEVICES`,
   `POSEIDON_MGPU_EXTERNAL_DOWNLOAD_DEVICE`,
-  `POSEIDON_MGPU_EXTERNAL_ROUND_ROBIN_COMPUTE`, and
-  `POSEIDON_MGPU_EXTERNAL_DEBUG_DUMP`.
+  `POSEIDON_MGPU_EXTERNAL_ROUND_ROBIN_COMPUTE`,
+  `POSEIDON_MGPU_EXTERNAL_DEBUG_DUMP`,
+  `POSEIDON_MGPU_EXTERNAL_PREFLIGHT_COMM_AVAILABLE`,
+  `POSEIDON_MGPU_EXTERNAL_PREFLIGHT_RELIN_KEYS`,
+  `POSEIDON_MGPU_EXTERNAL_PREFLIGHT_GALOIS_KEYS`,
+  `POSEIDON_MGPU_EXTERNAL_NODES`, and
+  `POSEIDON_MGPU_EXTERNAL_DEVICES_PER_NODE`.
+- `poseidon_mgpu_external_hevm_mock_artifact_tests` uses a generated mock
+  `.hevm + .cst` artifact to exercise the same external artifact path,
+  preflight flags, and non-trivial topology on machines without ResNet20
+  artifacts.
 - Use the CPU-only Poseidon GPU preflight before execution on real artifacts.
   It reports required communication, RelinKeys, GaloisKeys, invalid devices,
   and unsupported executor ops without linking CUDA/RMM. The dump tool exposes
@@ -195,7 +204,7 @@ ResNet20 artifact runbook:
 - Repeatable artifact validation uses the skipped-by-default
   `poseidon_mgpu_external_hevm_artifact_tests` with
   `POSEIDON_MGPU_EXTERNAL_HEVM`, `POSEIDON_MGPU_EXTERNAL_CST`, and explicit
-  placement environment variables.
+  placement, preflight, and topology environment variables.
 - Treat unsupported opcode diagnostics as adapter work, not scheduler work.
   Do not guess `ModswitchC` or `UpscaleC` semantics.
 - Treat bootstrap fallback diagnostics as an execution-backend gap. Loading,
