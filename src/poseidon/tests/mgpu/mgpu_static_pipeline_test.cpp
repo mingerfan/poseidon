@@ -107,6 +107,49 @@ void test_pipeline_places_unassigned_ops_before_copy_insertion()
     }
 }
 
+void test_pipeline_prepares_dacapo_json_input()
+{
+    const char *json = R"json(
+{
+  "version": 1,
+  "ops": [
+    {"kind": "upload_cipher", "device": 0, "outputs": [1]},
+    {"kind": "upload_plain", "device": 1, "outputs": [2]},
+    {"kind": "multiply_plain", "device": 1, "inputs": [1, 2], "outputs": [3]},
+    {"kind": "download", "device": 0, "inputs": [3]}
+  ]
+}
+)json";
+
+    StaticSchedulePipelineOptions options;
+    options.device_count = 2;
+    options.emit_debug_dump = true;
+
+    const StaticSchedulePipelineResult result = prepare_dacapo_static_schedule(
+        json, DacapoAdapterOptions{ DacapoInputFormat::Json }, options);
+
+    require(result.ok(), "Dacapo JSON pipeline failed:\n" + result.format_diagnostics());
+    require(result.schedule.ops.size() == 6, "expected two inserted copies");
+    require(result.schedule.ops[2].kind == MgpuOpKind::CopyCipher,
+            "multiply input should be copied to device 1");
+    require(result.schedule.ops[5].kind == MgpuOpKind::Download,
+            "last op should remain download");
+    require_contains(result.debug_dump, "mgpu.copy_cipher");
+    require_contains(result.debug_dump, "mgpu.download device=0");
+}
+
+void test_pipeline_reports_dacapo_adapter_errors()
+{
+    const StaticSchedulePipelineResult result = prepare_dacapo_static_schedule(
+        R"json({"version": 1, "ops": [{"kind": "bad", "device": 0}]})json",
+        DacapoAdapterOptions{ DacapoInputFormat::Json });
+
+    require(!result.ok(), "invalid Dacapo JSON pipeline input should fail");
+    require_contains(result.format_diagnostics(), "dacapo_adapter");
+    require_contains(result.format_diagnostics(), "unknown op kind");
+    require(result.schedule.ops.empty(), "failed Dacapo adapter should not produce a schedule");
+}
+
 }  // namespace
 
 int main()
@@ -116,6 +159,8 @@ int main()
         test_pipeline_inserts_copies_and_dumps();
         test_pipeline_reports_copy_insertion_errors();
         test_pipeline_places_unassigned_ops_before_copy_insertion();
+        test_pipeline_prepares_dacapo_json_input();
+        test_pipeline_reports_dacapo_adapter_errors();
     }
     catch (const std::exception &ex)
     {
