@@ -29,6 +29,7 @@
 |---|---|
 | `GpuDeviceContext` | Own per-device `GpuParameterData`, `GpuEvaluator`, keys, and stream handle placeholder. |
 | `GpuObjectStore` | Map logical value IDs to value kind, device ownership, and optional opaque object handles. |
+| `IoBindingScheduleHandler` | Bind static upload/download value IDs to external object handles while forwarding compute ops to a fallback handler. |
 | `GpuComm` | Define object-level copy/clone operations between devices and return destination object handles. |
 | `MaterializedGpuComm` | Bridge logical copy requests to materialized full-object buffer copy requests. |
 | `PoseidonGpuObjectCopyMaterializer` | Optional CUDA/RMM-gated bridge from Poseidon GPU objects to full-object copy buffers. |
@@ -89,7 +90,8 @@ Execution pipeline:
 3. Copy insertion pass inserts `CopyPlain`/`CopyCipher`.
 4. Verifier checks schedule invariants.
 5. Dumper optionally prints a readable text form.
-6. Interpreter executes the static schedule.
+6. Runtime IO binding maps scheduled upload/download value IDs to external CPU/GPU object handles.
+7. Interpreter executes the static schedule.
 
 Current Dacapo bridge:
 
@@ -104,6 +106,13 @@ Optional GPU object materialization:
 - Default `poseidon_mgpu` must remain buildable without enabling this option.
 - Materializers must reject `fields_.size() != 1`; V1 does not execute multi-shard objects.
 
+Runtime IO binding:
+
+- `IoBindingScheduleHandler` is format-agnostic and stores opaque object handles by `ValueId`.
+- Upload bindings are provided by the caller after placement/copy insertion has produced the final schedule.
+- Downloads record the scheduled source value handle; typed CPU/GPU conversion remains the responsibility of a higher-level Poseidon GPU handler.
+- Compute ops are forwarded to a fallback handler so the interpreter remains static and does not infer missing placements or payloads.
+
 ## 5. Test Plan
 
 | Test | Requirement |
@@ -112,6 +121,7 @@ Optional GPU object materialization:
 | IR tests | Construct schedules and verify kind/string/dump behavior. |
 | Verifier tests | Missing input, missing copy, invalid device, unavailable key, and form mismatch must fail clearly. |
 | Single-GPU interpreter tests | Upload, run one op, download, and compare against the existing single-GPU path. |
+| IO binding tests | Missing upload bindings, kind mismatches, fallback compute output, and metadata-only downloads must fail clearly. |
 | Copy tests | Same-device copy always runs; cross-device copy runs only when at least two GPUs are visible. |
 | Materialized copy tests | Object-handle copy dispatch validates one-buffer full-object copy requests. |
 | Static graph tests | Handwritten ResNet-like small graph verifies copy insertion and execution order. |
