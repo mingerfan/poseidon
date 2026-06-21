@@ -1,4 +1,5 @@
 #include "poseidon/mgpu/compiler/static_schedule_pipeline.h"
+#include "poseidon/tests/mgpu/hevm_test_utils.h"
 
 #include <cstdlib>
 #include <cstdint>
@@ -49,89 +50,6 @@ void require_contains(const std::string &text, const std::string &needle)
     {
         throw std::runtime_error("expected text to contain: " + needle + "\ntext:\n" + text);
     }
-}
-
-struct HevmOpRecord
-{
-    std::uint16_t opcode = 0;
-    std::uint16_t dst = 0;
-    std::uint16_t lhs = 0;
-    std::uint16_t rhs = 0;
-};
-
-void append_u16(std::string &output, std::uint16_t value)
-{
-    output.push_back(static_cast<char>(value & 0xFF));
-    output.push_back(static_cast<char>((value >> 8) & 0xFF));
-}
-
-void append_u32(std::string &output, std::uint32_t value)
-{
-    for (int i = 0; i < 4; ++i)
-    {
-        output.push_back(static_cast<char>((value >> (8 * i)) & 0xFF));
-    }
-}
-
-void append_u64(std::string &output, std::uint64_t value)
-{
-    for (int i = 0; i < 8; ++i)
-    {
-        output.push_back(static_cast<char>((value >> (8 * i)) & 0xFF));
-    }
-}
-
-std::string make_hevm_binary(
-    std::uint64_t arg_length, std::uint64_t res_length,
-    std::uint64_t num_ctxt_buffer, std::uint64_t num_ptxt_buffer,
-    const std::vector<std::uint64_t> &result_registers,
-    const std::vector<HevmOpRecord> &ops)
-{
-    const std::uint64_t config_array_count = arg_length * 2 + res_length * 3;
-    const std::uint64_t config_body_length = 40 + config_array_count * 8;
-
-    std::string output;
-    append_u32(output, 0x4845564D);
-    append_u32(output, 24);
-    append_u64(output, arg_length);
-    append_u64(output, res_length);
-
-    append_u64(output, config_body_length);
-    append_u64(output, ops.size());
-    append_u64(output, num_ctxt_buffer);
-    append_u64(output, num_ptxt_buffer);
-    append_u64(output, 0);
-
-    for (std::uint64_t i = 0; i < arg_length; ++i)
-    {
-        append_u64(output, 0);
-    }
-    for (std::uint64_t i = 0; i < arg_length; ++i)
-    {
-        append_u64(output, 0);
-    }
-    for (std::uint64_t i = 0; i < res_length; ++i)
-    {
-        append_u64(output, 0);
-    }
-    for (std::uint64_t i = 0; i < res_length; ++i)
-    {
-        append_u64(output, 0);
-    }
-    for (std::uint64_t i = 0; i < res_length; ++i)
-    {
-        append_u64(output, result_registers[i]);
-    }
-
-    for (const HevmOpRecord &op : ops)
-    {
-        append_u16(output, op.opcode);
-        append_u16(output, op.dst);
-        append_u16(output, op.lhs);
-        append_u16(output, op.rhs);
-    }
-
-    return output;
 }
 
 MgpuSchedule make_resnet_like_schedule()
@@ -271,12 +189,12 @@ void test_pipeline_prepares_dacapo_json_input()
 
 void test_pipeline_prepares_hevm_binary_input()
 {
-    const std::string hevm = make_hevm_binary(
+    const std::string hevm = test::make_hevm_binary(
         1, 1, 3, 1, { 2 },
         {
-            HevmOpRecord{ 0, 0, 0, static_cast<std::uint16_t>((4 << 10) + 40) },
-            HevmOpRecord{ 9, 1, 0, 0 },
-            HevmOpRecord{ 1, 2, 1, static_cast<std::uint16_t>(-1) },
+            test::HevmOpRecord{ 0, 0, 0, test::make_hevm_encode_attr(4, 40) },
+            test::HevmOpRecord{ 9, 1, 0, 0 },
+            test::HevmOpRecord{ 1, 2, 1, static_cast<std::uint16_t>(-1) },
         });
 
     StaticSchedulePipelineOptions options;
@@ -311,6 +229,58 @@ void test_pipeline_prepares_hevm_binary_input()
     require_contains(result.debug_dump, "name=\"auto_copy\"");
 }
 
+void test_pipeline_prepares_resnet_like_hevm_binary()
+{
+    const std::string hevm = test::make_hevm_binary(
+        2, 1, 9, 2, { 8 },
+        {
+            test::HevmOpRecord{ 0, 0, 0, test::make_hevm_encode_attr(5, 45) },
+            test::HevmOpRecord{ 0, 1, 0, test::make_hevm_encode_attr(4, 40) },
+            test::HevmOpRecord{ 9, 2, 0, 0 },
+            test::HevmOpRecord{ 3, 3, 2, 0 },
+            test::HevmOpRecord{ 1, 4, 3, 1 },
+            test::HevmOpRecord{ 9, 5, 1, 1 },
+            test::HevmOpRecord{ 6, 6, 4, 5 },
+            test::HevmOpRecord{ 8, 7, 6, 6 },
+            test::HevmOpRecord{ 3, 8, 7, 0 },
+        });
+
+    StaticSchedulePipelineOptions options;
+    options.device_count = 2;
+    options.placement.policy = StaticPlacementPolicy::RoundRobinCompute;
+    options.emit_debug_dump = true;
+
+    const StaticSchedulePipelineResult result = prepare_dacapo_static_schedule(
+        hevm, DacapoAdapterOptions{ DacapoInputFormat::HevmBinary }, options);
+
+    require(result.ok(), "ResNet-like HEVM pipeline failed:\n" + result.format_diagnostics());
+    require(result.schedule.ops.size() == 20, "expected static copies for round-robin HEVM graph");
+    require(result.schedule.ops.front().kind == MgpuOpKind::UploadCipher,
+            "first HEVM op should upload the first argument");
+    require(result.schedule.ops[1].kind == MgpuOpKind::UploadCipher,
+            "second HEVM op should upload the residual argument");
+    require(
+        result.schedule.ops[2].integer_attributes.at("encode_level") == 5,
+        "first HEVM encode level should survive pipeline");
+    require(
+        result.schedule.ops[3].integer_attributes.at("encode_scale") == 40,
+        "second HEVM encode scale should survive pipeline");
+    require(result.schedule.ops[8].kind == MgpuOpKind::Rotate,
+            "rotate should remain after inserted input copies");
+    require(result.schedule.ops[8].integer_attributes.at("rotate_step") == 1,
+            "positive HEVM rotate_step should survive pipeline");
+    require(result.schedule.ops[13].kind == MgpuOpKind::Add,
+            "residual add should remain a ciphertext add");
+    require(result.schedule.ops[16].kind == MgpuOpKind::Multiply,
+            "square activation should remain a ciphertext multiply");
+    require(result.schedule.ops.back().kind == MgpuOpKind::Download,
+            "last HEVM op should remain download");
+    require_contains(result.debug_dump, "mgpu.add");
+    require_contains(result.debug_dump, "mgpu.multiply");
+    require_contains(result.debug_dump, "attrs={rotate_step=1}");
+    require_contains(result.debug_dump, "name=\"auto_copy\"");
+}
+
 void test_pipeline_reports_dacapo_adapter_errors()
 {
     const StaticSchedulePipelineResult result = prepare_dacapo_static_schedule(
@@ -336,6 +306,7 @@ int main()
         test_pipeline_preserves_integer_attributes();
         test_pipeline_prepares_dacapo_json_input();
         test_pipeline_prepares_hevm_binary_input();
+        test_pipeline_prepares_resnet_like_hevm_binary();
         test_pipeline_reports_dacapo_adapter_errors();
     }
     catch (const std::exception &ex)

@@ -1,4 +1,5 @@
 #include "poseidon/mgpu/compiler/dacapo_adapter.h"
+#include "poseidon/tests/mgpu/hevm_test_utils.h"
 
 #include <cstdint>
 #include <cstdlib>
@@ -26,89 +27,6 @@ void require_contains(const std::string &text, const std::string &needle)
     {
         throw std::runtime_error("expected text to contain: " + needle + "\ntext:\n" + text);
     }
-}
-
-struct HevmOpRecord
-{
-    std::uint16_t opcode = 0;
-    std::uint16_t dst = 0;
-    std::uint16_t lhs = 0;
-    std::uint16_t rhs = 0;
-};
-
-void append_u16(std::string &output, std::uint16_t value)
-{
-    output.push_back(static_cast<char>(value & 0xFF));
-    output.push_back(static_cast<char>((value >> 8) & 0xFF));
-}
-
-void append_u32(std::string &output, std::uint32_t value)
-{
-    for (int i = 0; i < 4; ++i)
-    {
-        output.push_back(static_cast<char>((value >> (8 * i)) & 0xFF));
-    }
-}
-
-void append_u64(std::string &output, std::uint64_t value)
-{
-    for (int i = 0; i < 8; ++i)
-    {
-        output.push_back(static_cast<char>((value >> (8 * i)) & 0xFF));
-    }
-}
-
-std::string make_hevm_binary(
-    std::uint64_t arg_length, std::uint64_t res_length,
-    std::uint64_t num_ctxt_buffer, std::uint64_t num_ptxt_buffer,
-    const std::vector<std::uint64_t> &result_registers,
-    const std::vector<HevmOpRecord> &ops)
-{
-    const std::uint64_t config_array_count = arg_length * 2 + res_length * 3;
-    const std::uint64_t config_body_length = 40 + config_array_count * 8;
-
-    std::string output;
-    append_u32(output, 0x4845564D);
-    append_u32(output, 24);
-    append_u64(output, arg_length);
-    append_u64(output, res_length);
-
-    append_u64(output, config_body_length);
-    append_u64(output, ops.size());
-    append_u64(output, num_ctxt_buffer);
-    append_u64(output, num_ptxt_buffer);
-    append_u64(output, 0);
-
-    for (std::uint64_t i = 0; i < arg_length; ++i)
-    {
-        append_u64(output, 0);
-    }
-    for (std::uint64_t i = 0; i < arg_length; ++i)
-    {
-        append_u64(output, 0);
-    }
-    for (std::uint64_t i = 0; i < res_length; ++i)
-    {
-        append_u64(output, 0);
-    }
-    for (std::uint64_t i = 0; i < res_length; ++i)
-    {
-        append_u64(output, 0);
-    }
-    for (std::uint64_t i = 0; i < res_length; ++i)
-    {
-        append_u64(output, result_registers[i]);
-    }
-
-    for (const HevmOpRecord &op : ops)
-    {
-        append_u16(output, op.opcode);
-        append_u16(output, op.dst);
-        append_u16(output, op.lhs);
-        append_u16(output, op.rhs);
-    }
-
-    return output;
 }
 
 void test_format_strings()
@@ -166,13 +84,13 @@ void test_json_format_reports_parse_diagnostics()
 
 void test_hevm_binary_translates_supported_ops()
 {
-    const std::string hevm = make_hevm_binary(
+    const std::string hevm = test::make_hevm_binary(
         1, 1, 1, 1, { 0 },
         {
-            HevmOpRecord{ 0, 0, 0, static_cast<std::uint16_t>((4 << 10) + 40) },
-            HevmOpRecord{ 9, 0, 0, 0 },
-            HevmOpRecord{ 7, 0, 0, 0 },
-            HevmOpRecord{ 3, 0, 0, 0 },
+            test::HevmOpRecord{ 0, 0, 0, test::make_hevm_encode_attr(4, 40) },
+            test::HevmOpRecord{ 9, 0, 0, 0 },
+            test::HevmOpRecord{ 7, 0, 0, 0 },
+            test::HevmOpRecord{ 3, 0, 0, 0 },
         });
 
     const DacapoAdapterResult result = translate_dacapo_schedule(
@@ -208,10 +126,10 @@ void test_hevm_binary_translates_supported_ops()
 
 void test_hevm_binary_translates_rotate_attributes()
 {
-    const std::string hevm = make_hevm_binary(
+    const std::string hevm = test::make_hevm_binary(
         1, 1, 2, 0, { 1 },
         {
-            HevmOpRecord{ 1, 1, 0, static_cast<std::uint16_t>(-3) },
+            test::HevmOpRecord{ 1, 1, 0, static_cast<std::uint16_t>(-3) },
         });
 
     const DacapoAdapterResult result = translate_dacapo_schedule(
@@ -229,10 +147,10 @@ void test_hevm_binary_translates_rotate_attributes()
 
 void test_hevm_binary_translates_bootstrap_target_level()
 {
-    const std::string hevm = make_hevm_binary(
+    const std::string hevm = test::make_hevm_binary(
         1, 1, 2, 0, { 1 },
         {
-            HevmOpRecord{ 10, 1, 0, 6 },
+            test::HevmOpRecord{ 10, 1, 0, 6 },
         });
 
     const DacapoAdapterResult result = translate_dacapo_schedule(
@@ -250,10 +168,10 @@ void test_hevm_binary_translates_bootstrap_target_level()
 
 void test_hevm_binary_reports_unsupported_opcode()
 {
-    const std::string hevm = make_hevm_binary(
+    const std::string hevm = test::make_hevm_binary(
         1, 1, 2, 0, { 1 },
         {
-            HevmOpRecord{ 2, 1, 0, 0 },
+            test::HevmOpRecord{ 2, 1, 0, 0 },
         });
 
     const DacapoAdapterResult result = translate_dacapo_schedule(
@@ -266,7 +184,7 @@ void test_hevm_binary_reports_unsupported_opcode()
 
 void test_hevm_binary_reports_bad_magic()
 {
-    std::string hevm = make_hevm_binary(1, 1, 1, 0, { 0 }, {});
+    std::string hevm = test::make_hevm_binary(1, 1, 1, 0, { 0 }, {});
     hevm[0] = '\0';
 
     const DacapoAdapterResult result = translate_dacapo_schedule(
