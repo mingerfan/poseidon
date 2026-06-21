@@ -1,0 +1,105 @@
+#include "poseidon/mgpu/compiler/static_schedule_pipeline.h"
+
+#include <cstdlib>
+#include <iostream>
+#include <stdexcept>
+#include <string>
+#include <utility>
+#include <vector>
+
+using namespace poseidon::mgpu;
+
+namespace
+{
+
+MgpuValueRef value(ValueId id)
+{
+    return MgpuValueRef{ id };
+}
+
+MgpuOp op(
+    MgpuOpKind kind, int device_id, std::vector<MgpuValueRef> inputs,
+    std::vector<MgpuValueRef> outputs)
+{
+    return MgpuOp{ kind, device_id, std::move(inputs), std::move(outputs), {} };
+}
+
+void require(bool condition, const std::string &message)
+{
+    if (!condition)
+    {
+        throw std::runtime_error(message);
+    }
+}
+
+void require_contains(const std::string &text, const std::string &needle)
+{
+    if (text.find(needle) == std::string::npos)
+    {
+        throw std::runtime_error("expected text to contain: " + needle + "\ntext:\n" + text);
+    }
+}
+
+MgpuSchedule make_resnet_like_schedule()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, 0, {}, { value(1) }));
+    schedule.ops.push_back(op(MgpuOpKind::UploadPlain, 1, {}, { value(2) }));
+    schedule.ops.push_back(op(MgpuOpKind::MultiplyPlain, 1, { value(1), value(2) }, { value(3) }));
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, 0, {}, { value(4) }));
+    schedule.ops.push_back(op(MgpuOpKind::Add, 1, { value(3), value(4) }, { value(5) }));
+    schedule.ops.push_back(op(MgpuOpKind::Download, 0, { value(5) }, {}));
+    return schedule;
+}
+
+void test_pipeline_inserts_copies_and_dumps()
+{
+    StaticSchedulePipelineOptions options;
+    options.device_count = 2;
+    options.emit_debug_dump = true;
+
+    const StaticSchedulePipelineResult result =
+        prepare_static_schedule(make_resnet_like_schedule(), options);
+
+    require(result.ok(), "pipeline failed:\n" + result.format_diagnostics());
+    require(result.schedule.ops.size() == 9, "expected three inserted copies");
+    require(result.schedule.ops[2].kind == MgpuOpKind::CopyCipher,
+            "multiply input should be copied to device 1");
+    require(result.schedule.ops[5].kind == MgpuOpKind::CopyCipher,
+            "add input should be copied to device 1");
+    require(result.schedule.ops[8].kind == MgpuOpKind::Download,
+            "last op should remain download");
+    require_contains(result.debug_dump, "mgpu.schedule");
+    require_contains(result.debug_dump, "name=\"auto_copy\"");
+    require_contains(result.debug_dump, "mgpu.download device=0");
+}
+
+void test_pipeline_reports_copy_insertion_errors()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::Rescale, 0, { value(99) }, { value(1) }));
+
+    const StaticSchedulePipelineResult result = prepare_static_schedule(schedule);
+    require(!result.ok(), "pipeline should fail for unknown input");
+    require_contains(result.format_diagnostics(), "copy_insertion op #0");
+    require_contains(result.format_diagnostics(), "unknown input value %99");
+}
+
+}  // namespace
+
+int main()
+{
+    try
+    {
+        test_pipeline_inserts_copies_and_dumps();
+        test_pipeline_reports_copy_insertion_errors();
+    }
+    catch (const std::exception &ex)
+    {
+        std::cerr << "mgpu static pipeline test failed: " << ex.what() << '\n';
+        return EXIT_FAILURE;
+    }
+
+    std::cout << "mgpu static pipeline tests passed\n";
+    return EXIT_SUCCESS;
+}
