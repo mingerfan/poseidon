@@ -244,6 +244,15 @@ Json execution_gate_to_json(const HevmArtifactReportInput &input)
         root["diagnostics"] = execution_preflight_diagnostics_to_json(
             *input.poseidon_gpu_execution_preflight);
     }
+    else
+    {
+        root["diagnostics"].push_back(Json{
+            { "stage", "execution_gate" },
+            { "location", 0 },
+            { "message",
+              "HEVM artifact report has no readiness or execution preflight result" },
+        });
+    }
     return root;
 }
 

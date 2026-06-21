@@ -305,7 +305,9 @@ gate preserve `route_index`, `transport`, `source_device`, and
 `destination_device` so cluster bring-up scripts can identify missing backends
 without parsing nested preflight text. The same structured diagnostics are used
 when a report contains aggregate execution preflight data but no readiness
-result.
+result. Reports that contain neither readiness nor aggregate execution
+preflight data explicitly report that missing gate input in
+`execution_gate.diagnostics`.
 
 `poseidon_mgpu_external_hevm_failure_report_mock_artifact_tests` uses an
 unsupported HEVM opcode mock to verify that the external artifact CTest path

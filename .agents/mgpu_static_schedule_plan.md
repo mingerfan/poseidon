@@ -295,7 +295,9 @@ Dacapo artifact debugging:
   fields in top-level `execution_gate.diagnostics`, not only in nested
   preflight blocks. Reports that include aggregate execution preflight without
   readiness must still emit structured per-stage gate diagnostics instead of a
-  single flattened text blob.
+  single flattened text blob. Reports missing both readiness and aggregate
+  execution preflight must explain that missing gate input in
+  `execution_gate.diagnostics`.
 - Communication topology planning must reject ambiguous topologies before route
   generation. Logical device IDs are unique, non-negative identifiers; local
   device IDs are unique within each node; node and local IDs must be

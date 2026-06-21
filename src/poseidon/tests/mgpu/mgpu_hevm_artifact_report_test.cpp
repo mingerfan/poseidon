@@ -354,6 +354,49 @@ void test_report_execution_gate_without_readiness_keeps_structured_diagnostics()
         "execution gate fallback destination device missing");
 }
 
+void test_report_execution_gate_requires_gate_input()
+{
+    StaticScheduleExecutionConfig config;
+    config.pipeline.device_count = 1;
+
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, 0, {}, { value(1) }));
+    schedule.ops.push_back(op(MgpuOpKind::Download, 0, { value(1) }, {}));
+    const MgpuScheduleSummary summary =
+        summarize_schedule(schedule, config.pipeline.device_count);
+
+    HevmIoBindingPlan io_plan;
+    io_plan.cipher_inputs.push_back(HevmCipherInputSlot{ 0, 1, 0, 40, 2, 2 });
+    io_plan.results.push_back(HevmResultSlot{ 0, 1, 1, 0, 40, 2 });
+
+    HevmArtifactReportInput input;
+    input.execution_config = &config;
+    input.schedule_summary = &summary;
+    input.io_plan = &io_plan;
+
+    const nlohmann::json report =
+        nlohmann::json::parse(hevm_artifact_report_to_json(input));
+    require(
+        !report.at("execution_gate").at("ok").get<bool>(),
+        "report without gate input should be not-ready");
+    require(
+        report.at("execution_gate")
+                .at("diagnostics")
+                .at(0)
+                .at("stage")
+                .get<std::string>() == "execution_gate",
+        "missing gate input diagnostic stage mismatch");
+    require(
+        report.at("execution_gate")
+                .at("diagnostics")
+                .at(0)
+                .at("message")
+                .get<std::string>()
+                .find("no readiness or execution preflight result") !=
+            std::string::npos,
+        "missing gate input diagnostic message mismatch");
+}
+
 void test_failure_report_includes_artifact_diagnostics()
 {
     StaticScheduleExecutionConfig config;
@@ -442,6 +485,7 @@ int main()
         test_report_includes_execution_evidence();
         test_report_execution_gate_reports_not_ready();
         test_report_execution_gate_without_readiness_keeps_structured_diagnostics();
+        test_report_execution_gate_requires_gate_input();
         test_failure_report_includes_artifact_diagnostics();
         test_report_rejects_missing_required_sections();
     }
