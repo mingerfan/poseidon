@@ -28,11 +28,13 @@
 | Module | Responsibility |
 |---|---|
 | `GpuDeviceContext` | Own per-device `GpuParameterData`, `GpuEvaluator`, keys, and stream handle placeholder. |
-| `GpuObjectStore` | Map logical value IDs to GPU plaintext/ciphertext objects and their device ownership. |
-| `GpuComm` | Define object-level copy/clone operations between devices. |
+| `GpuObjectStore` | Map logical value IDs to value kind, device ownership, and optional opaque object handles. |
+| `GpuComm` | Define object-level copy/clone operations between devices and return destination object handles. |
+| `MaterializedGpuComm` | Bridge logical copy requests to materialized full-object buffer copy requests. |
+| `PoseidonGpuObjectCopyMaterializer` | Optional CUDA/RMM-gated bridge from Poseidon GPU objects to full-object copy buffers. |
 | `CudaPeerComm` | Implement same-device copy, CUDA peer copy, and host-staging fallback. |
 | Schedule IR | Represent upload, copy, compute, bootstrap fallback, and download operations independent of Dacapo format. |
-| Dacapo adapter | Translate Dacapo JSON/TOML/native output into internal IR after Dacapo format is known. |
+| Dacapo adapter | Translate internal JSON debug input and Dacapo HEVM binary output into internal IR. |
 | Placement pass | Assign each op/value to a GPU. |
 | Copy insertion pass | Insert explicit copy operations when input placement differs from compute placement. |
 | Verifier | Check device availability, input placement, object form, keys, scale, level, and NTT form before execution. |
@@ -52,6 +54,7 @@ enum class MgpuOpKind {
     CopyPlain,
     CopyCipher,
     Add,
+    AddPlain,
     Sub,
     MultiplyPlain,
     Multiply,
@@ -71,6 +74,7 @@ struct MgpuOp {
     int device_id;
     std::vector<MgpuValueRef> inputs;
     std::vector<MgpuValueRef> outputs;
+    std::string debug_name;
 };
 
 struct MgpuSchedule {
@@ -80,12 +84,25 @@ struct MgpuSchedule {
 
 Execution pipeline:
 
-1. Dacapo adapter or handcrafted tests produce internal IR.
+1. Dacapo adapter, internal JSON debug input, or handcrafted tests produce internal IR.
 2. Placement pass assigns devices.
 3. Copy insertion pass inserts `CopyPlain`/`CopyCipher`.
 4. Verifier checks schedule invariants.
 5. Dumper optionally prints a readable text form.
 6. Interpreter executes the static schedule.
+
+Current Dacapo bridge:
+
+- `DacapoInputFormat::Json` accepts Poseidon's internal schedule JSON for debug and tests.
+- `DacapoInputFormat::HevmBinary` parses Dacapo `.hevm` output without linking MLIR/Dacapo.
+- HEVM registers are translated to Poseidon SSA-like `ValueId`s; do not reuse HEVM register IDs directly as values.
+- Unsupported HEVM opcodes must fail clearly rather than being guessed.
+
+Optional GPU object materialization:
+
+- `POSEIDON_BUILD_MGPU_GPU_OBJECTS=ON` builds the CUDA/RMM-gated Poseidon GPU object materializer.
+- Default `poseidon_mgpu` must remain buildable without enabling this option.
+- Materializers must reject `fields_.size() != 1`; V1 does not execute multi-shard objects.
 
 ## 5. Test Plan
 
@@ -96,6 +113,7 @@ Execution pipeline:
 | Verifier tests | Missing input, missing copy, invalid device, unavailable key, and form mismatch must fail clearly. |
 | Single-GPU interpreter tests | Upload, run one op, download, and compare against the existing single-GPU path. |
 | Copy tests | Same-device copy always runs; cross-device copy runs only when at least two GPUs are visible. |
+| Materialized copy tests | Object-handle copy dispatch validates one-buffer full-object copy requests. |
 | Static graph tests | Handwritten ResNet-like small graph verifies copy insertion and execution order. |
 
 ## 6. Phases
@@ -107,7 +125,7 @@ Execution pipeline:
 | 2 | Single-GPU interpreter and object store | Single-GPU schedule matches existing GPU result. |
 | 3 | `GpuComm` and CUDA peer-copy backend | Same-device tests pass; multi-GPU tests skip or pass. |
 | 4 | Static placement and copy insertion | Handwritten small graph verifies inserted copies. |
-| 5 | Add Dacapo submodule and adapter skeleton | Adapter tests use small captured/mock Dacapo input. |
+| 5 | Add Dacapo submodule and JSON/HEVM adapters | Adapter tests use small captured/mock Dacapo input. |
 | 6 | ResNet20 static schedule path | Single-GPU fallback works; multi-GPU run validates on cluster. |
 | 7 | Cluster communication planning | NCCL/MPI interface is introduced only after single-node path is stable. |
 
