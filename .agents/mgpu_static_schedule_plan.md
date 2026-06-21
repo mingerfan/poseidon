@@ -283,6 +283,10 @@ Dacapo artifact debugging:
   previews may pass `--execution-cuda-peer-available`; do not pass
   `--execution-inter-node-available` until a real cluster transport backend is
   implemented behind the mgpu communication interface.
+- Communication execution preflight diagnostics must stay machine-readable:
+  every missing-backend diagnostic should include the route index, transport
+  kind, source device, and destination device in JSON so cluster bring-up
+  scripts can identify the exact missing route without parsing text.
 - The dump tool and external HEVM CTest now expose a unified
   `poseidon_gpu_execution_preflight` result. Treat it as the CPU-only execution
   gate that combines schedule verification, Poseidon GPU preflight,

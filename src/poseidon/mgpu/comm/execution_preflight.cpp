@@ -16,10 +16,17 @@ using Json = nlohmann::json;
 void add_diagnostic(
     MgpuCommunicationExecutionPreflight &preflight,
     std::size_t route_index,
+    const MgpuCopyRoute &route,
     std::string message)
 {
     preflight.diagnostics.push_back(
-        MgpuCommunicationExecutionDiagnostic{ route_index, std::move(message) });
+        MgpuCommunicationExecutionDiagnostic{
+            route_index,
+            route.transport,
+            route.source_device,
+            route.destination_device,
+            std::move(message),
+        });
 }
 
 bool route_supported(
@@ -78,6 +85,9 @@ Json diagnostics_to_json(
     {
         result.push_back(Json{
             { "route_index", diagnostic.route_index },
+            { "transport", to_string(diagnostic.transport) },
+            { "source_device", diagnostic.source_device },
+            { "destination_device", diagnostic.destination_device },
             { "message", diagnostic.message },
         });
     }
@@ -95,7 +105,10 @@ std::string MgpuCommunicationExecutionPreflight::format_diagnostics() const
         {
             stream << '\n';
         }
-        stream << "route #" << diagnostics[i].route_index << ": "
+        stream << "route #" << diagnostics[i].route_index << " "
+               << to_string(diagnostics[i].transport) << " device "
+               << diagnostics[i].source_device << " -> "
+               << diagnostics[i].destination_device << ": "
                << diagnostics[i].message;
     }
     return stream.str();
@@ -115,7 +128,7 @@ MgpuCommunicationExecutionPreflight preflight_communication_execution(
             std::ostringstream stream;
             stream << missing_transport_message(route.transport) << " for device "
                    << route.source_device << " -> " << route.destination_device;
-            add_diagnostic(preflight, route_index, stream.str());
+            add_diagnostic(preflight, route_index, route, stream.str());
         }
     }
     return preflight;
@@ -144,7 +157,10 @@ void dump_communication_execution_preflight(
         for (const MgpuCommunicationExecutionDiagnostic &diagnostic :
              preflight.diagnostics)
         {
-            stream << "    route #" << diagnostic.route_index << ": "
+            stream << "    route #" << diagnostic.route_index << " "
+                   << to_string(diagnostic.transport) << " device "
+                   << diagnostic.source_device << " -> "
+                   << diagnostic.destination_device << ": "
                    << diagnostic.message << '\n';
         }
     }

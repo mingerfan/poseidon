@@ -428,6 +428,9 @@ routes executable by the currently available backend. For the single-node path,
 also pass `--execution-cuda-peer-available`. Do not pass
 `--execution-inter-node-available` until a real cluster transport backend has
 been implemented and wired behind the mgpu communication layer.
+The JSON diagnostics include each missing route's index, transport kind,
+source device, and destination device so cluster scripts can report the exact
+backend gap without parsing human-readable text.
 
 ## CUDA Peer Probe
 

@@ -62,6 +62,14 @@ void test_same_device_only_defaults()
     require(preflight.diagnostics.size() == 2, "expected cuda and inter-node diagnostics");
     require_contains(preflight.format_diagnostics(), "CUDA peer");
     require_contains(preflight.format_diagnostics(), "inter-node communication backend");
+    require_contains(preflight.format_diagnostics(), "cuda_peer device 0 -> 1");
+    require_contains(preflight.format_diagnostics(), "inter_node device 1 -> 8");
+
+    const std::string json = communication_execution_preflight_to_json(preflight);
+    require_contains(json, "\"transport\": \"cuda_peer\"");
+    require_contains(json, "\"transport\": \"inter_node\"");
+    require_contains(json, "\"source_device\": 1");
+    require_contains(json, "\"destination_device\": 8");
 }
 
 void test_single_node_backend_accepts_cuda_peer()

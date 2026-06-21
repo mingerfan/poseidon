@@ -20,6 +20,9 @@ struct MgpuCommunicationExecutionOptions
 struct MgpuCommunicationExecutionDiagnostic
 {
     std::size_t route_index = 0;
+    MgpuTransportKind transport = MgpuTransportKind::SameDevice;
+    int source_device = 0;
+    int destination_device = 0;
     std::string message;
 };
 
