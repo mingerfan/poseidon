@@ -554,6 +554,7 @@ if(POSEIDON_BUILD_MGPU_TESTS)
     add_test(
         NAME poseidon_mgpu_static_schedule_config_tests
         COMMAND poseidon_mgpu_static_schedule_config_tests
+                ${POSEIDON_INCLUDES_DIR}/src/poseidon/mgpu/configs
     )
 
     add_test(

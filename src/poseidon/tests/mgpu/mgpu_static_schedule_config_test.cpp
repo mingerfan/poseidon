@@ -1,7 +1,10 @@
 #include "poseidon/mgpu/compiler/static_schedule_config.h"
 
 #include <cstdlib>
+#include <filesystem>
+#include <fstream>
 #include <iostream>
+#include <iterator>
 #include <stdexcept>
 #include <string>
 
@@ -24,6 +27,23 @@ void require_contains(const std::string &text, const std::string &needle)
     {
         throw std::runtime_error("expected text to contain: " + needle + "\ntext:\n" + text);
     }
+}
+
+std::string read_text_file(const std::filesystem::path &path)
+{
+    std::ifstream stream(path);
+    if (!stream)
+    {
+        throw std::runtime_error("failed to open config template: " + path.string());
+    }
+
+    std::string result(
+        (std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
+    if (stream.bad())
+    {
+        throw std::runtime_error("failed to read config template: " + path.string());
+    }
+    return result;
 }
 
 void test_parse_single_node_eight_gpu_config()
@@ -232,9 +252,75 @@ void test_config_diagnostics()
     require_contains(result.format_diagnostics(), "fewer logical devices");
 }
 
+void test_config_template(
+    const std::filesystem::path &config_dir, const std::string &filename,
+    int expected_device_count, int expected_node_count, int expected_devices_per_node,
+    bool expected_cuda_peer, bool expected_inter_node, bool expected_require_ready)
+{
+    const std::filesystem::path path = config_dir / filename;
+    const StaticScheduleExecutionConfigParseResult result =
+        parse_static_schedule_execution_config_json(read_text_file(path));
+    require(result.ok(), filename + " should parse:\n" + result.format_diagnostics());
+
+    const StaticScheduleExecutionConfig &config = result.config;
+    require(
+        config.pipeline.device_count == expected_device_count,
+        filename + " device_count mismatch");
+    require(config.node_count == expected_node_count, filename + " node_count mismatch");
+    require(
+        config.devices_per_node == expected_devices_per_node,
+        filename + " devices_per_node mismatch");
+    require(config.opcode_summary, filename + " should enable opcode summary");
+    require(
+        config.poseidon_gpu_preflight,
+        filename + " should enable Poseidon GPU preflight");
+    require(config.communication_plan, filename + " should enable communication plan");
+    require(
+        config.communication_execution_preflight,
+        filename + " should enable communication execution preflight");
+    require(
+        config.communication_execution.same_device_available,
+        filename + " should declare same-device execution");
+    require(
+        config.communication_execution.cuda_peer_available == expected_cuda_peer,
+        filename + " CUDA peer backend mismatch");
+    require(
+        config.communication_execution.inter_node_available == expected_inter_node,
+        filename + " inter-node backend mismatch");
+    require(
+        config.require_ready == expected_require_ready,
+        filename + " require_ready mismatch");
+
+    const MgpuTopology topology = make_static_schedule_execution_topology(config);
+    require(
+        topology.devices.size() == static_cast<std::size_t>(expected_device_count),
+        filename + " topology device count mismatch");
+    require(topology.devices.front().node_id == 0, filename + " first node mismatch");
+    require(
+        topology.devices.back().node_id == expected_node_count - 1,
+        filename + " last node mismatch");
+    require(
+        topology.devices.back().local_device == expected_devices_per_node - 1,
+        filename + " last local device mismatch");
+}
+
+void test_bundled_config_templates(const std::filesystem::path &config_dir)
+{
+    require(
+        std::filesystem::is_directory(config_dir),
+        "expected config template directory: " + config_dir.string());
+
+    test_config_template(
+        config_dir, "single_gpu.json", 1, 1, 1, false, false, true);
+    test_config_template(
+        config_dir, "single_node_8gpu.json", 8, 1, 8, true, false, true);
+    test_config_template(
+        config_dir, "cluster_4x8_preview.json", 32, 4, 8, true, false, false);
+}
+
 }  // namespace
 
-int main()
+int main(int argc, char **argv)
 {
     try
     {
@@ -243,6 +329,10 @@ int main()
         test_require_ready_enables_hard_gate_checks();
         test_config_json_round_trip();
         test_config_diagnostics();
+        if (argc > 1)
+        {
+            test_bundled_config_templates(argv[1]);
+        }
     }
     catch (const std::exception &ex)
     {

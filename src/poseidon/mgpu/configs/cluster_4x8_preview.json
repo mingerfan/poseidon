@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "device_count": 32,
+  "emit_debug_dump": false,
+  "placement": {
+    "policy": "round_robin_compute",
+    "default_device": 0,
+    "upload_device": 0,
+    "compute_devices": [
+      0, 1, 2, 3, 4, 5, 6, 7,
+      8, 9, 10, 11, 12, 13, 14, 15,
+      16, 17, 18, 19, 20, 21, 22, 23,
+      24, 25, 26, 27, 28, 29, 30, 31
+    ],
+    "download_device": 0
+  },
+  "topology": {
+    "nodes": 4,
+    "devices_per_node": 8
+  },
+  "preflight": {
+    "opcode_summary": true,
+    "poseidon_gpu_preflight": true,
+    "comm_available": true,
+    "relin_keys": true,
+    "galois_keys": true,
+    "communication_plan": true,
+    "communication_execution": true,
+    "require_ready": false
+  },
+  "execution_backends": {
+    "same_device": true,
+    "cuda_peer": true,
+    "inter_node": false
+  }
+}

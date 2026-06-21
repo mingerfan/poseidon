@@ -20,6 +20,7 @@
 | `src/poseidon/mgpu/runtime/` | Device contexts, object store, and schedule interpreter. |
 | `src/poseidon/mgpu/comm/` | Communication abstraction and CUDA P2P implementation. |
 | `src/poseidon/mgpu/ir/` | Internal schedule IR and readable debug dump/parser utilities. |
+| `src/poseidon/mgpu/configs/` | Bundled CPU-side static schedule config templates for single GPU, single-node 8-GPU, and 4x8 cluster preview diagnostics. |
 | `src/poseidon/mgpu/third_party/dacapo/` | Dacapo git submodule from `git@github.com:corelab-src/dacapo.git`. |
 | `src/poseidon/tests/mgpu/` | Multi-GPU runtime tests; cross-device tests must skip on single-GPU machines. |
 
@@ -167,6 +168,10 @@ Dacapo artifact debugging:
   from the internal static schedule execution config. Later command-line
   placement/preflight/backend flags override the file so single-GPU, 8-GPU, and
   4x8 preview configs can be reused across artifacts.
+- Bundled config templates live under `src/poseidon/mgpu/configs/`. Use
+  `single_gpu.json` for compatibility checks, `single_node_8gpu.json` for the
+  first 8-GPU run, and `cluster_4x8_preview.json` only for planning until an
+  inter-node transport backend exists.
 - Use the dump tool before running a real ResNet20 artifact to confirm op
   counts, HEVM I/O metadata, explicit copy counts, and device distribution.
   For large artifacts, use `--write-summary-json` and `--write-schedule`

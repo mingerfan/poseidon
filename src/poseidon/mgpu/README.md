@@ -133,7 +133,14 @@ Then inspect the ResNet20 artifact without executing GPU operators:
 ```
 
 The same placement, topology, preflight, and backend declarations can live in a
-CPU-only JSON config and be reused across artifacts:
+CPU-only JSON config and be reused across artifacts. Bundled templates live in
+`src/poseidon/mgpu/configs/`:
+
+- `single_gpu.json`
+- `single_node_8gpu.json`
+- `cluster_4x8_preview.json`
+
+The 8-GPU template is the intended first multi-GPU target:
 
 ```json
 {
@@ -163,11 +170,12 @@ CPU-only JSON config and be reused across artifacts:
 }
 ```
 
-Use it with `--config /path/to/config.json`; later command-line placement,
-topology, preflight, and backend flags override the file. For a 4x8 cluster
-preview, set `device_count` to `32` and `topology` to `{ "nodes": 4,
-"devices_per_node": 8 }`. Keep `inter_node` false until a real inter-node
-transport backend exists.
+Use a template with
+`--config src/poseidon/mgpu/configs/single_node_8gpu.json`; later command-line
+placement, topology, preflight, and backend flags override the file. The 4x8
+preview template sets `device_count` to `32` and `topology` to `{ "nodes": 4,
+"devices_per_node": 8 }`, but keeps `inter_node` and `require_ready` false
+until a real inter-node transport backend exists.
 
 Use the skipped-by-default external CTest for a repeatable check:
 
