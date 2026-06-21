@@ -1,5 +1,6 @@
 #pragma once
 
+#include "poseidon/mgpu/comm/execution_preflight.h"
 #include "poseidon/mgpu/comm/inter_node_transport.h"
 #include "poseidon/mgpu/comm/materialized_gpu_comm.h"
 #include "poseidon/mgpu/comm/topology.h"
@@ -17,7 +18,8 @@ public:
         GpuObjectCopyBackend &local_backend,
         InterNodeTransportBackend &inter_node_backend,
         ScheduleOpHandler &non_copy_handler,
-        StaticScheduleExecutorOptions options = {});
+        StaticScheduleExecutorOptions options = {},
+        MgpuCommunicationExecutionOptions communication_options = {});
 
     ScheduleExecutionResult run(const MgpuSchedule &schedule) const;
 
@@ -28,6 +30,7 @@ private:
     InterNodeTransportBackend &inter_node_backend_;
     ScheduleOpHandler &non_copy_handler_;
     StaticScheduleExecutorOptions options_;
+    MgpuCommunicationExecutionOptions communication_options_;
 };
 
 }  // namespace poseidon::mgpu

@@ -50,7 +50,7 @@
 | Static schedule execution config | CPU-only JSON config for placement, topology, preflight gates, and declared communication backends. |
 | Verifier | Check device availability, input placement, object form, keys, scale, level, and NTT form before execution. |
 | Interpreter | Execute the verified schedule in order. |
-| Planned communication executor | Runtime bridge that builds a communication plan from the static schedule/topology, rejects route diagnostics before execution, then runs the interpreter with planned materialized communication. |
+| Planned communication executor | Runtime bridge that builds a communication plan from the static schedule/topology, rejects route/backend diagnostics before execution, then runs the interpreter with planned materialized communication. |
 | Dumper | Emit MLIR-like readable text for debugging. |
 | Dacapo HEVM dump tool | Load `.hevm + .cst`, run placement/copy insertion, and print schedule/I/O summaries for debugging real artifacts. |
 | ResNet20 artifact path check tool | CPU-only helper that checks Dacapo's expected ResNet20 `.hevm + .cst` paths and prints a repeatable dump-tool preflight command. |
@@ -306,9 +306,9 @@ Dacapo artifact debugging:
   `RoutedGpuObjectCopyBackend`.
 - `PlannedCommunicationStaticScheduleExecutor` is the CPU-side runtime bridge
   for tests and future execution wiring. It computes the communication plan
-  from the already static schedule plus topology, returns plan diagnostics
-  before any op executes, and otherwise delegates copy ops to
-  `PlannedMaterializedGpuComm`.
+  from the already static schedule plus topology, checks declared communication
+  execution availability, returns plan/backend diagnostics before any op
+  executes, and otherwise delegates copy ops to `PlannedMaterializedGpuComm`.
 - The dump tool and external HEVM CTest now expose a unified
   `poseidon_gpu_execution_preflight` result. Treat it as the CPU-only execution
   gate that combines schedule verification, Poseidon GPU preflight,
@@ -368,7 +368,7 @@ ResNet20 artifact runbook:
 | Single-GPU interpreter tests | Upload, run one op, download, and compare against the existing single-GPU path. |
 | IO binding tests | Missing upload bindings, kind mismatches, fallback compute output, and metadata-only downloads must fail clearly. |
 | Copy tests | Same-device copy always runs; cross-device copy runs only when at least two GPUs are visible. |
-| Planned communication executor tests | CPU-only tests verify the interpreter path uses precomputed communication routes and stops before execution when topology planning fails. |
+| Planned communication executor tests | CPU-only tests verify the interpreter path uses precomputed communication routes and stops before execution when topology planning or declared backend availability fails. |
 | Materialized copy tests | Object-handle copy dispatch validates one-buffer full-object copy requests. |
 | Planned materialized copy tests | CPU-only tests verify that static communication-plan routes control materialized local/inter-node dispatch and reject missing or mismatched routes before backend calls. |
 | GPU runtime smoke tests | Optional CUDA/RMM tests cover upload/download, same-device Add, and a cross-device CopyCipher+Add schedule when at least two GPUs are visible. |

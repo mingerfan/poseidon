@@ -118,6 +118,14 @@ public:
     std::vector<InterNodeObjectCopyRequest> requests;
 };
 
+MgpuCommunicationExecutionOptions all_routes_available()
+{
+    MgpuCommunicationExecutionOptions options;
+    options.cuda_peer_available = true;
+    options.inter_node_available = true;
+    return options;
+}
+
 MgpuSchedule make_two_route_schedule()
 {
     MgpuSchedule schedule;
@@ -138,7 +146,8 @@ void test_executor_uses_static_plan_for_copy_routes()
     CopyingInterNodeBackend inter_node_backend;
     PlannedCommunicationStaticScheduleExecutor executor(
         make_uniform_cluster_topology(2, 4), materializer, local_backend,
-        inter_node_backend, handler, StaticScheduleExecutorOptions{ 5 });
+        inter_node_backend, handler, StaticScheduleExecutorOptions{ 5 },
+        all_routes_available());
 
     const ScheduleExecutionResult result = executor.run(make_two_route_schedule());
 
@@ -206,6 +215,40 @@ void test_executor_reports_plan_diagnostics_before_execution()
         "inter-node backend should not run");
 }
 
+void test_executor_reports_missing_backend_before_execution()
+{
+    UploadVectorHandler handler;
+    VectorCopyMaterializer materializer;
+    CopyingLocalBackend local_backend;
+    CopyingInterNodeBackend inter_node_backend;
+
+    MgpuCommunicationExecutionOptions options;
+    options.cuda_peer_available = true;
+    options.inter_node_available = false;
+
+    PlannedCommunicationStaticScheduleExecutor executor(
+        make_uniform_cluster_topology(2, 4), materializer, local_backend,
+        inter_node_backend, handler, StaticScheduleExecutorOptions{ 5 },
+        options);
+
+    const ScheduleExecutionResult result = executor.run(make_two_route_schedule());
+
+    require(!result.ok(), "missing inter-node backend should fail");
+    require_contains(
+        result.format_errors(),
+        "inter-node communication backend is not available");
+    require(
+        handler.executed_ops.empty(),
+        "backend preflight should stop execution before upload");
+    require(
+        materializer.requests.empty(),
+        "backend preflight should stop before materialization");
+    require(local_backend.requests.empty(), "local backend should not run");
+    require(
+        inter_node_backend.requests.empty(),
+        "inter-node backend should not run");
+}
+
 }  // namespace
 
 int main()
@@ -214,6 +257,7 @@ int main()
     {
         test_executor_uses_static_plan_for_copy_routes();
         test_executor_reports_plan_diagnostics_before_execution();
+        test_executor_reports_missing_backend_before_execution();
     }
     catch (const std::exception &ex)
     {
