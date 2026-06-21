@@ -645,6 +645,43 @@ std::string make_artifact_failure_summary_json(
     return hevm_artifact_failure_report_to_json(input, 2);
 }
 
+DacapoHevmArtifactResult make_hevm_read_failure_result(
+    const ToolOptions &tool_options, const std::string &message)
+{
+    DacapoHevmArtifactResult result;
+    result.diagnostics.push_back(DacapoHevmArtifactDiagnostic{
+        "read_hevm",
+        tool_options.hevm_path,
+        0,
+        message,
+    });
+    return result;
+}
+
+void write_optional_failure_summary(
+    const ToolOptions &tool_options, const DacapoHevmArtifactResult &artifacts,
+    const std::optional<DacapoHevmOpcodeSummary> &opcode_summary,
+    const std::optional<HevmArtifactReadinessResult> &readiness)
+{
+    if (!tool_options.summary_json && tool_options.summary_json_path.empty())
+    {
+        return;
+    }
+
+    const std::string failure_summary_json =
+        make_artifact_failure_summary_json(
+            tool_options, artifacts, opcode_summary, readiness);
+    if (!tool_options.summary_json_path.empty())
+    {
+        write_text_file(
+            tool_options.summary_json_path, failure_summary_json + "\n");
+    }
+    if (tool_options.summary_json)
+    {
+        std::cout << failure_summary_json << '\n';
+    }
+}
+
 }  // namespace
 
 int main(int argc, char **argv)
@@ -655,7 +692,21 @@ int main(int argc, char **argv)
         std::optional<DacapoHevmOpcodeSummary> opcode_summary;
         if (tool_options.config.opcode_summary)
         {
-            opcode_summary = summarize_hevm_opcodes(read_binary_file(tool_options.hevm_path));
+            std::string hevm_input;
+            try
+            {
+                hevm_input = read_binary_file(tool_options.hevm_path);
+            }
+            catch (const std::exception &ex)
+            {
+                const DacapoHevmArtifactResult artifacts =
+                    make_hevm_read_failure_result(tool_options, ex.what());
+                write_optional_failure_summary(
+                    tool_options, artifacts, std::nullopt, std::nullopt);
+                std::cerr << artifacts.format_diagnostics() << '\n';
+                return EXIT_FAILURE;
+            }
+            opcode_summary = summarize_hevm_opcodes(hevm_input);
             if (!opcode_summary->ok())
             {
                 std::cerr << opcode_summary->format_diagnostics() << '\n';
@@ -686,19 +737,8 @@ int main(int argc, char **argv)
             }
             if (tool_options.summary_json || !tool_options.summary_json_path.empty())
             {
-                const std::string failure_summary_json =
-                    make_artifact_failure_summary_json(
-                        tool_options, artifacts, opcode_summary, readiness);
-                if (!tool_options.summary_json_path.empty())
-                {
-                    write_text_file(
-                        tool_options.summary_json_path,
-                        failure_summary_json + "\n");
-                }
-                if (tool_options.summary_json)
-                {
-                    std::cout << failure_summary_json << '\n';
-                }
+                write_optional_failure_summary(
+                    tool_options, artifacts, opcode_summary, readiness);
             }
             std::cerr << artifacts.format_diagnostics() << '\n';
             return EXIT_FAILURE;

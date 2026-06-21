@@ -182,6 +182,9 @@ Dacapo artifact debugging:
 - If artifact translation fails before a schedule is built, `--write-summary-json`
   must still write a not-ready failure report with artifact diagnostics and the
   opcode summary so unsupported real Dacapo outputs remain scriptable.
+- If HEVM file pre-read fails while `--opcode-summary` is enabled,
+  `--write-summary-json` must still write a not-ready report so bad artifact
+  paths are scriptable during ResNet20 bring-up.
 - The dump tool is CPU-side only; it must not link Dacapo/MLIR, CUDA runtime,
   RMM, or GPU evaluator code.
 - `poseidon_mgpu_external_hevm_artifact_tests` is a skipped-by-default CTest

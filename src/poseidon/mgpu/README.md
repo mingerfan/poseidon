@@ -343,6 +343,9 @@ If artifact translation fails before a schedule can be built, for example
 because a real Dacapo output contains unsupported `ModswitchC` or `UpscaleC`,
 `--write-summary-json` still writes a failure report with artifact diagnostics,
 the opcode summary, and `execution_gate.status = "not_ready"`.
+The same applies when an early HEVM file read fails during opcode-summary
+preflight, so incorrect ResNet20 artifact paths still leave a machine-readable
+failure report.
 
 Use `--write-schedule <file>` to save the readable MLIR-like static schedule
 without printing it to stdout or embedding it into JSON. This is the preferred
