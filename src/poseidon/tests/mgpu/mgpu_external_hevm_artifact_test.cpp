@@ -211,6 +211,23 @@ void write_text_file(const std::string &path, const std::string &contents)
     }
 }
 
+std::string read_text_file(const std::string &path)
+{
+    std::ifstream stream(path);
+    if (!stream)
+    {
+        throw std::runtime_error("failed to open external HEVM output: " + path);
+    }
+
+    std::ostringstream buffer;
+    buffer << stream.rdbuf();
+    if (stream.bad())
+    {
+        throw std::runtime_error("failed to read external HEVM output: " + path);
+    }
+    return buffer.str();
+}
+
 std::string make_mock_hevm_binary()
 {
     return test::make_hevm_binary(
@@ -332,6 +349,10 @@ StaticSchedulePipelineOptions make_pipeline_options()
         options.placement.policy = StaticPlacementPolicy::RoundRobinCompute;
     }
     options.emit_debug_dump = parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_DEBUG_DUMP"));
+    if (get_env("POSEIDON_MGPU_EXTERNAL_SCHEDULE_DUMP") != nullptr)
+    {
+        options.emit_debug_dump = true;
+    }
     return options;
 }
 
@@ -653,6 +674,16 @@ int main()
             write_text_file(
                 report_path, hevm_artifact_report_to_json(report, 2) + "\n");
             std::cout << "external_report_json: " << report_path << '\n';
+        }
+
+        if (const char *schedule_path = get_env("POSEIDON_MGPU_EXTERNAL_SCHEDULE_DUMP"))
+        {
+            write_text_file(schedule_path, artifacts.debug_dump);
+            require(
+                read_text_file(schedule_path).find("mgpu.schedule") !=
+                    std::string::npos,
+                "external HEVM schedule dump should contain mgpu.schedule");
+            std::cout << "external_schedule_dump: " << schedule_path << '\n';
         }
 
         if (config.require_ready)

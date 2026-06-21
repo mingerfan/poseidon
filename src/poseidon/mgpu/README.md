@@ -243,6 +243,7 @@ Optional environment variables:
 - `POSEIDON_MGPU_EXTERNAL_EXECUTION_INTER_NODE_AVAILABLE=1`
 - `POSEIDON_MGPU_EXTERNAL_REQUIRE_READY=1`
 - `POSEIDON_MGPU_EXTERNAL_REPORT_JSON=/path/to/report.json`
+- `POSEIDON_MGPU_EXTERNAL_SCHEDULE_DUMP=/path/to/schedule.mlir`
 
 `poseidon_mgpu_external_hevm_mock_artifact_tests` exercises the same CTest
 binary with a generated mock `.hevm + .cst` artifact, preflight availability
@@ -261,8 +262,9 @@ topology, preflight, and backend declarations stay covered without a real
 ResNet20 artifact.
 
 `poseidon_mgpu_external_hevm_report_mock_artifact_tests` writes the shared JSON
-report from the external artifact CTest path, covering the same report builder
-used by the dump tool's `--summary-json` and `--write-summary-json` modes.
+report and readable schedule dump from the external artifact CTest path,
+covering the same report builder used by the dump tool's `--summary-json` and
+`--write-summary-json` modes plus the CTest schedule-dump output path.
 
 The dump tool can run the same preflight without CTest:
 

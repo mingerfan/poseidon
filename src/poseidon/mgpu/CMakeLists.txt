@@ -490,6 +490,7 @@ if(POSEIDON_BUILD_MGPU_TESTS)
         "POSEIDON_MGPU_EXTERNAL_PREFLIGHT_GALOIS_KEYS=1"
         "POSEIDON_MGPU_EXTERNAL_EXECUTION_CUDA_PEER_AVAILABLE=1"
         "POSEIDON_MGPU_EXTERNAL_REPORT_JSON=${CMAKE_CURRENT_BINARY_DIR}/external_hevm_report_mock.json"
+        "POSEIDON_MGPU_EXTERNAL_SCHEDULE_DUMP=${CMAKE_CURRENT_BINARY_DIR}/external_hevm_schedule_mock.mlir"
     )
     set_tests_properties(poseidon_mgpu_external_hevm_report_mock_artifact_tests
         PROPERTIES

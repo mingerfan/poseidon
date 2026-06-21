@@ -30,3 +30,12 @@ Mandatory constraints:
 - Keep memory use conservative. Avoid broad parallel builds unless needed.
 - After each small completed feature, run the relevant tests, commit the scoped
   changes, and push the development branch.
+
+Temporary implementation/testing note:
+
+- The current multi-GPU path is intentionally incomplete. Full execution is not
+  expected to run yet because lazy rescale support is still needed for the
+  low-bit-width GPU path. Until this note is removed, do not require full
+  end-to-end ResNet20 or full GPU execution tests at the end of each small
+  change; run simple, focused tests for the touched CPU-side/tooling behavior
+  instead.

@@ -200,6 +200,9 @@ Dacapo artifact debugging:
   write the shared machine-readable HEVM artifact report used by the dump tool.
   Write this report before enforcing `require_ready` so failed gates can still
   leave repeatable diagnostics.
+- External artifact tests also accept `POSEIDON_MGPU_EXTERNAL_SCHEDULE_DUMP` to
+  write the readable MLIR-like static schedule separately from stdout and the
+  machine-readable report.
 - `poseidon_mgpu_external_hevm_mock_artifact_tests` uses a generated mock
   `.hevm + .cst` artifact to exercise the same external artifact path,
   preflight flags, and non-trivial topology on machines without ResNet20
