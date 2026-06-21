@@ -14,6 +14,12 @@ Mandatory constraints:
   cross-device movement must go through the multi-GPU communication layer.
 - The interpreter executes a static schedule. It must not make dynamic placement
   decisions at runtime.
+- Static placement options own upload, compute, and download device choices.
+  The interpreter and GPU runtime must consume those assigned devices without
+  overriding them.
+- When inputs, compute, or downloads live on different devices, rely on the
+  copy insertion pass and the mgpu communication layer. Do not add ad hoc
+  copies in GPU evaluators or operator handlers.
 - Dacapo is expected at `src/poseidon/mgpu/third_party/dacapo` from
   `git@github.com:corelab-src/dacapo.git`.
 - Use Nix for Dacapo dependency isolation when needed. Do not modify the system

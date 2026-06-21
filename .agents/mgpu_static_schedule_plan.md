@@ -42,6 +42,7 @@
 | Verifier | Check device availability, input placement, object form, keys, scale, level, and NTT form before execution. |
 | Interpreter | Execute the verified schedule in order. |
 | Dumper | Emit MLIR-like readable text for debugging. |
+| Dacapo HEVM dump tool | Load `.hevm + .cst`, run placement/copy insertion, and print schedule/I/O summaries for debugging real artifacts. |
 
 ## 4. Interface Plan
 
@@ -95,6 +96,19 @@ Execution pipeline:
 6. Runtime IO binding maps scheduled upload/download value IDs to external CPU/GPU object handles.
 7. Interpreter executes the static schedule.
 
+Static placement options:
+
+- `default_device` is the fallback device for uploads, single-device compute,
+  and downloads when no more specific option is set.
+- `upload_device`, when set, places all unassigned upload ops on that device.
+- `compute_devices`, when non-empty and `policy == RoundRobinCompute`, defines
+  the exact round-robin compute device order. When empty, round-robin starts at
+  `default_device` and wraps over `[0, device_count)`.
+- `download_device`, when set, places unassigned downloads on that device.
+- Placement assigns only devices. If upload, compute, or download devices differ,
+  the copy insertion pass must insert explicit `CopyPlain`/`CopyCipher` ops.
+  Runtime and GPU handlers must not infer or insert these copies.
+
 Current Dacapo bridge:
 
 - `DacapoInputFormat::Json` accepts Poseidon's internal schedule JSON for debug and tests.
@@ -125,6 +139,17 @@ Runtime IO binding:
 - Downloads record the scheduled source value handle; typed CPU/GPU conversion remains the responsibility of a higher-level Poseidon GPU handler.
 - Compute ops are forwarded to a fallback handler so the interpreter remains static and does not infer missing placements or payloads.
 
+Dacapo artifact debugging:
+
+- `POSEIDON_BUILD_MGPU_TOOLS=ON` builds `poseidon_mgpu_dacapo_hevm_dump`.
+- The dump tool accepts `--hevm`, `--constants`, `--devices`,
+  `--default-device`, `--upload-device`, `--compute-devices`,
+  `--download-device`, `--round-robin-compute`, and `--no-schedule`.
+- Use the dump tool before running a real ResNet20 artifact to confirm op
+  counts, HEVM I/O metadata, explicit copy counts, and device distribution.
+- The dump tool is CPU-side only; it must not link Dacapo/MLIR, CUDA runtime,
+  RMM, or GPU evaluator code.
+
 ## 5. Test Plan
 
 | Test | Requirement |
@@ -138,6 +163,8 @@ Runtime IO binding:
 | Materialized copy tests | Object-handle copy dispatch validates one-buffer full-object copy requests. |
 | GPU runtime smoke tests | Optional CUDA/RMM tests cover upload/download, same-device Add, and a cross-device CopyCipher+Add schedule when at least two GPUs are visible. |
 | Static graph tests | Handwritten ResNet-like small graph verifies copy insertion and execution order. |
+| Placement configuration tests | Upload, compute-device list, and download placement must all trigger explicit copies when devices differ. |
+| Artifact dump tool smoke | Build the optional tool and run it on mock `.hevm + .cst` artifacts with upload/compute/download device options. |
 
 ## 6. Phases
 
@@ -149,7 +176,7 @@ Runtime IO binding:
 | 3 | `GpuComm` and CUDA peer-copy backend | Same-device tests pass; multi-GPU tests skip or pass. |
 | 4 | Static placement and copy insertion | Handwritten small graph verifies inserted copies. |
 | 5 | Add Dacapo submodule and JSON/HEVM adapters | Adapter tests use small captured/mock Dacapo input. |
-| 6 | ResNet20 static schedule path | Single-GPU fallback works; multi-GPU run validates on cluster. |
+| 6 | ResNet20 static schedule path | Artifact load/dump works; single-GPU fallback works; multi-GPU run validates on cluster. |
 | 7 | Cluster communication planning | NCCL/MPI interface is introduced only after single-node path is stable. |
 
 On a single-GPU development machine, complete Phases 0-4 with same-device copy
