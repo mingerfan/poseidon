@@ -124,6 +124,9 @@ void test_report_includes_execution_evidence()
             .get<bool>(),
         "execution gate should record readiness evaluation");
     require(
+        report.at("execution_gate").at("diagnostics").empty(),
+        "ready execution gate should not include diagnostics");
+    require(
         report.at("artifacts").at("hevm").get<std::string>() == "/tmp/model.hevm",
         "HEVM path missing");
     require(
@@ -219,6 +222,25 @@ void test_report_execution_gate_reports_not_ready()
              .at("readiness_ok")
              .get<bool>(),
         "execution gate should record failed readiness");
+    require(
+        !report.at("execution_gate").at("diagnostics").empty(),
+        "not-ready execution gate should include diagnostics");
+    require(
+        report.at("execution_gate")
+                .at("diagnostics")
+                .at(0)
+                .at("stage")
+                .get<std::string>() == "communication_execution_preflight",
+        "execution gate diagnostic stage mismatch");
+    require(
+        report.at("execution_gate")
+                .at("diagnostics")
+                .at(0)
+                .at("message")
+                .get<std::string>()
+                .find("CUDA peer or host-staged copy backend is not available") !=
+            std::string::npos,
+        "execution gate diagnostic message mismatch");
     require(
         !report.at("hevm_artifact_readiness").at("ok").get<bool>(),
         "readiness JSON should fail");

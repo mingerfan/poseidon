@@ -325,7 +325,9 @@ human-readable text output. The JSON report is produced by the shared
 execution config, schedule summary, HEVM I/O counts, opcode summary, readiness,
 communication diagnostics, the aggregate Poseidon GPU execution preflight, and
 a top-level `execution_gate` summary for scripts that only need the ready/not
-ready decision.
+ready decision. `execution_gate.diagnostics` mirrors the readiness/preflight
+failure reasons so scripts do not need to inspect every nested diagnostic block
+to print a concise failure summary.
 
 Use `--write-schedule <file>` to save the readable MLIR-like static schedule
 without printing it to stdout or embedding it into JSON. This is the preferred

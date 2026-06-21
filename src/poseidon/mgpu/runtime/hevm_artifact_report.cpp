@@ -86,6 +86,32 @@ Json execution_gate_to_json(const HevmArtifactReportInput &input)
           execution_preflight_evaluated },
         { "poseidon_gpu_execution_preflight_ok", execution_preflight_ok },
     };
+    root["diagnostics"] = Json::array();
+    if (readiness_evaluated)
+    {
+        for (const HevmArtifactReadinessDiagnostic &diagnostic :
+             input.hevm_artifact_readiness->diagnostics)
+        {
+            root["diagnostics"].push_back(Json{
+                { "stage", diagnostic.stage },
+                { "location", diagnostic.location },
+                { "message", diagnostic.message },
+            });
+        }
+    }
+    else if (execution_preflight_evaluated)
+    {
+        const std::string diagnostics =
+            input.poseidon_gpu_execution_preflight->format_diagnostics();
+        if (!diagnostics.empty())
+        {
+            root["diagnostics"].push_back(Json{
+                { "stage", "poseidon_gpu_execution_preflight" },
+                { "location", 0 },
+                { "message", diagnostics },
+            });
+        }
+    }
     return root;
 }
 

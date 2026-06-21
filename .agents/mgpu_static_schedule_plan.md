@@ -208,7 +208,7 @@ Dacapo artifact debugging:
   Write this report before enforcing `require_ready` so failed gates can still
   leave repeatable diagnostics. The report includes a top-level
   `execution_gate` summary for scripts that need a single ready/not-ready
-  decision.
+  decision plus gate-level diagnostics for concise failure summaries.
 - External artifact tests also accept `POSEIDON_MGPU_EXTERNAL_SCHEDULE_DUMP` to
   write the readable MLIR-like static schedule separately from stdout and the
   machine-readable report.
