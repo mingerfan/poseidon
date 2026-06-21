@@ -450,9 +450,10 @@ implementation, and must not make placement decisions.
 `comm/planned_materialized_gpu_comm.*` connects the static communication plan to
 execution. It looks up a precomputed route by copy value IDs, rejects invalid,
 ambiguous, missing, or request-mismatched routes before backend execution,
-materializes the full-object buffers, and then delegates to
-`RoutedGpuObjectCopyBackend`. This keeps transport choice tied to the planned
-schedule rather than inferred inside evaluator or kernel code.
+rejects null source objects before materialization, materializes the full-object
+buffers, and then delegates to `RoutedGpuObjectCopyBackend`. This keeps
+transport choice tied to the planned schedule rather than inferred inside
+evaluator or kernel code.
 
 The runtime copy handler requires the source value to carry an object handle
 before calling the communication layer. Metadata-only values remain valid for

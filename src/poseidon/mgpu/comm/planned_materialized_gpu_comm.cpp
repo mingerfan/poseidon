@@ -37,6 +37,17 @@ void validate_request_matches_route(
     }
 }
 
+void validate_request_has_source_object(const GpuCommCopyRequest &request)
+{
+    if (request.source_object != nullptr)
+    {
+        return;
+    }
+
+    throw std::invalid_argument(
+        "planned materialized GPU copy source object is null");
+}
+
 }  // namespace
 
 PlannedMaterializedGpuComm::PlannedMaterializedGpuComm(
@@ -86,6 +97,7 @@ std::shared_ptr<void> PlannedMaterializedGpuComm::copy(
 
     const MgpuCopyRoute &route = routes_[route_iter->second];
     validate_request_matches_route(route, request);
+    validate_request_has_source_object(request);
 
     MaterializedGpuObjectCopy materialized =
         materializer_.materialize_copy(request);

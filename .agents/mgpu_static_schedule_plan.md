@@ -302,8 +302,8 @@ Dacapo artifact debugging:
 - `PlannedMaterializedGpuComm` is the static-plan adapter for execution. It
   looks up routes from a precomputed `MgpuCommunicationPlan`, rejects invalid or
   ambiguous plans, validates each runtime copy request against the planned
-  route, then materializes the full-object copy and calls
-  `RoutedGpuObjectCopyBackend`.
+  route, rejects null source objects before materialization, then materializes
+  the full-object copy and calls `RoutedGpuObjectCopyBackend`.
 - Runtime copy dispatch must reject metadata-only source values before calling
   the communication layer. Cross-device communication is for materialized full
   objects, not unresolved handles.
