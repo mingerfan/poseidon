@@ -229,7 +229,8 @@ if(POSEIDON_BUILD_MGPU_TOOLS)
             "POSEIDON_MGPU_RESNET20_CONFIG=${POSEIDON_INCLUDES_DIR}/src/poseidon/mgpu/configs/cluster_4x8_node_spread_preview.json"
             "POSEIDON_MGPU_RESNET20_EXPECT_DEVICE_COUNT=32"
             "POSEIDON_MGPU_RESNET20_EXPECT_NODES=4"
-            "POSEIDON_MGPU_RESNET20_EXPECT_DEVICES_PER_NODE=8")
+            "POSEIDON_MGPU_RESNET20_EXPECT_DEVICES_PER_NODE=8"
+            "POSEIDON_MGPU_RESNET20_EXPECT_INTER_NODE_ROUTE_METADATA=1")
         set_tests_properties(
             poseidon_mgpu_resnet20_dump_preflight_cluster_preview_mock_tests
             PROPERTIES

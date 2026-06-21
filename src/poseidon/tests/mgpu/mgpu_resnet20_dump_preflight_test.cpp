@@ -96,6 +96,12 @@ bool should_expect_invalid_hevm_failure_report()
         get_env("POSEIDON_MGPU_RESNET20_EXPECT_INVALID_HEVM_REPORT"));
 }
 
+bool should_expect_inter_node_route_metadata()
+{
+    return parse_bool(
+        get_env("POSEIDON_MGPU_RESNET20_EXPECT_INTER_NODE_ROUTE_METADATA"));
+}
+
 std::string shell_quote(const std::string &text)
 {
     std::string output = "'";
@@ -229,6 +235,16 @@ void require_summary_expectations(const std::string &summary)
         }
         expected += "\n      ]";
         require_contains(summary, expected);
+    }
+    if (should_expect_inter_node_route_metadata())
+    {
+        require_contains(summary, "\"stage\": \"communication_execution_preflight\"");
+        require_contains(summary, "\"route_index\":");
+        require_contains(summary, "\"transport\": \"inter_node\"");
+        require_contains(summary, "\"source_device\":");
+        require_contains(summary, "\"destination_device\":");
+        require_contains(
+            summary, "inter-node communication backend is not available");
     }
 }
 
