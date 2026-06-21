@@ -170,6 +170,66 @@ void test_mismatched_route_and_request_fails_before_backend()
         "inter-node backend should not run after validation failure");
 }
 
+void test_cuda_peer_route_across_nodes_fails_before_backend()
+{
+    RecordingLocalBackend local_backend;
+    RecordingInterNodeBackend inter_node_backend;
+    RoutedGpuObjectCopyBackend router(
+        make_uniform_cluster_topology(2, 4), local_backend, inter_node_backend);
+
+    MgpuCopyRoute cuda_peer = route(MgpuTransportKind::CudaPeer);
+    cuda_peer.destination_device = 4;
+
+    bool failed = false;
+    try
+    {
+        router.copy_object(cuda_peer, object_copy(cuda_peer));
+    }
+    catch (const std::invalid_argument &ex)
+    {
+        failed = true;
+        require_contains(
+            ex.what(),
+            "CUDA peer copy route endpoints are on different nodes");
+    }
+
+    require(failed, "cross-node CUDA peer route should fail");
+    require(local_backend.requests.empty(), "local backend should not run");
+    require(
+        inter_node_backend.requests.empty(),
+        "inter-node backend should not run");
+}
+
+void test_inter_node_route_inside_node_fails_before_backend()
+{
+    RecordingLocalBackend local_backend;
+    RecordingInterNodeBackend inter_node_backend;
+    RoutedGpuObjectCopyBackend router(
+        make_uniform_cluster_topology(2, 4), local_backend, inter_node_backend);
+
+    MgpuCopyRoute inter_node = route(MgpuTransportKind::InterNode);
+    inter_node.destination_device = 2;
+
+    bool failed = false;
+    try
+    {
+        router.copy_object(inter_node, object_copy(inter_node));
+    }
+    catch (const std::invalid_argument &ex)
+    {
+        failed = true;
+        require_contains(
+            ex.what(),
+            "inter-node copy route endpoints are on the same node");
+    }
+
+    require(failed, "same-node inter-node route should fail");
+    require(local_backend.requests.empty(), "local backend should not run");
+    require(
+        inter_node_backend.requests.empty(),
+        "inter-node backend should not run");
+}
+
 }  // namespace
 
 int main()
@@ -179,6 +239,8 @@ int main()
         test_local_routes_use_local_backend();
         test_inter_node_route_uses_inter_node_backend();
         test_mismatched_route_and_request_fails_before_backend();
+        test_cuda_peer_route_across_nodes_fails_before_backend();
+        test_inter_node_route_inside_node_fails_before_backend();
     }
     catch (const std::exception &ex)
     {

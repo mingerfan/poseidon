@@ -1,5 +1,7 @@
 #include "poseidon/mgpu/comm/routed_object_copy.h"
 
+#include <algorithm>
+#include <sstream>
 #include <stdexcept>
 #include <utility>
 
@@ -7,6 +9,24 @@ namespace poseidon::mgpu
 {
 namespace
 {
+
+const MgpuLogicalDevice &lookup_device(
+    const MgpuTopology &topology, int logical_device, const char *role)
+{
+    const auto iter = std::find_if(
+        topology.devices.begin(), topology.devices.end(),
+        [logical_device](const MgpuLogicalDevice &device) {
+            return device.logical_device == logical_device;
+        });
+    if (iter == topology.devices.end())
+    {
+        std::ostringstream stream;
+        stream << "copy route " << role << " device " << logical_device
+               << " is not present in topology";
+        throw std::invalid_argument(stream.str());
+    }
+    return *iter;
+}
 
 void validate_route_matches_request(
     const MgpuCopyRoute &route, const GpuObjectCopyRequest &request)
@@ -51,6 +71,45 @@ void validate_same_device_route(const MgpuCopyRoute &route)
     }
 }
 
+void validate_route_matches_topology(
+    const MgpuTopology &topology, const MgpuCopyRoute &route)
+{
+    const MgpuLogicalDevice &source =
+        lookup_device(topology, route.source_device, "source");
+    const MgpuLogicalDevice &destination =
+        lookup_device(topology, route.destination_device, "destination");
+
+    switch (route.transport)
+    {
+    case MgpuTransportKind::SameDevice:
+        if (source.logical_device != destination.logical_device)
+        {
+            throw std::invalid_argument(
+                "same-device copy route endpoints are different logical devices");
+        }
+        return;
+    case MgpuTransportKind::CudaPeer:
+        if (source.logical_device == destination.logical_device)
+        {
+            throw std::invalid_argument(
+                "CUDA peer copy route uses the same source and destination device");
+        }
+        if (source.node_id != destination.node_id)
+        {
+            throw std::invalid_argument(
+                "CUDA peer copy route endpoints are on different nodes");
+        }
+        return;
+    case MgpuTransportKind::InterNode:
+        if (source.node_id == destination.node_id)
+        {
+            throw std::invalid_argument(
+                "inter-node copy route endpoints are on the same node");
+        }
+        return;
+    }
+}
+
 }  // namespace
 
 RoutedGpuObjectCopyBackend::RoutedGpuObjectCopyBackend(
@@ -66,6 +125,7 @@ void RoutedGpuObjectCopyBackend::copy_object(
 {
     validate_route_matches_request(route, request);
     validate_same_device_route(route);
+    validate_route_matches_topology(topology_, route);
 
     if (route.transport == MgpuTransportKind::InterNode)
     {

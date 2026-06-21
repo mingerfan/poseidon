@@ -296,9 +296,9 @@ Dacapo artifact debugging:
   clearly and must not be exposed as an available inter-node execution backend.
 - `RoutedGpuObjectCopyBackend` consumes an already planned route. It must not
   choose placement or invent copies; it validates that the materialized
-  full-object request matches the route, dispatches same-device/CUDA-peer
-  routes to the local backend, and dispatches inter-node routes through
-  `InterNodeTransportBackend`.
+  full-object request matches the route and that the route transport matches
+  topology, dispatches same-device/CUDA-peer routes to the local backend, and
+  dispatches inter-node routes through `InterNodeTransportBackend`.
 - `PlannedMaterializedGpuComm` is the static-plan adapter for execution. It
   looks up routes from a precomputed `MgpuCommunicationPlan`, rejects invalid or
   ambiguous plans, validates each runtime copy request against the planned

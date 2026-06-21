@@ -441,10 +441,11 @@ backend.
 
 `comm/routed_object_copy.*` is the route-aware object-copy dispatcher. It
 consumes routes that were already produced by the topology planner, validates
-that the materialized full-object copy request matches the route, sends
-same-device and CUDA-peer routes to the local `GpuObjectCopyBackend`, and sends
-inter-node routes through `InterNodeTransportBackend`. It is still an interface
-boundary, not an NCCL/MPI implementation, and must not make placement decisions.
+that the materialized full-object copy request and transport kind match the
+topology route, sends same-device and CUDA-peer routes to the local
+`GpuObjectCopyBackend`, and sends inter-node routes through
+`InterNodeTransportBackend`. It is still an interface boundary, not an NCCL/MPI
+implementation, and must not make placement decisions.
 
 `comm/planned_materialized_gpu_comm.*` connects the static communication plan to
 execution. It looks up a precomputed route by copy value IDs, rejects invalid,
