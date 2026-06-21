@@ -3,6 +3,7 @@ add_library(poseidon_mgpu STATIC
     comm/gpu_object_copy.cpp
     comm/materialized_gpu_comm.cpp
     compiler/copy_insertion.cpp
+    compiler/dacapo_artifacts.cpp
     compiler/dacapo_adapter.cpp
     compiler/dacapo_constants.cpp
     compiler/schedule_verifier.cpp
@@ -56,6 +57,10 @@ if(POSEIDON_BUILD_MGPU_TESTS)
 
     add_executable(poseidon_mgpu_dacapo_adapter_tests
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_dacapo_adapter_test.cpp
+    )
+
+    add_executable(poseidon_mgpu_dacapo_artifact_tests
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_dacapo_artifact_test.cpp
     )
 
     add_executable(poseidon_mgpu_dacapo_constants_tests
@@ -121,6 +126,11 @@ if(POSEIDON_BUILD_MGPU_TESTS)
     )
 
     target_link_libraries(poseidon_mgpu_dacapo_adapter_tests
+        PRIVATE
+            poseidon_mgpu
+    )
+
+    target_link_libraries(poseidon_mgpu_dacapo_artifact_tests
         PRIVATE
             poseidon_mgpu
     )
@@ -198,6 +208,11 @@ if(POSEIDON_BUILD_MGPU_TESTS)
     add_test(
         NAME poseidon_mgpu_dacapo_adapter_tests
         COMMAND poseidon_mgpu_dacapo_adapter_tests
+    )
+
+    add_test(
+        NAME poseidon_mgpu_dacapo_artifact_tests
+        COMMAND poseidon_mgpu_dacapo_artifact_tests
     )
 
     add_test(
