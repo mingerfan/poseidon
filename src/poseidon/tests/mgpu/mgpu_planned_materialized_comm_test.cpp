@@ -61,6 +61,31 @@ public:
     std::vector<GpuCommCopyRequest> requests;
 };
 
+class NullDestinationMaterializer final : public GpuObjectCopyMaterializer
+{
+public:
+    MaterializedGpuObjectCopy materialize_copy(
+        const GpuCommCopyRequest &request) override
+    {
+        requests.push_back(request);
+
+        MaterializedGpuObjectCopy result;
+        result.object_copy.source_id = request.source_id;
+        result.object_copy.destination_id = request.destination_id;
+        result.object_copy.kind = request.kind;
+        result.object_copy.buffers.push_back(GpuObjectBufferCopy{
+            reinterpret_cast<const void *>(0x1),
+            reinterpret_cast<void *>(0x2),
+            1,
+            request.source_device,
+            request.destination_device,
+        });
+        return result;
+    }
+
+    std::vector<GpuCommCopyRequest> requests;
+};
+
 class CopyingLocalBackend final : public GpuObjectCopyBackend
 {
 public:
@@ -257,6 +282,43 @@ void test_request_route_device_mismatch_fails_before_materialization()
         "inter-node backend should not run");
 }
 
+void test_request_route_kind_mismatch_fails_before_materialization()
+{
+    const MgpuCopyRoute cuda_peer =
+        route(42, 43, 1, 2, MgpuTransportKind::CudaPeer);
+    VectorCopyMaterializer materializer;
+    CopyingLocalBackend local_backend;
+    CopyingInterNodeBackend inter_node_backend;
+    RoutedGpuObjectCopyBackend routed_backend(
+        make_uniform_cluster_topology(2, 4), local_backend, inter_node_backend);
+    PlannedMaterializedGpuComm comm(
+        plan_with_route(cuda_peer), materializer, routed_backend);
+
+    GpuCommCopyRequest request =
+        request_from_route(cuda_peer, std::make_shared<std::vector<int>>(1, 7));
+    request.kind = MgpuValueKind::Plaintext;
+
+    bool failed = false;
+    try
+    {
+        (void)comm.copy(request);
+    }
+    catch (const std::invalid_argument &ex)
+    {
+        failed = true;
+        require_contains(ex.what(), "route kind does not match copy request");
+    }
+
+    require(failed, "kind mismatch should fail");
+    require(
+        materializer.requests.empty(),
+        "kind mismatch should fail before materialization");
+    require(local_backend.requests.empty(), "local backend should not run");
+    require(
+        inter_node_backend.requests.empty(),
+        "inter-node backend should not run");
+}
+
 void test_null_source_object_fails_before_materialization()
 {
     const MgpuCopyRoute cuda_peer =
@@ -323,6 +385,44 @@ void test_invalid_plan_is_rejected()
     require(failed, "invalid plan should fail");
 }
 
+void test_reserved_value_id_planned_route_is_rejected()
+{
+    MgpuCommunicationPlan plan;
+    plan.routes.push_back(route(0, 61, 1, 2, MgpuTransportKind::CudaPeer));
+
+    VectorCopyMaterializer materializer;
+    CopyingLocalBackend local_backend;
+    CopyingInterNodeBackend inter_node_backend;
+    RoutedGpuObjectCopyBackend routed_backend(
+        make_uniform_cluster_topology(2, 4), local_backend, inter_node_backend);
+
+    bool failed = false;
+    try
+    {
+        PlannedMaterializedGpuComm comm(plan, materializer, routed_backend);
+    }
+    catch (const std::invalid_argument &ex)
+    {
+        failed = true;
+        require_contains(ex.what(), "reserved value id 0");
+    }
+    require(failed, "reserved source route id should fail");
+
+    plan.routes.clear();
+    plan.routes.push_back(route(60, 0, 1, 2, MgpuTransportKind::CudaPeer));
+    failed = false;
+    try
+    {
+        PlannedMaterializedGpuComm comm(plan, materializer, routed_backend);
+    }
+    catch (const std::invalid_argument &ex)
+    {
+        failed = true;
+        require_contains(ex.what(), "reserved value id 0");
+    }
+    require(failed, "reserved destination route id should fail");
+}
+
 void test_duplicate_planned_route_is_rejected()
 {
     const MgpuCopyRoute cuda_peer =
@@ -350,6 +450,41 @@ void test_duplicate_planned_route_is_rejected()
     require(failed, "duplicate planned route should fail");
 }
 
+void test_null_materialized_destination_fails_before_backend()
+{
+    const MgpuCopyRoute cuda_peer =
+        route(70, 71, 1, 2, MgpuTransportKind::CudaPeer);
+    NullDestinationMaterializer materializer;
+    CopyingLocalBackend local_backend;
+    CopyingInterNodeBackend inter_node_backend;
+    RoutedGpuObjectCopyBackend routed_backend(
+        make_uniform_cluster_topology(2, 4), local_backend, inter_node_backend);
+    PlannedMaterializedGpuComm comm(
+        plan_with_route(cuda_peer), materializer, routed_backend);
+
+    bool failed = false;
+    try
+    {
+        (void)comm.copy(
+            request_from_route(
+                cuda_peer, std::make_shared<std::vector<int>>(1, 7)));
+    }
+    catch (const std::invalid_argument &ex)
+    {
+        failed = true;
+        require_contains(ex.what(), "destination object is null");
+    }
+
+    require(failed, "null materialized destination should fail");
+    require(
+        materializer.requests.size() == 1,
+        "null destination should be detected after materialization");
+    require(local_backend.requests.empty(), "local backend should not run");
+    require(
+        inter_node_backend.requests.empty(),
+        "inter-node backend should not run");
+}
+
 }  // namespace
 
 int main()
@@ -360,9 +495,12 @@ int main()
         test_inter_node_planned_route_uses_inter_node_backend();
         test_missing_planned_route_fails_before_materialization();
         test_request_route_device_mismatch_fails_before_materialization();
+        test_request_route_kind_mismatch_fails_before_materialization();
         test_null_source_object_fails_before_materialization();
         test_invalid_plan_is_rejected();
+        test_reserved_value_id_planned_route_is_rejected();
         test_duplicate_planned_route_is_rejected();
+        test_null_materialized_destination_fails_before_backend();
     }
     catch (const std::exception &ex)
     {
