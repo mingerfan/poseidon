@@ -83,6 +83,7 @@ bool expected_input_kind(MgpuOpKind kind, std::size_t input_index, MgpuValueKind
     case MgpuOpKind::Multiply:
         expected = MgpuValueKind::Ciphertext;
         return input_index < 2;
+    case MgpuOpKind::AddPlain:
     case MgpuOpKind::MultiplyPlain:
         if (input_index == 0)
         {
@@ -127,6 +128,7 @@ bool output_kind(MgpuOpKind kind, MgpuValueKind &output)
     case MgpuOpKind::UploadCipher:
     case MgpuOpKind::CopyCipher:
     case MgpuOpKind::Add:
+    case MgpuOpKind::AddPlain:
     case MgpuOpKind::Sub:
     case MgpuOpKind::MultiplyPlain:
     case MgpuOpKind::Multiply:

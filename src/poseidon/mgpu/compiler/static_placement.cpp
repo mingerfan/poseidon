@@ -36,6 +36,7 @@ bool output_kind(MgpuOpKind kind, MgpuValueKind &output)
     case MgpuOpKind::UploadCipher:
     case MgpuOpKind::CopyCipher:
     case MgpuOpKind::Add:
+    case MgpuOpKind::AddPlain:
     case MgpuOpKind::Sub:
     case MgpuOpKind::MultiplyPlain:
     case MgpuOpKind::Multiply:

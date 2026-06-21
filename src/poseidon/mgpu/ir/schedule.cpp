@@ -50,6 +50,8 @@ const char *to_string(MgpuOpKind kind) noexcept
         return "copy_cipher";
     case MgpuOpKind::Add:
         return "add";
+    case MgpuOpKind::AddPlain:
+        return "add_plain";
     case MgpuOpKind::Sub:
         return "sub";
     case MgpuOpKind::MultiplyPlain:
@@ -91,6 +93,10 @@ std::optional<MgpuOpKind> mgpu_op_kind_from_string(std::string_view name) noexce
     if (name == "add")
     {
         return MgpuOpKind::Add;
+    }
+    if (name == "add_plain")
+    {
+        return MgpuOpKind::AddPlain;
     }
     if (name == "sub")
     {

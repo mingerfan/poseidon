@@ -243,6 +243,7 @@ ScheduleVerificationResult verify_schedule(
                 }
             }
             break;
+        case MgpuOpKind::AddPlain:
         case MgpuOpKind::MultiplyPlain:
             if (expect_arity(result, op, op_index, 2, 1) && device_valid)
             {

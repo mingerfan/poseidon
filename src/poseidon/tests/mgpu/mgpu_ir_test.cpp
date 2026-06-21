@@ -61,12 +61,17 @@ void test_kind_strings()
 {
     require(std::string(to_string(MgpuOpKind::MultiplyPlain)) == "multiply_plain",
             "MultiplyPlain string mismatch");
+    require(std::string(to_string(MgpuOpKind::AddPlain)) == "add_plain",
+            "AddPlain string mismatch");
+    require(mgpu_op_kind_from_string("add_plain") == MgpuOpKind::AddPlain,
+            "add_plain string should map to AddPlain");
     require(mgpu_op_kind_from_string("rotate") == MgpuOpKind::Rotate,
             "rotate string should map to Rotate");
     require(!mgpu_op_kind_from_string("unknown_op").has_value(),
             "unknown op should not parse");
     require(is_upload_op(MgpuOpKind::UploadCipher), "UploadCipher should be upload op");
     require(is_copy_op(MgpuOpKind::CopyPlain), "CopyPlain should be copy op");
+    require(is_compute_op(MgpuOpKind::AddPlain), "AddPlain should be compute op");
     require(is_compute_op(MgpuOpKind::Rescale), "Rescale should be compute op");
     require(is_download_op(MgpuOpKind::Download), "Download should be download op");
 }
@@ -95,6 +100,19 @@ void test_dump()
 void test_valid_schedule()
 {
     require_valid(make_valid_two_device_schedule(), 2);
+}
+
+void test_add_plain_schedule()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, 0, {}, { value(1) }));
+    schedule.ops.push_back(op(MgpuOpKind::UploadPlain, 0, {}, { value(2) }));
+    schedule.ops.push_back(op(MgpuOpKind::AddPlain, 0, { value(1), value(2) }, { value(3) }));
+    schedule.ops.push_back(op(MgpuOpKind::Download, 0, { value(3) }, {}));
+
+    require_valid(schedule, 1);
+    require_contains(
+        dump_schedule(schedule), "#2 [%3] = mgpu.add_plain device=0 inputs=[%1, %2]");
 }
 
 void test_invalid_device()
@@ -146,6 +164,7 @@ int main()
         test_kind_strings();
         test_dump();
         test_valid_schedule();
+        test_add_plain_schedule();
         test_invalid_device();
         test_missing_input();
         test_missing_copy();

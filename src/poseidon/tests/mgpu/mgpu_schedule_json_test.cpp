@@ -71,16 +71,19 @@ void test_json_round_trip()
     schedule.ops.push_back(op(MgpuOpKind::UploadCipher, 0, {}, { value(1) }, "input"));
     schedule.ops.push_back(op(MgpuOpKind::UploadPlain, 0, {}, { value(2) }));
     schedule.ops.push_back(op(MgpuOpKind::Add, 0, { value(1), value(1) }, { value(3) }));
-    schedule.ops.push_back(op(MgpuOpKind::Download, 0, { value(3) }, {}));
+    schedule.ops.push_back(op(MgpuOpKind::AddPlain, 0, { value(3), value(2) }, { value(4) }));
+    schedule.ops.push_back(op(MgpuOpKind::Download, 0, { value(4) }, {}));
 
     const std::string json = schedule_to_json(schedule);
     require_contains(json, "\"kind\": \"add\"");
+    require_contains(json, "\"kind\": \"add_plain\"");
     require_contains(json, "\"name\": \"input\"");
 
     const ScheduleJsonParseResult parsed = parse_schedule_json(json);
     require(parsed.ok(), "round-trip JSON should parse:\n" + parsed.format_diagnostics());
     require(parsed.schedule.ops.size() == schedule.ops.size(), "round-trip op count mismatch");
     require(parsed.schedule.ops[2].kind == MgpuOpKind::Add, "round-trip op kind mismatch");
+    require(parsed.schedule.ops[3].kind == MgpuOpKind::AddPlain, "round-trip add_plain kind mismatch");
     require(parsed.schedule.ops[2].outputs[0].id == 3, "round-trip output id mismatch");
 }
 

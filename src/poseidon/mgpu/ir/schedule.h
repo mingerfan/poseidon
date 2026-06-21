@@ -25,6 +25,7 @@ enum class MgpuOpKind
     CopyPlain,
     CopyCipher,
     Add,
+    AddPlain,
     Sub,
     MultiplyPlain,
     Multiply,

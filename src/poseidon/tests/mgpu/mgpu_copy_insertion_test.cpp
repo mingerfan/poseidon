@@ -82,6 +82,25 @@ void test_inserts_only_missing_inputs()
     require_verifies(result.schedule, 2);
 }
 
+void test_add_plain_inserts_cipher_and_plain_copies()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, 0, {}, { value(1) }));
+    schedule.ops.push_back(op(MgpuOpKind::UploadPlain, 1, {}, { value(2) }));
+    schedule.ops.push_back(op(MgpuOpKind::AddPlain, 2, { value(1), value(2) }, { value(3) }));
+
+    const CopyInsertionResult result = insert_required_copies(schedule);
+    require(result.ok(), "copy insertion failed:\n" + result.format_diagnostics());
+    require(result.schedule.ops.size() == 5, "expected two inserted copy ops");
+    require(result.schedule.ops[2].kind == MgpuOpKind::CopyCipher, "expected ciphertext copy");
+    require(result.schedule.ops[2].outputs[0].id == 4, "cipher copy id mismatch");
+    require(result.schedule.ops[3].kind == MgpuOpKind::CopyPlain, "expected plaintext copy");
+    require(result.schedule.ops[3].outputs[0].id == 5, "plain copy id mismatch");
+    require(result.schedule.ops[4].inputs[0].id == 4, "cipher input should be rewritten");
+    require(result.schedule.ops[4].inputs[1].id == 5, "plain input should be rewritten");
+    require_verifies(result.schedule, 3);
+}
+
 void test_existing_copy_is_preserved()
 {
     MgpuSchedule schedule;
@@ -129,6 +148,7 @@ int main()
     {
         test_inserts_cipher_copy_for_unary_op();
         test_inserts_only_missing_inputs();
+        test_add_plain_inserts_cipher_and_plain_copies();
         test_existing_copy_is_preserved();
         test_download_plaintext_copy_does_not_require_ciphertext();
         test_unknown_input_reports_diagnostic();

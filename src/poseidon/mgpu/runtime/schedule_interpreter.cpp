@@ -39,6 +39,7 @@ void apply_completed_op(MgpuObjectStore &object_store, const MgpuOp &op)
     case MgpuOpKind::UploadCipher:
     case MgpuOpKind::CopyCipher:
     case MgpuOpKind::Add:
+    case MgpuOpKind::AddPlain:
     case MgpuOpKind::Sub:
     case MgpuOpKind::MultiplyPlain:
     case MgpuOpKind::Multiply:
