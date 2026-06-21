@@ -57,6 +57,55 @@ Json check_to_json(bool evaluated, bool ok)
     };
 }
 
+void add_schedule_verification_diagnostics(
+    HevmArtifactReadinessResult &result,
+    const ScheduleVerificationResult &verification)
+{
+    for (const ScheduleVerificationError &error : verification.errors)
+    {
+        add_diagnostic(
+            result, "schedule_verification", error.op_index, error.message);
+    }
+}
+
+void add_poseidon_gpu_preflight_diagnostics(
+    HevmArtifactReadinessResult &result,
+    const PoseidonGpuSchedulePreflightResult &preflight)
+{
+    for (const PoseidonGpuSchedulePreflightDiagnostic &diagnostic :
+         preflight.diagnostics)
+    {
+        add_diagnostic(
+            result, "poseidon_gpu_preflight", diagnostic.op_index,
+            diagnostic.message);
+    }
+}
+
+void add_communication_plan_diagnostics(
+    HevmArtifactReadinessResult &result,
+    const MgpuCommunicationPlan &plan)
+{
+    for (const MgpuCommunicationPlanDiagnostic &diagnostic : plan.diagnostics)
+    {
+        add_diagnostic(
+            result, "communication_plan", diagnostic.op_index,
+            diagnostic.message);
+    }
+}
+
+void add_communication_execution_preflight_diagnostics(
+    HevmArtifactReadinessResult &result,
+    const MgpuCommunicationExecutionPreflight &preflight)
+{
+    for (const MgpuCommunicationExecutionDiagnostic &diagnostic :
+         preflight.diagnostics)
+    {
+        add_diagnostic(
+            result, "communication_execution_preflight",
+            diagnostic.route_index, diagnostic.message);
+    }
+}
+
 }  // namespace
 
 std::string HevmArtifactReadinessResult::format_diagnostics() const
@@ -108,44 +157,64 @@ HevmArtifactReadinessResult check_hevm_artifact_readiness(
         }
     }
 
-    if (input.poseidon_gpu_preflight != nullptr)
+    if (input.poseidon_gpu_execution_preflight != nullptr)
+    {
+        const PoseidonGpuExecutionPreflightResult &preflight =
+            *input.poseidon_gpu_execution_preflight;
+        result.poseidon_gpu_execution_preflight_evaluated = true;
+        result.poseidon_gpu_execution_preflight_ok = preflight.ok();
+
+        result.poseidon_gpu_preflight_evaluated = true;
+        result.poseidon_gpu_preflight_ok = preflight.poseidon_gpu_preflight.ok();
+        result.communication_plan_evaluated = preflight.communication_plan_evaluated;
+        result.communication_plan_ok = preflight.communication_plan_evaluated
+                                           ? preflight.communication_plan.ok()
+                                           : true;
+        result.communication_execution_preflight_evaluated =
+            preflight.communication_execution_preflight_evaluated;
+        result.communication_execution_preflight_ok =
+            preflight.communication_execution_preflight_evaluated
+                ? preflight.communication_execution_preflight.ok()
+                : true;
+
+        add_schedule_verification_diagnostics(
+            result, preflight.schedule_verification);
+        add_poseidon_gpu_preflight_diagnostics(
+            result, preflight.poseidon_gpu_preflight);
+        if (preflight.communication_plan_evaluated)
+        {
+            add_communication_plan_diagnostics(result, preflight.communication_plan);
+        }
+        if (preflight.communication_execution_preflight_evaluated)
+        {
+            add_communication_execution_preflight_diagnostics(
+                result, preflight.communication_execution_preflight);
+        }
+    }
+    else if (input.poseidon_gpu_preflight != nullptr)
     {
         result.poseidon_gpu_preflight_evaluated = true;
         result.poseidon_gpu_preflight_ok = input.poseidon_gpu_preflight->ok();
-        for (const PoseidonGpuSchedulePreflightDiagnostic &diagnostic :
-             input.poseidon_gpu_preflight->diagnostics)
-        {
-            add_diagnostic(
-                result, "poseidon_gpu_preflight", diagnostic.op_index,
-                diagnostic.message);
-        }
+        add_poseidon_gpu_preflight_diagnostics(
+            result, *input.poseidon_gpu_preflight);
     }
 
-    if (input.communication_plan != nullptr)
+    if (input.poseidon_gpu_execution_preflight == nullptr &&
+        input.communication_plan != nullptr)
     {
         result.communication_plan_evaluated = true;
         result.communication_plan_ok = input.communication_plan->ok();
-        for (const MgpuCommunicationPlanDiagnostic &diagnostic :
-             input.communication_plan->diagnostics)
-        {
-            add_diagnostic(
-                result, "communication_plan", diagnostic.op_index,
-                diagnostic.message);
-        }
+        add_communication_plan_diagnostics(result, *input.communication_plan);
     }
 
-    if (input.communication_execution_preflight != nullptr)
+    if (input.poseidon_gpu_execution_preflight == nullptr &&
+        input.communication_execution_preflight != nullptr)
     {
         result.communication_execution_preflight_evaluated = true;
         result.communication_execution_preflight_ok =
             input.communication_execution_preflight->ok();
-        for (const MgpuCommunicationExecutionDiagnostic &diagnostic :
-             input.communication_execution_preflight->diagnostics)
-        {
-            add_diagnostic(
-                result, "communication_execution_preflight",
-                diagnostic.route_index, diagnostic.message);
-        }
+        add_communication_execution_preflight_diagnostics(
+            result, *input.communication_execution_preflight);
     }
 
     return result;
@@ -168,6 +237,11 @@ void dump_hevm_artifact_readiness(
            << status_label(
                   result.hevm_opcode_summary_evaluated,
                   result.hevm_opcodes_supported)
+           << '\n';
+    stream << "  poseidon_gpu_execution_preflight: "
+           << status_label(
+                  result.poseidon_gpu_execution_preflight_evaluated,
+                  result.poseidon_gpu_execution_preflight_ok)
            << '\n';
     stream << "  poseidon_gpu_preflight: "
            << status_label(
@@ -207,6 +281,10 @@ std::string hevm_artifact_readiness_to_json(
           check_to_json(
               result.hevm_opcode_summary_evaluated,
               result.hevm_opcodes_supported) },
+        { "poseidon_gpu_execution_preflight",
+          check_to_json(
+              result.poseidon_gpu_execution_preflight_evaluated,
+              result.poseidon_gpu_execution_preflight_ok) },
         { "poseidon_gpu_preflight",
           check_to_json(
               result.poseidon_gpu_preflight_evaluated,

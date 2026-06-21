@@ -38,6 +38,7 @@
 | CUDA peer probe | Optional CUDA/RMM-free diagnostic that reports visible devices and CUDA peer-access matrix before single-node 8-GPU execution. |
 | Communication topology planner | CPU-only classification of copy ops as same-device, intra-node CUDA peer, or inter-node transport for future cluster expansion. |
 | Communication execution preflight | CPU-only check that planned copy routes are executable by the currently available same-device, CUDA peer, or inter-node backend set. |
+| Poseidon GPU execution preflight | CPU-only aggregate gate for schedule verification, Poseidon GPU executor prerequisites, communication planning, and communication execution availability. |
 | Schedule IR | Represent upload, copy, compute, bootstrap fallback, and download operations independent of Dacapo format. |
 | Dacapo adapter | Translate internal JSON debug input and Dacapo HEVM binary output into internal IR. |
 | Placement pass | Assign each op/value to a GPU. |
@@ -209,6 +210,11 @@ Dacapo artifact debugging:
   previews may pass `--execution-cuda-peer-available`; do not pass
   `--execution-inter-node-available` until a real cluster transport backend is
   implemented behind the mgpu communication interface.
+- The dump tool and external HEVM CTest now expose a unified
+  `poseidon_gpu_execution_preflight` result. Treat it as the CPU-only execution
+  gate that combines schedule verification, Poseidon GPU preflight,
+  communication plan diagnostics, and communication execution preflight while
+  preserving the older individual diagnostic blocks for compatibility.
 - Use `poseidon_mgpu_dacapo_hevm_dump --opcode-summary` on real artifacts to
   see the full HEVM opcode distribution before schedule translation. This is
   especially important for detecting unsupported `ModswitchC` and `UpscaleC`
@@ -273,6 +279,7 @@ ResNet20 artifact runbook:
 | Poseidon GPU preflight tests | CPU-only checks report required comm/keys and unsupported GPU executor operations before attempting GPU execution. |
 | Communication topology tests | CPU-only tests classify scheduled copy ops for single-node and uniform cluster topologies without linking NCCL/MPI. |
 | Communication execution preflight tests | CPU-only tests report when same-device, CUDA peer, or inter-node planned routes lack an executable backend. |
+| Poseidon GPU execution preflight tests | CPU-only tests aggregate schedule verifier, GPU executor preflight, communication planning, and communication execution availability into one result. |
 | HEVM artifact readiness tests | CPU-only tests combine opcode support, Poseidon GPU preflight, communication planning, and execution preflight into an optional hard gate. |
 | CUDA peer probe tests | Optional CUDA tests report visible devices and peer-access matrix, skipping when CUDA devices are unavailable. |
 
@@ -286,7 +293,7 @@ ResNet20 artifact runbook:
 | 3 | `GpuComm` and CUDA peer-copy backend | Same-device tests pass; multi-GPU tests skip or pass. |
 | 4 | Static placement and copy insertion | Handwritten small graph verifies inserted copies. |
 | 5 | Add Dacapo submodule and JSON/HEVM adapters | Adapter tests use small captured/mock Dacapo input. |
-| 6 | ResNet20 static schedule path | Dacapo runbook generates real `.hevm + .cst`; dump tool reports opcode summary, schedule summary, communication plan, and CPU-only Poseidon GPU preflight; skipped-by-default external artifact CTest validates the same artifact; unsupported opcode and bootstrap diagnostics are resolved or explicitly recorded before GPU execution; single-node 8-GPU run validates on cluster hardware. |
+| 6 | ResNet20 static schedule path | Dacapo runbook generates real `.hevm + .cst`; dump tool reports opcode summary, schedule summary, communication plan, and CPU-only Poseidon GPU execution preflight; skipped-by-default external artifact CTest validates the same artifact; unsupported opcode and bootstrap diagnostics are resolved or explicitly recorded before GPU execution; single-node 8-GPU run validates on cluster hardware. |
 | 7 | Cluster communication planning | CPU-only topology planning classifies inter-node copies and execution preflight reports missing inter-node backend first; NCCL/MPI interface is introduced only after single-node path is stable. |
 
 On a single-GPU development machine, complete Phases 0-4 with same-device copy

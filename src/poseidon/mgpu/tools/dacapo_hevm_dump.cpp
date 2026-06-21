@@ -2,6 +2,7 @@
 #include "poseidon/mgpu/comm/execution_preflight.h"
 #include "poseidon/mgpu/comm/topology.h"
 #include "poseidon/mgpu/ir/schedule_summary.h"
+#include "poseidon/mgpu/runtime/gpu_execution_preflight.h"
 #include "poseidon/mgpu/runtime/hevm_artifact_readiness.h"
 #include "poseidon/mgpu/runtime/hevm_io_binding.h"
 #include "poseidon/mgpu/runtime/poseidon_gpu_schedule_preflight.h"
@@ -401,6 +402,34 @@ MgpuTopology make_tool_topology(const ToolOptions &tool_options)
     return make_uniform_cluster_topology(tool_options.node_count, devices_per_node);
 }
 
+PoseidonGpuExecutionPreflightOptions make_execution_preflight_options(
+    const ToolOptions &tool_options)
+{
+    PoseidonGpuExecutionPreflightOptions options;
+    options.device_count = tool_options.device_count;
+    options.copy_ops_have_comm = tool_options.preflight_comm_available;
+    options.relin_keys_available = tool_options.preflight_relin_keys_available;
+    options.galois_keys_available = tool_options.preflight_galois_keys_available;
+    options.check_communication_plan = tool_options.communication_plan;
+    if (options.check_communication_plan)
+    {
+        options.topology = make_tool_topology(tool_options);
+    }
+    options.check_communication_execution =
+        tool_options.communication_execution_preflight;
+    options.communication_execution = MgpuCommunicationExecutionOptions{
+        true,
+        tool_options.execution_cuda_peer_available,
+        tool_options.execution_inter_node_available,
+    };
+    return options;
+}
+
+bool needs_execution_preflight(const ToolOptions &tool_options)
+{
+    return tool_options.poseidon_gpu_preflight || tool_options.require_ready;
+}
+
 nlohmann::json optional_preflight_json(
     const std::optional<PoseidonGpuSchedulePreflightResult> &preflight)
 {
@@ -432,6 +461,17 @@ nlohmann::json optional_communication_execution_preflight_json(
     }
 
     return parse_json_object(communication_execution_preflight_to_json(*preflight, -1));
+}
+
+nlohmann::json optional_execution_preflight_json(
+    const std::optional<PoseidonGpuExecutionPreflightResult> &preflight)
+{
+    if (!preflight.has_value())
+    {
+        return nullptr;
+    }
+
+    return parse_json_object(poseidon_gpu_execution_preflight_to_json(*preflight, -1));
 }
 
 nlohmann::json hevm_opcode_summary_json(const DacapoHevmOpcodeSummary &summary)
@@ -516,6 +556,17 @@ void print_optional_communication_execution_preflight(
     dump_communication_execution_preflight(std::cout, *preflight);
 }
 
+void print_optional_execution_preflight(
+    const std::optional<PoseidonGpuExecutionPreflightResult> &preflight)
+{
+    if (!preflight.has_value())
+    {
+        return;
+    }
+
+    dump_poseidon_gpu_execution_preflight(std::cout, *preflight);
+}
+
 void print_io_summary(const HevmIoBindingPlan &plan)
 {
     std::cout << "hevm_io:\n";
@@ -559,6 +610,7 @@ nlohmann::json make_tool_summary_json(
     const HevmIoBindingPlan &io_plan, nlohmann::json preflight,
     nlohmann::json communication_plan,
     nlohmann::json communication_execution_preflight,
+    nlohmann::json execution_preflight,
     nlohmann::json opcode_summary,
     nlohmann::json readiness,
     std::optional<std::string> debug_dump)
@@ -586,6 +638,11 @@ nlohmann::json make_tool_summary_json(
     {
         root["communication_execution_preflight"] =
             std::move(communication_execution_preflight);
+    }
+    if (!execution_preflight.is_null())
+    {
+        root["poseidon_gpu_execution_preflight"] =
+            std::move(execution_preflight);
     }
     if (!opcode_summary.is_null())
     {
@@ -655,25 +712,39 @@ int main(int argc, char **argv)
         const MgpuScheduleSummary summary =
             summarize_schedule(artifacts.schedule, tool_options.device_count);
 
+        std::optional<PoseidonGpuExecutionPreflightResult> execution_preflight;
+        if (needs_execution_preflight(tool_options))
+        {
+            execution_preflight = preflight_poseidon_gpu_execution_plan(
+                artifacts.schedule, make_execution_preflight_options(tool_options));
+        }
+
         std::optional<PoseidonGpuSchedulePreflightResult> poseidon_preflight;
         if (tool_options.poseidon_gpu_preflight)
         {
-            poseidon_preflight = preflight_poseidon_gpu_schedule(
-                artifacts.schedule,
-                PoseidonGpuSchedulePreflightOptions{
-                    tool_options.device_count,
-                    tool_options.preflight_comm_available,
-                    tool_options.preflight_relin_keys_available,
-                    tool_options.preflight_galois_keys_available,
-                });
+            poseidon_preflight = execution_preflight.has_value()
+                                     ? execution_preflight->poseidon_gpu_preflight
+                                     : preflight_poseidon_gpu_schedule(
+                                           artifacts.schedule,
+                                           PoseidonGpuSchedulePreflightOptions{
+                                               tool_options.device_count,
+                                               tool_options.preflight_comm_available,
+                                               tool_options
+                                                   .preflight_relin_keys_available,
+                                               tool_options
+                                                   .preflight_galois_keys_available,
+                                           });
         }
 
         std::optional<MgpuCommunicationPlan> communication_plan;
         if (tool_options.communication_plan)
         {
             communication_plan =
-                plan_schedule_communication(
-                    artifacts.schedule, make_tool_topology(tool_options));
+                execution_preflight.has_value() &&
+                        execution_preflight->communication_plan_evaluated
+                    ? execution_preflight->communication_plan
+                    : plan_schedule_communication(
+                          artifacts.schedule, make_tool_topology(tool_options));
         }
 
         std::optional<MgpuCommunicationExecutionPreflight>
@@ -681,26 +752,29 @@ int main(int argc, char **argv)
         if (tool_options.communication_execution_preflight &&
             communication_plan.has_value() && communication_plan->ok())
         {
-            communication_execution_preflight = preflight_communication_execution(
-                *communication_plan,
-                MgpuCommunicationExecutionOptions{
-                    true,
-                    tool_options.execution_cuda_peer_available,
-                    tool_options.execution_inter_node_available,
-                });
+            communication_execution_preflight =
+                execution_preflight.has_value() &&
+                        execution_preflight
+                            ->communication_execution_preflight_evaluated
+                    ? execution_preflight->communication_execution_preflight
+                    : preflight_communication_execution(
+                          *communication_plan,
+                          MgpuCommunicationExecutionOptions{
+                              true,
+                              tool_options.execution_cuda_peer_available,
+                              tool_options.execution_inter_node_available,
+                          });
         }
 
         std::optional<HevmArtifactReadinessResult> readiness;
         if (tool_options.require_ready)
         {
-            readiness = check_hevm_artifact_readiness(HevmArtifactReadinessInput{
-                opcode_summary.has_value() ? &*opcode_summary : nullptr,
-                poseidon_preflight.has_value() ? &*poseidon_preflight : nullptr,
-                communication_plan.has_value() ? &*communication_plan : nullptr,
-                communication_execution_preflight.has_value()
-                    ? &*communication_execution_preflight
-                    : nullptr,
-            });
+            HevmArtifactReadinessInput readiness_input;
+            readiness_input.opcode_summary =
+                opcode_summary.has_value() ? &*opcode_summary : nullptr;
+            readiness_input.poseidon_gpu_execution_preflight =
+                execution_preflight.has_value() ? &*execution_preflight : nullptr;
+            readiness = check_hevm_artifact_readiness(readiness_input);
         }
 
         if (tool_options.summary_json)
@@ -714,6 +788,8 @@ int main(int argc, char **argv)
             nlohmann::json communication_execution_preflight_json =
                 optional_communication_execution_preflight_json(
                     communication_execution_preflight);
+            nlohmann::json execution_preflight_json =
+                optional_execution_preflight_json(execution_preflight);
             nlohmann::json opcode_summary_json_value =
                 opcode_summary.has_value() ? hevm_opcode_summary_json(*opcode_summary)
                                            : nullptr;
@@ -725,6 +801,7 @@ int main(int argc, char **argv)
                              summary, artifacts.constants.values.size(), io_plan.plan,
                              std::move(preflight), std::move(communication_plan_json),
                              std::move(communication_execution_preflight_json),
+                             std::move(execution_preflight_json),
                              std::move(opcode_summary_json_value),
                              std::move(readiness_json), debug_dump)
                              .dump(2)
@@ -741,6 +818,7 @@ int main(int argc, char **argv)
             print_optional_communication_plan(communication_plan);
             print_optional_communication_execution_preflight(
                 communication_execution_preflight);
+            print_optional_execution_preflight(execution_preflight);
             if (readiness.has_value())
             {
                 dump_hevm_artifact_readiness(std::cout, *readiness);

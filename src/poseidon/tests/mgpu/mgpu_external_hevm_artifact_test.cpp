@@ -2,6 +2,7 @@
 #include "poseidon/mgpu/comm/execution_preflight.h"
 #include "poseidon/mgpu/comm/topology.h"
 #include "poseidon/mgpu/ir/schedule_summary.h"
+#include "poseidon/mgpu/runtime/gpu_execution_preflight.h"
 #include "poseidon/mgpu/runtime/hevm_artifact_readiness.h"
 #include "poseidon/mgpu/runtime/hevm_io_binding.h"
 #include "poseidon/mgpu/runtime/poseidon_gpu_schedule_preflight.h"
@@ -27,6 +28,9 @@ namespace
 {
 
 constexpr int kSkip = 77;
+
+MgpuCommunicationExecutionOptions make_communication_execution_options();
+MgpuTopology make_external_topology(const StaticSchedulePipelineOptions &options);
 
 class TempDir
 {
@@ -347,6 +351,24 @@ PoseidonGpuSchedulePreflightOptions make_preflight_options(
     };
 }
 
+PoseidonGpuExecutionPreflightOptions make_execution_preflight_options(
+    const StaticSchedulePipelineOptions &options)
+{
+    PoseidonGpuExecutionPreflightOptions preflight_options;
+    const PoseidonGpuSchedulePreflightOptions gpu_options =
+        make_preflight_options(options);
+    preflight_options.device_count = gpu_options.device_count;
+    preflight_options.copy_ops_have_comm = gpu_options.copy_ops_have_comm;
+    preflight_options.relin_keys_available = gpu_options.relin_keys_available;
+    preflight_options.galois_keys_available = gpu_options.galois_keys_available;
+    preflight_options.check_communication_plan = true;
+    preflight_options.topology = make_external_topology(options);
+    preflight_options.check_communication_execution = true;
+    preflight_options.communication_execution =
+        make_communication_execution_options();
+    return preflight_options;
+}
+
 MgpuCommunicationExecutionOptions make_communication_execution_options()
 {
     return MgpuCommunicationExecutionOptions{
@@ -493,9 +515,16 @@ int main()
         std::cout << "constants: " << artifacts.constants.values.size() << '\n';
         print_io_summary(io_plan.plan);
         std::cout << dump_schedule_summary(summary);
-        const PoseidonGpuSchedulePreflightResult preflight =
-            preflight_poseidon_gpu_schedule(
-                artifacts.schedule, make_preflight_options(options));
+        const PoseidonGpuExecutionPreflightResult execution_preflight =
+            preflight_poseidon_gpu_execution_plan(
+                artifacts.schedule, make_execution_preflight_options(options));
+        require(
+            execution_preflight.schedule_verification.ok(),
+            "external HEVM execution schedule verification failed:\n" +
+                execution_preflight.schedule_verification.format_errors());
+
+        const PoseidonGpuSchedulePreflightResult &preflight =
+            execution_preflight.poseidon_gpu_preflight;
         std::cout << dump_poseidon_gpu_schedule_preflight(preflight);
         if (use_rich_mock_artifact)
         {
@@ -507,25 +536,29 @@ int main()
                 "rich mock artifact should require GaloisKeys");
         }
 
-        const MgpuCommunicationPlan communication_plan =
-            plan_schedule_communication(artifacts.schedule, make_external_topology(options));
+        require(
+            execution_preflight.communication_plan_evaluated,
+            "external HEVM execution preflight should include a communication plan");
+        const MgpuCommunicationPlan &communication_plan =
+            execution_preflight.communication_plan;
         require(
             communication_plan.ok(),
             "external HEVM communication plan failed:\n" +
                 communication_plan.format_diagnostics());
         std::cout << dump_communication_plan(communication_plan);
-        const MgpuCommunicationExecutionPreflight communication_preflight =
-            preflight_communication_execution(
-                communication_plan, make_communication_execution_options());
+        require(
+            execution_preflight.communication_execution_preflight_evaluated,
+            "external HEVM execution preflight should include communication execution");
+        const MgpuCommunicationExecutionPreflight &communication_preflight =
+            execution_preflight.communication_execution_preflight;
         std::cout << dump_communication_execution_preflight(communication_preflight);
+        std::cout << dump_poseidon_gpu_execution_preflight(execution_preflight);
 
+        HevmArtifactReadinessInput readiness_input;
+        readiness_input.opcode_summary = &opcode_summary;
+        readiness_input.poseidon_gpu_execution_preflight = &execution_preflight;
         const HevmArtifactReadinessResult readiness =
-            check_hevm_artifact_readiness(HevmArtifactReadinessInput{
-                &opcode_summary,
-                &preflight,
-                &communication_plan,
-                &communication_preflight,
-            });
+            check_hevm_artifact_readiness(readiness_input);
         std::cout << dump_hevm_artifact_readiness(readiness);
         if (parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_REQUIRE_READY")))
         {

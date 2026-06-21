@@ -115,6 +115,52 @@ void test_preflight_diagnostics_are_propagated()
     require_contains(result.format_diagnostics(), "inter-node communication backend");
 }
 
+void test_execution_preflight_diagnostics_are_propagated()
+{
+    const DacapoHevmOpcodeSummary opcode_summary = make_supported_opcode_summary();
+
+    PoseidonGpuExecutionPreflightResult execution_preflight;
+    execution_preflight.schedule_verification.errors.push_back(
+        ScheduleVerificationError{ 4, "input value %1 is on device 0" });
+    execution_preflight.poseidon_gpu_preflight.diagnostics.push_back(
+        PoseidonGpuSchedulePreflightDiagnostic{ 5, "rotate requires GaloisKeys" });
+    execution_preflight.communication_plan_evaluated = true;
+    execution_preflight.communication_execution_preflight_evaluated = true;
+    execution_preflight.communication_execution_preflight.diagnostics.push_back(
+        MgpuCommunicationExecutionDiagnostic{
+            2, "CUDA peer or host-staged copy backend is not available" });
+
+    HevmArtifactReadinessInput input;
+    input.opcode_summary = &opcode_summary;
+    input.poseidon_gpu_execution_preflight = &execution_preflight;
+    const HevmArtifactReadinessResult result =
+        check_hevm_artifact_readiness(input);
+
+    require(!result.ok(), "execution preflight diagnostics should fail readiness");
+    require(
+        result.poseidon_gpu_execution_preflight_evaluated,
+        "execution preflight should be evaluated");
+    require(
+        !result.poseidon_gpu_execution_preflight_ok,
+        "execution preflight flag should fail");
+    require(
+        !result.poseidon_gpu_preflight_ok,
+        "nested GPU preflight flag should fail");
+    require(
+        !result.communication_execution_preflight_ok,
+        "nested communication execution flag should fail");
+    require_contains(result.format_diagnostics(), "schedule_verification");
+    require_contains(result.format_diagnostics(), "input value %1");
+    require_contains(result.format_diagnostics(), "GaloisKeys");
+    require_contains(result.format_diagnostics(), "CUDA peer");
+
+    const std::string text = dump_hevm_artifact_readiness(result);
+    require_contains(text, "poseidon_gpu_execution_preflight: error");
+
+    const std::string json = hevm_artifact_readiness_to_json(result);
+    require_contains(json, "\"poseidon_gpu_execution_preflight\"");
+}
+
 }  // namespace
 
 int main()
@@ -124,6 +170,7 @@ int main()
         test_all_checks_pass();
         test_unsupported_opcode_fails();
         test_preflight_diagnostics_are_propagated();
+        test_execution_preflight_diagnostics_are_propagated();
     }
     catch (const std::exception &ex)
     {

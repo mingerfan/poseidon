@@ -3,6 +3,7 @@
 #include "poseidon/mgpu/comm/execution_preflight.h"
 #include "poseidon/mgpu/comm/topology.h"
 #include "poseidon/mgpu/compiler/dacapo_adapter.h"
+#include "poseidon/mgpu/runtime/gpu_execution_preflight.h"
 #include "poseidon/mgpu/runtime/poseidon_gpu_schedule_preflight.h"
 
 #include <cstddef>
@@ -20,6 +21,8 @@ struct HevmArtifactReadinessInput
     const MgpuCommunicationPlan *communication_plan = nullptr;
     const MgpuCommunicationExecutionPreflight *communication_execution_preflight =
         nullptr;
+    const PoseidonGpuExecutionPreflightResult *poseidon_gpu_execution_preflight =
+        nullptr;
 };
 
 struct HevmArtifactReadinessDiagnostic
@@ -33,6 +36,8 @@ struct HevmArtifactReadinessResult
 {
     bool hevm_opcode_summary_evaluated = false;
     bool hevm_opcodes_supported = true;
+    bool poseidon_gpu_execution_preflight_evaluated = false;
+    bool poseidon_gpu_execution_preflight_ok = true;
     bool poseidon_gpu_preflight_evaluated = false;
     bool poseidon_gpu_preflight_ok = true;
     bool communication_plan_evaluated = false;

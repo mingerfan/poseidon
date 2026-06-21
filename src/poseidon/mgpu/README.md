@@ -162,16 +162,19 @@ Interpret the diagnostics conservatively:
   Single-node 8-GPU execution should use CUDA peer communication first; cluster
   transport is a later backend behind the same mgpu communication interface.
 - `--require-ready` and `POSEIDON_MGPU_EXTERNAL_REQUIRE_READY=1` turn these
-  CPU-side diagnostics into a hard gate. Use them before execution attempts; do
-  not use a passing readiness gate as a substitute for a real GPU correctness run.
+  CPU-side diagnostics into a hard gate. The gate includes the unified
+  `poseidon_gpu_execution_preflight` result, so schedule verification failures,
+  Poseidon GPU executor prerequisites, communication plan failures, and missing
+  communication execution backends all fail before execution attempts. Do not
+  use a passing readiness gate as a substitute for a real GPU correctness run.
 
 ## External HEVM Artifact Check
 
 `poseidon_mgpu_external_hevm_artifact_tests` is a skipped-by-default CTest for
 real Dacapo `.hevm + .cst` output, including ResNet20 artifacts. It loads the
 files, runs static placement and copy insertion, builds the HEVM I/O plan, and
-prints schedule/device summaries plus a Poseidon GPU executor preflight. It
-does not execute GPU operators.
+prints schedule/device summaries plus the CPU-only Poseidon GPU execution
+preflight. It does not execute GPU operators.
 
 ```bash
 POSEIDON_MGPU_EXTERNAL_HEVM=/path/to/model.hevm \
@@ -231,14 +234,17 @@ poseidon_mgpu_dacapo_hevm_dump \
   --no-schedule
 ```
 
-Preflight is CPU-only. It reports whether the schedule needs the mgpu
-communication layer, relinearization keys, Galois keys, or unsupported
-Poseidon GPU operations such as bootstrap fallback before attempting execution.
-Without `--require-ready`, the dump tool prints diagnostics and exits
-successfully if loading and schedule construction succeeded. With
-`--require-ready`, unsupported HEVM opcodes, Poseidon GPU preflight failures,
-communication plan failures, or unavailable communication execution routes
-produce a non-zero exit code.
+Preflight is CPU-only. The dump tool preserves the older individual diagnostic
+blocks and also emits `poseidon_gpu_execution_preflight` when Poseidon GPU
+preflight or readiness gating is requested. That aggregate result reports
+schedule verification errors, whether the schedule needs the mgpu communication
+layer, relinearization keys, Galois keys, unsupported Poseidon GPU operations
+such as bootstrap fallback, communication plan failures, and unavailable
+communication execution routes before attempting execution. Without
+`--require-ready`, the dump tool prints diagnostics and exits successfully if
+loading and schedule construction succeeded. With `--require-ready`, failures
+in the opcode summary or aggregate execution preflight produce a non-zero exit
+code.
 
 ## Communication Topology Planning
 

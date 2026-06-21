@@ -15,6 +15,7 @@ add_library(poseidon_mgpu STATIC
     ir/schedule_json.cpp
     ir/schedule_summary.cpp
     runtime/comm_schedule_handler.cpp
+    runtime/gpu_execution_preflight.cpp
     runtime/hevm_artifact_readiness.cpp
     runtime/hevm_io_binding.cpp
     runtime/hevm_plaintext_encoding.cpp
@@ -123,6 +124,10 @@ if(POSEIDON_BUILD_MGPU_TESTS)
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_hevm_artifact_readiness_test.cpp
     )
 
+    add_executable(poseidon_mgpu_gpu_execution_preflight_tests
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_gpu_execution_preflight_test.cpp
+    )
+
     add_executable(poseidon_mgpu_poseidon_gpu_preflight_tests
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_poseidon_gpu_preflight_test.cpp
     )
@@ -225,6 +230,11 @@ if(POSEIDON_BUILD_MGPU_TESTS)
     )
 
     target_link_libraries(poseidon_mgpu_hevm_artifact_readiness_tests
+        PRIVATE
+            poseidon_mgpu
+    )
+
+    target_link_libraries(poseidon_mgpu_gpu_execution_preflight_tests
         PRIVATE
             poseidon_mgpu
     )
@@ -421,6 +431,11 @@ if(POSEIDON_BUILD_MGPU_TESTS)
     add_test(
         NAME poseidon_mgpu_hevm_artifact_readiness_tests
         COMMAND poseidon_mgpu_hevm_artifact_readiness_tests
+    )
+
+    add_test(
+        NAME poseidon_mgpu_gpu_execution_preflight_tests
+        COMMAND poseidon_mgpu_gpu_execution_preflight_tests
     )
 
     add_test(
