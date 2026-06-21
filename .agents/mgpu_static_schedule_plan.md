@@ -170,6 +170,10 @@ Dacapo artifact debugging:
   artifact copies as same-device, intra-node CUDA peer, or inter-node routes.
   For 4x8 previews, add `--nodes 4 --devices-per-node 8`. This remains a
   CPU-only diagnostic and must not pull NCCL/MPI into the normal build.
+- Use `poseidon_mgpu_dacapo_hevm_dump --opcode-summary` on real artifacts to
+  see the full HEVM opcode distribution before schedule translation. This is
+  especially important for detecting unsupported `ModswitchC` and `UpscaleC`
+  opcodes in ResNet20 artifacts.
 
 ## 5. Test Plan
 

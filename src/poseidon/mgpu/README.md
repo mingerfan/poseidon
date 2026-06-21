@@ -68,6 +68,7 @@ poseidon_mgpu_dacapo_hevm_dump \
   --constants /path/to/model.cst \
   --devices 8 \
   --compute-devices 0,1,2,3,4,5,6,7 \
+  --opcode-summary \
   --communication-plan \
   --poseidon-gpu-preflight \
   --preflight-comm-available \
@@ -96,3 +97,6 @@ owned by the existing mgpu communication layer.
 
 The Dacapo HEVM dump tool can include this plan with `--communication-plan`.
 For a 4x8 logical cluster preview, pass `--nodes 4 --devices-per-node 8`.
+Use `--opcode-summary` to print the raw HEVM opcode distribution before
+execution planning; this is useful when a real artifact contains unsupported
+opcodes such as `ModswitchC` or `UpscaleC`.

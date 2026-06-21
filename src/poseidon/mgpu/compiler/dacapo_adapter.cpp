@@ -4,6 +4,7 @@
 
 #include <cstdint>
 #include <limits>
+#include <map>
 #include <sstream>
 #include <utility>
 #include <vector>
@@ -25,6 +26,12 @@ void add_diagnostic(DacapoAdapterResult &result, std::size_t offset, const std::
     result.diagnostics.push_back(DacapoAdapterDiagnostic{ offset, message });
 }
 
+void add_summary_diagnostic(
+    DacapoHevmOpcodeSummary &summary, std::size_t offset, const std::string &message)
+{
+    summary.diagnostics.push_back(DacapoAdapterDiagnostic{ offset, message });
+}
+
 bool ensure_available(
     DacapoAdapterResult &result, std::string_view input, std::size_t offset,
     std::size_t bytes, const char *what)
@@ -34,6 +41,20 @@ bool ensure_available(
         std::ostringstream stream;
         stream << "truncated HEVM binary while reading " << what;
         add_diagnostic(result, offset, stream.str());
+        return false;
+    }
+    return true;
+}
+
+bool ensure_summary_available(
+    DacapoHevmOpcodeSummary &summary, std::string_view input, std::size_t offset,
+    std::size_t bytes, const char *what)
+{
+    if (offset > input.size() || bytes > input.size() - offset)
+    {
+        std::ostringstream stream;
+        stream << "truncated HEVM binary while reading " << what;
+        add_summary_diagnostic(summary, offset, stream.str());
         return false;
     }
     return true;
@@ -664,6 +685,145 @@ DacapoAdapterResult translate_hevm_binary(std::string_view input)
 }
 
 }  // namespace
+
+std::optional<std::string_view> hevm_opcode_name(std::uint16_t opcode) noexcept
+{
+    switch (opcode)
+    {
+    case 0:
+        return std::string_view("Encode");
+    case 1:
+        return std::string_view("RotateC");
+    case 2:
+        return std::string_view("NegateC");
+    case 3:
+        return std::string_view("RescaleC");
+    case 4:
+        return std::string_view("ModswitchC");
+    case 5:
+        return std::string_view("UpscaleC");
+    case 6:
+        return std::string_view("AddCC");
+    case 7:
+        return std::string_view("AddCP");
+    case 8:
+        return std::string_view("MulCC");
+    case 9:
+        return std::string_view("MulCP");
+    case 10:
+        return std::string_view("BootstrapC");
+    case kHevmAllocOpcode:
+        return std::string_view("Alloc");
+    default:
+        return std::nullopt;
+    }
+}
+
+bool is_supported_hevm_opcode(std::uint16_t opcode) noexcept
+{
+    switch (opcode)
+    {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 6:
+    case 7:
+    case 8:
+    case 9:
+    case 10:
+    case kHevmAllocOpcode:
+        return true;
+    default:
+        return false;
+    }
+}
+
+std::string DacapoHevmOpcodeSummary::format_diagnostics() const
+{
+    std::ostringstream stream;
+    for (std::size_t i = 0; i < diagnostics.size(); ++i)
+    {
+        if (i > 0)
+        {
+            stream << '\n';
+        }
+        stream << "offset " << diagnostics[i].offset << ": " << diagnostics[i].message;
+    }
+    return stream.str();
+}
+
+DacapoHevmOpcodeSummary summarize_hevm_opcodes(std::string_view input)
+{
+    DacapoHevmOpcodeSummary summary;
+    if (!ensure_summary_available(summary, input, 0, 24, "HEVM header"))
+    {
+        return summary;
+    }
+
+    const std::uint32_t magic = read_u32_le(input, 0);
+    if (magic != kHevmMagic)
+    {
+        add_summary_diagnostic(summary, 0, "invalid HEVM magic number");
+        return summary;
+    }
+
+    const std::uint32_t header_size = read_u32_le(input, 4);
+    if (header_size < 24)
+    {
+        add_summary_diagnostic(summary, 4, "HEVM header size is smaller than the fixed header");
+        return summary;
+    }
+    if (!ensure_summary_available(
+            summary, input, header_size, kHevmFixedConfigBytes, "HEVM config body"))
+    {
+        return summary;
+    }
+
+    const std::uint64_t config_body_length = read_u64_le(input, header_size);
+    const std::uint64_t num_operations = read_u64_le(input, header_size + 8);
+    std::uint64_t operations_offset = 0;
+    std::uint64_t operations_bytes = 0;
+    if (!checked_add(header_size, config_body_length, operations_offset) ||
+        !checked_mul(num_operations, 8, operations_bytes))
+    {
+        add_summary_diagnostic(summary, header_size, "HEVM operations offset overflow");
+        return summary;
+    }
+    if (!ensure_summary_available(
+            summary, input, static_cast<std::size_t>(operations_offset),
+            static_cast<std::size_t>(operations_bytes), "HEVM operations"))
+    {
+        return summary;
+    }
+
+    summary.operation_count = num_operations;
+    std::map<std::uint16_t, std::uint64_t> counts;
+    for (std::uint64_t op_index = 0; op_index < num_operations; ++op_index)
+    {
+        const std::size_t offset =
+            static_cast<std::size_t>(operations_offset + op_index * 8);
+        const std::uint16_t opcode = read_u16_le(input, offset);
+        if (opcode == kHevmAllocOpcode)
+        {
+            ++summary.alloc_count;
+        }
+        ++counts[opcode];
+    }
+
+    summary.opcode_counts.reserve(counts.size());
+    for (const auto &[opcode, count] : counts)
+    {
+        const std::optional<std::string_view> name = hevm_opcode_name(opcode);
+        summary.opcode_counts.push_back(DacapoHevmOpcodeCount{
+            opcode,
+            count,
+            name.has_value() ? std::string(*name) : "unknown",
+            is_supported_hevm_opcode(opcode),
+        });
+    }
+    return summary;
+}
 
 const char *to_string(DacapoInputFormat format) noexcept
 {

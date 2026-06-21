@@ -221,6 +221,70 @@ void test_hevm_binary_translates_negate()
     require(result.schedule.ops[1].outputs[0].id == 2, "HEVM negate output mismatch");
 }
 
+void test_hevm_opcode_summary_counts_supported_and_unsupported_ops()
+{
+    const std::string hevm = test::make_hevm_binary(
+        1, 1, 2, 1, { 1 },
+        {
+            test::HevmOpRecord{ 0, 0, 0, test::make_hevm_encode_attr(4, 40) },
+            test::HevmOpRecord{ 4, 1, 0, 0 },
+            test::HevmOpRecord{ 5, 1, 0, 0 },
+            test::HevmOpRecord{ 9, 1, 0, 0 },
+        });
+
+    const DacapoHevmOpcodeSummary summary = summarize_hevm_opcodes(hevm);
+    require(summary.ok(), "HEVM opcode summary should parse:\n" + summary.format_diagnostics());
+    require(summary.operation_count == 4, "HEVM opcode operation count mismatch");
+    require(summary.alloc_count == 0, "HEVM opcode alloc count mismatch");
+
+    bool saw_encode = false;
+    bool saw_modswitch = false;
+    bool saw_upscale = false;
+    bool saw_mulcp = false;
+    for (const DacapoHevmOpcodeCount &count : summary.opcode_counts)
+    {
+        if (count.opcode == 0)
+        {
+            saw_encode = true;
+            require(count.name == "Encode", "Encode opcode name mismatch");
+            require(count.supported, "Encode should be marked supported");
+        }
+        if (count.opcode == 4)
+        {
+            saw_modswitch = true;
+            require(count.name == "ModswitchC", "Modswitch opcode name mismatch");
+            require(!count.supported, "Modswitch should be marked unsupported");
+        }
+        if (count.opcode == 5)
+        {
+            saw_upscale = true;
+            require(count.name == "UpscaleC", "Upscale opcode name mismatch");
+            require(!count.supported, "Upscale should be marked unsupported");
+        }
+        if (count.opcode == 9)
+        {
+            saw_mulcp = true;
+            require(count.name == "MulCP", "MulCP opcode name mismatch");
+            require(count.supported, "MulCP should be marked supported");
+        }
+    }
+
+    require(saw_encode, "expected Encode opcode");
+    require(saw_modswitch, "expected Modswitch opcode");
+    require(saw_upscale, "expected Upscale opcode");
+    require(saw_mulcp, "expected MulCP opcode");
+}
+
+void test_hevm_opcode_summary_reports_bad_magic()
+{
+    std::string hevm = test::make_hevm_binary(1, 1, 1, 0, { 0 }, {});
+    hevm[0] = '\0';
+
+    const DacapoHevmOpcodeSummary summary = summarize_hevm_opcodes(hevm);
+    require(!summary.ok(), "bad HEVM magic should fail opcode summary");
+    require_contains(summary.format_diagnostics(), "invalid HEVM magic number");
+}
+
 void test_hevm_binary_reports_unsupported_opcode()
 {
     const std::string hevm = test::make_hevm_binary(
@@ -273,6 +337,8 @@ int main()
         test_hevm_binary_translates_rotate_attributes();
         test_hevm_binary_translates_bootstrap_target_level();
         test_hevm_binary_translates_negate();
+        test_hevm_opcode_summary_counts_supported_and_unsupported_ops();
+        test_hevm_opcode_summary_reports_bad_magic();
         test_hevm_binary_reports_unsupported_opcode();
         test_hevm_binary_reports_bad_magic();
         test_unknown_dacapo_format_does_not_guess();

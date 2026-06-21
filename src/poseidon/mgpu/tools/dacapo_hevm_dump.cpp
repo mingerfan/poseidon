@@ -6,8 +6,10 @@
 #include "poseidon/util/json.h"
 
 #include <cstdlib>
+#include <fstream>
 #include <iostream>
 #include <optional>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -36,6 +38,7 @@ struct ToolOptions
     bool communication_plan = false;
     int node_count = 1;
     int devices_per_node = 0;
+    bool opcode_summary = false;
 };
 
 void print_usage(std::ostream &stream)
@@ -51,6 +54,7 @@ void print_usage(std::ostream &stream)
            "[--preflight-relin-keys] "
            "[--preflight-galois-keys] "
            "[--communication-plan] "
+           "[--opcode-summary] "
            "[--nodes N] "
            "[--devices-per-node N] "
            "[--summary-json] "
@@ -220,6 +224,11 @@ ToolOptions parse_args(int argc, char **argv)
             options.communication_plan = true;
             continue;
         }
+        if (arg == "--opcode-summary")
+        {
+            options.opcode_summary = true;
+            continue;
+        }
         if (arg == "--nodes")
         {
             if (++i >= argc)
@@ -295,6 +304,23 @@ ToolOptions parse_args(int argc, char **argv)
     return options;
 }
 
+std::string read_binary_file(const std::string &path)
+{
+    std::ifstream stream(path, std::ios::binary);
+    if (!stream)
+    {
+        throw std::runtime_error("failed to open file: " + path);
+    }
+
+    std::ostringstream buffer;
+    buffer << stream.rdbuf();
+    if (stream.bad())
+    {
+        throw std::runtime_error("failed to read file: " + path);
+    }
+    return buffer.str();
+}
+
 StaticSchedulePipelineOptions make_pipeline_options(const ToolOptions &tool_options)
 {
     StaticSchedulePipelineOptions options;
@@ -362,6 +388,55 @@ nlohmann::json optional_communication_plan_json(
     const MgpuCommunicationPlan plan =
         plan_schedule_communication(schedule, make_tool_topology(tool_options));
     return parse_json_object(communication_plan_to_json(plan, -1));
+}
+
+nlohmann::json hevm_opcode_summary_json(const DacapoHevmOpcodeSummary &summary)
+{
+    nlohmann::json root;
+    root["ok"] = summary.ok();
+    root["operation_count"] = summary.operation_count;
+    root["alloc_count"] = summary.alloc_count;
+    root["opcode_counts"] = nlohmann::json::array();
+    for (const DacapoHevmOpcodeCount &count : summary.opcode_counts)
+    {
+        root["opcode_counts"].push_back(nlohmann::json{
+            { "opcode", count.opcode },
+            { "name", count.name },
+            { "count", count.count },
+            { "supported", count.supported },
+        });
+    }
+    root["diagnostics"] = nlohmann::json::array();
+    for (const DacapoAdapterDiagnostic &diagnostic : summary.diagnostics)
+    {
+        root["diagnostics"].push_back(nlohmann::json{
+            { "offset", diagnostic.offset },
+            { "message", diagnostic.message },
+        });
+    }
+    return root;
+}
+
+void print_opcode_summary_text(const DacapoHevmOpcodeSummary &summary)
+{
+    std::cout << "hevm_opcode_summary:\n";
+    std::cout << "  operations: " << summary.operation_count << '\n';
+    std::cout << "  allocs: " << summary.alloc_count << '\n';
+    for (const DacapoHevmOpcodeCount &count : summary.opcode_counts)
+    {
+        std::cout << "  opcode " << count.opcode << " " << count.name << ": "
+                  << count.count << " supported="
+                  << (count.supported ? "true" : "false") << '\n';
+    }
+    if (!summary.diagnostics.empty())
+    {
+        std::cout << "  diagnostics:\n";
+        for (const DacapoAdapterDiagnostic &diagnostic : summary.diagnostics)
+        {
+            std::cout << "    offset " << diagnostic.offset << ": "
+                      << diagnostic.message << '\n';
+        }
+    }
 }
 
 void print_optional_preflight(
@@ -440,7 +515,7 @@ void print_text_summary(
 nlohmann::json make_tool_summary_json(
     const MgpuScheduleSummary &summary, std::size_t constant_count,
     const HevmIoBindingPlan &io_plan, nlohmann::json preflight,
-    nlohmann::json communication_plan,
+    nlohmann::json communication_plan, nlohmann::json opcode_summary,
     std::optional<std::string> debug_dump)
 {
     nlohmann::json root;
@@ -462,6 +537,10 @@ nlohmann::json make_tool_summary_json(
     {
         root["communication_plan"] = std::move(communication_plan);
     }
+    if (!opcode_summary.is_null())
+    {
+        root["hevm_opcode_summary"] = std::move(opcode_summary);
+    }
     if (debug_dump.has_value())
     {
         root["debug_dump"] = *debug_dump;
@@ -476,6 +555,17 @@ int main(int argc, char **argv)
     try
     {
         const ToolOptions tool_options = parse_args(argc, argv);
+        std::optional<DacapoHevmOpcodeSummary> opcode_summary;
+        if (tool_options.opcode_summary)
+        {
+            opcode_summary = summarize_hevm_opcodes(read_binary_file(tool_options.hevm_path));
+            if (!opcode_summary->ok())
+            {
+                std::cerr << opcode_summary->format_diagnostics() << '\n';
+                return EXIT_FAILURE;
+            }
+        }
+
         const DacapoHevmArtifactResult artifacts =
             prepare_dacapo_hevm_artifacts_from_files(
                 DacapoHevmArtifactPaths{
@@ -485,6 +575,10 @@ int main(int argc, char **argv)
                 make_pipeline_options(tool_options));
         if (!artifacts.ok())
         {
+            if (opcode_summary.has_value())
+            {
+                print_opcode_summary_text(*opcode_summary);
+            }
             std::cerr << artifacts.format_diagnostics() << '\n';
             return EXIT_FAILURE;
         }
@@ -509,15 +603,22 @@ int main(int argc, char **argv)
                 optional_preflight_json(tool_options, artifacts.schedule);
             nlohmann::json communication_plan =
                 optional_communication_plan_json(tool_options, artifacts.schedule);
+            nlohmann::json opcode_summary_json_value =
+                opcode_summary.has_value() ? hevm_opcode_summary_json(*opcode_summary)
+                                           : nullptr;
             std::cout << make_tool_summary_json(
                              summary, artifacts.constants.values.size(), io_plan.plan,
                              std::move(preflight), std::move(communication_plan),
-                             debug_dump)
+                             std::move(opcode_summary_json_value), debug_dump)
                              .dump(2)
                       << '\n';
         }
         else
         {
+            if (opcode_summary.has_value())
+            {
+                print_opcode_summary_text(*opcode_summary);
+            }
             print_text_summary(summary, artifacts.constants.values.size(), io_plan.plan);
             print_optional_preflight(tool_options, artifacts.schedule);
             print_optional_communication_plan(tool_options, artifacts.schedule);
