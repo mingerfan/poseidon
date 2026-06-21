@@ -14,6 +14,11 @@ MaterializedGpuComm::MaterializedGpuComm(
 
 std::shared_ptr<void> MaterializedGpuComm::copy(const GpuCommCopyRequest &request)
 {
+    if (request.source_object == nullptr)
+    {
+        throw std::invalid_argument("materialized GPU copy source object is null");
+    }
+
     MaterializedGpuObjectCopy materialized = materializer_.materialize_copy(request);
     if (materialized.destination_object == nullptr)
     {

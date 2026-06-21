@@ -142,6 +142,37 @@ void test_materialized_comm_rejects_invalid_object_copy()
     require(backend.requests.empty(), "backend should not run for invalid copy request");
 }
 
+void test_materialized_comm_rejects_null_source_before_materializer()
+{
+    VectorCopyMaterializer materializer;
+    MemcpyBackend backend;
+    MaterializedGpuComm comm(materializer, backend);
+
+    bool failed = false;
+    try
+    {
+        (void)comm.copy(GpuCommCopyRequest{
+            3,
+            4,
+            MgpuValueKind::Ciphertext,
+            0,
+            1,
+            nullptr,
+        });
+    }
+    catch (const std::invalid_argument &ex)
+    {
+        failed = true;
+        require_contains(ex.what(), "source object is null");
+    }
+
+    require(failed, "null source object should fail");
+    require(
+        materializer.requests.empty(),
+        "null source should fail before materialization");
+    require(backend.requests.empty(), "backend should not run for null source");
+}
+
 }  // namespace
 
 int main()
@@ -150,6 +181,7 @@ int main()
     {
         test_materialized_comm_copies_object_buffer();
         test_materialized_comm_rejects_invalid_object_copy();
+        test_materialized_comm_rejects_null_source_before_materializer();
     }
     catch (const std::exception &ex)
     {
