@@ -163,6 +163,15 @@ MgpuOp make_op(
     };
 }
 
+MgpuOp make_op_with_attr(
+    MgpuOpKind kind, std::vector<MgpuValueRef> inputs, std::vector<MgpuValueRef> outputs,
+    std::string debug_name, std::string attr_name, std::int64_t attr_value)
+{
+    MgpuOp op = make_op(kind, std::move(inputs), std::move(outputs), std::move(debug_name));
+    op.integer_attributes.emplace(std::move(attr_name), attr_value);
+    return op;
+}
+
 DacapoAdapterResult translate_hevm_binary(std::string_view input)
 {
     DacapoAdapterResult result;
@@ -318,8 +327,11 @@ DacapoAdapterResult translate_hevm_binary(std::string_view input)
                 return result;
             }
             plain_values[dst] = output_id;
-            result.schedule.ops.push_back(
-                make_op(MgpuOpKind::UploadPlain, {}, { value(output_id) }, "hevm_encode"));
+            MgpuOp op = make_op(
+                MgpuOpKind::UploadPlain, {}, { value(output_id) }, "hevm_encode");
+            op.integer_attributes.emplace("encode_level", rhs >> 10);
+            op.integer_attributes.emplace("encode_scale", rhs & 0x3FF);
+            result.schedule.ops.push_back(std::move(op));
             break;
         }
         case 1: {
@@ -338,9 +350,9 @@ DacapoAdapterResult translate_hevm_binary(std::string_view input)
                 return result;
             }
             cipher_values[dst] = output_id;
-            result.schedule.ops.push_back(make_op(
+            result.schedule.ops.push_back(make_op_with_attr(
                 MgpuOpKind::Rotate, { value(input_id) }, { value(output_id) },
-                "hevm_rotate"));
+                "hevm_rotate", "rotate_step", static_cast<std::int16_t>(rhs)));
             break;
         }
         case 3: {
@@ -476,9 +488,9 @@ DacapoAdapterResult translate_hevm_binary(std::string_view input)
                 return result;
             }
             cipher_values[dst] = output_id;
-            result.schedule.ops.push_back(make_op(
+            result.schedule.ops.push_back(make_op_with_attr(
                 MgpuOpKind::BootstrapFallback, { value(input_id) }, { value(output_id) },
-                "hevm_bootstrap"));
+                "hevm_bootstrap", "target_level", rhs));
             break;
         }
         default: {

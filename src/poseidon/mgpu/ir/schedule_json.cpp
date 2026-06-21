@@ -3,6 +3,7 @@
 #include "poseidon/util/json.h"
 
 #include <cstdint>
+#include <limits>
 #include <sstream>
 #include <stdexcept>
 #include <utility>
@@ -96,6 +97,46 @@ bool parse_value_refs(
     return ok;
 }
 
+bool parse_integer_attributes(
+    ScheduleJsonParseResult &result, const Json &object,
+    std::unordered_map<std::string, std::int64_t> &attributes, const std::string &path)
+{
+    if (!object.is_object())
+    {
+        add_diagnostic(result, path, "expected an object");
+        return false;
+    }
+
+    bool ok = true;
+    for (auto iter = object.begin(); iter != object.end(); ++iter)
+    {
+        const std::string item_path = path + "/" + iter.key();
+        if (!iter.value().is_number_integer() && !iter.value().is_number_unsigned())
+        {
+            add_diagnostic(result, item_path, "expected an integer attribute");
+            ok = false;
+            continue;
+        }
+
+        if (iter.value().is_number_unsigned())
+        {
+            const std::uint64_t unsigned_value = iter.value().get<std::uint64_t>();
+            if (unsigned_value > static_cast<std::uint64_t>(
+                                     std::numeric_limits<std::int64_t>::max()))
+            {
+                add_diagnostic(result, item_path, "integer attribute exceeds int64_t");
+                ok = false;
+                continue;
+            }
+            attributes.emplace(iter.key(), static_cast<std::int64_t>(unsigned_value));
+            continue;
+        }
+
+        attributes.emplace(iter.key(), iter.value().get<std::int64_t>());
+    }
+    return ok;
+}
+
 void parse_op(ScheduleJsonParseResult &result, const Json &op_json, std::size_t op_index)
 {
     const std::string op_path = "/ops/" + std::to_string(op_index);
@@ -179,6 +220,12 @@ void parse_op(ScheduleJsonParseResult &result, const Json &op_json, std::size_t 
         {
             add_diagnostic(result, op_path + "/debug_name", "expected a string");
         }
+    }
+
+    const auto attrs_iter = op_json.find("attrs");
+    if (attrs_iter != op_json.end())
+    {
+        parse_integer_attributes(result, *attrs_iter, op.integer_attributes, op_path + "/attrs");
     }
 
     result.schedule.ops.push_back(std::move(op));
@@ -282,6 +329,15 @@ std::string schedule_to_json(const MgpuSchedule &schedule, int indent)
         if (!op.debug_name.empty())
         {
             op_json["name"] = op.debug_name;
+        }
+        if (!op.integer_attributes.empty())
+        {
+            Json attrs_json = Json::object();
+            for (const auto &item : op.integer_attributes)
+            {
+                attrs_json[item.first] = item.second;
+            }
+            op_json["attrs"] = std::move(attrs_json);
         }
         root["ops"].push_back(std::move(op_json));
     }

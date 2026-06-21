@@ -1,7 +1,10 @@
 #include "poseidon/mgpu/ir/schedule.h"
 
+#include <algorithm>
 #include <ostream>
 #include <sstream>
+#include <utility>
+#include <vector>
 
 namespace poseidon::mgpu
 {
@@ -20,6 +23,33 @@ void write_value_list(std::ostream &stream, const std::vector<MgpuValueRef> &val
         stream << '%' << values[i].id;
     }
     stream << ']';
+}
+
+void write_integer_attributes(
+    std::ostream &stream, const std::unordered_map<std::string, std::int64_t> &attributes)
+{
+    if (attributes.empty())
+    {
+        return;
+    }
+
+    std::vector<std::pair<std::string, std::int64_t>> sorted(
+        attributes.begin(),
+        attributes.end());
+    std::sort(sorted.begin(), sorted.end(), [](const auto &left, const auto &right) {
+        return left.first < right.first;
+    });
+
+    stream << " attrs={";
+    for (std::size_t i = 0; i < sorted.size(); ++i)
+    {
+        if (i > 0)
+        {
+            stream << ", ";
+        }
+        stream << sorted[i].first << '=' << sorted[i].second;
+    }
+    stream << '}';
 }
 
 }  // namespace
@@ -186,6 +216,8 @@ void dump_schedule(std::ostream &stream, const MgpuSchedule &schedule)
         {
             stream << " name=\"" << op.debug_name << '"';
         }
+
+        write_integer_attributes(stream, op.integer_attributes);
 
         stream << '\n';
     }

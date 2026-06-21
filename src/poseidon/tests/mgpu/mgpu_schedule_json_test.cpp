@@ -6,6 +6,7 @@
 #include <limits>
 #include <stdexcept>
 #include <string>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -24,6 +25,15 @@ MgpuOp op(
     std::vector<MgpuValueRef> outputs, std::string debug_name = {})
 {
     return MgpuOp{ kind, device_id, std::move(inputs), std::move(outputs), std::move(debug_name) };
+}
+
+MgpuOp op_with_attrs(
+    MgpuOpKind kind, int device_id, std::vector<MgpuValueRef> inputs,
+    std::vector<MgpuValueRef> outputs, std::unordered_map<std::string, std::int64_t> attrs)
+{
+    MgpuOp result{ kind, device_id, std::move(inputs), std::move(outputs), {} };
+    result.integer_attributes = std::move(attrs);
+    return result;
 }
 
 void require(bool condition, const std::string &message)
@@ -72,12 +82,16 @@ void test_json_round_trip()
     schedule.ops.push_back(op(MgpuOpKind::UploadPlain, 0, {}, { value(2) }));
     schedule.ops.push_back(op(MgpuOpKind::Add, 0, { value(1), value(1) }, { value(3) }));
     schedule.ops.push_back(op(MgpuOpKind::AddPlain, 0, { value(3), value(2) }, { value(4) }));
-    schedule.ops.push_back(op(MgpuOpKind::Download, 0, { value(4) }, {}));
+    schedule.ops.push_back(op_with_attrs(
+        MgpuOpKind::Rotate, 0, { value(4) }, { value(5) }, { { "rotate_step", -7 } }));
+    schedule.ops.push_back(op(MgpuOpKind::Download, 0, { value(5) }, {}));
 
     const std::string json = schedule_to_json(schedule);
     require_contains(json, "\"kind\": \"add\"");
     require_contains(json, "\"kind\": \"add_plain\"");
     require_contains(json, "\"name\": \"input\"");
+    require_contains(json, "\"attrs\"");
+    require_contains(json, "\"rotate_step\": -7");
 
     const ScheduleJsonParseResult parsed = parse_schedule_json(json);
     require(parsed.ok(), "round-trip JSON should parse:\n" + parsed.format_diagnostics());
@@ -85,6 +99,9 @@ void test_json_round_trip()
     require(parsed.schedule.ops[2].kind == MgpuOpKind::Add, "round-trip op kind mismatch");
     require(parsed.schedule.ops[3].kind == MgpuOpKind::AddPlain, "round-trip add_plain kind mismatch");
     require(parsed.schedule.ops[2].outputs[0].id == 3, "round-trip output id mismatch");
+    require(
+        parsed.schedule.ops[4].integer_attributes.at("rotate_step") == -7,
+        "round-trip rotate_step mismatch");
 }
 
 void test_parse_large_unsigned_value_id()
@@ -113,7 +130,8 @@ void test_parse_reports_errors()
   "ops": [
     {"kind": "not_an_op", "device": 0, "outputs": [1]},
     {"kind": "upload_cipher", "device": 0, "outputs": [-1]},
-    {"kind": "download", "device": "gpu0", "inputs": [1]}
+    {"kind": "download", "device": "gpu0", "inputs": [1]},
+    {"kind": "rotate", "device": 0, "inputs": [1], "outputs": [2], "attrs": {"rotate_step": "bad"}}
   ]
 }
 )json";
@@ -123,6 +141,7 @@ void test_parse_reports_errors()
     require_contains(result.format_diagnostics(), "unknown op kind");
     require_contains(result.format_diagnostics(), "value id must be non-negative");
     require_contains(result.format_diagnostics(), "/ops/2/device");
+    require_contains(result.format_diagnostics(), "/ops/3/attrs/rotate_step");
 }
 
 void test_malformed_json_reports_error()

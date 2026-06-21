@@ -76,6 +76,7 @@ struct MgpuOp {
     std::vector<MgpuValueRef> inputs;
     std::vector<MgpuValueRef> outputs;
     std::string debug_name;
+    std::unordered_map<std::string, std::int64_t> integer_attributes;
 };
 
 struct MgpuSchedule {
@@ -98,6 +99,7 @@ Current Dacapo bridge:
 - `DacapoInputFormat::Json` accepts Poseidon's internal schedule JSON for debug and tests.
 - `DacapoInputFormat::HevmBinary` parses Dacapo `.hevm` output without linking MLIR/Dacapo.
 - HEVM registers are translated to Poseidon SSA-like `ValueId`s; do not reuse HEVM register IDs directly as values.
+- Static integer parameters such as `rotate_step`, `encode_level`, `encode_scale`, and bootstrap `target_level` live in `MgpuOp::integer_attributes`.
 - Unsupported HEVM opcodes must fail clearly rather than being guessed.
 
 Optional GPU object materialization:

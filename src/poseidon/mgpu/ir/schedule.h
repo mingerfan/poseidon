@@ -5,6 +5,7 @@
 #include <optional>
 #include <string>
 #include <string_view>
+#include <unordered_map>
 #include <vector>
 
 namespace poseidon::mgpu
@@ -48,6 +49,7 @@ struct MgpuOp
     std::vector<MgpuValueRef> inputs;
     std::vector<MgpuValueRef> outputs;
     std::string debug_name;
+    std::unordered_map<std::string, std::int64_t> integer_attributes;
 };
 
 struct MgpuSchedule

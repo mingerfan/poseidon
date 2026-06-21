@@ -169,7 +169,7 @@ void test_hevm_binary_translates_supported_ops()
     const std::string hevm = make_hevm_binary(
         1, 1, 1, 1, { 0 },
         {
-            HevmOpRecord{ 0, 0, 0, 0 },
+            HevmOpRecord{ 0, 0, 0, static_cast<std::uint16_t>((4 << 10) + 40) },
             HevmOpRecord{ 9, 0, 0, 0 },
             HevmOpRecord{ 7, 0, 0, 0 },
             HevmOpRecord{ 3, 0, 0, 0 },
@@ -185,6 +185,12 @@ void test_hevm_binary_translates_supported_ops()
     require(result.schedule.ops[0].device_id == -1, "HEVM ops should be unassigned");
     require(result.schedule.ops[1].kind == MgpuOpKind::UploadPlain, "HEVM encode op mismatch");
     require(result.schedule.ops[1].outputs[0].id == 2, "HEVM plain value id mismatch");
+    require(
+        result.schedule.ops[1].integer_attributes.at("encode_level") == 4,
+        "HEVM encode level mismatch");
+    require(
+        result.schedule.ops[1].integer_attributes.at("encode_scale") == 40,
+        "HEVM encode scale mismatch");
     require(result.schedule.ops[2].kind == MgpuOpKind::MultiplyPlain, "HEVM mulcp mismatch");
     require(result.schedule.ops[2].inputs[0].id == 1, "HEVM mulcp cipher input mismatch");
     require(result.schedule.ops[2].inputs[1].id == 2, "HEVM mulcp plain input mismatch");
@@ -198,6 +204,48 @@ void test_hevm_binary_translates_supported_ops()
     require(result.schedule.ops[4].outputs[0].id == 5, "HEVM rescale output mismatch");
     require(result.schedule.ops[5].kind == MgpuOpKind::Download, "HEVM result op mismatch");
     require(result.schedule.ops[5].inputs[0].id == 5, "HEVM result input mismatch");
+}
+
+void test_hevm_binary_translates_rotate_attributes()
+{
+    const std::string hevm = make_hevm_binary(
+        1, 1, 2, 0, { 1 },
+        {
+            HevmOpRecord{ 1, 1, 0, static_cast<std::uint16_t>(-3) },
+        });
+
+    const DacapoAdapterResult result = translate_dacapo_schedule(
+        hevm, DacapoAdapterOptions{ DacapoInputFormat::HevmBinary });
+
+    require(result.ok(), "HEVM rotate should translate:\n" + result.format_diagnostics());
+    require(result.schedule.ops.size() == 3, "HEVM rotate op count mismatch");
+    require(result.schedule.ops[1].kind == MgpuOpKind::Rotate, "HEVM rotate kind mismatch");
+    require(result.schedule.ops[1].inputs[0].id == 1, "HEVM rotate input mismatch");
+    require(result.schedule.ops[1].outputs[0].id == 2, "HEVM rotate output mismatch");
+    require(
+        result.schedule.ops[1].integer_attributes.at("rotate_step") == -3,
+        "HEVM rotate_step mismatch");
+}
+
+void test_hevm_binary_translates_bootstrap_target_level()
+{
+    const std::string hevm = make_hevm_binary(
+        1, 1, 2, 0, { 1 },
+        {
+            HevmOpRecord{ 10, 1, 0, 6 },
+        });
+
+    const DacapoAdapterResult result = translate_dacapo_schedule(
+        hevm, DacapoAdapterOptions{ DacapoInputFormat::HevmBinary });
+
+    require(result.ok(), "HEVM bootstrap should translate:\n" + result.format_diagnostics());
+    require(result.schedule.ops.size() == 3, "HEVM bootstrap op count mismatch");
+    require(
+        result.schedule.ops[1].kind == MgpuOpKind::BootstrapFallback,
+        "HEVM bootstrap kind mismatch");
+    require(
+        result.schedule.ops[1].integer_attributes.at("target_level") == 6,
+        "HEVM bootstrap target level mismatch");
 }
 
 void test_hevm_binary_reports_unsupported_opcode()
@@ -249,6 +297,8 @@ int main()
         test_json_format_translates_internal_schedule();
         test_json_format_reports_parse_diagnostics();
         test_hevm_binary_translates_supported_ops();
+        test_hevm_binary_translates_rotate_attributes();
+        test_hevm_binary_translates_bootstrap_target_level();
         test_hevm_binary_reports_unsupported_opcode();
         test_hevm_binary_reports_bad_magic();
         test_unknown_dacapo_format_does_not_guess();

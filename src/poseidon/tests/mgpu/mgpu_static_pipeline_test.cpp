@@ -4,6 +4,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -22,6 +23,15 @@ MgpuOp op(
     std::vector<MgpuValueRef> outputs)
 {
     return MgpuOp{ kind, device_id, std::move(inputs), std::move(outputs), {} };
+}
+
+MgpuOp op_with_attrs(
+    MgpuOpKind kind, int device_id, std::vector<MgpuValueRef> inputs,
+    std::vector<MgpuValueRef> outputs, std::unordered_map<std::string, std::int64_t> attrs)
+{
+    MgpuOp result{ kind, device_id, std::move(inputs), std::move(outputs), {} };
+    result.integer_attributes = std::move(attrs);
+    return result;
 }
 
 void require(bool condition, const std::string &message)
@@ -107,6 +117,28 @@ void test_pipeline_places_unassigned_ops_before_copy_insertion()
     }
 }
 
+void test_pipeline_preserves_integer_attributes()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, kUnassignedDevice, {}, { value(1) }));
+    schedule.ops.push_back(op_with_attrs(
+        MgpuOpKind::Rotate, kUnassignedDevice, { value(1) }, { value(2) },
+        { { "rotate_step", 5 } }));
+    schedule.ops.push_back(op(MgpuOpKind::Download, kUnassignedDevice, { value(2) }, {}));
+
+    StaticSchedulePipelineOptions options;
+    options.device_count = 2;
+    options.placement.default_device = 1;
+    options.emit_debug_dump = true;
+
+    const StaticSchedulePipelineResult result = prepare_static_schedule(schedule, options);
+    require(result.ok(), "pipeline failed:\n" + result.format_diagnostics());
+    require(
+        result.schedule.ops[1].integer_attributes.at("rotate_step") == 5,
+        "pipeline should preserve rotate_step");
+    require_contains(result.debug_dump, "attrs={rotate_step=5}");
+}
+
 void test_pipeline_prepares_dacapo_json_input()
 {
     const char *json = R"json(
@@ -159,6 +191,7 @@ int main()
         test_pipeline_inserts_copies_and_dumps();
         test_pipeline_reports_copy_insertion_errors();
         test_pipeline_places_unassigned_ops_before_copy_insertion();
+        test_pipeline_preserves_integer_attributes();
         test_pipeline_prepares_dacapo_json_input();
         test_pipeline_reports_dacapo_adapter_errors();
     }

@@ -5,6 +5,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -23,6 +24,15 @@ MgpuOp op(
     std::vector<MgpuValueRef> outputs, std::string debug_name = {})
 {
     return MgpuOp{ kind, device_id, std::move(inputs), std::move(outputs), std::move(debug_name) };
+}
+
+MgpuOp op_with_attrs(
+    MgpuOpKind kind, int device_id, std::vector<MgpuValueRef> inputs,
+    std::vector<MgpuValueRef> outputs, std::unordered_map<std::string, std::int64_t> attrs)
+{
+    MgpuOp result{ kind, device_id, std::move(inputs), std::move(outputs), {} };
+    result.integer_attributes = std::move(attrs);
+    return result;
 }
 
 void require(bool condition, const std::string &message)
@@ -115,6 +125,20 @@ void test_add_plain_schedule()
         dump_schedule(schedule), "#2 [%3] = mgpu.add_plain device=0 inputs=[%1, %2]");
 }
 
+void test_integer_attribute_dump()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, 0, {}, { value(1) }));
+    schedule.ops.push_back(op_with_attrs(
+        MgpuOpKind::Rotate, 0, { value(1) }, { value(2) },
+        { { "rotate_step", -3 }, { "level", 4 } }));
+
+    const std::string dumped = dump_schedule(schedule);
+    require_contains(
+        dumped,
+        "#1 [%2] = mgpu.rotate device=0 inputs=[%1] attrs={level=4, rotate_step=-3}");
+}
+
 void test_invalid_device()
 {
     MgpuSchedule schedule;
@@ -165,6 +189,7 @@ int main()
         test_dump();
         test_valid_schedule();
         test_add_plain_schedule();
+        test_integer_attribute_dump();
         test_invalid_device();
         test_missing_input();
         test_missing_copy();
