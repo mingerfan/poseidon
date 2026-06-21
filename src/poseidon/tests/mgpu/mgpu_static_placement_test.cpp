@@ -169,6 +169,38 @@ void test_rejects_duplicate_compute_devices()
     require_contains(result.format_diagnostics(), "duplicate compute device 1");
 }
 
+void test_places_download_on_explicit_download_device()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, kUnassignedDevice, {}, { value(1) }));
+    schedule.ops.push_back(op(MgpuOpKind::Rescale, kUnassignedDevice, { value(1) }, { value(2) }));
+    schedule.ops.push_back(op(MgpuOpKind::Download, kUnassignedDevice, { value(2) }, {}));
+
+    StaticPlacementOptions options;
+    options.device_count = 2;
+    options.default_device = 0;
+    options.policy = StaticPlacementPolicy::RoundRobinCompute;
+    options.compute_devices = { 1 };
+    options.download_device = 0;
+
+    const StaticPlacementResult result = place_static_schedule(schedule, options);
+    require(result.ok(), "download placement failed:\n" + result.format_diagnostics());
+    require(result.schedule.ops[0].device_id == 0, "upload should use default device");
+    require(result.schedule.ops[1].device_id == 1, "compute should use explicit compute device");
+    require(result.schedule.ops[2].device_id == 0, "download should use explicit download device");
+}
+
+void test_rejects_invalid_download_device()
+{
+    StaticPlacementOptions options;
+    options.device_count = 2;
+    options.download_device = 2;
+
+    const StaticPlacementResult result = place_static_schedule(MgpuSchedule{}, options);
+    require(!result.ok(), "invalid download device should fail placement");
+    require_contains(result.format_diagnostics(), "invalid download device 2");
+}
+
 void test_unassigned_copy_is_diagnostic()
 {
     MgpuSchedule schedule;
@@ -211,6 +243,8 @@ int main()
         test_round_robin_compute_uses_explicit_compute_device_order();
         test_rejects_invalid_compute_devices();
         test_rejects_duplicate_compute_devices();
+        test_places_download_on_explicit_download_device();
+        test_rejects_invalid_download_device();
         test_unassigned_copy_is_diagnostic();
         test_invalid_existing_device_is_diagnostic();
     }

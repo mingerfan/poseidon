@@ -3,6 +3,7 @@
 #include "poseidon/mgpu/ir/schedule.h"
 
 #include <cstddef>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -24,6 +25,7 @@ struct StaticPlacementOptions
     StaticPlacementPolicy policy = StaticPlacementPolicy::SingleDevice;
     bool preserve_existing_devices = true;
     std::vector<int> compute_devices;
+    std::optional<int> download_device;
 };
 
 struct StaticPlacementDiagnostic

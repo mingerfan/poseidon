@@ -146,6 +146,25 @@ bool validate_compute_devices(StaticPlacementResult &result, const StaticPlaceme
     return true;
 }
 
+bool validate_download_device(
+    StaticPlacementResult &result, const StaticPlacementOptions &options)
+{
+    if (!options.download_device.has_value())
+    {
+        return true;
+    }
+    if (is_valid_device(*options.download_device, options.device_count))
+    {
+        return true;
+    }
+
+    std::ostringstream stream;
+    stream << "invalid download device " << *options.download_device
+           << " for device_count " << options.device_count;
+    add_diagnostic(result, 0, stream.str());
+    return false;
+}
+
 int choose_unassigned_device(
     StaticPlacementResult &result, const std::unordered_map<ValueId, ValueState> &values,
     std::size_t op_index, const MgpuOp &op, const StaticPlacementOptions &options,
@@ -161,10 +180,18 @@ int choose_unassigned_device(
         if (!op.inputs.empty())
         {
             const ValueState *state = lookup_value(result, values, op_index, op.inputs[0].id);
+            if (options.download_device.has_value())
+            {
+                return *options.download_device;
+            }
             if (state != nullptr)
             {
                 return state->device_id;
             }
+        }
+        if (options.download_device.has_value())
+        {
+            return *options.download_device;
         }
         return options.default_device;
     }
@@ -237,6 +264,10 @@ StaticPlacementResult place_static_schedule(
         return result;
     }
     if (!validate_compute_devices(result, options))
+    {
+        return result;
+    }
+    if (!validate_download_device(result, options))
     {
         return result;
     }

@@ -206,6 +206,40 @@ void test_pipeline_round_robin_uses_explicit_compute_device_order()
             "second compute should use second explicit compute device");
 }
 
+void test_pipeline_inserts_copy_to_explicit_download_device()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, kUnassignedDevice, {}, { value(1) }));
+    schedule.ops.push_back(op(MgpuOpKind::Rescale, kUnassignedDevice, { value(1) }, { value(2) }));
+    schedule.ops.push_back(op(MgpuOpKind::Download, kUnassignedDevice, { value(2) }, {}));
+
+    StaticSchedulePipelineOptions options;
+    options.device_count = 2;
+    options.placement.default_device = 0;
+    options.placement.policy = StaticPlacementPolicy::RoundRobinCompute;
+    options.placement.compute_devices = { 1 };
+    options.placement.download_device = 0;
+
+    const StaticSchedulePipelineResult result = prepare_static_schedule(schedule, options);
+    require(result.ok(), "pipeline failed:\n" + result.format_diagnostics());
+    require(result.schedule.ops.size() == 5, "expected compute and download copies");
+    require(result.schedule.ops[0].kind == MgpuOpKind::UploadCipher,
+            "first op should upload input");
+    require(result.schedule.ops[0].device_id == 0, "upload should use default device");
+    require(result.schedule.ops[1].kind == MgpuOpKind::CopyCipher,
+            "compute should receive copied input");
+    require(result.schedule.ops[1].device_id == 1, "compute input copy should target device 1");
+    require(result.schedule.ops[2].kind == MgpuOpKind::Rescale,
+            "compute should follow its input copy");
+    require(result.schedule.ops[2].device_id == 1, "compute should run on device 1");
+    require(result.schedule.ops[3].kind == MgpuOpKind::CopyCipher,
+            "download should receive copied result");
+    require(result.schedule.ops[3].device_id == 0, "download copy should target device 0");
+    require(result.schedule.ops[4].kind == MgpuOpKind::Download,
+            "download should follow result copy");
+    require(result.schedule.ops[4].device_id == 0, "download should run on device 0");
+}
+
 void test_pipeline_preserves_integer_attributes()
 {
     MgpuSchedule schedule;
@@ -410,6 +444,7 @@ int main()
         test_pipeline_places_unassigned_ops_before_copy_insertion();
         test_pipeline_round_robin_compute_starts_at_default_device();
         test_pipeline_round_robin_uses_explicit_compute_device_order();
+        test_pipeline_inserts_copy_to_explicit_download_device();
         test_pipeline_preserves_integer_attributes();
         test_pipeline_prepares_dacapo_json_input();
         test_pipeline_prepares_hevm_binary_input();
