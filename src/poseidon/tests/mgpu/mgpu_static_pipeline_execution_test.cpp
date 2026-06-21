@@ -1,6 +1,6 @@
 #include "poseidon/mgpu/compiler/static_schedule_pipeline.h"
-#include "poseidon/mgpu/runtime/comm_schedule_handler.h"
 #include "poseidon/mgpu/runtime/io_binding_handler.h"
+#include "poseidon/mgpu/runtime/static_schedule_executor.h"
 #include "poseidon/tests/mgpu/hevm_test_utils.h"
 
 #include <cstdint>
@@ -206,12 +206,11 @@ void test_static_hevm_pipeline_executes_through_interpreter_handlers()
 
     ExpressionComputeHandler compute;
     RecordingGpuComm comm;
-    CopyDispatchingScheduleHandler copy_handler(comm, &compute);
-    IoBindingScheduleHandler io(&copy_handler);
+    IoBindingScheduleHandler io(&compute);
     bind_uploads(pipeline.schedule, io);
 
-    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 2 });
-    const ScheduleExecutionResult execution = interpreter.run(pipeline.schedule, io);
+    StaticScheduleExecutor executor(comm, io, StaticScheduleExecutorOptions{ 2 });
+    const ScheduleExecutionResult execution = executor.run(pipeline.schedule);
 
     require(execution.ok(), "interpreter failed:\n" + execution.format_errors());
     require(comm.requests.size() == 8, "expected eight explicit copy requests");

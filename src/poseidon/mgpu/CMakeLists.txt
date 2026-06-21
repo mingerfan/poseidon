@@ -13,6 +13,7 @@ add_library(poseidon_mgpu STATIC
     runtime/io_binding_handler.cpp
     runtime/object_store.cpp
     runtime/schedule_interpreter.cpp
+    runtime/static_schedule_executor.cpp
 )
 
 target_include_directories(poseidon_mgpu

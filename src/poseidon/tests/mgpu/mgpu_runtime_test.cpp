@@ -1,4 +1,5 @@
 #include "poseidon/mgpu/runtime/schedule_interpreter.h"
+#include "poseidon/mgpu/runtime/static_schedule_executor.h"
 
 #include <cstdlib>
 #include <iostream>
@@ -109,6 +110,18 @@ public:
     }
 };
 
+class ReturningGpuComm final : public GpuComm
+{
+public:
+    std::shared_ptr<void> copy(const GpuCommCopyRequest &request) override
+    {
+        requests.push_back(request);
+        return request.source_object;
+    }
+
+    std::vector<GpuCommCopyRequest> requests;
+};
+
 MgpuSchedule make_single_device_schedule()
 {
     MgpuSchedule schedule;
@@ -215,6 +228,48 @@ void test_handler_failure_stops_execution()
     require_contains(result.format_errors(), "injected handler failure");
 }
 
+void test_static_schedule_executor_routes_copies_to_comm()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, 0, {}, { value(1) }));
+    schedule.ops.push_back(op(MgpuOpKind::CopyCipher, 1, { value(1) }, { value(2) }));
+    schedule.ops.push_back(op(MgpuOpKind::Download, 1, { value(2) }, {}));
+
+    ReturningGpuComm comm;
+    ObjectDefiningHandler handler;
+    StaticScheduleExecutor executor(comm, handler, StaticScheduleExecutorOptions{ 2 });
+
+    const ScheduleExecutionResult result = executor.run(schedule);
+
+    require(result.ok(), "static executor should run copy schedule:\n" + result.format_errors());
+    require(comm.requests.size() == 1, "copy should be dispatched through comm");
+    require(comm.requests[0].source_id == 1, "comm source id mismatch");
+    require(comm.requests[0].destination_id == 2, "comm destination id mismatch");
+    require(comm.requests[0].source_device == 0, "comm source device mismatch");
+    require(comm.requests[0].destination_device == 1, "comm destination device mismatch");
+    require(result.object_store.at(2).device_id == 1, "copied object should land on destination");
+    require(result.object_store.has_object(2), "copied object handle should be retained");
+}
+
+void test_static_schedule_executor_reports_comm_errors()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, 0, {}, { value(1) }));
+    schedule.ops.push_back(op(MgpuOpKind::CopyCipher, 1, { value(1) }, { value(2) }));
+    schedule.ops.push_back(op(MgpuOpKind::Download, 1, { value(2) }, {}));
+
+    SameDeviceGpuComm comm;
+    ObjectDefiningHandler handler;
+    StaticScheduleExecutor executor(comm, handler, StaticScheduleExecutorOptions{ 2 });
+
+    const ScheduleExecutionResult result = executor.run(schedule);
+
+    require(!result.ok(), "same-device comm should reject executor cross-device copy");
+    require_contains(result.format_errors(), "requires a multi-GPU communication backend");
+    require(result.object_store.contains(1), "upload before failed copy should be retained");
+    require(!result.object_store.contains(2), "failed copy output should not be retained");
+}
+
 }  // namespace
 
 int main()
@@ -226,6 +281,8 @@ int main()
         test_interpreter_preserves_handler_defined_objects();
         test_interpreter_rejects_invalid_schedule_before_execution();
         test_handler_failure_stops_execution();
+        test_static_schedule_executor_routes_copies_to_comm();
+        test_static_schedule_executor_reports_comm_errors();
     }
     catch (const std::exception &ex)
     {
