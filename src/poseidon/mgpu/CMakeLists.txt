@@ -4,6 +4,7 @@ add_library(poseidon_mgpu STATIC
     comm/gpu_object_copy.cpp
     comm/inter_node_transport.cpp
     comm/materialized_gpu_comm.cpp
+    comm/planned_materialized_gpu_comm.cpp
     comm/routed_object_copy.cpp
     comm/topology.cpp
     compiler/copy_insertion.cpp
@@ -216,6 +217,10 @@ if(POSEIDON_BUILD_MGPU_TESTS)
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_materialized_comm_test.cpp
     )
 
+    add_executable(poseidon_mgpu_planned_materialized_comm_tests
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_planned_materialized_comm_test.cpp
+    )
+
     add_executable(poseidon_mgpu_dacapo_adapter_tests
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_dacapo_adapter_test.cpp
     )
@@ -330,6 +335,11 @@ if(POSEIDON_BUILD_MGPU_TESTS)
     )
 
     target_link_libraries(poseidon_mgpu_materialized_comm_tests
+        PRIVATE
+            poseidon_mgpu
+    )
+
+    target_link_libraries(poseidon_mgpu_planned_materialized_comm_tests
         PRIVATE
             poseidon_mgpu
     )
@@ -467,6 +477,11 @@ if(POSEIDON_BUILD_MGPU_TESTS)
     add_test(
         NAME poseidon_mgpu_materialized_comm_tests
         COMMAND poseidon_mgpu_materialized_comm_tests
+    )
+
+    add_test(
+        NAME poseidon_mgpu_planned_materialized_comm_tests
+        COMMAND poseidon_mgpu_planned_materialized_comm_tests
     )
 
     add_test(

@@ -34,6 +34,7 @@
 | `PoseidonGpuScheduleHandler` | Optional CUDA/RMM-gated executor that uploads CPU Poseidon objects, calls existing single-GPU `GpuEvaluator`, and downloads scheduled results. |
 | `GpuComm` | Define object-level copy/clone operations between devices and return destination object handles. |
 | `MaterializedGpuComm` | Bridge logical copy requests to materialized full-object buffer copy requests. |
+| `PlannedMaterializedGpuComm` | Bridge static communication-plan routes to materialized full-object copies and route-aware local/inter-node dispatch. |
 | `PoseidonGpuObjectCopyMaterializer` | Optional CUDA/RMM-gated bridge from Poseidon GPU objects to full-object copy buffers. |
 | `CudaPeerComm` | Implement same-device copy, CUDA peer copy, and host-staging fallback as a materialized object-copy backend. |
 | CUDA peer probe | Optional CUDA/RMM-free diagnostic that reports visible devices and CUDA peer-access matrix before single-node 8-GPU execution. |
@@ -297,6 +298,11 @@ Dacapo artifact debugging:
   full-object request matches the route, dispatches same-device/CUDA-peer
   routes to the local backend, and dispatches inter-node routes through
   `InterNodeTransportBackend`.
+- `PlannedMaterializedGpuComm` is the static-plan adapter for execution. It
+  looks up routes from a precomputed `MgpuCommunicationPlan`, rejects invalid or
+  ambiguous plans, validates each runtime copy request against the planned
+  route, then materializes the full-object copy and calls
+  `RoutedGpuObjectCopyBackend`.
 - The dump tool and external HEVM CTest now expose a unified
   `poseidon_gpu_execution_preflight` result. Treat it as the CPU-only execution
   gate that combines schedule verification, Poseidon GPU preflight,
@@ -357,6 +363,7 @@ ResNet20 artifact runbook:
 | IO binding tests | Missing upload bindings, kind mismatches, fallback compute output, and metadata-only downloads must fail clearly. |
 | Copy tests | Same-device copy always runs; cross-device copy runs only when at least two GPUs are visible. |
 | Materialized copy tests | Object-handle copy dispatch validates one-buffer full-object copy requests. |
+| Planned materialized copy tests | CPU-only tests verify that static communication-plan routes control materialized local/inter-node dispatch and reject missing or mismatched routes before backend calls. |
 | GPU runtime smoke tests | Optional CUDA/RMM tests cover upload/download, same-device Add, and a cross-device CopyCipher+Add schedule when at least two GPUs are visible. |
 | Static graph tests | Handwritten ResNet-like small graph verifies copy insertion and execution order. |
 | Placement configuration tests | Upload, compute-device list, and download placement must all trigger explicit copies when devices differ. |
