@@ -91,6 +91,13 @@ void test_hevm_binary_translates_supported_ops()
             test::HevmOpRecord{ 9, 0, 0, 0 },
             test::HevmOpRecord{ 7, 0, 0, 0 },
             test::HevmOpRecord{ 3, 0, 0, 0 },
+        },
+        test::HevmConfigMetadata{
+            { 45 },
+            { 12 },
+            { 40 },
+            { 8 },
+            16,
         });
 
     const DacapoAdapterResult result = translate_dacapo_schedule(
@@ -101,6 +108,18 @@ void test_hevm_binary_translates_supported_ops()
     require(result.schedule.ops[0].kind == MgpuOpKind::UploadCipher, "HEVM arg op mismatch");
     require(result.schedule.ops[0].outputs[0].id == 1, "HEVM arg value id mismatch");
     require(result.schedule.ops[0].device_id == -1, "HEVM ops should be unassigned");
+    require(
+        result.schedule.ops[0].integer_attributes.at("hevm_arg_index") == 0,
+        "HEVM arg index metadata mismatch");
+    require(
+        result.schedule.ops[0].integer_attributes.at("hevm_arg_scale") == 45,
+        "HEVM arg scale metadata mismatch");
+    require(
+        result.schedule.ops[0].integer_attributes.at("hevm_arg_level") == 12,
+        "HEVM arg level metadata mismatch");
+    require(
+        result.schedule.ops[0].integer_attributes.at("hevm_init_level") == 16,
+        "HEVM init level metadata mismatch");
     require(result.schedule.ops[1].kind == MgpuOpKind::UploadPlain, "HEVM encode op mismatch");
     require(result.schedule.ops[1].outputs[0].id == 2, "HEVM plain value id mismatch");
     require(
@@ -122,6 +141,18 @@ void test_hevm_binary_translates_supported_ops()
     require(result.schedule.ops[4].outputs[0].id == 5, "HEVM rescale output mismatch");
     require(result.schedule.ops[5].kind == MgpuOpKind::Download, "HEVM result op mismatch");
     require(result.schedule.ops[5].inputs[0].id == 5, "HEVM result input mismatch");
+    require(
+        result.schedule.ops[5].integer_attributes.at("hevm_result_index") == 0,
+        "HEVM result index metadata mismatch");
+    require(
+        result.schedule.ops[5].integer_attributes.at("hevm_result_register") == 0,
+        "HEVM result register metadata mismatch");
+    require(
+        result.schedule.ops[5].integer_attributes.at("hevm_result_scale") == 40,
+        "HEVM result scale metadata mismatch");
+    require(
+        result.schedule.ops[5].integer_attributes.at("hevm_result_level") == 8,
+        "HEVM result level metadata mismatch");
 }
 
 void test_hevm_binary_translates_rotate_attributes()
