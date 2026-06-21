@@ -70,6 +70,10 @@ if(POSEIDON_BUILD_MGPU_TESTS)
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_static_pipeline_test.cpp
     )
 
+    add_executable(poseidon_mgpu_static_pipeline_execution_tests
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_static_pipeline_execution_test.cpp
+    )
+
     target_link_libraries(poseidon_mgpu_ir_tests
         PRIVATE
             poseidon_mgpu
@@ -121,6 +125,11 @@ if(POSEIDON_BUILD_MGPU_TESTS)
     )
 
     target_link_libraries(poseidon_mgpu_static_pipeline_tests
+        PRIVATE
+            poseidon_mgpu
+    )
+
+    target_link_libraries(poseidon_mgpu_static_pipeline_execution_tests
         PRIVATE
             poseidon_mgpu
     )
@@ -178,6 +187,11 @@ if(POSEIDON_BUILD_MGPU_TESTS)
     add_test(
         NAME poseidon_mgpu_static_pipeline_tests
         COMMAND poseidon_mgpu_static_pipeline_tests
+    )
+
+    add_test(
+        NAME poseidon_mgpu_static_pipeline_execution_tests
+        COMMAND poseidon_mgpu_static_pipeline_execution_tests
     )
 endif()
 
