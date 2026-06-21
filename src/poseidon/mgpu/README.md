@@ -396,7 +396,10 @@ paths, writes `POSEIDON_MGPU_RESNET20_PREFLIGHT_JSON` and
 `POSEIDON_MGPU_RESNET20_SCHEDULE_DUMP` when those variables are set, and
 otherwise uses temporary outputs. Set `POSEIDON_MGPU_RESNET20_DACAPO_ROOT` or
 `DACAPO_ROOT` for real artifacts. The mock variant covers the wrapper on
-machines without real Dacapo output.
+machines without real Dacapo output. During early artifact bring-up, set
+`POSEIDON_MGPU_RESNET20_ALLOW_NOT_READY=1` to treat a not-ready dump-tool
+result as a successful diagnostic collection as long as the JSON report was
+written with `execution_gate.status = "not_ready"`.
 
 ## Communication Topology Planning
 

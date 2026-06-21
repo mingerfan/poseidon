@@ -170,14 +170,15 @@ fs::path constants_path(const fs::path &dacapo_root)
     return dacapo_root / "examples" / "traced" / "_hecate_ResNet.cst";
 }
 
-std::string make_mock_hevm_binary()
+std::string make_mock_hevm_binary(bool unsupported_opcode)
 {
+    const std::uint16_t final_opcode = unsupported_opcode ? 4 : 9;
     return poseidon::mgpu::test::make_hevm_binary(
         1, 1, 2, 1, { 1 },
         {
             poseidon::mgpu::test::HevmOpRecord{
                 0, 0, 0, poseidon::mgpu::test::make_hevm_encode_attr(2, 20) },
-            poseidon::mgpu::test::HevmOpRecord{ 9, 1, 0, 0 },
+            poseidon::mgpu::test::HevmOpRecord{ final_opcode, 1, 0, 0 },
         },
         poseidon::mgpu::test::HevmConfigMetadata{
             { 20 },
@@ -200,9 +201,11 @@ std::string make_mock_constant_file()
     return output;
 }
 
-void create_mock_resnet20_artifacts(const fs::path &dacapo_root)
+void create_mock_resnet20_artifacts(
+    const fs::path &dacapo_root, bool unsupported_opcode)
 {
-    write_binary_file(hevm_path(dacapo_root), make_mock_hevm_binary());
+    write_binary_file(
+        hevm_path(dacapo_root), make_mock_hevm_binary(unsupported_opcode));
     write_binary_file(constants_path(dacapo_root), make_mock_constant_file());
 }
 
@@ -252,14 +255,18 @@ int main(int argc, char **argv)
         require(argc == 2, "expected Dacapo HEVM dump tool path");
         const bool use_mock =
             parse_bool(get_env("POSEIDON_MGPU_RESNET20_MOCK_ARTIFACTS"));
+        const bool use_unsupported_mock =
+            parse_bool(get_env("POSEIDON_MGPU_RESNET20_UNSUPPORTED_MOCK_ARTIFACTS"));
+        const bool allow_not_ready =
+            parse_bool(get_env("POSEIDON_MGPU_RESNET20_ALLOW_NOT_READY"));
         std::optional<TempDir> mock_root;
         fs::path dacapo_root;
 
-        if (use_mock)
+        if (use_mock || use_unsupported_mock)
         {
             mock_root.emplace();
             dacapo_root = mock_root->root();
-            create_mock_resnet20_artifacts(dacapo_root);
+            create_mock_resnet20_artifacts(dacapo_root, use_unsupported_mock);
         }
         else if (const char *root = get_env("POSEIDON_MGPU_RESNET20_DACAPO_ROOT"))
         {
@@ -290,13 +297,24 @@ int main(int argc, char **argv)
         const std::string command =
             build_command(argv[1], dacapo_root, summary_path, schedule_path);
         const int exit_code = std::system(command.c_str());
-        require(exit_code == 0, "ResNet20 dump preflight failed: " + command);
 
         const std::string summary = read_text_file(summary_path);
-        const std::string schedule = read_text_file(schedule_path);
         require_contains(summary, "\"execution_gate\"");
-        require_contains(summary, "\"status\": \"ready\"");
         require_contains(summary, "\"hevm_opcode_summary\"");
+        if (exit_code != 0)
+        {
+            require(
+                allow_not_ready,
+                "ResNet20 dump preflight failed: " + command +
+                    "\nsummary:\n" + summary);
+            require_contains(summary, "\"status\": \"not_ready\"");
+            std::cout << "resnet20_dump_preflight_not_ready: " << summary_path
+                      << '\n';
+            return EXIT_SUCCESS;
+        }
+
+        const std::string schedule = read_text_file(schedule_path);
+        require_contains(summary, "\"status\": \"ready\"");
         require_contains(summary, "\"poseidon_gpu_execution_preflight\"");
         require_contains(schedule, "mgpu.schedule");
         std::cout << "resnet20_dump_preflight_json: " << summary_path << '\n';
