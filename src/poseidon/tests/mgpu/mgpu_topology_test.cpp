@@ -109,6 +109,109 @@ void test_communication_plan_reports_bad_schedule()
     require_contains(plan.format_diagnostics(), "unknown copy input value %99");
 }
 
+void test_communication_plan_routes_plaintext_copies()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadPlain, 0, {}, { value(10) }));
+    schedule.ops.push_back(
+        op(MgpuOpKind::CopyPlain, 1, { value(10) }, { value(11) }));
+    schedule.ops.push_back(op(MgpuOpKind::Download, 1, { value(11) }, {}));
+
+    const MgpuCommunicationPlan plan =
+        plan_schedule_communication(schedule, make_single_node_topology(2));
+
+    require(plan.ok(), "plaintext copy plan should pass:\n" + plan.format_diagnostics());
+    require(plan.routes.size() == 1, "plaintext copy route count mismatch");
+    require(
+        plan.routes[0].kind == MgpuValueKind::Plaintext,
+        "plaintext copy route kind mismatch");
+    require(
+        plan.routes[0].transport == MgpuTransportKind::CudaPeer,
+        "plaintext copy route transport mismatch");
+
+    const std::string text = dump_communication_plan(plan);
+    require_contains(text, "copy %10 -> %11 plaintext device 0 -> 1");
+
+    const std::string json = communication_plan_to_json(plan);
+    require_contains(json, "\"kind\": \"plaintext\"");
+    require_contains(json, "\"source_id\": 10");
+    require_contains(json, "\"destination_id\": 11");
+}
+
+void test_communication_plan_reports_copy_kind_mismatch()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadPlain, 0, {}, { value(1) }));
+    schedule.ops.push_back(
+        op(MgpuOpKind::CopyCipher, 1, { value(1) }, { value(2) }));
+
+    const MgpuCommunicationPlan plan =
+        plan_schedule_communication(schedule, make_single_node_topology(2));
+
+    require(!plan.ok(), "copy kind mismatch should fail planning");
+    require(plan.routes.empty(), "copy kind mismatch should not produce a route");
+    require_contains(
+        plan.format_diagnostics(),
+        "copy input value %1 expected ciphertext, got plaintext");
+}
+
+void test_communication_plan_reports_copy_arity_errors()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, 0, {}, { value(1) }));
+    schedule.ops.push_back(
+        op(MgpuOpKind::CopyCipher, 1, { value(1), value(1) }, { value(2) }));
+
+    const MgpuCommunicationPlan plan =
+        plan_schedule_communication(schedule, make_single_node_topology(2));
+
+    require(!plan.ok(), "copy arity mismatch should fail planning");
+    require(plan.routes.empty(), "copy arity mismatch should not produce a route");
+    require_contains(
+        plan.format_diagnostics(),
+        "copy op must have exactly one input and one output");
+}
+
+void test_communication_plan_reports_missing_route_devices()
+{
+    MgpuSchedule missing_source;
+    missing_source.ops.push_back(
+        op(MgpuOpKind::UploadCipher, 3, {}, { value(1) }));
+    missing_source.ops.push_back(
+        op(MgpuOpKind::CopyCipher, 1, { value(1) }, { value(2) }));
+
+    const MgpuCommunicationPlan missing_source_plan =
+        plan_schedule_communication(missing_source, make_single_node_topology(2));
+
+    require(!missing_source_plan.ok(), "missing source device should fail planning");
+    require(
+        missing_source_plan.routes.empty(),
+        "missing source device should not produce a route");
+    require_contains(
+        missing_source_plan.format_diagnostics(),
+        "copy source device 3 is not present in topology");
+
+    MgpuSchedule missing_destination;
+    missing_destination.ops.push_back(
+        op(MgpuOpKind::UploadCipher, 0, {}, { value(1) }));
+    missing_destination.ops.push_back(
+        op(MgpuOpKind::CopyCipher, 3, { value(1) }, { value(2) }));
+
+    const MgpuCommunicationPlan missing_destination_plan =
+        plan_schedule_communication(
+            missing_destination, make_single_node_topology(2));
+
+    require(
+        !missing_destination_plan.ok(),
+        "missing destination device should fail planning");
+    require(
+        missing_destination_plan.routes.empty(),
+        "missing destination device should not produce a route");
+    require_contains(
+        missing_destination_plan.format_diagnostics(),
+        "copy destination device 3 is not present in topology");
+}
+
 void test_communication_plan_rejects_duplicate_logical_devices()
 {
     MgpuTopology topology;
@@ -163,6 +266,10 @@ int main()
         test_uniform_cluster_topology();
         test_communication_plan_classifies_routes();
         test_communication_plan_reports_bad_schedule();
+        test_communication_plan_routes_plaintext_copies();
+        test_communication_plan_reports_copy_kind_mismatch();
+        test_communication_plan_reports_copy_arity_errors();
+        test_communication_plan_reports_missing_route_devices();
         test_communication_plan_rejects_duplicate_logical_devices();
         test_communication_plan_rejects_duplicate_local_devices();
         test_communication_plan_rejects_negative_topology_ids();
