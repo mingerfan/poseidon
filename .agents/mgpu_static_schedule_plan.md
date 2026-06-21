@@ -209,6 +209,9 @@ Dacapo artifact debugging:
   leave repeatable diagnostics. The report includes a top-level
   `execution_gate` summary for scripts that need a single ready/not-ready
   decision plus gate-level diagnostics for concise failure summaries.
+- Keep a not-ready mock report test that does not enable hard `require_ready`;
+  it should validate that failed communication gates still produce durable
+  `execution_gate.diagnostics` on single-GPU development machines.
 - External artifact tests also accept `POSEIDON_MGPU_EXTERNAL_SCHEDULE_DUMP` to
   write the readable MLIR-like static schedule separately from stdout and the
   machine-readable report.

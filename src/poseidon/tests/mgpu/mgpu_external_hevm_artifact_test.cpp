@@ -329,6 +329,30 @@ void validate_report_json_file(
         report.at("execution_gate").at("ok").get<bool>() == readiness.ok(),
         "external report execution gate does not match readiness");
     require(
+        report.at("execution_gate").at("status").get<std::string>() ==
+            (readiness.ok() ? "ready" : "not_ready"),
+        "external report execution gate status mismatch");
+    if (readiness.ok())
+    {
+        require(
+            report.at("execution_gate").at("diagnostics").empty(),
+            "ready external report should not include gate diagnostics");
+    }
+    else
+    {
+        require(
+            !report.at("execution_gate").at("diagnostics").empty(),
+            "not-ready external report should include gate diagnostics");
+        require(
+            report.at("execution_gate")
+                    .at("diagnostics")
+                    .at(0)
+                    .at("message")
+                    .get<std::string>()
+                    .find(readiness.diagnostics.at(0).message) != std::string::npos,
+            "external report gate diagnostic should mirror readiness diagnostics");
+    }
+    require(
         report.at("execution_config").at("device_count").get<int>() ==
             config.pipeline.device_count,
         "external report device_count mismatch");

@@ -283,6 +283,11 @@ report and readable schedule dump from the external artifact CTest path,
 covering the same report builder used by the dump tool's `--summary-json` and
 `--write-summary-json` modes plus the CTest schedule-dump output path.
 
+`poseidon_mgpu_external_hevm_not_ready_report_mock_artifact_tests` writes a
+not-ready report without enabling the hard `require_ready` failure, so the
+top-level `execution_gate.diagnostics` path stays covered on single-GPU
+development machines.
+
 The dump tool can run the same preflight without CTest:
 
 ```bash
