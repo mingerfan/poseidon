@@ -29,6 +29,22 @@ void add_diagnostic(
         });
 }
 
+void add_plan_diagnostic(
+    MgpuCommunicationExecutionPreflight &preflight,
+    const MgpuCommunicationPlanDiagnostic &diagnostic)
+{
+    std::ostringstream stream;
+    stream << "communication plan op #" << diagnostic.op_index << ": "
+           << diagnostic.message;
+    preflight.diagnostics.push_back(MgpuCommunicationExecutionDiagnostic{
+        0,
+        MgpuTransportKind::SameDevice,
+        0,
+        0,
+        stream.str(),
+    });
+}
+
 bool route_supported(
     const MgpuCopyRoute &route,
     const MgpuCommunicationExecutionOptions &options)
@@ -119,6 +135,16 @@ MgpuCommunicationExecutionPreflight preflight_communication_execution(
     const MgpuCommunicationExecutionOptions &options)
 {
     MgpuCommunicationExecutionPreflight preflight;
+    if (!plan.ok())
+    {
+        for (const MgpuCommunicationPlanDiagnostic &diagnostic :
+             plan.diagnostics)
+        {
+            add_plan_diagnostic(preflight, diagnostic);
+        }
+        return preflight;
+    }
+
     for (std::size_t route_index = 0; route_index < plan.routes.size(); ++route_index)
     {
         const MgpuCopyRoute &route = plan.routes[route_index];

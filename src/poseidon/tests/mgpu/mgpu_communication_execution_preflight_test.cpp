@@ -103,6 +103,33 @@ void test_cluster_backend_accepts_all_routes()
     require_contains(json, "\"inter_node\": 1");
 }
 
+void test_invalid_communication_plan_fails_before_route_checks()
+{
+    MgpuCommunicationPlan plan = make_mixed_plan();
+    plan.diagnostics.push_back(
+        MgpuCommunicationPlanDiagnostic{ 7, "copy source device 9 is not present in topology" });
+
+    MgpuCommunicationExecutionOptions options;
+    options.cuda_peer_available = true;
+    options.inter_node_available = true;
+    const MgpuCommunicationExecutionPreflight preflight =
+        preflight_communication_execution(plan, options);
+
+    require(
+        !preflight.ok(),
+        "invalid communication plan should fail execution preflight");
+    require(preflight.same_device_routes == 0, "invalid plan should not count routes");
+    require(preflight.cuda_peer_routes == 0, "invalid plan should not count CUDA routes");
+    require(preflight.inter_node_routes == 0, "invalid plan should not count inter-node routes");
+    require(preflight.diagnostics.size() == 1, "expected one plan diagnostic");
+    require_contains(preflight.format_diagnostics(), "communication plan op #7");
+    require_contains(preflight.format_diagnostics(), "copy source device 9");
+
+    const std::string json = communication_execution_preflight_to_json(preflight);
+    require_contains(json, "\"ok\": false");
+    require_contains(json, "communication plan op #7");
+}
+
 }  // namespace
 
 int main()
@@ -112,6 +139,7 @@ int main()
         test_same_device_only_defaults();
         test_single_node_backend_accepts_cuda_peer();
         test_cluster_backend_accepts_all_routes();
+        test_invalid_communication_plan_fails_before_route_checks();
     }
     catch (const std::exception &ex)
     {
