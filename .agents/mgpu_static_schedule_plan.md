@@ -161,13 +161,17 @@ Dacapo artifact debugging:
 - The dump tool accepts `--hevm`, `--constants`, `--config`, `--devices`,
   `--default-device`, `--upload-device`, `--compute-devices`,
   `--download-device`, `--round-robin-compute`, `--summary-json`, and
-  `--write-summary-json <file>`, and `--no-schedule`.
+  `--write-summary-json <file>`, `--write-schedule <file>`, and
+  `--no-schedule`.
 - `--config <json>` loads placement, topology, preflight, and backend settings
   from the internal static schedule execution config. Later command-line
   placement/preflight/backend flags override the file so single-GPU, 8-GPU, and
   4x8 preview configs can be reused across artifacts.
 - Use the dump tool before running a real ResNet20 artifact to confirm op
   counts, HEVM I/O metadata, explicit copy counts, and device distribution.
+  For large artifacts, use `--write-summary-json` and `--write-schedule`
+  together so the CPU-only gate report and readable schedule dump are durable
+  without forcing the schedule into stdout.
 - The dump tool is CPU-side only; it must not link Dacapo/MLIR, CUDA runtime,
   RMM, or GPU evaluator code.
 - `poseidon_mgpu_external_hevm_artifact_tests` is a skipped-by-default CTest
@@ -286,7 +290,7 @@ ResNet20 artifact runbook:
 | Static graph tests | Handwritten ResNet-like small graph verifies copy insertion and execution order. |
 | Placement configuration tests | Upload, compute-device list, and download placement must all trigger explicit copies when devices differ. |
 | Static schedule config tests | CPU-only tests parse single-node 8-GPU and 4x8 cluster JSON configs, validate readiness defaults, and reject invalid placement/topology. |
-| Artifact dump tool smoke | Build the optional tool and run it on mock `.hevm + .cst` artifacts with upload/compute/download device options. |
+| Artifact dump tool smoke | Build the optional tool and run it on mock `.hevm + .cst` artifacts with upload/compute/download device options, durable JSON report output, and separate schedule-dump output. |
 | External artifact test | Skips by default; when env vars point at real ResNet20 `.hevm + .cst`, load artifacts, run placement/copy insertion, build HEVM I/O plan, and print schedule summaries. |
 | Rich mock artifact test | Generated `.hevm + .cst` covers rotate, ciphertext arithmetic, rescale, explicit copies, key preflight, and readiness gating without real ResNet20 artifacts. |
 | Poseidon GPU preflight tests | CPU-only checks report required comm/keys and unsupported GPU executor operations before attempting GPU execution. |

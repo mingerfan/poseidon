@@ -51,6 +51,23 @@ if(POSEIDON_BUILD_MGPU_TOOLS)
         PRIVATE
             poseidon_mgpu
     )
+
+    if(POSEIDON_BUILD_MGPU_TESTS)
+        add_executable(poseidon_mgpu_dacapo_hevm_dump_tool_tests
+            ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_dacapo_hevm_dump_tool_test.cpp
+        )
+
+        target_link_libraries(poseidon_mgpu_dacapo_hevm_dump_tool_tests
+            PRIVATE
+                poseidon_mgpu
+        )
+
+        add_test(
+            NAME poseidon_mgpu_dacapo_hevm_dump_tool_tests
+            COMMAND poseidon_mgpu_dacapo_hevm_dump_tool_tests
+                    $<TARGET_FILE:poseidon_mgpu_dacapo_hevm_dump>
+        )
+    endif()
 endif()
 
 if(POSEIDON_BUILD_MGPU_TESTS)

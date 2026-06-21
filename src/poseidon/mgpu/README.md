@@ -128,6 +128,7 @@ Then inspect the ResNet20 artifact without executing GPU operators:
   --require-ready \
   --summary-json \
   --write-summary-json /tmp/resnet20-mgpu-preflight.json \
+  --write-schedule /tmp/resnet20-mgpu-schedule.mlir \
   --no-schedule
 ```
 
@@ -283,6 +284,7 @@ poseidon_mgpu_dacapo_hevm_dump \
   --require-ready \
   --summary-json \
   --write-summary-json /tmp/model-mgpu-preflight.json \
+  --write-schedule /tmp/model-mgpu-schedule.mlir \
   --no-schedule
 ```
 
@@ -303,6 +305,11 @@ human-readable text output. The JSON report is produced by the shared
 `runtime/hevm_artifact_report.*` builder and contains artifact paths, effective
 execution config, schedule summary, HEVM I/O counts, opcode summary, readiness,
 communication diagnostics, and the aggregate Poseidon GPU execution preflight.
+
+Use `--write-schedule <file>` to save the readable MLIR-like static schedule
+without printing it to stdout or embedding it into JSON. This is the preferred
+mode for large ResNet20 artifacts: keep `--no-schedule` on stdout, write the
+JSON gate with `--write-summary-json`, and write the schedule dump separately.
 
 ## Communication Topology Planning
 

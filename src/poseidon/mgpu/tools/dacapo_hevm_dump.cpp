@@ -31,6 +31,7 @@ struct ToolOptions
     bool dump_schedule = true;
     bool summary_json = false;
     std::string summary_json_path;
+    std::string schedule_path;
 };
 
 std::string read_binary_file(const std::string &path);
@@ -58,6 +59,7 @@ void print_usage(std::ostream &stream)
            "[--devices-per-node N] "
            "[--summary-json] "
            "[--write-summary-json <file>] "
+           "[--write-schedule <file>] "
            "[--no-schedule]\n";
 }
 
@@ -252,6 +254,15 @@ ToolOptions parse_args(int argc, char **argv)
             options.summary_json_path = argv[i];
             continue;
         }
+        if (arg == "--write-schedule")
+        {
+            if (++i >= argc)
+            {
+                throw std::invalid_argument("missing value for --write-schedule");
+            }
+            options.schedule_path = argv[i];
+            continue;
+        }
         if (arg == "--poseidon-gpu-preflight")
         {
             options.config.poseidon_gpu_preflight = true;
@@ -400,7 +411,8 @@ ToolOptions parse_args(int argc, char **argv)
 StaticScheduleExecutionConfig effective_config(const ToolOptions &tool_options)
 {
     StaticScheduleExecutionConfig config = tool_options.config;
-    config.pipeline.emit_debug_dump = tool_options.dump_schedule;
+    config.pipeline.emit_debug_dump =
+        tool_options.dump_schedule || !tool_options.schedule_path.empty();
     return config;
 }
 
@@ -749,6 +761,10 @@ int main(int argc, char **argv)
         if (!tool_options.summary_json_path.empty())
         {
             write_text_file(tool_options.summary_json_path, *summary_json + "\n");
+        }
+        if (!tool_options.schedule_path.empty())
+        {
+            write_text_file(tool_options.schedule_path, artifacts.debug_dump);
         }
 
         if (tool_options.summary_json)
