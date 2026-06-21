@@ -300,7 +300,10 @@ covering the same report builder used by the dump tool's `--summary-json` and
 `poseidon_mgpu_external_hevm_not_ready_report_mock_artifact_tests` writes a
 not-ready report without enabling the hard `require_ready` failure, so the
 top-level `execution_gate.diagnostics` path stays covered on single-GPU
-development machines.
+development machines. Communication execution diagnostics in that top-level
+gate preserve `route_index`, `transport`, `source_device`, and
+`destination_device` so cluster bring-up scripts can identify missing backends
+without parsing nested preflight text.
 
 `poseidon_mgpu_external_hevm_failure_report_mock_artifact_tests` uses an
 unsupported HEVM opcode mock to verify that the external artifact CTest path

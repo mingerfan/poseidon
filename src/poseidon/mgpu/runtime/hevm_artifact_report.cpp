@@ -91,6 +91,24 @@ Json artifact_diagnostics_to_json(
     return root;
 }
 
+Json readiness_diagnostic_to_json(
+    const HevmArtifactReadinessDiagnostic &diagnostic)
+{
+    Json root{
+        { "stage", diagnostic.stage },
+        { "location", diagnostic.location },
+        { "message", diagnostic.message },
+    };
+    if (diagnostic.has_route)
+    {
+        root["route_index"] = diagnostic.route_index;
+        root["transport"] = to_string(diagnostic.transport);
+        root["source_device"] = diagnostic.source_device;
+        root["destination_device"] = diagnostic.destination_device;
+    }
+    return root;
+}
+
 bool artifact_read_succeeded(const DacapoHevmArtifactResult &artifacts)
 {
     for (const DacapoHevmArtifactDiagnostic &diagnostic : artifacts.diagnostics)
@@ -113,11 +131,7 @@ Json artifact_failure_gate_diagnostics_to_json(
         for (const HevmArtifactReadinessDiagnostic &diagnostic :
              input.hevm_artifact_readiness->diagnostics)
         {
-            root.push_back(Json{
-                { "stage", diagnostic.stage },
-                { "location", diagnostic.location },
-                { "message", diagnostic.message },
-            });
+            root.push_back(readiness_diagnostic_to_json(diagnostic));
         }
     }
     for (const DacapoHevmArtifactDiagnostic &diagnostic :
@@ -164,11 +178,7 @@ Json execution_gate_to_json(const HevmArtifactReportInput &input)
         for (const HevmArtifactReadinessDiagnostic &diagnostic :
              input.hevm_artifact_readiness->diagnostics)
         {
-            root["diagnostics"].push_back(Json{
-                { "stage", diagnostic.stage },
-                { "location", diagnostic.location },
-                { "message", diagnostic.message },
-            });
+            root["diagnostics"].push_back(readiness_diagnostic_to_json(diagnostic));
         }
     }
     else if (execution_preflight_evaluated)

@@ -291,6 +291,9 @@ Dacapo artifact debugging:
   every missing-backend diagnostic should include the route index, transport
   kind, source device, and destination device in JSON so cluster bring-up
   scripts can identify the exact missing route without parsing text.
+- HEVM readiness and artifact reports must preserve those communication route
+  fields in top-level `execution_gate.diagnostics`, not only in nested
+  preflight blocks.
 - Communication topology planning must reject ambiguous topologies before route
   generation. Logical device IDs are unique, non-negative identifiers; local
   device IDs are unique within each node; node and local IDs must be

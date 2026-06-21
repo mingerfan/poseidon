@@ -1,4 +1,5 @@
 #include "poseidon/mgpu/runtime/hevm_artifact_readiness.h"
+#include "poseidon/util/json.h"
 
 #include <cstdlib>
 #include <iostream>
@@ -118,6 +119,30 @@ void test_preflight_diagnostics_are_propagated()
     require_contains(result.format_diagnostics(), "bootstrap fallback");
     require_contains(result.format_diagnostics(), "not present in topology");
     require_contains(result.format_diagnostics(), "inter-node communication backend");
+
+    const nlohmann::json json =
+        nlohmann::json::parse(hevm_artifact_readiness_to_json(result));
+    bool found_route_diagnostic = false;
+    for (const nlohmann::json &diagnostic : json.at("diagnostics"))
+    {
+        if (diagnostic.at("stage").get<std::string>() !=
+            "communication_execution_preflight")
+        {
+            continue;
+        }
+        found_route_diagnostic = true;
+        require(diagnostic.at("route_index").get<int>() == 1, "route index missing");
+        require(
+            diagnostic.at("transport").get<std::string>() == "inter_node",
+            "transport missing");
+        require(diagnostic.at("source_device").get<int>() == 1, "source device missing");
+        require(
+            diagnostic.at("destination_device").get<int>() == 8,
+            "destination device missing");
+    }
+    require(
+        found_route_diagnostic,
+        "communication execution diagnostic should keep route metadata");
 }
 
 void test_execution_preflight_diagnostics_are_propagated()

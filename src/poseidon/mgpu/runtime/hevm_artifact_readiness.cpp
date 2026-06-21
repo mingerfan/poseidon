@@ -24,6 +24,22 @@ void add_diagnostic(
     });
 }
 
+void add_communication_execution_diagnostic(
+    HevmArtifactReadinessResult &result,
+    const MgpuCommunicationExecutionDiagnostic &diagnostic)
+{
+    HevmArtifactReadinessDiagnostic readiness_diagnostic;
+    readiness_diagnostic.stage = "communication_execution_preflight";
+    readiness_diagnostic.location = diagnostic.route_index;
+    readiness_diagnostic.message = diagnostic.message;
+    readiness_diagnostic.has_route = true;
+    readiness_diagnostic.route_index = diagnostic.route_index;
+    readiness_diagnostic.transport = diagnostic.transport;
+    readiness_diagnostic.source_device = diagnostic.source_device;
+    readiness_diagnostic.destination_device = diagnostic.destination_device;
+    result.diagnostics.push_back(std::move(readiness_diagnostic));
+}
+
 const char *status_label(bool evaluated, bool ok) noexcept
 {
     if (!evaluated)
@@ -39,11 +55,19 @@ Json diagnostics_to_json(
     Json result = Json::array();
     for (const HevmArtifactReadinessDiagnostic &diagnostic : diagnostics)
     {
-        result.push_back(Json{
+        Json entry{
             { "stage", diagnostic.stage },
             { "location", diagnostic.location },
             { "message", diagnostic.message },
-        });
+        };
+        if (diagnostic.has_route)
+        {
+            entry["route_index"] = diagnostic.route_index;
+            entry["transport"] = to_string(diagnostic.transport);
+            entry["source_device"] = diagnostic.source_device;
+            entry["destination_device"] = diagnostic.destination_device;
+        }
+        result.push_back(std::move(entry));
     }
     return result;
 }
@@ -100,9 +124,7 @@ void add_communication_execution_preflight_diagnostics(
     for (const MgpuCommunicationExecutionDiagnostic &diagnostic :
          preflight.diagnostics)
     {
-        add_diagnostic(
-            result, "communication_execution_preflight",
-            diagnostic.route_index, diagnostic.message);
+        add_communication_execution_diagnostic(result, diagnostic);
     }
 }
 

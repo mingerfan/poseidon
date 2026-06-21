@@ -242,6 +242,34 @@ void test_report_execution_gate_reports_not_ready()
             std::string::npos,
         "execution gate diagnostic message mismatch");
     require(
+        report.at("execution_gate")
+                .at("diagnostics")
+                .at(0)
+                .at("route_index")
+                .get<int>() == 0,
+        "execution gate route index missing");
+    require(
+        report.at("execution_gate")
+                .at("diagnostics")
+                .at(0)
+                .at("transport")
+                .get<std::string>() == "cuda_peer",
+        "execution gate transport missing");
+    require(
+        report.at("execution_gate")
+                .at("diagnostics")
+                .at(0)
+                .at("source_device")
+                .get<int>() == 0,
+        "execution gate source device missing");
+    require(
+        report.at("execution_gate")
+                .at("diagnostics")
+                .at(0)
+                .at("destination_device")
+                .get<int>() == 1,
+        "execution gate destination device missing");
+    require(
         !report.at("hevm_artifact_readiness").at("ok").get<bool>(),
         "readiness JSON should fail");
 }

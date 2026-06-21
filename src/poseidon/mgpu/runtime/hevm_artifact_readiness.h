@@ -30,6 +30,11 @@ struct HevmArtifactReadinessDiagnostic
     std::string stage;
     std::size_t location = 0;
     std::string message;
+    bool has_route = false;
+    std::size_t route_index = 0;
+    MgpuTransportKind transport = MgpuTransportKind::SameDevice;
+    int source_device = 0;
+    int destination_device = 0;
 };
 
 struct HevmArtifactReadinessResult
