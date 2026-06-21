@@ -337,30 +337,68 @@ void append_path_status_json(
     stream << "    }" << suffix << '\n';
 }
 
+std::string readiness_status(
+    const PathStatus &hevm, const PathStatus &constants,
+    const std::optional<PathStatus> &config_status)
+{
+    if (hevm.ok() && constants.ok() &&
+        (!config_status.has_value() || config_status->ok()))
+    {
+        return "ready";
+    }
+    if (hevm.ok() && constants.ok() && config_status.has_value() &&
+        !config_status->ok())
+    {
+        return "missing_config";
+    }
+    if ((!hevm.ok() || !constants.ok()) && config_status.has_value() &&
+        !config_status->ok())
+    {
+        return "missing_inputs";
+    }
+    return "missing_artifacts";
+}
+
 std::string make_summary_json(
     const ToolOptions &options, const fs::path &dacapo_root,
     const PathStatus &hevm, const PathStatus &constants,
+    const std::optional<PathStatus> &config_status,
     const std::string &dump_command)
 {
-    const bool ready = hevm.ok() && constants.ok();
+    const bool ready =
+        hevm.ok() && constants.ok() &&
+        (!config_status.has_value() || config_status->ok());
     std::ostringstream json;
     json << "{\n";
     json << "  \"version\": 1,\n";
     append_json_string_field(json, "dacapo_root", dacapo_root.string(), ",");
     json << "  \"ready\": " << (ready ? "true" : "false") << ",\n";
     append_json_string_field(
-        json, "status", ready ? "ready" : "missing_artifacts", ",");
+        json, "status", readiness_status(hevm, constants, config_status), ",");
     json << "  \"artifacts\": {\n";
     append_path_status_json(json, "hevm", hevm, ",");
     append_path_status_json(json, "constants", constants, "");
     json << "  },\n";
-    if (options.config_path.has_value())
+    if (config_status.has_value())
     {
-        append_json_string_field(json, "config_path", *options.config_path, ",");
+        json << "  \"config\": {\n";
+        json << "    \"path\": \""
+             << json_escape(config_status->path.string()) << "\",\n";
+        json << "    \"present\": "
+             << (config_status->exists ? "true" : "false") << ",\n";
+        json << "    \"regular_file\": "
+             << (config_status->regular_file ? "true" : "false") << ",\n";
+        json << "    \"bytes\": " << config_status->size << ",\n";
+        json << "    \"ok\": "
+             << (config_status->ok() ? "true" : "false") << ",\n";
+        json << "    \"diagnostic\": \""
+             << json_escape(config_status->ok() ? "" : config_status->diagnostic)
+             << "\"\n";
+        json << "  },\n";
     }
     else
     {
-        json << "  \"config_path\": null,\n";
+        json << "  \"config\": null,\n";
     }
     append_json_string_field(
         json, "summary_path", options.summary_path, ",");
@@ -403,7 +441,14 @@ int main(int argc, char **argv)
             "ResNet.40._hecate_ResNet.hevm");
         const PathStatus constants = inspect_file(
             dacapo_root / "examples" / "traced" / "_hecate_ResNet.cst");
-        const bool ready = hevm.ok() && constants.ok();
+        std::optional<PathStatus> config_status;
+        if (options.config_path.has_value())
+        {
+            config_status = inspect_file(*options.config_path);
+        }
+        const bool ready =
+            hevm.ok() && constants.ok() &&
+            (!config_status.has_value() || config_status->ok());
         const std::string dump_command =
             make_dump_command(options, hevm.path, constants.path);
 
@@ -411,8 +456,12 @@ int main(int argc, char **argv)
         std::cout << "  dacapo_root: " << dacapo_root.string() << '\n';
         print_file_status(std::cout, "hevm", hevm);
         print_file_status(std::cout, "constants", constants);
-        std::cout << "  status: " << (ready ? "ready" : "missing_artifacts")
-                  << '\n';
+        if (config_status.has_value())
+        {
+            print_file_status(std::cout, "config", *config_status);
+        }
+        std::cout << "  status: "
+                  << readiness_status(hevm, constants, config_status) << '\n';
 
         if (!ready)
         {
@@ -426,6 +475,11 @@ int main(int argc, char **argv)
             {
                 std::cout << "    - missing constants: "
                           << constants.path.string() << '\n';
+            }
+            if (config_status.has_value() && !config_status->ok())
+            {
+                std::cout << "    - missing config: "
+                          << config_status->path.string() << '\n';
             }
             std::cout << "  generation_hint:\n";
             std::cout << "    - run: hc-trace ResNet\n";
@@ -441,7 +495,9 @@ int main(int argc, char **argv)
         if (options.summary_json || !options.summary_json_path.empty())
         {
             const std::string summary =
-                make_summary_json(options, dacapo_root, hevm, constants, dump_command);
+                make_summary_json(
+                    options, dacapo_root, hevm, constants, config_status,
+                    dump_command);
             if (!options.summary_json_path.empty())
             {
                 write_text_file(options.summary_json_path, summary + "\n");

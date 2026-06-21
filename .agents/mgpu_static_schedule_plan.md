@@ -163,8 +163,9 @@ Dacapo artifact debugging:
 - `POSEIDON_BUILD_MGPU_TOOLS=ON` also builds
   `poseidon_mgpu_resnet20_artifact_check`, a CPU-only helper that verifies the
   expected ResNet20 artifact paths under `DACAPO_ROOT` or `--dacapo-root` and
-  prints the next `poseidon_mgpu_dacapo_hevm_dump` command. Use
-  `--summary-json` or `--write-summary-json <file>` for scriptable path
+  prints the next `poseidon_mgpu_dacapo_hevm_dump` command. When `--config` is
+  provided, the helper must also check that config path before reporting ready.
+  Use `--summary-json` or `--write-summary-json <file>` for scriptable path
   readiness. It must not parse HEVM, link Dacapo/MLIR, load CUDA/RMM, or
   execute GPU operators.
 - The dump tool accepts `--hevm`, `--constants`, `--config`, `--devices`,

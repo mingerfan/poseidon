@@ -218,6 +218,7 @@ void test_config_command_hint(const std::string &tool_path)
 
     require(exit_code == 0, "config artifact check should pass");
     require_contains(output, "status: ready");
+    require_contains(output, "config: ");
     require_contains(output, "--config " + shell_quote(config_path));
     require_contains(output, "--summary-json");
     require_not_contains(output, "--devices 8");
@@ -245,12 +246,15 @@ void test_summary_json_for_ready_artifacts(const std::string &tool_path)
 {
     TempDir dacapo_root;
     create_mock_resnet20_artifacts(dacapo_root.root());
+    const std::string config_path = dacapo_root.path("single_node_8gpu.json");
     const std::string report_path = dacapo_root.path("artifact-check.json");
+    write_text_file(config_path, "{\"version\":1}\n");
 
     int exit_code = 0;
     const std::string output = run_tool(
         tool_path,
         "--dacapo-root " + shell_quote(dacapo_root.root().string()) +
+            " --config " + shell_quote(config_path) +
             " --write-summary-json " + shell_quote(report_path) +
             " --summary-json"
             " --no-command",
@@ -265,9 +269,37 @@ void test_summary_json_for_ready_artifacts(const std::string &tool_path)
     require_contains(report, "\"hevm\"");
     require_contains(report, "\"constants\"");
     require_contains(report, "\"present\": true");
+    require_contains(report, "\"config\"");
+    require_contains(report, config_path);
     require_contains(report, "\"dump_command\"");
     require_contains(report, "ResNet.40._hecate_ResNet.hevm");
     require_contains(report, "_hecate_ResNet.cst");
+}
+
+void test_missing_config_report(const std::string &tool_path)
+{
+    TempDir dacapo_root;
+    create_mock_resnet20_artifacts(dacapo_root.root());
+    const std::string config_path = dacapo_root.path("missing-config.json");
+    const std::string report_path = dacapo_root.path("missing-config-report.json");
+
+    int exit_code = 0;
+    const std::string output = run_tool(
+        tool_path,
+        "--dacapo-root " + shell_quote(dacapo_root.root().string()) +
+            " --config " + shell_quote(config_path) +
+            " --write-summary-json " + shell_quote(report_path),
+        exit_code);
+
+    require(exit_code != 0, "missing config check should fail");
+    require_contains(output, "status: missing_config");
+    require_contains(output, "missing config");
+    const std::string report = read_text_file(report_path);
+    require_contains(report, "\"ready\": false");
+    require_contains(report, "\"status\": \"missing_config\"");
+    require_contains(report, "\"config\"");
+    require_contains(report, "\"present\": false");
+    require_contains(report, "\"diagnostic\": \"missing\"");
 }
 
 void test_summary_json_for_missing_artifacts(const std::string &tool_path)
@@ -305,6 +337,7 @@ int main(int argc, char **argv)
         test_config_command_hint(argv[1]);
         test_no_command_mode(argv[1]);
         test_summary_json_for_ready_artifacts(argv[1]);
+        test_missing_config_report(argv[1]);
         test_summary_json_for_missing_artifacts(argv[1]);
     }
     catch (const std::exception &ex)
