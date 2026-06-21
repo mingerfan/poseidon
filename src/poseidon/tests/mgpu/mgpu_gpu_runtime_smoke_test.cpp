@@ -6,8 +6,8 @@
 #include "poseidon/keygenerator.h"
 #include "poseidon/mgpu/compiler/dacapo_constants.h"
 #include "poseidon/mgpu/compiler/static_schedule_pipeline.h"
-#include "poseidon/mgpu/runtime/hevm_io_binding.h"
-#include "poseidon/mgpu/runtime/hevm_plaintext_encoding.h"
+#include "poseidon/mgpu/runtime/hevm_static_execution_plan.h"
+#include "poseidon/mgpu/runtime/poseidon_gpu_hevm_executor.h"
 #include "poseidon/mgpu/runtime/poseidon_gpu_schedule_handler.h"
 #include "poseidon/mgpu/runtime/schedule_interpreter.h"
 #include "poseidon/parameters_literal.h"
@@ -378,15 +378,19 @@ void run_gpu_runtime_hevm_constants_smoke()
         parse_dacapo_constant_file(make_hevm_constant_file());
     require(constants.ok(), "HEVM constants parse failed:\n" + constants.format_diagnostics());
 
-    const HevmIoBindingPlanResult io_plan_result =
-        build_hevm_io_binding_plan(pipeline.schedule);
-    require(io_plan_result.ok(), "HEVM IO plan failed:\n" + io_plan_result.format_diagnostics());
+    DacapoHevmArtifactResult artifacts;
+    artifacts.schedule = pipeline.schedule;
+    artifacts.constants = constants.table;
+    artifacts.debug_dump = pipeline.debug_dump;
 
-    const HevmPlaintextEncodingResult plaintexts =
-        encode_hevm_plain_inputs(context, io_plan_result.plan, constants.table);
-    require(plaintexts.ok(), "HEVM plaintext encoding failed:\n" +
-                                 plaintexts.format_diagnostics());
-    require(plaintexts.plaintexts.size() == 1, "expected one HEVM plaintext upload");
+    const HevmStaticExecutionPlanResult execution_plan =
+        prepare_hevm_static_execution_plan(context, artifacts);
+    require(
+        execution_plan.ok(),
+        "HEVM static execution plan failed:\n" + execution_plan.format_diagnostics());
+    require(
+        execution_plan.plan.encoded_plaintexts.size() == 1,
+        "expected one HEVM plaintext upload");
 
     CKKSEncoder encoder(context);
     Plaintext input_plain;
@@ -401,26 +405,23 @@ void run_gpu_runtime_hevm_constants_smoke()
 
     Ciphertext expected_product;
     cpu_evaluator->multiply_plain(
-        input_cipher, *plaintexts.plaintexts[0].plaintext, expected_product);
+        input_cipher, *execution_plan.plan.encoded_plaintexts[0].plaintext,
+        expected_product);
 
-    PoseidonGpuScheduleHandler handler(context);
-    bind_hevm_cipher_inputs(
-        handler, io_plan_result.plan,
-        std::vector<std::shared_ptr<const Ciphertext>>{
-            std::make_shared<Ciphertext>(input_cipher),
-        });
-    bind_hevm_encoded_plain_inputs(handler, plaintexts.plaintexts);
+    const PoseidonGpuHevmExecutionResult gpu_result =
+        execute_hevm_static_plan_with_poseidon_gpu(
+            context, execution_plan.plan,
+            std::vector<std::shared_ptr<const Ciphertext>>{
+                std::make_shared<Ciphertext>(input_cipher),
+            },
+            PoseidonGpuHevmExecutionOptions{ 1 });
 
-    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 1 });
-    const ScheduleExecutionResult result = interpreter.run(pipeline.schedule, handler);
-    require(result.ok(), "GPU runtime HEVM constants schedule failed:\n" +
-                             result.format_errors());
-
-    const std::vector<std::shared_ptr<Ciphertext>> hevm_results =
-        collect_hevm_results(handler, io_plan_result.plan);
-    require(hevm_results.size() == 1, "expected one HEVM result slot");
-    require(hevm_results[0] != nullptr, "missing HEVM result ciphertext");
-    require_ciphertexts_equal(expected_product, *hevm_results[0]);
+    require(
+        gpu_result.ok(),
+        "GPU runtime HEVM constants schedule failed:\n" + gpu_result.format_errors());
+    require(gpu_result.results.size() == 1, "expected one HEVM result slot");
+    require(gpu_result.results[0] != nullptr, "missing HEVM result ciphertext");
+    require_ciphertexts_equal(expected_product, *gpu_result.results[0]);
 }
 
 void run_gpu_runtime_add_plain_rescale_smoke()

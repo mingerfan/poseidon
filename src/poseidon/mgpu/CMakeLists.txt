@@ -376,6 +376,7 @@ endif()
 
 if(POSEIDON_BUILD_MGPU_GPU_RUNTIME)
     add_library(poseidon_mgpu_gpu_runtime STATIC
+        runtime/poseidon_gpu_hevm_executor.cpp
         runtime/poseidon_gpu_schedule_handler.cpp
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/gpu/gpu_ciphertext.cpp
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/gpu/gpu_key.cpp
