@@ -181,10 +181,18 @@ if(POSEIDON_BUILD_MGPU_TESTS)
     )
 endif()
 
+option(POSEIDON_BUILD_MGPU_GPU_RUNTIME "Build optional Poseidon GPU schedule handler for multi-GPU runtime" OFF)
+message(STATUS "POSEIDON_BUILD_MGPU_GPU_RUNTIME: ${POSEIDON_BUILD_MGPU_GPU_RUNTIME}")
+
+set(POSEIDON_MGPU_REQUIRES_RMM FALSE)
+if(POSEIDON_BUILD_MGPU_GPU_OBJECTS OR POSEIDON_BUILD_MGPU_GPU_RUNTIME)
+    set(POSEIDON_MGPU_REQUIRES_RMM TRUE)
+endif()
+
 option(POSEIDON_BUILD_MGPU_GPU_OBJECTS "Build optional GPU object materializer for multi-GPU runtime" OFF)
 message(STATUS "POSEIDON_BUILD_MGPU_GPU_OBJECTS: ${POSEIDON_BUILD_MGPU_GPU_OBJECTS}")
 
-if(POSEIDON_BUILD_MGPU_GPU_OBJECTS)
+if(POSEIDON_MGPU_REQUIRES_RMM)
     enable_language(CUDA)
     set(CMAKE_CUDA_STANDARD 17)
     set(CMAKE_CUDA_STANDARD_REQUIRED ON)
@@ -222,7 +230,9 @@ if(POSEIDON_BUILD_MGPU_GPU_OBJECTS)
         message(FATAL_ERROR
             "Bundled RMM was not found at ${POSEIDON_BUNDLED_RMM_DIR}")
     endif()
+endif()
 
+if(POSEIDON_BUILD_MGPU_GPU_OBJECTS)
     add_library(poseidon_mgpu_gpu_objects STATIC
         comm/gpu_object_materializer.cpp
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/gpu/gpu_ciphertext.cpp
@@ -240,6 +250,47 @@ if(POSEIDON_BUILD_MGPU_GPU_OBJECTS)
             CUDA::cudart
             rmm::rmm
     )
+endif()
+
+if(POSEIDON_BUILD_MGPU_GPU_RUNTIME)
+    add_library(poseidon_mgpu_gpu_runtime STATIC
+        runtime/poseidon_gpu_schedule_handler.cpp
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/gpu/gpu_ciphertext.cpp
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/gpu/gpu_key.cpp
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/gpu/gpu_parameter.cpp
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/gpu/gpu_plaintext.cpp
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/gpu/gpu_uploader.cpp
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/gpu/gpu_evaluator.cpp
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/gpu/gpu_elementwise_handler.cpp
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/gpu/gpu_keyswitch_handler.cpp
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/gpu/gpu_modswitch_handler.cpp
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/gpu/gpu_ntt_handler.cpp
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/gpu/gpu_tensor_core_gemm.cu
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/gpu/kernels/gpu_elementwise_kernels.cu
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/gpu/kernels/gpu_keyswitch_kernels.cu
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/gpu/kernels/gpu_ntt_kernels.cu
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/gpu/kernels/gpu_rescale_kernels.cu
+    )
+
+    target_include_directories(poseidon_mgpu_gpu_runtime
+        PUBLIC
+            ${POSEIDON_INCLUDES_DIR}/src
+    )
+
+    target_link_libraries(poseidon_mgpu_gpu_runtime
+        PUBLIC
+            poseidon_mgpu
+            CUDA::cudart
+            rmm::rmm
+    )
+
+    target_compile_options(poseidon_mgpu_gpu_runtime
+        PRIVATE
+            $<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>
+    )
+
+    set_target_properties(poseidon_mgpu_gpu_runtime PROPERTIES
+        CUDA_ARCHITECTURES 75)
 endif()
 
 option(POSEIDON_BUILD_MGPU_CUDA_COMM "Build optional CUDA peer communication backend" OFF)

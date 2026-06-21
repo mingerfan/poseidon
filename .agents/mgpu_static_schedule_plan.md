@@ -30,6 +30,7 @@
 | `GpuDeviceContext` | Own per-device `GpuParameterData`, `GpuEvaluator`, keys, and stream handle placeholder. |
 | `GpuObjectStore` | Map logical value IDs to value kind, device ownership, and optional opaque object handles. |
 | `IoBindingScheduleHandler` | Bind static upload/download value IDs to external object handles while forwarding compute ops to a fallback handler. |
+| `PoseidonGpuScheduleHandler` | Optional CUDA/RMM-gated executor that uploads CPU Poseidon objects, calls existing single-GPU `GpuEvaluator`, and downloads scheduled results. |
 | `GpuComm` | Define object-level copy/clone operations between devices and return destination object handles. |
 | `MaterializedGpuComm` | Bridge logical copy requests to materialized full-object buffer copy requests. |
 | `PoseidonGpuObjectCopyMaterializer` | Optional CUDA/RMM-gated bridge from Poseidon GPU objects to full-object copy buffers. |
@@ -107,6 +108,12 @@ Optional GPU object materialization:
 - `POSEIDON_BUILD_MGPU_GPU_OBJECTS=ON` builds the CUDA/RMM-gated Poseidon GPU object materializer.
 - Default `poseidon_mgpu` must remain buildable without enabling this option.
 - Materializers must reject `fields_.size() != 1`; V1 does not execute multi-shard objects.
+
+Optional Poseidon GPU schedule execution:
+
+- `POSEIDON_BUILD_MGPU_GPU_RUNTIME=ON` builds the CUDA/RMM-gated schedule handler that bridges mgpu IR to the existing single-GPU `GpuEvaluator`.
+- The handler may execute only full single-device objects (`fields_.size() == 1`) and must reject copy ops; copy ops remain owned by the mgpu communication layer.
+- It is a runtime executor, not a scheduler: device IDs and `integer_attributes` must already be present in the static schedule.
 
 Runtime IO binding:
 
