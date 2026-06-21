@@ -2,6 +2,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -43,9 +44,10 @@ void require_contains(const std::string &text, const std::string &needle)
 class RecordingGpuComm final : public GpuComm
 {
 public:
-    void copy(const GpuCommCopyRequest &request) override
+    std::shared_ptr<void> copy(const GpuCommCopyRequest &request) override
     {
         requests.push_back(request);
+        return request.source_object;
     }
 
     std::vector<GpuCommCopyRequest> requests;
@@ -54,8 +56,17 @@ public:
 class RecordingFallback final : public ScheduleOpHandler
 {
 public:
-    void execute(const MgpuOp &op, MgpuObjectStore &) override
+    void execute(const MgpuOp &op, MgpuObjectStore &object_store) override
     {
+        if (is_upload_op(op.kind))
+        {
+            const MgpuValueKind kind = op.kind == MgpuOpKind::UploadPlain
+                                           ? MgpuValueKind::Plaintext
+                                           : MgpuValueKind::Ciphertext;
+            object_store.define(
+                op.outputs[0].id, kind, op.device_id,
+                std::make_shared<std::string>("uploaded"));
+        }
         op_kinds.push_back(op.kind);
     }
 
@@ -97,6 +108,11 @@ void test_copy_dispatch_uses_comm_layer()
     require(comm.requests[0].kind == MgpuValueKind::Ciphertext, "comm kind mismatch");
     require(comm.requests[0].source_device == 0, "comm source device mismatch");
     require(comm.requests[0].destination_device == 0, "comm destination device mismatch");
+    require(comm.requests[0].source_object != nullptr, "comm source object should be provided");
+    require(result.object_store.has_object(2), "copy output object should be retained");
+    require(
+        *result.object_store.object_as<std::string>(2) == "uploaded",
+        "copy output object mismatch");
     require(fallback.op_kinds.size() == 2, "fallback should receive non-copy ops only");
     require(fallback.op_kinds[0] == MgpuOpKind::UploadCipher, "fallback first op mismatch");
     require(fallback.op_kinds[1] == MgpuOpKind::Download, "fallback second op mismatch");

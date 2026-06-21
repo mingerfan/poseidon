@@ -2,6 +2,8 @@
 
 #include "poseidon/mgpu/ir/schedule.h"
 
+#include <memory>
+
 namespace poseidon::mgpu
 {
 
@@ -12,6 +14,7 @@ struct GpuCommCopyRequest
     MgpuValueKind kind = MgpuValueKind::Ciphertext;
     int source_device = 0;
     int destination_device = 0;
+    std::shared_ptr<void> source_object;
 };
 
 class GpuComm
@@ -19,13 +22,13 @@ class GpuComm
 public:
     virtual ~GpuComm() = default;
 
-    virtual void copy(const GpuCommCopyRequest &request) = 0;
+    virtual std::shared_ptr<void> copy(const GpuCommCopyRequest &request) = 0;
 };
 
 class SameDeviceGpuComm final : public GpuComm
 {
 public:
-    void copy(const GpuCommCopyRequest &request) override;
+    std::shared_ptr<void> copy(const GpuCommCopyRequest &request) override;
 };
 
 }  // namespace poseidon::mgpu

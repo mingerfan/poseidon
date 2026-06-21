@@ -6,7 +6,7 @@
 namespace poseidon::mgpu
 {
 
-void SameDeviceGpuComm::copy(const GpuCommCopyRequest &request)
+std::shared_ptr<void> SameDeviceGpuComm::copy(const GpuCommCopyRequest &request)
 {
     if (request.source_device != request.destination_device)
     {
@@ -16,6 +16,7 @@ void SameDeviceGpuComm::copy(const GpuCommCopyRequest &request)
                << " requires a multi-GPU communication backend";
         throw std::runtime_error(stream.str());
     }
+    return request.source_object;
 }
 
 }  // namespace poseidon::mgpu
