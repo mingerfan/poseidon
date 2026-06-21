@@ -7,6 +7,7 @@ add_library(poseidon_mgpu STATIC
     compiler/static_placement.cpp
     compiler/static_schedule_pipeline.cpp
     ir/schedule.cpp
+    ir/schedule_json.cpp
     runtime/comm_schedule_handler.cpp
     runtime/object_store.cpp
     runtime/schedule_interpreter.cpp
@@ -25,6 +26,10 @@ target_link_libraries(poseidon_mgpu
 if(POSEIDON_BUILD_MGPU_TESTS)
     add_executable(poseidon_mgpu_ir_tests
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_ir_test.cpp
+    )
+
+    add_executable(poseidon_mgpu_schedule_json_tests
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_schedule_json_test.cpp
     )
 
     add_executable(poseidon_mgpu_comm_tests
@@ -56,6 +61,11 @@ if(POSEIDON_BUILD_MGPU_TESTS)
     )
 
     target_link_libraries(poseidon_mgpu_ir_tests
+        PRIVATE
+            poseidon_mgpu
+    )
+
+    target_link_libraries(poseidon_mgpu_schedule_json_tests
         PRIVATE
             poseidon_mgpu
     )
@@ -98,6 +108,11 @@ if(POSEIDON_BUILD_MGPU_TESTS)
     add_test(
         NAME poseidon_mgpu_ir_tests
         COMMAND poseidon_mgpu_ir_tests
+    )
+
+    add_test(
+        NAME poseidon_mgpu_schedule_json_tests
+        COMMAND poseidon_mgpu_schedule_json_tests
     )
 
     add_test(
