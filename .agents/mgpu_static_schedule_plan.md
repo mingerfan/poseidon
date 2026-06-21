@@ -161,7 +161,7 @@ Dacapo artifact debugging:
 - The dump tool accepts `--hevm`, `--constants`, `--config`, `--devices`,
   `--default-device`, `--upload-device`, `--compute-devices`,
   `--download-device`, `--round-robin-compute`, `--summary-json`, and
-  `--no-schedule`.
+  `--write-summary-json <file>`, and `--no-schedule`.
 - `--config <json>` loads placement, topology, preflight, and backend settings
   from the internal static schedule execution config. Later command-line
   placement/preflight/backend flags override the file so single-GPU, 8-GPU, and
@@ -192,6 +192,10 @@ Dacapo artifact debugging:
 - External artifact tests also accept `POSEIDON_MGPU_EXTERNAL_CONFIG` or
   `POSEIDON_MGPU_EXTERNAL_CONFIG_JSON` to exercise the same static schedule
   execution config path as the dump tool.
+- External artifact tests also accept `POSEIDON_MGPU_EXTERNAL_REPORT_JSON` to
+  write the shared machine-readable HEVM artifact report used by the dump tool.
+  Write this report before enforcing `require_ready` so failed gates can still
+  leave repeatable diagnostics.
 - `poseidon_mgpu_external_hevm_mock_artifact_tests` uses a generated mock
   `.hevm + .cst` artifact to exercise the same external artifact path,
   preflight flags, and non-trivial topology on machines without ResNet20
@@ -290,6 +294,7 @@ ResNet20 artifact runbook:
 | Communication execution preflight tests | CPU-only tests report when same-device, CUDA peer, or inter-node planned routes lack an executable backend. |
 | Poseidon GPU execution preflight tests | CPU-only tests aggregate schedule verifier, GPU executor preflight, communication planning, and communication execution availability into one result. |
 | HEVM artifact readiness tests | CPU-only tests combine opcode support, Poseidon GPU preflight, communication planning, and execution preflight into an optional hard gate. |
+| HEVM artifact report tests | CPU-only tests verify the shared JSON report builder used by dump-tool output and external artifact CTest report files. |
 | CUDA peer probe tests | Optional CUDA tests report visible devices and peer-access matrix, skipping when CUDA devices are unavailable. |
 
 ## 6. Phases

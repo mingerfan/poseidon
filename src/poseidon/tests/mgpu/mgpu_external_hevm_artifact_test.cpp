@@ -4,6 +4,7 @@
 #include "poseidon/mgpu/comm/topology.h"
 #include "poseidon/mgpu/ir/schedule_summary.h"
 #include "poseidon/mgpu/runtime/gpu_execution_preflight.h"
+#include "poseidon/mgpu/runtime/hevm_artifact_report.h"
 #include "poseidon/mgpu/runtime/hevm_artifact_readiness.h"
 #include "poseidon/mgpu/runtime/hevm_io_binding.h"
 #include "poseidon/mgpu/runtime/poseidon_gpu_schedule_preflight.h"
@@ -193,6 +194,20 @@ void write_binary_file(const std::string &path, const std::string &contents)
     if (!stream)
     {
         throw std::runtime_error("failed to write mock external HEVM artifact: " + path);
+    }
+}
+
+void write_text_file(const std::string &path, const std::string &contents)
+{
+    std::ofstream stream(path);
+    if (!stream)
+    {
+        throw std::runtime_error("failed to create external HEVM report: " + path);
+    }
+    stream << contents;
+    if (!stream)
+    {
+        throw std::runtime_error("failed to write external HEVM report: " + path);
     }
 }
 
@@ -616,6 +631,30 @@ int main()
         const HevmArtifactReadinessResult readiness =
             check_hevm_artifact_readiness(readiness_input);
         std::cout << dump_hevm_artifact_readiness(readiness);
+
+        if (const char *report_path = get_env("POSEIDON_MGPU_EXTERNAL_REPORT_JSON"))
+        {
+            const std::string *debug_dump =
+                artifacts.debug_dump.empty() ? nullptr : &artifacts.debug_dump;
+            HevmArtifactReportInput report;
+            report.hevm_path = hevm_path;
+            report.constants_path = constants_path;
+            report.execution_config = &config;
+            report.schedule_summary = &summary;
+            report.constant_count = artifacts.constants.values.size();
+            report.io_plan = &io_plan.plan;
+            report.poseidon_gpu_preflight = &preflight;
+            report.communication_plan = &communication_plan;
+            report.communication_execution_preflight = &communication_preflight;
+            report.poseidon_gpu_execution_preflight = &execution_preflight;
+            report.hevm_opcode_summary = &opcode_summary;
+            report.hevm_artifact_readiness = &readiness;
+            report.debug_dump = debug_dump;
+            write_text_file(
+                report_path, hevm_artifact_report_to_json(report, 2) + "\n");
+            std::cout << "external_report_json: " << report_path << '\n';
+        }
+
         if (config.require_ready)
         {
             require(

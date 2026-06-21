@@ -127,6 +127,7 @@ Then inspect the ResNet20 artifact without executing GPU operators:
   --preflight-galois-keys \
   --require-ready \
   --summary-json \
+  --write-summary-json /tmp/resnet20-mgpu-preflight.json \
   --no-schedule
 ```
 
@@ -240,6 +241,7 @@ Optional environment variables:
 - `POSEIDON_MGPU_EXTERNAL_EXECUTION_CUDA_PEER_AVAILABLE=1`
 - `POSEIDON_MGPU_EXTERNAL_EXECUTION_INTER_NODE_AVAILABLE=1`
 - `POSEIDON_MGPU_EXTERNAL_REQUIRE_READY=1`
+- `POSEIDON_MGPU_EXTERNAL_REPORT_JSON=/path/to/report.json`
 
 `poseidon_mgpu_external_hevm_mock_artifact_tests` exercises the same CTest
 binary with a generated mock `.hevm + .cst` artifact, preflight availability
@@ -256,6 +258,10 @@ their Poseidon GPU semantics are verified.
 path with `POSEIDON_MGPU_EXTERNAL_CONFIG_JSON` so config-file driven placement,
 topology, preflight, and backend declarations stay covered without a real
 ResNet20 artifact.
+
+`poseidon_mgpu_external_hevm_report_mock_artifact_tests` writes the shared JSON
+report from the external artifact CTest path, covering the same report builder
+used by the dump tool's `--summary-json` and `--write-summary-json` modes.
 
 The dump tool can run the same preflight without CTest:
 
@@ -276,6 +282,7 @@ poseidon_mgpu_dacapo_hevm_dump \
   --preflight-galois-keys \
   --require-ready \
   --summary-json \
+  --write-summary-json /tmp/model-mgpu-preflight.json \
   --no-schedule
 ```
 
@@ -290,6 +297,12 @@ communication execution routes before attempting execution. Without
 loading and schedule construction succeeded. With `--require-ready`, failures
 in the opcode summary or aggregate execution preflight produce a non-zero exit
 code.
+
+Use `--write-summary-json <file>` when you need a durable report while keeping
+human-readable text output. The JSON report is produced by the shared
+`runtime/hevm_artifact_report.*` builder and contains artifact paths, effective
+execution config, schedule summary, HEVM I/O counts, opcode summary, readiness,
+communication diagnostics, and the aggregate Poseidon GPU execution preflight.
 
 ## Communication Topology Planning
 

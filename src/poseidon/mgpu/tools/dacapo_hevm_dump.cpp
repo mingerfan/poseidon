@@ -4,10 +4,10 @@
 #include "poseidon/mgpu/comm/topology.h"
 #include "poseidon/mgpu/ir/schedule_summary.h"
 #include "poseidon/mgpu/runtime/gpu_execution_preflight.h"
+#include "poseidon/mgpu/runtime/hevm_artifact_report.h"
 #include "poseidon/mgpu/runtime/hevm_artifact_readiness.h"
 #include "poseidon/mgpu/runtime/hevm_io_binding.h"
 #include "poseidon/mgpu/runtime/poseidon_gpu_schedule_preflight.h"
-#include "poseidon/util/json.h"
 
 #include <cstdlib>
 #include <fstream>
@@ -30,6 +30,7 @@ struct ToolOptions
     StaticScheduleExecutionConfig config;
     bool dump_schedule = true;
     bool summary_json = false;
+    std::string summary_json_path;
 };
 
 std::string read_binary_file(const std::string &path);
@@ -56,6 +57,7 @@ void print_usage(std::ostream &stream)
            "[--nodes N] "
            "[--devices-per-node N] "
            "[--summary-json] "
+           "[--write-summary-json <file>] "
            "[--no-schedule]\n";
 }
 
@@ -241,6 +243,15 @@ ToolOptions parse_args(int argc, char **argv)
             options.summary_json = true;
             continue;
         }
+        if (arg == "--write-summary-json")
+        {
+            if (++i >= argc)
+            {
+                throw std::invalid_argument("missing value for --write-summary-json");
+            }
+            options.summary_json_path = argv[i];
+            continue;
+        }
         if (arg == "--poseidon-gpu-preflight")
         {
             options.config.poseidon_gpu_preflight = true;
@@ -410,14 +421,23 @@ std::string read_binary_file(const std::string &path)
     return buffer.str();
 }
 
+void write_text_file(const std::string &path, const std::string &contents)
+{
+    std::ofstream stream(path);
+    if (!stream)
+    {
+        throw std::runtime_error("failed to create file: " + path);
+    }
+    stream << contents;
+    if (!stream)
+    {
+        throw std::runtime_error("failed to write file: " + path);
+    }
+}
+
 StaticSchedulePipelineOptions make_pipeline_options(const ToolOptions &tool_options)
 {
     return effective_config(tool_options).pipeline;
-}
-
-nlohmann::json parse_json_object(const std::string &text)
-{
-    return nlohmann::json::parse(text);
 }
 
 MgpuTopology make_tool_topology(const ToolOptions &tool_options)
@@ -450,77 +470,6 @@ bool needs_execution_preflight(const ToolOptions &tool_options)
 {
     return tool_options.config.poseidon_gpu_preflight ||
            tool_options.config.require_ready;
-}
-
-nlohmann::json optional_preflight_json(
-    const std::optional<PoseidonGpuSchedulePreflightResult> &preflight)
-{
-    if (!preflight.has_value())
-    {
-        return nullptr;
-    }
-
-    return parse_json_object(poseidon_gpu_schedule_preflight_to_json(*preflight, -1));
-}
-
-nlohmann::json optional_communication_plan_json(
-    const std::optional<MgpuCommunicationPlan> &plan)
-{
-    if (!plan.has_value())
-    {
-        return nullptr;
-    }
-
-    return parse_json_object(communication_plan_to_json(*plan, -1));
-}
-
-nlohmann::json optional_communication_execution_preflight_json(
-    const std::optional<MgpuCommunicationExecutionPreflight> &preflight)
-{
-    if (!preflight.has_value())
-    {
-        return nullptr;
-    }
-
-    return parse_json_object(communication_execution_preflight_to_json(*preflight, -1));
-}
-
-nlohmann::json optional_execution_preflight_json(
-    const std::optional<PoseidonGpuExecutionPreflightResult> &preflight)
-{
-    if (!preflight.has_value())
-    {
-        return nullptr;
-    }
-
-    return parse_json_object(poseidon_gpu_execution_preflight_to_json(*preflight, -1));
-}
-
-nlohmann::json hevm_opcode_summary_json(const DacapoHevmOpcodeSummary &summary)
-{
-    nlohmann::json root;
-    root["ok"] = summary.ok();
-    root["operation_count"] = summary.operation_count;
-    root["alloc_count"] = summary.alloc_count;
-    root["opcode_counts"] = nlohmann::json::array();
-    for (const DacapoHevmOpcodeCount &count : summary.opcode_counts)
-    {
-        root["opcode_counts"].push_back(nlohmann::json{
-            { "opcode", count.opcode },
-            { "name", count.name },
-            { "count", count.count },
-            { "supported", count.supported },
-        });
-    }
-    root["diagnostics"] = nlohmann::json::array();
-    for (const DacapoAdapterDiagnostic &diagnostic : summary.diagnostics)
-    {
-        root["diagnostics"].push_back(nlohmann::json{
-            { "offset", diagnostic.offset },
-            { "message", diagnostic.message },
-        });
-    }
-    return root;
 }
 
 void print_opcode_summary_text(const DacapoHevmOpcodeSummary &summary)
@@ -627,61 +576,43 @@ void print_text_summary(
     }
 }
 
-nlohmann::json make_tool_summary_json(
-    const StaticScheduleExecutionConfig &config,
-    const MgpuScheduleSummary &summary, std::size_t constant_count,
-    const HevmIoBindingPlan &io_plan, nlohmann::json preflight,
-    nlohmann::json communication_plan,
-    nlohmann::json communication_execution_preflight,
-    nlohmann::json execution_preflight,
-    nlohmann::json opcode_summary,
-    nlohmann::json readiness,
-    std::optional<std::string> debug_dump)
+std::string make_summary_json(
+    const ToolOptions &tool_options, const MgpuScheduleSummary &summary,
+    std::size_t constant_count, const HevmIoBindingPlan &io_plan,
+    const std::optional<PoseidonGpuSchedulePreflightResult> &poseidon_preflight,
+    const std::optional<MgpuCommunicationPlan> &communication_plan,
+    const std::optional<MgpuCommunicationExecutionPreflight>
+        &communication_execution_preflight,
+    const std::optional<PoseidonGpuExecutionPreflightResult>
+        &execution_preflight,
+    const std::optional<DacapoHevmOpcodeSummary> &opcode_summary,
+    const std::optional<HevmArtifactReadinessResult> &readiness,
+    const std::optional<std::string> &debug_dump)
 {
-    nlohmann::json root;
-    root["version"] = 1;
-    root["execution_config"] = parse_json_object(
-        static_schedule_execution_config_to_json(config, -1));
-    root["schedule"] = parse_json_object(schedule_summary_to_json(summary, -1));
-    root["constants"] = nlohmann::json{
-        { "vectors", constant_count },
-    };
-    root["hevm_io"] = nlohmann::json{
-        { "cipher_inputs", io_plan.cipher_inputs.size() },
-        { "plaintext_constants", io_plan.plain_inputs.size() },
-        { "results", io_plan.results.size() },
-    };
-    if (!preflight.is_null())
-    {
-        root["poseidon_gpu_preflight"] = std::move(preflight);
-    }
-    if (!communication_plan.is_null())
-    {
-        root["communication_plan"] = std::move(communication_plan);
-    }
-    if (!communication_execution_preflight.is_null())
-    {
-        root["communication_execution_preflight"] =
-            std::move(communication_execution_preflight);
-    }
-    if (!execution_preflight.is_null())
-    {
-        root["poseidon_gpu_execution_preflight"] =
-            std::move(execution_preflight);
-    }
-    if (!opcode_summary.is_null())
-    {
-        root["hevm_opcode_summary"] = std::move(opcode_summary);
-    }
-    if (!readiness.is_null())
-    {
-        root["hevm_artifact_readiness"] = std::move(readiness);
-    }
-    if (debug_dump.has_value())
-    {
-        root["debug_dump"] = *debug_dump;
-    }
-    return root;
+    const StaticScheduleExecutionConfig config = effective_config(tool_options);
+    HevmArtifactReportInput report;
+    report.hevm_path = tool_options.hevm_path;
+    report.constants_path = tool_options.constants_path;
+    report.execution_config = &config;
+    report.schedule_summary = &summary;
+    report.constant_count = constant_count;
+    report.io_plan = &io_plan;
+    report.poseidon_gpu_preflight =
+        poseidon_preflight.has_value() ? &*poseidon_preflight : nullptr;
+    report.communication_plan =
+        communication_plan.has_value() ? &*communication_plan : nullptr;
+    report.communication_execution_preflight =
+        communication_execution_preflight.has_value()
+            ? &*communication_execution_preflight
+            : nullptr;
+    report.poseidon_gpu_execution_preflight =
+        execution_preflight.has_value() ? &*execution_preflight : nullptr;
+    report.hevm_opcode_summary =
+        opcode_summary.has_value() ? &*opcode_summary : nullptr;
+    report.hevm_artifact_readiness =
+        readiness.has_value() ? &*readiness : nullptr;
+    report.debug_dump = debug_dump.has_value() ? &*debug_dump : nullptr;
+    return hevm_artifact_report_to_json(report, 2);
 }
 
 }  // namespace
@@ -802,36 +733,27 @@ int main(int argc, char **argv)
             readiness = check_hevm_artifact_readiness(readiness_input);
         }
 
+        const std::optional<std::string> debug_dump =
+            tool_options.dump_schedule ? std::optional<std::string>(artifacts.debug_dump)
+                                       : std::nullopt;
+        std::optional<std::string> summary_json;
+        if (tool_options.summary_json || !tool_options.summary_json_path.empty())
+        {
+            summary_json = make_summary_json(
+                tool_options, summary, artifacts.constants.values.size(), io_plan.plan,
+                poseidon_preflight, communication_plan,
+                communication_execution_preflight, execution_preflight,
+                opcode_summary, readiness, debug_dump);
+        }
+
+        if (!tool_options.summary_json_path.empty())
+        {
+            write_text_file(tool_options.summary_json_path, *summary_json + "\n");
+        }
+
         if (tool_options.summary_json)
         {
-            const std::optional<std::string> debug_dump =
-                tool_options.dump_schedule ? std::optional<std::string>(artifacts.debug_dump)
-                                           : std::nullopt;
-            nlohmann::json preflight = optional_preflight_json(poseidon_preflight);
-            nlohmann::json communication_plan_json =
-                optional_communication_plan_json(communication_plan);
-            nlohmann::json communication_execution_preflight_json =
-                optional_communication_execution_preflight_json(
-                    communication_execution_preflight);
-            nlohmann::json execution_preflight_json =
-                optional_execution_preflight_json(execution_preflight);
-            nlohmann::json opcode_summary_json_value =
-                opcode_summary.has_value() ? hevm_opcode_summary_json(*opcode_summary)
-                                           : nullptr;
-            nlohmann::json readiness_json =
-                readiness.has_value()
-                    ? parse_json_object(hevm_artifact_readiness_to_json(*readiness, -1))
-                    : nullptr;
-            std::cout << make_tool_summary_json(
-                             effective_config(tool_options),
-                             summary, artifacts.constants.values.size(), io_plan.plan,
-                             std::move(preflight), std::move(communication_plan_json),
-                             std::move(communication_execution_preflight_json),
-                             std::move(execution_preflight_json),
-                             std::move(opcode_summary_json_value),
-                             std::move(readiness_json), debug_dump)
-                             .dump(2)
-                      << '\n';
+            std::cout << *summary_json << '\n';
         }
         else
         {

@@ -17,6 +17,7 @@ add_library(poseidon_mgpu STATIC
     ir/schedule_summary.cpp
     runtime/comm_schedule_handler.cpp
     runtime/gpu_execution_preflight.cpp
+    runtime/hevm_artifact_report.cpp
     runtime/hevm_artifact_readiness.cpp
     runtime/hevm_io_binding.cpp
     runtime/hevm_plaintext_encoding.cpp
@@ -123,6 +124,10 @@ if(POSEIDON_BUILD_MGPU_TESTS)
 
     add_executable(poseidon_mgpu_hevm_artifact_readiness_tests
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_hevm_artifact_readiness_test.cpp
+    )
+
+    add_executable(poseidon_mgpu_hevm_artifact_report_tests
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_hevm_artifact_report_test.cpp
     )
 
     add_executable(poseidon_mgpu_gpu_execution_preflight_tests
@@ -235,6 +240,11 @@ if(POSEIDON_BUILD_MGPU_TESTS)
     )
 
     target_link_libraries(poseidon_mgpu_hevm_artifact_readiness_tests
+        PRIVATE
+            poseidon_mgpu
+    )
+
+    target_link_libraries(poseidon_mgpu_hevm_artifact_report_tests
         PRIVATE
             poseidon_mgpu
     )
@@ -449,6 +459,26 @@ if(POSEIDON_BUILD_MGPU_TESTS)
             WILL_FAIL TRUE)
 
     add_test(
+        NAME poseidon_mgpu_external_hevm_report_mock_artifact_tests
+        COMMAND poseidon_mgpu_external_hevm_artifact_tests
+    )
+    set(POSEIDON_MGPU_EXTERNAL_HEVM_REPORT_MOCK_ENV
+        "POSEIDON_MGPU_EXTERNAL_MOCK_ARTIFACT=1"
+        "POSEIDON_MGPU_EXTERNAL_DEVICE_COUNT=2"
+        "POSEIDON_MGPU_EXTERNAL_UPLOAD_DEVICE=0"
+        "POSEIDON_MGPU_EXTERNAL_COMPUTE_DEVICES=1"
+        "POSEIDON_MGPU_EXTERNAL_DOWNLOAD_DEVICE=0"
+        "POSEIDON_MGPU_EXTERNAL_PREFLIGHT_COMM_AVAILABLE=1"
+        "POSEIDON_MGPU_EXTERNAL_PREFLIGHT_RELIN_KEYS=1"
+        "POSEIDON_MGPU_EXTERNAL_PREFLIGHT_GALOIS_KEYS=1"
+        "POSEIDON_MGPU_EXTERNAL_EXECUTION_CUDA_PEER_AVAILABLE=1"
+        "POSEIDON_MGPU_EXTERNAL_REPORT_JSON=${CMAKE_CURRENT_BINARY_DIR}/external_hevm_report_mock.json"
+    )
+    set_tests_properties(poseidon_mgpu_external_hevm_report_mock_artifact_tests
+        PROPERTIES
+            ENVIRONMENT "${POSEIDON_MGPU_EXTERNAL_HEVM_REPORT_MOCK_ENV}")
+
+    add_test(
         NAME poseidon_mgpu_dacapo_constants_tests
         COMMAND poseidon_mgpu_dacapo_constants_tests
     )
@@ -481,6 +511,11 @@ if(POSEIDON_BUILD_MGPU_TESTS)
     add_test(
         NAME poseidon_mgpu_hevm_artifact_readiness_tests
         COMMAND poseidon_mgpu_hevm_artifact_readiness_tests
+    )
+
+    add_test(
+        NAME poseidon_mgpu_hevm_artifact_report_tests
+        COMMAND poseidon_mgpu_hevm_artifact_report_tests
     )
 
     add_test(
