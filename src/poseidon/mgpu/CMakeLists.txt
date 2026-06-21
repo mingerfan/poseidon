@@ -61,11 +61,15 @@ if(POSEIDON_BUILD_MGPU_TOOLS)
             PRIVATE
                 poseidon_mgpu
         )
+        add_dependencies(
+            poseidon_mgpu_dacapo_hevm_dump_tool_tests
+            poseidon_mgpu_dacapo_hevm_dump)
 
         add_test(
             NAME poseidon_mgpu_dacapo_hevm_dump_tool_tests
             COMMAND poseidon_mgpu_dacapo_hevm_dump_tool_tests
                     $<TARGET_FILE:poseidon_mgpu_dacapo_hevm_dump>
+                    ${POSEIDON_INCLUDES_DIR}/src/poseidon/mgpu/configs
         )
     endif()
 endif()

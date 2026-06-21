@@ -138,6 +138,25 @@ std::string make_hevm_binary()
         });
 }
 
+std::string make_two_compute_hevm_binary()
+{
+    return poseidon::mgpu::test::make_hevm_binary(
+        1, 1, 3, 1, { 2 },
+        {
+            poseidon::mgpu::test::HevmOpRecord{
+                0, 0, 0, poseidon::mgpu::test::make_hevm_encode_attr(2, 20) },
+            poseidon::mgpu::test::HevmOpRecord{ 9, 1, 0, 0 },
+            poseidon::mgpu::test::HevmOpRecord{ 9, 2, 1, 0 },
+        },
+        poseidon::mgpu::test::HevmConfigMetadata{
+            { 20 },
+            { 2 },
+            { 40 },
+            { 2 },
+            2,
+        });
+}
+
 std::string make_constant_file()
 {
     std::string output;
@@ -211,14 +230,52 @@ void test_write_schedule_and_report(const std::string &tool_path)
     require_contains(schedule_text, "mgpu.copy_plain");
 }
 
+void test_config_file_template_report(
+    const std::string &tool_path, const std::string &config_dir)
+{
+    TempDir temp;
+    const std::string hevm_path = temp.path("mock.hevm");
+    const std::string constants_path = temp.path("mock.cst");
+    const std::string summary_path = temp.path("summary.json");
+    const std::string stdout_path = temp.path("stdout.txt");
+    const std::string config_path =
+        (std::filesystem::path(config_dir) / "single_node_8gpu.json").string();
+    write_binary_file(hevm_path, make_two_compute_hevm_binary());
+    write_binary_file(constants_path, make_constant_file());
+
+    const std::string command =
+        shell_quote(tool_path) +
+        " --config " + shell_quote(config_path) +
+        " --hevm " + shell_quote(hevm_path) +
+        " --constants " + shell_quote(constants_path) +
+        " --write-summary-json " + shell_quote(summary_path) +
+        " --no-schedule > " + shell_quote(stdout_path);
+
+    const int exit_code = std::system(command.c_str());
+    require(exit_code == 0, "dump tool config command failed: " + command);
+
+    const std::string stdout_text = read_text_file(stdout_path);
+    const std::string summary_text = read_text_file(summary_path);
+
+    require_not_contains(stdout_text, "mgpu.schedule");
+    require_contains(summary_text, "\"device_count\": 8");
+    require_contains(summary_text, "\"cuda_peer\": true");
+    require_contains(summary_text, "\"require_ready\": true");
+    require_contains(summary_text, "\"execution_gate\"");
+    require_contains(summary_text, "\"status\": \"ready\"");
+    require_contains(summary_text, "\"copy_plain\": 1");
+    require_contains(summary_text, "\"copy_cipher\": 2");
+}
+
 }  // namespace
 
 int main(int argc, char **argv)
 {
     try
     {
-        require(argc == 2, "expected path to poseidon_mgpu_dacapo_hevm_dump");
+        require(argc == 3, "expected dump tool path and mgpu config directory");
         test_write_schedule_and_report(argv[1]);
+        test_config_file_template_report(argv[1], argv[2]);
     }
     catch (const std::exception &ex)
     {
