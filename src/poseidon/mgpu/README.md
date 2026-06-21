@@ -22,3 +22,15 @@ The Dacapo submodule is source-only in this build. Poseidon does not build
 Dacapo or MLIR as part of `poseidon_mgpu`; use the adapter boundary in
 `compiler/` to translate captured Dacapo output into the internal IR once the
 output format is fixed.
+
+## Dacapo Dependency Isolation
+
+Use Nix for Dacapo/MLIR dependency experiments instead of installing packages
+into the system environment:
+
+```bash
+nix-shell src/poseidon/mgpu/nix/dacapo-shell.nix
+```
+
+The shell points `DACAPO_ROOT` at `src/poseidon/mgpu/third_party/dacapo` and
+keeps Dacapo source-only with respect to the normal Poseidon build.
