@@ -9,9 +9,11 @@
 #include "poseidon/mgpu/runtime/hevm_io_binding.h"
 #include "poseidon/mgpu/runtime/poseidon_gpu_schedule_preflight.h"
 
+#include <cstdint>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <limits>
 #include <optional>
 #include <sstream>
 #include <stdexcept>
@@ -106,6 +108,12 @@ std::vector<int> parse_compute_devices(const char *value)
         begin = end + 1;
     }
     return devices;
+}
+
+std::int64_t topology_device_count(int node_count, int devices_per_node)
+{
+    return static_cast<std::int64_t>(node_count) *
+           static_cast<std::int64_t>(devices_per_node);
 }
 
 bool argument_requires_value(const std::string &arg)
@@ -455,8 +463,14 @@ ToolOptions parse_args(int argc, char **argv)
         {
             throw std::invalid_argument("communication topology devices per node must be positive");
         }
-        if (options.config.node_count * devices_per_node <
-            options.config.pipeline.device_count)
+        const std::int64_t total_devices =
+            topology_device_count(options.config.node_count, devices_per_node);
+        if (total_devices > std::numeric_limits<int>::max())
+        {
+            throw std::invalid_argument(
+                "communication topology device count exceeds logical device id range");
+        }
+        if (total_devices < options.config.pipeline.device_count)
         {
             throw std::invalid_argument(
                 "communication topology has fewer logical devices than --devices");

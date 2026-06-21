@@ -3,6 +3,7 @@
 #include "poseidon/util/json.h"
 
 #include <cstdint>
+#include <limits>
 #include <optional>
 #include <sstream>
 #include <utility>
@@ -173,6 +174,12 @@ bool read_int_array(
 bool is_valid_device(int device_id, int device_count)
 {
     return device_id >= 0 && device_id < device_count;
+}
+
+std::int64_t topology_device_count(int node_count, int devices_per_node)
+{
+    return static_cast<std::int64_t>(node_count) *
+           static_cast<std::int64_t>(devices_per_node);
 }
 
 void parse_placement_policy(
@@ -429,12 +436,22 @@ void validate_config(StaticScheduleExecutionConfigParseResult &result)
                 result, "/topology/devices_per_node",
                 "topology devices_per_node must be positive");
         }
-        else if (
-            config.node_count * devices_per_node < config.pipeline.device_count)
+        else if (config.node_count > 0)
         {
-            add_diagnostic(
-                result, "/topology",
-                "topology has fewer logical devices than device_count");
+            const std::int64_t total_devices =
+                topology_device_count(config.node_count, devices_per_node);
+            if (total_devices > std::numeric_limits<int>::max())
+            {
+                add_diagnostic(
+                    result, "/topology",
+                    "topology device count exceeds logical device id range");
+            }
+            else if (total_devices < config.pipeline.device_count)
+            {
+                add_diagnostic(
+                    result, "/topology",
+                    "topology has fewer logical devices than device_count");
+            }
         }
     }
 }

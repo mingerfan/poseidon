@@ -18,6 +18,7 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <limits>
 #include <optional>
 #include <sstream>
 #include <stdexcept>
@@ -88,6 +89,12 @@ int parse_int(const char *name, const char *value)
         throw std::invalid_argument(std::string("invalid integer for ") + name + ": " + value);
     }
     return parsed;
+}
+
+std::int64_t topology_device_count(int node_count, int devices_per_node)
+{
+    return static_cast<std::int64_t>(node_count) *
+           static_cast<std::int64_t>(devices_per_node);
 }
 
 bool parse_bool(const char *value)
@@ -720,8 +727,13 @@ void validate_external_config(const StaticScheduleExecutionConfig &config)
     const int devices_per_node =
         config.devices_per_node == 0 ? config.pipeline.device_count
                                      : config.devices_per_node;
+    const std::int64_t total_devices =
+        topology_device_count(config.node_count, devices_per_node);
     require(
-        config.node_count * devices_per_node >= config.pipeline.device_count,
+        total_devices <= std::numeric_limits<int>::max(),
+        "external HEVM topology device count exceeds logical device id range");
+    require(
+        total_devices >= config.pipeline.device_count,
         "external HEVM topology has fewer logical devices than device_count");
 }
 
@@ -872,8 +884,13 @@ MgpuTopology make_external_topology(const StaticScheduleExecutionConfig &config)
     {
         devices_per_node = config.pipeline.device_count;
     }
+    const std::int64_t total_devices =
+        topology_device_count(config.node_count, devices_per_node);
     require(
-        config.node_count * devices_per_node >= config.pipeline.device_count,
+        total_devices <= std::numeric_limits<int>::max(),
+        "external HEVM topology device count exceeds logical device id range");
+    require(
+        total_devices >= config.pipeline.device_count,
         "external HEVM topology has fewer logical devices than device_count");
     return make_uniform_cluster_topology(config.node_count, devices_per_node);
 }

@@ -245,6 +245,30 @@ void test_single_node_zero_devices_per_node_defaults_to_device_count()
     require(topology.devices[3].local_device == 3, "implicit topology local id mismatch");
 }
 
+void test_config_rejects_topology_logical_device_count_overflow()
+{
+    const char *json = R"json(
+{
+  "version": 1,
+  "device_count": 2,
+  "topology": {
+    "nodes": 1073741824,
+    "devices_per_node": 3
+  },
+  "preflight": {
+    "communication_plan": true
+  }
+}
+)json";
+
+    const StaticScheduleExecutionConfigParseResult result =
+        parse_static_schedule_execution_config_json(json);
+    require(!result.ok(), "oversized config topology should fail");
+    require_contains(
+        result.format_diagnostics(),
+        "/topology: topology device count exceeds logical device id range");
+}
+
 void test_config_json_round_trip()
 {
     StaticScheduleExecutionConfig config;
@@ -516,6 +540,7 @@ int main(int argc, char **argv)
         test_require_ready_enables_hard_gate_checks();
         test_require_ready_rejects_explicitly_disabled_hard_gate_checks();
         test_single_node_zero_devices_per_node_defaults_to_device_count();
+        test_config_rejects_topology_logical_device_count_overflow();
         test_config_json_round_trip();
         test_config_json_round_trip_preserves_unset_optional_devices();
         test_config_diagnostics();
