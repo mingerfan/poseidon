@@ -220,6 +220,10 @@ if(POSEIDON_BUILD_BENCH)
     add_subdirectory(bench)
 endif()
 
+# [option] POSEIDON_BUILD_MGPU (default: OFF)
+option(POSEIDON_BUILD_MGPU "Build optional multi-GPU static schedule runtime" OFF)
+message(STATUS "POSEIDON_BUILD_MGPU: ${POSEIDON_BUILD_MGPU}")
+
 add_library(poseidon_shared SHARED ${POSEIDON_SOURCE_FILES})    
 target_include_directories(poseidon_shared PUBLIC ${POSEIDON_INCLUDES_DIR}/src)
 target_link_libraries(poseidon_shared PRIVATE gmp)
@@ -269,6 +273,10 @@ if(POSEIDON_USE_INTEL_HEXL)
             DESTINATION ${CMAKE_INSTALL_PREFIX}/${CMAKE_LIBRARY_PREFIX}
             FILES_MATCHING PATTERN "*hexl*"
     )
+endif()
+
+if(POSEIDON_BUILD_MGPU)
+    add_subdirectory(src/poseidon/mgpu)
 endif()
 
 install(
