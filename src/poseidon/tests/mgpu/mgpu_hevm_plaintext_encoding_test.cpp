@@ -36,6 +36,23 @@ ParametersLiteral make_ckks_test_parameters()
     return parms;
 }
 
+ParametersLiteral make_bfv_test_parameters()
+{
+    ParametersLiteral parms(
+        BFV,
+        /*log_n=*/12,
+        /*log_slots=*/11,
+        /*log_scale=*/20,
+        /*hamming_weight=*/0,
+        /*q0_level=*/0,
+        Modulus(65537),
+        std::vector<Modulus>{},
+        std::vector<Modulus>{},
+        sec_level_type::none);
+    parms.set_log_modulus(std::vector<std::uint32_t>(3, 30), {});
+    return parms;
+}
+
 void require(bool condition, const std::string &message)
 {
     if (!condition)
@@ -159,6 +176,39 @@ void test_reports_missing_level()
     require_contains(result.format_diagnostics(), "missing Poseidon parms_id");
 }
 
+void test_reports_non_ckks_context()
+{
+    const ParametersLiteral parms = make_bfv_test_parameters();
+    const PoseidonContext context(parms);
+    const HevmPlaintextEncodingResult result =
+        encode_hevm_plain_inputs(context, make_plan(), make_constants());
+
+    require(!result.ok(), "non-CKKS context should fail");
+    require(result.plaintexts.empty(), "non-CKKS encoding should not return plaintexts");
+    require_contains(
+        result.format_diagnostics(),
+        "HEVM plaintext constants require a CKKS context");
+}
+
+void test_bind_rejects_null_encoded_plaintext()
+{
+    IoBindingScheduleHandler io;
+    HevmEncodedPlaintext plaintext;
+    plaintext.value_id = 10;
+
+    bool failed = false;
+    try
+    {
+        bind_hevm_encoded_plain_inputs(io, { plaintext });
+    }
+    catch (const std::invalid_argument &ex)
+    {
+        failed = true;
+        require_contains(ex.what(), "encoded HEVM plaintext must not be null");
+    }
+    require(failed, "null encoded plaintext should fail binding");
+}
+
 }  // namespace
 
 int main()
@@ -168,6 +218,8 @@ int main()
         test_encodes_plaintexts_for_each_upload_value();
         test_reports_missing_constant();
         test_reports_missing_level();
+        test_reports_non_ckks_context();
+        test_bind_rejects_null_encoded_plaintext();
     }
     catch (const std::exception &ex)
     {
