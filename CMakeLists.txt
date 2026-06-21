@@ -276,6 +276,13 @@ if(POSEIDON_USE_INTEL_HEXL)
 endif()
 
 if(POSEIDON_BUILD_MGPU)
+    option(POSEIDON_BUILD_MGPU_TESTS "Build multi-GPU static schedule tests" ON)
+    message(STATUS "POSEIDON_BUILD_MGPU_TESTS: ${POSEIDON_BUILD_MGPU_TESTS}")
+
+    if(POSEIDON_BUILD_MGPU_TESTS)
+        enable_testing()
+    endif()
+
     add_subdirectory(src/poseidon/mgpu)
 endif()
 
