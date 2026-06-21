@@ -3,6 +3,7 @@
 #include "poseidon/util/json.h"
 
 #include <cstdint>
+#include <optional>
 #include <sstream>
 #include <utility>
 
@@ -72,6 +73,41 @@ bool read_bool(
     }
 
     value = iter->get<bool>();
+    return true;
+}
+
+bool read_optional_int(
+    StaticScheduleExecutionConfigParseResult &result, const Json &object,
+    const char *field, std::optional<int> &value, const std::string &path)
+{
+    const auto iter = object.find(field);
+    if (iter == object.end())
+    {
+        return false;
+    }
+
+    const std::string item_path = path + "/" + field;
+    if (iter->is_null())
+    {
+        value.reset();
+        return true;
+    }
+
+    if (!iter->is_number_integer() && !iter->is_number_unsigned())
+    {
+        add_diagnostic(result, item_path, "expected an integer or null");
+        return false;
+    }
+
+    try
+    {
+        value = iter->get<int>();
+    }
+    catch (const std::exception &ex)
+    {
+        add_diagnostic(result, item_path, ex.what());
+        return false;
+    }
     return true;
 }
 
@@ -174,16 +210,12 @@ void parse_placement(
     read_int(
         result, placement, "default_device", config.pipeline.placement.default_device,
         "/placement");
-    int upload_device = 0;
-    if (read_int(result, placement, "upload_device", upload_device, "/placement"))
-    {
-        config.pipeline.placement.upload_device = upload_device;
-    }
-    int download_device = 0;
-    if (read_int(result, placement, "download_device", download_device, "/placement"))
-    {
-        config.pipeline.placement.download_device = download_device;
-    }
+    read_optional_int(
+        result, placement, "upload_device", config.pipeline.placement.upload_device,
+        "/placement");
+    read_optional_int(
+        result, placement, "download_device", config.pipeline.placement.download_device,
+        "/placement");
     if (read_int_array(
             result, placement, "compute_devices",
             config.pipeline.placement.compute_devices, "/placement") &&

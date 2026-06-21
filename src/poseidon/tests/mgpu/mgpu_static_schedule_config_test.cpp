@@ -214,6 +214,36 @@ void test_config_json_round_trip()
         "round-trip compute_devices mismatch");
 }
 
+void test_config_json_round_trip_preserves_unset_optional_devices()
+{
+    StaticScheduleExecutionConfig config;
+    config.pipeline.device_count = 3;
+    config.pipeline.placement.default_device = 1;
+    config.pipeline.placement.policy = StaticPlacementPolicy::RoundRobinCompute;
+    config.pipeline.placement.compute_devices = { 1, 2 };
+
+    const std::string json = static_schedule_execution_config_to_json(config);
+    require_contains(json, "\"upload_device\": null");
+    require_contains(json, "\"download_device\": null");
+
+    const StaticScheduleExecutionConfigParseResult parsed =
+        parse_static_schedule_execution_config_json(json);
+    require(
+        parsed.ok(),
+        "round-trip config with null optional devices should parse:\n" +
+            parsed.format_diagnostics());
+    require(
+        !parsed.config.pipeline.placement.upload_device.has_value(),
+        "round-trip upload_device should remain unset");
+    require(
+        !parsed.config.pipeline.placement.download_device.has_value(),
+        "round-trip download_device should remain unset");
+    require(
+        parsed.config.pipeline.placement.policy ==
+            StaticPlacementPolicy::RoundRobinCompute,
+        "round-trip compute_devices should imply round-robin placement");
+}
+
 void test_config_diagnostics()
 {
     const char *json = R"json(
@@ -328,6 +358,7 @@ int main(int argc, char **argv)
         test_parse_cluster_preview_config();
         test_require_ready_enables_hard_gate_checks();
         test_config_json_round_trip();
+        test_config_json_round_trip_preserves_unset_optional_devices();
         test_config_diagnostics();
         if (argc > 1)
         {
