@@ -399,7 +399,10 @@ otherwise uses temporary outputs. Set `POSEIDON_MGPU_RESNET20_DACAPO_ROOT` or
 machines without real Dacapo output. During early artifact bring-up, set
 `POSEIDON_MGPU_RESNET20_ALLOW_NOT_READY=1` to treat a not-ready dump-tool
 result as a successful diagnostic collection as long as the JSON report was
-written with `execution_gate.status = "not_ready"`.
+written with `execution_gate.status = "not_ready"`. This also covers planning
+configs such as `cluster_4x8_node_spread_preview.json`, where the dump tool may
+exit successfully while the execution gate remains not-ready because inter-node
+routes do not yet have an execution backend.
 
 ## Communication Topology Planning
 

@@ -156,6 +156,20 @@ if(POSEIDON_BUILD_MGPU_TOOLS)
             poseidon_mgpu_resnet20_dump_preflight_not_ready_mock_tests
             PROPERTIES
                 ENVIRONMENT "${POSEIDON_MGPU_RESNET20_DUMP_PREFLIGHT_NOT_READY_MOCK_ENV}")
+
+        add_test(
+            NAME poseidon_mgpu_resnet20_dump_preflight_cluster_preview_mock_tests
+            COMMAND poseidon_mgpu_resnet20_dump_preflight_tests
+                    $<TARGET_FILE:poseidon_mgpu_dacapo_hevm_dump>
+        )
+        set(POSEIDON_MGPU_RESNET20_DUMP_PREFLIGHT_CLUSTER_PREVIEW_MOCK_ENV
+            "POSEIDON_MGPU_RESNET20_MOCK_ARTIFACTS=1"
+            "POSEIDON_MGPU_RESNET20_ALLOW_NOT_READY=1"
+            "POSEIDON_MGPU_RESNET20_CONFIG=${POSEIDON_INCLUDES_DIR}/src/poseidon/mgpu/configs/cluster_4x8_node_spread_preview.json")
+        set_tests_properties(
+            poseidon_mgpu_resnet20_dump_preflight_cluster_preview_mock_tests
+            PROPERTIES
+                ENVIRONMENT "${POSEIDON_MGPU_RESNET20_DUMP_PREFLIGHT_CLUSTER_PREVIEW_MOCK_ENV}")
     endif()
 endif()
 

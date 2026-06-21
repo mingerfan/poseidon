@@ -174,11 +174,12 @@ std::string make_mock_hevm_binary(bool unsupported_opcode)
 {
     const std::uint16_t final_opcode = unsupported_opcode ? 4 : 9;
     return poseidon::mgpu::test::make_hevm_binary(
-        1, 1, 2, 1, { 1 },
+        1, 1, 3, 1, { 2 },
         {
             poseidon::mgpu::test::HevmOpRecord{
                 0, 0, 0, poseidon::mgpu::test::make_hevm_encode_attr(2, 20) },
             poseidon::mgpu::test::HevmOpRecord{ final_opcode, 1, 0, 0 },
+            poseidon::mgpu::test::HevmOpRecord{ final_opcode, 2, 1, 0 },
         },
         poseidon::mgpu::test::HevmConfigMetadata{
             { 20 },
@@ -301,7 +302,7 @@ int main(int argc, char **argv)
         const std::string summary = read_text_file(summary_path);
         require_contains(summary, "\"execution_gate\"");
         require_contains(summary, "\"hevm_opcode_summary\"");
-        if (exit_code != 0)
+        if (summary.find("\"status\": \"not_ready\"") != std::string::npos)
         {
             require(
                 allow_not_ready,
@@ -312,6 +313,7 @@ int main(int argc, char **argv)
                       << '\n';
             return EXIT_SUCCESS;
         }
+        require(exit_code == 0, "ResNet20 dump preflight failed: " + command);
 
         const std::string schedule = read_text_file(schedule_path);
         require_contains(summary, "\"status\": \"ready\"");
