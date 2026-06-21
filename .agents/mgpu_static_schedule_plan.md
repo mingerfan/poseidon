@@ -182,8 +182,13 @@ Dacapo artifact debugging:
   ResNet20 artifact paths. It should write durable JSON and schedule dumps when
   `POSEIDON_MGPU_RESNET20_PREFLIGHT_JSON` and
   `POSEIDON_MGPU_RESNET20_SCHEDULE_DUMP` are set, return skip without real
-  artifacts, and keep a mock CTest variant for single-GPU development. It may
-  accept `POSEIDON_MGPU_RESNET20_ALLOW_NOT_READY=1` only as an explicit
+  artifacts, and keep mock CTest variants for single-GPU development. Set
+  `POSEIDON_MGPU_RESNET20_CONFIG` to reuse a bundled config template; explicit
+  `POSEIDON_MGPU_RESNET20_DEVICE_COUNT`,
+  `POSEIDON_MGPU_RESNET20_COMPUTE_DEVICES`, placement, topology, preflight,
+  backend, and `POSEIDON_MGPU_RESNET20_REQUIRE_READY` variables are appended as
+  dump-tool overrides after that config. It may accept
+  `POSEIDON_MGPU_RESNET20_ALLOW_NOT_READY=1` only as an explicit
   diagnostic-collection mode; that mode must still require a not-ready JSON
   report, cover both hard-gate failures and zero-exit not-ready planning
   previews, and must not be treated as execution readiness.
@@ -196,6 +201,14 @@ Dacapo artifact debugging:
   from the internal static schedule execution config. Later command-line
   placement/preflight/backend flags override the file so single-GPU, 8-GPU, and
   4x8 preview configs can be reused across artifacts.
+- Config-driven wrapper paths must keep the same override semantics. The
+  external HEVM CTest accepts `POSEIDON_MGPU_EXTERNAL_CONFIG` or
+  `POSEIDON_MGPU_EXTERNAL_CONFIG_JSON` first, then applies explicitly provided
+  `POSEIDON_MGPU_EXTERNAL_*` placement, topology, preflight, backend, and
+  readiness environment variables. The ResNet20 dump-preflight wrapper accepts
+  `POSEIDON_MGPU_RESNET20_CONFIG` first, then appends explicitly provided
+  `POSEIDON_MGPU_RESNET20_*` placement, topology, preflight, backend, and
+  readiness overrides to the dump-tool command.
 - Bundled config templates live under `src/poseidon/mgpu/configs/`. Use
   `single_gpu.json` for compatibility checks, `single_node_8gpu.json` for the
   first 8-GPU run, `cluster_4x8_preview.json` for all-device cluster planning,
@@ -236,7 +249,10 @@ Dacapo artifact debugging:
   make the external artifact check fail.
 - External artifact tests also accept `POSEIDON_MGPU_EXTERNAL_CONFIG` or
   `POSEIDON_MGPU_EXTERNAL_CONFIG_JSON` to exercise the same static schedule
-  execution config path as the dump tool.
+  execution config path as the dump tool. Explicit placement, topology,
+  preflight, backend, and `POSEIDON_MGPU_EXTERNAL_REQUIRE_READY` environment
+  variables override the parsed config, matching the dump tool's
+  `--config ... --devices ...` behavior.
 - External artifact tests also accept `POSEIDON_MGPU_EXTERNAL_REPORT_JSON` to
   write the shared machine-readable HEVM artifact report used by the dump tool.
   Write this report before enforcing `require_ready` so failed gates can still

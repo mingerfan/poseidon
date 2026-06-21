@@ -268,6 +268,13 @@ Optional environment variables:
 - `POSEIDON_MGPU_EXTERNAL_REPORT_JSON=/path/to/report.json`
 - `POSEIDON_MGPU_EXTERNAL_SCHEDULE_DUMP=/path/to/schedule.mlir`
 
+When `POSEIDON_MGPU_EXTERNAL_CONFIG` or
+`POSEIDON_MGPU_EXTERNAL_CONFIG_JSON` is set, explicit
+`POSEIDON_MGPU_EXTERNAL_*` placement, topology, preflight, backend, and
+`POSEIDON_MGPU_EXTERNAL_REQUIRE_READY` variables override the parsed config.
+This matches the dump tool's `--config ... --devices ...` behavior and lets a
+single 8-GPU or 4x8 template be reused for narrower mock or bring-up runs.
+
 `poseidon_mgpu_external_hevm_mock_artifact_tests` exercises the same CTest
 binary with a generated mock `.hevm + .cst` artifact, preflight availability
 flags, and a 2x2 topology. It is intended to keep the artifact diagnostics path
@@ -402,8 +409,13 @@ CTest gate. It runs `poseidon_mgpu_dacapo_hevm_dump` on the expected ResNet20
 paths, writes `POSEIDON_MGPU_RESNET20_PREFLIGHT_JSON` and
 `POSEIDON_MGPU_RESNET20_SCHEDULE_DUMP` when those variables are set, and
 otherwise uses temporary outputs. Set `POSEIDON_MGPU_RESNET20_DACAPO_ROOT` or
-`DACAPO_ROOT` for real artifacts. The mock variant covers the wrapper on
-machines without real Dacapo output. During early artifact bring-up, set
+`DACAPO_ROOT` for real artifacts. Set `POSEIDON_MGPU_RESNET20_CONFIG` to reuse
+a bundled config template; explicit `POSEIDON_MGPU_RESNET20_DEVICE_COUNT`,
+`POSEIDON_MGPU_RESNET20_COMPUTE_DEVICES`, placement, topology, preflight,
+backend, and `POSEIDON_MGPU_RESNET20_REQUIRE_READY` variables are appended as
+dump-tool overrides after that config. The mock variants cover both the
+default wrapper path and config-plus-override path on machines without real
+Dacapo output. During early artifact bring-up, set
 `POSEIDON_MGPU_RESNET20_ALLOW_NOT_READY=1` to treat a not-ready dump-tool
 result as a successful diagnostic collection as long as the JSON report was
 written with `execution_gate.status = "not_ready"`. This also covers planning
