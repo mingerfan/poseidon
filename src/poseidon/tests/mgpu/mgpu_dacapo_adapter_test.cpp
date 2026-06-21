@@ -167,12 +167,12 @@ void test_json_format_reports_parse_diagnostics()
 void test_hevm_binary_translates_supported_ops()
 {
     const std::string hevm = make_hevm_binary(
-        1, 1, 4, 1, { 3 },
+        1, 1, 1, 1, { 0 },
         {
             HevmOpRecord{ 0, 0, 0, 0 },
-            HevmOpRecord{ 9, 1, 0, 0 },
-            HevmOpRecord{ 7, 2, 1, 0 },
-            HevmOpRecord{ 3, 3, 2, 0 },
+            HevmOpRecord{ 9, 0, 0, 0 },
+            HevmOpRecord{ 7, 0, 0, 0 },
+            HevmOpRecord{ 3, 0, 0, 0 },
         });
 
     const DacapoAdapterResult result = translate_dacapo_schedule(
@@ -184,17 +184,20 @@ void test_hevm_binary_translates_supported_ops()
     require(result.schedule.ops[0].outputs[0].id == 1, "HEVM arg value id mismatch");
     require(result.schedule.ops[0].device_id == -1, "HEVM ops should be unassigned");
     require(result.schedule.ops[1].kind == MgpuOpKind::UploadPlain, "HEVM encode op mismatch");
-    require(result.schedule.ops[1].outputs[0].id == 5, "HEVM plain value id mismatch");
+    require(result.schedule.ops[1].outputs[0].id == 2, "HEVM plain value id mismatch");
     require(result.schedule.ops[2].kind == MgpuOpKind::MultiplyPlain, "HEVM mulcp mismatch");
     require(result.schedule.ops[2].inputs[0].id == 1, "HEVM mulcp cipher input mismatch");
-    require(result.schedule.ops[2].inputs[1].id == 5, "HEVM mulcp plain input mismatch");
-    require(result.schedule.ops[2].outputs[0].id == 2, "HEVM mulcp output mismatch");
+    require(result.schedule.ops[2].inputs[1].id == 2, "HEVM mulcp plain input mismatch");
+    require(result.schedule.ops[2].outputs[0].id == 3, "HEVM mulcp output mismatch");
     require(result.schedule.ops[3].kind == MgpuOpKind::AddPlain, "HEVM addcp mismatch");
-    require(result.schedule.ops[3].inputs[0].id == 2, "HEVM addcp cipher input mismatch");
-    require(result.schedule.ops[3].inputs[1].id == 5, "HEVM addcp plain input mismatch");
+    require(result.schedule.ops[3].inputs[0].id == 3, "HEVM addcp cipher input mismatch");
+    require(result.schedule.ops[3].inputs[1].id == 2, "HEVM addcp plain input mismatch");
+    require(result.schedule.ops[3].outputs[0].id == 4, "HEVM addcp output mismatch");
     require(result.schedule.ops[4].kind == MgpuOpKind::Rescale, "HEVM rescale mismatch");
+    require(result.schedule.ops[4].inputs[0].id == 4, "HEVM rescale input mismatch");
+    require(result.schedule.ops[4].outputs[0].id == 5, "HEVM rescale output mismatch");
     require(result.schedule.ops[5].kind == MgpuOpKind::Download, "HEVM result op mismatch");
-    require(result.schedule.ops[5].inputs[0].id == 4, "HEVM result input mismatch");
+    require(result.schedule.ops[5].inputs[0].id == 5, "HEVM result input mismatch");
 }
 
 void test_hevm_binary_reports_unsupported_opcode()

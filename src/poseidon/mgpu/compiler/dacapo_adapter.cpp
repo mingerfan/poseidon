@@ -15,6 +15,8 @@ namespace
 
 constexpr std::uint32_t kHevmMagic = 0x4845564D;
 constexpr std::uint16_t kHevmAllocOpcode = 0xFFFF;
+constexpr std::uint64_t kMaxHevmRegisterCount =
+    static_cast<std::uint64_t>(std::numeric_limits<std::uint16_t>::max()) + 1;
 constexpr int kUnassignedDacapoDevice = -1;
 
 void add_diagnostic(DacapoAdapterResult &result, std::size_t offset, const std::string &message)
@@ -87,20 +89,25 @@ bool checked_mul(std::uint64_t left, std::uint64_t right, std::uint64_t &result)
     return true;
 }
 
-ValueId value_id_for_register(
-    DacapoAdapterResult &result, std::size_t offset, std::uint64_t base,
-    std::uint64_t reg, const char *kind)
+ValueId allocate_value_id(
+    DacapoAdapterResult &result, std::size_t offset, ValueId &next_value_id)
 {
-    std::uint64_t id = 0;
-    if (!checked_add(base, reg, id) || id == 0)
+    if (next_value_id == 0)
     {
-        std::ostringstream stream;
-        stream << "HEVM " << kind << " register " << reg
-               << " cannot be represented as a Poseidon value id";
-        add_diagnostic(result, offset, stream.str());
+        add_diagnostic(result, offset, "Poseidon value id 0 is reserved");
         return 0;
     }
-    return static_cast<ValueId>(id);
+
+    const ValueId id = next_value_id;
+    if (next_value_id == std::numeric_limits<ValueId>::max())
+    {
+        add_diagnostic(result, offset, "Poseidon value id space exhausted");
+        next_value_id = 0;
+        return 0;
+    }
+
+    ++next_value_id;
+    return id;
 }
 
 bool validate_register(
@@ -117,6 +124,25 @@ bool validate_register(
            << count << " " << kind << " buffers";
     add_diagnostic(result, offset, stream.str());
     return false;
+}
+
+ValueId lookup_register_value(
+    DacapoAdapterResult &result, std::size_t offset,
+    const std::vector<ValueId> &values, std::uint64_t reg, const char *kind)
+{
+    if (!validate_register(result, offset, reg, values.size(), kind))
+    {
+        return 0;
+    }
+
+    const ValueId id = values[static_cast<std::size_t>(reg)];
+    if (id == 0)
+    {
+        std::ostringstream stream;
+        stream << "HEVM " << kind << " register " << reg << " is used before definition";
+        add_diagnostic(result, offset, stream.str());
+    }
+    return id;
 }
 
 MgpuValueRef value(ValueId id)
@@ -178,6 +204,13 @@ DacapoAdapterResult translate_hevm_binary(std::string_view input)
             "HEVM adapter V1 expects every function argument to be a ciphertext register");
         return result;
     }
+    if (num_ctxt_buffer > kMaxHevmRegisterCount || num_ptxt_buffer > kMaxHevmRegisterCount)
+    {
+        add_diagnostic(
+            result, header_size + 16,
+            "HEVM register count exceeds the 16-bit operation register space");
+        return result;
+    }
 
     std::uint64_t arg_array_count = 0;
     std::uint64_t result_prefix_array_count = 0;
@@ -217,12 +250,6 @@ DacapoAdapterResult translate_hevm_binary(std::string_view input)
         return result;
     }
 
-    std::uint64_t plain_base = 0;
-    if (!checked_add(num_ctxt_buffer, 1, plain_base))
-    {
-        add_diagnostic(result, header_size + 16, "HEVM ciphertext buffer count overflow");
-        return result;
-    }
     std::uint64_t res_dst_entry_offset = 0;
     std::uint64_t res_dst_byte_offset = 0;
     std::uint64_t header_and_fixed_config = 0;
@@ -246,13 +273,18 @@ DacapoAdapterResult translate_hevm_binary(std::string_view input)
         return result;
     }
 
+    std::vector<ValueId> cipher_values(static_cast<std::size_t>(num_ctxt_buffer), 0);
+    std::vector<ValueId> plain_values(static_cast<std::size_t>(num_ptxt_buffer), 0);
+    ValueId next_value_id = 1;
+
     for (std::uint64_t arg = 0; arg < arg_length; ++arg)
     {
-        const ValueId output_id = value_id_for_register(result, 8, 1, arg, "cipher");
+        const ValueId output_id = allocate_value_id(result, 8, next_value_id);
         if (output_id == 0)
         {
             return result;
         }
+        cipher_values[static_cast<std::size_t>(arg)] = output_id;
         result.schedule.ops.push_back(
             make_op(MgpuOpKind::UploadCipher, {}, { value(output_id) }, "hevm_arg"));
     }
@@ -279,15 +311,15 @@ DacapoAdapterResult translate_hevm_binary(std::string_view input)
                 result.schedule.ops.clear();
                 return result;
             }
-            const ValueId plain_dst =
-                value_id_for_register(result, offset + 2, plain_base, dst, "plain");
-            if (plain_dst == 0)
+            const ValueId output_id = allocate_value_id(result, offset + 2, next_value_id);
+            if (output_id == 0)
             {
                 result.schedule.ops.clear();
                 return result;
             }
+            plain_values[dst] = output_id;
             result.schedule.ops.push_back(
-                make_op(MgpuOpKind::UploadPlain, {}, { value(plain_dst) }, "hevm_encode"));
+                make_op(MgpuOpKind::UploadPlain, {}, { value(output_id) }, "hevm_encode"));
             break;
         }
         case 1: {
@@ -297,12 +329,17 @@ DacapoAdapterResult translate_hevm_binary(std::string_view input)
                 result.schedule.ops.clear();
                 return result;
             }
-            const ValueId cipher_dst =
-                value_id_for_register(result, offset + 2, 1, dst, "cipher");
-            const ValueId cipher_lhs =
-                value_id_for_register(result, offset + 4, 1, lhs, "cipher");
+            const ValueId input_id =
+                lookup_register_value(result, offset + 4, cipher_values, lhs, "cipher");
+            const ValueId output_id = allocate_value_id(result, offset + 2, next_value_id);
+            if (input_id == 0 || output_id == 0)
+            {
+                result.schedule.ops.clear();
+                return result;
+            }
+            cipher_values[dst] = output_id;
             result.schedule.ops.push_back(make_op(
-                MgpuOpKind::Rotate, { value(cipher_lhs) }, { value(cipher_dst) },
+                MgpuOpKind::Rotate, { value(input_id) }, { value(output_id) },
                 "hevm_rotate"));
             break;
         }
@@ -313,12 +350,17 @@ DacapoAdapterResult translate_hevm_binary(std::string_view input)
                 result.schedule.ops.clear();
                 return result;
             }
-            const ValueId cipher_dst =
-                value_id_for_register(result, offset + 2, 1, dst, "cipher");
-            const ValueId cipher_lhs =
-                value_id_for_register(result, offset + 4, 1, lhs, "cipher");
+            const ValueId input_id =
+                lookup_register_value(result, offset + 4, cipher_values, lhs, "cipher");
+            const ValueId output_id = allocate_value_id(result, offset + 2, next_value_id);
+            if (input_id == 0 || output_id == 0)
+            {
+                result.schedule.ops.clear();
+                return result;
+            }
+            cipher_values[dst] = output_id;
             result.schedule.ops.push_back(make_op(
-                MgpuOpKind::Rescale, { value(cipher_lhs) }, { value(cipher_dst) },
+                MgpuOpKind::Rescale, { value(input_id) }, { value(output_id) },
                 "hevm_rescale"));
             break;
         }
@@ -330,15 +372,20 @@ DacapoAdapterResult translate_hevm_binary(std::string_view input)
                 result.schedule.ops.clear();
                 return result;
             }
-            const ValueId cipher_dst =
-                value_id_for_register(result, offset + 2, 1, dst, "cipher");
-            const ValueId cipher_lhs =
-                value_id_for_register(result, offset + 4, 1, lhs, "cipher");
-            const ValueId cipher_rhs =
-                value_id_for_register(result, offset + 6, 1, rhs, "cipher");
+            const ValueId left_id =
+                lookup_register_value(result, offset + 4, cipher_values, lhs, "cipher");
+            const ValueId right_id =
+                lookup_register_value(result, offset + 6, cipher_values, rhs, "cipher");
+            const ValueId output_id = allocate_value_id(result, offset + 2, next_value_id);
+            if (left_id == 0 || right_id == 0 || output_id == 0)
+            {
+                result.schedule.ops.clear();
+                return result;
+            }
+            cipher_values[dst] = output_id;
             result.schedule.ops.push_back(make_op(
-                MgpuOpKind::Add, { value(cipher_lhs), value(cipher_rhs) },
-                { value(cipher_dst) }, "hevm_addcc"));
+                MgpuOpKind::Add, { value(left_id), value(right_id) },
+                { value(output_id) }, "hevm_addcc"));
             break;
         }
         case 7: {
@@ -349,20 +396,20 @@ DacapoAdapterResult translate_hevm_binary(std::string_view input)
                 result.schedule.ops.clear();
                 return result;
             }
-            const ValueId cipher_dst =
-                value_id_for_register(result, offset + 2, 1, dst, "cipher");
-            const ValueId cipher_lhs =
-                value_id_for_register(result, offset + 4, 1, lhs, "cipher");
-            const ValueId plain_rhs =
-                value_id_for_register(result, offset + 6, plain_base, rhs, "plain");
-            if (plain_rhs == 0)
+            const ValueId left_id =
+                lookup_register_value(result, offset + 4, cipher_values, lhs, "cipher");
+            const ValueId right_id =
+                lookup_register_value(result, offset + 6, plain_values, rhs, "plain");
+            const ValueId output_id = allocate_value_id(result, offset + 2, next_value_id);
+            if (left_id == 0 || right_id == 0 || output_id == 0)
             {
                 result.schedule.ops.clear();
                 return result;
             }
+            cipher_values[dst] = output_id;
             result.schedule.ops.push_back(make_op(
-                MgpuOpKind::AddPlain, { value(cipher_lhs), value(plain_rhs) },
-                { value(cipher_dst) }, "hevm_addcp"));
+                MgpuOpKind::AddPlain, { value(left_id), value(right_id) },
+                { value(output_id) }, "hevm_addcp"));
             break;
         }
         case 8: {
@@ -373,15 +420,20 @@ DacapoAdapterResult translate_hevm_binary(std::string_view input)
                 result.schedule.ops.clear();
                 return result;
             }
-            const ValueId cipher_dst =
-                value_id_for_register(result, offset + 2, 1, dst, "cipher");
-            const ValueId cipher_lhs =
-                value_id_for_register(result, offset + 4, 1, lhs, "cipher");
-            const ValueId cipher_rhs =
-                value_id_for_register(result, offset + 6, 1, rhs, "cipher");
+            const ValueId left_id =
+                lookup_register_value(result, offset + 4, cipher_values, lhs, "cipher");
+            const ValueId right_id =
+                lookup_register_value(result, offset + 6, cipher_values, rhs, "cipher");
+            const ValueId output_id = allocate_value_id(result, offset + 2, next_value_id);
+            if (left_id == 0 || right_id == 0 || output_id == 0)
+            {
+                result.schedule.ops.clear();
+                return result;
+            }
+            cipher_values[dst] = output_id;
             result.schedule.ops.push_back(make_op(
-                MgpuOpKind::Multiply, { value(cipher_lhs), value(cipher_rhs) },
-                { value(cipher_dst) }, "hevm_mulcc"));
+                MgpuOpKind::Multiply, { value(left_id), value(right_id) },
+                { value(output_id) }, "hevm_mulcc"));
             break;
         }
         case 9: {
@@ -392,20 +444,20 @@ DacapoAdapterResult translate_hevm_binary(std::string_view input)
                 result.schedule.ops.clear();
                 return result;
             }
-            const ValueId cipher_dst =
-                value_id_for_register(result, offset + 2, 1, dst, "cipher");
-            const ValueId cipher_lhs =
-                value_id_for_register(result, offset + 4, 1, lhs, "cipher");
-            const ValueId plain_rhs =
-                value_id_for_register(result, offset + 6, plain_base, rhs, "plain");
-            if (plain_rhs == 0)
+            const ValueId left_id =
+                lookup_register_value(result, offset + 4, cipher_values, lhs, "cipher");
+            const ValueId right_id =
+                lookup_register_value(result, offset + 6, plain_values, rhs, "plain");
+            const ValueId output_id = allocate_value_id(result, offset + 2, next_value_id);
+            if (left_id == 0 || right_id == 0 || output_id == 0)
             {
                 result.schedule.ops.clear();
                 return result;
             }
+            cipher_values[dst] = output_id;
             result.schedule.ops.push_back(make_op(
-                MgpuOpKind::MultiplyPlain, { value(cipher_lhs), value(plain_rhs) },
-                { value(cipher_dst) }, "hevm_mulcp"));
+                MgpuOpKind::MultiplyPlain, { value(left_id), value(right_id) },
+                { value(output_id) }, "hevm_mulcp"));
             break;
         }
         case 10: {
@@ -415,12 +467,17 @@ DacapoAdapterResult translate_hevm_binary(std::string_view input)
                 result.schedule.ops.clear();
                 return result;
             }
-            const ValueId cipher_dst =
-                value_id_for_register(result, offset + 2, 1, dst, "cipher");
-            const ValueId cipher_lhs =
-                value_id_for_register(result, offset + 4, 1, lhs, "cipher");
+            const ValueId input_id =
+                lookup_register_value(result, offset + 4, cipher_values, lhs, "cipher");
+            const ValueId output_id = allocate_value_id(result, offset + 2, next_value_id);
+            if (input_id == 0 || output_id == 0)
+            {
+                result.schedule.ops.clear();
+                return result;
+            }
+            cipher_values[dst] = output_id;
             result.schedule.ops.push_back(make_op(
-                MgpuOpKind::BootstrapFallback, { value(cipher_lhs) }, { value(cipher_dst) },
+                MgpuOpKind::BootstrapFallback, { value(input_id) }, { value(output_id) },
                 "hevm_bootstrap"));
             break;
         }
@@ -444,7 +501,7 @@ DacapoAdapterResult translate_hevm_binary(std::string_view input)
             return result;
         }
         const ValueId input_id =
-            value_id_for_register(result, offset, 1, result_register, "cipher");
+            lookup_register_value(result, offset, cipher_values, result_register, "cipher");
         if (input_id == 0)
         {
             result.schedule.ops.clear();
