@@ -85,6 +85,28 @@ void test_pipeline_reports_copy_insertion_errors()
     require_contains(result.format_diagnostics(), "unknown input value %99");
 }
 
+void test_pipeline_places_unassigned_ops_before_copy_insertion()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, kUnassignedDevice, {}, { value(1) }));
+    schedule.ops.push_back(op(MgpuOpKind::UploadPlain, kUnassignedDevice, {}, { value(2) }));
+    schedule.ops.push_back(
+        op(MgpuOpKind::MultiplyPlain, kUnassignedDevice, { value(1), value(2) }, { value(3) }));
+    schedule.ops.push_back(op(MgpuOpKind::Download, kUnassignedDevice, { value(3) }, {}));
+
+    StaticSchedulePipelineOptions options;
+    options.device_count = 2;
+    options.placement.default_device = 1;
+
+    const StaticSchedulePipelineResult result = prepare_static_schedule(schedule, options);
+    require(result.ok(), "pipeline failed:\n" + result.format_diagnostics());
+    require(result.schedule.ops.size() == 4, "no copies should be required after single-device placement");
+    for (const MgpuOp &placed_op : result.schedule.ops)
+    {
+        require(placed_op.device_id == 1, "pipeline should place all ops on default device");
+    }
+}
+
 }  // namespace
 
 int main()
@@ -93,6 +115,7 @@ int main()
     {
         test_pipeline_inserts_copies_and_dumps();
         test_pipeline_reports_copy_insertion_errors();
+        test_pipeline_places_unassigned_ops_before_copy_insertion();
     }
     catch (const std::exception &ex)
     {

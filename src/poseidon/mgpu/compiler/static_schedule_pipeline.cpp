@@ -40,8 +40,22 @@ StaticSchedulePipelineResult prepare_static_schedule(
 {
     StaticSchedulePipelineResult result;
 
+    StaticPlacementOptions placement_options = options.placement;
+    placement_options.device_count = options.device_count;
+    const StaticPlacementResult placement_result =
+        place_static_schedule(schedule, placement_options);
+    result.schedule = placement_result.schedule;
+    for (const StaticPlacementDiagnostic &diagnostic : placement_result.diagnostics)
+    {
+        add_diagnostic(result, "placement", diagnostic.op_index, diagnostic.message);
+    }
+    if (!placement_result.ok())
+    {
+        return result;
+    }
+
     const CopyInsertionResult copy_result =
-        insert_required_copies(schedule, options.copy_insertion);
+        insert_required_copies(result.schedule, options.copy_insertion);
     result.schedule = copy_result.schedule;
     for (const CopyInsertionDiagnostic &diagnostic : copy_result.diagnostics)
     {

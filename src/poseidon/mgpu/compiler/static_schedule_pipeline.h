@@ -1,6 +1,7 @@
 #pragma once
 
 #include "poseidon/mgpu/compiler/copy_insertion.h"
+#include "poseidon/mgpu/compiler/static_placement.h"
 #include "poseidon/mgpu/ir/schedule.h"
 
 #include <cstddef>
@@ -13,6 +14,7 @@ namespace poseidon::mgpu
 struct StaticSchedulePipelineOptions
 {
     int device_count = 1;
+    StaticPlacementOptions placement;
     CopyInsertionOptions copy_insertion;
     bool emit_debug_dump = false;
 };
