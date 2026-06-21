@@ -241,6 +241,58 @@ void test_no_command_mode(const std::string &tool_path)
     require_not_contains(output, "dump_command:");
 }
 
+void test_summary_json_for_ready_artifacts(const std::string &tool_path)
+{
+    TempDir dacapo_root;
+    create_mock_resnet20_artifacts(dacapo_root.root());
+    const std::string report_path = dacapo_root.path("artifact-check.json");
+
+    int exit_code = 0;
+    const std::string output = run_tool(
+        tool_path,
+        "--dacapo-root " + shell_quote(dacapo_root.root().string()) +
+            " --write-summary-json " + shell_quote(report_path) +
+            " --summary-json"
+            " --no-command",
+        exit_code);
+
+    require(exit_code == 0, "ready JSON artifact check should pass");
+    const std::string report = read_text_file(report_path);
+    require_contains(output, "\"version\": 1");
+    require_contains(output, "\"ready\": true");
+    require_contains(report, "\"status\": \"ready\"");
+    require_contains(report, "\"artifacts\"");
+    require_contains(report, "\"hevm\"");
+    require_contains(report, "\"constants\"");
+    require_contains(report, "\"present\": true");
+    require_contains(report, "\"dump_command\"");
+    require_contains(report, "ResNet.40._hecate_ResNet.hevm");
+    require_contains(report, "_hecate_ResNet.cst");
+}
+
+void test_summary_json_for_missing_artifacts(const std::string &tool_path)
+{
+    TempDir dacapo_root;
+    const std::string report_path = dacapo_root.path("missing-artifact-check.json");
+
+    int exit_code = 0;
+    const std::string output = run_tool(
+        tool_path,
+        "--dacapo-root " + shell_quote(dacapo_root.root().string()) +
+            " --write-summary-json " + shell_quote(report_path) +
+            " --no-command",
+        exit_code);
+
+    require(exit_code != 0, "missing artifact JSON check should fail");
+    require_not_contains(output, "\"version\": 1");
+    const std::string report = read_text_file(report_path);
+    require_contains(report, "\"ready\": false");
+    require_contains(report, "\"status\": \"missing_artifacts\"");
+    require_contains(report, "\"present\": false");
+    require_contains(report, "\"diagnostic\": \"missing\"");
+    require_contains(report, "\"generation_hint\"");
+}
+
 }  // namespace
 
 int main(int argc, char **argv)
@@ -252,6 +304,8 @@ int main(int argc, char **argv)
         test_ready_artifacts_command_hint(argv[1]);
         test_config_command_hint(argv[1]);
         test_no_command_mode(argv[1]);
+        test_summary_json_for_ready_artifacts(argv[1]);
+        test_summary_json_for_missing_artifacts(argv[1]);
     }
     catch (const std::exception &ex)
     {

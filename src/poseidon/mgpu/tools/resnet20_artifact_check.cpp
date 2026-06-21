@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <optional>
 #include <sstream>
@@ -19,6 +20,8 @@ struct ToolOptions
     std::string summary_path = "/tmp/resnet20-mgpu-preflight.json";
     std::string schedule_path = "/tmp/resnet20-mgpu-schedule.mlir";
     bool print_command = true;
+    bool summary_json = false;
+    std::string summary_json_path;
 };
 
 struct PathStatus
@@ -44,6 +47,8 @@ void print_usage(std::ostream &stream)
            "[--config <file>] "
            "[--summary-path <file>] "
            "[--schedule-path <file>] "
+           "[--summary-json] "
+           "[--write-summary-json <file>] "
            "[--no-command]\n\n"
         << "Checks Dacapo's expected ResNet20 HEAAN GPU artifact paths:\n"
         << "  examples/optimized/dacapo/ResNet.40._hecate_ResNet.hevm\n"
@@ -104,6 +109,16 @@ ToolOptions parse_args(int argc, char **argv)
         if (arg == "--schedule-path")
         {
             options.schedule_path = require_value(i, argc, argv, arg);
+            continue;
+        }
+        if (arg == "--summary-json")
+        {
+            options.summary_json = true;
+            continue;
+        }
+        if (arg == "--write-summary-json")
+        {
+            options.summary_json_path = require_value(i, argc, argv, arg);
             continue;
         }
         if (arg == "--no-command")
@@ -178,6 +193,20 @@ PathStatus inspect_file(const fs::path &path)
     return status;
 }
 
+void write_text_file(const std::string &path, const std::string &contents)
+{
+    std::ofstream stream(path);
+    if (!stream)
+    {
+        throw std::runtime_error("failed to create file: " + path);
+    }
+    stream << contents;
+    if (!stream)
+    {
+        throw std::runtime_error("failed to write file: " + path);
+    }
+}
+
 std::string shell_quote(const std::string &text)
 {
     std::string output = "'";
@@ -240,6 +269,112 @@ std::string make_dump_command(
     return command.str();
 }
 
+std::string json_escape(const std::string &text)
+{
+    std::ostringstream escaped;
+    for (const unsigned char ch : text)
+    {
+        switch (ch)
+        {
+        case '\"':
+            escaped << "\\\"";
+            break;
+        case '\\':
+            escaped << "\\\\";
+            break;
+        case '\b':
+            escaped << "\\b";
+            break;
+        case '\f':
+            escaped << "\\f";
+            break;
+        case '\n':
+            escaped << "\\n";
+            break;
+        case '\r':
+            escaped << "\\r";
+            break;
+        case '\t':
+            escaped << "\\t";
+            break;
+        default:
+            if (ch < 0x20)
+            {
+                const char *hex = "0123456789abcdef";
+                escaped << "\\u00" << hex[(ch >> 4) & 0x0F]
+                        << hex[ch & 0x0F];
+            }
+            else
+            {
+                escaped << static_cast<char>(ch);
+            }
+        }
+    }
+    return escaped.str();
+}
+
+void append_json_string_field(
+    std::ostream &stream, const std::string &name, const std::string &value,
+    const std::string &suffix)
+{
+    stream << "  \"" << name << "\": \"" << json_escape(value) << "\""
+           << suffix << '\n';
+}
+
+void append_path_status_json(
+    std::ostream &stream, const std::string &name, const PathStatus &status,
+    const std::string &suffix)
+{
+    stream << "    \"" << name << "\": {\n";
+    stream << "      \"path\": \"" << json_escape(status.path.string()) << "\",\n";
+    stream << "      \"present\": " << (status.exists ? "true" : "false") << ",\n";
+    stream << "      \"regular_file\": "
+           << (status.regular_file ? "true" : "false") << ",\n";
+    stream << "      \"bytes\": " << status.size << ",\n";
+    stream << "      \"ok\": " << (status.ok() ? "true" : "false") << ",\n";
+    stream << "      \"diagnostic\": \""
+           << json_escape(status.ok() ? "" : status.diagnostic) << "\"\n";
+    stream << "    }" << suffix << '\n';
+}
+
+std::string make_summary_json(
+    const ToolOptions &options, const fs::path &dacapo_root,
+    const PathStatus &hevm, const PathStatus &constants,
+    const std::string &dump_command)
+{
+    const bool ready = hevm.ok() && constants.ok();
+    std::ostringstream json;
+    json << "{\n";
+    json << "  \"version\": 1,\n";
+    append_json_string_field(json, "dacapo_root", dacapo_root.string(), ",");
+    json << "  \"ready\": " << (ready ? "true" : "false") << ",\n";
+    append_json_string_field(
+        json, "status", ready ? "ready" : "missing_artifacts", ",");
+    json << "  \"artifacts\": {\n";
+    append_path_status_json(json, "hevm", hevm, ",");
+    append_path_status_json(json, "constants", constants, "");
+    json << "  },\n";
+    if (options.config_path.has_value())
+    {
+        append_json_string_field(json, "config_path", *options.config_path, ",");
+    }
+    else
+    {
+        json << "  \"config_path\": null,\n";
+    }
+    append_json_string_field(
+        json, "summary_path", options.summary_path, ",");
+    append_json_string_field(
+        json, "schedule_path", options.schedule_path, ",");
+    append_json_string_field(json, "dump_command", dump_command, ",");
+    json << "  \"generation_hint\": [\n";
+    json << "    \"hc-trace ResNet\",\n";
+    json << "    \"hbt dacapo 40 ResNet HEAAN GPU\"\n";
+    json << "  ]\n";
+    json << "}";
+    return json.str();
+}
+
 void print_file_status(
     std::ostream &stream, const std::string &label, const PathStatus &status)
 {
@@ -269,6 +404,8 @@ int main(int argc, char **argv)
         const PathStatus constants = inspect_file(
             dacapo_root / "examples" / "traced" / "_hecate_ResNet.cst");
         const bool ready = hevm.ok() && constants.ok();
+        const std::string dump_command =
+            make_dump_command(options, hevm.path, constants.path);
 
         std::cout << "resnet20_artifact_check:\n";
         std::cout << "  dacapo_root: " << dacapo_root.string() << '\n';
@@ -298,8 +435,21 @@ int main(int argc, char **argv)
         if (options.print_command)
         {
             std::cout << "  dump_command:\n";
-            std::cout << make_dump_command(options, hevm.path, constants.path)
-                      << '\n';
+            std::cout << dump_command << '\n';
+        }
+
+        if (options.summary_json || !options.summary_json_path.empty())
+        {
+            const std::string summary =
+                make_summary_json(options, dacapo_root, hevm, constants, dump_command);
+            if (!options.summary_json_path.empty())
+            {
+                write_text_file(options.summary_json_path, summary + "\n");
+            }
+            if (options.summary_json)
+            {
+                std::cout << summary << '\n';
+            }
         }
 
         return ready ? EXIT_SUCCESS : EXIT_FAILURE;

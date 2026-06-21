@@ -82,7 +82,8 @@ poseidon_mgpu_resnet20_artifact_check \
   --dump-tool /tmp/poseidon-mgpu-tools/bin/poseidon_mgpu_dacapo_hevm_dump \
   --config src/poseidon/mgpu/configs/single_node_8gpu.json \
   --summary-path /tmp/resnet20-mgpu-preflight.json \
-  --schedule-path /tmp/resnet20-mgpu-schedule.mlir
+  --schedule-path /tmp/resnet20-mgpu-schedule.mlir \
+  --write-summary-json /tmp/resnet20-artifact-paths.json
 ```
 
 Build the Poseidon CPU-side mgpu diagnostics and external-artifact CTest binary
@@ -376,7 +377,9 @@ JSON gate with `--write-summary-json`, and write the schedule dump separately.
 `poseidon_mgpu_resnet20_artifact_check` is intentionally narrower than the dump
 tool. It only verifies Dacapo's expected ResNet20 `.hevm + .cst` paths and
 prints a repeatable preflight command. It does not parse HEVM, link Dacapo,
-load CUDA, or execute Poseidon GPU operators.
+load CUDA, or execute Poseidon GPU operators. Use `--summary-json` or
+`--write-summary-json <file>` when a script needs the path readiness result in
+machine-readable form before invoking the heavier HEVM dump preflight.
 
 ## Communication Topology Planning
 
