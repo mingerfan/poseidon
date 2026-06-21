@@ -404,6 +404,70 @@ void run_gpu_runtime_rotate_smoke()
     require_ciphertexts_equal(expected_rotate, *handler.cipher_download(31));
 }
 
+void run_gpu_runtime_multiply_relinearize_rescale_smoke()
+{
+    constexpr int device_id = 0;
+    RmmPoolScope rmm_scope(device_id);
+
+    const ParametersLiteral parms = make_gpu_ckks_keyswitch_test_parameters();
+    PoseidonContext context(parms);
+    auto cpu_evaluator = PoseidonFactory::get_instance()->create_ckks_evaluator(context);
+
+    KeyGenerator keygen(context);
+    PublicKey public_key;
+    keygen.create_public_key(public_key);
+    RelinKeys relin_keys;
+    keygen.create_relin_keys(relin_keys);
+
+    CKKSEncoder encoder(context);
+    Plaintext plain0;
+    Plaintext plain1;
+    encoder.encode(std::vector<double>{ 1.0, -2.0, 3.0, 4.5 }, parms.scale(), plain0);
+    encoder.encode(std::vector<double>{ 0.5, 1.5, -1.0, 2.0 }, parms.scale(), plain1);
+
+    Encryptor encryptor(context, public_key, keygen.secret_key());
+    Ciphertext cipher0;
+    Ciphertext cipher1;
+    encryptor.encrypt(plain0, cipher0);
+    encryptor.encrypt(plain1, cipher1);
+
+    Ciphertext expected_multiply;
+    Ciphertext expected_relinearize;
+    Ciphertext expected_rescale;
+    cpu_evaluator->multiply(cipher0, cipher1, expected_multiply);
+    cpu_evaluator->relinearize(expected_multiply, expected_relinearize, relin_keys);
+    cpu_evaluator->rescale(expected_relinearize, expected_rescale);
+
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, device_id, {}, { value(40) }));
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, device_id, {}, { value(41) }));
+    schedule.ops.push_back(
+        op(MgpuOpKind::Multiply, device_id, { value(40), value(41) }, { value(42) }));
+    schedule.ops.push_back(op(MgpuOpKind::Relinearize, device_id, { value(42) }, { value(43) }));
+    schedule.ops.push_back(op(MgpuOpKind::Rescale, device_id, { value(43) }, { value(44) }));
+    schedule.ops.push_back(op(MgpuOpKind::Download, device_id, { value(42) }, {}));
+    schedule.ops.push_back(op(MgpuOpKind::Download, device_id, { value(43) }, {}));
+    schedule.ops.push_back(op(MgpuOpKind::Download, device_id, { value(44) }, {}));
+
+    PoseidonGpuScheduleHandler handler(context);
+    handler.bind_cipher_upload(40, std::make_shared<Ciphertext>(cipher0));
+    handler.bind_cipher_upload(41, std::make_shared<Ciphertext>(cipher1));
+    handler.upload_keys_for_device(device_id, &relin_keys, nullptr);
+
+    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 1 });
+    const ScheduleExecutionResult result = interpreter.run(schedule, handler);
+    require(
+        result.ok(),
+        "GPU runtime multiply/relinearize/rescale schedule failed:\n" +
+            result.format_errors());
+    require(handler.has_cipher_download(42), "missing multiply output download");
+    require(handler.has_cipher_download(43), "missing relinearize output download");
+    require(handler.has_cipher_download(44), "missing relin/rescale output download");
+    require_ciphertexts_equal(expected_multiply, *handler.cipher_download(42));
+    require_ciphertexts_equal(expected_relinearize, *handler.cipher_download(43));
+    require_ciphertexts_equal(expected_rescale, *handler.cipher_download(44));
+}
+
 }  // namespace
 
 int main()
@@ -420,6 +484,7 @@ int main()
         run_gpu_runtime_multiply_plain_smoke();
         run_gpu_runtime_add_plain_rescale_smoke();
         run_gpu_runtime_rotate_smoke();
+        run_gpu_runtime_multiply_relinearize_rescale_smoke();
     }
     catch (const std::exception &ex)
     {
