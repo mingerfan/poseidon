@@ -39,6 +39,7 @@
 | CUDA peer probe | Optional CUDA/RMM-free diagnostic that reports visible devices and CUDA peer-access matrix before single-node 8-GPU execution. |
 | Communication topology planner | CPU-only classification of copy ops as same-device, intra-node CUDA peer, or inter-node transport for future cluster expansion. |
 | Communication execution preflight | CPU-only check that planned copy routes are executable by the currently available same-device, CUDA peer, or inter-node backend set. |
+| Inter-node transport interface | CPU-only boundary that adapts planned inter-node routes plus full-object copy buffers into a future NCCL/MPI-style backend request; the default backend fails clearly. |
 | Poseidon GPU execution preflight | CPU-only aggregate gate for schedule verification, Poseidon GPU executor prerequisites, communication planning, and communication execution availability. |
 | Schedule IR | Represent upload, copy, compute, bootstrap fallback, and download operations independent of Dacapo format. |
 | Dacapo adapter | Translate internal JSON debug input and Dacapo HEVM binary output into internal IR. |
@@ -287,6 +288,9 @@ Dacapo artifact debugging:
   every missing-backend diagnostic should include the route index, transport
   kind, source device, and destination device in JSON so cluster bring-up
   scripts can identify the exact missing route without parsing text.
+- `InterNodeTransportBackend` is only an interface boundary until a real
+  NCCL/MPI backend is implemented. The default missing backend must fail
+  clearly and must not be exposed as an available inter-node execution backend.
 - The dump tool and external HEVM CTest now expose a unified
   `poseidon_gpu_execution_preflight` result. Treat it as the CPU-only execution
   gate that combines schedule verification, Poseidon GPU preflight,

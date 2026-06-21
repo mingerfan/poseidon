@@ -432,6 +432,13 @@ The JSON diagnostics include each missing route's index, transport kind,
 source device, and destination device so cluster scripts can report the exact
 backend gap without parsing human-readable text.
 
+`comm/inter_node_transport.*` defines the CPU-only boundary for a future
+cluster transport backend. It converts planned inter-node routes and
+full-object copy buffers into requests with source/destination node and local
+device metadata. `MissingInterNodeTransportBackend` intentionally fails; it is
+not an implementation and must not be advertised as an available inter-node
+backend.
+
 ## CUDA Peer Probe
 
 `POSEIDON_BUILD_MGPU_CUDA_COMM=ON` builds the optional CUDA peer-copy backend
