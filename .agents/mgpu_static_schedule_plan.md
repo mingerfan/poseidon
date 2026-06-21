@@ -107,7 +107,7 @@ Optional GPU object materialization:
 
 - `POSEIDON_BUILD_MGPU_GPU_OBJECTS=ON` builds the CUDA/RMM-gated Poseidon GPU object materializer.
 - Default `poseidon_mgpu` must remain buildable without enabling this option.
-- Materializers must reject `fields_.size() != 1`; V1 does not execute multi-shard objects.
+- Materializers must reject `fields_.size() != 1` and per-poly multi-shard layouts; V1 copies only full single-field, single-shard objects.
 
 Optional Poseidon GPU schedule execution:
 

@@ -250,6 +250,24 @@ if(POSEIDON_BUILD_MGPU_GPU_OBJECTS)
             CUDA::cudart
             rmm::rmm
     )
+
+    if(POSEIDON_BUILD_MGPU_TESTS)
+        add_executable(poseidon_mgpu_gpu_object_materializer_tests
+            ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_gpu_object_materializer_test.cpp
+        )
+
+        target_link_libraries(poseidon_mgpu_gpu_object_materializer_tests
+            PRIVATE
+                poseidon_mgpu_gpu_objects
+        )
+
+        add_test(
+            NAME poseidon_mgpu_gpu_object_materializer_tests
+            COMMAND poseidon_mgpu_gpu_object_materializer_tests
+        )
+        set_tests_properties(poseidon_mgpu_gpu_object_materializer_tests
+            PROPERTIES SKIP_RETURN_CODE 77)
+    endif()
 endif()
 
 if(POSEIDON_BUILD_MGPU_GPU_RUNTIME)
