@@ -404,23 +404,23 @@ void run_gpu_runtime_hevm_constants_smoke()
         input_cipher, *plaintexts.plaintexts[0].plaintext, expected_product);
 
     PoseidonGpuScheduleHandler handler(context);
-    handler.bind_cipher_upload(
-        io_plan_result.plan.cipher_inputs[0].value_id,
-        std::make_shared<Ciphertext>(input_cipher));
-    for (const HevmEncodedPlaintext &plaintext : plaintexts.plaintexts)
-    {
-        handler.bind_plain_upload(plaintext.value_id, plaintext.plaintext);
-    }
+    bind_hevm_cipher_inputs(
+        handler, io_plan_result.plan,
+        std::vector<std::shared_ptr<const Ciphertext>>{
+            std::make_shared<Ciphertext>(input_cipher),
+        });
+    bind_hevm_encoded_plain_inputs(handler, plaintexts.plaintexts);
 
     ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 1 });
     const ScheduleExecutionResult result = interpreter.run(pipeline.schedule, handler);
     require(result.ok(), "GPU runtime HEVM constants schedule failed:\n" +
                              result.format_errors());
 
-    require(io_plan_result.plan.results.size() == 1, "expected one HEVM result slot");
-    const ValueId result_value_id = io_plan_result.plan.results[0].value_id;
-    require(handler.has_cipher_download(result_value_id), "missing HEVM result ciphertext");
-    require_ciphertexts_equal(expected_product, *handler.cipher_download(result_value_id));
+    const std::vector<std::shared_ptr<Ciphertext>> hevm_results =
+        collect_hevm_results(handler, io_plan_result.plan);
+    require(hevm_results.size() == 1, "expected one HEVM result slot");
+    require(hevm_results[0] != nullptr, "missing HEVM result ciphertext");
+    require_ciphertexts_equal(expected_product, *hevm_results[0]);
 }
 
 void run_gpu_runtime_add_plain_rescale_smoke()

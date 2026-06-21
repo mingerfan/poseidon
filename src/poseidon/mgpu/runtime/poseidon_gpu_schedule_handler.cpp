@@ -91,6 +91,17 @@ int require_int_attr(const MgpuOp &op, const char *name)
     return static_cast<int>(iter->second);
 }
 
+void validate_hevm_index_range(std::uint64_t index, std::size_t count, const char *what)
+{
+    if (index >= count)
+    {
+        std::ostringstream stream;
+        stream << "HEVM " << what << " index " << index
+               << " is outside object count " << count;
+        throw std::invalid_argument(stream.str());
+    }
+}
+
 std::shared_ptr<gpu::GpuCiphertextData> make_cipher_handle(
     gpu::GpuCiphertextData &&ciphertext)
 {
@@ -460,6 +471,65 @@ std::shared_ptr<gpu::GpuPlaintextData> PoseidonGpuScheduleHandler::plain_object(
         throw std::invalid_argument(value_name(id) + " has no GPU plaintext handle");
     }
     return std::static_pointer_cast<gpu::GpuPlaintextData>(metadata.object);
+}
+
+void bind_hevm_cipher_inputs(
+    PoseidonGpuScheduleHandler &handler, const HevmIoBindingPlan &plan,
+    const std::vector<std::shared_ptr<const Ciphertext>> &cipher_inputs)
+{
+    if (cipher_inputs.size() != plan.cipher_inputs.size())
+    {
+        std::ostringstream stream;
+        stream << "HEVM cipher input object count " << cipher_inputs.size()
+               << " does not match schedule input count " << plan.cipher_inputs.size();
+        throw std::invalid_argument(stream.str());
+    }
+
+    for (const HevmCipherInputSlot &slot : plan.cipher_inputs)
+    {
+        validate_hevm_index_range(slot.index, cipher_inputs.size(), "cipher input");
+        const auto &ciphertext = cipher_inputs[static_cast<std::size_t>(slot.index)];
+        if (ciphertext == nullptr)
+        {
+            std::ostringstream stream;
+            stream << "HEVM cipher input object at index " << slot.index
+                   << " must not be null";
+            throw std::invalid_argument(stream.str());
+        }
+        handler.bind_cipher_upload(slot.value_id, ciphertext);
+    }
+}
+
+void bind_hevm_encoded_plain_inputs(
+    PoseidonGpuScheduleHandler &handler,
+    const std::vector<HevmEncodedPlaintext> &plaintexts)
+{
+    for (const HevmEncodedPlaintext &plaintext : plaintexts)
+    {
+        if (plaintext.plaintext == nullptr)
+        {
+            throw std::invalid_argument("encoded HEVM plaintext must not be null");
+        }
+        handler.bind_plain_upload(plaintext.value_id, plaintext.plaintext);
+    }
+}
+
+std::vector<std::shared_ptr<Ciphertext>> collect_hevm_results(
+    const PoseidonGpuScheduleHandler &handler, const HevmIoBindingPlan &plan)
+{
+    std::vector<std::shared_ptr<Ciphertext>> results(plan.results.size());
+    for (const HevmResultSlot &slot : plan.results)
+    {
+        validate_hevm_index_range(slot.index, results.size(), "result");
+        if (!handler.has_cipher_download(slot.value_id))
+        {
+            throw std::out_of_range(
+                "missing HEVM ciphertext result for " + value_name(slot.value_id));
+        }
+        results[static_cast<std::size_t>(slot.index)] =
+            handler.cipher_download(slot.value_id);
+    }
+    return results;
 }
 
 }  // namespace poseidon::mgpu
