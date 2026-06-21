@@ -4,18 +4,25 @@
 #include "poseidon/encryptor.h"
 #include "poseidon/factory/poseidon_factory.h"
 #include "poseidon/keygenerator.h"
+#include "poseidon/mgpu/compiler/dacapo_constants.h"
+#include "poseidon/mgpu/compiler/static_schedule_pipeline.h"
+#include "poseidon/mgpu/runtime/hevm_io_binding.h"
+#include "poseidon/mgpu/runtime/hevm_plaintext_encoding.h"
 #include "poseidon/mgpu/runtime/poseidon_gpu_schedule_handler.h"
 #include "poseidon/mgpu/runtime/schedule_interpreter.h"
 #include "poseidon/parameters_literal.h"
 #include "poseidon/plaintext.h"
 #include "poseidon/poseidon_context.h"
+#include "poseidon/tests/mgpu/hevm_test_utils.h"
 
 #include <cuda_runtime_api.h>
 #include <rmm/mr/cuda_memory_resource.hpp>
 #include <rmm/mr/per_device_resource.hpp>
 #include <rmm/mr/pool_memory_resource.hpp>
 
+#include <cmath>
 #include <cstdlib>
+#include <cstring>
 #include <iostream>
 #include <memory>
 #include <optional>
@@ -104,6 +111,37 @@ void require_ciphertexts_equal(const Ciphertext &expected, const Ciphertext &act
             throw std::runtime_error(stream.str());
         }
     }
+}
+
+void append_i64(std::string &output, std::int64_t value)
+{
+    const auto bits = static_cast<std::uint64_t>(value);
+    for (int i = 0; i < 8; ++i)
+    {
+        output.push_back(static_cast<char>((bits >> (8 * i)) & 0xFF));
+    }
+}
+
+void append_double(std::string &output, double value)
+{
+    std::uint64_t bits = 0;
+    std::memcpy(&bits, &value, sizeof(bits));
+    for (int i = 0; i < 8; ++i)
+    {
+        output.push_back(static_cast<char>((bits >> (8 * i)) & 0xFF));
+    }
+}
+
+std::string make_hevm_constant_file()
+{
+    std::string output;
+    append_i64(output, 1);
+    append_i64(output, 4);
+    append_double(output, 0.5);
+    append_double(output, -1.0);
+    append_double(output, 2.0);
+    append_double(output, 3.5);
+    return output;
 }
 
 class RmmPoolScope
@@ -307,6 +345,84 @@ void run_gpu_runtime_multiply_plain_smoke()
     require_ciphertexts_equal(expected_product, *handler.cipher_download(12));
 }
 
+void run_gpu_runtime_hevm_constants_smoke()
+{
+    constexpr int device_id = 0;
+    RmmPoolScope rmm_scope(device_id);
+
+    const ParametersLiteral parms = make_gpu_ckks_test_parameters();
+    PoseidonContext context(parms);
+    auto cpu_evaluator = PoseidonFactory::get_instance()->create_ckks_evaluator(context);
+
+    const std::string hevm = test::make_hevm_binary(
+        1, 1, 2, 1, { 1 },
+        {
+            test::HevmOpRecord{ 0, 0, 0, test::make_hevm_encode_attr(2, 20) },
+            test::HevmOpRecord{ 9, 1, 0, 0 },
+        },
+        test::HevmConfigMetadata{
+            { 20 },
+            { 2 },
+            { 40 },
+            { 2 },
+            2,
+        });
+
+    StaticSchedulePipelineOptions options;
+    options.device_count = 1;
+    const StaticSchedulePipelineResult pipeline = prepare_dacapo_static_schedule(
+        hevm, DacapoAdapterOptions{ DacapoInputFormat::HevmBinary }, options);
+    require(pipeline.ok(), "HEVM GPU pipeline failed:\n" + pipeline.format_diagnostics());
+
+    const DacapoConstantParseResult constants =
+        parse_dacapo_constant_file(make_hevm_constant_file());
+    require(constants.ok(), "HEVM constants parse failed:\n" + constants.format_diagnostics());
+
+    const HevmIoBindingPlanResult io_plan_result =
+        build_hevm_io_binding_plan(pipeline.schedule);
+    require(io_plan_result.ok(), "HEVM IO plan failed:\n" + io_plan_result.format_diagnostics());
+
+    const HevmPlaintextEncodingResult plaintexts =
+        encode_hevm_plain_inputs(context, io_plan_result.plan, constants.table);
+    require(plaintexts.ok(), "HEVM plaintext encoding failed:\n" +
+                                 plaintexts.format_diagnostics());
+    require(plaintexts.plaintexts.size() == 1, "expected one HEVM plaintext upload");
+
+    CKKSEncoder encoder(context);
+    Plaintext input_plain;
+    encoder.encode(std::vector<double>{ 1.0, 2.0, 3.0, 4.0 }, std::ldexp(1.0, 20), input_plain);
+
+    KeyGenerator keygen(context);
+    PublicKey public_key;
+    keygen.create_public_key(public_key);
+    Encryptor encryptor(context, public_key, keygen.secret_key());
+    Ciphertext input_cipher;
+    encryptor.encrypt(input_plain, input_cipher);
+
+    Ciphertext expected_product;
+    cpu_evaluator->multiply_plain(
+        input_cipher, *plaintexts.plaintexts[0].plaintext, expected_product);
+
+    PoseidonGpuScheduleHandler handler(context);
+    handler.bind_cipher_upload(
+        io_plan_result.plan.cipher_inputs[0].value_id,
+        std::make_shared<Ciphertext>(input_cipher));
+    for (const HevmEncodedPlaintext &plaintext : plaintexts.plaintexts)
+    {
+        handler.bind_plain_upload(plaintext.value_id, plaintext.plaintext);
+    }
+
+    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 1 });
+    const ScheduleExecutionResult result = interpreter.run(pipeline.schedule, handler);
+    require(result.ok(), "GPU runtime HEVM constants schedule failed:\n" +
+                             result.format_errors());
+
+    require(io_plan_result.plan.results.size() == 1, "expected one HEVM result slot");
+    const ValueId result_value_id = io_plan_result.plan.results[0].value_id;
+    require(handler.has_cipher_download(result_value_id), "missing HEVM result ciphertext");
+    require_ciphertexts_equal(expected_product, *handler.cipher_download(result_value_id));
+}
+
 void run_gpu_runtime_add_plain_rescale_smoke()
 {
     constexpr int device_id = 0;
@@ -489,6 +605,7 @@ int main()
     {
         run_gpu_runtime_smoke();
         run_gpu_runtime_multiply_plain_smoke();
+        run_gpu_runtime_hevm_constants_smoke();
         run_gpu_runtime_add_plain_rescale_smoke();
         run_gpu_runtime_rotate_smoke();
         run_gpu_runtime_multiply_relinearize_rescale_smoke();
