@@ -61,6 +61,34 @@ void validate_required_input(const HevmArtifactReportInput &input)
     }
 }
 
+Json execution_gate_to_json(const HevmArtifactReportInput &input)
+{
+    const bool readiness_evaluated = input.hevm_artifact_readiness != nullptr;
+    const bool readiness_ok =
+        readiness_evaluated && input.hevm_artifact_readiness->ok();
+    const bool execution_preflight_evaluated =
+        input.poseidon_gpu_execution_preflight != nullptr;
+    const bool execution_preflight_ok =
+        execution_preflight_evaluated &&
+        input.poseidon_gpu_execution_preflight->ok();
+
+    Json root;
+    root["ok"] = readiness_evaluated ? readiness_ok
+                                      : execution_preflight_ok;
+    root["status"] = root["ok"].get<bool>() ? "ready" : "not_ready";
+    root["checks"] = Json{
+        { "artifacts_loaded", true },
+        { "schedule_built", true },
+        { "hevm_io_bound", true },
+        { "readiness_evaluated", readiness_evaluated },
+        { "readiness_ok", readiness_ok },
+        { "poseidon_gpu_execution_preflight_evaluated",
+          execution_preflight_evaluated },
+        { "poseidon_gpu_execution_preflight_ok", execution_preflight_ok },
+    };
+    return root;
+}
+
 }  // namespace
 
 std::string hevm_artifact_report_to_json(
@@ -70,6 +98,7 @@ std::string hevm_artifact_report_to_json(
 
     Json root;
     root["version"] = 1;
+    root["execution_gate"] = execution_gate_to_json(input);
     if (!input.hevm_path.empty() || !input.constants_path.empty())
     {
         root["artifacts"] = Json{

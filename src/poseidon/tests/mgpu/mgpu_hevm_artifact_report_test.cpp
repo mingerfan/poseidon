@@ -112,6 +112,18 @@ void test_report_includes_execution_evidence()
         nlohmann::json::parse(hevm_artifact_report_to_json(input));
     require(report.at("version").get<int>() == 1, "version mismatch");
     require(
+        report.at("execution_gate").at("ok").get<bool>(),
+        "execution gate should be ok");
+    require(
+        report.at("execution_gate").at("status").get<std::string>() == "ready",
+        "execution gate status mismatch");
+    require(
+        report.at("execution_gate")
+            .at("checks")
+            .at("readiness_evaluated")
+            .get<bool>(),
+        "execution gate should record readiness evaluation");
+    require(
         report.at("artifacts").at("hevm").get<std::string>() == "/tmp/model.hevm",
         "HEVM path missing");
     require(
