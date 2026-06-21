@@ -181,6 +181,37 @@ void test_require_ready_enables_hard_gate_checks()
         "require_ready should enable communication execution preflight");
 }
 
+void test_single_node_zero_devices_per_node_defaults_to_device_count()
+{
+    const char *json = R"json(
+{
+  "version": 1,
+  "device_count": 4,
+  "topology": {
+    "nodes": 1,
+    "devices_per_node": 0
+  },
+  "preflight": {
+    "communication_plan": true,
+    "communication_execution": true
+  }
+}
+)json";
+
+    const StaticScheduleExecutionConfigParseResult result =
+        parse_static_schedule_execution_config_json(json);
+    require(
+        result.ok(),
+        "single-node config with implicit devices_per_node should parse:\n" +
+            result.format_diagnostics());
+
+    const MgpuTopology topology = make_static_schedule_execution_topology(result.config);
+    require(topology.devices.size() == 4, "implicit single-node topology size mismatch");
+    require(topology.devices[0].node_id == 0, "implicit topology first node mismatch");
+    require(topology.devices[3].logical_device == 3, "implicit topology logical id mismatch");
+    require(topology.devices[3].local_device == 3, "implicit topology local id mismatch");
+}
+
 void test_config_json_round_trip()
 {
     StaticScheduleExecutionConfig config;
@@ -282,6 +313,96 @@ void test_config_diagnostics()
     require_contains(result.format_diagnostics(), "fewer logical devices");
 }
 
+void test_config_reports_json_shape_errors()
+{
+    const StaticScheduleExecutionConfigParseResult non_object =
+        parse_static_schedule_execution_config_json("[1, 2]");
+    require(!non_object.ok(), "non-object config root should fail");
+    require_contains(non_object.format_diagnostics(), "/: expected an object");
+
+    const StaticScheduleExecutionConfigParseResult malformed =
+        parse_static_schedule_execution_config_json("{");
+    require(!malformed.ok(), "malformed config JSON should fail");
+    require_contains(malformed.format_diagnostics(), "/:");
+
+    const char *json = R"json(
+{
+  "version": 1,
+  "device_count": 2,
+  "placement": [],
+  "topology": [],
+  "preflight": [],
+  "execution_backends": []
+}
+)json";
+
+    const StaticScheduleExecutionConfigParseResult result =
+        parse_static_schedule_execution_config_json(json);
+    require(!result.ok(), "object-valued config sections should reject arrays");
+    require_contains(result.format_diagnostics(), "/placement: expected an object");
+    require_contains(result.format_diagnostics(), "/topology: expected an object");
+    require_contains(result.format_diagnostics(), "/preflight: expected an object");
+    require_contains(
+        result.format_diagnostics(),
+        "/execution_backends: expected an object");
+}
+
+void test_config_reports_scalar_type_errors()
+{
+    const char *json = R"json(
+{
+  "version": true,
+  "device_count": "8",
+  "emit_debug_dump": 1,
+  "placement": {
+    "policy": false,
+    "default_device": null,
+    "upload_device": "0",
+    "download_device": false,
+    "compute_devices": [0, "1"]
+  },
+  "topology": {
+    "nodes": "1",
+    "devices_per_node": false
+  },
+  "preflight": {
+    "opcode_summary": 1
+  },
+  "execution_backends": {
+    "same_device": 1
+  }
+}
+)json";
+
+    const StaticScheduleExecutionConfigParseResult result =
+        parse_static_schedule_execution_config_json(json);
+    require(!result.ok(), "scalar type mismatches should fail");
+    require_contains(result.format_diagnostics(), "/version: expected an integer");
+    require_contains(result.format_diagnostics(), "/device_count: expected an integer");
+    require_contains(result.format_diagnostics(), "/emit_debug_dump: expected a boolean");
+    require_contains(result.format_diagnostics(), "/placement/policy: expected a string");
+    require_contains(result.format_diagnostics(), "/placement/default_device: expected an integer");
+    require_contains(
+        result.format_diagnostics(),
+        "/placement/upload_device: expected an integer or null");
+    require_contains(
+        result.format_diagnostics(),
+        "/placement/download_device: expected an integer or null");
+    require_contains(
+        result.format_diagnostics(),
+        "/placement/compute_devices/1: expected an integer");
+    require_contains(result.format_diagnostics(), "/topology/nodes: expected an integer");
+    require_contains(
+        result.format_diagnostics(),
+        "/topology/devices_per_node: expected an integer");
+    require_contains(
+        result.format_diagnostics(),
+        "/preflight/opcode_summary: expected a boolean");
+    require_contains(
+        result.format_diagnostics(),
+        "/execution_backends/same_device: expected a boolean");
+}
+
 void test_config_template(
     const std::filesystem::path &config_dir, const std::string &filename,
     int expected_device_count, int expected_node_count, int expected_devices_per_node,
@@ -360,9 +481,12 @@ int main(int argc, char **argv)
         test_parse_single_node_eight_gpu_config();
         test_parse_cluster_preview_config();
         test_require_ready_enables_hard_gate_checks();
+        test_single_node_zero_devices_per_node_defaults_to_device_count();
         test_config_json_round_trip();
         test_config_json_round_trip_preserves_unset_optional_devices();
         test_config_diagnostics();
+        test_config_reports_json_shape_errors();
+        test_config_reports_scalar_type_errors();
         if (argc > 1)
         {
             test_bundled_config_templates(argv[1]);
