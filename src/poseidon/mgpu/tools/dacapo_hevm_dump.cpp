@@ -1,4 +1,5 @@
 #include "poseidon/mgpu/compiler/dacapo_artifacts.h"
+#include "poseidon/mgpu/comm/execution_preflight.h"
 #include "poseidon/mgpu/comm/topology.h"
 #include "poseidon/mgpu/ir/schedule_summary.h"
 #include "poseidon/mgpu/runtime/hevm_io_binding.h"
@@ -36,6 +37,9 @@ struct ToolOptions
     bool preflight_relin_keys_available = false;
     bool preflight_galois_keys_available = false;
     bool communication_plan = false;
+    bool communication_execution_preflight = false;
+    bool execution_cuda_peer_available = false;
+    bool execution_inter_node_available = false;
     int node_count = 1;
     int devices_per_node = 0;
     bool opcode_summary = false;
@@ -54,6 +58,9 @@ void print_usage(std::ostream &stream)
            "[--preflight-relin-keys] "
            "[--preflight-galois-keys] "
            "[--communication-plan] "
+           "[--communication-execution-preflight] "
+           "[--execution-cuda-peer-available] "
+           "[--execution-inter-node-available] "
            "[--opcode-summary] "
            "[--nodes N] "
            "[--devices-per-node N] "
@@ -224,6 +231,26 @@ ToolOptions parse_args(int argc, char **argv)
             options.communication_plan = true;
             continue;
         }
+        if (arg == "--communication-execution-preflight")
+        {
+            options.communication_plan = true;
+            options.communication_execution_preflight = true;
+            continue;
+        }
+        if (arg == "--execution-cuda-peer-available")
+        {
+            options.communication_plan = true;
+            options.communication_execution_preflight = true;
+            options.execution_cuda_peer_available = true;
+            continue;
+        }
+        if (arg == "--execution-inter-node-available")
+        {
+            options.communication_plan = true;
+            options.communication_execution_preflight = true;
+            options.execution_inter_node_available = true;
+            continue;
+        }
         if (arg == "--opcode-summary")
         {
             options.opcode_summary = true;
@@ -390,6 +417,33 @@ nlohmann::json optional_communication_plan_json(
     return parse_json_object(communication_plan_to_json(plan, -1));
 }
 
+nlohmann::json optional_communication_execution_preflight_json(
+    const ToolOptions &tool_options,
+    const MgpuSchedule &schedule)
+{
+    if (!tool_options.communication_execution_preflight)
+    {
+        return nullptr;
+    }
+
+    const MgpuCommunicationPlan plan =
+        plan_schedule_communication(schedule, make_tool_topology(tool_options));
+    if (!plan.ok())
+    {
+        return nullptr;
+    }
+
+    const MgpuCommunicationExecutionPreflight preflight =
+        preflight_communication_execution(
+            plan,
+            MgpuCommunicationExecutionOptions{
+                true,
+                tool_options.execution_cuda_peer_available,
+                tool_options.execution_inter_node_available,
+            });
+    return parse_json_object(communication_execution_preflight_to_json(preflight, -1));
+}
+
 nlohmann::json hevm_opcode_summary_json(const DacapoHevmOpcodeSummary &summary)
 {
     nlohmann::json root;
@@ -474,6 +528,33 @@ void print_optional_communication_plan(
     dump_communication_plan(std::cout, plan);
 }
 
+void print_optional_communication_execution_preflight(
+    const ToolOptions &tool_options,
+    const MgpuSchedule &schedule)
+{
+    if (!tool_options.communication_execution_preflight)
+    {
+        return;
+    }
+
+    const MgpuCommunicationPlan plan =
+        plan_schedule_communication(schedule, make_tool_topology(tool_options));
+    if (!plan.ok())
+    {
+        return;
+    }
+
+    const MgpuCommunicationExecutionPreflight preflight =
+        preflight_communication_execution(
+            plan,
+            MgpuCommunicationExecutionOptions{
+                true,
+                tool_options.execution_cuda_peer_available,
+                tool_options.execution_inter_node_available,
+            });
+    dump_communication_execution_preflight(std::cout, preflight);
+}
+
 void print_io_summary(const HevmIoBindingPlan &plan)
 {
     std::cout << "hevm_io:\n";
@@ -515,7 +596,9 @@ void print_text_summary(
 nlohmann::json make_tool_summary_json(
     const MgpuScheduleSummary &summary, std::size_t constant_count,
     const HevmIoBindingPlan &io_plan, nlohmann::json preflight,
-    nlohmann::json communication_plan, nlohmann::json opcode_summary,
+    nlohmann::json communication_plan,
+    nlohmann::json communication_execution_preflight,
+    nlohmann::json opcode_summary,
     std::optional<std::string> debug_dump)
 {
     nlohmann::json root;
@@ -536,6 +619,11 @@ nlohmann::json make_tool_summary_json(
     if (!communication_plan.is_null())
     {
         root["communication_plan"] = std::move(communication_plan);
+    }
+    if (!communication_execution_preflight.is_null())
+    {
+        root["communication_execution_preflight"] =
+            std::move(communication_execution_preflight);
     }
     if (!opcode_summary.is_null())
     {
@@ -603,12 +691,16 @@ int main(int argc, char **argv)
                 optional_preflight_json(tool_options, artifacts.schedule);
             nlohmann::json communication_plan =
                 optional_communication_plan_json(tool_options, artifacts.schedule);
+            nlohmann::json communication_execution_preflight =
+                optional_communication_execution_preflight_json(
+                    tool_options, artifacts.schedule);
             nlohmann::json opcode_summary_json_value =
                 opcode_summary.has_value() ? hevm_opcode_summary_json(*opcode_summary)
                                            : nullptr;
             std::cout << make_tool_summary_json(
                              summary, artifacts.constants.values.size(), io_plan.plan,
                              std::move(preflight), std::move(communication_plan),
+                             std::move(communication_execution_preflight),
                              std::move(opcode_summary_json_value), debug_dump)
                              .dump(2)
                       << '\n';
@@ -622,6 +714,8 @@ int main(int argc, char **argv)
             print_text_summary(summary, artifacts.constants.values.size(), io_plan.plan);
             print_optional_preflight(tool_options, artifacts.schedule);
             print_optional_communication_plan(tool_options, artifacts.schedule);
+            print_optional_communication_execution_preflight(
+                tool_options, artifacts.schedule);
 
             if (tool_options.dump_schedule)
             {

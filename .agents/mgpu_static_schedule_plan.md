@@ -36,6 +36,7 @@
 | `PoseidonGpuObjectCopyMaterializer` | Optional CUDA/RMM-gated bridge from Poseidon GPU objects to full-object copy buffers. |
 | `CudaPeerComm` | Implement same-device copy, CUDA peer copy, and host-staging fallback as a materialized object-copy backend. |
 | Communication topology planner | CPU-only classification of copy ops as same-device, intra-node CUDA peer, or inter-node transport for future cluster expansion. |
+| Communication execution preflight | CPU-only check that planned copy routes are executable by the currently available same-device, CUDA peer, or inter-node backend set. |
 | Schedule IR | Represent upload, copy, compute, bootstrap fallback, and download operations independent of Dacapo format. |
 | Dacapo adapter | Translate internal JSON debug input and Dacapo HEVM binary output into internal IR. |
 | Placement pass | Assign each op/value to a GPU. |
@@ -165,7 +166,9 @@ Dacapo artifact debugging:
   `POSEIDON_MGPU_EXTERNAL_PREFLIGHT_RELIN_KEYS`,
   `POSEIDON_MGPU_EXTERNAL_PREFLIGHT_GALOIS_KEYS`,
   `POSEIDON_MGPU_EXTERNAL_NODES`, and
-  `POSEIDON_MGPU_EXTERNAL_DEVICES_PER_NODE`.
+  `POSEIDON_MGPU_EXTERNAL_DEVICES_PER_NODE`,
+  `POSEIDON_MGPU_EXTERNAL_EXECUTION_CUDA_PEER_AVAILABLE`, and
+  `POSEIDON_MGPU_EXTERNAL_EXECUTION_INTER_NODE_AVAILABLE`.
 - `poseidon_mgpu_external_hevm_mock_artifact_tests` uses a generated mock
   `.hevm + .cst` artifact to exercise the same external artifact path,
   preflight flags, and non-trivial topology on machines without ResNet20
@@ -179,6 +182,11 @@ Dacapo artifact debugging:
   artifact copies as same-device, intra-node CUDA peer, or inter-node routes.
   For 4x8 previews, add `--nodes 4 --devices-per-node 8`. This remains a
   CPU-only diagnostic and must not pull NCCL/MPI into the normal build.
+- Use `--communication-execution-preflight` to check whether the current
+  communication backend can execute the planned routes. Single-node 8-GPU
+  previews may pass `--execution-cuda-peer-available`; do not pass
+  `--execution-inter-node-available` until a real cluster transport backend is
+  implemented behind the mgpu communication interface.
 - Use `poseidon_mgpu_dacapo_hevm_dump --opcode-summary` on real artifacts to
   see the full HEVM opcode distribution before schedule translation. This is
   especially important for detecting unsupported `ModswitchC` and `UpscaleC`
@@ -199,8 +207,9 @@ ResNet20 artifact runbook:
   Verify both files exist before running Poseidon diagnostics.
 - First Poseidon gate is CPU-side only:
   `poseidon_mgpu_dacapo_hevm_dump --opcode-summary --communication-plan
-  --poseidon-gpu-preflight --summary-json --no-schedule` with explicit
-  `--hevm`, `--constants`, and placement flags.
+  --communication-execution-preflight --poseidon-gpu-preflight --summary-json
+  --no-schedule` with explicit `--hevm`, `--constants`, placement flags, and
+  available-backend flags.
 - Repeatable artifact validation uses the skipped-by-default
   `poseidon_mgpu_external_hevm_artifact_tests` with
   `POSEIDON_MGPU_EXTERNAL_HEVM`, `POSEIDON_MGPU_EXTERNAL_CST`, and explicit
@@ -231,6 +240,7 @@ ResNet20 artifact runbook:
 | External artifact test | Skips by default; when env vars point at real ResNet20 `.hevm + .cst`, load artifacts, run placement/copy insertion, build HEVM I/O plan, and print schedule summaries. |
 | Poseidon GPU preflight tests | CPU-only checks report required comm/keys and unsupported GPU executor operations before attempting GPU execution. |
 | Communication topology tests | CPU-only tests classify scheduled copy ops for single-node and uniform cluster topologies without linking NCCL/MPI. |
+| Communication execution preflight tests | CPU-only tests report when same-device, CUDA peer, or inter-node planned routes lack an executable backend. |
 
 ## 6. Phases
 
@@ -243,7 +253,7 @@ ResNet20 artifact runbook:
 | 4 | Static placement and copy insertion | Handwritten small graph verifies inserted copies. |
 | 5 | Add Dacapo submodule and JSON/HEVM adapters | Adapter tests use small captured/mock Dacapo input. |
 | 6 | ResNet20 static schedule path | Dacapo runbook generates real `.hevm + .cst`; dump tool reports opcode summary, schedule summary, communication plan, and CPU-only Poseidon GPU preflight; skipped-by-default external artifact CTest validates the same artifact; unsupported opcode and bootstrap diagnostics are resolved or explicitly recorded before GPU execution; single-node 8-GPU run validates on cluster hardware. |
-| 7 | Cluster communication planning | CPU-only topology planning classifies inter-node copies first; NCCL/MPI interface is introduced only after single-node path is stable. |
+| 7 | Cluster communication planning | CPU-only topology planning classifies inter-node copies and execution preflight reports missing inter-node backend first; NCCL/MPI interface is introduced only after single-node path is stable. |
 
 On a single-GPU development machine, complete Phases 0-4 with same-device copy
 and skip cross-device tests. Do not block implementation on multi-GPU hardware

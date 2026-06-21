@@ -1,4 +1,5 @@
 #include "poseidon/mgpu/compiler/dacapo_artifacts.h"
+#include "poseidon/mgpu/comm/execution_preflight.h"
 #include "poseidon/mgpu/comm/topology.h"
 #include "poseidon/mgpu/ir/schedule_summary.h"
 #include "poseidon/mgpu/runtime/hevm_io_binding.h"
@@ -294,6 +295,15 @@ PoseidonGpuSchedulePreflightOptions make_preflight_options(
     };
 }
 
+MgpuCommunicationExecutionOptions make_communication_execution_options()
+{
+    return MgpuCommunicationExecutionOptions{
+        true,
+        parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_EXECUTION_CUDA_PEER_AVAILABLE")),
+        parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_EXECUTION_INTER_NODE_AVAILABLE")),
+    };
+}
+
 MgpuTopology make_external_topology(const StaticSchedulePipelineOptions &options)
 {
     int node_count = 1;
@@ -416,6 +426,10 @@ int main()
             "external HEVM communication plan failed:\n" +
                 communication_plan.format_diagnostics());
         std::cout << dump_communication_plan(communication_plan);
+        const MgpuCommunicationExecutionPreflight communication_preflight =
+            preflight_communication_execution(
+                communication_plan, make_communication_execution_options());
+        std::cout << dump_communication_execution_preflight(communication_preflight);
         if (!artifacts.debug_dump.empty())
         {
             std::cout << '\n' << artifacts.debug_dump;

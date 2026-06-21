@@ -99,6 +99,8 @@ Then inspect the ResNet20 artifact without executing GPU operators:
   --download-device 0 \
   --opcode-summary \
   --communication-plan \
+  --communication-execution-preflight \
+  --execution-cuda-peer-available \
   --poseidon-gpu-preflight \
   --preflight-comm-available \
   --preflight-relin-keys \
@@ -119,6 +121,7 @@ POSEIDON_MGPU_EXTERNAL_DOWNLOAD_DEVICE=0 \
 POSEIDON_MGPU_EXTERNAL_PREFLIGHT_COMM_AVAILABLE=1 \
 POSEIDON_MGPU_EXTERNAL_PREFLIGHT_RELIN_KEYS=1 \
 POSEIDON_MGPU_EXTERNAL_PREFLIGHT_GALOIS_KEYS=1 \
+POSEIDON_MGPU_EXTERNAL_EXECUTION_CUDA_PEER_AVAILABLE=1 \
 ctest --test-dir /tmp/poseidon-mgpu-tools --output-on-failure \
   -R '^poseidon_mgpu_external_hevm_artifact_tests$'
 ```
@@ -166,6 +169,8 @@ Optional environment variables:
 - `POSEIDON_MGPU_EXTERNAL_PREFLIGHT_GALOIS_KEYS=1`
 - `POSEIDON_MGPU_EXTERNAL_NODES=4`
 - `POSEIDON_MGPU_EXTERNAL_DEVICES_PER_NODE=8`
+- `POSEIDON_MGPU_EXTERNAL_EXECUTION_CUDA_PEER_AVAILABLE=1`
+- `POSEIDON_MGPU_EXTERNAL_EXECUTION_INTER_NODE_AVAILABLE=1`
 
 `poseidon_mgpu_external_hevm_mock_artifact_tests` exercises the same CTest
 binary with a generated mock `.hevm + .cst` artifact, preflight availability
@@ -182,6 +187,8 @@ poseidon_mgpu_dacapo_hevm_dump \
   --compute-devices 0,1,2,3,4,5,6,7 \
   --opcode-summary \
   --communication-plan \
+  --communication-execution-preflight \
+  --execution-cuda-peer-available \
   --poseidon-gpu-preflight \
   --preflight-comm-available \
   --preflight-relin-keys \
@@ -212,3 +219,9 @@ For a 4x8 logical cluster preview, pass `--nodes 4 --devices-per-node 8`.
 Use `--opcode-summary` to print the raw HEVM opcode distribution before
 execution planning; this is useful when a real artifact contains unsupported
 opcodes such as `ModswitchC` or `UpscaleC`.
+
+Add `--communication-execution-preflight` to distinguish planned routes from
+routes executable by the currently available backend. For the single-node path,
+also pass `--execution-cuda-peer-available`. Do not pass
+`--execution-inter-node-available` until a real cluster transport backend has
+been implemented and wired behind the mgpu communication layer.
