@@ -35,6 +35,105 @@ nix-shell src/poseidon/mgpu/nix/dacapo-shell.nix
 The shell points `DACAPO_ROOT` at `src/poseidon/mgpu/third_party/dacapo` and
 keeps Dacapo source-only with respect to the normal Poseidon build.
 
+The upstream Dacapo helper functions in `config.sh` currently expect the
+compiler binary at `$DACAPO_ROOT/build/bin/hecate-opt`. If you use a different
+CMake build directory, either invoke `hecate-opt` directly or provide the same
+path before using helpers such as `hc-trace`, `hopts`, and `hbt`.
+
+## ResNet20 Artifact Runbook
+
+Generate real Dacapo ResNet20 artifacts inside the isolated Dacapo shell, not
+from the normal Poseidon build:
+
+```bash
+nix-shell src/poseidon/mgpu/nix/dacapo-shell.nix
+cd "$DACAPO_ROOT"
+cmake -S . -B build -G Ninja
+cmake --build build -j2
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+./install.sh
+source config.sh
+hc-trace ResNet
+hbt dacapo 40 ResNet HEAAN GPU
+```
+
+Dacapo's ResNet test script loads artifacts using this naming convention:
+
+```text
+$DACAPO_ROOT/examples/traced/_hecate_ResNet.cst
+$DACAPO_ROOT/examples/optimized/dacapo/ResNet.40._hecate_ResNet.hevm
+```
+
+Check that both files exist before handing them to Poseidon:
+
+```bash
+test -f "$DACAPO_ROOT/examples/traced/_hecate_ResNet.cst"
+test -f "$DACAPO_ROOT/examples/optimized/dacapo/ResNet.40._hecate_ResNet.hevm"
+```
+
+Build the Poseidon CPU-side mgpu diagnostics and external-artifact CTest binary
+separately:
+
+```bash
+cd "$POSEIDON_ROOT"
+cmake -S . -B /tmp/poseidon-mgpu-tools \
+  -DPOSEIDON_BUILD_MGPU=ON \
+  -DPOSEIDON_BUILD_MGPU_TOOLS=ON \
+  -DPOSEIDON_BUILD_MGPU_TESTS=ON
+cmake --build /tmp/poseidon-mgpu-tools \
+  --target poseidon_mgpu_dacapo_hevm_dump \
+           poseidon_mgpu_external_hevm_artifact_tests -j2
+```
+
+Then inspect the ResNet20 artifact without executing GPU operators:
+
+```bash
+/tmp/poseidon-mgpu-tools/bin/poseidon_mgpu_dacapo_hevm_dump \
+  --hevm "$DACAPO_ROOT/examples/optimized/dacapo/ResNet.40._hecate_ResNet.hevm" \
+  --constants "$DACAPO_ROOT/examples/traced/_hecate_ResNet.cst" \
+  --devices 8 \
+  --upload-device 0 \
+  --compute-devices 0,1,2,3,4,5,6,7 \
+  --download-device 0 \
+  --opcode-summary \
+  --communication-plan \
+  --poseidon-gpu-preflight \
+  --preflight-comm-available \
+  --preflight-relin-keys \
+  --preflight-galois-keys \
+  --summary-json \
+  --no-schedule
+```
+
+Use the skipped-by-default external CTest for a repeatable check:
+
+```bash
+POSEIDON_MGPU_EXTERNAL_HEVM="$DACAPO_ROOT/examples/optimized/dacapo/ResNet.40._hecate_ResNet.hevm" \
+POSEIDON_MGPU_EXTERNAL_CST="$DACAPO_ROOT/examples/traced/_hecate_ResNet.cst" \
+POSEIDON_MGPU_EXTERNAL_DEVICE_COUNT=8 \
+POSEIDON_MGPU_EXTERNAL_UPLOAD_DEVICE=0 \
+POSEIDON_MGPU_EXTERNAL_COMPUTE_DEVICES=0,1,2,3,4,5,6,7 \
+POSEIDON_MGPU_EXTERNAL_DOWNLOAD_DEVICE=0 \
+ctest --test-dir /tmp/poseidon-mgpu-tools --output-on-failure \
+  -R '^poseidon_mgpu_external_hevm_artifact_tests$'
+```
+
+Interpret the diagnostics conservatively:
+
+- Unsupported HEVM opcodes, especially `ModswitchC` or `UpscaleC`, mean the
+  Dacapo adapter must be extended only after the Poseidon GPU scale/modulus
+  semantics are verified.
+- A `BootstrapFallback` preflight failure means the artifact can be loaded and
+  scheduled, but the current Poseidon GPU execution path cannot run it end to
+  end until a fallback or native bootstrap path is designed.
+- Missing relinearization or Galois keys must be fixed by key provisioning, not
+  by changing placement in the interpreter.
+- `communication_plan` entries marked `inter_node` are diagnostic only today.
+  Single-node 8-GPU execution should use CUDA peer communication first; cluster
+  transport is a later backend behind the same mgpu communication interface.
+
 ## External HEVM Artifact Check
 
 `poseidon_mgpu_external_hevm_artifact_tests` is a skipped-by-default CTest for

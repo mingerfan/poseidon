@@ -175,6 +175,35 @@ Dacapo artifact debugging:
   especially important for detecting unsupported `ModswitchC` and `UpscaleC`
   opcodes in ResNet20 artifacts.
 
+ResNet20 artifact runbook:
+
+- Use only the Nix-isolated Dacapo environment for Dacapo dependencies:
+  `nix-shell src/poseidon/mgpu/nix/dacapo-shell.nix`.
+- Dacapo's upstream helper functions in `config.sh` expect
+  `$DACAPO_ROOT/build/bin/hecate-opt`; keep that build path when using
+  `hc-trace`, `hopts`, or `hbt`, or invoke the optimizer directly.
+- Generate the ResNet20 HEAAN GPU artifact with:
+  `hc-trace ResNet` and `hbt dacapo 40 ResNet HEAAN GPU`.
+- The expected artifacts are:
+  `$DACAPO_ROOT/examples/traced/_hecate_ResNet.cst` and
+  `$DACAPO_ROOT/examples/optimized/dacapo/ResNet.40._hecate_ResNet.hevm`.
+  Verify both files exist before running Poseidon diagnostics.
+- First Poseidon gate is CPU-side only:
+  `poseidon_mgpu_dacapo_hevm_dump --opcode-summary --communication-plan
+  --poseidon-gpu-preflight --summary-json --no-schedule` with explicit
+  `--hevm`, `--constants`, and placement flags.
+- Repeatable artifact validation uses the skipped-by-default
+  `poseidon_mgpu_external_hevm_artifact_tests` with
+  `POSEIDON_MGPU_EXTERNAL_HEVM`, `POSEIDON_MGPU_EXTERNAL_CST`, and explicit
+  placement environment variables.
+- Treat unsupported opcode diagnostics as adapter work, not scheduler work.
+  Do not guess `ModswitchC` or `UpscaleC` semantics.
+- Treat bootstrap fallback diagnostics as an execution-backend gap. Loading,
+  placement, copy insertion, and communication planning may still be valid.
+- For 4x8 previews, run the dump tool with
+  `--communication-plan --nodes 4 --devices-per-node 8`; any `inter_node`
+  routes are diagnostic until a cluster transport backend exists.
+
 ## 5. Test Plan
 
 | Test | Requirement |
@@ -204,7 +233,7 @@ Dacapo artifact debugging:
 | 3 | `GpuComm` and CUDA peer-copy backend | Same-device tests pass; multi-GPU tests skip or pass. |
 | 4 | Static placement and copy insertion | Handwritten small graph verifies inserted copies. |
 | 5 | Add Dacapo submodule and JSON/HEVM adapters | Adapter tests use small captured/mock Dacapo input. |
-| 6 | ResNet20 static schedule path | Artifact load/dump works; skipped-by-default external artifact CTest validates real `.hevm + .cst`; CPU-only preflight reports GPU executor readiness; single-GPU fallback works; multi-GPU run validates on cluster. |
+| 6 | ResNet20 static schedule path | Dacapo runbook generates real `.hevm + .cst`; dump tool reports opcode summary, schedule summary, communication plan, and CPU-only Poseidon GPU preflight; skipped-by-default external artifact CTest validates the same artifact; unsupported opcode and bootstrap diagnostics are resolved or explicitly recorded before GPU execution; single-node 8-GPU run validates on cluster hardware. |
 | 7 | Cluster communication planning | CPU-only topology planning classifies inter-node copies first; NCCL/MPI interface is introduced only after single-node path is stable. |
 
 On a single-GPU development machine, complete Phases 0-4 with same-device copy
