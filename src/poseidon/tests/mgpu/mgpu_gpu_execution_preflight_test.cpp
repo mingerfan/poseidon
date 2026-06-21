@@ -189,6 +189,55 @@ void test_keys_and_communication_execution_are_reported()
         "ready communication execution check should be ok");
 }
 
+void test_communication_execution_is_not_run_when_plan_fails()
+{
+    PoseidonGpuExecutionPreflightOptions options;
+    options.device_count = 2;
+    options.copy_ops_have_comm = true;
+    options.galois_keys_available = true;
+    options.check_communication_plan = true;
+    options.topology = make_single_node_topology(1);
+    options.check_communication_execution = true;
+    options.communication_execution.cuda_peer_available = true;
+
+    const PoseidonGpuExecutionPreflightResult result =
+        preflight_poseidon_gpu_execution_plan(make_copy_and_rotate_schedule(), options);
+
+    require(!result.ok(), "topology planning failure should fail preflight");
+    require(result.schedule_verification.ok(), "schedule verifier should pass");
+    require(result.poseidon_gpu_preflight.ok(), "Poseidon GPU preflight should pass");
+    require(result.communication_plan_evaluated, "communication plan should run");
+    require(!result.communication_plan.ok(), "communication plan should fail");
+    require(
+        !result.communication_execution_preflight_evaluated,
+        "communication execution preflight should not run after plan failure");
+    require_contains(
+        result.format_diagnostics(),
+        "copy destination device 1 is not present in topology");
+
+    const std::string text = dump_poseidon_gpu_execution_preflight(result);
+    require_contains(text, "communication_plan: error");
+    require_contains(text, "communication_execution_preflight: not_run");
+
+    const nlohmann::json json =
+        nlohmann::json::parse(poseidon_gpu_execution_preflight_to_json(result));
+    require(
+        json.at("checks")
+                .at("communication_plan")
+                .at("status")
+                .get<std::string>() == "error",
+        "communication plan check should be error");
+    require(
+        json.at("checks")
+                .at("communication_execution_preflight")
+                .at("status")
+                .get<std::string>() == "not_run",
+        "communication execution check should be not_run");
+    require(
+        json.at("communication_execution_preflight").is_null(),
+        "communication execution JSON payload should be null when not evaluated");
+}
+
 }  // namespace
 
 int main()
@@ -198,6 +247,7 @@ int main()
         test_supported_single_device_schedule_passes();
         test_verifier_errors_are_reported();
         test_keys_and_communication_execution_are_reported();
+        test_communication_execution_is_not_run_when_plan_fails();
     }
     catch (const std::exception &ex)
     {
