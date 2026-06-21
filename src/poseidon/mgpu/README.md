@@ -265,9 +265,11 @@ unsupported `ModswitchC` and `UpscaleC`; those remain real adapter work once
 their Poseidon GPU semantics are verified.
 
 `poseidon_mgpu_external_hevm_config_mock_artifact_tests` exercises the same
-path with `POSEIDON_MGPU_EXTERNAL_CONFIG_JSON` so config-file driven placement,
-topology, preflight, and backend declarations stay covered without a real
-ResNet20 artifact.
+path with `POSEIDON_MGPU_EXTERNAL_CONFIG_JSON`, and
+`poseidon_mgpu_external_hevm_config_file_mock_artifact_tests` uses the bundled
+`single_node_8gpu.json` through `POSEIDON_MGPU_EXTERNAL_CONFIG`. Together they
+keep config-driven placement, topology, preflight, and backend declarations
+covered without a real ResNet20 artifact.
 
 `poseidon_mgpu_external_hevm_report_mock_artifact_tests` writes the shared JSON
 report and readable schedule dump from the external artifact CTest path,
