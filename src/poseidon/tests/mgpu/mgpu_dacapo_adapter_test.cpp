@@ -346,6 +346,38 @@ void test_hevm_binary_reports_bad_magic()
     require_contains(result.format_diagnostics(), "invalid HEVM magic number");
 }
 
+void test_hevm_binary_reports_register_out_of_range()
+{
+    const std::string hevm = test::make_hevm_binary(
+        1, 1, 2, 0, { 1 },
+        {
+            test::HevmOpRecord{ 6, 1, 0, 2 },
+        });
+
+    const DacapoAdapterResult result = translate_dacapo_schedule(
+        hevm, DacapoAdapterOptions{ DacapoInputFormat::HevmBinary });
+
+    require(!result.ok(), "out-of-range HEVM register should fail");
+    require(result.schedule.ops.empty(), "failed register adapter should not produce a schedule");
+    require_contains(result.format_diagnostics(), "HEVM cipher register 2 is out of range");
+}
+
+void test_hevm_binary_reports_use_before_definition()
+{
+    const std::string hevm = test::make_hevm_binary(
+        1, 1, 2, 1, { 1 },
+        {
+            test::HevmOpRecord{ 7, 1, 0, 0 },
+        });
+
+    const DacapoAdapterResult result = translate_dacapo_schedule(
+        hevm, DacapoAdapterOptions{ DacapoInputFormat::HevmBinary });
+
+    require(!result.ok(), "undefined HEVM plain register should fail");
+    require(result.schedule.ops.empty(), "failed undefined register adapter should not produce a schedule");
+    require_contains(result.format_diagnostics(), "HEVM plain register 0 is used before definition");
+}
+
 void test_unknown_dacapo_format_does_not_guess()
 {
     const DacapoAdapterResult result = translate_dacapo_schedule(
@@ -375,6 +407,8 @@ int main()
         test_hevm_opcode_summary_reports_bad_magic();
         test_hevm_binary_reports_unsupported_opcode();
         test_hevm_binary_reports_bad_magic();
+        test_hevm_binary_reports_register_out_of_range();
+        test_hevm_binary_reports_use_before_definition();
         test_unknown_dacapo_format_does_not_guess();
     }
     catch (const std::exception &ex)
