@@ -132,6 +132,21 @@ if(POSEIDON_BUILD_MGPU_TOOLS)
                 ENVIRONMENT "POSEIDON_MGPU_RESNET20_MOCK_ARTIFACTS=1")
 
         add_test(
+            NAME poseidon_mgpu_resnet20_artifact_path_override_mock_tests
+            COMMAND poseidon_mgpu_resnet20_artifact_path_tests
+                    $<TARGET_FILE:poseidon_mgpu_resnet20_artifact_check>
+        )
+        set(POSEIDON_MGPU_RESNET20_ARTIFACT_PATH_OVERRIDE_MOCK_ENV
+            "POSEIDON_MGPU_RESNET20_MOCK_ARTIFACTS=1"
+            "POSEIDON_MGPU_RESNET20_DEVICE_COUNT=2"
+            "POSEIDON_MGPU_RESNET20_COMPUTE_DEVICES=0,1"
+            "POSEIDON_MGPU_RESNET20_EXECUTION_CUDA_PEER_AVAILABLE=1")
+        set_tests_properties(
+            poseidon_mgpu_resnet20_artifact_path_override_mock_tests
+            PROPERTIES
+                ENVIRONMENT "${POSEIDON_MGPU_RESNET20_ARTIFACT_PATH_OVERRIDE_MOCK_ENV}")
+
+        add_test(
             NAME poseidon_mgpu_resnet20_dump_preflight_tests
             COMMAND poseidon_mgpu_resnet20_dump_preflight_tests
                     $<TARGET_FILE:poseidon_mgpu_dacapo_hevm_dump>

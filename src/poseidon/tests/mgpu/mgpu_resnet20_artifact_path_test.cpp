@@ -72,14 +72,6 @@ bool parse_bool(const char *value)
            text == "TRUE";
 }
 
-void require(bool condition, const std::string &message)
-{
-    if (!condition)
-    {
-        throw std::runtime_error(message);
-    }
-}
-
 std::string shell_quote(const std::string &text)
 {
     std::string output = "'";
@@ -96,6 +88,74 @@ std::string shell_quote(const std::string &text)
     }
     output.push_back('\'');
     return output;
+}
+
+void append_optional_flag(
+    std::string &command, const char *env_name, const char *flag_name)
+{
+    if (const char *value = get_env(env_name))
+    {
+        command += " ";
+        command += flag_name;
+        command += " ";
+        command += shell_quote(value);
+    }
+}
+
+void append_optional_bool_flag(
+    std::string &command, const char *env_name, const char *flag_name)
+{
+    if (parse_bool(get_env(env_name)))
+    {
+        command += " ";
+        command += flag_name;
+    }
+}
+
+void append_dump_hint_overrides(std::string &command)
+{
+    append_optional_flag(
+        command, "POSEIDON_MGPU_RESNET20_DEVICE_COUNT", "--devices");
+    append_optional_flag(
+        command, "POSEIDON_MGPU_RESNET20_DEFAULT_DEVICE", "--default-device");
+    append_optional_flag(
+        command, "POSEIDON_MGPU_RESNET20_UPLOAD_DEVICE", "--upload-device");
+    append_optional_flag(
+        command, "POSEIDON_MGPU_RESNET20_COMPUTE_DEVICES", "--compute-devices");
+    append_optional_flag(
+        command, "POSEIDON_MGPU_RESNET20_DOWNLOAD_DEVICE", "--download-device");
+    append_optional_flag(command, "POSEIDON_MGPU_RESNET20_NODES", "--nodes");
+    append_optional_flag(
+        command, "POSEIDON_MGPU_RESNET20_DEVICES_PER_NODE",
+        "--devices-per-node");
+    append_optional_bool_flag(
+        command, "POSEIDON_MGPU_RESNET20_ROUND_ROBIN_COMPUTE",
+        "--round-robin-compute");
+    append_optional_bool_flag(
+        command, "POSEIDON_MGPU_RESNET20_EXECUTION_CUDA_PEER_AVAILABLE",
+        "--execution-cuda-peer-available");
+    append_optional_bool_flag(
+        command, "POSEIDON_MGPU_RESNET20_EXECUTION_INTER_NODE_AVAILABLE",
+        "--execution-inter-node-available");
+    append_optional_bool_flag(
+        command, "POSEIDON_MGPU_RESNET20_PREFLIGHT_COMM_AVAILABLE",
+        "--preflight-comm-available");
+    append_optional_bool_flag(
+        command, "POSEIDON_MGPU_RESNET20_PREFLIGHT_RELIN_KEYS",
+        "--preflight-relin-keys");
+    append_optional_bool_flag(
+        command, "POSEIDON_MGPU_RESNET20_PREFLIGHT_GALOIS_KEYS",
+        "--preflight-galois-keys");
+    append_optional_bool_flag(
+        command, "POSEIDON_MGPU_RESNET20_REQUIRE_READY", "--require-ready");
+}
+
+void require(bool condition, const std::string &message)
+{
+    if (!condition)
+    {
+        throw std::runtime_error(message);
+    }
 }
 
 void write_text_file(const fs::path &path, const std::string &contents)
@@ -183,6 +243,7 @@ std::string build_command(
         command += " --schedule-path ";
         command += shell_quote(schedule_path);
     }
+    append_dump_hint_overrides(command);
     return command;
 }
 
@@ -235,6 +296,20 @@ int main(int argc, char **argv)
         require_contains(report, "\"status\": \"ready\"");
         require_contains(report, "ResNet.40._hecate_ResNet.hevm");
         require_contains(report, "_hecate_ResNet.cst");
+        if (const char *device_count = get_env("POSEIDON_MGPU_RESNET20_DEVICE_COUNT"))
+        {
+            require_contains(report, "--devices '" + std::string(device_count) + "'");
+        }
+        if (const char *compute_devices =
+                get_env("POSEIDON_MGPU_RESNET20_COMPUTE_DEVICES"))
+        {
+            require_contains(
+                report, "--compute-devices '" + std::string(compute_devices) + "'");
+        }
+        if (parse_bool(get_env("POSEIDON_MGPU_RESNET20_EXECUTION_CUDA_PEER_AVAILABLE")))
+        {
+            require_contains(report, "--execution-cuda-peer-available");
+        }
         std::cout << "resnet20_artifact_path_report: " << report_path << '\n';
     }
     catch (const std::exception &ex)

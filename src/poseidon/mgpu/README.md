@@ -407,8 +407,10 @@ preflight.
 wrapper around the same tool. Set `POSEIDON_MGPU_RESNET20_DACAPO_ROOT` or
 `DACAPO_ROOT` to run it against real artifacts, and optionally
 `POSEIDON_MGPU_RESNET20_REPORT_JSON` to keep the path-readiness JSON report.
-`poseidon_mgpu_resnet20_artifact_path_mock_tests` covers the wrapper on
-machines without real Dacapo output.
+The wrapper forwards explicit `POSEIDON_MGPU_RESNET20_*` dump-command hint
+overrides to `poseidon_mgpu_resnet20_artifact_check`. Mock tests cover both the
+default wrapper path and override-forwarding path on machines without real
+Dacapo output.
 
 `poseidon_mgpu_resnet20_dump_preflight_tests` is the next skipped-by-default
 CTest gate. It runs `poseidon_mgpu_dacapo_hevm_dump` on the expected ResNet20

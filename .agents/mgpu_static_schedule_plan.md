@@ -178,8 +178,10 @@ Dacapo artifact debugging:
 - Keep `poseidon_mgpu_resnet20_artifact_path_tests` as the skipped-by-default
   CTest wrapper for real ResNet20 path readiness. It should run when
   `POSEIDON_MGPU_RESNET20_DACAPO_ROOT` or `DACAPO_ROOT` is set, write the same
-  JSON readiness report when requested, and return skip on machines without
-  real Dacapo output. Keep a mock CTest variant for single-GPU development.
+  JSON readiness report when requested, forward explicit
+  `POSEIDON_MGPU_RESNET20_*` dump-command hint overrides to
+  `poseidon_mgpu_resnet20_artifact_check`, and return skip on machines without
+  real Dacapo output. Keep mock CTest variants for single-GPU development.
 - Keep `poseidon_mgpu_resnet20_dump_preflight_tests` as the skipped-by-default
   CTest wrapper for running the dump-tool CPU-side preflight on the expected
   ResNet20 artifact paths. It should write durable JSON and schedule dumps when
