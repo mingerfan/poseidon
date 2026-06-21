@@ -123,6 +123,52 @@ void test_round_robin_compute_starts_at_default_device()
     require(result.schedule.ops[3].device_id == 1, "third compute should return to device 1");
 }
 
+void test_round_robin_compute_uses_explicit_compute_device_order()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, kUnassignedDevice, {}, { value(1) }));
+    schedule.ops.push_back(op(MgpuOpKind::Relinearize, kUnassignedDevice, { value(1) }, { value(2) }));
+    schedule.ops.push_back(op(MgpuOpKind::Rescale, kUnassignedDevice, { value(2) }, { value(3) }));
+    schedule.ops.push_back(op(MgpuOpKind::Rotate, kUnassignedDevice, { value(3) }, { value(4) }));
+
+    StaticPlacementOptions options;
+    options.device_count = 3;
+    options.default_device = 1;
+    options.policy = StaticPlacementPolicy::RoundRobinCompute;
+    options.compute_devices = { 2, 0 };
+
+    const StaticPlacementResult result = place_static_schedule(schedule, options);
+    require(result.ok(), "round-robin placement failed:\n" + result.format_diagnostics());
+    require(result.schedule.ops[0].device_id == 1, "upload should use default device");
+    require(result.schedule.ops[1].device_id == 2, "first compute should use first compute device");
+    require(result.schedule.ops[2].device_id == 0, "second compute should use second compute device");
+    require(result.schedule.ops[3].device_id == 2, "third compute should wrap compute device list");
+}
+
+void test_rejects_invalid_compute_devices()
+{
+    StaticPlacementOptions options;
+    options.device_count = 2;
+    options.policy = StaticPlacementPolicy::RoundRobinCompute;
+    options.compute_devices = { 0, 2 };
+
+    const StaticPlacementResult result = place_static_schedule(MgpuSchedule{}, options);
+    require(!result.ok(), "invalid compute device should fail placement");
+    require_contains(result.format_diagnostics(), "invalid compute device 2");
+}
+
+void test_rejects_duplicate_compute_devices()
+{
+    StaticPlacementOptions options;
+    options.device_count = 2;
+    options.policy = StaticPlacementPolicy::RoundRobinCompute;
+    options.compute_devices = { 1, 1 };
+
+    const StaticPlacementResult result = place_static_schedule(MgpuSchedule{}, options);
+    require(!result.ok(), "duplicate compute device should fail placement");
+    require_contains(result.format_diagnostics(), "duplicate compute device 1");
+}
+
 void test_unassigned_copy_is_diagnostic()
 {
     MgpuSchedule schedule;
@@ -162,6 +208,9 @@ int main()
         test_preserves_existing_devices();
         test_round_robin_compute_policy();
         test_round_robin_compute_starts_at_default_device();
+        test_round_robin_compute_uses_explicit_compute_device_order();
+        test_rejects_invalid_compute_devices();
+        test_rejects_duplicate_compute_devices();
         test_unassigned_copy_is_diagnostic();
         test_invalid_existing_device_is_diagnostic();
     }

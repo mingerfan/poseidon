@@ -23,6 +23,7 @@ struct StaticPlacementOptions
     int default_device = 0;
     StaticPlacementPolicy policy = StaticPlacementPolicy::SingleDevice;
     bool preserve_existing_devices = true;
+    std::vector<int> compute_devices;
 };
 
 struct StaticPlacementDiagnostic

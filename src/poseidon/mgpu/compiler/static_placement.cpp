@@ -102,11 +102,48 @@ void define_output(
     }
 }
 
-int next_round_robin_device(std::size_t &next_compute_device, int device_count)
+int next_round_robin_device(
+    std::size_t &next_compute_device, const StaticPlacementOptions &options)
 {
-    const int device_id = static_cast<int>(next_compute_device % static_cast<std::size_t>(device_count));
+    if (!options.compute_devices.empty())
+    {
+        const int device_id = options.compute_devices[
+            next_compute_device % options.compute_devices.size()];
+        ++next_compute_device;
+        return device_id;
+    }
+
+    const int device_id = static_cast<int>(
+        next_compute_device % static_cast<std::size_t>(options.device_count));
     ++next_compute_device;
     return device_id;
+}
+
+bool validate_compute_devices(StaticPlacementResult &result, const StaticPlacementOptions &options)
+{
+    for (std::size_t i = 0; i < options.compute_devices.size(); ++i)
+    {
+        const int device_id = options.compute_devices[i];
+        if (!is_valid_device(device_id, options.device_count))
+        {
+            std::ostringstream stream;
+            stream << "invalid compute device " << device_id << " for device_count "
+                   << options.device_count;
+            add_diagnostic(result, 0, stream.str());
+            return false;
+        }
+        for (std::size_t j = 0; j < i; ++j)
+        {
+            if (options.compute_devices[j] == device_id)
+            {
+                std::ostringstream stream;
+                stream << "duplicate compute device " << device_id;
+                add_diagnostic(result, 0, stream.str());
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 int choose_unassigned_device(
@@ -145,7 +182,7 @@ int choose_unassigned_device(
     case StaticPlacementPolicy::SingleDevice:
         return options.default_device;
     case StaticPlacementPolicy::RoundRobinCompute:
-        return next_round_robin_device(next_compute_device, options.device_count);
+        return next_round_robin_device(next_compute_device, options);
     }
     return options.default_device;
 }
@@ -199,7 +236,13 @@ StaticPlacementResult place_static_schedule(
         add_diagnostic(result, 0, stream.str());
         return result;
     }
-    next_compute_device = static_cast<std::size_t>(options.default_device);
+    if (!validate_compute_devices(result, options))
+    {
+        return result;
+    }
+    next_compute_device = options.compute_devices.empty()
+                              ? static_cast<std::size_t>(options.default_device)
+                              : 0;
 
     for (std::size_t op_index = 0; op_index < schedule.ops.size(); ++op_index)
     {

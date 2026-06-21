@@ -164,6 +164,48 @@ void test_pipeline_round_robin_compute_starts_at_default_device()
             "second round-robin compute should wrap to device 0");
 }
 
+void test_pipeline_round_robin_uses_explicit_compute_device_order()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, kUnassignedDevice, {}, { value(1) }));
+    schedule.ops.push_back(op(MgpuOpKind::UploadPlain, kUnassignedDevice, {}, { value(2) }));
+    schedule.ops.push_back(
+        op(MgpuOpKind::MultiplyPlain, kUnassignedDevice, { value(1), value(2) }, { value(3) }));
+    schedule.ops.push_back(op(MgpuOpKind::Rescale, kUnassignedDevice, { value(3) }, { value(4) }));
+
+    StaticSchedulePipelineOptions options;
+    options.device_count = 3;
+    options.placement.default_device = 1;
+    options.placement.policy = StaticPlacementPolicy::RoundRobinCompute;
+    options.placement.compute_devices = { 2, 0 };
+
+    const StaticSchedulePipelineResult result = prepare_static_schedule(schedule, options);
+    require(result.ok(), "pipeline failed:\n" + result.format_diagnostics());
+    require(result.schedule.ops.size() == 7, "expected copies into explicit compute devices");
+    require(result.schedule.ops[0].device_id == 1, "upload cipher should use default device");
+    require(result.schedule.ops[1].device_id == 1, "upload plain should use default device");
+    require(result.schedule.ops[2].kind == MgpuOpKind::CopyCipher,
+            "first compute should receive copied ciphertext");
+    require(result.schedule.ops[2].device_id == 2,
+            "cipher copy should target first explicit compute device");
+    require(result.schedule.ops[3].kind == MgpuOpKind::CopyPlain,
+            "first compute should receive copied plaintext");
+    require(result.schedule.ops[3].device_id == 2,
+            "plain copy should target first explicit compute device");
+    require(result.schedule.ops[4].kind == MgpuOpKind::MultiplyPlain,
+            "first compute should follow inserted copies");
+    require(result.schedule.ops[4].device_id == 2,
+            "first compute should use first explicit compute device");
+    require(result.schedule.ops[5].kind == MgpuOpKind::CopyCipher,
+            "second compute should receive copied ciphertext");
+    require(result.schedule.ops[5].device_id == 0,
+            "second compute copy should target second explicit compute device");
+    require(result.schedule.ops[6].kind == MgpuOpKind::Rescale,
+            "second compute should follow inserted copy");
+    require(result.schedule.ops[6].device_id == 0,
+            "second compute should use second explicit compute device");
+}
+
 void test_pipeline_preserves_integer_attributes()
 {
     MgpuSchedule schedule;
@@ -367,6 +409,7 @@ int main()
         test_pipeline_reports_verifier_errors();
         test_pipeline_places_unassigned_ops_before_copy_insertion();
         test_pipeline_round_robin_compute_starts_at_default_device();
+        test_pipeline_round_robin_uses_explicit_compute_device_order();
         test_pipeline_preserves_integer_attributes();
         test_pipeline_prepares_dacapo_json_input();
         test_pipeline_prepares_hevm_binary_input();

@@ -19,6 +19,7 @@ struct ToolOptions
     std::string constants_path;
     int device_count = 1;
     int default_device = 0;
+    std::vector<int> compute_devices;
     bool round_robin_compute = false;
     bool dump_schedule = true;
 };
@@ -28,6 +29,7 @@ void print_usage(std::ostream &stream)
     stream
         << "usage: poseidon_mgpu_dacapo_hevm_dump --hevm <file> --constants <file> "
            "[--devices N] [--default-device N] [--round-robin-compute] "
+           "[--compute-devices a,b,c] "
            "[--no-schedule]\n";
 }
 
@@ -45,6 +47,35 @@ int parse_int_arg(const std::string &name, const char *value)
         throw std::invalid_argument("invalid integer for " + name + ": " + value);
     }
     return parsed;
+}
+
+std::vector<int> parse_compute_devices(const char *value)
+{
+    if (value == nullptr || std::string(value).empty())
+    {
+        throw std::invalid_argument("missing value for --compute-devices");
+    }
+
+    std::vector<int> devices;
+    const std::string text = value;
+    std::size_t begin = 0;
+    while (begin <= text.size())
+    {
+        const std::size_t end = text.find(',', begin);
+        const std::string item = text.substr(
+            begin, end == std::string::npos ? std::string::npos : end - begin);
+        if (item.empty())
+        {
+            throw std::invalid_argument("empty device id in --compute-devices");
+        }
+        devices.push_back(parse_int_arg("--compute-devices", item.c_str()));
+        if (end == std::string::npos)
+        {
+            break;
+        }
+        begin = end + 1;
+    }
+    return devices;
 }
 
 ToolOptions parse_args(int argc, char **argv)
@@ -99,6 +130,16 @@ ToolOptions parse_args(int argc, char **argv)
             options.round_robin_compute = true;
             continue;
         }
+        if (arg == "--compute-devices")
+        {
+            if (++i >= argc)
+            {
+                throw std::invalid_argument("missing value for --compute-devices");
+            }
+            options.compute_devices = parse_compute_devices(argv[i]);
+            options.round_robin_compute = true;
+            continue;
+        }
         if (arg == "--no-schedule")
         {
             options.dump_schedule = false;
@@ -137,6 +178,7 @@ StaticSchedulePipelineOptions make_pipeline_options(const ToolOptions &tool_opti
     {
         options.placement.policy = StaticPlacementPolicy::RoundRobinCompute;
     }
+    options.placement.compute_devices = tool_options.compute_devices;
     return options;
 }
 
