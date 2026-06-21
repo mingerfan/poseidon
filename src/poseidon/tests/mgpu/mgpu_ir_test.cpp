@@ -271,6 +271,16 @@ void test_missing_copy()
         schedule, 2, "input value %1 is on device 0 but op runs on device 1");
 }
 
+void test_download_missing_copy()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, 0, {}, { value(1) }));
+    schedule.ops.push_back(op(MgpuOpKind::Download, 1, { value(1) }, {}));
+    require_invalid_contains(
+        schedule, 2,
+        "download input value %1 is on device 0 but op runs on device 1");
+}
+
 void test_wrong_input_kind()
 {
     MgpuSchedule schedule;
@@ -279,12 +289,35 @@ void test_wrong_input_kind()
     require_invalid_contains(schedule, 1, "input value %1 expected ciphertext, got plaintext");
 }
 
+void test_copy_wrong_input_kind()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadPlain, 0, {}, { value(1) }));
+    schedule.ops.push_back(op(MgpuOpKind::CopyCipher, 1, { value(1) }, { value(2) }));
+    require_invalid_contains(
+        schedule, 2, "copy input value %1 expected ciphertext, got plaintext");
+}
+
 void test_duplicate_output()
 {
     MgpuSchedule schedule;
     schedule.ops.push_back(op(MgpuOpKind::UploadCipher, 0, {}, { value(1) }));
     schedule.ops.push_back(op(MgpuOpKind::UploadCipher, 0, {}, { value(1) }));
     require_invalid_contains(schedule, 1, "duplicate output value %1");
+}
+
+void test_reserved_output_id()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, 0, {}, { value(0) }));
+    require_invalid_contains(schedule, 1, "output value id 0 is reserved");
+}
+
+void test_invalid_device_count()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, 0, {}, { value(1) }));
+    require_invalid_contains(schedule, 0, "device_count must be positive");
 }
 
 }  // namespace
@@ -305,8 +338,12 @@ int main()
         test_invalid_device();
         test_missing_input();
         test_missing_copy();
+        test_download_missing_copy();
         test_wrong_input_kind();
+        test_copy_wrong_input_kind();
         test_duplicate_output();
+        test_reserved_output_id();
+        test_invalid_device_count();
     }
     catch (const std::exception &ex)
     {
