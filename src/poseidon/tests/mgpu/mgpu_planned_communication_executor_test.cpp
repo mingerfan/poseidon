@@ -140,6 +140,16 @@ MgpuSchedule make_two_route_schedule()
     return schedule;
 }
 
+MgpuSchedule make_same_device_copy_schedule()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, 0, {}, { value(1) }));
+    schedule.ops.push_back(
+        op(MgpuOpKind::CopyCipher, 0, { value(1) }, { value(2) }));
+    schedule.ops.push_back(op(MgpuOpKind::Download, 0, { value(2) }, {}));
+    return schedule;
+}
+
 void test_executor_uses_static_plan_for_copy_routes()
 {
     UploadVectorHandler handler;
@@ -183,6 +193,52 @@ void test_executor_uses_static_plan_for_copy_routes()
     require(
         *copied == std::vector<int>({ 1, 2, 3, 4 }),
         "final copied vector mismatch");
+}
+
+void test_executor_routes_same_device_copy_through_comm_layer()
+{
+    UploadVectorHandler handler;
+    VectorCopyMaterializer materializer;
+    CopyingLocalBackend local_backend;
+    CopyingInterNodeBackend inter_node_backend;
+    PlannedCommunicationStaticScheduleExecutor executor(
+        make_single_node_topology(1), materializer, local_backend,
+        inter_node_backend, handler, StaticScheduleExecutorOptions{ 1 });
+
+    const ScheduleExecutionResult result =
+        executor.run(make_same_device_copy_schedule());
+
+    require(
+        result.ok(),
+        "planned executor should run same-device copy:\n" +
+            result.format_errors());
+    require(
+        handler.executed_ops.size() == 2,
+        "handler should see upload and download only");
+    require(
+        materializer.requests.size() == 1,
+        "same-device copy should still be materialized explicitly");
+    require(
+        local_backend.requests.size() == 1,
+        "same-device copy should use local object-copy backend");
+    require(
+        inter_node_backend.requests.empty(),
+        "same-device copy should not use inter-node backend");
+    require(
+        materializer.requests[0].source_device == 0 &&
+            materializer.requests[0].destination_device == 0,
+        "same-device materializer route mismatch");
+    require(
+        local_backend.requests[0].buffers[0].source_device == 0 &&
+            local_backend.requests[0].buffers[0].destination_device == 0,
+        "same-device backend buffer route mismatch");
+    require(result.object_store.at(2).device_id == 0, "copy destination device mismatch");
+    require(result.object_store.has_object(2), "same-device copy should keep object");
+
+    const auto copied = result.object_store.object_as<std::vector<int>>(2);
+    require(
+        *copied == std::vector<int>({ 1, 2, 3, 4 }),
+        "same-device copied vector mismatch");
 }
 
 void test_executor_reports_plan_diagnostics_before_execution()
@@ -364,6 +420,7 @@ int main()
     try
     {
         test_executor_uses_static_plan_for_copy_routes();
+        test_executor_routes_same_device_copy_through_comm_layer();
         test_executor_reports_plan_diagnostics_before_execution();
         test_executor_reports_missing_backend_before_execution();
         test_executor_reports_missing_cuda_peer_backend_at_copy_op();
