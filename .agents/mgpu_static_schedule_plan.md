@@ -39,6 +39,7 @@
 | CUDA peer probe | Optional CUDA/RMM-free diagnostic that reports visible devices and CUDA peer-access matrix before single-node 8-GPU execution. |
 | Communication topology planner | CPU-only classification of copy ops as same-device, intra-node CUDA peer, or inter-node transport for future cluster expansion. |
 | Communication execution preflight | CPU-only check that planned copy routes are executable by the currently available same-device, CUDA peer, or inter-node backend set. |
+| Routed object-copy backend | CPU-only dispatcher that sends same-device/CUDA-peer planned routes to the local object-copy backend and inter-node routes to the inter-node transport boundary. |
 | Inter-node transport interface | CPU-only boundary that adapts planned inter-node routes plus full-object copy buffers into a future NCCL/MPI-style backend request; the default backend fails clearly. |
 | Poseidon GPU execution preflight | CPU-only aggregate gate for schedule verification, Poseidon GPU executor prerequisites, communication planning, and communication execution availability. |
 | Schedule IR | Represent upload, copy, compute, bootstrap fallback, and download operations independent of Dacapo format. |
@@ -291,6 +292,11 @@ Dacapo artifact debugging:
 - `InterNodeTransportBackend` is only an interface boundary until a real
   NCCL/MPI backend is implemented. The default missing backend must fail
   clearly and must not be exposed as an available inter-node execution backend.
+- `RoutedGpuObjectCopyBackend` consumes an already planned route. It must not
+  choose placement or invent copies; it validates that the materialized
+  full-object request matches the route, dispatches same-device/CUDA-peer
+  routes to the local backend, and dispatches inter-node routes through
+  `InterNodeTransportBackend`.
 - The dump tool and external HEVM CTest now expose a unified
   `poseidon_gpu_execution_preflight` result. Treat it as the CPU-only execution
   gate that combines schedule verification, Poseidon GPU preflight,
@@ -361,6 +367,7 @@ ResNet20 artifact runbook:
 | Poseidon GPU preflight tests | CPU-only checks report required comm/keys and unsupported GPU executor operations before attempting GPU execution. |
 | Communication topology tests | CPU-only tests classify scheduled copy ops for single-node and uniform cluster topologies without linking NCCL/MPI. |
 | Communication execution preflight tests | CPU-only tests report when same-device, CUDA peer, or inter-node planned routes lack an executable backend. |
+| Routed object-copy tests | CPU-only tests verify that planned routes dispatch to the local or inter-node backend and reject request/route mismatches before any backend call. |
 | Poseidon GPU execution preflight tests | CPU-only tests aggregate schedule verifier, GPU executor preflight, communication planning, and communication execution availability into one result. |
 | HEVM artifact readiness tests | CPU-only tests combine opcode support, Poseidon GPU preflight, communication planning, and execution preflight into an optional hard gate. |
 | HEVM artifact report tests | CPU-only tests verify the shared JSON report builder used by dump-tool output and external artifact CTest report files. |

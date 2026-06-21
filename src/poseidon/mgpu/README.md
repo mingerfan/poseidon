@@ -439,6 +439,13 @@ device metadata. `MissingInterNodeTransportBackend` intentionally fails; it is
 not an implementation and must not be advertised as an available inter-node
 backend.
 
+`comm/routed_object_copy.*` is the route-aware object-copy dispatcher. It
+consumes routes that were already produced by the topology planner, validates
+that the materialized full-object copy request matches the route, sends
+same-device and CUDA-peer routes to the local `GpuObjectCopyBackend`, and sends
+inter-node routes through `InterNodeTransportBackend`. It is still an interface
+boundary, not an NCCL/MPI implementation, and must not make placement decisions.
+
 ## CUDA Peer Probe
 
 `POSEIDON_BUILD_MGPU_CUDA_COMM=ON` builds the optional CUDA peer-copy backend
