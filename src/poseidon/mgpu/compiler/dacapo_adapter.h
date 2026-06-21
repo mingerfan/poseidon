@@ -14,6 +14,7 @@ enum class DacapoInputFormat
 {
     Unknown,
     EarthMlirText,
+    HevmBinary,
     Json
 };
 
