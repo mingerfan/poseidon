@@ -83,6 +83,29 @@ void test_preserves_existing_devices()
     require(result.schedule.ops[1].device_id == 1, "unassigned compute should use default device");
 }
 
+void test_can_override_existing_devices_when_requested()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, 0, {}, { value(1) }));
+    schedule.ops.push_back(op(MgpuOpKind::UploadPlain, 0, {}, { value(2) }));
+    schedule.ops.push_back(
+        op(MgpuOpKind::MultiplyPlain, 0, { value(1), value(2) }, { value(3) }));
+
+    StaticPlacementOptions options;
+    options.device_count = 2;
+    options.default_device = 1;
+    options.preserve_existing_devices = false;
+
+    const StaticPlacementResult result = place_static_schedule(schedule, options);
+    require(result.ok(), "override placement failed:\n" + result.format_diagnostics());
+    for (const MgpuOp &placed_op : result.schedule.ops)
+    {
+        require(
+            placed_op.device_id == 1,
+            "placement should override existing op devices when preservation is disabled");
+    }
+}
+
 void test_round_robin_compute_policy()
 {
     MgpuSchedule schedule;
@@ -190,6 +213,24 @@ void test_places_download_on_explicit_download_device()
     require(result.schedule.ops[2].device_id == 0, "download should use explicit download device");
 }
 
+void test_unassigned_download_defaults_to_input_device()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, 1, {}, { value(1) }));
+    schedule.ops.push_back(op(MgpuOpKind::Download, kUnassignedDevice, { value(1) }, {}));
+
+    StaticPlacementOptions options;
+    options.device_count = 2;
+    options.default_device = 0;
+
+    const StaticPlacementResult result = place_static_schedule(schedule, options);
+    require(result.ok(), "download default placement failed:\n" + result.format_diagnostics());
+    require(result.schedule.ops[0].device_id == 1, "assigned upload should stay on device 1");
+    require(
+        result.schedule.ops[1].device_id == 1,
+        "download without explicit device should follow its input device");
+}
+
 void test_places_upload_on_explicit_upload_device()
 {
     MgpuSchedule schedule;
@@ -269,12 +310,14 @@ int main()
     {
         test_single_device_places_unassigned_ops();
         test_preserves_existing_devices();
+        test_can_override_existing_devices_when_requested();
         test_round_robin_compute_policy();
         test_round_robin_compute_starts_at_default_device();
         test_round_robin_compute_uses_explicit_compute_device_order();
         test_rejects_invalid_compute_devices();
         test_rejects_duplicate_compute_devices();
         test_places_download_on_explicit_download_device();
+        test_unassigned_download_defaults_to_input_device();
         test_places_upload_on_explicit_upload_device();
         test_rejects_invalid_upload_device();
         test_rejects_invalid_download_device();
