@@ -1,5 +1,6 @@
 #include "poseidon/batchencoder.h"
 #include "poseidon/ciphertext.h"
+#include "poseidon/ckks_encoder.h"
 #include "poseidon/encryptor.h"
 #include "poseidon/factory/poseidon_factory.h"
 #include "poseidon/keygenerator.h"
@@ -166,6 +167,23 @@ ParametersLiteral make_gpu_test_parameters()
         sec_level_type::none);
 }
 
+ParametersLiteral make_gpu_ckks_test_parameters()
+{
+    ParametersLiteral parms(
+        CKKS,
+        /*log_n=*/12,
+        /*log_slots=*/11,
+        /*log_scale=*/20,
+        /*hamming_weight=*/0,
+        /*q0_level=*/0,
+        Modulus(0),
+        std::vector<Modulus>{},
+        std::vector<Modulus>{},
+        sec_level_type::none);
+    parms.set_log_modulus(std::vector<std::uint32_t>(3, 30), {});
+    return parms;
+}
+
 void run_gpu_runtime_smoke()
 {
     constexpr int device_id = 0;
@@ -219,6 +237,50 @@ void run_gpu_runtime_smoke()
     require_ciphertexts_equal(expected_sum, *handler.cipher_download(4));
 }
 
+void run_gpu_runtime_multiply_plain_smoke()
+{
+    constexpr int device_id = 0;
+    RmmPoolScope rmm_scope(device_id);
+
+    const ParametersLiteral parms = make_gpu_ckks_test_parameters();
+    PoseidonContext context(parms);
+    auto cpu_evaluator = PoseidonFactory::get_instance()->create_ckks_evaluator(context);
+
+    KeyGenerator keygen(context);
+    PublicKey public_key;
+    keygen.create_public_key(public_key);
+
+    CKKSEncoder encoder(context);
+    Plaintext plain0;
+    Plaintext plain1;
+    encoder.encode(std::vector<double>{ 1.0, 2.0, 3.0, 4.0 }, parms.scale(), plain0);
+    encoder.encode(std::vector<double>{ 0.5, -1.0, 2.0, 3.5 }, parms.scale(), plain1);
+
+    Encryptor encryptor(context, public_key, keygen.secret_key());
+    Ciphertext cipher0;
+    encryptor.encrypt(plain0, cipher0);
+
+    Ciphertext expected_product;
+    cpu_evaluator->multiply_plain(cipher0, plain1, expected_product);
+
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, device_id, {}, { value(10) }));
+    schedule.ops.push_back(op(MgpuOpKind::UploadPlain, device_id, {}, { value(11) }));
+    schedule.ops.push_back(
+        op(MgpuOpKind::MultiplyPlain, device_id, { value(10), value(11) }, { value(12) }));
+    schedule.ops.push_back(op(MgpuOpKind::Download, device_id, { value(12) }, {}));
+
+    PoseidonGpuScheduleHandler handler(context);
+    handler.bind_cipher_upload(10, std::make_shared<Ciphertext>(cipher0));
+    handler.bind_plain_upload(11, std::make_shared<Plaintext>(plain1));
+
+    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 1 });
+    const ScheduleExecutionResult result = interpreter.run(schedule, handler);
+    require(result.ok(), "GPU runtime multiply_plain schedule failed:\n" + result.format_errors());
+    require(handler.has_cipher_download(12), "missing multiply_plain output download");
+    require_ciphertexts_equal(expected_product, *handler.cipher_download(12));
+}
+
 }  // namespace
 
 int main()
@@ -232,6 +294,7 @@ int main()
     try
     {
         run_gpu_runtime_smoke();
+        run_gpu_runtime_multiply_plain_smoke();
     }
     catch (const std::exception &ex)
     {
