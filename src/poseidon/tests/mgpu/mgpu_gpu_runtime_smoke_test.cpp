@@ -281,6 +281,58 @@ void run_gpu_runtime_multiply_plain_smoke()
     require_ciphertexts_equal(expected_product, *handler.cipher_download(12));
 }
 
+void run_gpu_runtime_add_plain_rescale_smoke()
+{
+    constexpr int device_id = 0;
+    RmmPoolScope rmm_scope(device_id);
+
+    const ParametersLiteral parms = make_gpu_ckks_test_parameters();
+    PoseidonContext context(parms);
+    auto cpu_evaluator = PoseidonFactory::get_instance()->create_ckks_evaluator(context);
+
+    KeyGenerator keygen(context);
+    PublicKey public_key;
+    keygen.create_public_key(public_key);
+
+    CKKSEncoder encoder(context);
+    Plaintext input_plain;
+    Plaintext bias_plain;
+    encoder.encode(std::vector<double>{ 1.25, -2.0, 3.5, 4.0 }, parms.scale(), input_plain);
+    encoder.encode(std::vector<double>{ 0.25, 0.5, -1.5, 2.0 }, parms.scale(), bias_plain);
+
+    Encryptor encryptor(context, public_key, keygen.secret_key());
+    Ciphertext input_cipher;
+    encryptor.encrypt(input_plain, input_cipher);
+
+    Ciphertext expected_add_plain;
+    Ciphertext expected_rescale;
+    cpu_evaluator->add_plain(input_cipher, bias_plain, expected_add_plain);
+    cpu_evaluator->rescale(expected_add_plain, expected_rescale);
+
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, device_id, {}, { value(20) }));
+    schedule.ops.push_back(op(MgpuOpKind::UploadPlain, device_id, {}, { value(21) }));
+    schedule.ops.push_back(
+        op(MgpuOpKind::AddPlain, device_id, { value(20), value(21) }, { value(22) }));
+    schedule.ops.push_back(op(MgpuOpKind::Rescale, device_id, { value(22) }, { value(23) }));
+    schedule.ops.push_back(op(MgpuOpKind::Download, device_id, { value(22) }, {}));
+    schedule.ops.push_back(op(MgpuOpKind::Download, device_id, { value(23) }, {}));
+
+    PoseidonGpuScheduleHandler handler(context);
+    handler.bind_cipher_upload(20, std::make_shared<Ciphertext>(input_cipher));
+    handler.bind_plain_upload(21, std::make_shared<Plaintext>(bias_plain));
+
+    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 1 });
+    const ScheduleExecutionResult result = interpreter.run(schedule, handler);
+    require(
+        result.ok(),
+        "GPU runtime add_plain/rescale schedule failed:\n" + result.format_errors());
+    require(handler.has_cipher_download(22), "missing add_plain output download");
+    require(handler.has_cipher_download(23), "missing rescale output download");
+    require_ciphertexts_equal(expected_add_plain, *handler.cipher_download(22));
+    require_ciphertexts_equal(expected_rescale, *handler.cipher_download(23));
+}
+
 }  // namespace
 
 int main()
@@ -295,6 +347,7 @@ int main()
     {
         run_gpu_runtime_smoke();
         run_gpu_runtime_multiply_plain_smoke();
+        run_gpu_runtime_add_plain_rescale_smoke();
     }
     catch (const std::exception &ex)
     {
