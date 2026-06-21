@@ -102,6 +102,9 @@ Current Dacapo bridge:
 - HEVM registers are translated to Poseidon SSA-like `ValueId`s; do not reuse HEVM register IDs directly as values.
 - Static integer parameters such as `rotate_step`, `encode_level`, `encode_scale`, and bootstrap `target_level` live in `MgpuOp::integer_attributes`.
 - Unsupported HEVM opcodes must fail clearly rather than being guessed.
+- HEVM `NegateC` is supported as `MgpuOpKind::Negate`; HEVM `ModswitchC`
+  and `UpscaleC` remain unsupported until Poseidon GPU has a verified
+  dynamic modulus/scale-management mapping.
 
 Optional GPU object materialization:
 
