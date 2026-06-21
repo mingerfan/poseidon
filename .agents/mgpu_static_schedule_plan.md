@@ -227,6 +227,9 @@ Dacapo artifact debugging:
 - Keep a missing-constants mock report test for both dump-tool and external
   CTest paths so `.hevm` success plus missing `.cst` still leaves a
   machine-readable not-ready report.
+- Keep an invalid-HEVM mock report test for both dump-tool and external CTest
+  paths so opcode-summary preflight failures leave machine-readable not-ready
+  reports.
 - External artifact tests also accept `POSEIDON_MGPU_EXTERNAL_SCHEDULE_DUMP` to
   write the readable MLIR-like static schedule separately from stdout and the
   machine-readable report.

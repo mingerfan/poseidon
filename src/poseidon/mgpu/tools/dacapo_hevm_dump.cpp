@@ -658,6 +658,22 @@ DacapoHevmArtifactResult make_hevm_read_failure_result(
     return result;
 }
 
+DacapoHevmArtifactResult make_opcode_summary_failure_result(
+    const ToolOptions &tool_options, const DacapoHevmOpcodeSummary &summary)
+{
+    DacapoHevmArtifactResult result;
+    for (const DacapoAdapterDiagnostic &diagnostic : summary.diagnostics)
+    {
+        result.diagnostics.push_back(DacapoHevmArtifactDiagnostic{
+            "dacapo_opcode_summary",
+            tool_options.hevm_path,
+            diagnostic.offset,
+            diagnostic.message,
+        });
+    }
+    return result;
+}
+
 void write_optional_failure_summary(
     const ToolOptions &tool_options, const DacapoHevmArtifactResult &artifacts,
     const std::optional<DacapoHevmOpcodeSummary> &opcode_summary,
@@ -709,6 +725,11 @@ int main(int argc, char **argv)
             opcode_summary = summarize_hevm_opcodes(hevm_input);
             if (!opcode_summary->ok())
             {
+                const DacapoHevmArtifactResult artifacts =
+                    make_opcode_summary_failure_result(
+                        tool_options, *opcode_summary);
+                write_optional_failure_summary(
+                    tool_options, artifacts, opcode_summary, std::nullopt);
                 std::cerr << opcode_summary->format_diagnostics() << '\n';
                 return EXIT_FAILURE;
             }

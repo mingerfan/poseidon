@@ -605,6 +605,24 @@ if(POSEIDON_BUILD_MGPU_TESTS)
             ENVIRONMENT "${POSEIDON_MGPU_EXTERNAL_HEVM_MISSING_CONSTANTS_REPORT_MOCK_ENV}")
 
     add_test(
+        NAME poseidon_mgpu_external_hevm_invalid_input_report_mock_artifact_tests
+        COMMAND poseidon_mgpu_external_hevm_artifact_tests
+    )
+    set(POSEIDON_MGPU_EXTERNAL_HEVM_INVALID_INPUT_REPORT_MOCK_ENV
+        "POSEIDON_MGPU_EXTERNAL_INVALID_HEVM_MOCK_ARTIFACT=1"
+        "POSEIDON_MGPU_EXTERNAL_EXPECT_INVALID_HEVM_REPORT=1"
+        "POSEIDON_MGPU_EXTERNAL_DEVICE_COUNT=2"
+        "POSEIDON_MGPU_EXTERNAL_UPLOAD_DEVICE=0"
+        "POSEIDON_MGPU_EXTERNAL_COMPUTE_DEVICES=1"
+        "POSEIDON_MGPU_EXTERNAL_DOWNLOAD_DEVICE=0"
+        "POSEIDON_MGPU_EXTERNAL_REPORT_JSON=${CMAKE_CURRENT_BINARY_DIR}/external_hevm_invalid_input_report_mock.json"
+    )
+    set_tests_properties(
+        poseidon_mgpu_external_hevm_invalid_input_report_mock_artifact_tests
+        PROPERTIES
+            ENVIRONMENT "${POSEIDON_MGPU_EXTERNAL_HEVM_INVALID_INPUT_REPORT_MOCK_ENV}")
+
+    add_test(
         NAME poseidon_mgpu_dacapo_constants_tests
         COMMAND poseidon_mgpu_dacapo_constants_tests
     )

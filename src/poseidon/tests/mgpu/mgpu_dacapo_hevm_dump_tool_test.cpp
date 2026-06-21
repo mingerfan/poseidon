@@ -395,6 +395,43 @@ void test_failure_report_for_missing_constants_file(const std::string &tool_path
     require_contains(summary_text, "failed to open Dacapo artifact file");
 }
 
+void test_failure_report_for_invalid_hevm_file(const std::string &tool_path)
+{
+    TempDir temp;
+    const std::string hevm_path = temp.path("invalid.hevm");
+    const std::string constants_path = temp.path("mock.cst");
+    const std::string summary_path = temp.path("invalid_hevm_summary.json");
+    const std::string stdout_path = temp.path("stdout.txt");
+    const std::string stderr_path = temp.path("stderr.txt");
+    write_binary_file(hevm_path, std::string(24, 'x'));
+    write_binary_file(constants_path, make_constant_file());
+
+    const std::string command =
+        shell_quote(tool_path) +
+        " --hevm " + shell_quote(hevm_path) +
+        " --constants " + shell_quote(constants_path) +
+        " --opcode-summary"
+        " --write-summary-json " + shell_quote(summary_path) +
+        " --no-schedule > " + shell_quote(stdout_path) +
+        " 2> " + shell_quote(stderr_path);
+
+    const int exit_code = std::system(command.c_str());
+    require(exit_code != 0, "invalid HEVM command should fail: " + command);
+
+    const std::string stdout_text = read_text_file(stdout_path);
+    const std::string stderr_text = read_text_file(stderr_path);
+    const std::string summary_text = read_text_file(summary_path);
+
+    require_not_contains(stdout_text, "mgpu.schedule");
+    require_contains(stderr_text, "invalid HEVM magic number");
+    require_contains(summary_text, "\"status\": \"not_ready\"");
+    require_contains(summary_text, "\"artifacts_loaded\": true");
+    require_contains(summary_text, "\"schedule_built\": false");
+    require_contains(summary_text, "\"stage\": \"dacapo_opcode_summary\"");
+    require_contains(summary_text, "\"hevm_opcode_summary\"");
+    require_contains(summary_text, "invalid HEVM magic number");
+}
+
 }  // namespace
 
 int main(int argc, char **argv)
@@ -407,6 +444,7 @@ int main(int argc, char **argv)
         test_failure_report_for_unsupported_opcode(argv[1]);
         test_failure_report_for_missing_hevm_file(argv[1]);
         test_failure_report_for_missing_constants_file(argv[1]);
+        test_failure_report_for_invalid_hevm_file(argv[1]);
     }
     catch (const std::exception &ex)
     {
