@@ -79,6 +79,10 @@ if(POSEIDON_BUILD_MGPU_TESTS)
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_dacapo_artifact_test.cpp
     )
 
+    add_executable(poseidon_mgpu_external_hevm_artifact_tests
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_external_hevm_artifact_test.cpp
+    )
+
     add_executable(poseidon_mgpu_dacapo_constants_tests
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_dacapo_constants_test.cpp
     )
@@ -151,6 +155,11 @@ if(POSEIDON_BUILD_MGPU_TESTS)
     )
 
     target_link_libraries(poseidon_mgpu_dacapo_artifact_tests
+        PRIVATE
+            poseidon_mgpu
+    )
+
+    target_link_libraries(poseidon_mgpu_external_hevm_artifact_tests
         PRIVATE
             poseidon_mgpu
     )
@@ -239,6 +248,13 @@ if(POSEIDON_BUILD_MGPU_TESTS)
         NAME poseidon_mgpu_dacapo_artifact_tests
         COMMAND poseidon_mgpu_dacapo_artifact_tests
     )
+
+    add_test(
+        NAME poseidon_mgpu_external_hevm_artifact_tests
+        COMMAND poseidon_mgpu_external_hevm_artifact_tests
+    )
+    set_tests_properties(poseidon_mgpu_external_hevm_artifact_tests
+        PROPERTIES SKIP_RETURN_CODE 77)
 
     add_test(
         NAME poseidon_mgpu_dacapo_constants_tests

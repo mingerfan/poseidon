@@ -34,3 +34,27 @@ nix-shell src/poseidon/mgpu/nix/dacapo-shell.nix
 
 The shell points `DACAPO_ROOT` at `src/poseidon/mgpu/third_party/dacapo` and
 keeps Dacapo source-only with respect to the normal Poseidon build.
+
+## External HEVM Artifact Check
+
+`poseidon_mgpu_external_hevm_artifact_tests` is a skipped-by-default CTest for
+real Dacapo `.hevm + .cst` output, including ResNet20 artifacts. It loads the
+files, runs static placement and copy insertion, builds the HEVM I/O plan, and
+prints schedule/device summaries. It does not execute GPU operators.
+
+```bash
+POSEIDON_MGPU_EXTERNAL_HEVM=/path/to/model.hevm \
+POSEIDON_MGPU_EXTERNAL_CST=/path/to/model.cst \
+POSEIDON_MGPU_EXTERNAL_DEVICE_COUNT=8 \
+POSEIDON_MGPU_EXTERNAL_UPLOAD_DEVICE=0 \
+POSEIDON_MGPU_EXTERNAL_COMPUTE_DEVICES=0,1,2,3,4,5,6,7 \
+POSEIDON_MGPU_EXTERNAL_DOWNLOAD_DEVICE=0 \
+ctest --test-dir /tmp/poseidon-mgpu-json --output-on-failure \
+  -R '^poseidon_mgpu_external_hevm_artifact_tests$'
+```
+
+Optional environment variables:
+
+- `POSEIDON_MGPU_EXTERNAL_DEFAULT_DEVICE`
+- `POSEIDON_MGPU_EXTERNAL_ROUND_ROBIN_COMPUTE=1`
+- `POSEIDON_MGPU_EXTERNAL_DEBUG_DUMP=1`

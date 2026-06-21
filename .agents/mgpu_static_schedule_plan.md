@@ -144,11 +144,22 @@ Dacapo artifact debugging:
 - `POSEIDON_BUILD_MGPU_TOOLS=ON` builds `poseidon_mgpu_dacapo_hevm_dump`.
 - The dump tool accepts `--hevm`, `--constants`, `--devices`,
   `--default-device`, `--upload-device`, `--compute-devices`,
-  `--download-device`, `--round-robin-compute`, and `--no-schedule`.
+  `--download-device`, `--round-robin-compute`, `--summary-json`, and
+  `--no-schedule`.
 - Use the dump tool before running a real ResNet20 artifact to confirm op
   counts, HEVM I/O metadata, explicit copy counts, and device distribution.
 - The dump tool is CPU-side only; it must not link Dacapo/MLIR, CUDA runtime,
   RMM, or GPU evaluator code.
+- `poseidon_mgpu_external_hevm_artifact_tests` is a skipped-by-default CTest
+  for real `.hevm + .cst` artifacts. Set `POSEIDON_MGPU_EXTERNAL_HEVM` and
+  `POSEIDON_MGPU_EXTERNAL_CST` together, plus optional placement variables
+  `POSEIDON_MGPU_EXTERNAL_DEVICE_COUNT`,
+  `POSEIDON_MGPU_EXTERNAL_DEFAULT_DEVICE`,
+  `POSEIDON_MGPU_EXTERNAL_UPLOAD_DEVICE`,
+  `POSEIDON_MGPU_EXTERNAL_COMPUTE_DEVICES`,
+  `POSEIDON_MGPU_EXTERNAL_DOWNLOAD_DEVICE`,
+  `POSEIDON_MGPU_EXTERNAL_ROUND_ROBIN_COMPUTE`, and
+  `POSEIDON_MGPU_EXTERNAL_DEBUG_DUMP`.
 
 ## 5. Test Plan
 
@@ -165,6 +176,7 @@ Dacapo artifact debugging:
 | Static graph tests | Handwritten ResNet-like small graph verifies copy insertion and execution order. |
 | Placement configuration tests | Upload, compute-device list, and download placement must all trigger explicit copies when devices differ. |
 | Artifact dump tool smoke | Build the optional tool and run it on mock `.hevm + .cst` artifacts with upload/compute/download device options. |
+| External artifact test | Skips by default; when env vars point at real ResNet20 `.hevm + .cst`, load artifacts, run placement/copy insertion, build HEVM I/O plan, and print schedule summaries. |
 
 ## 6. Phases
 
@@ -176,7 +188,7 @@ Dacapo artifact debugging:
 | 3 | `GpuComm` and CUDA peer-copy backend | Same-device tests pass; multi-GPU tests skip or pass. |
 | 4 | Static placement and copy insertion | Handwritten small graph verifies inserted copies. |
 | 5 | Add Dacapo submodule and JSON/HEVM adapters | Adapter tests use small captured/mock Dacapo input. |
-| 6 | ResNet20 static schedule path | Artifact load/dump works; single-GPU fallback works; multi-GPU run validates on cluster. |
+| 6 | ResNet20 static schedule path | Artifact load/dump works; skipped-by-default external artifact CTest validates real `.hevm + .cst`; single-GPU fallback works; multi-GPU run validates on cluster. |
 | 7 | Cluster communication planning | NCCL/MPI interface is introduced only after single-node path is stable. |
 
 On a single-GPU development machine, complete Phases 0-4 with same-device copy
