@@ -78,6 +78,12 @@ bool parse_bool(const char *value)
            text == "TRUE";
 }
 
+bool should_expect_missing_hevm_failure_report()
+{
+    return parse_bool(
+        get_env("POSEIDON_MGPU_RESNET20_EXPECT_MISSING_HEVM_REPORT"));
+}
+
 std::string shell_quote(const std::string &text)
 {
     std::string output = "'";
@@ -322,6 +328,11 @@ void create_mock_resnet20_artifacts(
     write_binary_file(constants_path(dacapo_root), make_mock_constant_file());
 }
 
+void create_mock_resnet20_artifacts_without_hevm(const fs::path &dacapo_root)
+{
+    write_binary_file(constants_path(dacapo_root), make_mock_constant_file());
+}
+
 std::string build_command(
     const std::string &dump_tool_path, const fs::path &dacapo_root,
     const std::string &summary_path, const std::string &schedule_path)
@@ -371,16 +382,25 @@ int main(int argc, char **argv)
             parse_bool(get_env("POSEIDON_MGPU_RESNET20_MOCK_ARTIFACTS"));
         const bool use_unsupported_mock =
             parse_bool(get_env("POSEIDON_MGPU_RESNET20_UNSUPPORTED_MOCK_ARTIFACTS"));
+        const bool use_missing_hevm_mock =
+            parse_bool(get_env("POSEIDON_MGPU_RESNET20_MISSING_HEVM_MOCK_ARTIFACTS"));
         const bool allow_not_ready =
             parse_bool(get_env("POSEIDON_MGPU_RESNET20_ALLOW_NOT_READY"));
         std::optional<TempDir> mock_root;
         fs::path dacapo_root;
 
-        if (use_mock || use_unsupported_mock)
+        if (use_mock || use_unsupported_mock || use_missing_hevm_mock)
         {
             mock_root.emplace();
             dacapo_root = mock_root->root();
-            create_mock_resnet20_artifacts(dacapo_root, use_unsupported_mock);
+            if (use_missing_hevm_mock)
+            {
+                create_mock_resnet20_artifacts_without_hevm(dacapo_root);
+            }
+            else
+            {
+                create_mock_resnet20_artifacts(dacapo_root, use_unsupported_mock);
+            }
         }
         else if (const char *root = get_env("POSEIDON_MGPU_RESNET20_DACAPO_ROOT"))
         {
@@ -414,7 +434,6 @@ int main(int argc, char **argv)
 
         const std::string summary = read_text_file(summary_path);
         require_contains(summary, "\"execution_gate\"");
-        require_contains(summary, "\"hevm_opcode_summary\"");
         require_summary_expectations(summary);
         if (summary.find("\"status\": \"not_ready\"") != std::string::npos)
         {
@@ -423,6 +442,16 @@ int main(int argc, char **argv)
                 "ResNet20 dump preflight failed: " + command +
                     "\nsummary:\n" + summary);
             require_contains(summary, "\"status\": \"not_ready\"");
+            if (should_expect_missing_hevm_failure_report())
+            {
+                require_contains(summary, "\"artifacts_loaded\": false");
+                require_contains(summary, "\"stage\": \"read_hevm\"");
+                require_contains(summary, "failed to open file");
+            }
+            else
+            {
+                require_contains(summary, "\"hevm_opcode_summary\"");
+            }
             std::cout << "resnet20_dump_preflight_not_ready: " << summary_path
                       << '\n';
             return EXIT_SUCCESS;
@@ -431,6 +460,7 @@ int main(int argc, char **argv)
 
         const std::string schedule = read_text_file(schedule_path);
         require_contains(summary, "\"status\": \"ready\"");
+        require_contains(summary, "\"hevm_opcode_summary\"");
         require_contains(summary, "\"poseidon_gpu_execution_preflight\"");
         require_contains(schedule, "mgpu.schedule");
         std::cout << "resnet20_dump_preflight_json: " << summary_path << '\n';
