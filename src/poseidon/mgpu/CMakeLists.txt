@@ -328,6 +328,26 @@ if(POSEIDON_BUILD_MGPU_TESTS)
             ENVIRONMENT "${POSEIDON_MGPU_EXTERNAL_HEVM_MOCK_ENV}")
 
     add_test(
+        NAME poseidon_mgpu_external_hevm_rich_mock_artifact_tests
+        COMMAND poseidon_mgpu_external_hevm_artifact_tests
+    )
+    set(POSEIDON_MGPU_EXTERNAL_HEVM_RICH_MOCK_ENV
+        "POSEIDON_MGPU_EXTERNAL_RICH_MOCK_ARTIFACT=1"
+        "POSEIDON_MGPU_EXTERNAL_REQUIRE_READY=1"
+        "POSEIDON_MGPU_EXTERNAL_DEVICE_COUNT=4"
+        "POSEIDON_MGPU_EXTERNAL_UPLOAD_DEVICE=0"
+        "POSEIDON_MGPU_EXTERNAL_COMPUTE_DEVICES=1,2"
+        "POSEIDON_MGPU_EXTERNAL_DOWNLOAD_DEVICE=0"
+        "POSEIDON_MGPU_EXTERNAL_PREFLIGHT_COMM_AVAILABLE=1"
+        "POSEIDON_MGPU_EXTERNAL_PREFLIGHT_RELIN_KEYS=1"
+        "POSEIDON_MGPU_EXTERNAL_PREFLIGHT_GALOIS_KEYS=1"
+        "POSEIDON_MGPU_EXTERNAL_EXECUTION_CUDA_PEER_AVAILABLE=1"
+    )
+    set_tests_properties(poseidon_mgpu_external_hevm_rich_mock_artifact_tests
+        PROPERTIES
+            ENVIRONMENT "${POSEIDON_MGPU_EXTERNAL_HEVM_RICH_MOCK_ENV}")
+
+    add_test(
         NAME poseidon_mgpu_external_hevm_mock_artifact_require_ready_tests
         COMMAND poseidon_mgpu_external_hevm_artifact_tests
     )

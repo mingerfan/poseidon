@@ -189,6 +189,7 @@ Optional environment variables:
 - `POSEIDON_MGPU_EXTERNAL_DEFAULT_DEVICE`
 - `POSEIDON_MGPU_EXTERNAL_ROUND_ROBIN_COMPUTE=1`
 - `POSEIDON_MGPU_EXTERNAL_DEBUG_DUMP=1`
+- `POSEIDON_MGPU_EXTERNAL_RICH_MOCK_ARTIFACT=1`
 - `POSEIDON_MGPU_EXTERNAL_PREFLIGHT_COMM_AVAILABLE=1`
 - `POSEIDON_MGPU_EXTERNAL_PREFLIGHT_RELIN_KEYS=1`
 - `POSEIDON_MGPU_EXTERNAL_PREFLIGHT_GALOIS_KEYS=1`
@@ -202,6 +203,12 @@ Optional environment variables:
 binary with a generated mock `.hevm + .cst` artifact, preflight availability
 flags, and a 2x2 topology. It is intended to keep the artifact diagnostics path
 covered on machines that do not have a real ResNet20 artifact yet.
+
+`poseidon_mgpu_external_hevm_rich_mock_artifact_tests` uses a richer generated
+artifact with rotate, ciphertext add/multiply, rescale, plaintext add, explicit
+copy insertion, GaloisKeys preflight, and readiness gating. It still avoids
+unsupported `ModswitchC` and `UpscaleC`; those remain real adapter work once
+their Poseidon GPU semantics are verified.
 
 The dump tool can run the same preflight without CTest:
 

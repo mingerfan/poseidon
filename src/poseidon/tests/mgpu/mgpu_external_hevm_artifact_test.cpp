@@ -209,6 +209,28 @@ std::string make_mock_hevm_binary()
         });
 }
 
+std::string make_rich_mock_hevm_binary()
+{
+    return test::make_hevm_binary(
+        2, 1, 6, 2, { 5 },
+        {
+            test::HevmOpRecord{ 0, 0, 0, test::make_hevm_encode_attr(3, 20) },
+            test::HevmOpRecord{ 0, 1, 1, test::make_hevm_encode_attr(3, 20) },
+            test::HevmOpRecord{ 1, 2, 0, 1 },
+            test::HevmOpRecord{ 6, 3, 2, 1 },
+            test::HevmOpRecord{ 8, 4, 3, 1 },
+            test::HevmOpRecord{ 3, 4, 4, 0 },
+            test::HevmOpRecord{ 7, 5, 4, 0 },
+        },
+        test::HevmConfigMetadata{
+            { 20, 20 },
+            { 3, 3 },
+            { 20 },
+            { 2 },
+            3,
+        });
+}
+
 std::string make_mock_constant_file()
 {
     std::string output;
@@ -218,6 +240,23 @@ std::string make_mock_constant_file()
     append_double(output, -1.0);
     append_double(output, 2.0);
     append_double(output, 3.5);
+    return output;
+}
+
+std::string make_rich_mock_constant_file()
+{
+    std::string output;
+    append_i64(output, 2);
+    append_i64(output, 4);
+    append_double(output, 0.5);
+    append_double(output, -1.0);
+    append_double(output, 2.0);
+    append_double(output, 3.5);
+    append_i64(output, 4);
+    append_double(output, 1.25);
+    append_double(output, 0.25);
+    append_double(output, -0.75);
+    append_double(output, 4.0);
     return output;
 }
 
@@ -285,6 +324,18 @@ void print_io_summary(const HevmIoBindingPlan &plan)
     std::cout << "  results: " << plan.results.size() << '\n';
 }
 
+std::size_t op_count_for_kind(const MgpuScheduleSummary &summary, MgpuOpKind kind)
+{
+    for (const MgpuOpKindCount &count : summary.op_counts)
+    {
+        if (count.kind == kind)
+        {
+            return count.count;
+        }
+    }
+    return 0;
+}
+
 PoseidonGpuSchedulePreflightOptions make_preflight_options(
     const StaticSchedulePipelineOptions &options)
 {
@@ -348,6 +399,8 @@ int main()
     {
         const bool use_mock_artifact =
             parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_MOCK_ARTIFACT"));
+        const bool use_rich_mock_artifact =
+            parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_RICH_MOCK_ARTIFACT"));
         std::optional<TempDir> mock_temp;
         std::string hevm_path = get_env("POSEIDON_MGPU_EXTERNAL_HEVM") == nullptr
                                     ? ""
@@ -356,20 +409,27 @@ int main()
                                          ? ""
                                          : get_env("POSEIDON_MGPU_EXTERNAL_CST");
 
-        if (use_mock_artifact)
+        if (use_mock_artifact || use_rich_mock_artifact)
         {
             mock_temp.emplace();
             hevm_path = mock_temp->path("mock_resnet20.hevm");
             constants_path = mock_temp->path("mock_resnet20.cst");
-            write_binary_file(hevm_path, make_mock_hevm_binary());
-            write_binary_file(constants_path, make_mock_constant_file());
+            write_binary_file(
+                hevm_path,
+                use_rich_mock_artifact ? make_rich_mock_hevm_binary()
+                                       : make_mock_hevm_binary());
+            write_binary_file(
+                constants_path,
+                use_rich_mock_artifact ? make_rich_mock_constant_file()
+                                       : make_mock_constant_file());
         }
 
         if (hevm_path.empty() && constants_path.empty())
         {
             std::cout << "skipping external HEVM artifact test; set "
                       << "POSEIDON_MGPU_EXTERNAL_HEVM and POSEIDON_MGPU_EXTERNAL_CST "
-                      << "or POSEIDON_MGPU_EXTERNAL_MOCK_ARTIFACT=1\n";
+                      << "or POSEIDON_MGPU_EXTERNAL_MOCK_ARTIFACT=1 or "
+                      << "POSEIDON_MGPU_EXTERNAL_RICH_MOCK_ARTIFACT=1\n";
             return kSkip;
         }
         if (hevm_path.empty() || constants_path.empty())
@@ -409,6 +469,24 @@ int main()
         require(
             summary.unassigned_device_ops == 0,
             "external HEVM schedule has unassigned devices after placement");
+        if (use_rich_mock_artifact)
+        {
+            require(
+                op_count_for_kind(summary, MgpuOpKind::Rotate) == 1,
+                "rich mock artifact should include one rotate");
+            require(
+                op_count_for_kind(summary, MgpuOpKind::Multiply) == 1,
+                "rich mock artifact should include one ciphertext multiply");
+            require(
+                op_count_for_kind(summary, MgpuOpKind::Add) == 1,
+                "rich mock artifact should include one ciphertext add");
+            require(
+                op_count_for_kind(summary, MgpuOpKind::Rescale) == 1,
+                "rich mock artifact should include one rescale");
+            require(
+                summary.copy_ops > 0,
+                "rich mock artifact placement should exercise explicit copy insertion");
+        }
 
         std::cout << "external_hevm: " << hevm_path << '\n';
         std::cout << "external_constants: " << constants_path << '\n';
@@ -419,6 +497,15 @@ int main()
             preflight_poseidon_gpu_schedule(
                 artifacts.schedule, make_preflight_options(options));
         std::cout << dump_poseidon_gpu_schedule_preflight(preflight);
+        if (use_rich_mock_artifact)
+        {
+            require(
+                preflight.requires_comm,
+                "rich mock artifact should require the communication layer");
+            require(
+                preflight.requires_galois_keys,
+                "rich mock artifact should require GaloisKeys");
+        }
 
         const MgpuCommunicationPlan communication_plan =
             plan_schedule_communication(artifacts.schedule, make_external_topology(options));

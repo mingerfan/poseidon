@@ -187,6 +187,11 @@ Dacapo artifact debugging:
   `.hevm + .cst` artifact to exercise the same external artifact path,
   preflight flags, and non-trivial topology on machines without ResNet20
   artifacts.
+- `poseidon_mgpu_external_hevm_rich_mock_artifact_tests` uses a generated
+  artifact with rotate, ciphertext add/multiply, rescale, plaintext add,
+  explicit copy insertion, GaloisKeys preflight, and readiness gating. It must
+  not include unsupported `ModswitchC` or `UpscaleC` until those semantics are
+  verified.
 - `poseidon_mgpu_external_hevm_mock_artifact_require_ready_tests` covers the
   same path with the readiness gate enabled so future changes cannot silently
   weaken the hard pre-execution check.
@@ -264,6 +269,7 @@ ResNet20 artifact runbook:
 | Placement configuration tests | Upload, compute-device list, and download placement must all trigger explicit copies when devices differ. |
 | Artifact dump tool smoke | Build the optional tool and run it on mock `.hevm + .cst` artifacts with upload/compute/download device options. |
 | External artifact test | Skips by default; when env vars point at real ResNet20 `.hevm + .cst`, load artifacts, run placement/copy insertion, build HEVM I/O plan, and print schedule summaries. |
+| Rich mock artifact test | Generated `.hevm + .cst` covers rotate, ciphertext arithmetic, rescale, explicit copies, key preflight, and readiness gating without real ResNet20 artifacts. |
 | Poseidon GPU preflight tests | CPU-only checks report required comm/keys and unsupported GPU executor operations before attempting GPU execution. |
 | Communication topology tests | CPU-only tests classify scheduled copy ops for single-node and uniform cluster topologies without linking NCCL/MPI. |
 | Communication execution preflight tests | CPU-only tests report when same-device, CUDA peer, or inter-node planned routes lack an executable backend. |
