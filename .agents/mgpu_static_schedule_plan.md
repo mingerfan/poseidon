@@ -35,6 +35,7 @@
 | `MaterializedGpuComm` | Bridge logical copy requests to materialized full-object buffer copy requests. |
 | `PoseidonGpuObjectCopyMaterializer` | Optional CUDA/RMM-gated bridge from Poseidon GPU objects to full-object copy buffers. |
 | `CudaPeerComm` | Implement same-device copy, CUDA peer copy, and host-staging fallback as a materialized object-copy backend. |
+| Communication topology planner | CPU-only classification of copy ops as same-device, intra-node CUDA peer, or inter-node transport for future cluster expansion. |
 | Schedule IR | Represent upload, copy, compute, bootstrap fallback, and download operations independent of Dacapo format. |
 | Dacapo adapter | Translate internal JSON debug input and Dacapo HEVM binary output into internal IR. |
 | Placement pass | Assign each op/value to a GPU. |
@@ -183,6 +184,7 @@ Dacapo artifact debugging:
 | Artifact dump tool smoke | Build the optional tool and run it on mock `.hevm + .cst` artifacts with upload/compute/download device options. |
 | External artifact test | Skips by default; when env vars point at real ResNet20 `.hevm + .cst`, load artifacts, run placement/copy insertion, build HEVM I/O plan, and print schedule summaries. |
 | Poseidon GPU preflight tests | CPU-only checks report required comm/keys and unsupported GPU executor operations before attempting GPU execution. |
+| Communication topology tests | CPU-only tests classify scheduled copy ops for single-node and uniform cluster topologies without linking NCCL/MPI. |
 
 ## 6. Phases
 
@@ -195,7 +197,7 @@ Dacapo artifact debugging:
 | 4 | Static placement and copy insertion | Handwritten small graph verifies inserted copies. |
 | 5 | Add Dacapo submodule and JSON/HEVM adapters | Adapter tests use small captured/mock Dacapo input. |
 | 6 | ResNet20 static schedule path | Artifact load/dump works; skipped-by-default external artifact CTest validates real `.hevm + .cst`; CPU-only preflight reports GPU executor readiness; single-GPU fallback works; multi-GPU run validates on cluster. |
-| 7 | Cluster communication planning | NCCL/MPI interface is introduced only after single-node path is stable. |
+| 7 | Cluster communication planning | CPU-only topology planning classifies inter-node copies first; NCCL/MPI interface is introduced only after single-node path is stable. |
 
 On a single-GPU development machine, complete Phases 0-4 with same-device copy
 and skip cross-device tests. Do not block implementation on multi-GPU hardware
@@ -212,3 +214,4 @@ until the first real cross-device validation phase.
 | Dacapo dependency churn | Use Nix isolation; do not touch system package state. |
 | Large key replication memory pressure | Replicate keys per GPU for V1, then profile before optimizing. |
 | Bootstrap complexity | Treat bootstrap as a barrier/fallback op until native support is planned. |
+| Premature cluster dependency lock-in | Do not add NCCL/MPI as required dependencies before the single-node path and topology interface are stable. |

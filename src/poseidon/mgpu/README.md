@@ -79,3 +79,16 @@ poseidon_mgpu_dacapo_hevm_dump \
 Preflight is CPU-only. It reports whether the schedule needs the mgpu
 communication layer, relinearization keys, Galois keys, or unsupported
 Poseidon GPU operations such as bootstrap fallback before attempting execution.
+
+## Communication Topology Planning
+
+`comm/topology.*` is a CPU-only planning layer for copy ops. It models logical
+devices as `(node_id, local_device)` pairs and classifies scheduled copies as:
+
+- `same_device`
+- `cuda_peer` for copies inside one node
+- `inter_node` for copies across nodes
+
+This does not add NCCL or MPI. It fixes the V1 planning interface for the
+single-node 8-GPU path and the later 4x8 cluster path while keeping execution
+owned by the existing mgpu communication layer.
