@@ -108,6 +108,16 @@ std::vector<int> parse_compute_devices(const char *value)
     return devices;
 }
 
+bool argument_requires_value(const std::string &arg)
+{
+    return arg == "--config" || arg == "--hevm" || arg == "--constants" ||
+           arg == "--devices" || arg == "--default-device" ||
+           arg == "--compute-devices" || arg == "--upload-device" ||
+           arg == "--download-device" || arg == "--write-summary-json" ||
+           arg == "--write-schedule" || arg == "--nodes" ||
+           arg == "--devices-per-node";
+}
+
 void load_config_file(ToolOptions &options, const char *path)
 {
     if (path == nullptr)
@@ -127,21 +137,8 @@ void load_config_file(ToolOptions &options, const char *path)
     options.dump_schedule = result.config.pipeline.emit_debug_dump;
 }
 
-void apply_require_ready(ToolOptions &options)
+void load_config_files_first(ToolOptions &options, int argc, char **argv)
 {
-    if (!options.config.require_ready)
-    {
-        return;
-    }
-    options.config.opcode_summary = true;
-    options.config.poseidon_gpu_preflight = true;
-    options.config.communication_plan = true;
-    options.config.communication_execution_preflight = true;
-}
-
-ToolOptions parse_args(int argc, char **argv)
-{
-    ToolOptions options;
     for (int i = 1; i < argc; ++i)
     {
         const std::string arg = argv[i];
@@ -157,6 +154,45 @@ ToolOptions parse_args(int argc, char **argv)
                 throw std::invalid_argument("missing value for --config");
             }
             load_config_file(options, argv[i]);
+            continue;
+        }
+        if (argument_requires_value(arg) && i + 1 < argc)
+        {
+            ++i;
+        }
+    }
+}
+
+void apply_require_ready(ToolOptions &options)
+{
+    if (!options.config.require_ready)
+    {
+        return;
+    }
+    options.config.opcode_summary = true;
+    options.config.poseidon_gpu_preflight = true;
+    options.config.communication_plan = true;
+    options.config.communication_execution_preflight = true;
+}
+
+ToolOptions parse_args(int argc, char **argv)
+{
+    ToolOptions options;
+    load_config_files_first(options, argc, argv);
+    for (int i = 1; i < argc; ++i)
+    {
+        const std::string arg = argv[i];
+        if (arg == "--help" || arg == "-h")
+        {
+            print_usage(std::cout);
+            std::exit(EXIT_SUCCESS);
+        }
+        if (arg == "--config")
+        {
+            if (++i >= argc)
+            {
+                throw std::invalid_argument("missing value for --config");
+            }
             continue;
         }
         if (arg == "--hevm")

@@ -189,11 +189,12 @@ The 8-GPU template is the intended first multi-GPU target:
 ```
 
 Use a template with
-`--config src/poseidon/mgpu/configs/single_node_8gpu.json`; later command-line
-placement, topology, preflight, and backend flags override the file. The 4x8
-preview template sets `device_count` to `32` and `topology` to `{ "nodes": 4,
-"devices_per_node": 8 }`, but keeps `inter_node` and `require_ready` false
-until a real inter-node transport backend exists.
+`--config src/poseidon/mgpu/configs/single_node_8gpu.json`; explicit
+command-line placement, topology, preflight, and backend flags override the file
+independent of argument order. The 4x8 preview template sets `device_count` to
+`32` and `topology` to `{ "nodes": 4, "devices_per_node": 8 }`, but keeps
+`inter_node` and `require_ready` false until a real inter-node transport backend
+exists.
 
 Use the skipped-by-default external CTest for a repeatable check:
 

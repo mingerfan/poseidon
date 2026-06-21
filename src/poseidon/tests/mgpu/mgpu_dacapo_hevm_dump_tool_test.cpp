@@ -323,6 +323,45 @@ void test_config_file_command_line_overrides(
     require_contains(summary_text, "\"copy_cipher\": 2");
 }
 
+void test_config_file_command_line_overrides_when_config_is_last(
+    const std::string &tool_path, const std::string &config_dir)
+{
+    TempDir temp;
+    const std::string hevm_path = temp.path("mock.hevm");
+    const std::string constants_path = temp.path("mock.cst");
+    const std::string summary_path = temp.path("summary.json");
+    const std::string stdout_path = temp.path("stdout.txt");
+    const std::string config_path =
+        (std::filesystem::path(config_dir) / "single_node_8gpu.json").string();
+    write_binary_file(hevm_path, make_two_compute_hevm_binary());
+    write_binary_file(constants_path, make_constant_file());
+
+    const std::string command =
+        shell_quote(tool_path) +
+        " --devices 2"
+        " --compute-devices 0,1"
+        " --execution-cuda-peer-available"
+        " --hevm " + shell_quote(hevm_path) +
+        " --constants " + shell_quote(constants_path) +
+        " --write-summary-json " + shell_quote(summary_path) +
+        " --no-schedule"
+        " --config " + shell_quote(config_path) +
+        " > " + shell_quote(stdout_path);
+
+    const int exit_code = std::system(command.c_str());
+    require(
+        exit_code == 0,
+        "dump tool late-config override command failed: " + command);
+
+    const std::string summary_text = read_text_file(summary_path);
+
+    require_contains(summary_text, "\"device_count\": 2");
+    require_contains(summary_text, "\"compute_devices\": [\n        0,\n        1\n      ]");
+    require_contains(summary_text, "\"execution_gate\"");
+    require_contains(summary_text, "\"status\": \"ready\"");
+    require_contains(summary_text, "\"cuda_peer\": true");
+}
+
 void test_config_file_rejects_stale_cli_compute_devices(
     const std::string &tool_path, const std::string &config_dir)
 {
@@ -515,6 +554,8 @@ int main(int argc, char **argv)
         test_write_schedule_and_report(argv[1]);
         test_config_file_template_report(argv[1], argv[2]);
         test_config_file_command_line_overrides(argv[1], argv[2]);
+        test_config_file_command_line_overrides_when_config_is_last(
+            argv[1], argv[2]);
         test_config_file_rejects_stale_cli_compute_devices(argv[1], argv[2]);
         test_failure_report_for_unsupported_opcode(argv[1]);
         test_failure_report_for_missing_hevm_file(argv[1]);

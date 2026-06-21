@@ -203,9 +203,10 @@ Dacapo artifact debugging:
   `--write-summary-json <file>`, `--write-schedule <file>`, and
   `--no-schedule`.
 - `--config <json>` loads placement, topology, preflight, and backend settings
-  from the internal static schedule execution config. Later command-line
-  placement/preflight/backend flags override the file so single-GPU, 8-GPU, and
-  4x8 preview configs can be reused across artifacts.
+  from the internal static schedule execution config. Explicit command-line
+  placement/preflight/backend flags override the file independent of argument
+  order so single-GPU, 8-GPU, and 4x8 preview configs can be reused across
+  artifacts.
 - Config-driven wrapper paths must keep the same override semantics. The
   external HEVM CTest accepts `POSEIDON_MGPU_EXTERNAL_CONFIG` or
   `POSEIDON_MGPU_EXTERNAL_CONFIG_JSON` first, then applies explicitly provided
