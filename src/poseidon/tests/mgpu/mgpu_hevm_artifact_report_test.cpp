@@ -153,6 +153,77 @@ void test_report_includes_execution_evidence()
         "debug dump missing");
 }
 
+void test_report_execution_gate_reports_not_ready()
+{
+    StaticScheduleExecutionConfig config;
+    config.pipeline.device_count = 2;
+    config.pipeline.placement.upload_device = 0;
+    config.pipeline.placement.compute_devices = { 1 };
+    config.pipeline.placement.download_device = 1;
+    config.preflight_comm_available = true;
+    config.communication_plan = true;
+    config.communication_execution_preflight = true;
+    config.require_ready = true;
+
+    const MgpuSchedule schedule = make_report_schedule();
+    const MgpuScheduleSummary summary =
+        summarize_schedule(schedule, config.pipeline.device_count);
+
+    HevmIoBindingPlan io_plan;
+    io_plan.cipher_inputs.push_back(HevmCipherInputSlot{ 0, 1, 0, 40, 2, 2 });
+    io_plan.results.push_back(HevmResultSlot{ 0, 2, 2, 1, 40, 2 });
+
+    DacapoHevmOpcodeSummary opcode_summary;
+    opcode_summary.operation_count = 1;
+    opcode_summary.opcode_counts.push_back(
+        DacapoHevmOpcodeCount{ 9, 1, "OutputC", true });
+
+    PoseidonGpuExecutionPreflightOptions execution_options;
+    execution_options.device_count = config.pipeline.device_count;
+    execution_options.copy_ops_have_comm = true;
+    execution_options.check_communication_plan = true;
+    execution_options.topology = make_single_node_topology(2);
+    execution_options.check_communication_execution = true;
+    execution_options.communication_execution = config.communication_execution;
+    const PoseidonGpuExecutionPreflightResult execution_preflight =
+        preflight_poseidon_gpu_execution_plan(schedule, execution_options);
+    require(!execution_preflight.ok(), "execution preflight should fail");
+
+    HevmArtifactReadinessInput readiness_input;
+    readiness_input.opcode_summary = &opcode_summary;
+    readiness_input.poseidon_gpu_execution_preflight = &execution_preflight;
+    const HevmArtifactReadinessResult readiness =
+        check_hevm_artifact_readiness(readiness_input);
+    require(!readiness.ok(), "readiness should fail");
+
+    HevmArtifactReportInput input;
+    input.execution_config = &config;
+    input.schedule_summary = &summary;
+    input.io_plan = &io_plan;
+    input.poseidon_gpu_execution_preflight = &execution_preflight;
+    input.hevm_opcode_summary = &opcode_summary;
+    input.hevm_artifact_readiness = &readiness;
+
+    const nlohmann::json report =
+        nlohmann::json::parse(hevm_artifact_report_to_json(input));
+    require(
+        !report.at("execution_gate").at("ok").get<bool>(),
+        "execution gate should fail");
+    require(
+        report.at("execution_gate").at("status").get<std::string>() ==
+            "not_ready",
+        "execution gate status mismatch");
+    require(
+        !report.at("execution_gate")
+             .at("checks")
+             .at("readiness_ok")
+             .get<bool>(),
+        "execution gate should record failed readiness");
+    require(
+        !report.at("hevm_artifact_readiness").at("ok").get<bool>(),
+        "readiness JSON should fail");
+}
+
 void test_report_rejects_missing_required_sections()
 {
     HevmArtifactReportInput input;
@@ -175,6 +246,7 @@ int main()
     try
     {
         test_report_includes_execution_evidence();
+        test_report_execution_gate_reports_not_ready();
         test_report_rejects_missing_required_sections();
     }
     catch (const std::exception &ex)
