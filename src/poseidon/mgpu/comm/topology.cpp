@@ -3,6 +3,7 @@
 #include "poseidon/util/json.h"
 
 #include <algorithm>
+#include <limits>
 #include <set>
 #include <sstream>
 #include <stdexcept>
@@ -282,9 +283,26 @@ MgpuTopology make_uniform_cluster_topology(int node_count, int devices_per_node)
     {
         throw std::invalid_argument("devices_per_node must be non-negative");
     }
+    const std::size_t node_size = static_cast<std::size_t>(node_count);
+    const std::size_t devices_per_node_size =
+        static_cast<std::size_t>(devices_per_node);
+    if (node_size != 0 &&
+        devices_per_node_size >
+            std::numeric_limits<std::size_t>::max() / node_size)
+    {
+        throw std::invalid_argument(
+            "uniform cluster topology device count exceeds addressable size");
+    }
+    const std::size_t total_devices = node_size * devices_per_node_size;
+    if (total_devices >
+        static_cast<std::size_t>(std::numeric_limits<int>::max()))
+    {
+        throw std::invalid_argument(
+            "uniform cluster topology device count exceeds logical device id range");
+    }
 
     MgpuTopology topology;
-    topology.devices.reserve(static_cast<std::size_t>(node_count * devices_per_node));
+    topology.devices.reserve(total_devices);
     int logical_device = 0;
     for (int node = 0; node < node_count; ++node)
     {

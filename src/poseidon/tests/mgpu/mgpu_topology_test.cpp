@@ -1,6 +1,7 @@
 #include "poseidon/mgpu/comm/topology.h"
 
 #include <cstdlib>
+#include <limits>
 #include <iostream>
 #include <stdexcept>
 #include <string>
@@ -58,6 +59,23 @@ void test_uniform_cluster_topology()
     require(topology.devices[8].node_id == 1, "cluster second node mismatch");
     require(topology.devices[31].node_id == 3, "cluster last node mismatch");
     require(topology.devices[31].local_device == 7, "cluster last local device mismatch");
+}
+
+void test_uniform_cluster_topology_rejects_logical_device_overflow()
+{
+    bool failed = false;
+    try
+    {
+        (void)make_uniform_cluster_topology(
+            std::numeric_limits<int>::max(), 2);
+    }
+    catch (const std::invalid_argument &ex)
+    {
+        failed = true;
+        require_contains(ex.what(), "logical device id range");
+    }
+
+    require(failed, "oversized cluster topology should fail before allocation");
 }
 
 MgpuSchedule make_copy_schedule()
@@ -264,6 +282,7 @@ int main()
     {
         test_single_node_topology();
         test_uniform_cluster_topology();
+        test_uniform_cluster_topology_rejects_logical_device_overflow();
         test_communication_plan_classifies_routes();
         test_communication_plan_reports_bad_schedule();
         test_communication_plan_routes_plaintext_copies();
