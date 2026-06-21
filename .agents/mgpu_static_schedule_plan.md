@@ -34,7 +34,7 @@
 | `GpuComm` | Define object-level copy/clone operations between devices and return destination object handles. |
 | `MaterializedGpuComm` | Bridge logical copy requests to materialized full-object buffer copy requests. |
 | `PoseidonGpuObjectCopyMaterializer` | Optional CUDA/RMM-gated bridge from Poseidon GPU objects to full-object copy buffers. |
-| `CudaPeerComm` | Implement same-device copy, CUDA peer copy, and host-staging fallback. |
+| `CudaPeerComm` | Implement same-device copy, CUDA peer copy, and host-staging fallback as a materialized object-copy backend. |
 | Schedule IR | Represent upload, copy, compute, bootstrap fallback, and download operations independent of Dacapo format. |
 | Dacapo adapter | Translate internal JSON debug input and Dacapo HEVM binary output into internal IR. |
 | Placement pass | Assign each op/value to a GPU. |
@@ -133,6 +133,7 @@ Runtime IO binding:
 | IO binding tests | Missing upload bindings, kind mismatches, fallback compute output, and metadata-only downloads must fail clearly. |
 | Copy tests | Same-device copy always runs; cross-device copy runs only when at least two GPUs are visible. |
 | Materialized copy tests | Object-handle copy dispatch validates one-buffer full-object copy requests. |
+| GPU runtime smoke tests | Optional CUDA/RMM tests cover upload/download, same-device Add, and a cross-device CopyCipher+Add schedule when at least two GPUs are visible. |
 | Static graph tests | Handwritten ResNet-like small graph verifies copy insertion and execution order. |
 
 ## 6. Phases

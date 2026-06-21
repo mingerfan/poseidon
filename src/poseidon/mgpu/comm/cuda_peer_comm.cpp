@@ -147,7 +147,7 @@ void CudaPeerComm::copy_buffer(const CudaPeerCopyRequest &request) const
     copy_with_host_staging(request);
 }
 
-void CudaPeerComm::copy_object(const GpuObjectCopyRequest &request) const
+void CudaPeerComm::copy_object(const GpuObjectCopyRequest &request)
 {
     const GpuObjectCopyValidationResult validation =
         validate_full_object_copy_request(request);

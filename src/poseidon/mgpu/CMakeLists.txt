@@ -346,4 +346,24 @@ if(POSEIDON_BUILD_MGPU_CUDA_COMM)
         set_tests_properties(poseidon_mgpu_cuda_comm_tests
             PROPERTIES SKIP_RETURN_CODE 77)
     endif()
+
+    if(POSEIDON_BUILD_MGPU_GPU_RUNTIME AND POSEIDON_BUILD_MGPU_GPU_OBJECTS AND POSEIDON_BUILD_MGPU_TESTS)
+        add_executable(poseidon_mgpu_gpu_runtime_copy_smoke_tests
+            ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_gpu_runtime_copy_smoke_test.cpp
+        )
+
+        target_link_libraries(poseidon_mgpu_gpu_runtime_copy_smoke_tests
+            PRIVATE
+                poseidon_mgpu_cuda_comm
+                poseidon_mgpu_gpu_objects
+                poseidon_mgpu_gpu_runtime
+        )
+
+        add_test(
+            NAME poseidon_mgpu_gpu_runtime_copy_smoke_tests
+            COMMAND poseidon_mgpu_gpu_runtime_copy_smoke_tests
+        )
+        set_tests_properties(poseidon_mgpu_gpu_runtime_copy_smoke_tests
+            PROPERTIES SKIP_RETURN_CODE 77)
+    endif()
 endif()
