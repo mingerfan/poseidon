@@ -240,6 +240,47 @@ void test_pipeline_inserts_copy_to_explicit_download_device()
     require(result.schedule.ops[4].device_id == 0, "download should run on device 0");
 }
 
+void test_pipeline_inserts_copies_from_explicit_upload_device()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, kUnassignedDevice, {}, { value(1) }));
+    schedule.ops.push_back(op(MgpuOpKind::UploadPlain, kUnassignedDevice, {}, { value(2) }));
+    schedule.ops.push_back(
+        op(MgpuOpKind::MultiplyPlain, kUnassignedDevice, { value(1), value(2) }, { value(3) }));
+    schedule.ops.push_back(op(MgpuOpKind::Download, kUnassignedDevice, { value(3) }, {}));
+
+    StaticSchedulePipelineOptions options;
+    options.device_count = 2;
+    options.placement.default_device = 0;
+    options.placement.upload_device = 1;
+    options.placement.download_device = 1;
+
+    const StaticSchedulePipelineResult result = prepare_static_schedule(schedule, options);
+    require(result.ok(), "pipeline failed:\n" + result.format_diagnostics());
+    require(result.schedule.ops.size() == 7, "expected copies from upload and to download devices");
+    require(result.schedule.ops[0].kind == MgpuOpKind::UploadCipher,
+            "first op should upload cipher");
+    require(result.schedule.ops[0].device_id == 1, "cipher upload should use upload device");
+    require(result.schedule.ops[1].kind == MgpuOpKind::UploadPlain,
+            "second op should upload plain");
+    require(result.schedule.ops[1].device_id == 1, "plain upload should use upload device");
+    require(result.schedule.ops[2].kind == MgpuOpKind::CopyCipher,
+            "compute should receive copied cipher input");
+    require(result.schedule.ops[2].device_id == 0, "cipher input copy should target compute device");
+    require(result.schedule.ops[3].kind == MgpuOpKind::CopyPlain,
+            "compute should receive copied plain input");
+    require(result.schedule.ops[3].device_id == 0, "plain input copy should target compute device");
+    require(result.schedule.ops[4].kind == MgpuOpKind::MultiplyPlain,
+            "compute should follow input copies");
+    require(result.schedule.ops[4].device_id == 0, "compute should use default device");
+    require(result.schedule.ops[5].kind == MgpuOpKind::CopyCipher,
+            "download should receive copied result");
+    require(result.schedule.ops[5].device_id == 1, "result copy should target download device");
+    require(result.schedule.ops[6].kind == MgpuOpKind::Download,
+            "download should follow result copy");
+    require(result.schedule.ops[6].device_id == 1, "download should use download device");
+}
+
 void test_pipeline_preserves_integer_attributes()
 {
     MgpuSchedule schedule;
@@ -445,6 +486,7 @@ int main()
         test_pipeline_round_robin_compute_starts_at_default_device();
         test_pipeline_round_robin_uses_explicit_compute_device_order();
         test_pipeline_inserts_copy_to_explicit_download_device();
+        test_pipeline_inserts_copies_from_explicit_upload_device();
         test_pipeline_preserves_integer_attributes();
         test_pipeline_prepares_dacapo_json_input();
         test_pipeline_prepares_hevm_binary_input();

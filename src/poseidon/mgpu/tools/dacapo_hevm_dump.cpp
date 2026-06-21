@@ -21,6 +21,7 @@ struct ToolOptions
     int device_count = 1;
     int default_device = 0;
     std::vector<int> compute_devices;
+    std::optional<int> upload_device;
     std::optional<int> download_device;
     bool round_robin_compute = false;
     bool dump_schedule = true;
@@ -32,6 +33,7 @@ void print_usage(std::ostream &stream)
         << "usage: poseidon_mgpu_dacapo_hevm_dump --hevm <file> --constants <file> "
            "[--devices N] [--default-device N] [--round-robin-compute] "
            "[--compute-devices a,b,c] "
+           "[--upload-device N] "
            "[--download-device N] "
            "[--no-schedule]\n";
 }
@@ -143,6 +145,15 @@ ToolOptions parse_args(int argc, char **argv)
             options.round_robin_compute = true;
             continue;
         }
+        if (arg == "--upload-device")
+        {
+            if (++i >= argc)
+            {
+                throw std::invalid_argument("missing value for --upload-device");
+            }
+            options.upload_device = parse_int_arg("--upload-device", argv[i]);
+            continue;
+        }
         if (arg == "--download-device")
         {
             if (++i >= argc)
@@ -177,6 +188,11 @@ ToolOptions parse_args(int argc, char **argv)
     {
         throw std::invalid_argument("--default-device must be in [0, devices)");
     }
+    if (options.upload_device.has_value() &&
+        (*options.upload_device < 0 || *options.upload_device >= options.device_count))
+    {
+        throw std::invalid_argument("--upload-device must be in [0, devices)");
+    }
     if (options.download_device.has_value() &&
         (*options.download_device < 0 || *options.download_device >= options.device_count))
     {
@@ -196,6 +212,7 @@ StaticSchedulePipelineOptions make_pipeline_options(const ToolOptions &tool_opti
         options.placement.policy = StaticPlacementPolicy::RoundRobinCompute;
     }
     options.placement.compute_devices = tool_options.compute_devices;
+    options.placement.upload_device = tool_options.upload_device;
     options.placement.download_device = tool_options.download_device;
     return options;
 }

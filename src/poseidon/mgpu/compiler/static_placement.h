@@ -25,6 +25,7 @@ struct StaticPlacementOptions
     StaticPlacementPolicy policy = StaticPlacementPolicy::SingleDevice;
     bool preserve_existing_devices = true;
     std::vector<int> compute_devices;
+    std::optional<int> upload_device;
     std::optional<int> download_device;
 };
 

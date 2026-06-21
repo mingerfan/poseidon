@@ -190,6 +190,37 @@ void test_places_download_on_explicit_download_device()
     require(result.schedule.ops[2].device_id == 0, "download should use explicit download device");
 }
 
+void test_places_upload_on_explicit_upload_device()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, kUnassignedDevice, {}, { value(1) }));
+    schedule.ops.push_back(op(MgpuOpKind::UploadPlain, kUnassignedDevice, {}, { value(2) }));
+    schedule.ops.push_back(
+        op(MgpuOpKind::MultiplyPlain, kUnassignedDevice, { value(1), value(2) }, { value(3) }));
+
+    StaticPlacementOptions options;
+    options.device_count = 2;
+    options.default_device = 0;
+    options.upload_device = 1;
+
+    const StaticPlacementResult result = place_static_schedule(schedule, options);
+    require(result.ok(), "upload placement failed:\n" + result.format_diagnostics());
+    require(result.schedule.ops[0].device_id == 1, "cipher upload should use explicit upload device");
+    require(result.schedule.ops[1].device_id == 1, "plain upload should use explicit upload device");
+    require(result.schedule.ops[2].device_id == 0, "compute should still use default device");
+}
+
+void test_rejects_invalid_upload_device()
+{
+    StaticPlacementOptions options;
+    options.device_count = 2;
+    options.upload_device = 3;
+
+    const StaticPlacementResult result = place_static_schedule(MgpuSchedule{}, options);
+    require(!result.ok(), "invalid upload device should fail placement");
+    require_contains(result.format_diagnostics(), "invalid upload device 3");
+}
+
 void test_rejects_invalid_download_device()
 {
     StaticPlacementOptions options;
@@ -244,6 +275,8 @@ int main()
         test_rejects_invalid_compute_devices();
         test_rejects_duplicate_compute_devices();
         test_places_download_on_explicit_download_device();
+        test_places_upload_on_explicit_upload_device();
+        test_rejects_invalid_upload_device();
         test_rejects_invalid_download_device();
         test_unassigned_copy_is_diagnostic();
         test_invalid_existing_device_is_diagnostic();
