@@ -17,3 +17,8 @@ Subdirectories:
 - `runtime/`: device contexts, object store, schedule interpreter;
 - `comm/`: object-level GPU communication backends;
 - `third_party/dacapo/`: planned Dacapo submodule location.
+
+The Dacapo submodule is source-only in this build. Poseidon does not build
+Dacapo or MLIR as part of `poseidon_mgpu`; use the adapter boundary in
+`compiler/` to translate captured Dacapo output into the internal IR once the
+output format is fixed.
