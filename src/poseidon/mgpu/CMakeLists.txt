@@ -84,6 +84,10 @@ if(POSEIDON_BUILD_MGPU_TOOLS)
             ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_resnet20_artifact_path_test.cpp
         )
 
+        add_executable(poseidon_mgpu_resnet20_dump_preflight_tests
+            ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_resnet20_dump_preflight_test.cpp
+        )
+
         add_dependencies(
             poseidon_mgpu_resnet20_artifact_check_tool_tests
             poseidon_mgpu_resnet20_artifact_check)
@@ -91,6 +95,14 @@ if(POSEIDON_BUILD_MGPU_TOOLS)
         add_dependencies(
             poseidon_mgpu_resnet20_artifact_path_tests
             poseidon_mgpu_resnet20_artifact_check)
+
+        target_link_libraries(poseidon_mgpu_resnet20_dump_preflight_tests
+            PRIVATE
+                poseidon_mgpu
+        )
+        add_dependencies(
+            poseidon_mgpu_resnet20_dump_preflight_tests
+            poseidon_mgpu_dacapo_hevm_dump)
 
         add_test(
             NAME poseidon_mgpu_resnet20_artifact_check_tool_tests
@@ -112,6 +124,23 @@ if(POSEIDON_BUILD_MGPU_TOOLS)
                     $<TARGET_FILE:poseidon_mgpu_resnet20_artifact_check>
         )
         set_tests_properties(poseidon_mgpu_resnet20_artifact_path_mock_tests
+            PROPERTIES
+                ENVIRONMENT "POSEIDON_MGPU_RESNET20_MOCK_ARTIFACTS=1")
+
+        add_test(
+            NAME poseidon_mgpu_resnet20_dump_preflight_tests
+            COMMAND poseidon_mgpu_resnet20_dump_preflight_tests
+                    $<TARGET_FILE:poseidon_mgpu_dacapo_hevm_dump>
+        )
+        set_tests_properties(poseidon_mgpu_resnet20_dump_preflight_tests
+            PROPERTIES SKIP_RETURN_CODE 77)
+
+        add_test(
+            NAME poseidon_mgpu_resnet20_dump_preflight_mock_tests
+            COMMAND poseidon_mgpu_resnet20_dump_preflight_tests
+                    $<TARGET_FILE:poseidon_mgpu_dacapo_hevm_dump>
+        )
+        set_tests_properties(poseidon_mgpu_resnet20_dump_preflight_mock_tests
             PROPERTIES
                 ENVIRONMENT "POSEIDON_MGPU_RESNET20_MOCK_ARTIFACTS=1")
     endif()

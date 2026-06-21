@@ -390,6 +390,14 @@ wrapper around the same tool. Set `POSEIDON_MGPU_RESNET20_DACAPO_ROOT` or
 `poseidon_mgpu_resnet20_artifact_path_mock_tests` covers the wrapper on
 machines without real Dacapo output.
 
+`poseidon_mgpu_resnet20_dump_preflight_tests` is the next skipped-by-default
+CTest gate. It runs `poseidon_mgpu_dacapo_hevm_dump` on the expected ResNet20
+paths, writes `POSEIDON_MGPU_RESNET20_PREFLIGHT_JSON` and
+`POSEIDON_MGPU_RESNET20_SCHEDULE_DUMP` when those variables are set, and
+otherwise uses temporary outputs. Set `POSEIDON_MGPU_RESNET20_DACAPO_ROOT` or
+`DACAPO_ROOT` for real artifacts. The mock variant covers the wrapper on
+machines without real Dacapo output.
+
 ## Communication Topology Planning
 
 `comm/topology.*` is a CPU-only planning layer for copy ops. It models logical

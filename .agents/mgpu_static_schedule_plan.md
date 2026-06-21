@@ -173,6 +173,12 @@ Dacapo artifact debugging:
   `POSEIDON_MGPU_RESNET20_DACAPO_ROOT` or `DACAPO_ROOT` is set, write the same
   JSON readiness report when requested, and return skip on machines without
   real Dacapo output. Keep a mock CTest variant for single-GPU development.
+- Keep `poseidon_mgpu_resnet20_dump_preflight_tests` as the skipped-by-default
+  CTest wrapper for running the dump-tool CPU-side preflight on the expected
+  ResNet20 artifact paths. It should write durable JSON and schedule dumps when
+  `POSEIDON_MGPU_RESNET20_PREFLIGHT_JSON` and
+  `POSEIDON_MGPU_RESNET20_SCHEDULE_DUMP` are set, return skip without real
+  artifacts, and keep a mock CTest variant for single-GPU development.
 - The dump tool accepts `--hevm`, `--constants`, `--config`, `--devices`,
   `--default-device`, `--upload-device`, `--compute-devices`,
   `--download-device`, `--round-robin-compute`, `--summary-json`, and
