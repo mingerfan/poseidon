@@ -404,6 +404,40 @@ void validate_report_json_file(
                     .get<std::string>()
                     .find(readiness.diagnostics.at(0).message) != std::string::npos,
             "external report gate diagnostic should mirror readiness diagnostics");
+        if (readiness.diagnostics.at(0).has_route)
+        {
+            require(
+                report.at("execution_gate")
+                        .at("diagnostics")
+                        .at(0)
+                        .at("route_index")
+                        .get<std::size_t>() ==
+                    readiness.diagnostics.at(0).route_index,
+                "external report gate diagnostic route_index mismatch");
+            require(
+                report.at("execution_gate")
+                        .at("diagnostics")
+                        .at(0)
+                        .at("transport")
+                        .get<std::string>() ==
+                    to_string(readiness.diagnostics.at(0).transport),
+                "external report gate diagnostic transport mismatch");
+            require(
+                report.at("execution_gate")
+                        .at("diagnostics")
+                        .at(0)
+                        .at("source_device")
+                        .get<int>() == readiness.diagnostics.at(0).source_device,
+                "external report gate diagnostic source_device mismatch");
+            require(
+                report.at("execution_gate")
+                        .at("diagnostics")
+                        .at(0)
+                        .at("destination_device")
+                        .get<int>() ==
+                    readiness.diagnostics.at(0).destination_device,
+                "external report gate diagnostic destination_device mismatch");
+        }
     }
     require(
         report.at("execution_config").at("device_count").get<int>() ==
