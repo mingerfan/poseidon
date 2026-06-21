@@ -174,6 +174,24 @@ if(POSEIDON_BUILD_MGPU_TOOLS)
             poseidon_mgpu_resnet20_dump_preflight_cluster_preview_mock_tests
             PROPERTIES
                 ENVIRONMENT "${POSEIDON_MGPU_RESNET20_DUMP_PREFLIGHT_CLUSTER_PREVIEW_MOCK_ENV}")
+
+        add_test(
+            NAME poseidon_mgpu_resnet20_dump_preflight_config_override_mock_tests
+            COMMAND poseidon_mgpu_resnet20_dump_preflight_tests
+                    $<TARGET_FILE:poseidon_mgpu_dacapo_hevm_dump>
+        )
+        set(POSEIDON_MGPU_RESNET20_DUMP_PREFLIGHT_CONFIG_OVERRIDE_MOCK_ENV
+            "POSEIDON_MGPU_RESNET20_MOCK_ARTIFACTS=1"
+            "POSEIDON_MGPU_RESNET20_CONFIG=${POSEIDON_INCLUDES_DIR}/src/poseidon/mgpu/configs/single_node_8gpu.json"
+            "POSEIDON_MGPU_RESNET20_DEVICE_COUNT=2"
+            "POSEIDON_MGPU_RESNET20_COMPUTE_DEVICES=0,1"
+            "POSEIDON_MGPU_RESNET20_DEVICES_PER_NODE=2"
+            "POSEIDON_MGPU_RESNET20_EXPECT_DEVICE_COUNT=2"
+            "POSEIDON_MGPU_RESNET20_EXPECT_COMPUTE_DEVICES=0,1")
+        set_tests_properties(
+            poseidon_mgpu_resnet20_dump_preflight_config_override_mock_tests
+            PROPERTIES
+                ENVIRONMENT "${POSEIDON_MGPU_RESNET20_DUMP_PREFLIGHT_CONFIG_OVERRIDE_MOCK_ENV}")
     endif()
 endif()
 

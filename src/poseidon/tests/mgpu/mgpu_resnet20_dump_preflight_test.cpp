@@ -54,6 +54,8 @@ private:
     fs::path path_;
 };
 
+void require_contains(const std::string &text, const std::string &needle);
+
 const char *get_env(const char *name)
 {
     const char *value = std::getenv(name);
@@ -76,14 +78,6 @@ bool parse_bool(const char *value)
            text == "TRUE";
 }
 
-void require(bool condition, const std::string &message)
-{
-    if (!condition)
-    {
-        throw std::runtime_error(message);
-    }
-}
-
 std::string shell_quote(const std::string &text)
 {
     std::string output = "'";
@@ -100,6 +94,113 @@ std::string shell_quote(const std::string &text)
     }
     output.push_back('\'');
     return output;
+}
+
+void append_optional_flag(
+    std::string &command, const char *env_name, const char *flag_name)
+{
+    if (const char *value = get_env(env_name))
+    {
+        command += " ";
+        command += flag_name;
+        command += " ";
+        command += shell_quote(value);
+    }
+}
+
+void append_optional_bool_flag(
+    std::string &command, const char *env_name, const char *flag_name)
+{
+    if (parse_bool(get_env(env_name)))
+    {
+        command += " ";
+        command += flag_name;
+    }
+}
+
+void append_dump_tool_overrides(std::string &command)
+{
+    append_optional_flag(
+        command, "POSEIDON_MGPU_RESNET20_DEVICE_COUNT", "--devices");
+    append_optional_flag(
+        command, "POSEIDON_MGPU_RESNET20_DEFAULT_DEVICE", "--default-device");
+    append_optional_flag(
+        command, "POSEIDON_MGPU_RESNET20_UPLOAD_DEVICE", "--upload-device");
+    append_optional_flag(
+        command, "POSEIDON_MGPU_RESNET20_COMPUTE_DEVICES", "--compute-devices");
+    append_optional_flag(
+        command, "POSEIDON_MGPU_RESNET20_DOWNLOAD_DEVICE", "--download-device");
+    append_optional_flag(command, "POSEIDON_MGPU_RESNET20_NODES", "--nodes");
+    append_optional_flag(
+        command, "POSEIDON_MGPU_RESNET20_DEVICES_PER_NODE",
+        "--devices-per-node");
+    append_optional_bool_flag(
+        command, "POSEIDON_MGPU_RESNET20_ROUND_ROBIN_COMPUTE",
+        "--round-robin-compute");
+    append_optional_bool_flag(
+        command, "POSEIDON_MGPU_RESNET20_EXECUTION_CUDA_PEER_AVAILABLE",
+        "--execution-cuda-peer-available");
+    append_optional_bool_flag(
+        command, "POSEIDON_MGPU_RESNET20_EXECUTION_INTER_NODE_AVAILABLE",
+        "--execution-inter-node-available");
+    append_optional_bool_flag(
+        command, "POSEIDON_MGPU_RESNET20_PREFLIGHT_COMM_AVAILABLE",
+        "--preflight-comm-available");
+    append_optional_bool_flag(
+        command, "POSEIDON_MGPU_RESNET20_PREFLIGHT_RELIN_KEYS",
+        "--preflight-relin-keys");
+    append_optional_bool_flag(
+        command, "POSEIDON_MGPU_RESNET20_PREFLIGHT_GALOIS_KEYS",
+        "--preflight-galois-keys");
+    append_optional_bool_flag(
+        command, "POSEIDON_MGPU_RESNET20_REQUIRE_READY", "--require-ready");
+}
+
+void require(bool condition, const std::string &message)
+{
+    if (!condition)
+    {
+        throw std::runtime_error(message);
+    }
+}
+
+void require_summary_expectations(const std::string &summary)
+{
+    if (const char *device_count = get_env("POSEIDON_MGPU_RESNET20_EXPECT_DEVICE_COUNT"))
+    {
+        require_contains(
+            summary,
+            "\"device_count\": " + std::string(device_count));
+    }
+    if (const char *compute_devices =
+            get_env("POSEIDON_MGPU_RESNET20_EXPECT_COMPUTE_DEVICES"))
+    {
+        std::string expected = "\"compute_devices\": [";
+        const std::string text = compute_devices;
+        std::size_t begin = 0;
+        bool first = true;
+        while (begin <= text.size())
+        {
+            const std::size_t end = text.find(',', begin);
+            const std::string item = text.substr(
+                begin, end == std::string::npos ? std::string::npos : end - begin);
+            if (item.empty())
+            {
+                throw std::invalid_argument(
+                    "empty device id in POSEIDON_MGPU_RESNET20_EXPECT_COMPUTE_DEVICES");
+            }
+            expected += first ? "\n        " : ",\n        ";
+            expected += item;
+            first = false;
+            if (end == std::string::npos)
+            {
+                break;
+            }
+            begin = end + 1;
+        }
+        expected += "\n      ]";
+        require_contains(summary, expected);
+    }
 }
 
 void append_i64(std::string &output, std::int64_t value)
@@ -244,6 +345,7 @@ std::string build_command(
             " --preflight-galois-keys"
             " --require-ready";
     }
+    append_dump_tool_overrides(command);
     return command;
 }
 
@@ -302,6 +404,7 @@ int main(int argc, char **argv)
         const std::string summary = read_text_file(summary_path);
         require_contains(summary, "\"execution_gate\"");
         require_contains(summary, "\"hevm_opcode_summary\"");
+        require_summary_expectations(summary);
         if (summary.find("\"status\": \"not_ready\"") != std::string::npos)
         {
             require(
