@@ -1,4 +1,5 @@
 #include "poseidon/mgpu/runtime/gpu_execution_preflight.h"
+#include "poseidon/util/json.h"
 
 #include <cstdlib>
 #include <iostream>
@@ -85,9 +86,27 @@ void test_supported_single_device_schedule_passes()
     require_contains(text, "status: ok");
     require_contains(text, "communication_plan: not_run");
 
-    const std::string json = poseidon_gpu_execution_preflight_to_json(result);
-    require_contains(json, "\"ok\": true");
-    require_contains(json, "\"schedule_verification\"");
+    const nlohmann::json json =
+        nlohmann::json::parse(poseidon_gpu_execution_preflight_to_json(result));
+    require(json.at("ok").get<bool>(), "preflight JSON should be ok");
+    require(
+        json.at("checks")
+                .at("schedule_verification")
+                .at("status")
+                .get<std::string>() == "ok",
+        "schedule verification check status mismatch");
+    require(
+        json.at("checks")
+                .at("communication_plan")
+                .at("status")
+                .get<std::string>() == "not_run",
+        "communication plan check should be not_run");
+    require(
+        !json.at("checks")
+              .at("communication_plan")
+              .at("evaluated")
+              .get<bool>(),
+        "communication plan check should record evaluated=false");
 }
 
 void test_verifier_errors_are_reported()
@@ -132,6 +151,27 @@ void test_keys_and_communication_execution_are_reported()
         "communication execution preflight should run");
     require_contains(result.format_diagnostics(), "GaloisKeys");
     require_contains(result.format_diagnostics(), "CUDA peer");
+    const nlohmann::json failure_json =
+        nlohmann::json::parse(poseidon_gpu_execution_preflight_to_json(result));
+    require(
+        failure_json.at("checks")
+                .at("poseidon_gpu_preflight")
+                .at("status")
+                .get<std::string>() == "error",
+        "GPU preflight check should be error");
+    require(
+        failure_json.at("checks")
+                .at("communication_execution_preflight")
+                .at("status")
+                .get<std::string>() == "error",
+        "communication execution check should be error");
+    require(
+        failure_json.at("communication_execution_preflight")
+                .at("diagnostics")
+                .at(0)
+                .at("transport")
+                .get<std::string>() == "cuda_peer",
+        "communication execution diagnostic transport missing");
 
     options.galois_keys_available = true;
     options.communication_execution.cuda_peer_available = true;
@@ -139,6 +179,14 @@ void test_keys_and_communication_execution_are_reported()
         preflight_poseidon_gpu_execution_plan(make_copy_and_rotate_schedule(), options);
     require(ready.ok(), "declared keys and CUDA peer backend should pass:\n" +
                             ready.format_diagnostics());
+    const nlohmann::json ready_json =
+        nlohmann::json::parse(poseidon_gpu_execution_preflight_to_json(ready));
+    require(
+        ready_json.at("checks")
+                .at("communication_execution_preflight")
+                .at("status")
+                .get<std::string>() == "ok",
+        "ready communication execution check should be ok");
 }
 
 }  // namespace

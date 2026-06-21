@@ -33,6 +33,24 @@ void append_stage_diagnostics(
     stream << stage << ":\n" << diagnostics;
 }
 
+const char *status_label(bool evaluated, bool ok) noexcept
+{
+    if (!evaluated)
+    {
+        return "not_run";
+    }
+    return ok ? "ok" : "error";
+}
+
+Json check_to_json(bool evaluated, bool ok)
+{
+    return Json{
+        { "evaluated", evaluated },
+        { "ok", evaluated ? ok : false },
+        { "status", status_label(evaluated, ok) },
+    };
+}
+
 }  // namespace
 
 std::string PoseidonGpuExecutionPreflightResult::format_diagnostics() const
@@ -140,6 +158,20 @@ std::string poseidon_gpu_execution_preflight_to_json(
     Json root;
     root["version"] = 1;
     root["ok"] = result.ok();
+    root["checks"] = Json{
+        { "schedule_verification",
+          check_to_json(true, result.schedule_verification.ok()) },
+        { "poseidon_gpu_preflight",
+          check_to_json(true, result.poseidon_gpu_preflight.ok()) },
+        { "communication_plan",
+          check_to_json(
+              result.communication_plan_evaluated,
+              result.communication_plan.ok()) },
+        { "communication_execution_preflight",
+          check_to_json(
+              result.communication_execution_preflight_evaluated,
+              result.communication_execution_preflight.ok()) },
+    };
     root["schedule_verification"] = Json{
         { "ok", result.schedule_verification.ok() },
         { "diagnostics", Json::array() },
