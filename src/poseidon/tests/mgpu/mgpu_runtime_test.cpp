@@ -110,6 +110,19 @@ public:
     }
 };
 
+class MetadataOnlyUploadHandler final : public ScheduleOpHandler
+{
+public:
+    void execute(const MgpuOp &op, MgpuObjectStore &object_store) override
+    {
+        if (op.kind == MgpuOpKind::UploadCipher)
+        {
+            object_store.define(
+                op.outputs[0].id, MgpuValueKind::Ciphertext, op.device_id);
+        }
+    }
+};
+
 class ReturningGpuComm final : public GpuComm
 {
 public:
@@ -267,7 +280,32 @@ void test_static_schedule_executor_reports_comm_errors()
     require(!result.ok(), "same-device comm should reject executor cross-device copy");
     require_contains(result.format_errors(), "requires a multi-GPU communication backend");
     require(result.object_store.contains(1), "upload before failed copy should be retained");
-    require(!result.object_store.contains(2), "failed copy output should not be retained");
+    require(
+        !result.object_store.contains(2),
+        "failed copy output should not be retained");
+}
+
+void test_static_schedule_executor_rejects_metadata_only_copy_source()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, 0, {}, { value(1) }));
+    schedule.ops.push_back(
+        op(MgpuOpKind::CopyCipher, 1, { value(1) }, { value(2) }));
+
+    ReturningGpuComm comm;
+    MetadataOnlyUploadHandler handler;
+    StaticScheduleExecutor executor(comm, handler, StaticScheduleExecutorOptions{ 2 });
+
+    const ScheduleExecutionResult result = executor.run(schedule);
+
+    require(!result.ok(), "metadata-only copy source should fail");
+    require_contains(
+        result.format_errors(), "copy source value %1 has no object handle");
+    require(comm.requests.empty(), "comm should not receive metadata-only copy");
+    require(result.object_store.contains(1), "metadata-only upload should remain");
+    require(
+        !result.object_store.contains(2),
+        "failed copy output should not be retained");
 }
 
 }  // namespace
@@ -283,6 +321,7 @@ int main()
         test_handler_failure_stops_execution();
         test_static_schedule_executor_routes_copies_to_comm();
         test_static_schedule_executor_reports_comm_errors();
+        test_static_schedule_executor_rejects_metadata_only_copy_source();
     }
     catch (const std::exception &ex)
     {

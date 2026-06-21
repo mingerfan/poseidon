@@ -304,6 +304,9 @@ Dacapo artifact debugging:
   ambiguous plans, validates each runtime copy request against the planned
   route, then materializes the full-object copy and calls
   `RoutedGpuObjectCopyBackend`.
+- Runtime copy dispatch must reject metadata-only source values before calling
+  the communication layer. Cross-device communication is for materialized full
+  objects, not unresolved handles.
 - `PlannedCommunicationStaticScheduleExecutor` is the CPU-side runtime bridge
   for tests and future execution wiring. It computes the communication plan
   from the already static schedule plus topology, checks declared communication

@@ -1,6 +1,8 @@
 #include "poseidon/mgpu/runtime/comm_schedule_handler.h"
 
 #include <memory>
+#include <sstream>
+#include <stdexcept>
 #include <utility>
 
 namespace poseidon::mgpu
@@ -17,6 +19,20 @@ MgpuValueKind value_kind_for_copy(MgpuOpKind kind)
 {
     return kind == MgpuOpKind::CopyPlain ? MgpuValueKind::Plaintext
                                          : MgpuValueKind::Ciphertext;
+}
+
+void validate_copy_source_has_object(
+    const MgpuOp &op, const MgpuObjectMetadata &source)
+{
+    if (source.object != nullptr)
+    {
+        return;
+    }
+
+    std::ostringstream stream;
+    stream << "copy source value %" << op.inputs[0].id
+           << " has no object handle";
+    throw std::runtime_error(stream.str());
 }
 
 }  // namespace
@@ -40,6 +56,7 @@ void CopyDispatchingScheduleHandler::execute(
     }
 
     const MgpuObjectMetadata &source = object_store.at(op.inputs[0].id);
+    validate_copy_source_has_object(op, source);
     std::shared_ptr<void> copied_object = comm_.copy(GpuCommCopyRequest{
         op.inputs[0].id,
         op.outputs[0].id,
