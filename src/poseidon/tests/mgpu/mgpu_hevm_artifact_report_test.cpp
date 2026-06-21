@@ -461,6 +461,61 @@ void test_failure_report_includes_artifact_diagnostics()
         "failure report readiness should fail");
 }
 
+void test_failure_report_execution_gate_preserves_route_metadata()
+{
+    StaticScheduleExecutionConfig config;
+    config.pipeline.device_count = 32;
+    config.node_count = 4;
+    config.devices_per_node = 8;
+    config.communication_execution_preflight = true;
+
+    DacapoHevmArtifactResult artifacts;
+
+    MgpuCommunicationExecutionPreflight communication_preflight;
+    communication_preflight.inter_node_routes = 1;
+    communication_preflight.diagnostics.push_back(
+        MgpuCommunicationExecutionDiagnostic{
+            3,
+            MgpuTransportKind::InterNode,
+            7,
+            8,
+            "inter-node communication backend is not available" });
+
+    HevmArtifactReadinessInput readiness_input;
+    readiness_input.communication_execution_preflight = &communication_preflight;
+    const HevmArtifactReadinessResult readiness =
+        check_hevm_artifact_readiness(readiness_input);
+    require(!readiness.ok(), "missing inter-node backend readiness should fail");
+
+    HevmArtifactFailureReportInput input;
+    input.hevm_path = "/tmp/model.hevm";
+    input.constants_path = "/tmp/model.cst";
+    input.execution_config = &config;
+    input.artifacts = &artifacts;
+    input.hevm_artifact_readiness = &readiness;
+
+    const nlohmann::json report =
+        nlohmann::json::parse(hevm_artifact_failure_report_to_json(input));
+    const nlohmann::json &diagnostic =
+        report.at("execution_gate").at("diagnostics").at(0);
+    require(
+        diagnostic.at("stage").get<std::string>() ==
+            "communication_execution_preflight",
+        "failure report route diagnostic stage mismatch");
+    require(
+        diagnostic.at("route_index").get<int>() == 3,
+        "failure report route index missing");
+    require(
+        diagnostic.at("transport").get<std::string>() == "inter_node",
+        "failure report route transport missing");
+    require(
+        diagnostic.at("source_device").get<int>() == 7,
+        "failure report route source device missing");
+    require(
+        diagnostic.at("destination_device").get<int>() == 8,
+        "failure report route destination device missing");
+}
+
 void test_report_rejects_missing_required_sections()
 {
     HevmArtifactReportInput input;
@@ -487,6 +542,7 @@ int main()
         test_report_execution_gate_without_readiness_keeps_structured_diagnostics();
         test_report_execution_gate_requires_gate_input();
         test_failure_report_includes_artifact_diagnostics();
+        test_failure_report_execution_gate_preserves_route_metadata();
         test_report_rejects_missing_required_sections();
     }
     catch (const std::exception &ex)
