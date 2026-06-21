@@ -453,6 +453,13 @@ materializes the full-object buffers, and then delegates to
 `RoutedGpuObjectCopyBackend`. This keeps transport choice tied to the planned
 schedule rather than inferred inside evaluator or kernel code.
 
+`runtime/planned_communication_executor.*` wires that planned communication path
+into the static interpreter. It computes `MgpuCommunicationPlan` from the static
+schedule and topology before execution, returns route diagnostics without
+running any op, then executes the schedule through `StaticScheduleExecutor` with
+`PlannedMaterializedGpuComm`. It is CPU-side glue for the static schedule path,
+not a dynamic scheduler.
+
 ## CUDA Peer Probe
 
 `POSEIDON_BUILD_MGPU_CUDA_COMM=ON` builds the optional CUDA peer-copy backend

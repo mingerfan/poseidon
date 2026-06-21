@@ -27,6 +27,7 @@ add_library(poseidon_mgpu STATIC
     runtime/hevm_static_execution_plan.cpp
     runtime/io_binding_handler.cpp
     runtime/object_store.cpp
+    runtime/planned_communication_executor.cpp
     runtime/poseidon_gpu_schedule_preflight.cpp
     runtime/schedule_interpreter.cpp
     runtime/static_schedule_executor.cpp
@@ -241,6 +242,10 @@ if(POSEIDON_BUILD_MGPU_TESTS)
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_runtime_test.cpp
     )
 
+    add_executable(poseidon_mgpu_planned_communication_executor_tests
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_planned_communication_executor_test.cpp
+    )
+
     add_executable(poseidon_mgpu_io_binding_tests
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_io_binding_test.cpp
     )
@@ -365,6 +370,11 @@ if(POSEIDON_BUILD_MGPU_TESTS)
     )
 
     target_link_libraries(poseidon_mgpu_runtime_tests
+        PRIVATE
+            poseidon_mgpu
+    )
+
+    target_link_libraries(poseidon_mgpu_planned_communication_executor_tests
         PRIVATE
             poseidon_mgpu
     )
@@ -774,6 +784,11 @@ if(POSEIDON_BUILD_MGPU_TESTS)
     add_test(
         NAME poseidon_mgpu_runtime_tests
         COMMAND poseidon_mgpu_runtime_tests
+    )
+
+    add_test(
+        NAME poseidon_mgpu_planned_communication_executor_tests
+        COMMAND poseidon_mgpu_planned_communication_executor_tests
     )
 
     add_test(
