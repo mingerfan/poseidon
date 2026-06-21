@@ -1,0 +1,209 @@
+#include "poseidon/mgpu/compiler/static_schedule_pipeline.h"
+#include "poseidon/mgpu/runtime/hevm_io_binding.h"
+#include "poseidon/mgpu/runtime/schedule_interpreter.h"
+#include "poseidon/tests/mgpu/hevm_test_utils.h"
+
+#include <cstdlib>
+#include <iostream>
+#include <memory>
+#include <stdexcept>
+#include <string>
+#include <unordered_map>
+#include <utility>
+#include <vector>
+
+using namespace poseidon::mgpu;
+
+namespace
+{
+
+MgpuValueRef value(ValueId id)
+{
+    return MgpuValueRef{ id };
+}
+
+MgpuOp op_with_attrs(
+    MgpuOpKind kind, int device_id, std::vector<MgpuValueRef> inputs,
+    std::vector<MgpuValueRef> outputs, std::unordered_map<std::string, std::int64_t> attrs)
+{
+    MgpuOp result{ kind, device_id, std::move(inputs), std::move(outputs), {} };
+    result.integer_attributes = std::move(attrs);
+    return result;
+}
+
+std::shared_ptr<std::string> string_object(const char *value)
+{
+    return std::make_shared<std::string>(value);
+}
+
+void require(bool condition, const std::string &message)
+{
+    if (!condition)
+    {
+        throw std::runtime_error(message);
+    }
+}
+
+void require_contains(const std::string &text, const std::string &needle)
+{
+    if (text.find(needle) == std::string::npos)
+    {
+        throw std::runtime_error("expected text to contain: " + needle + "\ntext:\n" + text);
+    }
+}
+
+std::string make_two_result_hevm_binary()
+{
+    return test::make_hevm_binary(
+        2, 2, 2, 0, { 1, 0 }, {},
+        test::HevmConfigMetadata{
+            { 45, 46 },
+            { 12, 13 },
+            { 40, 41 },
+            { 8, 9 },
+            16,
+        });
+}
+
+StaticSchedulePipelineResult prepare_two_result_hevm_schedule()
+{
+    StaticSchedulePipelineOptions options;
+    options.device_count = 1;
+
+    return prepare_dacapo_static_schedule(
+        make_two_result_hevm_binary(),
+        DacapoAdapterOptions{ DacapoInputFormat::HevmBinary }, options);
+}
+
+void test_builds_plan_and_binds_cipher_inputs_by_hevm_index()
+{
+    const StaticSchedulePipelineResult pipeline = prepare_two_result_hevm_schedule();
+    require(pipeline.ok(), "pipeline failed:\n" + pipeline.format_diagnostics());
+
+    const HevmIoBindingPlanResult plan_result =
+        build_hevm_io_binding_plan(pipeline.schedule);
+    require(plan_result.ok(), "HEVM IO plan failed:\n" + plan_result.format_diagnostics());
+
+    const HevmIoBindingPlan &plan = plan_result.plan;
+    require(plan.cipher_inputs.size() == 2, "expected two HEVM cipher inputs");
+    require(plan.cipher_inputs[0].index == 0, "first cipher input index mismatch");
+    require(plan.cipher_inputs[0].scale == 45, "first cipher input scale mismatch");
+    require(plan.cipher_inputs[0].level == 12, "first cipher input level mismatch");
+    require(plan.cipher_inputs[0].init_level == 16, "first cipher init level mismatch");
+    require(plan.cipher_inputs[1].index == 1, "second cipher input index mismatch");
+    require(plan.cipher_inputs[1].scale == 46, "second cipher input scale mismatch");
+
+    require(plan.results.size() == 2, "expected two HEVM results");
+    require(plan.results[0].index == 0, "first result index mismatch");
+    require(plan.results[0].register_id == 1, "first result register mismatch");
+    require(plan.results[0].scale == 40, "first result scale mismatch");
+    require(plan.results[0].level == 8, "first result level mismatch");
+    require(plan.results[1].index == 1, "second result index mismatch");
+    require(plan.results[1].register_id == 0, "second result register mismatch");
+    require(plan.results[1].scale == 41, "second result scale mismatch");
+    require(plan.results[1].level == 9, "second result level mismatch");
+
+    IoBindingScheduleHandler io;
+    bind_hevm_cipher_inputs(
+        io, plan,
+        {
+            string_object("cipher_arg_0"),
+            string_object("cipher_arg_1"),
+        });
+
+    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 1 });
+    const ScheduleExecutionResult execution = interpreter.run(pipeline.schedule, io);
+    require(execution.ok(), "interpreter failed:\n" + execution.format_errors());
+
+    const std::vector<std::shared_ptr<void>> raw_results = collect_hevm_results(io, plan);
+    require(raw_results.size() == 2, "expected two collected HEVM results");
+    const auto result_0 = std::static_pointer_cast<std::string>(raw_results[0]);
+    const auto result_1 = std::static_pointer_cast<std::string>(raw_results[1]);
+    require(*result_0 == "cipher_arg_1", "HEVM result 0 should map to register 1");
+    require(*result_1 == "cipher_arg_0", "HEVM result 1 should map to register 0");
+}
+
+void test_reports_duplicate_hevm_input_indices()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op_with_attrs(
+        MgpuOpKind::UploadCipher, 0, {}, { value(1) },
+        {
+            { "hevm_arg_index", 0 },
+            { "hevm_arg_scale", 45 },
+            { "hevm_arg_level", 12 },
+            { "hevm_init_level", 16 },
+        }));
+    schedule.ops.push_back(op_with_attrs(
+        MgpuOpKind::UploadCipher, 0, {}, { value(2) },
+        {
+            { "hevm_arg_index", 0 },
+            { "hevm_arg_scale", 46 },
+            { "hevm_arg_level", 13 },
+            { "hevm_init_level", 16 },
+        }));
+
+    const HevmIoBindingPlanResult result = build_hevm_io_binding_plan(schedule);
+    require(!result.ok(), "duplicate HEVM input indices should fail");
+    require_contains(result.format_diagnostics(), "duplicate HEVM cipher input index 0");
+}
+
+void test_reports_incomplete_hevm_metadata()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op_with_attrs(
+        MgpuOpKind::Download, 0, { value(1) }, {},
+        {
+            { "hevm_result_index", 0 },
+            { "hevm_result_register", 1 },
+            { "hevm_result_scale", 40 },
+        }));
+
+    const HevmIoBindingPlanResult result = build_hevm_io_binding_plan(schedule);
+    require(!result.ok(), "incomplete HEVM result metadata should fail");
+    require_contains(result.format_diagnostics(), "missing HEVM integer attribute");
+    require_contains(result.format_diagnostics(), "hevm_result_level");
+}
+
+void test_bind_rejects_input_count_mismatch()
+{
+    const StaticSchedulePipelineResult pipeline = prepare_two_result_hevm_schedule();
+    require(pipeline.ok(), "pipeline failed:\n" + pipeline.format_diagnostics());
+    const HevmIoBindingPlanResult plan_result =
+        build_hevm_io_binding_plan(pipeline.schedule);
+    require(plan_result.ok(), "HEVM IO plan failed:\n" + plan_result.format_diagnostics());
+
+    IoBindingScheduleHandler io;
+    try
+    {
+        bind_hevm_cipher_inputs(io, plan_result.plan, { string_object("only_arg") });
+    }
+    catch (const std::invalid_argument &ex)
+    {
+        require_contains(ex.what(), "HEVM cipher input object count 1");
+        return;
+    }
+
+    throw std::runtime_error("input count mismatch should throw");
+}
+
+}  // namespace
+
+int main()
+{
+    try
+    {
+        test_builds_plan_and_binds_cipher_inputs_by_hevm_index();
+        test_reports_duplicate_hevm_input_indices();
+        test_reports_incomplete_hevm_metadata();
+        test_bind_rejects_input_count_mismatch();
+    }
+    catch (const std::exception &ex)
+    {
+        std::cerr << "mgpu HEVM IO binding test failed: " << ex.what() << '\n';
+        return EXIT_FAILURE;
+    }
+
+    std::cout << "mgpu HEVM IO binding tests passed\n";
+    return EXIT_SUCCESS;
+}
