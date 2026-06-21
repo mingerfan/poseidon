@@ -221,6 +221,9 @@ Dacapo artifact debugging:
 - Keep an unsupported-opcode mock report test for both dump-tool and external
   CTest paths so artifact translation failures still leave machine-readable
   not-ready reports before HEVM I/O binding exists.
+- Keep a missing-HEVM mock report test for both dump-tool and external CTest
+  paths so incorrect real artifact paths leave not-ready reports during
+  ResNet20 bring-up.
 - External artifact tests also accept `POSEIDON_MGPU_EXTERNAL_SCHEDULE_DUMP` to
   write the readable MLIR-like static schedule separately from stdout and the
   machine-readable report.
