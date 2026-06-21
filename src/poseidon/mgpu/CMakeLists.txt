@@ -10,6 +10,7 @@ add_library(poseidon_mgpu STATIC
     compiler/dacapo_constants.cpp
     compiler/schedule_verifier.cpp
     compiler/static_placement.cpp
+    compiler/static_schedule_config.cpp
     compiler/static_schedule_pipeline.cpp
     ir/schedule.cpp
     ir/schedule_json.cpp
@@ -136,6 +137,10 @@ if(POSEIDON_BUILD_MGPU_TESTS)
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_static_placement_test.cpp
     )
 
+    add_executable(poseidon_mgpu_static_schedule_config_tests
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_static_schedule_config_test.cpp
+    )
+
     add_executable(poseidon_mgpu_static_pipeline_tests
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_static_pipeline_test.cpp
     )
@@ -249,6 +254,11 @@ if(POSEIDON_BUILD_MGPU_TESTS)
             poseidon_mgpu
     )
 
+    target_link_libraries(poseidon_mgpu_static_schedule_config_tests
+        PRIVATE
+            poseidon_mgpu
+    )
+
     target_link_libraries(poseidon_mgpu_static_pipeline_tests
         PRIVATE
             poseidon_mgpu
@@ -358,6 +368,46 @@ if(POSEIDON_BUILD_MGPU_TESTS)
             ENVIRONMENT "${POSEIDON_MGPU_EXTERNAL_HEVM_RICH_MOCK_ENV}")
 
     add_test(
+        NAME poseidon_mgpu_external_hevm_config_mock_artifact_tests
+        COMMAND poseidon_mgpu_external_hevm_artifact_tests
+    )
+    set(POSEIDON_MGPU_EXTERNAL_HEVM_CONFIG_MOCK_JSON
+        "{"
+        "\"version\":1,"
+        "\"device_count\":4,"
+        "\"placement\":{"
+        "\"default_device\":0,"
+        "\"upload_device\":0,"
+        "\"compute_devices\":[1,2],"
+        "\"download_device\":0"
+        "},"
+        "\"topology\":{"
+        "\"nodes\":2,"
+        "\"devices_per_node\":2"
+        "},"
+        "\"preflight\":{"
+        "\"require_ready\":true,"
+        "\"comm_available\":true,"
+        "\"relin_keys\":true,"
+        "\"galois_keys\":true"
+        "},"
+        "\"execution_backends\":{"
+        "\"same_device\":true,"
+        "\"cuda_peer\":true,"
+        "\"inter_node\":true"
+        "}"
+        "}")
+    string(CONCAT POSEIDON_MGPU_EXTERNAL_HEVM_CONFIG_MOCK_JSON
+        ${POSEIDON_MGPU_EXTERNAL_HEVM_CONFIG_MOCK_JSON})
+    set(POSEIDON_MGPU_EXTERNAL_HEVM_CONFIG_MOCK_ENV
+        "POSEIDON_MGPU_EXTERNAL_RICH_MOCK_ARTIFACT=1"
+        "POSEIDON_MGPU_EXTERNAL_CONFIG_JSON=${POSEIDON_MGPU_EXTERNAL_HEVM_CONFIG_MOCK_JSON}"
+    )
+    set_tests_properties(poseidon_mgpu_external_hevm_config_mock_artifact_tests
+        PROPERTIES
+            ENVIRONMENT "${POSEIDON_MGPU_EXTERNAL_HEVM_CONFIG_MOCK_ENV}")
+
+    add_test(
         NAME poseidon_mgpu_external_hevm_mock_artifact_require_ready_tests
         COMMAND poseidon_mgpu_external_hevm_artifact_tests
     )
@@ -446,6 +496,11 @@ if(POSEIDON_BUILD_MGPU_TESTS)
     add_test(
         NAME poseidon_mgpu_static_placement_tests
         COMMAND poseidon_mgpu_static_placement_tests
+    )
+
+    add_test(
+        NAME poseidon_mgpu_static_schedule_config_tests
+        COMMAND poseidon_mgpu_static_schedule_config_tests
     )
 
     add_test(

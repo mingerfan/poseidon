@@ -130,6 +130,43 @@ Then inspect the ResNet20 artifact without executing GPU operators:
   --no-schedule
 ```
 
+The same placement, topology, preflight, and backend declarations can live in a
+CPU-only JSON config and be reused across artifacts:
+
+```json
+{
+  "version": 1,
+  "device_count": 8,
+  "placement": {
+    "default_device": 0,
+    "upload_device": 0,
+    "compute_devices": [0, 1, 2, 3, 4, 5, 6, 7],
+    "download_device": 0
+  },
+  "topology": {
+    "nodes": 1,
+    "devices_per_node": 8
+  },
+  "preflight": {
+    "require_ready": true,
+    "comm_available": true,
+    "relin_keys": true,
+    "galois_keys": true
+  },
+  "execution_backends": {
+    "same_device": true,
+    "cuda_peer": true,
+    "inter_node": false
+  }
+}
+```
+
+Use it with `--config /path/to/config.json`; later command-line placement,
+topology, preflight, and backend flags override the file. For a 4x8 cluster
+preview, set `device_count` to `32` and `topology` to `{ "nodes": 4,
+"devices_per_node": 8 }`. Keep `inter_node` false until a real inter-node
+transport backend exists.
+
 Use the skipped-by-default external CTest for a repeatable check:
 
 ```bash
@@ -189,6 +226,8 @@ ctest --test-dir /tmp/poseidon-mgpu-json --output-on-failure \
 
 Optional environment variables:
 
+- `POSEIDON_MGPU_EXTERNAL_CONFIG=/path/to/config.json`
+- `POSEIDON_MGPU_EXTERNAL_CONFIG_JSON='{"version":1,...}'`
 - `POSEIDON_MGPU_EXTERNAL_DEFAULT_DEVICE`
 - `POSEIDON_MGPU_EXTERNAL_ROUND_ROBIN_COMPUTE=1`
 - `POSEIDON_MGPU_EXTERNAL_DEBUG_DUMP=1`
@@ -213,12 +252,18 @@ copy insertion, GaloisKeys preflight, and readiness gating. It still avoids
 unsupported `ModswitchC` and `UpscaleC`; those remain real adapter work once
 their Poseidon GPU semantics are verified.
 
+`poseidon_mgpu_external_hevm_config_mock_artifact_tests` exercises the same
+path with `POSEIDON_MGPU_EXTERNAL_CONFIG_JSON` so config-file driven placement,
+topology, preflight, and backend declarations stay covered without a real
+ResNet20 artifact.
+
 The dump tool can run the same preflight without CTest:
 
 ```bash
 poseidon_mgpu_dacapo_hevm_dump \
   --hevm /path/to/model.hevm \
   --constants /path/to/model.cst \
+  --config /path/to/mgpu-config.json \
   --devices 8 \
   --compute-devices 0,1,2,3,4,5,6,7 \
   --opcode-summary \

@@ -1,4 +1,5 @@
 #include "poseidon/mgpu/compiler/dacapo_artifacts.h"
+#include "poseidon/mgpu/compiler/static_schedule_config.h"
 #include "poseidon/mgpu/comm/execution_preflight.h"
 #include "poseidon/mgpu/comm/topology.h"
 #include "poseidon/mgpu/ir/schedule_summary.h"
@@ -29,8 +30,7 @@ namespace
 
 constexpr int kSkip = 77;
 
-MgpuCommunicationExecutionOptions make_communication_execution_options();
-MgpuTopology make_external_topology(const StaticSchedulePipelineOptions &options);
+MgpuTopology make_external_topology(const StaticScheduleExecutionConfig &config);
 
 class TempDir
 {
@@ -320,6 +320,81 @@ StaticSchedulePipelineOptions make_pipeline_options()
     return options;
 }
 
+void apply_require_ready(StaticScheduleExecutionConfig &config)
+{
+    if (!config.require_ready)
+    {
+        return;
+    }
+    config.opcode_summary = true;
+    config.poseidon_gpu_preflight = true;
+    config.communication_plan = true;
+    config.communication_execution_preflight = true;
+}
+
+StaticScheduleExecutionConfig parse_external_config_text(
+    const std::string &text, const std::string &source)
+{
+    const StaticScheduleExecutionConfigParseResult result =
+        parse_static_schedule_execution_config_json(text);
+    if (!result.ok())
+    {
+        throw std::runtime_error(
+            "external HEVM config failed to parse from " + source + ":\n" +
+            result.format_diagnostics());
+    }
+    return result.config;
+}
+
+StaticScheduleExecutionConfig make_external_config()
+{
+    const char *config_path = get_env("POSEIDON_MGPU_EXTERNAL_CONFIG");
+    const char *config_json = get_env("POSEIDON_MGPU_EXTERNAL_CONFIG_JSON");
+    if (config_path != nullptr && config_json != nullptr)
+    {
+        throw std::invalid_argument(
+            "POSEIDON_MGPU_EXTERNAL_CONFIG and POSEIDON_MGPU_EXTERNAL_CONFIG_JSON cannot both be set");
+    }
+    if (config_path != nullptr)
+    {
+        return parse_external_config_text(read_binary_file(config_path), config_path);
+    }
+    if (config_json != nullptr)
+    {
+        return parse_external_config_text(config_json, "POSEIDON_MGPU_EXTERNAL_CONFIG_JSON");
+    }
+
+    StaticScheduleExecutionConfig config;
+    config.pipeline = make_pipeline_options();
+    config.preflight_comm_available =
+        parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_PREFLIGHT_COMM_AVAILABLE"));
+    config.preflight_relin_keys_available =
+        parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_PREFLIGHT_RELIN_KEYS"));
+    config.preflight_galois_keys_available =
+        parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_PREFLIGHT_GALOIS_KEYS"));
+    config.communication_plan = true;
+    config.communication_execution_preflight = true;
+    config.communication_execution.same_device_available = true;
+    config.communication_execution.cuda_peer_available =
+        parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_EXECUTION_CUDA_PEER_AVAILABLE"));
+    config.communication_execution.inter_node_available =
+        parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_EXECUTION_INTER_NODE_AVAILABLE"));
+    config.require_ready =
+        parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_REQUIRE_READY"));
+    apply_require_ready(config);
+
+    if (const char *nodes = get_env("POSEIDON_MGPU_EXTERNAL_NODES"))
+    {
+        config.node_count = parse_int("POSEIDON_MGPU_EXTERNAL_NODES", nodes);
+    }
+    if (const char *devices = get_env("POSEIDON_MGPU_EXTERNAL_DEVICES_PER_NODE"))
+    {
+        config.devices_per_node =
+            parse_int("POSEIDON_MGPU_EXTERNAL_DEVICES_PER_NODE", devices);
+    }
+    return config;
+}
+
 void print_io_summary(const HevmIoBindingPlan &plan)
 {
     std::cout << "hevm_io:\n";
@@ -341,76 +416,54 @@ std::size_t op_count_for_kind(const MgpuScheduleSummary &summary, MgpuOpKind kin
 }
 
 PoseidonGpuSchedulePreflightOptions make_preflight_options(
-    const StaticSchedulePipelineOptions &options)
+    const StaticScheduleExecutionConfig &config)
 {
     return PoseidonGpuSchedulePreflightOptions{
-        options.device_count,
-        parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_PREFLIGHT_COMM_AVAILABLE")),
-        parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_PREFLIGHT_RELIN_KEYS")),
-        parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_PREFLIGHT_GALOIS_KEYS")),
+        config.pipeline.device_count,
+        config.preflight_comm_available,
+        config.preflight_relin_keys_available,
+        config.preflight_galois_keys_available,
     };
 }
 
 PoseidonGpuExecutionPreflightOptions make_execution_preflight_options(
-    const StaticSchedulePipelineOptions &options)
+    const StaticScheduleExecutionConfig &config)
 {
     PoseidonGpuExecutionPreflightOptions preflight_options;
     const PoseidonGpuSchedulePreflightOptions gpu_options =
-        make_preflight_options(options);
+        make_preflight_options(config);
     preflight_options.device_count = gpu_options.device_count;
     preflight_options.copy_ops_have_comm = gpu_options.copy_ops_have_comm;
     preflight_options.relin_keys_available = gpu_options.relin_keys_available;
     preflight_options.galois_keys_available = gpu_options.galois_keys_available;
     preflight_options.check_communication_plan = true;
-    preflight_options.topology = make_external_topology(options);
+    preflight_options.topology = make_external_topology(config);
     preflight_options.check_communication_execution = true;
-    preflight_options.communication_execution =
-        make_communication_execution_options();
+    preflight_options.communication_execution = config.communication_execution;
     return preflight_options;
 }
 
-MgpuCommunicationExecutionOptions make_communication_execution_options()
+MgpuTopology make_external_topology(const StaticScheduleExecutionConfig &config)
 {
-    return MgpuCommunicationExecutionOptions{
-        true,
-        parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_EXECUTION_CUDA_PEER_AVAILABLE")),
-        parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_EXECUTION_INTER_NODE_AVAILABLE")),
-    };
-}
-
-MgpuTopology make_external_topology(const StaticSchedulePipelineOptions &options)
-{
-    int node_count = 1;
-    if (const char *nodes = get_env("POSEIDON_MGPU_EXTERNAL_NODES"))
-    {
-        node_count = parse_int("POSEIDON_MGPU_EXTERNAL_NODES", nodes);
-    }
-
-    int devices_per_node = 0;
-    if (const char *devices = get_env("POSEIDON_MGPU_EXTERNAL_DEVICES_PER_NODE"))
-    {
-        devices_per_node =
-            parse_int("POSEIDON_MGPU_EXTERNAL_DEVICES_PER_NODE", devices);
-    }
-
-    require(node_count > 0, "POSEIDON_MGPU_EXTERNAL_NODES must be positive");
+    int devices_per_node = config.devices_per_node;
+    require(config.node_count > 0, "POSEIDON_MGPU_EXTERNAL_NODES must be positive");
     require(
         devices_per_node >= 0,
         "POSEIDON_MGPU_EXTERNAL_DEVICES_PER_NODE must be non-negative");
 
-    if (node_count == 1 && devices_per_node == 0)
+    if (config.node_count == 1 && devices_per_node == 0)
     {
-        return make_single_node_topology(options.device_count);
+        return make_single_node_topology(config.pipeline.device_count);
     }
 
     if (devices_per_node == 0)
     {
-        devices_per_node = options.device_count;
+        devices_per_node = config.pipeline.device_count;
     }
     require(
-        node_count * devices_per_node >= options.device_count,
+        config.node_count * devices_per_node >= config.pipeline.device_count,
         "external HEVM topology has fewer logical devices than device_count");
-    return make_uniform_cluster_topology(node_count, devices_per_node);
+    return make_uniform_cluster_topology(config.node_count, devices_per_node);
 }
 
 }  // namespace
@@ -460,8 +513,10 @@ int main()
                 "POSEIDON_MGPU_EXTERNAL_HEVM and POSEIDON_MGPU_EXTERNAL_CST must be set together");
         }
 
-        const StaticSchedulePipelineOptions options = make_pipeline_options();
-        require(options.device_count > 0, "POSEIDON_MGPU_EXTERNAL_DEVICE_COUNT must be positive");
+        const StaticScheduleExecutionConfig config = make_external_config();
+        require(
+            config.pipeline.device_count > 0,
+            "POSEIDON_MGPU_EXTERNAL_DEVICE_COUNT must be positive");
 
         const DacapoHevmOpcodeSummary opcode_summary =
             summarize_hevm_opcodes(read_binary_file(hevm_path));
@@ -472,7 +527,8 @@ int main()
 
         const DacapoHevmArtifactResult artifacts =
             prepare_dacapo_hevm_artifacts_from_files(
-                DacapoHevmArtifactPaths{ hevm_path, constants_path }, options);
+                DacapoHevmArtifactPaths{ hevm_path, constants_path },
+                config.pipeline);
         require(artifacts.ok(), "external HEVM artifact load failed:\n" +
                                     artifacts.format_diagnostics());
         require(!artifacts.schedule.ops.empty(), "external HEVM schedule must not be empty");
@@ -486,7 +542,7 @@ int main()
         validate_constant_indices(io_plan.plan, artifacts.constants);
 
         const MgpuScheduleSummary summary =
-            summarize_schedule(artifacts.schedule, options.device_count);
+            summarize_schedule(artifacts.schedule, config.pipeline.device_count);
         require(summary.invalid_device_ops == 0, "external HEVM schedule has invalid devices");
         require(
             summary.unassigned_device_ops == 0,
@@ -517,7 +573,7 @@ int main()
         std::cout << dump_schedule_summary(summary);
         const PoseidonGpuExecutionPreflightResult execution_preflight =
             preflight_poseidon_gpu_execution_plan(
-                artifacts.schedule, make_execution_preflight_options(options));
+                artifacts.schedule, make_execution_preflight_options(config));
         require(
             execution_preflight.schedule_verification.ok(),
             "external HEVM execution schedule verification failed:\n" +
@@ -560,7 +616,7 @@ int main()
         const HevmArtifactReadinessResult readiness =
             check_hevm_artifact_readiness(readiness_input);
         std::cout << dump_hevm_artifact_readiness(readiness);
-        if (parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_REQUIRE_READY")))
+        if (config.require_ready)
         {
             require(
                 readiness.ok(),

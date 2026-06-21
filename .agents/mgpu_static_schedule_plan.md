@@ -43,6 +43,7 @@
 | Dacapo adapter | Translate internal JSON debug input and Dacapo HEVM binary output into internal IR. |
 | Placement pass | Assign each op/value to a GPU. |
 | Copy insertion pass | Insert explicit copy operations when input placement differs from compute placement. |
+| Static schedule execution config | CPU-only JSON config for placement, topology, preflight gates, and declared communication backends. |
 | Verifier | Check device availability, input placement, object form, keys, scale, level, and NTT form before execution. |
 | Interpreter | Execute the verified schedule in order. |
 | Dumper | Emit MLIR-like readable text for debugging. |
@@ -157,10 +158,14 @@ Runtime IO binding:
 Dacapo artifact debugging:
 
 - `POSEIDON_BUILD_MGPU_TOOLS=ON` builds `poseidon_mgpu_dacapo_hevm_dump`.
-- The dump tool accepts `--hevm`, `--constants`, `--devices`,
+- The dump tool accepts `--hevm`, `--constants`, `--config`, `--devices`,
   `--default-device`, `--upload-device`, `--compute-devices`,
   `--download-device`, `--round-robin-compute`, `--summary-json`, and
   `--no-schedule`.
+- `--config <json>` loads placement, topology, preflight, and backend settings
+  from the internal static schedule execution config. Later command-line
+  placement/preflight/backend flags override the file so single-GPU, 8-GPU, and
+  4x8 preview configs can be reused across artifacts.
 - Use the dump tool before running a real ResNet20 artifact to confirm op
   counts, HEVM I/O metadata, explicit copy counts, and device distribution.
 - The dump tool is CPU-side only; it must not link Dacapo/MLIR, CUDA runtime,
@@ -184,6 +189,9 @@ Dacapo artifact debugging:
   `POSEIDON_MGPU_EXTERNAL_EXECUTION_INTER_NODE_AVAILABLE`. Set
   `POSEIDON_MGPU_EXTERNAL_REQUIRE_READY=1` only when preflight failures should
   make the external artifact check fail.
+- External artifact tests also accept `POSEIDON_MGPU_EXTERNAL_CONFIG` or
+  `POSEIDON_MGPU_EXTERNAL_CONFIG_JSON` to exercise the same static schedule
+  execution config path as the dump tool.
 - `poseidon_mgpu_external_hevm_mock_artifact_tests` uses a generated mock
   `.hevm + .cst` artifact to exercise the same external artifact path,
   preflight flags, and non-trivial topology on machines without ResNet20
@@ -273,6 +281,7 @@ ResNet20 artifact runbook:
 | GPU runtime smoke tests | Optional CUDA/RMM tests cover upload/download, same-device Add, and a cross-device CopyCipher+Add schedule when at least two GPUs are visible. |
 | Static graph tests | Handwritten ResNet-like small graph verifies copy insertion and execution order. |
 | Placement configuration tests | Upload, compute-device list, and download placement must all trigger explicit copies when devices differ. |
+| Static schedule config tests | CPU-only tests parse single-node 8-GPU and 4x8 cluster JSON configs, validate readiness defaults, and reject invalid placement/topology. |
 | Artifact dump tool smoke | Build the optional tool and run it on mock `.hevm + .cst` artifacts with upload/compute/download device options. |
 | External artifact test | Skips by default; when env vars point at real ResNet20 `.hevm + .cst`, load artifacts, run placement/copy insertion, build HEVM I/O plan, and print schedule summaries. |
 | Rich mock artifact test | Generated `.hevm + .cst` covers rotate, ciphertext arithmetic, rescale, explicit copies, key preflight, and readiness gating without real ResNet20 artifacts. |

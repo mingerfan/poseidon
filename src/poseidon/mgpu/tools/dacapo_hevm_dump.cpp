@@ -1,4 +1,5 @@
 #include "poseidon/mgpu/compiler/dacapo_artifacts.h"
+#include "poseidon/mgpu/compiler/static_schedule_config.h"
 #include "poseidon/mgpu/comm/execution_preflight.h"
 #include "poseidon/mgpu/comm/topology.h"
 #include "poseidon/mgpu/ir/schedule_summary.h"
@@ -26,32 +27,18 @@ struct ToolOptions
 {
     std::string hevm_path;
     std::string constants_path;
-    int device_count = 1;
-    int default_device = 0;
-    std::vector<int> compute_devices;
-    std::optional<int> upload_device;
-    std::optional<int> download_device;
-    bool round_robin_compute = false;
+    StaticScheduleExecutionConfig config;
     bool dump_schedule = true;
     bool summary_json = false;
-    bool poseidon_gpu_preflight = false;
-    bool preflight_comm_available = false;
-    bool preflight_relin_keys_available = false;
-    bool preflight_galois_keys_available = false;
-    bool communication_plan = false;
-    bool communication_execution_preflight = false;
-    bool execution_cuda_peer_available = false;
-    bool execution_inter_node_available = false;
-    int node_count = 1;
-    int devices_per_node = 0;
-    bool opcode_summary = false;
-    bool require_ready = false;
 };
+
+std::string read_binary_file(const std::string &path);
 
 void print_usage(std::ostream &stream)
 {
     stream
         << "usage: poseidon_mgpu_dacapo_hevm_dump --hevm <file> --constants <file> "
+           "[--config <file>] "
            "[--devices N] [--default-device N] [--round-robin-compute] "
            "[--compute-devices a,b,c] "
            "[--upload-device N] "
@@ -117,6 +104,37 @@ std::vector<int> parse_compute_devices(const char *value)
     return devices;
 }
 
+void load_config_file(ToolOptions &options, const char *path)
+{
+    if (path == nullptr)
+    {
+        throw std::invalid_argument("missing value for --config");
+    }
+
+    const StaticScheduleExecutionConfigParseResult result =
+        parse_static_schedule_execution_config_json(read_binary_file(path));
+    if (!result.ok())
+    {
+        throw std::invalid_argument(
+            "invalid --config " + std::string(path) + ":\n" +
+            result.format_diagnostics());
+    }
+    options.config = result.config;
+    options.dump_schedule = result.config.pipeline.emit_debug_dump;
+}
+
+void apply_require_ready(ToolOptions &options)
+{
+    if (!options.config.require_ready)
+    {
+        return;
+    }
+    options.config.opcode_summary = true;
+    options.config.poseidon_gpu_preflight = true;
+    options.config.communication_plan = true;
+    options.config.communication_execution_preflight = true;
+}
+
 ToolOptions parse_args(int argc, char **argv)
 {
     ToolOptions options;
@@ -127,6 +145,15 @@ ToolOptions parse_args(int argc, char **argv)
         {
             print_usage(std::cout);
             std::exit(EXIT_SUCCESS);
+        }
+        if (arg == "--config")
+        {
+            if (++i >= argc)
+            {
+                throw std::invalid_argument("missing value for --config");
+            }
+            load_config_file(options, argv[i]);
+            continue;
         }
         if (arg == "--hevm")
         {
@@ -152,7 +179,7 @@ ToolOptions parse_args(int argc, char **argv)
             {
                 throw std::invalid_argument("missing value for --devices");
             }
-            options.device_count = parse_int_arg("--devices", argv[i]);
+            options.config.pipeline.device_count = parse_int_arg("--devices", argv[i]);
             continue;
         }
         if (arg == "--default-device")
@@ -161,12 +188,14 @@ ToolOptions parse_args(int argc, char **argv)
             {
                 throw std::invalid_argument("missing value for --default-device");
             }
-            options.default_device = parse_int_arg("--default-device", argv[i]);
+            options.config.pipeline.placement.default_device =
+                parse_int_arg("--default-device", argv[i]);
             continue;
         }
         if (arg == "--round-robin-compute")
         {
-            options.round_robin_compute = true;
+            options.config.pipeline.placement.policy =
+                StaticPlacementPolicy::RoundRobinCompute;
             continue;
         }
         if (arg == "--compute-devices")
@@ -175,8 +204,10 @@ ToolOptions parse_args(int argc, char **argv)
             {
                 throw std::invalid_argument("missing value for --compute-devices");
             }
-            options.compute_devices = parse_compute_devices(argv[i]);
-            options.round_robin_compute = true;
+            options.config.pipeline.placement.compute_devices =
+                parse_compute_devices(argv[i]);
+            options.config.pipeline.placement.policy =
+                StaticPlacementPolicy::RoundRobinCompute;
             continue;
         }
         if (arg == "--upload-device")
@@ -185,7 +216,8 @@ ToolOptions parse_args(int argc, char **argv)
             {
                 throw std::invalid_argument("missing value for --upload-device");
             }
-            options.upload_device = parse_int_arg("--upload-device", argv[i]);
+            options.config.pipeline.placement.upload_device =
+                parse_int_arg("--upload-device", argv[i]);
             continue;
         }
         if (arg == "--download-device")
@@ -194,12 +226,14 @@ ToolOptions parse_args(int argc, char **argv)
             {
                 throw std::invalid_argument("missing value for --download-device");
             }
-            options.download_device = parse_int_arg("--download-device", argv[i]);
+            options.config.pipeline.placement.download_device =
+                parse_int_arg("--download-device", argv[i]);
             continue;
         }
         if (arg == "--no-schedule")
         {
             options.dump_schedule = false;
+            options.config.pipeline.emit_debug_dump = false;
             continue;
         }
         if (arg == "--summary-json")
@@ -209,64 +243,61 @@ ToolOptions parse_args(int argc, char **argv)
         }
         if (arg == "--poseidon-gpu-preflight")
         {
-            options.poseidon_gpu_preflight = true;
+            options.config.poseidon_gpu_preflight = true;
             continue;
         }
         if (arg == "--preflight-comm-available")
         {
-            options.preflight_comm_available = true;
-            options.poseidon_gpu_preflight = true;
+            options.config.preflight_comm_available = true;
+            options.config.poseidon_gpu_preflight = true;
             continue;
         }
         if (arg == "--preflight-relin-keys")
         {
-            options.preflight_relin_keys_available = true;
-            options.poseidon_gpu_preflight = true;
+            options.config.preflight_relin_keys_available = true;
+            options.config.poseidon_gpu_preflight = true;
             continue;
         }
         if (arg == "--preflight-galois-keys")
         {
-            options.preflight_galois_keys_available = true;
-            options.poseidon_gpu_preflight = true;
+            options.config.preflight_galois_keys_available = true;
+            options.config.poseidon_gpu_preflight = true;
             continue;
         }
         if (arg == "--communication-plan")
         {
-            options.communication_plan = true;
+            options.config.communication_plan = true;
             continue;
         }
         if (arg == "--communication-execution-preflight")
         {
-            options.communication_plan = true;
-            options.communication_execution_preflight = true;
+            options.config.communication_plan = true;
+            options.config.communication_execution_preflight = true;
             continue;
         }
         if (arg == "--execution-cuda-peer-available")
         {
-            options.communication_plan = true;
-            options.communication_execution_preflight = true;
-            options.execution_cuda_peer_available = true;
+            options.config.communication_plan = true;
+            options.config.communication_execution_preflight = true;
+            options.config.communication_execution.cuda_peer_available = true;
             continue;
         }
         if (arg == "--execution-inter-node-available")
         {
-            options.communication_plan = true;
-            options.communication_execution_preflight = true;
-            options.execution_inter_node_available = true;
+            options.config.communication_plan = true;
+            options.config.communication_execution_preflight = true;
+            options.config.communication_execution.inter_node_available = true;
             continue;
         }
         if (arg == "--opcode-summary")
         {
-            options.opcode_summary = true;
+            options.config.opcode_summary = true;
             continue;
         }
         if (arg == "--require-ready")
         {
-            options.require_ready = true;
-            options.opcode_summary = true;
-            options.poseidon_gpu_preflight = true;
-            options.communication_plan = true;
-            options.communication_execution_preflight = true;
+            options.config.require_ready = true;
+            apply_require_ready(options);
             continue;
         }
         if (arg == "--nodes")
@@ -275,8 +306,8 @@ ToolOptions parse_args(int argc, char **argv)
             {
                 throw std::invalid_argument("missing value for --nodes");
             }
-            options.node_count = parse_int_arg("--nodes", argv[i]);
-            options.communication_plan = true;
+            options.config.node_count = parse_int_arg("--nodes", argv[i]);
+            options.config.communication_plan = true;
             continue;
         }
         if (arg == "--devices-per-node")
@@ -285,8 +316,9 @@ ToolOptions parse_args(int argc, char **argv)
             {
                 throw std::invalid_argument("missing value for --devices-per-node");
             }
-            options.devices_per_node = parse_int_arg("--devices-per-node", argv[i]);
-            options.communication_plan = true;
+            options.config.devices_per_node =
+                parse_int_arg("--devices-per-node", argv[i]);
+            options.config.communication_plan = true;
             continue;
         }
 
@@ -301,54 +333,64 @@ ToolOptions parse_args(int argc, char **argv)
     {
         throw std::invalid_argument("--constants is required");
     }
-    if (options.device_count <= 0)
+    apply_require_ready(options);
+
+    if (options.config.pipeline.device_count <= 0)
     {
         throw std::invalid_argument("--devices must be positive");
     }
-    if (options.default_device < 0 || options.default_device >= options.device_count)
+    if (options.config.pipeline.placement.default_device < 0 ||
+        options.config.pipeline.placement.default_device >=
+            options.config.pipeline.device_count)
     {
         throw std::invalid_argument("--default-device must be in [0, devices)");
     }
-    if (options.upload_device.has_value() &&
-        (*options.upload_device < 0 || *options.upload_device >= options.device_count))
+    if (options.config.pipeline.placement.upload_device.has_value() &&
+        (*options.config.pipeline.placement.upload_device < 0 ||
+         *options.config.pipeline.placement.upload_device >=
+             options.config.pipeline.device_count))
     {
         throw std::invalid_argument("--upload-device must be in [0, devices)");
     }
-    if (options.download_device.has_value() &&
-        (*options.download_device < 0 || *options.download_device >= options.device_count))
+    if (options.config.pipeline.placement.download_device.has_value() &&
+        (*options.config.pipeline.placement.download_device < 0 ||
+         *options.config.pipeline.placement.download_device >=
+             options.config.pipeline.device_count))
     {
         throw std::invalid_argument("--download-device must be in [0, devices)");
     }
-    if (options.node_count <= 0)
+    if (options.config.node_count <= 0)
     {
         throw std::invalid_argument("--nodes must be positive");
     }
-    if (options.devices_per_node < 0)
+    if (options.config.devices_per_node < 0)
     {
         throw std::invalid_argument("--devices-per-node must be non-negative");
     }
-    if (options.communication_plan)
+    if (options.config.communication_plan)
     {
         const int devices_per_node =
-            options.devices_per_node == 0 ? options.device_count : options.devices_per_node;
+            options.config.devices_per_node == 0 ? options.config.pipeline.device_count
+                                                 : options.config.devices_per_node;
         if (devices_per_node <= 0)
         {
             throw std::invalid_argument("communication topology devices per node must be positive");
         }
-        if (options.node_count * devices_per_node < options.device_count)
+        if (options.config.node_count * devices_per_node <
+            options.config.pipeline.device_count)
         {
             throw std::invalid_argument(
                 "communication topology has fewer logical devices than --devices");
         }
     }
-    if (options.require_ready)
-    {
-        options.opcode_summary = true;
-        options.poseidon_gpu_preflight = true;
-        options.communication_plan = true;
-        options.communication_execution_preflight = true;
-    }
     return options;
+}
+
+StaticScheduleExecutionConfig effective_config(const ToolOptions &tool_options)
+{
+    StaticScheduleExecutionConfig config = tool_options.config;
+    config.pipeline.emit_debug_dump = tool_options.dump_schedule;
+    return config;
 }
 
 std::string read_binary_file(const std::string &path)
@@ -370,18 +412,7 @@ std::string read_binary_file(const std::string &path)
 
 StaticSchedulePipelineOptions make_pipeline_options(const ToolOptions &tool_options)
 {
-    StaticSchedulePipelineOptions options;
-    options.device_count = tool_options.device_count;
-    options.emit_debug_dump = tool_options.dump_schedule;
-    options.placement.default_device = tool_options.default_device;
-    if (tool_options.round_robin_compute)
-    {
-        options.placement.policy = StaticPlacementPolicy::RoundRobinCompute;
-    }
-    options.placement.compute_devices = tool_options.compute_devices;
-    options.placement.upload_device = tool_options.upload_device;
-    options.placement.download_device = tool_options.download_device;
-    return options;
+    return effective_config(tool_options).pipeline;
 }
 
 nlohmann::json parse_json_object(const std::string &text)
@@ -391,43 +422,34 @@ nlohmann::json parse_json_object(const std::string &text)
 
 MgpuTopology make_tool_topology(const ToolOptions &tool_options)
 {
-    if (tool_options.node_count == 1 && tool_options.devices_per_node == 0)
-    {
-        return make_single_node_topology(tool_options.device_count);
-    }
-
-    const int devices_per_node =
-        tool_options.devices_per_node == 0 ? tool_options.device_count
-                                           : tool_options.devices_per_node;
-    return make_uniform_cluster_topology(tool_options.node_count, devices_per_node);
+    return make_static_schedule_execution_topology(tool_options.config);
 }
 
 PoseidonGpuExecutionPreflightOptions make_execution_preflight_options(
     const ToolOptions &tool_options)
 {
     PoseidonGpuExecutionPreflightOptions options;
-    options.device_count = tool_options.device_count;
-    options.copy_ops_have_comm = tool_options.preflight_comm_available;
-    options.relin_keys_available = tool_options.preflight_relin_keys_available;
-    options.galois_keys_available = tool_options.preflight_galois_keys_available;
-    options.check_communication_plan = tool_options.communication_plan;
+    options.device_count = tool_options.config.pipeline.device_count;
+    options.copy_ops_have_comm = tool_options.config.preflight_comm_available;
+    options.relin_keys_available =
+        tool_options.config.preflight_relin_keys_available;
+    options.galois_keys_available =
+        tool_options.config.preflight_galois_keys_available;
+    options.check_communication_plan = tool_options.config.communication_plan;
     if (options.check_communication_plan)
     {
         options.topology = make_tool_topology(tool_options);
     }
     options.check_communication_execution =
-        tool_options.communication_execution_preflight;
-    options.communication_execution = MgpuCommunicationExecutionOptions{
-        true,
-        tool_options.execution_cuda_peer_available,
-        tool_options.execution_inter_node_available,
-    };
+        tool_options.config.communication_execution_preflight;
+    options.communication_execution = tool_options.config.communication_execution;
     return options;
 }
 
 bool needs_execution_preflight(const ToolOptions &tool_options)
 {
-    return tool_options.poseidon_gpu_preflight || tool_options.require_ready;
+    return tool_options.config.poseidon_gpu_preflight ||
+           tool_options.config.require_ready;
 }
 
 nlohmann::json optional_preflight_json(
@@ -606,6 +628,7 @@ void print_text_summary(
 }
 
 nlohmann::json make_tool_summary_json(
+    const StaticScheduleExecutionConfig &config,
     const MgpuScheduleSummary &summary, std::size_t constant_count,
     const HevmIoBindingPlan &io_plan, nlohmann::json preflight,
     nlohmann::json communication_plan,
@@ -617,6 +640,8 @@ nlohmann::json make_tool_summary_json(
 {
     nlohmann::json root;
     root["version"] = 1;
+    root["execution_config"] = parse_json_object(
+        static_schedule_execution_config_to_json(config, -1));
     root["schedule"] = parse_json_object(schedule_summary_to_json(summary, -1));
     root["constants"] = nlohmann::json{
         { "vectors", constant_count },
@@ -667,7 +692,7 @@ int main(int argc, char **argv)
     {
         const ToolOptions tool_options = parse_args(argc, argv);
         std::optional<DacapoHevmOpcodeSummary> opcode_summary;
-        if (tool_options.opcode_summary)
+        if (tool_options.config.opcode_summary)
         {
             opcode_summary = summarize_hevm_opcodes(read_binary_file(tool_options.hevm_path));
             if (!opcode_summary->ok())
@@ -690,7 +715,7 @@ int main(int argc, char **argv)
             {
                 print_opcode_summary_text(*opcode_summary);
             }
-            if (tool_options.require_ready && opcode_summary.has_value())
+            if (tool_options.config.require_ready && opcode_summary.has_value())
             {
                 const HevmArtifactReadinessResult readiness =
                     check_hevm_artifact_readiness(
@@ -710,7 +735,8 @@ int main(int argc, char **argv)
         }
 
         const MgpuScheduleSummary summary =
-            summarize_schedule(artifacts.schedule, tool_options.device_count);
+            summarize_schedule(
+                artifacts.schedule, tool_options.config.pipeline.device_count);
 
         std::optional<PoseidonGpuExecutionPreflightResult> execution_preflight;
         if (needs_execution_preflight(tool_options))
@@ -720,24 +746,27 @@ int main(int argc, char **argv)
         }
 
         std::optional<PoseidonGpuSchedulePreflightResult> poseidon_preflight;
-        if (tool_options.poseidon_gpu_preflight)
+        if (tool_options.config.poseidon_gpu_preflight)
         {
             poseidon_preflight = execution_preflight.has_value()
                                      ? execution_preflight->poseidon_gpu_preflight
                                      : preflight_poseidon_gpu_schedule(
                                            artifacts.schedule,
                                            PoseidonGpuSchedulePreflightOptions{
-                                               tool_options.device_count,
-                                               tool_options.preflight_comm_available,
+                                               tool_options.config.pipeline.device_count,
+                                               tool_options.config
+                                                   .preflight_comm_available,
                                                tool_options
+                                                   .config
                                                    .preflight_relin_keys_available,
                                                tool_options
+                                                   .config
                                                    .preflight_galois_keys_available,
                                            });
         }
 
         std::optional<MgpuCommunicationPlan> communication_plan;
-        if (tool_options.communication_plan)
+        if (tool_options.config.communication_plan)
         {
             communication_plan =
                 execution_preflight.has_value() &&
@@ -749,7 +778,7 @@ int main(int argc, char **argv)
 
         std::optional<MgpuCommunicationExecutionPreflight>
             communication_execution_preflight;
-        if (tool_options.communication_execution_preflight &&
+        if (tool_options.config.communication_execution_preflight &&
             communication_plan.has_value() && communication_plan->ok())
         {
             communication_execution_preflight =
@@ -759,15 +788,11 @@ int main(int argc, char **argv)
                     ? execution_preflight->communication_execution_preflight
                     : preflight_communication_execution(
                           *communication_plan,
-                          MgpuCommunicationExecutionOptions{
-                              true,
-                              tool_options.execution_cuda_peer_available,
-                              tool_options.execution_inter_node_available,
-                          });
+                          tool_options.config.communication_execution);
         }
 
         std::optional<HevmArtifactReadinessResult> readiness;
-        if (tool_options.require_ready)
+        if (tool_options.config.require_ready)
         {
             HevmArtifactReadinessInput readiness_input;
             readiness_input.opcode_summary =
@@ -798,6 +823,7 @@ int main(int argc, char **argv)
                     ? parse_json_object(hevm_artifact_readiness_to_json(*readiness, -1))
                     : nullptr;
             std::cout << make_tool_summary_json(
+                             effective_config(tool_options),
                              summary, artifacts.constants.values.size(), io_plan.plan,
                              std::move(preflight), std::move(communication_plan_json),
                              std::move(communication_execution_preflight_json),
