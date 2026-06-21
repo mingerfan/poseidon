@@ -109,6 +109,64 @@ Json readiness_diagnostic_to_json(
     return root;
 }
 
+Json execution_preflight_diagnostics_to_json(
+    const PoseidonGpuExecutionPreflightResult &preflight)
+{
+    Json diagnostics = Json::array();
+
+    for (const ScheduleVerificationError &error :
+         preflight.schedule_verification.errors)
+    {
+        diagnostics.push_back(Json{
+            { "stage", "schedule_verification" },
+            { "location", error.op_index },
+            { "message", error.message },
+        });
+    }
+
+    for (const PoseidonGpuSchedulePreflightDiagnostic &diagnostic :
+         preflight.poseidon_gpu_preflight.diagnostics)
+    {
+        diagnostics.push_back(Json{
+            { "stage", "poseidon_gpu_preflight" },
+            { "location", diagnostic.op_index },
+            { "message", diagnostic.message },
+        });
+    }
+
+    if (preflight.communication_plan_evaluated)
+    {
+        for (const MgpuCommunicationPlanDiagnostic &diagnostic :
+             preflight.communication_plan.diagnostics)
+        {
+            diagnostics.push_back(Json{
+                { "stage", "communication_plan" },
+                { "location", diagnostic.op_index },
+                { "message", diagnostic.message },
+            });
+        }
+    }
+
+    if (preflight.communication_execution_preflight_evaluated)
+    {
+        for (const MgpuCommunicationExecutionDiagnostic &diagnostic :
+             preflight.communication_execution_preflight.diagnostics)
+        {
+            diagnostics.push_back(Json{
+                { "stage", "communication_execution_preflight" },
+                { "location", diagnostic.route_index },
+                { "message", diagnostic.message },
+                { "route_index", diagnostic.route_index },
+                { "transport", to_string(diagnostic.transport) },
+                { "source_device", diagnostic.source_device },
+                { "destination_device", diagnostic.destination_device },
+            });
+        }
+    }
+
+    return diagnostics;
+}
+
 bool artifact_read_succeeded(const DacapoHevmArtifactResult &artifacts)
 {
     for (const DacapoHevmArtifactDiagnostic &diagnostic : artifacts.diagnostics)
@@ -183,16 +241,8 @@ Json execution_gate_to_json(const HevmArtifactReportInput &input)
     }
     else if (execution_preflight_evaluated)
     {
-        const std::string diagnostics =
-            input.poseidon_gpu_execution_preflight->format_diagnostics();
-        if (!diagnostics.empty())
-        {
-            root["diagnostics"].push_back(Json{
-                { "stage", "poseidon_gpu_execution_preflight" },
-                { "location", 0 },
-                { "message", diagnostics },
-            });
-        }
+        root["diagnostics"] = execution_preflight_diagnostics_to_json(
+            *input.poseidon_gpu_execution_preflight);
     }
     return root;
 }

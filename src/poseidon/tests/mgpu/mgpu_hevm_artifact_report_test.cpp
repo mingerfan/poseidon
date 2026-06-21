@@ -274,6 +274,86 @@ void test_report_execution_gate_reports_not_ready()
         "readiness JSON should fail");
 }
 
+void test_report_execution_gate_without_readiness_keeps_structured_diagnostics()
+{
+    StaticScheduleExecutionConfig config;
+    config.pipeline.device_count = 2;
+    config.communication_plan = true;
+    config.communication_execution_preflight = true;
+
+    const MgpuSchedule schedule = make_report_schedule();
+    const MgpuScheduleSummary summary =
+        summarize_schedule(schedule, config.pipeline.device_count);
+
+    HevmIoBindingPlan io_plan;
+    io_plan.cipher_inputs.push_back(HevmCipherInputSlot{ 0, 1, 0, 40, 2, 2 });
+    io_plan.results.push_back(HevmResultSlot{ 0, 2, 2, 1, 40, 2 });
+
+    PoseidonGpuExecutionPreflightOptions execution_options;
+    execution_options.device_count = config.pipeline.device_count;
+    execution_options.copy_ops_have_comm = true;
+    execution_options.check_communication_plan = true;
+    execution_options.topology = make_single_node_topology(2);
+    execution_options.check_communication_execution = true;
+    execution_options.communication_execution = config.communication_execution;
+    const PoseidonGpuExecutionPreflightResult execution_preflight =
+        preflight_poseidon_gpu_execution_plan(schedule, execution_options);
+    require(!execution_preflight.ok(), "execution preflight should fail");
+
+    HevmArtifactReportInput input;
+    input.execution_config = &config;
+    input.schedule_summary = &summary;
+    input.io_plan = &io_plan;
+    input.poseidon_gpu_execution_preflight = &execution_preflight;
+
+    const nlohmann::json report =
+        nlohmann::json::parse(hevm_artifact_report_to_json(input));
+    require(
+        !report.at("execution_gate").at("ok").get<bool>(),
+        "execution gate without readiness should fail");
+    require(
+        !report.at("execution_gate")
+             .at("checks")
+             .at("readiness_evaluated")
+             .get<bool>(),
+        "execution gate should record missing readiness evaluation");
+    require(
+        report.at("execution_gate")
+                .at("diagnostics")
+                .at(0)
+                .at("stage")
+                .get<std::string>() == "communication_execution_preflight",
+        "execution gate fallback diagnostic stage mismatch");
+    require(
+        report.at("execution_gate")
+                .at("diagnostics")
+                .at(0)
+                .at("route_index")
+                .get<int>() == 0,
+        "execution gate fallback route index missing");
+    require(
+        report.at("execution_gate")
+                .at("diagnostics")
+                .at(0)
+                .at("transport")
+                .get<std::string>() == "cuda_peer",
+        "execution gate fallback transport missing");
+    require(
+        report.at("execution_gate")
+                .at("diagnostics")
+                .at(0)
+                .at("source_device")
+                .get<int>() == 0,
+        "execution gate fallback source device missing");
+    require(
+        report.at("execution_gate")
+                .at("diagnostics")
+                .at(0)
+                .at("destination_device")
+                .get<int>() == 1,
+        "execution gate fallback destination device missing");
+}
+
 void test_failure_report_includes_artifact_diagnostics()
 {
     StaticScheduleExecutionConfig config;
@@ -361,6 +441,7 @@ int main()
     {
         test_report_includes_execution_evidence();
         test_report_execution_gate_reports_not_ready();
+        test_report_execution_gate_without_readiness_keeps_structured_diagnostics();
         test_failure_report_includes_artifact_diagnostics();
         test_report_rejects_missing_required_sections();
     }

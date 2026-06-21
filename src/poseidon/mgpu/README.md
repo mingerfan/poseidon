@@ -303,7 +303,9 @@ top-level `execution_gate.diagnostics` path stays covered on single-GPU
 development machines. Communication execution diagnostics in that top-level
 gate preserve `route_index`, `transport`, `source_device`, and
 `destination_device` so cluster bring-up scripts can identify missing backends
-without parsing nested preflight text.
+without parsing nested preflight text. The same structured diagnostics are used
+when a report contains aggregate execution preflight data but no readiness
+result.
 
 `poseidon_mgpu_external_hevm_failure_report_mock_artifact_tests` uses an
 unsupported HEVM opcode mock to verify that the external artifact CTest path
