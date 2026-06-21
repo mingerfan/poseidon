@@ -44,6 +44,15 @@ MgpuOp op(
     return MgpuOp{ kind, device_id, std::move(inputs), std::move(outputs), {} };
 }
 
+MgpuOp op_with_attr(
+    MgpuOpKind kind, int device_id, std::vector<MgpuValueRef> inputs,
+    std::vector<MgpuValueRef> outputs, const std::string &attr_name, std::int64_t attr_value)
+{
+    MgpuOp result{ kind, device_id, std::move(inputs), std::move(outputs), {} };
+    result.integer_attributes.emplace(attr_name, attr_value);
+    return result;
+}
+
 void require(bool condition, const std::string &message)
 {
     if (!condition)
@@ -181,6 +190,23 @@ ParametersLiteral make_gpu_ckks_test_parameters()
         std::vector<Modulus>{},
         sec_level_type::none);
     parms.set_log_modulus(std::vector<std::uint32_t>(3, 30), {});
+    return parms;
+}
+
+ParametersLiteral make_gpu_ckks_keyswitch_test_parameters()
+{
+    ParametersLiteral parms(
+        CKKS,
+        /*log_n=*/12,
+        /*log_slots=*/11,
+        /*log_scale=*/20,
+        /*hamming_weight=*/0,
+        /*q0_level=*/0,
+        Modulus(0),
+        std::vector<Modulus>{},
+        std::vector<Modulus>{},
+        sec_level_type::none);
+    parms.set_log_modulus(std::vector<std::uint32_t>(3, 30), std::vector<std::uint32_t>(2, 30));
     return parms;
 }
 
@@ -333,6 +359,51 @@ void run_gpu_runtime_add_plain_rescale_smoke()
     require_ciphertexts_equal(expected_rescale, *handler.cipher_download(23));
 }
 
+void run_gpu_runtime_rotate_smoke()
+{
+    constexpr int device_id = 0;
+    constexpr int rotate_step = 1;
+    RmmPoolScope rmm_scope(device_id);
+
+    const ParametersLiteral parms = make_gpu_ckks_keyswitch_test_parameters();
+    PoseidonContext context(parms);
+    auto cpu_evaluator = PoseidonFactory::get_instance()->create_ckks_evaluator(context);
+
+    KeyGenerator keygen(context);
+    PublicKey public_key;
+    keygen.create_public_key(public_key);
+    GaloisKeys galois_keys;
+    keygen.create_galois_keys(std::vector<int>{ rotate_step }, galois_keys);
+
+    CKKSEncoder encoder(context);
+    Plaintext plain;
+    encoder.encode(std::vector<double>{ 1.0, 2.0, 3.0, 4.0 }, parms.scale(), plain);
+
+    Encryptor encryptor(context, public_key, keygen.secret_key());
+    Ciphertext cipher;
+    encryptor.encrypt(plain, cipher);
+
+    Ciphertext expected_rotate;
+    cpu_evaluator->rotate(cipher, expected_rotate, rotate_step, galois_keys);
+
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, device_id, {}, { value(30) }));
+    schedule.ops.push_back(op_with_attr(
+        MgpuOpKind::Rotate, device_id, { value(30) }, { value(31) },
+        "rotate_step", rotate_step));
+    schedule.ops.push_back(op(MgpuOpKind::Download, device_id, { value(31) }, {}));
+
+    PoseidonGpuScheduleHandler handler(context);
+    handler.bind_cipher_upload(30, std::make_shared<Ciphertext>(cipher));
+    handler.upload_keys_for_device(device_id, nullptr, &galois_keys);
+
+    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 1 });
+    const ScheduleExecutionResult result = interpreter.run(schedule, handler);
+    require(result.ok(), "GPU runtime rotate schedule failed:\n" + result.format_errors());
+    require(handler.has_cipher_download(31), "missing rotate output download");
+    require_ciphertexts_equal(expected_rotate, *handler.cipher_download(31));
+}
+
 }  // namespace
 
 int main()
@@ -348,6 +419,7 @@ int main()
         run_gpu_runtime_smoke();
         run_gpu_runtime_multiply_plain_smoke();
         run_gpu_runtime_add_plain_rescale_smoke();
+        run_gpu_runtime_rotate_smoke();
     }
     catch (const std::exception &ex)
     {
