@@ -65,12 +65,17 @@ void CopyDispatchingScheduleHandler::execute(
         op.device_id,
         source.object,
     });
-    if (copied_object != nullptr)
+    if (copied_object == nullptr)
     {
-        object_store.define(
-            op.outputs[0].id, value_kind_for_copy(op.kind), op.device_id,
-            std::move(copied_object));
+        std::ostringstream stream;
+        stream << "communication copy for output %" << op.outputs[0].id
+               << " returned no object handle";
+        throw std::runtime_error(stream.str());
     }
+
+    object_store.define(
+        op.outputs[0].id, value_kind_for_copy(op.kind), op.device_id,
+        std::move(copied_object));
 }
 
 }  // namespace poseidon::mgpu

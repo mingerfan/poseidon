@@ -53,6 +53,18 @@ public:
     std::vector<GpuCommCopyRequest> requests;
 };
 
+class NullReturningGpuComm final : public GpuComm
+{
+public:
+    std::shared_ptr<void> copy(const GpuCommCopyRequest &request) override
+    {
+        requests.push_back(request);
+        return nullptr;
+    }
+
+    std::vector<GpuCommCopyRequest> requests;
+};
+
 class RecordingFallback final : public ScheduleOpHandler
 {
 public:
@@ -118,6 +130,26 @@ void test_copy_dispatch_uses_comm_layer()
     require(fallback.op_kinds[1] == MgpuOpKind::Download, "fallback second op mismatch");
 }
 
+void test_copy_dispatch_rejects_null_comm_output()
+{
+    NullReturningGpuComm comm;
+    RecordingFallback fallback;
+    CopyDispatchingScheduleHandler handler(comm, &fallback);
+    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 1 });
+
+    const ScheduleExecutionResult result =
+        interpreter.run(make_same_device_copy_schedule(), handler);
+
+    require(!result.ok(), "null comm output should fail copy dispatch");
+    require(comm.requests.size() == 1, "comm should be called before null output failure");
+    require_contains(
+        result.format_errors(),
+        "communication copy for output %2 returned no object handle");
+    require(
+        !result.object_store.contains(2),
+        "null copy output should not be retained as metadata-only");
+}
+
 void test_same_device_comm_rejects_cross_device_copy()
 {
     SameDeviceGpuComm comm;
@@ -141,6 +173,7 @@ int main()
     try
     {
         test_copy_dispatch_uses_comm_layer();
+        test_copy_dispatch_rejects_null_comm_output();
         test_same_device_comm_rejects_cross_device_copy();
     }
     catch (const std::exception &ex)
