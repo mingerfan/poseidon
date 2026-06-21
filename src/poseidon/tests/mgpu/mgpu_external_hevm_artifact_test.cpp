@@ -2,6 +2,7 @@
 #include "poseidon/mgpu/comm/execution_preflight.h"
 #include "poseidon/mgpu/comm/topology.h"
 #include "poseidon/mgpu/ir/schedule_summary.h"
+#include "poseidon/mgpu/runtime/hevm_artifact_readiness.h"
 #include "poseidon/mgpu/runtime/hevm_io_binding.h"
 #include "poseidon/mgpu/runtime/poseidon_gpu_schedule_preflight.h"
 #include "poseidon/tests/mgpu/hevm_test_utils.h"
@@ -430,6 +431,23 @@ int main()
             preflight_communication_execution(
                 communication_plan, make_communication_execution_options());
         std::cout << dump_communication_execution_preflight(communication_preflight);
+
+        const HevmArtifactReadinessResult readiness =
+            check_hevm_artifact_readiness(HevmArtifactReadinessInput{
+                &opcode_summary,
+                &preflight,
+                &communication_plan,
+                &communication_preflight,
+            });
+        std::cout << dump_hevm_artifact_readiness(readiness);
+        if (parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_REQUIRE_READY")))
+        {
+            require(
+                readiness.ok(),
+                "external HEVM artifact is not ready for execution:\n" +
+                    readiness.format_diagnostics());
+        }
+
         if (!artifacts.debug_dump.empty())
         {
             std::cout << '\n' << artifacts.debug_dump;

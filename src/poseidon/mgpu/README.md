@@ -105,6 +105,7 @@ Then inspect the ResNet20 artifact without executing GPU operators:
   --preflight-comm-available \
   --preflight-relin-keys \
   --preflight-galois-keys \
+  --require-ready \
   --summary-json \
   --no-schedule
 ```
@@ -122,6 +123,7 @@ POSEIDON_MGPU_EXTERNAL_PREFLIGHT_COMM_AVAILABLE=1 \
 POSEIDON_MGPU_EXTERNAL_PREFLIGHT_RELIN_KEYS=1 \
 POSEIDON_MGPU_EXTERNAL_PREFLIGHT_GALOIS_KEYS=1 \
 POSEIDON_MGPU_EXTERNAL_EXECUTION_CUDA_PEER_AVAILABLE=1 \
+POSEIDON_MGPU_EXTERNAL_REQUIRE_READY=1 \
 ctest --test-dir /tmp/poseidon-mgpu-tools --output-on-failure \
   -R '^poseidon_mgpu_external_hevm_artifact_tests$'
 ```
@@ -139,6 +141,9 @@ Interpret the diagnostics conservatively:
 - `communication_plan` entries marked `inter_node` are diagnostic only today.
   Single-node 8-GPU execution should use CUDA peer communication first; cluster
   transport is a later backend behind the same mgpu communication interface.
+- `--require-ready` and `POSEIDON_MGPU_EXTERNAL_REQUIRE_READY=1` turn these
+  CPU-side diagnostics into a hard gate. Use them before execution attempts; do
+  not use a passing readiness gate as a substitute for a real GPU correctness run.
 
 ## External HEVM Artifact Check
 
@@ -171,6 +176,7 @@ Optional environment variables:
 - `POSEIDON_MGPU_EXTERNAL_DEVICES_PER_NODE=8`
 - `POSEIDON_MGPU_EXTERNAL_EXECUTION_CUDA_PEER_AVAILABLE=1`
 - `POSEIDON_MGPU_EXTERNAL_EXECUTION_INTER_NODE_AVAILABLE=1`
+- `POSEIDON_MGPU_EXTERNAL_REQUIRE_READY=1`
 
 `poseidon_mgpu_external_hevm_mock_artifact_tests` exercises the same CTest
 binary with a generated mock `.hevm + .cst` artifact, preflight availability
@@ -193,6 +199,7 @@ poseidon_mgpu_dacapo_hevm_dump \
   --preflight-comm-available \
   --preflight-relin-keys \
   --preflight-galois-keys \
+  --require-ready \
   --summary-json \
   --no-schedule
 ```
@@ -200,6 +207,11 @@ poseidon_mgpu_dacapo_hevm_dump \
 Preflight is CPU-only. It reports whether the schedule needs the mgpu
 communication layer, relinearization keys, Galois keys, or unsupported
 Poseidon GPU operations such as bootstrap fallback before attempting execution.
+Without `--require-ready`, the dump tool prints diagnostics and exits
+successfully if loading and schedule construction succeeded. With
+`--require-ready`, unsupported HEVM opcodes, Poseidon GPU preflight failures,
+communication plan failures, or unavailable communication execution routes
+produce a non-zero exit code.
 
 ## Communication Topology Planning
 

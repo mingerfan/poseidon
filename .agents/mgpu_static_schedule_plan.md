@@ -168,11 +168,16 @@ Dacapo artifact debugging:
   `POSEIDON_MGPU_EXTERNAL_NODES`, and
   `POSEIDON_MGPU_EXTERNAL_DEVICES_PER_NODE`,
   `POSEIDON_MGPU_EXTERNAL_EXECUTION_CUDA_PEER_AVAILABLE`, and
-  `POSEIDON_MGPU_EXTERNAL_EXECUTION_INTER_NODE_AVAILABLE`.
+  `POSEIDON_MGPU_EXTERNAL_EXECUTION_INTER_NODE_AVAILABLE`. Set
+  `POSEIDON_MGPU_EXTERNAL_REQUIRE_READY=1` only when preflight failures should
+  make the external artifact check fail.
 - `poseidon_mgpu_external_hevm_mock_artifact_tests` uses a generated mock
   `.hevm + .cst` artifact to exercise the same external artifact path,
   preflight flags, and non-trivial topology on machines without ResNet20
   artifacts.
+- `poseidon_mgpu_external_hevm_mock_artifact_require_ready_tests` covers the
+  same path with the readiness gate enabled so future changes cannot silently
+  weaken the hard pre-execution check.
 - Use the CPU-only Poseidon GPU preflight before execution on real artifacts.
   It reports required communication, RelinKeys, GaloisKeys, invalid devices,
   and unsupported executor ops without linking CUDA/RMM. The dump tool exposes
@@ -191,6 +196,11 @@ Dacapo artifact debugging:
   see the full HEVM opcode distribution before schedule translation. This is
   especially important for detecting unsupported `ModswitchC` and `UpscaleC`
   opcodes in ResNet20 artifacts.
+- Use `poseidon_mgpu_dacapo_hevm_dump --require-ready` to combine opcode
+  support, Poseidon GPU preflight, communication planning, and communication
+  execution preflight into a single CPU-only hard gate. Passing this gate means
+  the artifact is ready to attempt execution with the declared backends; it does
+  not replace an actual GPU correctness run.
 
 ResNet20 artifact runbook:
 
@@ -207,13 +217,14 @@ ResNet20 artifact runbook:
   Verify both files exist before running Poseidon diagnostics.
 - First Poseidon gate is CPU-side only:
   `poseidon_mgpu_dacapo_hevm_dump --opcode-summary --communication-plan
-  --communication-execution-preflight --poseidon-gpu-preflight --summary-json
-  --no-schedule` with explicit `--hevm`, `--constants`, placement flags, and
-  available-backend flags.
+  --communication-execution-preflight --poseidon-gpu-preflight --require-ready
+  --summary-json --no-schedule` with explicit `--hevm`, `--constants`,
+  placement flags, and available-backend flags.
 - Repeatable artifact validation uses the skipped-by-default
   `poseidon_mgpu_external_hevm_artifact_tests` with
   `POSEIDON_MGPU_EXTERNAL_HEVM`, `POSEIDON_MGPU_EXTERNAL_CST`, and explicit
-  placement, preflight, and topology environment variables.
+  placement, preflight, topology, and `POSEIDON_MGPU_EXTERNAL_REQUIRE_READY`
+  environment variables when a hard gate is intended.
 - Treat unsupported opcode diagnostics as adapter work, not scheduler work.
   Do not guess `ModswitchC` or `UpscaleC` semantics.
 - Treat bootstrap fallback diagnostics as an execution-backend gap. Loading,
@@ -241,6 +252,7 @@ ResNet20 artifact runbook:
 | Poseidon GPU preflight tests | CPU-only checks report required comm/keys and unsupported GPU executor operations before attempting GPU execution. |
 | Communication topology tests | CPU-only tests classify scheduled copy ops for single-node and uniform cluster topologies without linking NCCL/MPI. |
 | Communication execution preflight tests | CPU-only tests report when same-device, CUDA peer, or inter-node planned routes lack an executable backend. |
+| HEVM artifact readiness tests | CPU-only tests combine opcode support, Poseidon GPU preflight, communication planning, and execution preflight into an optional hard gate. |
 
 ## 6. Phases
 
