@@ -6,9 +6,8 @@
 #include "poseidon/mgpu/comm/cuda_peer_comm.h"
 #include "poseidon/mgpu/comm/gpu_object_materializer.h"
 #include "poseidon/mgpu/comm/materialized_gpu_comm.h"
-#include "poseidon/mgpu/runtime/comm_schedule_handler.h"
 #include "poseidon/mgpu/runtime/poseidon_gpu_schedule_handler.h"
-#include "poseidon/mgpu/runtime/schedule_interpreter.h"
+#include "poseidon/mgpu/runtime/static_schedule_executor.h"
 #include "poseidon/parameters_literal.h"
 #include "poseidon/plaintext.h"
 #include "poseidon/poseidon_context.h"
@@ -223,10 +222,9 @@ void run_cross_device_copy_smoke()
     PoseidonGpuObjectCopyMaterializer materializer;
     CudaPeerComm peer_backend;
     MaterializedGpuComm comm(materializer, peer_backend);
-    CopyDispatchingScheduleHandler handler(comm, &gpu_handler);
+    StaticScheduleExecutor executor(comm, gpu_handler, StaticScheduleExecutorOptions{ 2 });
 
-    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 2 });
-    const ScheduleExecutionResult result = interpreter.run(schedule, handler);
+    const ScheduleExecutionResult result = executor.run(schedule);
     require(result.ok(), "GPU runtime cross-device schedule failed:\n" + result.format_errors());
     require(gpu_handler.has_cipher_download(5), "missing add output download");
     require_ciphertexts_equal(expected_sum, *gpu_handler.cipher_download(5));
