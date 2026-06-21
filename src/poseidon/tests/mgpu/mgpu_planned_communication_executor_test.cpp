@@ -236,6 +236,13 @@ void test_executor_reports_missing_backend_before_execution()
     const ScheduleExecutionResult result = executor.run(make_two_route_schedule());
 
     require(!result.ok(), "missing inter-node backend should fail");
+    require(result.errors.size() == 1, "expected one missing backend error");
+    require(
+        result.errors[0].op_index == 2,
+        "missing inter-node backend should be reported at second copy op");
+    require_contains(
+        result.format_errors(),
+        "op #2: communication route #1");
     require_contains(
         result.format_errors(),
         "inter-node communication backend is not available");
@@ -245,6 +252,47 @@ void test_executor_reports_missing_backend_before_execution()
     require(
         materializer.requests.empty(),
         "backend preflight should stop before materialization");
+    require(local_backend.requests.empty(), "local backend should not run");
+    require(
+        inter_node_backend.requests.empty(),
+        "inter-node backend should not run");
+}
+
+void test_executor_reports_missing_cuda_peer_backend_at_copy_op()
+{
+    UploadVectorHandler handler;
+    VectorCopyMaterializer materializer;
+    CopyingLocalBackend local_backend;
+    CopyingInterNodeBackend inter_node_backend;
+
+    MgpuCommunicationExecutionOptions options;
+    options.cuda_peer_available = false;
+    options.inter_node_available = true;
+
+    PlannedCommunicationStaticScheduleExecutor executor(
+        make_uniform_cluster_topology(2, 4), materializer, local_backend,
+        inter_node_backend, handler, StaticScheduleExecutorOptions{ 5 },
+        options);
+
+    const ScheduleExecutionResult result = executor.run(make_two_route_schedule());
+
+    require(!result.ok(), "missing CUDA peer backend should fail");
+    require(result.errors.size() == 1, "expected one missing CUDA peer error");
+    require(
+        result.errors[0].op_index == 1,
+        "missing CUDA peer backend should be reported at first copy op");
+    require_contains(
+        result.format_errors(),
+        "op #1: communication route #0");
+    require_contains(
+        result.format_errors(),
+        "CUDA peer or host-staged copy backend is not available");
+    require(
+        handler.executed_ops.empty(),
+        "CUDA backend preflight should stop execution before upload");
+    require(
+        materializer.requests.empty(),
+        "CUDA backend preflight should stop before materialization");
     require(local_backend.requests.empty(), "local backend should not run");
     require(
         inter_node_backend.requests.empty(),
@@ -318,6 +366,7 @@ int main()
         test_executor_uses_static_plan_for_copy_routes();
         test_executor_reports_plan_diagnostics_before_execution();
         test_executor_reports_missing_backend_before_execution();
+        test_executor_reports_missing_cuda_peer_backend_at_copy_op();
         test_executor_from_config_uses_topology_and_backend_declarations();
     }
     catch (const std::exception &ex)
