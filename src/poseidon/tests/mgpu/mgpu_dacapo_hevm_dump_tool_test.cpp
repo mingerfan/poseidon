@@ -397,6 +397,59 @@ void test_config_file_rejects_stale_cli_compute_devices(
         stderr_text, "--compute-devices entries must be in [0, devices)");
 }
 
+void test_require_ready_not_ready_report_preserves_route_metadata(
+    const std::string &tool_path)
+{
+    TempDir temp;
+    const std::string hevm_path = temp.path("mock.hevm");
+    const std::string constants_path = temp.path("mock.cst");
+    const std::string summary_path = temp.path("not_ready_summary.json");
+    const std::string stdout_path = temp.path("stdout.txt");
+    const std::string stderr_path = temp.path("stderr.txt");
+    write_binary_file(hevm_path, make_hevm_binary());
+    write_binary_file(constants_path, make_constant_file());
+
+    const std::string command =
+        shell_quote(tool_path) +
+        " --hevm " + shell_quote(hevm_path) +
+        " --constants " + shell_quote(constants_path) +
+        " --devices 2"
+        " --upload-device 0"
+        " --compute-devices 1"
+        " --download-device 0"
+        " --opcode-summary"
+        " --communication-plan"
+        " --communication-execution-preflight"
+        " --poseidon-gpu-preflight"
+        " --preflight-comm-available"
+        " --preflight-relin-keys"
+        " --preflight-galois-keys"
+        " --require-ready"
+        " --write-summary-json " + shell_quote(summary_path) +
+        " --no-schedule > " + shell_quote(stdout_path) +
+        " 2> " + shell_quote(stderr_path);
+
+    const int exit_code = std::system(command.c_str());
+    require(exit_code != 0, "require-ready command should fail: " + command);
+
+    const std::string stdout_text = read_text_file(stdout_path);
+    const std::string summary_text = read_text_file(summary_path);
+
+    require_not_contains(stdout_text, "mgpu.schedule");
+    require_contains(summary_text, "\"status\": \"not_ready\"");
+    require_contains(summary_text, "\"execution_gate\"");
+    require_contains(
+        summary_text,
+        "\"stage\": \"communication_execution_preflight\"");
+    require_contains(summary_text, "\"route_index\": 0");
+    require_contains(summary_text, "\"transport\": \"cuda_peer\"");
+    require_contains(summary_text, "\"source_device\": 0");
+    require_contains(summary_text, "\"destination_device\": 1");
+    require_contains(
+        summary_text,
+        "CUDA peer or host-staged copy backend is not available");
+}
+
 void test_failure_report_for_unsupported_opcode(const std::string &tool_path)
 {
     TempDir temp;
@@ -557,6 +610,7 @@ int main(int argc, char **argv)
         test_config_file_command_line_overrides_when_config_is_last(
             argv[1], argv[2]);
         test_config_file_rejects_stale_cli_compute_devices(argv[1], argv[2]);
+        test_require_ready_not_ready_report_preserves_route_metadata(argv[1]);
         test_failure_report_for_unsupported_opcode(argv[1]);
         test_failure_report_for_missing_hevm_file(argv[1]);
         test_failure_report_for_missing_constants_file(argv[1]);
