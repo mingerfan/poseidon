@@ -116,6 +116,11 @@ bool should_expect_missing_hevm_failure_report()
     return parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_EXPECT_MISSING_HEVM_REPORT"));
 }
 
+bool should_expect_missing_constants_failure_report()
+{
+    return parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_EXPECT_MISSING_CONSTANTS_REPORT"));
+}
+
 std::optional<int> parse_optional_device(const char *name)
 {
     const char *value = get_env(name);
@@ -705,6 +710,9 @@ int main()
             parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_UNSUPPORTED_MOCK_ARTIFACT"));
         const bool use_missing_hevm_mock_artifact =
             parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_MISSING_HEVM_MOCK_ARTIFACT"));
+        const bool use_missing_constants_mock_artifact =
+            parse_bool(get_env(
+                "POSEIDON_MGPU_EXTERNAL_MISSING_CONSTANTS_MOCK_ARTIFACT"));
         std::optional<TempDir> mock_temp;
         std::string hevm_path = get_env("POSEIDON_MGPU_EXTERNAL_HEVM") == nullptr
                                     ? ""
@@ -714,7 +722,8 @@ int main()
                                          : get_env("POSEIDON_MGPU_EXTERNAL_CST");
 
         if (use_mock_artifact || use_rich_mock_artifact ||
-            use_unsupported_mock_artifact || use_missing_hevm_mock_artifact)
+            use_unsupported_mock_artifact || use_missing_hevm_mock_artifact ||
+            use_missing_constants_mock_artifact)
         {
             mock_temp.emplace();
             hevm_path = mock_temp->path("mock_resnet20.hevm");
@@ -728,10 +737,13 @@ int main()
                         : (use_rich_mock_artifact ? make_rich_mock_hevm_binary()
                                                   : make_mock_hevm_binary()));
             }
-            write_binary_file(
-                constants_path,
-                use_rich_mock_artifact ? make_rich_mock_constant_file()
-                                       : make_mock_constant_file());
+            if (!use_missing_constants_mock_artifact)
+            {
+                write_binary_file(
+                    constants_path,
+                    use_rich_mock_artifact ? make_rich_mock_constant_file()
+                                           : make_mock_constant_file());
+            }
         }
 
         if (hevm_path.empty() && constants_path.empty())
@@ -741,7 +753,8 @@ int main()
                       << "or POSEIDON_MGPU_EXTERNAL_MOCK_ARTIFACT=1 or "
                       << "POSEIDON_MGPU_EXTERNAL_RICH_MOCK_ARTIFACT=1 or "
                       << "POSEIDON_MGPU_EXTERNAL_UNSUPPORTED_MOCK_ARTIFACT=1 or "
-                      << "POSEIDON_MGPU_EXTERNAL_MISSING_HEVM_MOCK_ARTIFACT=1\n";
+                      << "POSEIDON_MGPU_EXTERNAL_MISSING_HEVM_MOCK_ARTIFACT=1 or "
+                      << "POSEIDON_MGPU_EXTERNAL_MISSING_CONSTANTS_MOCK_ARTIFACT=1\n";
             return kSkip;
         }
         if (hevm_path.empty() || constants_path.empty())
@@ -813,6 +826,10 @@ int main()
                           << '\n';
             }
             if (should_expect_artifact_failure_report())
+            {
+                return EXIT_SUCCESS;
+            }
+            if (should_expect_missing_constants_failure_report())
             {
                 return EXIT_SUCCESS;
             }

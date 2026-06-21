@@ -295,6 +295,9 @@ before HEVM I/O binding.
 `poseidon_mgpu_external_hevm_missing_input_report_mock_artifact_tests` covers
 the even earlier missing-HEVM-file path, which is useful when validating real
 ResNet20 artifact paths for the first time.
+`poseidon_mgpu_external_hevm_missing_constants_report_mock_artifact_tests`
+covers the matching missing-constants-file path after HEVM opcode-summary
+preflight has succeeded.
 
 The dump tool can run the same preflight without CTest:
 

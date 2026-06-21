@@ -224,6 +224,9 @@ Dacapo artifact debugging:
 - Keep a missing-HEVM mock report test for both dump-tool and external CTest
   paths so incorrect real artifact paths leave not-ready reports during
   ResNet20 bring-up.
+- Keep a missing-constants mock report test for both dump-tool and external
+  CTest paths so `.hevm` success plus missing `.cst` still leaves a
+  machine-readable not-ready report.
 - External artifact tests also accept `POSEIDON_MGPU_EXTERNAL_SCHEDULE_DUMP` to
   write the readable MLIR-like static schedule separately from stdout and the
   machine-readable report.
