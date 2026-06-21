@@ -8,8 +8,13 @@ communication backends that are expected to be available.
 - `single_node_8gpu.json`: first real target for an 8-GPU node using CUDA peer
   communication.
 - `cluster_4x8_preview.json`: planning template for a 4-node, 8-GPU-per-node
-  cluster. It keeps `inter_node` false and `require_ready` false until a real
-  inter-node transport backend exists.
+  cluster using all logical GPU IDs in round-robin order.
+- `cluster_4x8_node_spread_preview.json`: diagnostic planning template that
+  round-robins across one representative GPU per node, making inter-node copy
+  routes visible on small mock artifacts.
+
+The cluster templates keep `inter_node` false and `require_ready` false until a
+real inter-node transport backend exists.
 
 Use a template with:
 

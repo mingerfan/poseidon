@@ -170,8 +170,10 @@ Dacapo artifact debugging:
   4x8 preview configs can be reused across artifacts.
 - Bundled config templates live under `src/poseidon/mgpu/configs/`. Use
   `single_gpu.json` for compatibility checks, `single_node_8gpu.json` for the
-  first 8-GPU run, and `cluster_4x8_preview.json` only for planning until an
-  inter-node transport backend exists.
+  first 8-GPU run, `cluster_4x8_preview.json` for all-device cluster planning,
+  and `cluster_4x8_node_spread_preview.json` to force inter-node diagnostics on
+  small mock artifacts. Cluster configs are planning-only until an inter-node
+  transport backend exists.
 - Use the dump tool before running a real ResNet20 artifact to confirm op
   counts, HEVM I/O metadata, explicit copy counts, and device distribution.
   For large artifacts, use `--write-summary-json` and `--write-schedule`

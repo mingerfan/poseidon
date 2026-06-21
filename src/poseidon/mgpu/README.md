@@ -139,6 +139,7 @@ CPU-only JSON config and be reused across artifacts. Bundled templates live in
 - `single_gpu.json`
 - `single_node_8gpu.json`
 - `cluster_4x8_preview.json`
+- `cluster_4x8_node_spread_preview.json`
 
 The 8-GPU template is the intended first multi-GPU target:
 
@@ -270,6 +271,12 @@ path with `POSEIDON_MGPU_EXTERNAL_CONFIG_JSON`, and
 `single_node_8gpu.json` through `POSEIDON_MGPU_EXTERNAL_CONFIG`. Together they
 keep config-driven placement, topology, preflight, and backend declarations
 covered without a real ResNet20 artifact.
+
+`poseidon_mgpu_external_hevm_cluster_preview_mock_artifact_tests` uses the
+bundled `cluster_4x8_node_spread_preview.json` and asserts that inter-node
+routes are reported as not-ready while `inter_node` execution remains
+unavailable. This is diagnostic coverage only; it does not add or require a
+cluster transport.
 
 `poseidon_mgpu_external_hevm_report_mock_artifact_tests` writes the shared JSON
 report and readable schedule dump from the external artifact CTest path,

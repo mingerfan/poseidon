@@ -451,6 +451,20 @@ if(POSEIDON_BUILD_MGPU_TESTS)
             ENVIRONMENT "${POSEIDON_MGPU_EXTERNAL_HEVM_CONFIG_FILE_MOCK_ENV}")
 
     add_test(
+        NAME poseidon_mgpu_external_hevm_cluster_preview_mock_artifact_tests
+        COMMAND poseidon_mgpu_external_hevm_artifact_tests
+    )
+    set(POSEIDON_MGPU_EXTERNAL_HEVM_CLUSTER_PREVIEW_MOCK_ENV
+        "POSEIDON_MGPU_EXTERNAL_RICH_MOCK_ARTIFACT=1"
+        "POSEIDON_MGPU_EXTERNAL_CONFIG=${POSEIDON_INCLUDES_DIR}/src/poseidon/mgpu/configs/cluster_4x8_node_spread_preview.json"
+        "POSEIDON_MGPU_EXTERNAL_EXPECT_INTER_NODE_MISSING=1"
+    )
+    set_tests_properties(
+        poseidon_mgpu_external_hevm_cluster_preview_mock_artifact_tests
+        PROPERTIES
+            ENVIRONMENT "${POSEIDON_MGPU_EXTERNAL_HEVM_CLUSTER_PREVIEW_MOCK_ENV}")
+
+    add_test(
         NAME poseidon_mgpu_external_hevm_mock_artifact_require_ready_tests
         COMMAND poseidon_mgpu_external_hevm_artifact_tests
     )

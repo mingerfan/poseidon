@@ -346,6 +346,9 @@ void test_bundled_config_templates(const std::filesystem::path &config_dir)
         config_dir, "single_node_8gpu.json", 8, 1, 8, true, false, true);
     test_config_template(
         config_dir, "cluster_4x8_preview.json", 32, 4, 8, true, false, false);
+    test_config_template(
+        config_dir, "cluster_4x8_node_spread_preview.json", 32, 4, 8, true,
+        false, false);
 }
 
 }  // namespace

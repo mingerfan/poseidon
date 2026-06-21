@@ -101,6 +101,11 @@ bool parse_bool(const char *value)
     return text == "1" || text == "ON" || text == "on" || text == "true" || text == "TRUE";
 }
 
+bool should_expect_inter_node_missing()
+{
+    return parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_EXPECT_INTER_NODE_MISSING"));
+}
+
 std::optional<int> parse_optional_device(const char *name)
 {
     const char *value = get_env(name);
@@ -687,6 +692,27 @@ int main()
         const HevmArtifactReadinessResult readiness =
             check_hevm_artifact_readiness(readiness_input);
         std::cout << dump_hevm_artifact_readiness(readiness);
+
+        if (should_expect_inter_node_missing())
+        {
+            require(
+                communication_plan.inter_node_copies > 0,
+                "expected cluster preview to produce inter-node copy routes");
+            require(
+                communication_preflight.inter_node_routes > 0,
+                "expected cluster preview to preflight inter-node routes");
+            require(
+                !communication_preflight.ok(),
+                "expected cluster preview to report missing inter-node backend");
+            require(
+                !readiness.ok(),
+                "expected cluster preview readiness to remain not-ready");
+            require(
+                readiness.format_diagnostics().find(
+                    "inter-node communication backend is not available") !=
+                    std::string::npos,
+                "expected readiness diagnostics to mention missing inter-node backend");
+        }
 
         if (const char *report_path = get_env("POSEIDON_MGPU_EXTERNAL_REPORT_JSON"))
         {
