@@ -1,6 +1,8 @@
 add_library(poseidon_mgpu STATIC
+    comm/gpu_comm.cpp
     compiler/schedule_verifier.cpp
     ir/schedule.cpp
+    runtime/comm_schedule_handler.cpp
     runtime/object_store.cpp
     runtime/schedule_interpreter.cpp
 )
@@ -20,11 +22,20 @@ if(POSEIDON_BUILD_MGPU_TESTS)
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_ir_test.cpp
     )
 
+    add_executable(poseidon_mgpu_comm_tests
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_comm_test.cpp
+    )
+
     add_executable(poseidon_mgpu_runtime_tests
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_runtime_test.cpp
     )
 
     target_link_libraries(poseidon_mgpu_ir_tests
+        PRIVATE
+            poseidon_mgpu
+    )
+
+    target_link_libraries(poseidon_mgpu_comm_tests
         PRIVATE
             poseidon_mgpu
     )
@@ -37,6 +48,11 @@ if(POSEIDON_BUILD_MGPU_TESTS)
     add_test(
         NAME poseidon_mgpu_ir_tests
         COMMAND poseidon_mgpu_ir_tests
+    )
+
+    add_test(
+        NAME poseidon_mgpu_comm_tests
+        COMMAND poseidon_mgpu_comm_tests
     )
 
     add_test(
