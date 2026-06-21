@@ -1,6 +1,7 @@
 #include "poseidon/mgpu/runtime/poseidon_gpu_hevm_executor.h"
 
 #include "poseidon/mgpu/runtime/poseidon_gpu_schedule_handler.h"
+#include "poseidon/mgpu/runtime/poseidon_gpu_schedule_preflight.h"
 #include "poseidon/mgpu/runtime/static_schedule_executor.h"
 
 #include <algorithm>
@@ -19,6 +20,17 @@ void add_error(
 {
     result.execution.errors.push_back(
         ScheduleExecutionError{ op_index, std::move(message) });
+}
+
+void add_preflight_errors(
+    PoseidonGpuHevmExecutionResult &result,
+    const PoseidonGpuSchedulePreflightResult &preflight)
+{
+    for (const PoseidonGpuSchedulePreflightDiagnostic &diagnostic :
+         preflight.diagnostics)
+    {
+        add_error(result, diagnostic.op_index, "preflight: " + diagnostic.message);
+    }
 }
 
 std::vector<int> schedule_devices(const MgpuSchedule &schedule)
@@ -82,6 +94,21 @@ PoseidonGpuHevmExecutionResult execute_hevm_static_plan_with_poseidon_gpu(
         return result;
     }
 
+    const PoseidonGpuSchedulePreflightResult preflight =
+        preflight_poseidon_gpu_schedule(
+            plan.schedule,
+            PoseidonGpuSchedulePreflightOptions{
+                options.device_count,
+                /*copy_ops_have_comm=*/false,
+                options.relin_keys != nullptr,
+                options.galois_keys != nullptr,
+            });
+    if (!preflight.ok())
+    {
+        add_preflight_errors(result, preflight);
+        return result;
+    }
+
     try
     {
         PoseidonGpuScheduleHandler handler(context);
@@ -116,6 +143,21 @@ PoseidonGpuHevmExecutionResult execute_hevm_static_plan_with_poseidon_gpu(
     if (options.device_count <= 0)
     {
         add_error(result, 0, "device_count must be positive");
+        return result;
+    }
+
+    const PoseidonGpuSchedulePreflightResult preflight =
+        preflight_poseidon_gpu_schedule(
+            plan.schedule,
+            PoseidonGpuSchedulePreflightOptions{
+                options.device_count,
+                /*copy_ops_have_comm=*/true,
+                options.relin_keys != nullptr,
+                options.galois_keys != nullptr,
+            });
+    if (!preflight.ok())
+    {
+        add_preflight_errors(result, preflight);
         return result;
     }
 

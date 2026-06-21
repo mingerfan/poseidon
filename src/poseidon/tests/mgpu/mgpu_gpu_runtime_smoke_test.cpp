@@ -69,6 +69,14 @@ void require(bool condition, const std::string &message)
     }
 }
 
+void require_contains(const std::string &text, const std::string &needle)
+{
+    if (text.find(needle) == std::string::npos)
+    {
+        throw std::runtime_error("expected text to contain: " + needle + "\ntext:\n" + text);
+    }
+}
+
 void require_plaintexts_equal(const Plaintext &expected, const Plaintext &actual)
 {
     require(actual.coeff_count() == expected.coeff_count(), "plaintext coeff_count mismatch");
@@ -467,6 +475,74 @@ void run_gpu_runtime_hevm_constants_smoke()
     require_ciphertexts_equal(expected_product, *gpu_result.results[0]);
 }
 
+void run_gpu_runtime_hevm_preflight_failures()
+{
+    const ParametersLiteral parms = make_gpu_ckks_test_parameters();
+    PoseidonContext context(parms);
+
+    const std::string hevm = test::make_hevm_binary(
+        1, 1, 2, 1, { 1 },
+        {
+            test::HevmOpRecord{ 0, 0, 0, test::make_hevm_encode_attr(2, 20) },
+            test::HevmOpRecord{ 9, 1, 0, 0 },
+        },
+        test::HevmConfigMetadata{
+            { 20 },
+            { 2 },
+            { 40 },
+            { 2 },
+            2,
+        });
+
+    StaticSchedulePipelineOptions options;
+    options.device_count = 1;
+    const StaticSchedulePipelineResult pipeline = prepare_dacapo_static_schedule(
+        hevm, DacapoAdapterOptions{ DacapoInputFormat::HevmBinary }, options);
+    require(pipeline.ok(), "HEVM GPU pipeline failed:\n" + pipeline.format_diagnostics());
+
+    const DacapoConstantParseResult constants =
+        parse_dacapo_constant_file(make_hevm_constant_file());
+    require(constants.ok(), "HEVM constants parse failed:\n" + constants.format_diagnostics());
+
+    DacapoHevmArtifactResult artifacts;
+    artifacts.schedule = pipeline.schedule;
+    artifacts.constants = constants.table;
+
+    const HevmStaticExecutionPlanResult execution_plan =
+        prepare_hevm_static_execution_plan(context, artifacts);
+    require(
+        execution_plan.ok(),
+        "HEVM static execution plan failed:\n" + execution_plan.format_diagnostics());
+
+    HevmStaticExecutionPlan plan_with_same_device_copy = execution_plan.plan;
+    insert_same_device_cipher_copy_before_multiply_plain(plan_with_same_device_copy);
+    const PoseidonGpuHevmExecutionResult copy_without_comm =
+        execute_hevm_static_plan_with_poseidon_gpu(
+            context, plan_with_same_device_copy,
+            std::vector<std::shared_ptr<const Ciphertext>>{},
+            PoseidonGpuHevmExecutionOptions{ 1 });
+    require(!copy_without_comm.ok(), "copy without comm should fail preflight");
+    require_contains(copy_without_comm.format_errors(), "preflight");
+    require_contains(copy_without_comm.format_errors(), "communication layer");
+
+    HevmStaticExecutionPlan plan_with_rotate = execution_plan.plan;
+    plan_with_rotate.schedule.ops.insert(
+        plan_with_rotate.schedule.ops.end() - 1,
+        op_with_attr(
+            MgpuOpKind::Rotate, 0, { value(1) }, { value(100) },
+            "rotate_step", 1));
+    plan_with_rotate.schedule.ops.back().inputs[0] = value(100);
+    plan_with_rotate.io_plan.results[0].value_id = 100;
+
+    const PoseidonGpuHevmExecutionResult rotate_without_keys =
+        execute_hevm_static_plan_with_poseidon_gpu(
+            context, plan_with_rotate, std::vector<std::shared_ptr<const Ciphertext>>{},
+            PoseidonGpuHevmExecutionOptions{ 1 });
+    require(!rotate_without_keys.ok(), "rotate without keys should fail preflight");
+    require_contains(rotate_without_keys.format_errors(), "preflight");
+    require_contains(rotate_without_keys.format_errors(), "GaloisKeys");
+}
+
 void run_gpu_runtime_add_plain_rescale_smoke()
 {
     constexpr int device_id = 0;
@@ -650,6 +726,7 @@ int main()
         run_gpu_runtime_smoke();
         run_gpu_runtime_multiply_plain_smoke();
         run_gpu_runtime_hevm_constants_smoke();
+        run_gpu_runtime_hevm_preflight_failures();
         run_gpu_runtime_add_plain_rescale_smoke();
         run_gpu_runtime_rotate_smoke();
         run_gpu_runtime_multiply_relinearize_rescale_smoke();
