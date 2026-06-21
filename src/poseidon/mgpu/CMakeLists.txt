@@ -31,6 +31,20 @@ target_link_libraries(poseidon_mgpu
         poseidon_shared
 )
 
+option(POSEIDON_BUILD_MGPU_TOOLS "Build multi-GPU static schedule command-line tools" OFF)
+message(STATUS "POSEIDON_BUILD_MGPU_TOOLS: ${POSEIDON_BUILD_MGPU_TOOLS}")
+
+if(POSEIDON_BUILD_MGPU_TOOLS)
+    add_executable(poseidon_mgpu_dacapo_hevm_dump
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/mgpu/tools/dacapo_hevm_dump.cpp
+    )
+
+    target_link_libraries(poseidon_mgpu_dacapo_hevm_dump
+        PRIVATE
+            poseidon_mgpu
+    )
+endif()
+
 if(POSEIDON_BUILD_MGPU_TESTS)
     add_executable(poseidon_mgpu_ir_tests
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_ir_test.cpp
