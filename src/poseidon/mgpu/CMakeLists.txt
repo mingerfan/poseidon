@@ -14,6 +14,7 @@ add_library(poseidon_mgpu STATIC
     runtime/comm_schedule_handler.cpp
     runtime/hevm_io_binding.cpp
     runtime/hevm_plaintext_encoding.cpp
+    runtime/hevm_static_execution_plan.cpp
     runtime/io_binding_handler.cpp
     runtime/object_store.cpp
     runtime/schedule_interpreter.cpp
@@ -81,6 +82,10 @@ if(POSEIDON_BUILD_MGPU_TESTS)
 
     add_executable(poseidon_mgpu_hevm_plaintext_encoding_tests
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_hevm_plaintext_encoding_test.cpp
+    )
+
+    add_executable(poseidon_mgpu_hevm_static_execution_plan_tests
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_hevm_static_execution_plan_test.cpp
     )
 
     add_executable(poseidon_mgpu_static_placement_tests
@@ -156,6 +161,11 @@ if(POSEIDON_BUILD_MGPU_TESTS)
     )
 
     target_link_libraries(poseidon_mgpu_hevm_plaintext_encoding_tests
+        PRIVATE
+            poseidon_mgpu
+    )
+
+    target_link_libraries(poseidon_mgpu_hevm_static_execution_plan_tests
         PRIVATE
             poseidon_mgpu
     )
@@ -238,6 +248,11 @@ if(POSEIDON_BUILD_MGPU_TESTS)
     add_test(
         NAME poseidon_mgpu_hevm_plaintext_encoding_tests
         COMMAND poseidon_mgpu_hevm_plaintext_encoding_tests
+    )
+
+    add_test(
+        NAME poseidon_mgpu_hevm_static_execution_plan_tests
+        COMMAND poseidon_mgpu_hevm_static_execution_plan_tests
     )
 
     add_test(
