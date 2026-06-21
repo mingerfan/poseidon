@@ -26,6 +26,7 @@ void add_diagnostic(
             route.source_device,
             route.destination_device,
             std::move(message),
+            true,
         });
 }
 
@@ -42,6 +43,7 @@ void add_plan_diagnostic(
         0,
         0,
         stream.str(),
+        false,
     });
 }
 
@@ -99,13 +101,18 @@ Json diagnostics_to_json(
     Json result = Json::array();
     for (const MgpuCommunicationExecutionDiagnostic &diagnostic : diagnostics)
     {
-        result.push_back(Json{
-            { "route_index", diagnostic.route_index },
-            { "transport", to_string(diagnostic.transport) },
-            { "source_device", diagnostic.source_device },
-            { "destination_device", diagnostic.destination_device },
+        Json entry{
             { "message", diagnostic.message },
-        });
+            { "has_route", diagnostic.has_route },
+        };
+        if (diagnostic.has_route)
+        {
+            entry["route_index"] = diagnostic.route_index;
+            entry["transport"] = to_string(diagnostic.transport);
+            entry["source_device"] = diagnostic.source_device;
+            entry["destination_device"] = diagnostic.destination_device;
+        }
+        result.push_back(std::move(entry));
     }
     return result;
 }
@@ -121,11 +128,18 @@ std::string MgpuCommunicationExecutionPreflight::format_diagnostics() const
         {
             stream << '\n';
         }
-        stream << "route #" << diagnostics[i].route_index << " "
-               << to_string(diagnostics[i].transport) << " device "
-               << diagnostics[i].source_device << " -> "
-               << diagnostics[i].destination_device << ": "
-               << diagnostics[i].message;
+        if (diagnostics[i].has_route)
+        {
+            stream << "route #" << diagnostics[i].route_index << " "
+                   << to_string(diagnostics[i].transport) << " device "
+                   << diagnostics[i].source_device << " -> "
+                   << diagnostics[i].destination_device << ": ";
+        }
+        else
+        {
+            stream << "communication plan: ";
+        }
+        stream << diagnostics[i].message;
     }
     return stream.str();
 }
@@ -183,11 +197,19 @@ void dump_communication_execution_preflight(
         for (const MgpuCommunicationExecutionDiagnostic &diagnostic :
              preflight.diagnostics)
         {
-            stream << "    route #" << diagnostic.route_index << " "
-                   << to_string(diagnostic.transport) << " device "
-                   << diagnostic.source_device << " -> "
-                   << diagnostic.destination_device << ": "
-                   << diagnostic.message << '\n';
+            stream << "    ";
+            if (diagnostic.has_route)
+            {
+                stream << "route #" << diagnostic.route_index << " "
+                       << to_string(diagnostic.transport) << " device "
+                       << diagnostic.source_device << " -> "
+                       << diagnostic.destination_device << ": ";
+            }
+            else
+            {
+                stream << "communication plan: ";
+            }
+            stream << diagnostic.message << '\n';
         }
     }
 }

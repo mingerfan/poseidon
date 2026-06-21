@@ -32,7 +32,7 @@ void add_communication_execution_diagnostic(
     readiness_diagnostic.stage = "communication_execution_preflight";
     readiness_diagnostic.location = diagnostic.route_index;
     readiness_diagnostic.message = diagnostic.message;
-    readiness_diagnostic.has_route = true;
+    readiness_diagnostic.has_route = diagnostic.has_route;
     readiness_diagnostic.route_index = diagnostic.route_index;
     readiness_diagnostic.transport = diagnostic.transport;
     readiness_diagnostic.source_device = diagnostic.source_device;

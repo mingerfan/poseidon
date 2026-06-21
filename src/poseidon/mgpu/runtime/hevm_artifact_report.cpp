@@ -3,6 +3,7 @@
 #include "poseidon/util/json.h"
 
 #include <stdexcept>
+#include <utility>
 
 namespace poseidon::mgpu
 {
@@ -152,15 +153,19 @@ Json execution_preflight_diagnostics_to_json(
         for (const MgpuCommunicationExecutionDiagnostic &diagnostic :
              preflight.communication_execution_preflight.diagnostics)
         {
-            diagnostics.push_back(Json{
+            Json entry{
                 { "stage", "communication_execution_preflight" },
                 { "location", diagnostic.route_index },
                 { "message", diagnostic.message },
-                { "route_index", diagnostic.route_index },
-                { "transport", to_string(diagnostic.transport) },
-                { "source_device", diagnostic.source_device },
-                { "destination_device", diagnostic.destination_device },
-            });
+            };
+            if (diagnostic.has_route)
+            {
+                entry["route_index"] = diagnostic.route_index;
+                entry["transport"] = to_string(diagnostic.transport);
+                entry["source_device"] = diagnostic.source_device;
+                entry["destination_device"] = diagnostic.destination_device;
+            }
+            diagnostics.push_back(std::move(entry));
         }
     }
 

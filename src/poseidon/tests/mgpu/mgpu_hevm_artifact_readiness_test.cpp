@@ -100,7 +100,8 @@ void test_preflight_diagnostics_are_propagated()
             MgpuTransportKind::InterNode,
             1,
             8,
-            "inter-node communication backend is not available" });
+            "inter-node communication backend is not available",
+            true });
 
     const HevmArtifactReadinessResult result = check_hevm_artifact_readiness(
         HevmArtifactReadinessInput{
@@ -162,7 +163,8 @@ void test_execution_preflight_diagnostics_are_propagated()
             MgpuTransportKind::CudaPeer,
             0,
             1,
-            "CUDA peer or host-staged copy backend is not available" });
+            "CUDA peer or host-staged copy backend is not available",
+            true });
 
     HevmArtifactReadinessInput input;
     input.opcode_summary = &opcode_summary;
@@ -195,6 +197,49 @@ void test_execution_preflight_diagnostics_are_propagated()
     require_contains(json, "\"poseidon_gpu_execution_preflight\"");
 }
 
+void test_plan_level_communication_execution_diagnostic_omits_route_metadata()
+{
+    MgpuCommunicationExecutionPreflight communication_preflight;
+    communication_preflight.diagnostics.push_back(
+        MgpuCommunicationExecutionDiagnostic{
+            0,
+            MgpuTransportKind::SameDevice,
+            0,
+            0,
+            "communication plan op #9: copy source device 9 is not present in topology",
+            false });
+
+    HevmArtifactReadinessInput input;
+    input.communication_execution_preflight = &communication_preflight;
+    const HevmArtifactReadinessResult result =
+        check_hevm_artifact_readiness(input);
+
+    require(!result.ok(), "plan-level communication diagnostic should fail readiness");
+    require(
+        !result.diagnostics.at(0).has_route,
+        "plan-level diagnostic should not carry route metadata");
+
+    const nlohmann::json json =
+        nlohmann::json::parse(hevm_artifact_readiness_to_json(result));
+    const nlohmann::json &diagnostic = json.at("diagnostics").at(0);
+    require(
+        diagnostic.at("stage").get<std::string>() ==
+            "communication_execution_preflight",
+        "plan-level diagnostic stage mismatch");
+    require(
+        !diagnostic.contains("route_index"),
+        "plan-level diagnostic should omit route_index");
+    require(
+        !diagnostic.contains("transport"),
+        "plan-level diagnostic should omit transport");
+    require(
+        !diagnostic.contains("source_device"),
+        "plan-level diagnostic should omit source_device");
+    require(
+        !diagnostic.contains("destination_device"),
+        "plan-level diagnostic should omit destination_device");
+}
+
 }  // namespace
 
 int main()
@@ -205,6 +250,7 @@ int main()
         test_unsupported_opcode_fails();
         test_preflight_diagnostics_are_propagated();
         test_execution_preflight_diagnostics_are_propagated();
+        test_plan_level_communication_execution_diagnostic_omits_route_metadata();
     }
     catch (const std::exception &ex)
     {

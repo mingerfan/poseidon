@@ -62,7 +62,7 @@ void copy_communication_execution_errors(
          preflight.diagnostics)
     {
         std::size_t op_index = 0;
-        if (diagnostic.route_index < plan.routes.size())
+        if (diagnostic.has_route && diagnostic.route_index < plan.routes.size())
         {
             op_index =
                 route_op_index(schedule, plan.routes[diagnostic.route_index]);

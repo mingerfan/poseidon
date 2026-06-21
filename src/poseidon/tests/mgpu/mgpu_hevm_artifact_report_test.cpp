@@ -479,7 +479,8 @@ void test_failure_report_execution_gate_preserves_route_metadata()
             MgpuTransportKind::InterNode,
             7,
             8,
-            "inter-node communication backend is not available" });
+            "inter-node communication backend is not available",
+            true });
 
     HevmArtifactReadinessInput readiness_input;
     readiness_input.communication_execution_preflight = &communication_preflight;

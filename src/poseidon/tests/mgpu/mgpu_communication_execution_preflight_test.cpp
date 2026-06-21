@@ -26,6 +26,14 @@ void require_contains(const std::string &text, const std::string &needle)
     }
 }
 
+void require_not_contains(const std::string &text, const std::string &needle)
+{
+    if (text.find(needle) != std::string::npos)
+    {
+        throw std::runtime_error("expected text to omit: " + needle + "\ntext:\n" + text);
+    }
+}
+
 MgpuCopyRoute route(int source_device, int destination_device, MgpuTransportKind transport)
 {
     return MgpuCopyRoute{
@@ -124,10 +132,19 @@ void test_invalid_communication_plan_fails_before_route_checks()
     require(preflight.diagnostics.size() == 1, "expected one plan diagnostic");
     require_contains(preflight.format_diagnostics(), "communication plan op #7");
     require_contains(preflight.format_diagnostics(), "copy source device 9");
+    require(
+        !preflight.diagnostics[0].has_route,
+        "plan diagnostic should not masquerade as a route");
+    require_not_contains(preflight.format_diagnostics(), "same_device device 0 -> 0");
 
     const std::string json = communication_execution_preflight_to_json(preflight);
     require_contains(json, "\"ok\": false");
     require_contains(json, "communication plan op #7");
+    require_contains(json, "\"has_route\": false");
+    require_not_contains(json, "\"route_index\"");
+    require_not_contains(json, "\"transport\"");
+    require_not_contains(json, "\"source_device\"");
+    require_not_contains(json, "\"destination_device\"");
 }
 
 }  // namespace
