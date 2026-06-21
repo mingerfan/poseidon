@@ -2,6 +2,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -48,7 +49,7 @@ public:
     {
     }
 
-    void execute(const MgpuOp &op, const MgpuObjectStore &object_store) override
+    void execute(const MgpuOp &op, MgpuObjectStore &object_store) override
     {
         if (records.size() == fail_at_)
         {
@@ -77,6 +78,37 @@ private:
     std::size_t fail_at_ = static_cast<std::size_t>(-1);
 };
 
+class ObjectDefiningHandler final : public ScheduleOpHandler
+{
+public:
+    void execute(const MgpuOp &op, MgpuObjectStore &object_store) override
+    {
+        switch (op.kind)
+        {
+        case MgpuOpKind::UploadCipher:
+            object_store.define(
+                op.outputs[0].id, MgpuValueKind::Ciphertext, op.device_id,
+                std::make_shared<std::string>("cipher-upload"));
+            break;
+        case MgpuOpKind::UploadPlain:
+            object_store.define(
+                op.outputs[0].id, MgpuValueKind::Plaintext, op.device_id,
+                std::make_shared<std::string>("plain-upload"));
+            break;
+        case MgpuOpKind::MultiplyPlain: {
+            const auto input = object_store.object_as<std::string>(op.inputs[0].id);
+            const auto plain = object_store.object_as<std::string>(op.inputs[1].id);
+            object_store.define(
+                op.outputs[0].id, MgpuValueKind::Ciphertext, op.device_id,
+                std::make_shared<std::string>(*input + "+" + *plain));
+            break;
+        }
+        default:
+            break;
+        }
+    }
+};
+
 MgpuSchedule make_single_device_schedule()
 {
     MgpuSchedule schedule;
@@ -97,6 +129,16 @@ void test_object_store()
     require(store.contains(7), "object store should contain value 7");
     require(store.at(7).kind == MgpuValueKind::Ciphertext, "object kind mismatch");
     require(store.at(7).device_id == 3, "object device mismatch");
+    require(!store.has_object(7), "metadata-only object should not have a handle");
+
+    auto object = std::make_shared<std::string>("payload");
+    store.define(8, MgpuValueKind::Plaintext, 1, object);
+    require(store.has_object(8), "object-backed value should have a handle");
+    require(*store.object_as<std::string>(8) == "payload", "stored object mismatch");
+
+    store.set_object(7, std::make_shared<std::string>("late"));
+    require(store.has_object(7), "set_object should attach a handle");
+    require(*store.object_as<std::string>(7) == "late", "set object mismatch");
 
     bool duplicate_failed = false;
     try
@@ -108,6 +150,22 @@ void test_object_store()
         duplicate_failed = true;
     }
     require(duplicate_failed, "duplicate object define should fail");
+}
+
+void test_interpreter_preserves_handler_defined_objects()
+{
+    ObjectDefiningHandler handler;
+    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 1 });
+    const ScheduleExecutionResult result = interpreter.run(make_single_device_schedule(), handler);
+
+    require(result.ok(), "expected interpreter success, got:\n" + result.format_errors());
+    require(result.object_store.has_object(1), "upload ciphertext object should be retained");
+    require(result.object_store.has_object(2), "upload plaintext object should be retained");
+    require(result.object_store.has_object(3), "compute output object should be retained");
+    require(!result.object_store.has_object(4), "metadata-only rescale output should not have object");
+    require(
+        *result.object_store.object_as<std::string>(3) == "cipher-upload+plain-upload",
+        "compute output object mismatch");
 }
 
 void test_interpreter_runs_static_order()
@@ -165,6 +223,7 @@ int main()
     {
         test_object_store();
         test_interpreter_runs_static_order();
+        test_interpreter_preserves_handler_defined_objects();
         test_interpreter_rejects_invalid_schedule_before_execution();
         test_handler_failure_stops_execution();
     }

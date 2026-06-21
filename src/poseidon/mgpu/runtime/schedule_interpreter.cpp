@@ -2,6 +2,7 @@
 
 #include <exception>
 #include <sstream>
+#include <stdexcept>
 
 namespace poseidon::mgpu
 {
@@ -25,6 +26,26 @@ void copy_verifier_errors(
 void define_output(
     MgpuObjectStore &object_store, const MgpuOp &op, MgpuValueKind kind)
 {
+    const MgpuObjectMetadata *existing = object_store.find(op.outputs[0].id);
+    if (existing != nullptr)
+    {
+        if (existing->kind != kind)
+        {
+            std::ostringstream stream;
+            stream << "handler defined output %" << op.outputs[0].id << " as "
+                   << to_string(existing->kind) << ", expected " << to_string(kind);
+            throw std::runtime_error(stream.str());
+        }
+        if (existing->device_id != op.device_id)
+        {
+            std::ostringstream stream;
+            stream << "handler defined output %" << op.outputs[0].id << " on device "
+                   << existing->device_id << ", expected device " << op.device_id;
+            throw std::runtime_error(stream.str());
+        }
+        return;
+    }
+
     object_store.define(op.outputs[0].id, kind, op.device_id);
 }
 

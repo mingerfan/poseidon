@@ -11,7 +11,7 @@ class CopyDispatchingScheduleHandler final : public ScheduleOpHandler
 public:
     explicit CopyDispatchingScheduleHandler(GpuComm &comm, ScheduleOpHandler *fallback = nullptr);
 
-    void execute(const MgpuOp &op, const MgpuObjectStore &object_store) override;
+    void execute(const MgpuOp &op, MgpuObjectStore &object_store) override;
 
 private:
     GpuComm &comm_;

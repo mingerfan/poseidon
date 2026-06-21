@@ -39,7 +39,7 @@ class ScheduleOpHandler
 public:
     virtual ~ScheduleOpHandler() = default;
 
-    virtual void execute(const MgpuOp &op, const MgpuObjectStore &object_store) = 0;
+    virtual void execute(const MgpuOp &op, MgpuObjectStore &object_store) = 0;
 };
 
 class ScheduleInterpreter

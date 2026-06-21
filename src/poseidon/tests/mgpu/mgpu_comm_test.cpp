@@ -54,7 +54,7 @@ public:
 class RecordingFallback final : public ScheduleOpHandler
 {
 public:
-    void execute(const MgpuOp &op, const MgpuObjectStore &) override
+    void execute(const MgpuOp &op, MgpuObjectStore &) override
     {
         op_kinds.push_back(op.kind);
     }

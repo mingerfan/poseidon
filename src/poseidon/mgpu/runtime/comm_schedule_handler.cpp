@@ -25,7 +25,7 @@ CopyDispatchingScheduleHandler::CopyDispatchingScheduleHandler(
 }
 
 void CopyDispatchingScheduleHandler::execute(
-    const MgpuOp &op, const MgpuObjectStore &object_store)
+    const MgpuOp &op, MgpuObjectStore &object_store)
 {
     if (!is_comm_copy_op(op.kind))
     {
