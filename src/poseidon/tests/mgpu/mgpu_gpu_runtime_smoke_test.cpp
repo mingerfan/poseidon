@@ -1,6 +1,7 @@
 #include "poseidon/batchencoder.h"
 #include "poseidon/ciphertext.h"
 #include "poseidon/encryptor.h"
+#include "poseidon/factory/poseidon_factory.h"
 #include "poseidon/keygenerator.h"
 #include "poseidon/mgpu/runtime/poseidon_gpu_schedule_handler.h"
 #include "poseidon/mgpu/runtime/schedule_interpreter.h"
@@ -165,43 +166,57 @@ ParametersLiteral make_gpu_test_parameters()
         sec_level_type::none);
 }
 
-void run_upload_download_smoke()
+void run_gpu_runtime_smoke()
 {
     constexpr int device_id = 0;
     RmmPoolScope rmm_scope(device_id);
 
     const ParametersLiteral parms = make_gpu_test_parameters();
     PoseidonContext context(parms);
+    auto cpu_evaluator = PoseidonFactory::get_instance()->create_bfv_evaluator(context);
 
     KeyGenerator keygen(context);
     PublicKey public_key;
     keygen.create_public_key(public_key);
 
     BatchEncoder encoder(context);
-    Plaintext plain;
-    encoder.encode(std::vector<std::uint64_t>{ 1, 2, 3, 4, 5, 6, 7, 8 }, plain);
+    Plaintext plain0;
+    Plaintext plain1;
+    encoder.encode(std::vector<std::uint64_t>{ 1, 2, 3, 4, 5, 6, 7, 8 }, plain0);
+    encoder.encode(std::vector<std::uint64_t>{ 8, 7, 6, 5, 4, 3, 2, 1 }, plain1);
 
     Encryptor encryptor(context, public_key, keygen.secret_key());
-    Ciphertext cipher;
-    encryptor.encrypt(plain, cipher);
+    Ciphertext cipher0;
+    Ciphertext cipher1;
+    encryptor.encrypt(plain0, cipher0);
+    encryptor.encrypt(plain1, cipher1);
+
+    Ciphertext expected_sum;
+    cpu_evaluator->add(cipher0, cipher1, expected_sum);
 
     MgpuSchedule schedule;
     schedule.ops.push_back(op(MgpuOpKind::UploadCipher, device_id, {}, { value(1) }));
-    schedule.ops.push_back(op(MgpuOpKind::UploadPlain, device_id, {}, { value(2) }));
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, device_id, {}, { value(2) }));
+    schedule.ops.push_back(op(MgpuOpKind::UploadPlain, device_id, {}, { value(3) }));
+    schedule.ops.push_back(op(MgpuOpKind::Add, device_id, { value(1), value(2) }, { value(4) }));
     schedule.ops.push_back(op(MgpuOpKind::Download, device_id, { value(1) }, {}));
-    schedule.ops.push_back(op(MgpuOpKind::Download, device_id, { value(2) }, {}));
+    schedule.ops.push_back(op(MgpuOpKind::Download, device_id, { value(3) }, {}));
+    schedule.ops.push_back(op(MgpuOpKind::Download, device_id, { value(4) }, {}));
 
     PoseidonGpuScheduleHandler handler(context);
-    handler.bind_cipher_upload(1, std::make_shared<Ciphertext>(cipher));
-    handler.bind_plain_upload(2, std::make_shared<Plaintext>(plain));
+    handler.bind_cipher_upload(1, std::make_shared<Ciphertext>(cipher0));
+    handler.bind_cipher_upload(2, std::make_shared<Ciphertext>(cipher1));
+    handler.bind_plain_upload(3, std::make_shared<Plaintext>(plain0));
 
     ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 1 });
     const ScheduleExecutionResult result = interpreter.run(schedule, handler);
     require(result.ok(), "GPU runtime schedule failed:\n" + result.format_errors());
     require(handler.has_cipher_download(1), "missing ciphertext download");
-    require(handler.has_plain_download(2), "missing plaintext download");
-    require_ciphertexts_equal(cipher, *handler.cipher_download(1));
-    require_plaintexts_equal(plain, *handler.plain_download(2));
+    require(handler.has_plain_download(3), "missing plaintext download");
+    require(handler.has_cipher_download(4), "missing add output download");
+    require_ciphertexts_equal(cipher0, *handler.cipher_download(1));
+    require_plaintexts_equal(plain0, *handler.plain_download(3));
+    require_ciphertexts_equal(expected_sum, *handler.cipher_download(4));
 }
 
 }  // namespace
@@ -216,7 +231,7 @@ int main()
 
     try
     {
-        run_upload_download_smoke();
+        run_gpu_runtime_smoke();
     }
     catch (const std::exception &ex)
     {
