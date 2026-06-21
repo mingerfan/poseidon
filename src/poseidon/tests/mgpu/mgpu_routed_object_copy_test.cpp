@@ -170,6 +170,169 @@ void test_mismatched_route_and_request_fails_before_backend()
         "inter-node backend should not run after validation failure");
 }
 
+void test_route_request_value_id_mismatch_fails_before_backend()
+{
+    RecordingLocalBackend local_backend;
+    RecordingInterNodeBackend inter_node_backend;
+    RoutedGpuObjectCopyBackend router(
+        make_uniform_cluster_topology(2, 4), local_backend, inter_node_backend);
+
+    const MgpuCopyRoute cuda_peer = route(MgpuTransportKind::CudaPeer);
+    GpuObjectCopyRequest request = object_copy(cuda_peer);
+    request.destination_id = 99;
+
+    bool failed = false;
+    try
+    {
+        router.copy_object(cuda_peer, request);
+    }
+    catch (const std::invalid_argument &ex)
+    {
+        failed = true;
+        require_contains(ex.what(), "value ids do not match");
+    }
+    require(failed, "value id mismatch should fail");
+    require(local_backend.requests.empty(), "local backend should not run");
+    require(
+        inter_node_backend.requests.empty(),
+        "inter-node backend should not run");
+}
+
+void test_route_request_kind_mismatch_fails_before_backend()
+{
+    RecordingLocalBackend local_backend;
+    RecordingInterNodeBackend inter_node_backend;
+    RoutedGpuObjectCopyBackend router(
+        make_uniform_cluster_topology(2, 4), local_backend, inter_node_backend);
+
+    const MgpuCopyRoute cuda_peer = route(MgpuTransportKind::CudaPeer);
+    GpuObjectCopyRequest request = object_copy(cuda_peer);
+    request.kind = MgpuValueKind::Plaintext;
+
+    bool failed = false;
+    try
+    {
+        router.copy_object(cuda_peer, request);
+    }
+    catch (const std::invalid_argument &ex)
+    {
+        failed = true;
+        require_contains(ex.what(), "value kind does not match");
+    }
+    require(failed, "value kind mismatch should fail");
+    require(local_backend.requests.empty(), "local backend should not run");
+    require(
+        inter_node_backend.requests.empty(),
+        "inter-node backend should not run");
+}
+
+void test_route_missing_topology_device_fails_before_backend()
+{
+    RecordingLocalBackend local_backend;
+    RecordingInterNodeBackend inter_node_backend;
+    RoutedGpuObjectCopyBackend router(
+        make_uniform_cluster_topology(1, 4), local_backend, inter_node_backend);
+
+    MgpuCopyRoute missing_source = route(MgpuTransportKind::CudaPeer);
+    missing_source.source_device = 8;
+    GpuObjectCopyRequest request = object_copy(missing_source);
+
+    bool failed = false;
+    try
+    {
+        router.copy_object(missing_source, request);
+    }
+    catch (const std::invalid_argument &ex)
+    {
+        failed = true;
+        require_contains(ex.what(), "source device 8 is not present in topology");
+    }
+    require(failed, "missing source topology device should fail");
+    require(local_backend.requests.empty(), "local backend should not run");
+    require(
+        inter_node_backend.requests.empty(),
+        "inter-node backend should not run");
+
+    MgpuCopyRoute missing_destination = route(MgpuTransportKind::CudaPeer);
+    missing_destination.destination_device = 8;
+    request = object_copy(missing_destination);
+
+    failed = false;
+    try
+    {
+        router.copy_object(missing_destination, request);
+    }
+    catch (const std::invalid_argument &ex)
+    {
+        failed = true;
+        require_contains(
+            ex.what(), "destination device 8 is not present in topology");
+    }
+    require(failed, "missing destination topology device should fail");
+    require(local_backend.requests.empty(), "local backend should still not run");
+    require(
+        inter_node_backend.requests.empty(),
+        "inter-node backend should still not run");
+}
+
+void test_same_device_route_with_different_endpoints_fails_before_backend()
+{
+    RecordingLocalBackend local_backend;
+    RecordingInterNodeBackend inter_node_backend;
+    RoutedGpuObjectCopyBackend router(
+        make_uniform_cluster_topology(2, 4), local_backend, inter_node_backend);
+
+    MgpuCopyRoute same_device = route(MgpuTransportKind::SameDevice);
+    same_device.destination_device = 2;
+
+    bool failed = false;
+    try
+    {
+        router.copy_object(same_device, object_copy(same_device));
+    }
+    catch (const std::invalid_argument &ex)
+    {
+        failed = true;
+        require_contains(ex.what(), "different source and destination devices");
+    }
+
+    require(failed, "different-endpoint same-device route should fail");
+    require(local_backend.requests.empty(), "local backend should not run");
+    require(
+        inter_node_backend.requests.empty(),
+        "inter-node backend should not run");
+}
+
+void test_cuda_peer_route_same_device_fails_before_backend()
+{
+    RecordingLocalBackend local_backend;
+    RecordingInterNodeBackend inter_node_backend;
+    RoutedGpuObjectCopyBackend router(
+        make_uniform_cluster_topology(2, 4), local_backend, inter_node_backend);
+
+    MgpuCopyRoute cuda_peer = route(MgpuTransportKind::CudaPeer);
+    cuda_peer.destination_device = cuda_peer.source_device;
+
+    bool failed = false;
+    try
+    {
+        router.copy_object(cuda_peer, object_copy(cuda_peer));
+    }
+    catch (const std::invalid_argument &ex)
+    {
+        failed = true;
+        require_contains(
+            ex.what(),
+            "CUDA peer copy route uses the same source and destination device");
+    }
+
+    require(failed, "same-device CUDA peer route should fail");
+    require(local_backend.requests.empty(), "local backend should not run");
+    require(
+        inter_node_backend.requests.empty(),
+        "inter-node backend should not run");
+}
+
 void test_cuda_peer_route_across_nodes_fails_before_backend()
 {
     RecordingLocalBackend local_backend;
@@ -239,6 +402,11 @@ int main()
         test_local_routes_use_local_backend();
         test_inter_node_route_uses_inter_node_backend();
         test_mismatched_route_and_request_fails_before_backend();
+        test_route_request_value_id_mismatch_fails_before_backend();
+        test_route_request_kind_mismatch_fails_before_backend();
+        test_route_missing_topology_device_fails_before_backend();
+        test_same_device_route_with_different_endpoints_fails_before_backend();
+        test_cuda_peer_route_same_device_fails_before_backend();
         test_cuda_peer_route_across_nodes_fails_before_backend();
         test_inter_node_route_inside_node_fails_before_backend();
     }
