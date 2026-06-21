@@ -166,6 +166,67 @@ if(POSEIDON_BUILD_MGPU_TESTS)
     )
 endif()
 
+option(POSEIDON_BUILD_MGPU_GPU_OBJECTS "Build optional GPU object materializer for multi-GPU runtime" OFF)
+message(STATUS "POSEIDON_BUILD_MGPU_GPU_OBJECTS: ${POSEIDON_BUILD_MGPU_GPU_OBJECTS}")
+
+if(POSEIDON_BUILD_MGPU_GPU_OBJECTS)
+    enable_language(CUDA)
+    set(CMAKE_CUDA_STANDARD 17)
+    set(CMAKE_CUDA_STANDARD_REQUIRED ON)
+    if(NOT CMAKE_CUDA_ARCHITECTURES)
+        set(CMAKE_CUDA_ARCHITECTURES 75 CACHE STRING
+            "CUDA architectures for multi-GPU object materializer" FORCE)
+    endif()
+
+    find_package(CUDAToolkit REQUIRED)
+
+    set(POSEIDON_THIRD_PARTY_DIR "${POSEIDON_INCLUDES_DIR}/third_party" CACHE PATH
+        "Path to bundled third-party dependencies")
+    set(POSEIDON_BUNDLED_RMM_DIR "${POSEIDON_THIRD_PARTY_DIR}/rmm" CACHE PATH
+        "Path to bundled RMM source")
+
+    if(EXISTS "${POSEIDON_BUNDLED_RMM_DIR}/CMakeLists.txt")
+        set(CPM_SOURCE_CACHE "${POSEIDON_THIRD_PARTY_DIR}/cpm" CACHE PATH
+            "Bundled CPM cache for offline RAPIDS/RMM configuration" FORCE)
+        set(BUILD_TESTS OFF CACHE BOOL "" FORCE)
+        set(BUILD_BENCHMARKS OFF CACHE BOOL "" FORCE)
+        set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+        set(RMM_NVTX OFF CACHE BOOL "" FORCE)
+        set(USE_NVTX OFF CACHE BOOL "" FORCE)
+        set(RMM_LOGGING_LEVEL "OFF" CACHE STRING "" FORCE)
+        set(FMT_INSTALL OFF CACHE BOOL "" FORCE)
+        set(SPDLOG_INSTALL OFF CACHE BOOL "" FORCE)
+        set(SPDLOG_FMT_EXTERNAL_HO ON CACHE BOOL "" FORCE)
+        if(NOT TARGET rmm::rmm)
+            add_subdirectory(
+                "${POSEIDON_BUNDLED_RMM_DIR}"
+                "${CMAKE_BINARY_DIR}/third_party/rmm"
+                EXCLUDE_FROM_ALL)
+        endif()
+    else()
+        message(FATAL_ERROR
+            "Bundled RMM was not found at ${POSEIDON_BUNDLED_RMM_DIR}")
+    endif()
+
+    add_library(poseidon_mgpu_gpu_objects STATIC
+        comm/gpu_object_materializer.cpp
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/gpu/gpu_ciphertext.cpp
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/gpu/gpu_plaintext.cpp
+    )
+
+    target_include_directories(poseidon_mgpu_gpu_objects
+        PUBLIC
+            ${POSEIDON_INCLUDES_DIR}/src
+    )
+
+    target_link_libraries(poseidon_mgpu_gpu_objects
+        PUBLIC
+            poseidon_mgpu
+            CUDA::cudart
+            rmm::rmm
+    )
+endif()
+
 option(POSEIDON_BUILD_MGPU_CUDA_COMM "Build optional CUDA peer communication backend" OFF)
 message(STATUS "POSEIDON_BUILD_MGPU_CUDA_COMM: ${POSEIDON_BUILD_MGPU_CUDA_COMM}")
 
