@@ -81,6 +81,9 @@ poseidon_mgpu_resnet20_artifact_check \
   --dacapo-root "$DACAPO_ROOT" \
   --dump-tool /tmp/poseidon-mgpu-tools/bin/poseidon_mgpu_dacapo_hevm_dump \
   --config src/poseidon/mgpu/configs/single_node_8gpu.json \
+  --devices 8 \
+  --compute-devices 0,1,2,3,4,5,6,7 \
+  --execution-cuda-peer-available \
   --summary-path /tmp/resnet20-mgpu-preflight.json \
   --schedule-path /tmp/resnet20-mgpu-schedule.mlir \
   --write-summary-json /tmp/resnet20-artifact-paths.json
@@ -391,7 +394,10 @@ JSON gate with `--write-summary-json`, and write the schedule dump separately.
 `poseidon_mgpu_resnet20_artifact_check` is intentionally narrower than the dump
 tool. It only verifies Dacapo's expected ResNet20 `.hevm + .cst` paths and
 prints a repeatable preflight command. When `--config <file>` is provided, it
-also verifies that config path exists before reporting ready. It does not parse
+also verifies that config path exists before reporting ready. Optional
+placement, topology, preflight, backend, and readiness flags accepted by the
+dump tool can be passed to this path checker; it records them in the printed
+and JSON `dump_command` without validating GPU availability. It does not parse
 HEVM, link Dacapo, load CUDA, or execute Poseidon GPU operators. Use
 `--summary-json` or `--write-summary-json <file>` when a script needs the path
 readiness result in machine-readable form before invoking the heavier HEVM dump

@@ -6,6 +6,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <vector>
 
 namespace
 {
@@ -22,6 +23,7 @@ struct ToolOptions
     bool print_command = true;
     bool summary_json = false;
     std::string summary_json_path;
+    std::vector<std::string> dump_overrides;
 };
 
 struct PathStatus
@@ -45,6 +47,16 @@ void print_usage(std::ostream &stream)
            "[--dacapo-root <dir>] "
            "[--dump-tool <path>] "
            "[--config <file>] "
+           "[--devices N] [--default-device N] [--upload-device N] "
+           "[--compute-devices a,b,c] [--download-device N] "
+           "[--round-robin-compute] "
+           "[--nodes N] [--devices-per-node N] "
+           "[--execution-cuda-peer-available] "
+           "[--execution-inter-node-available] "
+           "[--preflight-comm-available] "
+           "[--preflight-relin-keys] "
+           "[--preflight-galois-keys] "
+           "[--require-ready] "
            "[--summary-path <file>] "
            "[--schedule-path <file>] "
            "[--summary-json] "
@@ -99,6 +111,26 @@ ToolOptions parse_args(int argc, char **argv)
         if (arg == "--config")
         {
             options.config_path = require_value(i, argc, argv, arg);
+            continue;
+        }
+        if (arg == "--devices" || arg == "--default-device" ||
+            arg == "--upload-device" || arg == "--compute-devices" ||
+            arg == "--download-device" || arg == "--nodes" ||
+            arg == "--devices-per-node")
+        {
+            options.dump_overrides.push_back(arg);
+            options.dump_overrides.push_back(require_value(i, argc, argv, arg));
+            continue;
+        }
+        if (arg == "--round-robin-compute" ||
+            arg == "--execution-cuda-peer-available" ||
+            arg == "--execution-inter-node-available" ||
+            arg == "--preflight-comm-available" ||
+            arg == "--preflight-relin-keys" ||
+            arg == "--preflight-galois-keys" ||
+            arg == "--require-ready")
+        {
+            options.dump_overrides.push_back(arg);
             continue;
         }
         if (arg == "--summary-path")
@@ -235,6 +267,21 @@ void append_common_dump_outputs(std::ostream &stream, const ToolOptions &options
            << " \\\n  --no-schedule";
 }
 
+void append_dump_overrides(std::ostream &stream, const ToolOptions &options)
+{
+    for (std::size_t i = 0; i < options.dump_overrides.size(); ++i)
+    {
+        const std::string &item = options.dump_overrides[i];
+        stream << " \\\n  " << item;
+        if (i + 1 < options.dump_overrides.size() &&
+            options.dump_overrides[i + 1].find("--") != 0)
+        {
+            stream << " " << shell_quote(options.dump_overrides[i + 1]);
+            ++i;
+        }
+    }
+}
+
 std::string make_dump_command(
     const ToolOptions &options, const fs::path &hevm_path,
     const fs::path &constants_path)
@@ -247,6 +294,7 @@ std::string make_dump_command(
     if (options.config_path.has_value())
     {
         command << " \\\n  --config " << shell_quote(*options.config_path);
+        append_dump_overrides(command, options);
         append_common_dump_outputs(command, options);
         return command.str();
     }
@@ -265,6 +313,7 @@ std::string make_dump_command(
         << " \\\n  --preflight-relin-keys"
         << " \\\n  --preflight-galois-keys"
         << " \\\n  --require-ready";
+    append_dump_overrides(command, options);
     append_common_dump_outputs(command, options);
     return command.str();
 }

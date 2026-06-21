@@ -169,6 +169,9 @@ Dacapo artifact debugging:
   expected ResNet20 artifact paths under `DACAPO_ROOT` or `--dacapo-root` and
   prints the next `poseidon_mgpu_dacapo_hevm_dump` command. When `--config` is
   provided, the helper must also check that config path before reporting ready.
+  Optional placement, topology, preflight, backend, and readiness flags accepted
+  by the dump tool may be passed through to this helper; it must record them in
+  the printed and JSON `dump_command` without validating GPU availability.
   Use `--summary-json` or `--write-summary-json <file>` for scriptable path
   readiness. It must not parse HEVM, link Dacapo/MLIR, load CUDA/RMM, or
   execute GPU operators.

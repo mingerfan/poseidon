@@ -225,6 +225,40 @@ void test_config_command_hint(const std::string &tool_path)
     require_not_contains(output, "--execution-cuda-peer-available");
 }
 
+void test_config_command_hint_with_overrides(const std::string &tool_path)
+{
+    TempDir dacapo_root;
+    create_mock_resnet20_artifacts(dacapo_root.root());
+    const std::string config_path = dacapo_root.path("single_node_8gpu.json");
+    const std::string report_path = dacapo_root.path("artifact-check.json");
+    write_text_file(config_path, "{\"version\":1}\n");
+
+    int exit_code = 0;
+    const std::string output = run_tool(
+        tool_path,
+        "--dacapo-root " + shell_quote(dacapo_root.root().string()) +
+            " --config " + shell_quote(config_path) +
+            " --devices 2"
+            " --compute-devices 0,1"
+            " --devices-per-node 2"
+            " --execution-cuda-peer-available"
+            " --write-summary-json " + shell_quote(report_path),
+        exit_code);
+
+    require(exit_code == 0, "config override artifact check should pass");
+    require_contains(output, "status: ready");
+    require_contains(output, "--config " + shell_quote(config_path));
+    require_contains(output, "--devices '2'");
+    require_contains(output, "--compute-devices '0,1'");
+    require_contains(output, "--devices-per-node '2'");
+    require_contains(output, "--execution-cuda-peer-available");
+    const std::string report = read_text_file(report_path);
+    require_contains(report, "\"status\": \"ready\"");
+    require_contains(report, "--devices '2'");
+    require_contains(report, "--compute-devices '0,1'");
+    require_contains(report, "--execution-cuda-peer-available");
+}
+
 void test_no_command_mode(const std::string &tool_path)
 {
     TempDir dacapo_root;
@@ -335,6 +369,7 @@ int main(int argc, char **argv)
         test_missing_artifacts_report(argv[1]);
         test_ready_artifacts_command_hint(argv[1]);
         test_config_command_hint(argv[1]);
+        test_config_command_hint_with_overrides(argv[1]);
         test_no_command_mode(argv[1]);
         test_summary_json_for_ready_artifacts(argv[1]);
         test_missing_config_report(argv[1]);
