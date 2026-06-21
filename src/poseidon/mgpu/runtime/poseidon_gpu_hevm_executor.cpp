@@ -1,6 +1,7 @@
 #include "poseidon/mgpu/runtime/poseidon_gpu_hevm_executor.h"
 
 #include "poseidon/mgpu/runtime/poseidon_gpu_schedule_handler.h"
+#include "poseidon/mgpu/runtime/static_schedule_executor.h"
 
 #include <algorithm>
 #include <exception>
@@ -52,6 +53,16 @@ void upload_keys_for_schedule_devices(
     }
 }
 
+void bind_hevm_plan_inputs(
+    PoseidonGpuScheduleHandler &handler, const HevmStaticExecutionPlan &plan,
+    const std::vector<std::shared_ptr<const Ciphertext>> &cipher_inputs,
+    const PoseidonGpuHevmExecutionOptions &options)
+{
+    bind_hevm_cipher_inputs(handler, plan.io_plan, cipher_inputs);
+    bind_hevm_encoded_plain_inputs(handler, plan.encoded_plaintexts);
+    upload_keys_for_schedule_devices(handler, plan.schedule, options);
+}
+
 }  // namespace
 
 std::string PoseidonGpuHevmExecutionResult::format_errors() const
@@ -74,12 +85,47 @@ PoseidonGpuHevmExecutionResult execute_hevm_static_plan_with_poseidon_gpu(
     try
     {
         PoseidonGpuScheduleHandler handler(context);
-        bind_hevm_cipher_inputs(handler, plan.io_plan, cipher_inputs);
-        bind_hevm_encoded_plain_inputs(handler, plan.encoded_plaintexts);
-        upload_keys_for_schedule_devices(handler, plan.schedule, options);
-
+        bind_hevm_plan_inputs(handler, plan, cipher_inputs, options);
         ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ options.device_count });
         result.execution = interpreter.run(plan.schedule, handler);
+        if (!result.execution.ok())
+        {
+            return result;
+        }
+
+        result.results = collect_hevm_results(handler, plan.io_plan);
+    }
+    catch (const std::exception &ex)
+    {
+        add_error(result, plan.schedule.ops.size(), ex.what());
+    }
+    catch (...)
+    {
+        add_error(result, plan.schedule.ops.size(), "unknown HEVM GPU execution error");
+    }
+
+    return result;
+}
+
+PoseidonGpuHevmExecutionResult execute_hevm_static_plan_with_poseidon_gpu(
+    const PoseidonContext &context, const HevmStaticExecutionPlan &plan,
+    const std::vector<std::shared_ptr<const Ciphertext>> &cipher_inputs, GpuComm &comm,
+    const PoseidonGpuHevmExecutionOptions &options)
+{
+    PoseidonGpuHevmExecutionResult result;
+    if (options.device_count <= 0)
+    {
+        add_error(result, 0, "device_count must be positive");
+        return result;
+    }
+
+    try
+    {
+        PoseidonGpuScheduleHandler handler(context);
+        bind_hevm_plan_inputs(handler, plan, cipher_inputs, options);
+        StaticScheduleExecutor executor(
+            comm, handler, StaticScheduleExecutorOptions{ options.device_count });
+        result.execution = executor.run(plan.schedule);
         if (!result.execution.ok())
         {
             return result;

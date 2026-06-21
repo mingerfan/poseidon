@@ -4,6 +4,7 @@
 #include "poseidon/encryptor.h"
 #include "poseidon/factory/poseidon_factory.h"
 #include "poseidon/keygenerator.h"
+#include "poseidon/mgpu/comm/gpu_comm.h"
 #include "poseidon/mgpu/compiler/dacapo_constants.h"
 #include "poseidon/mgpu/compiler/static_schedule_pipeline.h"
 #include "poseidon/mgpu/runtime/hevm_static_execution_plan.h"
@@ -111,6 +112,43 @@ void require_ciphertexts_equal(const Ciphertext &expected, const Ciphertext &act
             throw std::runtime_error(stream.str());
         }
     }
+}
+
+void insert_same_device_cipher_copy_before_multiply_plain(HevmStaticExecutionPlan &plan)
+{
+    require(!plan.io_plan.cipher_inputs.empty(), "expected HEVM cipher input");
+    const ValueId source_value_id = plan.io_plan.cipher_inputs[0].value_id;
+    constexpr ValueId copied_value_id = 100000;
+
+    MgpuOp copy_op{
+        MgpuOpKind::CopyCipher,
+        plan.io_plan.cipher_inputs[0].device_id,
+        { value(source_value_id) },
+        { value(copied_value_id) },
+        "same_device_hevm_copy",
+    };
+
+    auto insert_pos = plan.schedule.ops.begin();
+    for (; insert_pos != plan.schedule.ops.end(); ++insert_pos)
+    {
+        if (insert_pos->kind == MgpuOpKind::UploadPlain)
+        {
+            break;
+        }
+    }
+    plan.schedule.ops.insert(insert_pos, std::move(copy_op));
+
+    for (MgpuOp &op : plan.schedule.ops)
+    {
+        if (op.kind == MgpuOpKind::MultiplyPlain && !op.inputs.empty() &&
+            op.inputs[0].id == source_value_id)
+        {
+            op.inputs[0].id = copied_value_id;
+            return;
+        }
+    }
+
+    throw std::runtime_error("expected HEVM multiply_plain op");
 }
 
 void append_i64(std::string &output, std::int64_t value)
@@ -408,12 +446,17 @@ void run_gpu_runtime_hevm_constants_smoke()
         input_cipher, *execution_plan.plan.encoded_plaintexts[0].plaintext,
         expected_product);
 
+    HevmStaticExecutionPlan plan_with_same_device_copy = execution_plan.plan;
+    insert_same_device_cipher_copy_before_multiply_plain(plan_with_same_device_copy);
+
+    SameDeviceGpuComm comm;
     const PoseidonGpuHevmExecutionResult gpu_result =
         execute_hevm_static_plan_with_poseidon_gpu(
-            context, execution_plan.plan,
+            context, plan_with_same_device_copy,
             std::vector<std::shared_ptr<const Ciphertext>>{
                 std::make_shared<Ciphertext>(input_cipher),
             },
+            comm,
             PoseidonGpuHevmExecutionOptions{ 1 });
 
     require(

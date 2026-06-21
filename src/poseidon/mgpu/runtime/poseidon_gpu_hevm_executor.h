@@ -1,6 +1,7 @@
 #pragma once
 
 #include "poseidon/ciphertext.h"
+#include "poseidon/mgpu/comm/gpu_comm.h"
 #include "poseidon/mgpu/runtime/hevm_static_execution_plan.h"
 #include "poseidon/mgpu/runtime/schedule_interpreter.h"
 #include "poseidon/poseidon_context.h"
@@ -41,6 +42,11 @@ struct PoseidonGpuHevmExecutionResult
 PoseidonGpuHevmExecutionResult execute_hevm_static_plan_with_poseidon_gpu(
     const PoseidonContext &context, const HevmStaticExecutionPlan &plan,
     const std::vector<std::shared_ptr<const Ciphertext>> &cipher_inputs,
+    const PoseidonGpuHevmExecutionOptions &options = {});
+
+PoseidonGpuHevmExecutionResult execute_hevm_static_plan_with_poseidon_gpu(
+    const PoseidonContext &context, const HevmStaticExecutionPlan &plan,
+    const std::vector<std::shared_ptr<const Ciphertext>> &cipher_inputs, GpuComm &comm,
     const PoseidonGpuHevmExecutionOptions &options = {});
 
 }  // namespace mgpu
