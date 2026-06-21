@@ -121,7 +121,8 @@ void test_copy_dispatch_uses_comm_layer()
 void test_same_device_comm_rejects_cross_device_copy()
 {
     SameDeviceGpuComm comm;
-    CopyDispatchingScheduleHandler handler(comm);
+    RecordingFallback fallback;
+    CopyDispatchingScheduleHandler handler(comm, &fallback);
     ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 2 });
 
     const ScheduleExecutionResult result =
