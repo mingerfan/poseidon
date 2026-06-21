@@ -1,6 +1,9 @@
 #include "poseidon/mgpu/compiler/dacapo_adapter.h"
 
+#include "poseidon/mgpu/ir/schedule_json.h"
+
 #include <sstream>
+#include <utility>
 
 namespace poseidon::mgpu
 {
@@ -50,6 +53,24 @@ DacapoAdapterResult translate_dacapo_schedule(
     if (input.empty())
     {
         add_diagnostic(result, 0, "Dacapo adapter input is empty");
+        return result;
+    }
+
+    if (options.input_format == DacapoInputFormat::Json)
+    {
+        ScheduleJsonParseResult parsed = parse_schedule_json(input);
+        if (parsed.ok())
+        {
+            result.schedule = std::move(parsed.schedule);
+            return result;
+        }
+
+        for (const ScheduleJsonDiagnostic &diagnostic : parsed.diagnostics)
+        {
+            add_diagnostic(
+                result, 0,
+                "JSON schedule " + diagnostic.path + ": " + diagnostic.message);
+        }
         return result;
     }
 
