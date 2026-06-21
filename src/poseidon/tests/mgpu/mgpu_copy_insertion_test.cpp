@@ -65,6 +65,24 @@ void test_inserts_cipher_copy_for_unary_op()
     require_verifies(result.schedule, 2);
 }
 
+void test_explicit_next_value_id_controls_inserted_copy_ids()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, 0, {}, { value(1) }));
+    schedule.ops.push_back(op(MgpuOpKind::Negate, 1, { value(1) }, { value(2) }));
+
+    CopyInsertionOptions options;
+    options.next_value_id = 100;
+
+    const CopyInsertionResult result = insert_required_copies(schedule, options);
+    require(result.ok(), "copy insertion failed:\n" + result.format_diagnostics());
+    require(result.schedule.ops.size() == 3, "expected one inserted copy op");
+    require(result.schedule.ops[1].kind == MgpuOpKind::CopyCipher, "inserted op kind mismatch");
+    require(result.schedule.ops[1].outputs[0].id == 100, "explicit next copy id mismatch");
+    require(result.schedule.ops[2].inputs[0].id == 100, "compute input should use explicit copy id");
+    require_verifies(result.schedule, 2);
+}
+
 void test_inserts_only_missing_inputs()
 {
     MgpuSchedule schedule;
@@ -140,6 +158,19 @@ void test_unknown_input_reports_diagnostic()
     require_contains(result.format_diagnostics(), "unknown input value %99");
 }
 
+void test_wrong_input_kind_reports_diagnostic()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadPlain, 0, {}, { value(1) }));
+    schedule.ops.push_back(op(MgpuOpKind::Negate, 0, { value(1) }, { value(2) }));
+
+    const CopyInsertionResult result = insert_required_copies(schedule);
+    require(!result.ok(), "wrong input kind should fail copy insertion");
+    require_contains(
+        result.format_diagnostics(),
+        "input value %1 expected ciphertext, got plaintext");
+}
+
 }  // namespace
 
 int main()
@@ -147,11 +178,13 @@ int main()
     try
     {
         test_inserts_cipher_copy_for_unary_op();
+        test_explicit_next_value_id_controls_inserted_copy_ids();
         test_inserts_only_missing_inputs();
         test_add_plain_inserts_cipher_and_plain_copies();
         test_existing_copy_is_preserved();
         test_download_plaintext_copy_does_not_require_ciphertext();
         test_unknown_input_reports_diagnostic();
+        test_wrong_input_kind_reports_diagnostic();
     }
     catch (const std::exception &ex)
     {
