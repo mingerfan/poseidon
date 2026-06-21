@@ -28,6 +28,7 @@ enum class MgpuOpKind
     Add,
     AddPlain,
     Sub,
+    Negate,
     MultiplyPlain,
     Multiply,
     Relinearize,

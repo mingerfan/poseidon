@@ -98,6 +98,7 @@ bool expected_input_kind(MgpuOpKind kind, std::size_t input_index, MgpuValueKind
         return false;
     case MgpuOpKind::Relinearize:
     case MgpuOpKind::Rescale:
+    case MgpuOpKind::Negate:
     case MgpuOpKind::Rotate:
     case MgpuOpKind::BootstrapFallback:
         expected = MgpuValueKind::Ciphertext;
@@ -132,6 +133,7 @@ bool output_kind(MgpuOpKind kind, MgpuValueKind &output)
     case MgpuOpKind::Sub:
     case MgpuOpKind::MultiplyPlain:
     case MgpuOpKind::Multiply:
+    case MgpuOpKind::Negate:
     case MgpuOpKind::Relinearize:
     case MgpuOpKind::Rescale:
     case MgpuOpKind::Rotate:

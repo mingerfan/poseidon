@@ -376,6 +376,27 @@ DacapoAdapterResult translate_hevm_binary(std::string_view input)
                 "hevm_rescale"));
             break;
         }
+        case 2: {
+            if (!validate_register(result, offset + 2, dst, num_ctxt_buffer, "cipher") ||
+                !validate_register(result, offset + 4, lhs, num_ctxt_buffer, "cipher"))
+            {
+                result.schedule.ops.clear();
+                return result;
+            }
+            const ValueId input_id =
+                lookup_register_value(result, offset + 4, cipher_values, lhs, "cipher");
+            const ValueId output_id = allocate_value_id(result, offset + 2, next_value_id);
+            if (input_id == 0 || output_id == 0)
+            {
+                result.schedule.ops.clear();
+                return result;
+            }
+            cipher_values[dst] = output_id;
+            result.schedule.ops.push_back(make_op(
+                MgpuOpKind::Negate, { value(input_id) }, { value(output_id) },
+                "hevm_negate"));
+            break;
+        }
         case 6: {
             if (!validate_register(result, offset + 2, dst, num_ctxt_buffer, "cipher") ||
                 !validate_register(result, offset + 4, lhs, num_ctxt_buffer, "cipher") ||

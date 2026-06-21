@@ -84,6 +84,8 @@ const char *to_string(MgpuOpKind kind) noexcept
         return "add_plain";
     case MgpuOpKind::Sub:
         return "sub";
+    case MgpuOpKind::Negate:
+        return "negate";
     case MgpuOpKind::MultiplyPlain:
         return "multiply_plain";
     case MgpuOpKind::Multiply:
@@ -131,6 +133,10 @@ std::optional<MgpuOpKind> mgpu_op_kind_from_string(std::string_view name) noexce
     if (name == "sub")
     {
         return MgpuOpKind::Sub;
+    }
+    if (name == "negate")
+    {
+        return MgpuOpKind::Negate;
     }
     if (name == "multiply_plain")
     {

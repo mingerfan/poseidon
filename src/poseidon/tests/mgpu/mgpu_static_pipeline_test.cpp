@@ -232,7 +232,7 @@ void test_pipeline_prepares_hevm_binary_input()
 void test_pipeline_prepares_resnet_like_hevm_binary()
 {
     const std::string hevm = test::make_hevm_binary(
-        2, 1, 9, 2, { 8 },
+        2, 1, 10, 2, { 9 },
         {
             test::HevmOpRecord{ 0, 0, 0, test::make_hevm_encode_attr(5, 45) },
             test::HevmOpRecord{ 0, 1, 0, test::make_hevm_encode_attr(4, 40) },
@@ -241,8 +241,9 @@ void test_pipeline_prepares_resnet_like_hevm_binary()
             test::HevmOpRecord{ 1, 4, 3, 1 },
             test::HevmOpRecord{ 9, 5, 1, 1 },
             test::HevmOpRecord{ 6, 6, 4, 5 },
-            test::HevmOpRecord{ 8, 7, 6, 6 },
-            test::HevmOpRecord{ 3, 8, 7, 0 },
+            test::HevmOpRecord{ 2, 7, 6, 0 },
+            test::HevmOpRecord{ 8, 8, 7, 7 },
+            test::HevmOpRecord{ 3, 9, 8, 0 },
         });
 
     StaticSchedulePipelineOptions options;
@@ -254,7 +255,7 @@ void test_pipeline_prepares_resnet_like_hevm_binary()
         hevm, DacapoAdapterOptions{ DacapoInputFormat::HevmBinary }, options);
 
     require(result.ok(), "ResNet-like HEVM pipeline failed:\n" + result.format_diagnostics());
-    require(result.schedule.ops.size() == 20, "expected static copies for round-robin HEVM graph");
+    require(result.schedule.ops.size() == 22, "expected static copies for round-robin HEVM graph");
     require(result.schedule.ops.front().kind == MgpuOpKind::UploadCipher,
             "first HEVM op should upload the first argument");
     require(result.schedule.ops[1].kind == MgpuOpKind::UploadCipher,
@@ -271,11 +272,14 @@ void test_pipeline_prepares_resnet_like_hevm_binary()
             "positive HEVM rotate_step should survive pipeline");
     require(result.schedule.ops[13].kind == MgpuOpKind::Add,
             "residual add should remain a ciphertext add");
-    require(result.schedule.ops[16].kind == MgpuOpKind::Multiply,
+    require(result.schedule.ops[15].kind == MgpuOpKind::Negate,
+            "negate should remain a ciphertext unary op");
+    require(result.schedule.ops[18].kind == MgpuOpKind::Multiply,
             "square activation should remain a ciphertext multiply");
     require(result.schedule.ops.back().kind == MgpuOpKind::Download,
             "last HEVM op should remain download");
     require_contains(result.debug_dump, "mgpu.add");
+    require_contains(result.debug_dump, "mgpu.negate");
     require_contains(result.debug_dump, "mgpu.multiply");
     require_contains(result.debug_dump, "attrs={rotate_step=1}");
     require_contains(result.debug_dump, "name=\"auto_copy\"");

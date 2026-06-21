@@ -76,6 +76,8 @@ void test_kind_strings()
             "AddPlain string mismatch");
     require(mgpu_op_kind_from_string("add_plain") == MgpuOpKind::AddPlain,
             "add_plain string should map to AddPlain");
+    require(mgpu_op_kind_from_string("negate") == MgpuOpKind::Negate,
+            "negate string should map to Negate");
     require(mgpu_op_kind_from_string("rotate") == MgpuOpKind::Rotate,
             "rotate string should map to Rotate");
     require(!mgpu_op_kind_from_string("unknown_op").has_value(),
@@ -83,6 +85,7 @@ void test_kind_strings()
     require(is_upload_op(MgpuOpKind::UploadCipher), "UploadCipher should be upload op");
     require(is_copy_op(MgpuOpKind::CopyPlain), "CopyPlain should be copy op");
     require(is_compute_op(MgpuOpKind::AddPlain), "AddPlain should be compute op");
+    require(is_compute_op(MgpuOpKind::Negate), "Negate should be compute op");
     require(is_compute_op(MgpuOpKind::Rescale), "Rescale should be compute op");
     require(is_download_op(MgpuOpKind::Download), "Download should be download op");
 }
@@ -124,6 +127,17 @@ void test_add_plain_schedule()
     require_valid(schedule, 1);
     require_contains(
         dump_schedule(schedule), "#2 [%3] = mgpu.add_plain device=0 inputs=[%1, %2]");
+}
+
+void test_negate_schedule()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, 0, {}, { value(1) }));
+    schedule.ops.push_back(op(MgpuOpKind::Negate, 0, { value(1) }, { value(2) }));
+    schedule.ops.push_back(op(MgpuOpKind::Download, 0, { value(2) }, {}));
+
+    require_valid(schedule, 1);
+    require_contains(dump_schedule(schedule), "#1 [%2] = mgpu.negate device=0 inputs=[%1]");
 }
 
 void test_integer_attribute_dump()
@@ -228,6 +242,7 @@ int main()
         test_dump();
         test_valid_schedule();
         test_add_plain_schedule();
+        test_negate_schedule();
         test_integer_attribute_dump();
         test_required_static_attributes();
         test_invalid_device();

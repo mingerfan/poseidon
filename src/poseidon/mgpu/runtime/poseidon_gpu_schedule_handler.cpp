@@ -236,6 +236,7 @@ void PoseidonGpuScheduleHandler::execute(const MgpuOp &op, MgpuObjectStore &obje
     case MgpuOpKind::MultiplyPlain:
         execute_cipher_plain_binary(op, object_store);
         return;
+    case MgpuOpKind::Negate:
     case MgpuOpKind::Relinearize:
     case MgpuOpKind::Rescale:
     case MgpuOpKind::Rotate:
@@ -397,6 +398,9 @@ void PoseidonGpuScheduleHandler::execute_cipher_unary(
     gpu::GpuCiphertextData result;
     switch (op.kind)
     {
+    case MgpuOpKind::Negate:
+        evaluator(op.device_id).negate(*cipher, result);
+        break;
     case MgpuOpKind::Rescale:
         evaluator(op.device_id).rescale(*cipher, result);
         break;

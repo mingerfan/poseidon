@@ -306,6 +306,7 @@ ScheduleVerificationResult verify_schedule(
                 }
             }
             break;
+        case MgpuOpKind::Negate:
         case MgpuOpKind::Relinearize:
         case MgpuOpKind::Rescale:
             if (expect_arity(result, op, op_index, 1, 1) && device_valid &&

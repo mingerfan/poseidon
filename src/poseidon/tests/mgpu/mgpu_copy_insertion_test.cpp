@@ -52,7 +52,7 @@ void test_inserts_cipher_copy_for_unary_op()
 {
     MgpuSchedule schedule;
     schedule.ops.push_back(op(MgpuOpKind::UploadCipher, 0, {}, { value(1) }));
-    schedule.ops.push_back(op(MgpuOpKind::Rescale, 1, { value(1) }, { value(2) }));
+    schedule.ops.push_back(op(MgpuOpKind::Negate, 1, { value(1) }, { value(2) }));
 
     const CopyInsertionResult result = insert_required_copies(schedule);
     require(result.ok(), "copy insertion failed:\n" + result.format_diagnostics());
@@ -61,7 +61,7 @@ void test_inserts_cipher_copy_for_unary_op()
     require(result.schedule.ops[1].device_id == 1, "copy destination device mismatch");
     require(result.schedule.ops[1].inputs[0].id == 1, "copy input mismatch");
     require(result.schedule.ops[1].outputs[0].id == 3, "copy output id mismatch");
-    require(result.schedule.ops[2].inputs[0].id == 3, "rescale input should be rewritten");
+    require(result.schedule.ops[2].inputs[0].id == 3, "negate input should be rewritten");
     require_verifies(result.schedule, 2);
 }
 

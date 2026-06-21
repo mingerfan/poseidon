@@ -83,6 +83,9 @@ public:
         case MgpuOpKind::MultiplyPlain:
             define_binary(op, object_store, "mul_plain");
             return;
+        case MgpuOpKind::Negate:
+            define_unary(op, object_store, "negate");
+            return;
         case MgpuOpKind::Relinearize:
             define_unary(op, object_store, "relinearize");
             return;
@@ -155,7 +158,7 @@ private:
 std::string make_resnet_like_hevm_binary()
 {
     return test::make_hevm_binary(
-        2, 1, 9, 2, { 8 },
+        2, 1, 10, 2, { 9 },
         {
             test::HevmOpRecord{ 0, 0, 0, test::make_hevm_encode_attr(5, 45) },
             test::HevmOpRecord{ 0, 1, 0, test::make_hevm_encode_attr(4, 40) },
@@ -164,8 +167,9 @@ std::string make_resnet_like_hevm_binary()
             test::HevmOpRecord{ 1, 4, 3, 1 },
             test::HevmOpRecord{ 9, 5, 1, 1 },
             test::HevmOpRecord{ 6, 6, 4, 5 },
-            test::HevmOpRecord{ 8, 7, 6, 6 },
-            test::HevmOpRecord{ 3, 8, 7, 0 },
+            test::HevmOpRecord{ 2, 7, 6, 0 },
+            test::HevmOpRecord{ 8, 8, 7, 7 },
+            test::HevmOpRecord{ 3, 9, 8, 0 },
         });
 }
 
@@ -213,8 +217,8 @@ void test_static_hevm_pipeline_executes_through_interpreter_handlers()
     const ScheduleExecutionResult execution = executor.run(pipeline.schedule);
 
     require(execution.ok(), "interpreter failed:\n" + execution.format_errors());
-    require(comm.requests.size() == 8, "expected eight explicit copy requests");
-    require(compute.executed_ops.size() == 7, "expected seven compute operations");
+    require(comm.requests.size() == 9, "expected nine explicit copy requests");
+    require(compute.executed_ops.size() == 8, "expected eight compute operations");
 
     std::size_t cross_device_copies = 0;
     std::size_t plain_copies = 0;
@@ -238,7 +242,7 @@ void test_static_hevm_pipeline_executes_through_interpreter_handlers()
     require(downloaded != nullptr, "downloaded object should be materialized");
     require_contains(downloaded->expression, "rotate(1,rescale(mul_plain(cipher_arg_0");
     require_contains(downloaded->expression, "mul_plain(cipher_arg_1,plain_const_1)");
-    require_contains(downloaded->expression, "rescale(mul(add(");
+    require_contains(downloaded->expression, "rescale(mul(negate(add(");
 }
 
 }  // namespace

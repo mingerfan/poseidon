@@ -166,7 +166,7 @@ void test_hevm_binary_translates_bootstrap_target_level()
         "HEVM bootstrap target level mismatch");
 }
 
-void test_hevm_binary_reports_unsupported_opcode()
+void test_hevm_binary_translates_negate()
 {
     const std::string hevm = test::make_hevm_binary(
         1, 1, 2, 0, { 1 },
@@ -177,9 +177,27 @@ void test_hevm_binary_reports_unsupported_opcode()
     const DacapoAdapterResult result = translate_dacapo_schedule(
         hevm, DacapoAdapterOptions{ DacapoInputFormat::HevmBinary });
 
+    require(result.ok(), "HEVM negate should translate:\n" + result.format_diagnostics());
+    require(result.schedule.ops.size() == 3, "HEVM negate op count mismatch");
+    require(result.schedule.ops[1].kind == MgpuOpKind::Negate, "HEVM negate kind mismatch");
+    require(result.schedule.ops[1].inputs[0].id == 1, "HEVM negate input mismatch");
+    require(result.schedule.ops[1].outputs[0].id == 2, "HEVM negate output mismatch");
+}
+
+void test_hevm_binary_reports_unsupported_opcode()
+{
+    const std::string hevm = test::make_hevm_binary(
+        1, 1, 2, 0, { 1 },
+        {
+            test::HevmOpRecord{ 4, 1, 0, 0 },
+        });
+
+    const DacapoAdapterResult result = translate_dacapo_schedule(
+        hevm, DacapoAdapterOptions{ DacapoInputFormat::HevmBinary });
+
     require(!result.ok(), "unsupported HEVM opcode should fail");
     require(result.schedule.ops.empty(), "failed HEVM adapter should not produce a schedule");
-    require_contains(result.format_diagnostics(), "unsupported HEVM opcode 2");
+    require_contains(result.format_diagnostics(), "unsupported HEVM opcode 4");
 }
 
 void test_hevm_binary_reports_bad_magic()
@@ -217,6 +235,7 @@ int main()
         test_hevm_binary_translates_supported_ops();
         test_hevm_binary_translates_rotate_attributes();
         test_hevm_binary_translates_bootstrap_target_level();
+        test_hevm_binary_translates_negate();
         test_hevm_binary_reports_unsupported_opcode();
         test_hevm_binary_reports_bad_magic();
         test_unknown_dacapo_format_does_not_guess();

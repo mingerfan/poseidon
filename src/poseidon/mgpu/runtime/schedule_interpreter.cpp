@@ -64,6 +64,7 @@ void apply_completed_op(MgpuObjectStore &object_store, const MgpuOp &op)
     case MgpuOpKind::Sub:
     case MgpuOpKind::MultiplyPlain:
     case MgpuOpKind::Multiply:
+    case MgpuOpKind::Negate:
     case MgpuOpKind::Relinearize:
     case MgpuOpKind::Rescale:
     case MgpuOpKind::Rotate:

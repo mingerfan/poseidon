@@ -331,8 +331,11 @@ void run_gpu_runtime_add_plain_rescale_smoke()
     encryptor.encrypt(input_plain, input_cipher);
 
     Ciphertext expected_add_plain;
+    Ciphertext expected_negate;
     Ciphertext expected_rescale;
     cpu_evaluator->add_plain(input_cipher, bias_plain, expected_add_plain);
+    cpu_evaluator->sub(input_cipher, input_cipher, expected_negate);
+    cpu_evaluator->sub(expected_negate, input_cipher, expected_negate);
     cpu_evaluator->rescale(expected_add_plain, expected_rescale);
 
     MgpuSchedule schedule;
@@ -341,8 +344,10 @@ void run_gpu_runtime_add_plain_rescale_smoke()
     schedule.ops.push_back(
         op(MgpuOpKind::AddPlain, device_id, { value(20), value(21) }, { value(22) }));
     schedule.ops.push_back(op(MgpuOpKind::Rescale, device_id, { value(22) }, { value(23) }));
+    schedule.ops.push_back(op(MgpuOpKind::Negate, device_id, { value(20) }, { value(24) }));
     schedule.ops.push_back(op(MgpuOpKind::Download, device_id, { value(22) }, {}));
     schedule.ops.push_back(op(MgpuOpKind::Download, device_id, { value(23) }, {}));
+    schedule.ops.push_back(op(MgpuOpKind::Download, device_id, { value(24) }, {}));
 
     PoseidonGpuScheduleHandler handler(context);
     handler.bind_cipher_upload(20, std::make_shared<Ciphertext>(input_cipher));
@@ -355,8 +360,10 @@ void run_gpu_runtime_add_plain_rescale_smoke()
         "GPU runtime add_plain/rescale schedule failed:\n" + result.format_errors());
     require(handler.has_cipher_download(22), "missing add_plain output download");
     require(handler.has_cipher_download(23), "missing rescale output download");
+    require(handler.has_cipher_download(24), "missing negate output download");
     require_ciphertexts_equal(expected_add_plain, *handler.cipher_download(22));
     require_ciphertexts_equal(expected_rescale, *handler.cipher_download(23));
+    require_ciphertexts_equal(expected_negate, *handler.cipher_download(24));
 }
 
 void run_gpu_runtime_rotate_smoke()
