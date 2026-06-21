@@ -215,6 +215,9 @@ Dacapo artifact debugging:
 - Keep a not-ready mock report test that does not enable hard `require_ready`;
   it should validate that failed communication gates still produce durable
   `execution_gate.diagnostics` on single-GPU development machines.
+- Keep an unsupported-opcode mock report test for both dump-tool and external
+  CTest paths so artifact translation failures still leave machine-readable
+  not-ready reports before HEVM I/O binding exists.
 - External artifact tests also accept `POSEIDON_MGPU_EXTERNAL_SCHEDULE_DUMP` to
   write the readable MLIR-like static schedule separately from stdout and the
   machine-readable report.

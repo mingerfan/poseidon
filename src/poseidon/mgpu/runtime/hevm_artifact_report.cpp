@@ -61,6 +61,78 @@ void validate_required_input(const HevmArtifactReportInput &input)
     }
 }
 
+void validate_required_failure_input(const HevmArtifactFailureReportInput &input)
+{
+    if (input.execution_config == nullptr)
+    {
+        throw std::invalid_argument(
+            "HEVM artifact failure report requires execution_config");
+    }
+    if (input.artifacts == nullptr)
+    {
+        throw std::invalid_argument(
+            "HEVM artifact failure report requires artifacts");
+    }
+}
+
+Json artifact_diagnostics_to_json(
+    const std::vector<DacapoHevmArtifactDiagnostic> &diagnostics)
+{
+    Json root = Json::array();
+    for (const DacapoHevmArtifactDiagnostic &diagnostic : diagnostics)
+    {
+        root.push_back(Json{
+            { "stage", diagnostic.stage },
+            { "path", diagnostic.path },
+            { "location", diagnostic.location },
+            { "message", diagnostic.message },
+        });
+    }
+    return root;
+}
+
+bool artifact_read_succeeded(const DacapoHevmArtifactResult &artifacts)
+{
+    for (const DacapoHevmArtifactDiagnostic &diagnostic : artifacts.diagnostics)
+    {
+        if (diagnostic.stage == "read_hevm" ||
+            diagnostic.stage == "read_constants")
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+Json artifact_failure_gate_diagnostics_to_json(
+    const HevmArtifactFailureReportInput &input)
+{
+    Json root = Json::array();
+    if (input.hevm_artifact_readiness != nullptr)
+    {
+        for (const HevmArtifactReadinessDiagnostic &diagnostic :
+             input.hevm_artifact_readiness->diagnostics)
+        {
+            root.push_back(Json{
+                { "stage", diagnostic.stage },
+                { "location", diagnostic.location },
+                { "message", diagnostic.message },
+            });
+        }
+    }
+    for (const DacapoHevmArtifactDiagnostic &diagnostic :
+         input.artifacts->diagnostics)
+    {
+        root.push_back(Json{
+            { "stage", diagnostic.stage },
+            { "path", diagnostic.path },
+            { "location", diagnostic.location },
+            { "message", diagnostic.message },
+        });
+    }
+    return root;
+}
+
 Json execution_gate_to_json(const HevmArtifactReportInput &input)
 {
     const bool readiness_evaluated = input.hevm_artifact_readiness != nullptr;
@@ -112,6 +184,27 @@ Json execution_gate_to_json(const HevmArtifactReportInput &input)
             });
         }
     }
+    return root;
+}
+
+Json artifact_failure_execution_gate_to_json(
+    const HevmArtifactFailureReportInput &input)
+{
+    const bool readiness_evaluated = input.hevm_artifact_readiness != nullptr;
+    const bool readiness_ok =
+        readiness_evaluated && input.hevm_artifact_readiness->ok();
+
+    Json root;
+    root["ok"] = false;
+    root["status"] = "not_ready";
+    root["checks"] = Json{
+        { "artifacts_loaded", artifact_read_succeeded(*input.artifacts) },
+        { "schedule_built", false },
+        { "hevm_io_bound", false },
+        { "readiness_evaluated", readiness_evaluated },
+        { "readiness_ok", readiness_ok },
+    };
+    root["diagnostics"] = artifact_failure_gate_diagnostics_to_json(input);
     return root;
 }
 
@@ -181,6 +274,36 @@ std::string hevm_artifact_report_to_json(
     if (input.debug_dump != nullptr)
     {
         root["debug_dump"] = *input.debug_dump;
+    }
+    return root.dump(indent);
+}
+
+std::string hevm_artifact_failure_report_to_json(
+    const HevmArtifactFailureReportInput &input, int indent)
+{
+    validate_required_failure_input(input);
+
+    Json root;
+    root["version"] = 1;
+    root["execution_gate"] = artifact_failure_execution_gate_to_json(input);
+    root["artifacts"] = Json{
+        { "hevm", input.hevm_path },
+        { "constants", input.constants_path },
+    };
+    root["execution_config"] = parse_json_object(
+        static_schedule_execution_config_to_json(*input.execution_config, -1));
+    root["artifact_diagnostics"] =
+        artifact_diagnostics_to_json(input.artifacts->diagnostics);
+    if (input.hevm_opcode_summary != nullptr)
+    {
+        root["hevm_opcode_summary"] =
+            hevm_opcode_summary_to_json(*input.hevm_opcode_summary);
+    }
+    if (input.hevm_artifact_readiness != nullptr)
+    {
+        root["hevm_artifact_readiness"] = parse_json_object(
+            hevm_artifact_readiness_to_json(
+                *input.hevm_artifact_readiness, -1));
     }
     return root.dump(indent);
 }

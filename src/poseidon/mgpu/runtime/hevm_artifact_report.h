@@ -3,6 +3,7 @@
 #include "poseidon/mgpu/comm/execution_preflight.h"
 #include "poseidon/mgpu/comm/topology.h"
 #include "poseidon/mgpu/compiler/dacapo_adapter.h"
+#include "poseidon/mgpu/compiler/dacapo_artifacts.h"
 #include "poseidon/mgpu/compiler/static_schedule_config.h"
 #include "poseidon/mgpu/ir/schedule_summary.h"
 #include "poseidon/mgpu/runtime/gpu_execution_preflight.h"
@@ -35,7 +36,20 @@ struct HevmArtifactReportInput
     const std::string *debug_dump = nullptr;
 };
 
+struct HevmArtifactFailureReportInput
+{
+    std::string hevm_path;
+    std::string constants_path;
+    const StaticScheduleExecutionConfig *execution_config = nullptr;
+    const DacapoHevmArtifactResult *artifacts = nullptr;
+    const DacapoHevmOpcodeSummary *hevm_opcode_summary = nullptr;
+    const HevmArtifactReadinessResult *hevm_artifact_readiness = nullptr;
+};
+
 std::string hevm_artifact_report_to_json(
     const HevmArtifactReportInput &input, int indent = 2);
+
+std::string hevm_artifact_failure_report_to_json(
+    const HevmArtifactFailureReportInput &input, int indent = 2);
 
 }  // namespace poseidon::mgpu

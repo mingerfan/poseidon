@@ -288,6 +288,11 @@ not-ready report without enabling the hard `require_ready` failure, so the
 top-level `execution_gate.diagnostics` path stays covered on single-GPU
 development machines.
 
+`poseidon_mgpu_external_hevm_failure_report_mock_artifact_tests` uses an
+unsupported HEVM opcode mock to verify that the external artifact CTest path
+also writes the same not-ready failure report when schedule construction fails
+before HEVM I/O binding.
+
 The dump tool can run the same preflight without CTest:
 
 ```bash

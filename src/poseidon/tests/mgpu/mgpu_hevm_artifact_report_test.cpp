@@ -246,6 +246,70 @@ void test_report_execution_gate_reports_not_ready()
         "readiness JSON should fail");
 }
 
+void test_failure_report_includes_artifact_diagnostics()
+{
+    StaticScheduleExecutionConfig config;
+    config.pipeline.device_count = 2;
+    config.require_ready = true;
+
+    DacapoHevmArtifactResult artifacts;
+    artifacts.diagnostics.push_back(DacapoHevmArtifactDiagnostic{
+        "dacapo_adapter",
+        "/tmp/model.hevm",
+        16,
+        "unsupported HEVM opcode 4",
+    });
+
+    DacapoHevmOpcodeSummary opcode_summary;
+    opcode_summary.operation_count = 1;
+    opcode_summary.opcode_counts.push_back(
+        DacapoHevmOpcodeCount{ 4, 1, "ModswitchC", false });
+
+    HevmArtifactReadinessInput readiness_input;
+    readiness_input.opcode_summary = &opcode_summary;
+    const HevmArtifactReadinessResult readiness =
+        check_hevm_artifact_readiness(readiness_input);
+    require(!readiness.ok(), "unsupported opcode readiness should fail");
+
+    HevmArtifactFailureReportInput input;
+    input.hevm_path = "/tmp/model.hevm";
+    input.constants_path = "/tmp/model.cst";
+    input.execution_config = &config;
+    input.artifacts = &artifacts;
+    input.hevm_opcode_summary = &opcode_summary;
+    input.hevm_artifact_readiness = &readiness;
+
+    const nlohmann::json report =
+        nlohmann::json::parse(hevm_artifact_failure_report_to_json(input));
+    require(
+        !report.at("execution_gate").at("ok").get<bool>(),
+        "failure report gate should fail");
+    require(
+        report.at("execution_gate").at("status").get<std::string>() ==
+            "not_ready",
+        "failure report gate status mismatch");
+    require(
+        !report.at("execution_gate")
+             .at("checks")
+             .at("schedule_built")
+             .get<bool>(),
+        "failure report should mark schedule_built false");
+    require(
+        report.at("artifact_diagnostics").at(0).at("message").get<std::string>() ==
+            "unsupported HEVM opcode 4",
+        "failure report artifact diagnostic missing");
+    require(
+        report.at("hevm_opcode_summary")
+                .at("opcode_counts")
+                .at(0)
+                .at("supported")
+                .get<bool>() == false,
+        "failure report opcode support flag mismatch");
+    require(
+        report.at("hevm_artifact_readiness").at("ok").get<bool>() == false,
+        "failure report readiness should fail");
+}
+
 void test_report_rejects_missing_required_sections()
 {
     HevmArtifactReportInput input;
@@ -269,6 +333,7 @@ int main()
     {
         test_report_includes_execution_evidence();
         test_report_execution_gate_reports_not_ready();
+        test_failure_report_includes_artifact_diagnostics();
         test_report_rejects_missing_required_sections();
     }
     catch (const std::exception &ex)

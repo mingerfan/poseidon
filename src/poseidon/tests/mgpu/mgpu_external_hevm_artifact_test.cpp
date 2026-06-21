@@ -106,6 +106,11 @@ bool should_expect_inter_node_missing()
     return parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_EXPECT_INTER_NODE_MISSING"));
 }
 
+bool should_expect_artifact_failure_report()
+{
+    return parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_EXPECT_ARTIFACT_FAILURE_REPORT"));
+}
+
 std::optional<int> parse_optional_device(const char *name)
 {
     const char *value = get_env(name);
@@ -274,6 +279,23 @@ std::string make_rich_mock_hevm_binary()
         });
 }
 
+std::string make_unsupported_mock_hevm_binary()
+{
+    return test::make_hevm_binary(
+        1, 1, 2, 1, { 1 },
+        {
+            test::HevmOpRecord{ 0, 0, 0, test::make_hevm_encode_attr(2, 20) },
+            test::HevmOpRecord{ 4, 1, 0, 1 },
+        },
+        test::HevmConfigMetadata{
+            { 20 },
+            { 2 },
+            { 40 },
+            { 2 },
+            2,
+        });
+}
+
 std::string make_mock_constant_file()
 {
     std::string output;
@@ -373,6 +395,61 @@ void validate_report_json_file(
     require(
         report.at("hevm_artifact_readiness").at("ok").get<bool>() == readiness.ok(),
         "external report readiness mismatch");
+}
+
+void validate_failure_report_json_file(
+    const std::string &path, const StaticScheduleExecutionConfig &config,
+    const DacapoHevmArtifactResult &artifacts,
+    const DacapoHevmOpcodeSummary &opcode_summary,
+    const std::optional<HevmArtifactReadinessResult> &readiness)
+{
+    const Json report = Json::parse(read_text_file(path));
+    require(report.at("version").get<int>() == 1, "failure report version mismatch");
+    require(
+        !report.at("execution_gate").at("ok").get<bool>(),
+        "failure report execution gate should be not-ready");
+    require(
+        report.at("execution_gate").at("status").get<std::string>() ==
+            "not_ready",
+        "failure report execution gate status mismatch");
+    require(
+        !report.at("execution_gate")
+             .at("checks")
+             .at("schedule_built")
+             .get<bool>(),
+        "failure report should mark schedule_built false");
+    require(
+        report.at("execution_gate").at("diagnostics").size() >=
+            artifacts.diagnostics.size(),
+        "failure report should include gate diagnostics");
+    require(
+        report.at("execution_config").at("device_count").get<int>() ==
+            config.pipeline.device_count,
+        "failure report device_count mismatch");
+    require(
+        report.at("artifact_diagnostics").size() == artifacts.diagnostics.size(),
+        "failure report artifact diagnostic count mismatch");
+    require(
+        !artifacts.diagnostics.empty(),
+        "test failure artifact should include diagnostics");
+    require(
+        report.at("artifact_diagnostics")
+                .at(0)
+                .at("message")
+                .get<std::string>()
+                .find(artifacts.diagnostics.at(0).message) != std::string::npos,
+        "failure report artifact diagnostic message mismatch");
+    require(
+        report.at("hevm_opcode_summary").at("operation_count").get<std::uint64_t>() ==
+            opcode_summary.operation_count,
+        "failure report opcode operation count mismatch");
+    if (readiness.has_value())
+    {
+        require(
+            report.at("hevm_artifact_readiness").at("ok").get<bool>() ==
+                readiness->ok(),
+            "failure report readiness mismatch");
+    }
 }
 
 void print_opcode_summary(const DacapoHevmOpcodeSummary &summary)
@@ -576,6 +653,8 @@ int main()
             parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_MOCK_ARTIFACT"));
         const bool use_rich_mock_artifact =
             parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_RICH_MOCK_ARTIFACT"));
+        const bool use_unsupported_mock_artifact =
+            parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_UNSUPPORTED_MOCK_ARTIFACT"));
         std::optional<TempDir> mock_temp;
         std::string hevm_path = get_env("POSEIDON_MGPU_EXTERNAL_HEVM") == nullptr
                                     ? ""
@@ -584,15 +663,18 @@ int main()
                                          ? ""
                                          : get_env("POSEIDON_MGPU_EXTERNAL_CST");
 
-        if (use_mock_artifact || use_rich_mock_artifact)
+        if (use_mock_artifact || use_rich_mock_artifact ||
+            use_unsupported_mock_artifact)
         {
             mock_temp.emplace();
             hevm_path = mock_temp->path("mock_resnet20.hevm");
             constants_path = mock_temp->path("mock_resnet20.cst");
             write_binary_file(
                 hevm_path,
-                use_rich_mock_artifact ? make_rich_mock_hevm_binary()
-                                       : make_mock_hevm_binary());
+                use_unsupported_mock_artifact
+                    ? make_unsupported_mock_hevm_binary()
+                    : (use_rich_mock_artifact ? make_rich_mock_hevm_binary()
+                                              : make_mock_hevm_binary()));
             write_binary_file(
                 constants_path,
                 use_rich_mock_artifact ? make_rich_mock_constant_file()
@@ -604,7 +686,8 @@ int main()
             std::cout << "skipping external HEVM artifact test; set "
                       << "POSEIDON_MGPU_EXTERNAL_HEVM and POSEIDON_MGPU_EXTERNAL_CST "
                       << "or POSEIDON_MGPU_EXTERNAL_MOCK_ARTIFACT=1 or "
-                      << "POSEIDON_MGPU_EXTERNAL_RICH_MOCK_ARTIFACT=1\n";
+                      << "POSEIDON_MGPU_EXTERNAL_RICH_MOCK_ARTIFACT=1 or "
+                      << "POSEIDON_MGPU_EXTERNAL_UNSUPPORTED_MOCK_ARTIFACT=1\n";
             return kSkip;
         }
         if (hevm_path.empty() || constants_path.empty())
@@ -629,6 +712,39 @@ int main()
             prepare_dacapo_hevm_artifacts_from_files(
                 DacapoHevmArtifactPaths{ hevm_path, constants_path },
                 config.pipeline);
+        if (!artifacts.ok())
+        {
+            std::optional<HevmArtifactReadinessResult> failure_readiness;
+            if (config.require_ready)
+            {
+                failure_readiness = check_hevm_artifact_readiness(
+                    HevmArtifactReadinessInput{ &opcode_summary });
+                std::cout << dump_hevm_artifact_readiness(*failure_readiness);
+            }
+            if (const char *report_path = get_env("POSEIDON_MGPU_EXTERNAL_REPORT_JSON"))
+            {
+                HevmArtifactFailureReportInput report;
+                report.hevm_path = hevm_path;
+                report.constants_path = constants_path;
+                report.execution_config = &config;
+                report.artifacts = &artifacts;
+                report.hevm_opcode_summary = &opcode_summary;
+                report.hevm_artifact_readiness =
+                    failure_readiness.has_value() ? &*failure_readiness : nullptr;
+                write_text_file(
+                    report_path,
+                    hevm_artifact_failure_report_to_json(report, 2) + "\n");
+                validate_failure_report_json_file(
+                    report_path, config, artifacts, opcode_summary,
+                    failure_readiness);
+                std::cout << "external_failure_report_json: " << report_path
+                          << '\n';
+            }
+            if (should_expect_artifact_failure_report())
+            {
+                return EXIT_SUCCESS;
+            }
+        }
         require(artifacts.ok(), "external HEVM artifact load failed:\n" +
                                     artifacts.format_diagnostics());
         require(!artifacts.schedule.ops.empty(), "external HEVM schedule must not be empty");

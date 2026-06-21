@@ -8,7 +8,6 @@
 #include "poseidon/mgpu/runtime/hevm_artifact_readiness.h"
 #include "poseidon/mgpu/runtime/hevm_io_binding.h"
 #include "poseidon/mgpu/runtime/poseidon_gpu_schedule_preflight.h"
-#include "poseidon/util/json.h"
 
 #include <cstdlib>
 #include <fstream>
@@ -24,8 +23,6 @@ using namespace poseidon::mgpu;
 namespace
 {
 
-using Json = nlohmann::json;
-
 struct ToolOptions
 {
     std::string hevm_path;
@@ -38,11 +35,6 @@ struct ToolOptions
 };
 
 std::string read_binary_file(const std::string &path);
-
-Json parse_json_object(const std::string &text)
-{
-    return Json::parse(text);
-}
 
 void print_usage(std::ostream &stream)
 {
@@ -514,91 +506,6 @@ void print_opcode_summary_text(const DacapoHevmOpcodeSummary &summary)
     }
 }
 
-Json hevm_opcode_summary_json(const DacapoHevmOpcodeSummary &summary)
-{
-    Json root;
-    root["ok"] = summary.ok();
-    root["operation_count"] = summary.operation_count;
-    root["alloc_count"] = summary.alloc_count;
-    root["opcode_counts"] = Json::array();
-    for (const DacapoHevmOpcodeCount &count : summary.opcode_counts)
-    {
-        root["opcode_counts"].push_back(Json{
-            { "opcode", count.opcode },
-            { "name", count.name },
-            { "count", count.count },
-            { "supported", count.supported },
-        });
-    }
-    root["diagnostics"] = Json::array();
-    for (const DacapoAdapterDiagnostic &diagnostic : summary.diagnostics)
-    {
-        root["diagnostics"].push_back(Json{
-            { "offset", diagnostic.offset },
-            { "message", diagnostic.message },
-        });
-    }
-    return root;
-}
-
-Json artifact_diagnostics_json(
-    const std::vector<DacapoHevmArtifactDiagnostic> &diagnostics)
-{
-    Json root = Json::array();
-    for (const DacapoHevmArtifactDiagnostic &diagnostic : diagnostics)
-    {
-        root.push_back(Json{
-            { "stage", diagnostic.stage },
-            { "path", diagnostic.path },
-            { "location", diagnostic.location },
-            { "message", diagnostic.message },
-        });
-    }
-    return root;
-}
-
-Json gate_diagnostics_json(
-    const DacapoHevmArtifactResult &artifacts,
-    const std::optional<HevmArtifactReadinessResult> &readiness)
-{
-    Json root = Json::array();
-    if (readiness.has_value())
-    {
-        for (const HevmArtifactReadinessDiagnostic &diagnostic :
-             readiness->diagnostics)
-        {
-            root.push_back(Json{
-                { "stage", diagnostic.stage },
-                { "location", diagnostic.location },
-                { "message", diagnostic.message },
-            });
-        }
-    }
-    for (const DacapoHevmArtifactDiagnostic &diagnostic : artifacts.diagnostics)
-    {
-        root.push_back(Json{
-            { "stage", diagnostic.stage },
-            { "path", diagnostic.path },
-            { "location", diagnostic.location },
-            { "message", diagnostic.message },
-        });
-    }
-    return root;
-}
-
-bool artifact_read_succeeded(const DacapoHevmArtifactResult &artifacts)
-{
-    for (const DacapoHevmArtifactDiagnostic &diagnostic : artifacts.diagnostics)
-    {
-        if (diagnostic.stage == "read_hevm" ||
-            diagnostic.stage == "read_constants")
-        {
-            return false;
-        }
-    }
-    return true;
-}
-
 void print_optional_preflight(
     const std::optional<PoseidonGpuSchedulePreflightResult> &preflight)
 {
@@ -726,41 +633,16 @@ std::string make_artifact_failure_summary_json(
     const std::optional<HevmArtifactReadinessResult> &readiness)
 {
     const StaticScheduleExecutionConfig config = effective_config(tool_options);
-    const bool readiness_evaluated = readiness.has_value();
-    const bool readiness_ok = readiness_evaluated && readiness->ok();
-
-    Json root;
-    root["version"] = 1;
-    root["execution_gate"] = Json{
-        { "ok", false },
-        { "status", "not_ready" },
-        { "checks",
-          Json{
-              { "artifacts_loaded", artifact_read_succeeded(artifacts) },
-              { "schedule_built", false },
-              { "hevm_io_bound", false },
-              { "readiness_evaluated", readiness_evaluated },
-              { "readiness_ok", readiness_ok },
-          } },
-        { "diagnostics", gate_diagnostics_json(artifacts, readiness) },
-    };
-    root["artifacts"] = Json{
-        { "hevm", tool_options.hevm_path },
-        { "constants", tool_options.constants_path },
-    };
-    root["execution_config"] = parse_json_object(
-        static_schedule_execution_config_to_json(config, -1));
-    root["artifact_diagnostics"] = artifact_diagnostics_json(artifacts.diagnostics);
-    if (opcode_summary.has_value())
-    {
-        root["hevm_opcode_summary"] = hevm_opcode_summary_json(*opcode_summary);
-    }
-    if (readiness.has_value())
-    {
-        root["hevm_artifact_readiness"] = parse_json_object(
-            hevm_artifact_readiness_to_json(*readiness, -1));
-    }
-    return root.dump(2);
+    HevmArtifactFailureReportInput input;
+    input.hevm_path = tool_options.hevm_path;
+    input.constants_path = tool_options.constants_path;
+    input.execution_config = &config;
+    input.artifacts = &artifacts;
+    input.hevm_opcode_summary =
+        opcode_summary.has_value() ? &*opcode_summary : nullptr;
+    input.hevm_artifact_readiness =
+        readiness.has_value() ? &*readiness : nullptr;
+    return hevm_artifact_failure_report_to_json(input, 2);
 }
 
 }  // namespace
