@@ -94,7 +94,12 @@ void test_preflight_diagnostics_are_propagated()
 
     MgpuCommunicationExecutionPreflight communication_preflight;
     communication_preflight.diagnostics.push_back(
-        MgpuCommunicationExecutionDiagnostic{ 1, "inter-node communication backend is not available" });
+        MgpuCommunicationExecutionDiagnostic{
+            1,
+            MgpuTransportKind::InterNode,
+            1,
+            8,
+            "inter-node communication backend is not available" });
 
     const HevmArtifactReadinessResult result = check_hevm_artifact_readiness(
         HevmArtifactReadinessInput{
@@ -128,7 +133,11 @@ void test_execution_preflight_diagnostics_are_propagated()
     execution_preflight.communication_execution_preflight_evaluated = true;
     execution_preflight.communication_execution_preflight.diagnostics.push_back(
         MgpuCommunicationExecutionDiagnostic{
-            2, "CUDA peer or host-staged copy backend is not available" });
+            2,
+            MgpuTransportKind::CudaPeer,
+            0,
+            1,
+            "CUDA peer or host-staged copy backend is not available" });
 
     HevmArtifactReadinessInput input;
     input.opcode_summary = &opcode_summary;

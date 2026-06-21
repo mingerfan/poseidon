@@ -3,6 +3,7 @@
 #include "poseidon/util/json.h"
 
 #include <algorithm>
+#include <set>
 #include <sstream>
 #include <stdexcept>
 #include <unordered_map>
@@ -26,6 +27,73 @@ void add_diagnostic(
 {
     plan.diagnostics.push_back(
         MgpuCommunicationPlanDiagnostic{ op_index, std::move(message) });
+}
+
+void add_topology_diagnostic(MgpuCommunicationPlan &plan, std::string message)
+{
+    add_diagnostic(plan, 0, std::move(message));
+}
+
+bool validate_topology(MgpuCommunicationPlan &plan, const MgpuTopology &topology)
+{
+    bool valid = true;
+    std::unordered_map<int, std::size_t> logical_devices;
+    std::set<std::pair<int, int>> local_devices;
+
+    for (std::size_t index = 0; index < topology.devices.size(); ++index)
+    {
+        const MgpuLogicalDevice &device = topology.devices[index];
+        if (device.logical_device < 0)
+        {
+            std::ostringstream stream;
+            stream << "topology device entry #" << index
+                   << " has negative logical device "
+                   << device.logical_device;
+            add_topology_diagnostic(plan, stream.str());
+            valid = false;
+        }
+        if (device.node_id < 0)
+        {
+            std::ostringstream stream;
+            stream << "topology device entry #" << index
+                   << " has negative node id " << device.node_id;
+            add_topology_diagnostic(plan, stream.str());
+            valid = false;
+        }
+        if (device.local_device < 0)
+        {
+            std::ostringstream stream;
+            stream << "topology device entry #" << index
+                   << " has negative local device " << device.local_device;
+            add_topology_diagnostic(plan, stream.str());
+            valid = false;
+        }
+
+        const auto [logical_iter, logical_inserted] =
+            logical_devices.emplace(device.logical_device, index);
+        if (!logical_inserted)
+        {
+            std::ostringstream stream;
+            stream << "duplicate logical device " << device.logical_device
+                   << " in topology entries #" << logical_iter->second
+                   << " and #" << index;
+            add_topology_diagnostic(plan, stream.str());
+            valid = false;
+        }
+
+        const auto [_, local_inserted] =
+            local_devices.emplace(device.node_id, device.local_device);
+        if (!local_inserted)
+        {
+            std::ostringstream stream;
+            stream << "duplicate local device " << device.local_device
+                   << " on node " << device.node_id << " in topology";
+            add_topology_diagnostic(plan, stream.str());
+            valid = false;
+        }
+    }
+
+    return valid;
 }
 
 const MgpuLogicalDevice *find_device(const MgpuTopology &topology, int logical_device)
@@ -248,6 +316,11 @@ MgpuCommunicationPlan plan_schedule_communication(
     const MgpuSchedule &schedule, const MgpuTopology &topology)
 {
     MgpuCommunicationPlan plan;
+    if (!validate_topology(plan, topology))
+    {
+        return plan;
+    }
+
     std::unordered_map<ValueId, ValueState> values;
     for (std::size_t op_index = 0; op_index < schedule.ops.size(); ++op_index)
     {

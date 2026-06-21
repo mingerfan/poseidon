@@ -109,6 +109,50 @@ void test_communication_plan_reports_bad_schedule()
     require_contains(plan.format_diagnostics(), "unknown copy input value %99");
 }
 
+void test_communication_plan_rejects_duplicate_logical_devices()
+{
+    MgpuTopology topology;
+    topology.devices.push_back(MgpuLogicalDevice{ 0, 0, 0 });
+    topology.devices.push_back(MgpuLogicalDevice{ 0, 1, 0 });
+
+    const MgpuCommunicationPlan plan =
+        plan_schedule_communication(make_copy_schedule(), topology);
+
+    require(!plan.ok(), "duplicate logical devices should fail planning");
+    require(plan.routes.empty(), "invalid topology should not produce routes");
+    require_contains(plan.format_diagnostics(), "duplicate logical device 0");
+}
+
+void test_communication_plan_rejects_duplicate_local_devices()
+{
+    MgpuTopology topology;
+    topology.devices.push_back(MgpuLogicalDevice{ 0, 0, 0 });
+    topology.devices.push_back(MgpuLogicalDevice{ 1, 0, 0 });
+
+    const MgpuCommunicationPlan plan =
+        plan_schedule_communication(make_copy_schedule(), topology);
+
+    require(!plan.ok(), "duplicate local devices should fail planning");
+    require(plan.routes.empty(), "invalid topology should not produce routes");
+    require_contains(plan.format_diagnostics(), "duplicate local device 0 on node 0");
+}
+
+void test_communication_plan_rejects_negative_topology_ids()
+{
+    MgpuTopology topology;
+    topology.devices.push_back(MgpuLogicalDevice{ -1, -2, -3 });
+
+    MgpuSchedule schedule;
+    const MgpuCommunicationPlan plan =
+        plan_schedule_communication(schedule, topology);
+
+    require(!plan.ok(), "negative topology ids should fail planning");
+    require_contains(
+        plan.format_diagnostics(), "has negative logical device -1");
+    require_contains(plan.format_diagnostics(), "has negative node id -2");
+    require_contains(plan.format_diagnostics(), "has negative local device -3");
+}
+
 }  // namespace
 
 int main()
@@ -119,6 +163,9 @@ int main()
         test_uniform_cluster_topology();
         test_communication_plan_classifies_routes();
         test_communication_plan_reports_bad_schedule();
+        test_communication_plan_rejects_duplicate_logical_devices();
+        test_communication_plan_rejects_duplicate_local_devices();
+        test_communication_plan_rejects_negative_topology_ids();
     }
     catch (const std::exception &ex)
     {

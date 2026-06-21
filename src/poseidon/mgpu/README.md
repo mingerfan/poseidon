@@ -417,6 +417,10 @@ This does not add NCCL or MPI. It fixes the V1 planning interface for the
 single-node 8-GPU path and the later 4x8 cluster path while keeping execution
 owned by the existing mgpu communication layer.
 
+Topology validation runs before route generation. Logical device IDs must be
+unique and non-negative, node IDs must be non-negative, and local device IDs
+must be unique within each node.
+
 The Dacapo HEVM dump tool can include this plan with `--communication-plan`.
 For a 4x8 logical cluster preview, pass `--nodes 4 --devices-per-node 8`.
 Use `--opcode-summary` to print the raw HEVM opcode distribution before
