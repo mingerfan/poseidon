@@ -1,5 +1,7 @@
 #include "poseidon/mgpu/runtime/planned_communication_executor.h"
 
+#include "poseidon/mgpu/compiler/static_schedule_config.h"
+
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
@@ -249,6 +251,64 @@ void test_executor_reports_missing_backend_before_execution()
         "inter-node backend should not run");
 }
 
+void test_executor_from_config_uses_topology_and_backend_declarations()
+{
+    StaticScheduleExecutionConfig config;
+    config.pipeline.device_count = 5;
+    config.node_count = 2;
+    config.devices_per_node = 4;
+    config.communication_execution.cuda_peer_available = true;
+    config.communication_execution.inter_node_available = false;
+
+    UploadVectorHandler handler;
+    VectorCopyMaterializer materializer;
+    CopyingLocalBackend local_backend;
+    CopyingInterNodeBackend inter_node_backend;
+
+    PlannedCommunicationStaticScheduleExecutor executor =
+        PlannedCommunicationStaticScheduleExecutor::from_config(
+            config, materializer, local_backend, inter_node_backend, handler);
+
+    const ScheduleExecutionResult result = executor.run(make_two_route_schedule());
+
+    require(
+        !result.ok(),
+        "executor built from config should reject undeclared inter-node backend");
+    require_contains(
+        result.format_errors(),
+        "inter-node communication backend is not available");
+    require(handler.executed_ops.empty(), "config backend gate should stop upload");
+    require(
+        materializer.requests.empty(),
+        "config backend gate should stop before materialization");
+    require(local_backend.requests.empty(), "local backend should not run");
+    require(
+        inter_node_backend.requests.empty(),
+        "inter-node backend should not run");
+
+    config.communication_execution.inter_node_available = true;
+    PlannedCommunicationStaticScheduleExecutor cluster_executor =
+        PlannedCommunicationStaticScheduleExecutor::from_config(
+            config, materializer, local_backend, inter_node_backend, handler);
+
+    const ScheduleExecutionResult cluster_result =
+        cluster_executor.run(make_two_route_schedule());
+
+    require(
+        cluster_result.ok(),
+        "executor built from cluster-capable config should run:\n" +
+            cluster_result.format_errors());
+    require(
+        local_backend.requests.size() == 1,
+        "config executor local copy count mismatch");
+    require(
+        inter_node_backend.requests.size() == 1,
+        "config executor inter-node copy count mismatch");
+    require(
+        cluster_result.object_store.at(3).device_id == 4,
+        "config executor final device mismatch");
+}
+
 }  // namespace
 
 int main()
@@ -258,6 +318,7 @@ int main()
         test_executor_uses_static_plan_for_copy_routes();
         test_executor_reports_plan_diagnostics_before_execution();
         test_executor_reports_missing_backend_before_execution();
+        test_executor_from_config_uses_topology_and_backend_declarations();
     }
     catch (const std::exception &ex)
     {

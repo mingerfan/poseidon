@@ -2,6 +2,7 @@
 
 #include "poseidon/mgpu/comm/planned_materialized_gpu_comm.h"
 #include "poseidon/mgpu/comm/routed_object_copy.h"
+#include "poseidon/mgpu/compiler/static_schedule_config.h"
 
 #include <cstddef>
 #include <exception>
@@ -88,6 +89,21 @@ PlannedCommunicationStaticScheduleExecutor::
       non_copy_handler_(non_copy_handler), options_(options),
       communication_options_(communication_options)
 {
+}
+
+PlannedCommunicationStaticScheduleExecutor
+PlannedCommunicationStaticScheduleExecutor::from_config(
+    const StaticScheduleExecutionConfig &config,
+    GpuObjectCopyMaterializer &materializer,
+    GpuObjectCopyBackend &local_backend,
+    InterNodeTransportBackend &inter_node_backend,
+    ScheduleOpHandler &non_copy_handler)
+{
+    return PlannedCommunicationStaticScheduleExecutor(
+        make_static_schedule_execution_topology(config), materializer,
+        local_backend, inter_node_backend, non_copy_handler,
+        StaticScheduleExecutorOptions{ config.pipeline.device_count },
+        config.communication_execution);
 }
 
 ScheduleExecutionResult PlannedCommunicationStaticScheduleExecutor::run(

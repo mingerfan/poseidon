@@ -10,6 +10,8 @@
 namespace poseidon::mgpu
 {
 
+struct StaticScheduleExecutionConfig;
+
 class PlannedCommunicationStaticScheduleExecutor
 {
 public:
@@ -20,6 +22,13 @@ public:
         ScheduleOpHandler &non_copy_handler,
         StaticScheduleExecutorOptions options = {},
         MgpuCommunicationExecutionOptions communication_options = {});
+
+    static PlannedCommunicationStaticScheduleExecutor from_config(
+        const StaticScheduleExecutionConfig &config,
+        GpuObjectCopyMaterializer &materializer,
+        GpuObjectCopyBackend &local_backend,
+        InterNodeTransportBackend &inter_node_backend,
+        ScheduleOpHandler &non_copy_handler);
 
     ScheduleExecutionResult run(const MgpuSchedule &schedule) const;
 

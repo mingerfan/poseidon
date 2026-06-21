@@ -309,6 +309,9 @@ Dacapo artifact debugging:
   from the already static schedule plus topology, checks declared communication
   execution availability, returns plan/backend diagnostics before any op
   executes, and otherwise delegates copy ops to `PlannedMaterializedGpuComm`.
+  Prefer `from_config` when a `StaticScheduleExecutionConfig` is available so
+  topology, device count, and backend availability come from the same parsed
+  static config.
 - The dump tool and external HEVM CTest now expose a unified
   `poseidon_gpu_execution_preflight` result. Treat it as the CPU-only execution
   gate that combines schedule verification, Poseidon GPU preflight,

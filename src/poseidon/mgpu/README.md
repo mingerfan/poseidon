@@ -459,7 +459,9 @@ schedule and topology before execution, checks declared communication execution
 availability, returns route or backend diagnostics without running any op, then
 executes the schedule through `StaticScheduleExecutor` with
 `PlannedMaterializedGpuComm`. It is CPU-side glue for the static schedule path,
-not a dynamic scheduler.
+not a dynamic scheduler. Use `from_config` when a
+`StaticScheduleExecutionConfig` is available so topology, device count, and
+declared backend availability are consumed from the same static config.
 
 ## CUDA Peer Probe
 
