@@ -424,9 +424,10 @@ a bundled config template; explicit `POSEIDON_MGPU_RESNET20_DEVICE_COUNT`,
 `POSEIDON_MGPU_RESNET20_COMPUTE_DEVICES`, placement, topology, preflight,
 backend, and `POSEIDON_MGPU_RESNET20_REQUIRE_READY` variables are appended as
 dump-tool overrides after that config. The mock variants cover the default
-wrapper path, missing-HEVM not-ready report path, config-plus-placement/topology
-override path, and cluster-preview topology report path on machines without
-real Dacapo output. During early artifact bring-up, set
+wrapper path, missing-HEVM, missing-constants, invalid-HEVM not-ready report
+paths, config-plus-placement/topology override path, and cluster-preview
+topology report path on machines without real Dacapo output. During early
+artifact bring-up, set
 `POSEIDON_MGPU_RESNET20_ALLOW_NOT_READY=1` to treat a not-ready dump-tool
 result as a successful diagnostic collection as long as the JSON report was
 written with `execution_gate.status = "not_ready"`. This also covers planning

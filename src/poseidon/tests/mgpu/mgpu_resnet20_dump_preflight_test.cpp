@@ -84,6 +84,18 @@ bool should_expect_missing_hevm_failure_report()
         get_env("POSEIDON_MGPU_RESNET20_EXPECT_MISSING_HEVM_REPORT"));
 }
 
+bool should_expect_missing_constants_failure_report()
+{
+    return parse_bool(
+        get_env("POSEIDON_MGPU_RESNET20_EXPECT_MISSING_CONSTANTS_REPORT"));
+}
+
+bool should_expect_invalid_hevm_failure_report()
+{
+    return parse_bool(
+        get_env("POSEIDON_MGPU_RESNET20_EXPECT_INVALID_HEVM_REPORT"));
+}
+
 std::string shell_quote(const std::string &text)
 {
     std::string output = "'";
@@ -333,6 +345,17 @@ void create_mock_resnet20_artifacts_without_hevm(const fs::path &dacapo_root)
     write_binary_file(constants_path(dacapo_root), make_mock_constant_file());
 }
 
+void create_mock_resnet20_artifacts_without_constants(const fs::path &dacapo_root)
+{
+    write_binary_file(hevm_path(dacapo_root), make_mock_hevm_binary(false));
+}
+
+void create_invalid_mock_resnet20_hevm_artifacts(const fs::path &dacapo_root)
+{
+    write_binary_file(hevm_path(dacapo_root), std::string(24, 'x'));
+    write_binary_file(constants_path(dacapo_root), make_mock_constant_file());
+}
+
 std::string build_command(
     const std::string &dump_tool_path, const fs::path &dacapo_root,
     const std::string &summary_path, const std::string &schedule_path)
@@ -384,18 +407,32 @@ int main(int argc, char **argv)
             parse_bool(get_env("POSEIDON_MGPU_RESNET20_UNSUPPORTED_MOCK_ARTIFACTS"));
         const bool use_missing_hevm_mock =
             parse_bool(get_env("POSEIDON_MGPU_RESNET20_MISSING_HEVM_MOCK_ARTIFACTS"));
+        const bool use_missing_constants_mock =
+            parse_bool(get_env(
+                "POSEIDON_MGPU_RESNET20_MISSING_CONSTANTS_MOCK_ARTIFACTS"));
+        const bool use_invalid_hevm_mock =
+            parse_bool(get_env("POSEIDON_MGPU_RESNET20_INVALID_HEVM_MOCK_ARTIFACTS"));
         const bool allow_not_ready =
             parse_bool(get_env("POSEIDON_MGPU_RESNET20_ALLOW_NOT_READY"));
         std::optional<TempDir> mock_root;
         fs::path dacapo_root;
 
-        if (use_mock || use_unsupported_mock || use_missing_hevm_mock)
+        if (use_mock || use_unsupported_mock || use_missing_hevm_mock ||
+            use_missing_constants_mock || use_invalid_hevm_mock)
         {
             mock_root.emplace();
             dacapo_root = mock_root->root();
             if (use_missing_hevm_mock)
             {
                 create_mock_resnet20_artifacts_without_hevm(dacapo_root);
+            }
+            else if (use_missing_constants_mock)
+            {
+                create_mock_resnet20_artifacts_without_constants(dacapo_root);
+            }
+            else if (use_invalid_hevm_mock)
+            {
+                create_invalid_mock_resnet20_hevm_artifacts(dacapo_root);
             }
             else
             {
@@ -447,6 +484,20 @@ int main(int argc, char **argv)
                 require_contains(summary, "\"artifacts_loaded\": false");
                 require_contains(summary, "\"stage\": \"read_hevm\"");
                 require_contains(summary, "failed to open file");
+            }
+            else if (should_expect_missing_constants_failure_report())
+            {
+                require_contains(summary, "\"artifacts_loaded\": false");
+                require_contains(summary, "\"stage\": \"read_constants\"");
+                require_contains(summary, "\"hevm_opcode_summary\"");
+                require_contains(summary, "failed to open Dacapo artifact file");
+            }
+            else if (should_expect_invalid_hevm_failure_report())
+            {
+                require_contains(summary, "\"artifacts_loaded\": true");
+                require_contains(summary, "\"stage\": \"dacapo_opcode_summary\"");
+                require_contains(summary, "\"hevm_opcode_summary\"");
+                require_contains(summary, "invalid HEVM magic number");
             }
             else
             {
