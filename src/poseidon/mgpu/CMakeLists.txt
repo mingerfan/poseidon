@@ -605,6 +605,25 @@ if(POSEIDON_BUILD_MGPU_TESTS)
             ENVIRONMENT "${POSEIDON_MGPU_EXTERNAL_HEVM_CONFIG_FILE_MOCK_ENV}")
 
     add_test(
+        NAME poseidon_mgpu_external_hevm_config_file_override_mock_artifact_tests
+        COMMAND poseidon_mgpu_external_hevm_artifact_tests
+    )
+    set(POSEIDON_MGPU_EXTERNAL_HEVM_CONFIG_FILE_OVERRIDE_MOCK_ENV
+        "POSEIDON_MGPU_EXTERNAL_RICH_MOCK_ARTIFACT=1"
+        "POSEIDON_MGPU_EXTERNAL_CONFIG=${POSEIDON_INCLUDES_DIR}/src/poseidon/mgpu/configs/single_node_8gpu.json"
+        "POSEIDON_MGPU_EXTERNAL_DEVICE_COUNT=2"
+        "POSEIDON_MGPU_EXTERNAL_COMPUTE_DEVICES=0,1"
+        "POSEIDON_MGPU_EXTERNAL_DEVICES_PER_NODE=2"
+        "POSEIDON_MGPU_EXTERNAL_EXPECT_DEVICE_COUNT=2"
+        "POSEIDON_MGPU_EXTERNAL_EXPECT_COMPUTE_DEVICES=0,1"
+        "POSEIDON_MGPU_EXTERNAL_EXPECT_DEVICES_PER_NODE=2"
+    )
+    set_tests_properties(
+        poseidon_mgpu_external_hevm_config_file_override_mock_artifact_tests
+        PROPERTIES
+            ENVIRONMENT "${POSEIDON_MGPU_EXTERNAL_HEVM_CONFIG_FILE_OVERRIDE_MOCK_ENV}")
+
+    add_test(
         NAME poseidon_mgpu_external_hevm_cluster_preview_mock_artifact_tests
         COMMAND poseidon_mgpu_external_hevm_artifact_tests
     )

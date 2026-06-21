@@ -166,6 +166,22 @@ std::vector<int> parse_device_list(const char *name)
     return devices;
 }
 
+std::string format_device_list(const std::vector<int> &devices)
+{
+    std::ostringstream stream;
+    stream << "[";
+    for (std::size_t i = 0; i < devices.size(); ++i)
+    {
+        if (i > 0)
+        {
+            stream << ",";
+        }
+        stream << devices[i];
+    }
+    stream << "]";
+    return stream.str();
+}
+
 void append_i64(std::string &output, std::int64_t value)
 {
     const auto bits = static_cast<std::uint64_t>(value);
@@ -523,9 +539,16 @@ void print_opcode_summary(const DacapoHevmOpcodeSummary &summary)
     }
 }
 
-StaticSchedulePipelineOptions make_pipeline_options()
+void apply_bool_env(const char *name, bool &target)
 {
-    StaticSchedulePipelineOptions options;
+    if (const char *value = get_env(name))
+    {
+        target = parse_bool(value);
+    }
+}
+
+void apply_pipeline_env_overrides(StaticSchedulePipelineOptions &options)
+{
     if (const char *device_count = get_env("POSEIDON_MGPU_EXTERNAL_DEVICE_COUNT"))
     {
         options.device_count = parse_int("POSEIDON_MGPU_EXTERNAL_DEVICE_COUNT", device_count);
@@ -536,22 +559,42 @@ StaticSchedulePipelineOptions make_pipeline_options()
             parse_int("POSEIDON_MGPU_EXTERNAL_DEFAULT_DEVICE", default_device);
     }
 
-    options.placement.upload_device =
-        parse_optional_device("POSEIDON_MGPU_EXTERNAL_UPLOAD_DEVICE");
-    options.placement.download_device =
-        parse_optional_device("POSEIDON_MGPU_EXTERNAL_DOWNLOAD_DEVICE");
-    options.placement.compute_devices =
-        parse_device_list("POSEIDON_MGPU_EXTERNAL_COMPUTE_DEVICES");
-    if (!options.placement.compute_devices.empty() ||
-        parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_ROUND_ROBIN_COMPUTE")))
+    if (get_env("POSEIDON_MGPU_EXTERNAL_UPLOAD_DEVICE") != nullptr)
     {
+        options.placement.upload_device =
+            parse_optional_device("POSEIDON_MGPU_EXTERNAL_UPLOAD_DEVICE");
+    }
+    if (get_env("POSEIDON_MGPU_EXTERNAL_DOWNLOAD_DEVICE") != nullptr)
+    {
+        options.placement.download_device =
+            parse_optional_device("POSEIDON_MGPU_EXTERNAL_DOWNLOAD_DEVICE");
+    }
+    if (get_env("POSEIDON_MGPU_EXTERNAL_COMPUTE_DEVICES") != nullptr)
+    {
+        options.placement.compute_devices =
+            parse_device_list("POSEIDON_MGPU_EXTERNAL_COMPUTE_DEVICES");
         options.placement.policy = StaticPlacementPolicy::RoundRobinCompute;
     }
-    options.emit_debug_dump = parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_DEBUG_DUMP"));
+    if (const char *round_robin = get_env("POSEIDON_MGPU_EXTERNAL_ROUND_ROBIN_COMPUTE"))
+    {
+        options.placement.policy =
+            parse_bool(round_robin) ? StaticPlacementPolicy::RoundRobinCompute
+                                    : StaticPlacementPolicy::SingleDevice;
+    }
+    if (const char *debug_dump = get_env("POSEIDON_MGPU_EXTERNAL_DEBUG_DUMP"))
+    {
+        options.emit_debug_dump = parse_bool(debug_dump);
+    }
     if (get_env("POSEIDON_MGPU_EXTERNAL_SCHEDULE_DUMP") != nullptr)
     {
         options.emit_debug_dump = true;
     }
+}
+
+StaticSchedulePipelineOptions make_pipeline_options()
+{
+    StaticSchedulePipelineOptions options;
+    apply_pipeline_env_overrides(options);
     return options;
 }
 
@@ -565,6 +608,117 @@ void apply_require_ready(StaticScheduleExecutionConfig &config)
     config.poseidon_gpu_preflight = true;
     config.communication_plan = true;
     config.communication_execution_preflight = true;
+}
+
+void apply_external_config_env_overrides(StaticScheduleExecutionConfig &config)
+{
+    apply_pipeline_env_overrides(config.pipeline);
+    apply_bool_env(
+        "POSEIDON_MGPU_EXTERNAL_PREFLIGHT_COMM_AVAILABLE",
+        config.preflight_comm_available);
+    apply_bool_env(
+        "POSEIDON_MGPU_EXTERNAL_PREFLIGHT_RELIN_KEYS",
+        config.preflight_relin_keys_available);
+    apply_bool_env(
+        "POSEIDON_MGPU_EXTERNAL_PREFLIGHT_GALOIS_KEYS",
+        config.preflight_galois_keys_available);
+    apply_bool_env(
+        "POSEIDON_MGPU_EXTERNAL_EXECUTION_CUDA_PEER_AVAILABLE",
+        config.communication_execution.cuda_peer_available);
+    apply_bool_env(
+        "POSEIDON_MGPU_EXTERNAL_EXECUTION_INTER_NODE_AVAILABLE",
+        config.communication_execution.inter_node_available);
+    apply_bool_env(
+        "POSEIDON_MGPU_EXTERNAL_REQUIRE_READY", config.require_ready);
+
+    if (const char *nodes = get_env("POSEIDON_MGPU_EXTERNAL_NODES"))
+    {
+        config.node_count = parse_int("POSEIDON_MGPU_EXTERNAL_NODES", nodes);
+    }
+    if (const char *devices = get_env("POSEIDON_MGPU_EXTERNAL_DEVICES_PER_NODE"))
+    {
+        config.devices_per_node =
+            parse_int("POSEIDON_MGPU_EXTERNAL_DEVICES_PER_NODE", devices);
+    }
+    apply_require_ready(config);
+}
+
+void validate_external_config(const StaticScheduleExecutionConfig &config)
+{
+    require(
+        config.pipeline.device_count > 0,
+        "POSEIDON_MGPU_EXTERNAL_DEVICE_COUNT must be positive");
+    require(
+        config.pipeline.placement.default_device >= 0 &&
+            config.pipeline.placement.default_device < config.pipeline.device_count,
+        "POSEIDON_MGPU_EXTERNAL_DEFAULT_DEVICE must be in [0, device_count)");
+    if (config.pipeline.placement.upload_device.has_value())
+    {
+        require(
+            *config.pipeline.placement.upload_device >= 0 &&
+                *config.pipeline.placement.upload_device < config.pipeline.device_count,
+            "POSEIDON_MGPU_EXTERNAL_UPLOAD_DEVICE must be in [0, device_count)");
+    }
+    if (config.pipeline.placement.download_device.has_value())
+    {
+        require(
+            *config.pipeline.placement.download_device >= 0 &&
+                *config.pipeline.placement.download_device < config.pipeline.device_count,
+            "POSEIDON_MGPU_EXTERNAL_DOWNLOAD_DEVICE must be in [0, device_count)");
+    }
+    for (std::size_t i = 0; i < config.pipeline.placement.compute_devices.size(); ++i)
+    {
+        const int device = config.pipeline.placement.compute_devices[i];
+        require(
+            device >= 0 && device < config.pipeline.device_count,
+            "POSEIDON_MGPU_EXTERNAL_COMPUTE_DEVICES entries must be in [0, device_count)");
+        for (std::size_t j = 0; j < i; ++j)
+        {
+            require(
+                config.pipeline.placement.compute_devices[j] != device,
+                "POSEIDON_MGPU_EXTERNAL_COMPUTE_DEVICES must not contain duplicates");
+        }
+    }
+    require(config.node_count > 0, "POSEIDON_MGPU_EXTERNAL_NODES must be positive");
+    require(
+        config.devices_per_node >= 0,
+        "POSEIDON_MGPU_EXTERNAL_DEVICES_PER_NODE must be non-negative");
+    const int devices_per_node =
+        config.devices_per_node == 0 ? config.pipeline.device_count
+                                     : config.devices_per_node;
+    require(
+        config.node_count * devices_per_node >= config.pipeline.device_count,
+        "external HEVM topology has fewer logical devices than device_count");
+}
+
+void validate_external_config_expectations(
+    const StaticScheduleExecutionConfig &config)
+{
+    if (const char *expected = get_env("POSEIDON_MGPU_EXTERNAL_EXPECT_DEVICE_COUNT"))
+    {
+        require(
+            config.pipeline.device_count ==
+                parse_int("POSEIDON_MGPU_EXTERNAL_EXPECT_DEVICE_COUNT", expected),
+            "external HEVM effective device_count expectation mismatch");
+    }
+    if (const char *expected =
+            get_env("POSEIDON_MGPU_EXTERNAL_EXPECT_DEVICES_PER_NODE"))
+    {
+        require(
+            config.devices_per_node ==
+                parse_int("POSEIDON_MGPU_EXTERNAL_EXPECT_DEVICES_PER_NODE", expected),
+            "external HEVM effective devices_per_node expectation mismatch");
+    }
+    if (get_env("POSEIDON_MGPU_EXTERNAL_EXPECT_COMPUTE_DEVICES") != nullptr)
+    {
+        const std::vector<int> expected =
+            parse_device_list("POSEIDON_MGPU_EXTERNAL_EXPECT_COMPUTE_DEVICES");
+        require(
+            config.pipeline.placement.compute_devices == expected,
+            "external HEVM effective compute_devices expectation mismatch: got " +
+                format_device_list(config.pipeline.placement.compute_devices) +
+                ", expected " + format_device_list(expected));
+    }
 }
 
 StaticScheduleExecutionConfig parse_external_config_text(
@@ -590,43 +744,25 @@ StaticScheduleExecutionConfig make_external_config()
         throw std::invalid_argument(
             "POSEIDON_MGPU_EXTERNAL_CONFIG and POSEIDON_MGPU_EXTERNAL_CONFIG_JSON cannot both be set");
     }
+    StaticScheduleExecutionConfig config;
     if (config_path != nullptr)
     {
-        return parse_external_config_text(read_binary_file(config_path), config_path);
+        config = parse_external_config_text(read_binary_file(config_path), config_path);
     }
-    if (config_json != nullptr)
+    else if (config_json != nullptr)
     {
-        return parse_external_config_text(config_json, "POSEIDON_MGPU_EXTERNAL_CONFIG_JSON");
+        config = parse_external_config_text(
+            config_json, "POSEIDON_MGPU_EXTERNAL_CONFIG_JSON");
     }
-
-    StaticScheduleExecutionConfig config;
-    config.pipeline = make_pipeline_options();
-    config.preflight_comm_available =
-        parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_PREFLIGHT_COMM_AVAILABLE"));
-    config.preflight_relin_keys_available =
-        parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_PREFLIGHT_RELIN_KEYS"));
-    config.preflight_galois_keys_available =
-        parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_PREFLIGHT_GALOIS_KEYS"));
-    config.communication_plan = true;
-    config.communication_execution_preflight = true;
-    config.communication_execution.same_device_available = true;
-    config.communication_execution.cuda_peer_available =
-        parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_EXECUTION_CUDA_PEER_AVAILABLE"));
-    config.communication_execution.inter_node_available =
-        parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_EXECUTION_INTER_NODE_AVAILABLE"));
-    config.require_ready =
-        parse_bool(get_env("POSEIDON_MGPU_EXTERNAL_REQUIRE_READY"));
-    apply_require_ready(config);
-
-    if (const char *nodes = get_env("POSEIDON_MGPU_EXTERNAL_NODES"))
+    else
     {
-        config.node_count = parse_int("POSEIDON_MGPU_EXTERNAL_NODES", nodes);
+        config.communication_plan = true;
+        config.communication_execution_preflight = true;
+        config.communication_execution.same_device_available = true;
     }
-    if (const char *devices = get_env("POSEIDON_MGPU_EXTERNAL_DEVICES_PER_NODE"))
-    {
-        config.devices_per_node =
-            parse_int("POSEIDON_MGPU_EXTERNAL_DEVICES_PER_NODE", devices);
-    }
+    apply_external_config_env_overrides(config);
+    validate_external_config(config);
+    validate_external_config_expectations(config);
     return config;
 }
 
