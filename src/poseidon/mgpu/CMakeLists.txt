@@ -120,3 +120,43 @@ if(POSEIDON_BUILD_MGPU_TESTS)
         COMMAND poseidon_mgpu_static_pipeline_tests
     )
 endif()
+
+option(POSEIDON_BUILD_MGPU_CUDA_COMM "Build optional CUDA peer communication backend" OFF)
+message(STATUS "POSEIDON_BUILD_MGPU_CUDA_COMM: ${POSEIDON_BUILD_MGPU_CUDA_COMM}")
+
+if(POSEIDON_BUILD_MGPU_CUDA_COMM)
+    find_package(CUDAToolkit REQUIRED)
+
+    add_library(poseidon_mgpu_cuda_comm STATIC
+        comm/cuda_peer_comm.cpp
+    )
+
+    target_include_directories(poseidon_mgpu_cuda_comm
+        PUBLIC
+            ${POSEIDON_INCLUDES_DIR}/src
+    )
+
+    target_link_libraries(poseidon_mgpu_cuda_comm
+        PUBLIC
+            poseidon_mgpu
+            CUDA::cudart
+    )
+
+    if(POSEIDON_BUILD_MGPU_TESTS)
+        add_executable(poseidon_mgpu_cuda_comm_tests
+            ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_cuda_comm_test.cpp
+        )
+
+        target_link_libraries(poseidon_mgpu_cuda_comm_tests
+            PRIVATE
+                poseidon_mgpu_cuda_comm
+        )
+
+        add_test(
+            NAME poseidon_mgpu_cuda_comm_tests
+            COMMAND poseidon_mgpu_cuda_comm_tests
+        )
+        set_tests_properties(poseidon_mgpu_cuda_comm_tests
+            PROPERTIES SKIP_RETURN_CODE 77)
+    endif()
+endif()
