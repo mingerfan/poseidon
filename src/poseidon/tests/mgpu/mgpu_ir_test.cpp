@@ -3,6 +3,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <limits>
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
@@ -139,6 +140,44 @@ void test_integer_attribute_dump()
         "#1 [%2] = mgpu.rotate device=0 inputs=[%1] attrs={level=4, rotate_step=-3}");
 }
 
+void test_required_static_attributes()
+{
+    MgpuSchedule valid;
+    valid.ops.push_back(op(MgpuOpKind::UploadCipher, 0, {}, { value(1) }));
+    valid.ops.push_back(op_with_attrs(
+        MgpuOpKind::Rotate, 0, { value(1) }, { value(2) },
+        { { "rotate_step", 1 } }));
+    valid.ops.push_back(op_with_attrs(
+        MgpuOpKind::BootstrapFallback, 0, { value(2) }, { value(3) },
+        { { "target_level", 0 } }));
+    require_valid(valid, 1);
+
+    MgpuSchedule missing_rotate_step;
+    missing_rotate_step.ops.push_back(op(MgpuOpKind::UploadCipher, 0, {}, { value(1) }));
+    missing_rotate_step.ops.push_back(
+        op(MgpuOpKind::Rotate, 0, { value(1) }, { value(2) }));
+    require_invalid_contains(
+        missing_rotate_step, 1, "missing integer attribute 'rotate_step'");
+
+    MgpuSchedule out_of_range_rotate_step;
+    out_of_range_rotate_step.ops.push_back(op(MgpuOpKind::UploadCipher, 0, {}, { value(1) }));
+    out_of_range_rotate_step.ops.push_back(op_with_attrs(
+        MgpuOpKind::Rotate, 0, { value(1) }, { value(2) },
+        { { "rotate_step", std::numeric_limits<std::int64_t>::max() } }));
+    require_invalid_contains(
+        out_of_range_rotate_step, 1,
+        "integer attribute 'rotate_step' is out of int range");
+
+    MgpuSchedule negative_target_level;
+    negative_target_level.ops.push_back(op(MgpuOpKind::UploadCipher, 0, {}, { value(1) }));
+    negative_target_level.ops.push_back(op_with_attrs(
+        MgpuOpKind::BootstrapFallback, 0, { value(1) }, { value(2) },
+        { { "target_level", -1 } }));
+    require_invalid_contains(
+        negative_target_level, 1,
+        "integer attribute 'target_level' must be non-negative");
+}
+
 void test_invalid_device()
 {
     MgpuSchedule schedule;
@@ -190,6 +229,7 @@ int main()
         test_valid_schedule();
         test_add_plain_schedule();
         test_integer_attribute_dump();
+        test_required_static_attributes();
         test_invalid_device();
         test_missing_input();
         test_missing_copy();

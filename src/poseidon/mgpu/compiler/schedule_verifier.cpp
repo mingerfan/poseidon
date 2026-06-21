@@ -1,5 +1,6 @@
 #include "poseidon/mgpu/compiler/schedule_verifier.h"
 
+#include <limits>
 #include <sstream>
 #include <string>
 #include <unordered_map>
@@ -157,6 +158,49 @@ bool expect_copy_input(
     return true;
 }
 
+bool require_int_attribute(
+    ScheduleVerificationResult &result, const MgpuOp &op, std::size_t op_index,
+    const char *name)
+{
+    const auto iter = op.integer_attributes.find(name);
+    if (iter == op.integer_attributes.end())
+    {
+        add_error(result, op_index, std::string("missing integer attribute '") + name + "'");
+        return false;
+    }
+
+    if (iter->second < static_cast<std::int64_t>(std::numeric_limits<int>::min()) ||
+        iter->second > static_cast<std::int64_t>(std::numeric_limits<int>::max()))
+    {
+        add_error(
+            result, op_index,
+            std::string("integer attribute '") + name + "' is out of int range");
+        return false;
+    }
+
+    return true;
+}
+
+bool require_nonnegative_int_attribute(
+    ScheduleVerificationResult &result, const MgpuOp &op, std::size_t op_index,
+    const char *name)
+{
+    if (!require_int_attribute(result, op, op_index, name))
+    {
+        return false;
+    }
+
+    if (op.integer_attributes.at(name) < 0)
+    {
+        add_error(
+            result, op_index,
+            std::string("integer attribute '") + name + "' must be non-negative");
+        return false;
+    }
+
+    return true;
+}
+
 }  // namespace
 
 std::string ScheduleVerificationResult::format_errors() const
@@ -264,9 +308,31 @@ ScheduleVerificationResult verify_schedule(
             break;
         case MgpuOpKind::Relinearize:
         case MgpuOpKind::Rescale:
+            if (expect_arity(result, op, op_index, 1, 1) && device_valid &&
+                expect_input(
+                    result, values, op_index, op.inputs[0].id, MgpuValueKind::Ciphertext,
+                    op.device_id))
+            {
+                define_output(
+                    result, values, op_index, op.outputs[0].id, MgpuValueKind::Ciphertext,
+                    op.device_id);
+            }
+            break;
         case MgpuOpKind::Rotate:
+            if (expect_arity(result, op, op_index, 1, 1) && device_valid &&
+                require_int_attribute(result, op, op_index, "rotate_step") &&
+                expect_input(
+                    result, values, op_index, op.inputs[0].id, MgpuValueKind::Ciphertext,
+                    op.device_id))
+            {
+                define_output(
+                    result, values, op_index, op.outputs[0].id, MgpuValueKind::Ciphertext,
+                    op.device_id);
+            }
+            break;
         case MgpuOpKind::BootstrapFallback:
             if (expect_arity(result, op, op_index, 1, 1) && device_valid &&
+                require_nonnegative_int_attribute(result, op, op_index, "target_level") &&
                 expect_input(
                     result, values, op_index, op.inputs[0].id, MgpuValueKind::Ciphertext,
                     op.device_id))

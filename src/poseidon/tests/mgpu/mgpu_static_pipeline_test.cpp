@@ -95,6 +95,21 @@ void test_pipeline_reports_copy_insertion_errors()
     require_contains(result.format_diagnostics(), "unknown input value %99");
 }
 
+void test_pipeline_reports_verifier_errors()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, kUnassignedDevice, {}, { value(1) }));
+    schedule.ops.push_back(op(MgpuOpKind::Rotate, kUnassignedDevice, { value(1) }, { value(2) }));
+
+    StaticSchedulePipelineOptions options;
+    options.device_count = 1;
+
+    const StaticSchedulePipelineResult result = prepare_static_schedule(schedule, options);
+    require(!result.ok(), "pipeline should fail when required static attributes are missing");
+    require_contains(result.format_diagnostics(), "verify op #1");
+    require_contains(result.format_diagnostics(), "missing integer attribute 'rotate_step'");
+}
+
 void test_pipeline_places_unassigned_ops_before_copy_insertion()
 {
     MgpuSchedule schedule;
@@ -190,6 +205,7 @@ int main()
     {
         test_pipeline_inserts_copies_and_dumps();
         test_pipeline_reports_copy_insertion_errors();
+        test_pipeline_reports_verifier_errors();
         test_pipeline_places_unassigned_ops_before_copy_insertion();
         test_pipeline_preserves_integer_attributes();
         test_pipeline_prepares_dacapo_json_input();
