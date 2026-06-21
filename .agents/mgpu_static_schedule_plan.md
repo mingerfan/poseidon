@@ -166,6 +166,10 @@ Dacapo artifact debugging:
   and unsupported executor ops without linking CUDA/RMM. The dump tool exposes
   this through `--poseidon-gpu-preflight`, `--preflight-comm-available`,
   `--preflight-relin-keys`, and `--preflight-galois-keys`.
+- Use `poseidon_mgpu_dacapo_hevm_dump --communication-plan` to classify real
+  artifact copies as same-device, intra-node CUDA peer, or inter-node routes.
+  For 4x8 previews, add `--nodes 4 --devices-per-node 8`. This remains a
+  CPU-only diagnostic and must not pull NCCL/MPI into the normal build.
 
 ## 5. Test Plan
 

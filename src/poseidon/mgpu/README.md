@@ -68,6 +68,7 @@ poseidon_mgpu_dacapo_hevm_dump \
   --constants /path/to/model.cst \
   --devices 8 \
   --compute-devices 0,1,2,3,4,5,6,7 \
+  --communication-plan \
   --poseidon-gpu-preflight \
   --preflight-comm-available \
   --preflight-relin-keys \
@@ -92,3 +93,6 @@ devices as `(node_id, local_device)` pairs and classifies scheduled copies as:
 This does not add NCCL or MPI. It fixes the V1 planning interface for the
 single-node 8-GPU path and the later 4x8 cluster path while keeping execution
 owned by the existing mgpu communication layer.
+
+The Dacapo HEVM dump tool can include this plan with `--communication-plan`.
+For a 4x8 logical cluster preview, pass `--nodes 4 --devices-per-node 8`.

@@ -1,4 +1,5 @@
 #include "poseidon/mgpu/compiler/dacapo_artifacts.h"
+#include "poseidon/mgpu/comm/topology.h"
 #include "poseidon/mgpu/ir/schedule_summary.h"
 #include "poseidon/mgpu/runtime/hevm_io_binding.h"
 #include "poseidon/mgpu/runtime/poseidon_gpu_schedule_preflight.h"
@@ -32,6 +33,9 @@ struct ToolOptions
     bool preflight_comm_available = false;
     bool preflight_relin_keys_available = false;
     bool preflight_galois_keys_available = false;
+    bool communication_plan = false;
+    int node_count = 1;
+    int devices_per_node = 0;
 };
 
 void print_usage(std::ostream &stream)
@@ -46,6 +50,9 @@ void print_usage(std::ostream &stream)
            "[--preflight-comm-available] "
            "[--preflight-relin-keys] "
            "[--preflight-galois-keys] "
+           "[--communication-plan] "
+           "[--nodes N] "
+           "[--devices-per-node N] "
            "[--summary-json] "
            "[--no-schedule]\n";
 }
@@ -208,6 +215,31 @@ ToolOptions parse_args(int argc, char **argv)
             options.poseidon_gpu_preflight = true;
             continue;
         }
+        if (arg == "--communication-plan")
+        {
+            options.communication_plan = true;
+            continue;
+        }
+        if (arg == "--nodes")
+        {
+            if (++i >= argc)
+            {
+                throw std::invalid_argument("missing value for --nodes");
+            }
+            options.node_count = parse_int_arg("--nodes", argv[i]);
+            options.communication_plan = true;
+            continue;
+        }
+        if (arg == "--devices-per-node")
+        {
+            if (++i >= argc)
+            {
+                throw std::invalid_argument("missing value for --devices-per-node");
+            }
+            options.devices_per_node = parse_int_arg("--devices-per-node", argv[i]);
+            options.communication_plan = true;
+            continue;
+        }
 
         throw std::invalid_argument("unknown argument: " + arg);
     }
@@ -238,6 +270,28 @@ ToolOptions parse_args(int argc, char **argv)
     {
         throw std::invalid_argument("--download-device must be in [0, devices)");
     }
+    if (options.node_count <= 0)
+    {
+        throw std::invalid_argument("--nodes must be positive");
+    }
+    if (options.devices_per_node < 0)
+    {
+        throw std::invalid_argument("--devices-per-node must be non-negative");
+    }
+    if (options.communication_plan)
+    {
+        const int devices_per_node =
+            options.devices_per_node == 0 ? options.device_count : options.devices_per_node;
+        if (devices_per_node <= 0)
+        {
+            throw std::invalid_argument("communication topology devices per node must be positive");
+        }
+        if (options.node_count * devices_per_node < options.device_count)
+        {
+            throw std::invalid_argument(
+                "communication topology has fewer logical devices than --devices");
+        }
+    }
     return options;
 }
 
@@ -262,6 +316,19 @@ nlohmann::json parse_json_object(const std::string &text)
     return nlohmann::json::parse(text);
 }
 
+MgpuTopology make_tool_topology(const ToolOptions &tool_options)
+{
+    if (tool_options.node_count == 1 && tool_options.devices_per_node == 0)
+    {
+        return make_single_node_topology(tool_options.device_count);
+    }
+
+    const int devices_per_node =
+        tool_options.devices_per_node == 0 ? tool_options.device_count
+                                           : tool_options.devices_per_node;
+    return make_uniform_cluster_topology(tool_options.node_count, devices_per_node);
+}
+
 nlohmann::json optional_preflight_json(
     const ToolOptions &tool_options,
     const MgpuSchedule &schedule)
@@ -283,6 +350,20 @@ nlohmann::json optional_preflight_json(
     return parse_json_object(poseidon_gpu_schedule_preflight_to_json(result, -1));
 }
 
+nlohmann::json optional_communication_plan_json(
+    const ToolOptions &tool_options,
+    const MgpuSchedule &schedule)
+{
+    if (!tool_options.communication_plan)
+    {
+        return nullptr;
+    }
+
+    const MgpuCommunicationPlan plan =
+        plan_schedule_communication(schedule, make_tool_topology(tool_options));
+    return parse_json_object(communication_plan_to_json(plan, -1));
+}
+
 void print_optional_preflight(
     const ToolOptions &tool_options,
     const MgpuSchedule &schedule)
@@ -302,6 +383,20 @@ void print_optional_preflight(
                 tool_options.preflight_galois_keys_available,
             });
     dump_poseidon_gpu_schedule_preflight(std::cout, result);
+}
+
+void print_optional_communication_plan(
+    const ToolOptions &tool_options,
+    const MgpuSchedule &schedule)
+{
+    if (!tool_options.communication_plan)
+    {
+        return;
+    }
+
+    const MgpuCommunicationPlan plan =
+        plan_schedule_communication(schedule, make_tool_topology(tool_options));
+    dump_communication_plan(std::cout, plan);
 }
 
 void print_io_summary(const HevmIoBindingPlan &plan)
@@ -345,6 +440,7 @@ void print_text_summary(
 nlohmann::json make_tool_summary_json(
     const MgpuScheduleSummary &summary, std::size_t constant_count,
     const HevmIoBindingPlan &io_plan, nlohmann::json preflight,
+    nlohmann::json communication_plan,
     std::optional<std::string> debug_dump)
 {
     nlohmann::json root;
@@ -361,6 +457,10 @@ nlohmann::json make_tool_summary_json(
     if (!preflight.is_null())
     {
         root["poseidon_gpu_preflight"] = std::move(preflight);
+    }
+    if (!communication_plan.is_null())
+    {
+        root["communication_plan"] = std::move(communication_plan);
     }
     if (debug_dump.has_value())
     {
@@ -407,9 +507,12 @@ int main(int argc, char **argv)
                                            : std::nullopt;
             nlohmann::json preflight =
                 optional_preflight_json(tool_options, artifacts.schedule);
+            nlohmann::json communication_plan =
+                optional_communication_plan_json(tool_options, artifacts.schedule);
             std::cout << make_tool_summary_json(
                              summary, artifacts.constants.values.size(), io_plan.plan,
-                             std::move(preflight), debug_dump)
+                             std::move(preflight), std::move(communication_plan),
+                             debug_dump)
                              .dump(2)
                       << '\n';
         }
@@ -417,6 +520,7 @@ int main(int argc, char **argv)
         {
             print_text_summary(summary, artifacts.constants.values.size(), io_plan.plan);
             print_optional_preflight(tool_options, artifacts.schedule);
+            print_optional_communication_plan(tool_options, artifacts.schedule);
 
             if (tool_options.dump_schedule)
             {
