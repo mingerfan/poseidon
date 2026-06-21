@@ -168,6 +168,11 @@ Dacapo artifact debugging:
   Use `--summary-json` or `--write-summary-json <file>` for scriptable path
   readiness. It must not parse HEVM, link Dacapo/MLIR, load CUDA/RMM, or
   execute GPU operators.
+- Keep `poseidon_mgpu_resnet20_artifact_path_tests` as the skipped-by-default
+  CTest wrapper for real ResNet20 path readiness. It should run when
+  `POSEIDON_MGPU_RESNET20_DACAPO_ROOT` or `DACAPO_ROOT` is set, write the same
+  JSON readiness report when requested, and return skip on machines without
+  real Dacapo output. Keep a mock CTest variant for single-GPU development.
 - The dump tool accepts `--hevm`, `--constants`, `--config`, `--devices`,
   `--default-device`, `--upload-device`, `--compute-devices`,
   `--download-device`, `--round-robin-compute`, `--summary-json`, and

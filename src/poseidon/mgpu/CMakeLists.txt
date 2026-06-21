@@ -80,8 +80,16 @@ if(POSEIDON_BUILD_MGPU_TOOLS)
             ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_resnet20_artifact_check_tool_test.cpp
         )
 
+        add_executable(poseidon_mgpu_resnet20_artifact_path_tests
+            ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_resnet20_artifact_path_test.cpp
+        )
+
         add_dependencies(
             poseidon_mgpu_resnet20_artifact_check_tool_tests
+            poseidon_mgpu_resnet20_artifact_check)
+
+        add_dependencies(
+            poseidon_mgpu_resnet20_artifact_path_tests
             poseidon_mgpu_resnet20_artifact_check)
 
         add_test(
@@ -89,6 +97,23 @@ if(POSEIDON_BUILD_MGPU_TOOLS)
             COMMAND poseidon_mgpu_resnet20_artifact_check_tool_tests
                     $<TARGET_FILE:poseidon_mgpu_resnet20_artifact_check>
         )
+
+        add_test(
+            NAME poseidon_mgpu_resnet20_artifact_path_tests
+            COMMAND poseidon_mgpu_resnet20_artifact_path_tests
+                    $<TARGET_FILE:poseidon_mgpu_resnet20_artifact_check>
+        )
+        set_tests_properties(poseidon_mgpu_resnet20_artifact_path_tests
+            PROPERTIES SKIP_RETURN_CODE 77)
+
+        add_test(
+            NAME poseidon_mgpu_resnet20_artifact_path_mock_tests
+            COMMAND poseidon_mgpu_resnet20_artifact_path_tests
+                    $<TARGET_FILE:poseidon_mgpu_resnet20_artifact_check>
+        )
+        set_tests_properties(poseidon_mgpu_resnet20_artifact_path_mock_tests
+            PROPERTIES
+                ENVIRONMENT "POSEIDON_MGPU_RESNET20_MOCK_ARTIFACTS=1")
     endif()
 endif()
 

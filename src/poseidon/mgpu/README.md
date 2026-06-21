@@ -383,6 +383,13 @@ HEVM, link Dacapo, load CUDA, or execute Poseidon GPU operators. Use
 readiness result in machine-readable form before invoking the heavier HEVM dump
 preflight.
 
+`poseidon_mgpu_resnet20_artifact_path_tests` is a skipped-by-default CTest
+wrapper around the same tool. Set `POSEIDON_MGPU_RESNET20_DACAPO_ROOT` or
+`DACAPO_ROOT` to run it against real artifacts, and optionally
+`POSEIDON_MGPU_RESNET20_REPORT_JSON` to keep the path-readiness JSON report.
+`poseidon_mgpu_resnet20_artifact_path_mock_tests` covers the wrapper on
+machines without real Dacapo output.
+
 ## Communication Topology Planning
 
 `comm/topology.*` is a CPU-only planning layer for copy ops. It models logical
