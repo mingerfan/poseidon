@@ -184,13 +184,13 @@ endif()
 option(POSEIDON_BUILD_MGPU_GPU_RUNTIME "Build optional Poseidon GPU schedule handler for multi-GPU runtime" OFF)
 message(STATUS "POSEIDON_BUILD_MGPU_GPU_RUNTIME: ${POSEIDON_BUILD_MGPU_GPU_RUNTIME}")
 
+option(POSEIDON_BUILD_MGPU_GPU_OBJECTS "Build optional GPU object materializer for multi-GPU runtime" OFF)
+message(STATUS "POSEIDON_BUILD_MGPU_GPU_OBJECTS: ${POSEIDON_BUILD_MGPU_GPU_OBJECTS}")
+
 set(POSEIDON_MGPU_REQUIRES_RMM FALSE)
 if(POSEIDON_BUILD_MGPU_GPU_OBJECTS OR POSEIDON_BUILD_MGPU_GPU_RUNTIME)
     set(POSEIDON_MGPU_REQUIRES_RMM TRUE)
 endif()
-
-option(POSEIDON_BUILD_MGPU_GPU_OBJECTS "Build optional GPU object materializer for multi-GPU runtime" OFF)
-message(STATUS "POSEIDON_BUILD_MGPU_GPU_OBJECTS: ${POSEIDON_BUILD_MGPU_GPU_OBJECTS}")
 
 if(POSEIDON_MGPU_REQUIRES_RMM)
     enable_language(CUDA)
@@ -198,7 +198,7 @@ if(POSEIDON_MGPU_REQUIRES_RMM)
     set(CMAKE_CUDA_STANDARD_REQUIRED ON)
     if(NOT CMAKE_CUDA_ARCHITECTURES)
         set(CMAKE_CUDA_ARCHITECTURES 75 CACHE STRING
-            "CUDA architectures for multi-GPU object materializer" FORCE)
+            "CUDA architectures for optional multi-GPU CUDA targets" FORCE)
     endif()
 
     find_package(CUDAToolkit REQUIRED)
@@ -288,9 +288,6 @@ if(POSEIDON_BUILD_MGPU_GPU_RUNTIME)
         PRIVATE
             $<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>
     )
-
-    set_target_properties(poseidon_mgpu_gpu_runtime PROPERTIES
-        CUDA_ARCHITECTURES 75)
 
     if(POSEIDON_BUILD_MGPU_TESTS)
         add_executable(poseidon_mgpu_gpu_runtime_smoke_tests
