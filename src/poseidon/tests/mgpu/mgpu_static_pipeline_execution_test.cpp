@@ -1,10 +1,13 @@
+#include "poseidon/mgpu/compiler/dacapo_constants.h"
 #include "poseidon/mgpu/compiler/static_schedule_pipeline.h"
+#include "poseidon/mgpu/runtime/hevm_io_binding.h"
 #include "poseidon/mgpu/runtime/io_binding_handler.h"
 #include "poseidon/mgpu/runtime/static_schedule_executor.h"
 #include "poseidon/tests/mgpu/hevm_test_utils.h"
 
 #include <cstdint>
 #include <cstdlib>
+#include <cstring>
 #include <iostream>
 #include <memory>
 #include <sstream>
@@ -28,6 +31,11 @@ std::shared_ptr<MockObject> object(std::string expression)
     return std::make_shared<MockObject>(MockObject{ std::move(expression) });
 }
 
+std::shared_ptr<void> erased_object(std::string expression)
+{
+    return object(std::move(expression));
+}
+
 std::string value_name(ValueId id)
 {
     std::ostringstream stream;
@@ -49,6 +57,36 @@ void require_contains(const std::string &text, const std::string &needle)
     {
         throw std::runtime_error("expected text to contain: " + needle + "\ntext:\n" + text);
     }
+}
+
+void append_i64(std::string &output, std::int64_t value)
+{
+    const auto bits = static_cast<std::uint64_t>(value);
+    for (int i = 0; i < 8; ++i)
+    {
+        output.push_back(static_cast<char>((bits >> (8 * i)) & 0xFF));
+    }
+}
+
+void append_double(std::string &output, double value)
+{
+    std::uint64_t bits = 0;
+    std::memcpy(&bits, &value, sizeof(bits));
+    for (int i = 0; i < 8; ++i)
+    {
+        output.push_back(static_cast<char>((bits >> (8 * i)) & 0xFF));
+    }
+}
+
+std::string make_hevm_constant_file()
+{
+    std::string output;
+    append_i64(output, 2);
+    append_i64(output, 1);
+    append_double(output, 3.5);
+    append_i64(output, 1);
+    append_double(output, -2.0);
+    return output;
 }
 
 class RecordingGpuComm final : public GpuComm
@@ -184,6 +222,35 @@ StaticSchedulePipelineResult prepare_resnet_like_schedule()
         DacapoAdapterOptions{ DacapoInputFormat::HevmBinary }, options);
 }
 
+std::string make_constants_pipeline_hevm_binary()
+{
+    return test::make_hevm_binary(
+        1, 1, 2, 2, { 1 },
+        {
+            test::HevmOpRecord{ 0, 0, 1, test::make_hevm_encode_attr(3, 20) },
+            test::HevmOpRecord{ 0, 1, 0, test::make_hevm_encode_attr(3, 20) },
+            test::HevmOpRecord{ 9, 1, 0, 0 },
+        },
+        test::HevmConfigMetadata{
+            { 20 },
+            { 3 },
+            { 40 },
+            { 2 },
+            3,
+        });
+}
+
+StaticSchedulePipelineResult prepare_constants_pipeline_schedule()
+{
+    StaticSchedulePipelineOptions options;
+    options.device_count = 2;
+    options.placement.policy = StaticPlacementPolicy::RoundRobinCompute;
+
+    return prepare_dacapo_static_schedule(
+        make_constants_pipeline_hevm_binary(),
+        DacapoAdapterOptions{ DacapoInputFormat::HevmBinary }, options);
+}
+
 void bind_uploads(const MgpuSchedule &schedule, IoBindingScheduleHandler &io)
 {
     int cipher_index = 0;
@@ -245,6 +312,48 @@ void test_static_hevm_pipeline_executes_through_interpreter_handlers()
     require_contains(downloaded->expression, "rescale(mul(negate(add(");
 }
 
+void test_static_hevm_pipeline_binds_constants_by_dacapo_index()
+{
+    const StaticSchedulePipelineResult pipeline = prepare_constants_pipeline_schedule();
+    require(pipeline.ok(), "pipeline failed:\n" + pipeline.format_diagnostics());
+
+    const DacapoConstantParseResult constants =
+        parse_dacapo_constant_file(make_hevm_constant_file());
+    require(constants.ok(), "constant parse failed:\n" + constants.format_diagnostics());
+
+    const HevmIoBindingPlanResult plan_result =
+        build_hevm_io_binding_plan(pipeline.schedule);
+    require(plan_result.ok(), "HEVM IO plan failed:\n" + plan_result.format_diagnostics());
+    require(plan_result.plan.cipher_inputs.size() == 1, "expected one cipher input");
+    require(plan_result.plan.plain_inputs.size() == 2, "expected two plaintext constants");
+    require(plan_result.plan.results.size() == 1, "expected one result");
+
+    ExpressionComputeHandler compute;
+    RecordingGpuComm comm;
+    IoBindingScheduleHandler io(&compute);
+    bind_hevm_cipher_inputs(io, plan_result.plan, { erased_object("cipher_arg_0") });
+    bind_hevm_plain_inputs_by_constant_index(
+        io, plan_result.plan,
+        {
+            { 0, erased_object("const0:3.5") },
+            { 1, erased_object("const1:-2.0") },
+        });
+
+    StaticScheduleExecutor executor(comm, io, StaticScheduleExecutorOptions{ 2 });
+    const ScheduleExecutionResult execution = executor.run(pipeline.schedule);
+    require(execution.ok(), "interpreter failed:\n" + execution.format_errors());
+
+    const std::vector<std::shared_ptr<void>> raw_results =
+        collect_hevm_results(io, plan_result.plan);
+    require(raw_results.size() == 1, "expected one collected HEVM result");
+    const auto downloaded = std::static_pointer_cast<MockObject>(raw_results[0]);
+    require(downloaded != nullptr, "downloaded object should be materialized");
+    require_contains(downloaded->expression, "mul_plain(cipher_arg_0,const1:-2.0)");
+    require(
+        downloaded->expression.find("const0:3.5") == std::string::npos,
+        "multiply should use constant index 1, not upload order");
+}
+
 }  // namespace
 
 int main()
@@ -252,6 +361,7 @@ int main()
     try
     {
         test_static_hevm_pipeline_executes_through_interpreter_handlers();
+        test_static_hevm_pipeline_binds_constants_by_dacapo_index();
     }
     catch (const std::exception &ex)
     {
