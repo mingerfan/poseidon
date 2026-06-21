@@ -320,6 +320,32 @@ void test_plain_bind_rejects_missing_constant()
     throw std::runtime_error("missing plaintext constant should throw");
 }
 
+void test_collect_results_rejects_missing_download()
+{
+    HevmIoBindingPlan plan;
+    plan.results.push_back(HevmResultSlot{
+        /*index=*/0,
+        /*register_id=*/0,
+        /*value_id=*/42,
+        /*device_id=*/0,
+        /*scale=*/40,
+        /*level=*/2,
+    });
+
+    IoBindingScheduleHandler io;
+    try
+    {
+        (void)collect_hevm_results(io, plan);
+    }
+    catch (const std::out_of_range &ex)
+    {
+        require_contains(ex.what(), "missing download for %42");
+        return;
+    }
+
+    throw std::runtime_error("missing HEVM result download should throw");
+}
+
 }  // namespace
 
 int main()
@@ -333,6 +359,7 @@ int main()
         test_reports_incomplete_hevm_metadata();
         test_bind_rejects_input_count_mismatch();
         test_plain_bind_rejects_missing_constant();
+        test_collect_results_rejects_missing_download();
     }
     catch (const std::exception &ex)
     {
