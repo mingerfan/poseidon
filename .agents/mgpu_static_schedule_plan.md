@@ -179,6 +179,9 @@ Dacapo artifact debugging:
   For large artifacts, use `--write-summary-json` and `--write-schedule`
   together so the CPU-only gate report and readable schedule dump are durable
   without forcing the schedule into stdout.
+- If artifact translation fails before a schedule is built, `--write-summary-json`
+  must still write a not-ready failure report with artifact diagnostics and the
+  opcode summary so unsupported real Dacapo outputs remain scriptable.
 - The dump tool is CPU-side only; it must not link Dacapo/MLIR, CUDA runtime,
   RMM, or GPU evaluator code.
 - `poseidon_mgpu_external_hevm_artifact_tests` is a skipped-by-default CTest

@@ -334,6 +334,11 @@ ready decision. `execution_gate.diagnostics` mirrors the readiness/preflight
 failure reasons so scripts do not need to inspect every nested diagnostic block
 to print a concise failure summary.
 
+If artifact translation fails before a schedule can be built, for example
+because a real Dacapo output contains unsupported `ModswitchC` or `UpscaleC`,
+`--write-summary-json` still writes a failure report with artifact diagnostics,
+the opcode summary, and `execution_gate.status = "not_ready"`.
+
 Use `--write-schedule <file>` to save the readable MLIR-like static schedule
 without printing it to stdout or embedding it into JSON. This is the preferred
 mode for large ResNet20 artifacts: keep `--no-schedule` on stdout, write the

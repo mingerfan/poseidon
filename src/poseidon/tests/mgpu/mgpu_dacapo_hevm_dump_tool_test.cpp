@@ -157,6 +157,24 @@ std::string make_two_compute_hevm_binary()
         });
 }
 
+std::string make_unsupported_opcode_hevm_binary()
+{
+    return poseidon::mgpu::test::make_hevm_binary(
+        1, 1, 2, 1, { 1 },
+        {
+            poseidon::mgpu::test::HevmOpRecord{
+                0, 0, 0, poseidon::mgpu::test::make_hevm_encode_attr(2, 20) },
+            poseidon::mgpu::test::HevmOpRecord{ 4, 1, 0, 1 },
+        },
+        poseidon::mgpu::test::HevmConfigMetadata{
+            { 20 },
+            { 2 },
+            { 40 },
+            { 2 },
+            2,
+        });
+}
+
 std::string make_constant_file()
 {
     std::string output;
@@ -267,6 +285,45 @@ void test_config_file_template_report(
     require_contains(summary_text, "\"copy_cipher\": 2");
 }
 
+void test_failure_report_for_unsupported_opcode(const std::string &tool_path)
+{
+    TempDir temp;
+    const std::string hevm_path = temp.path("unsupported.hevm");
+    const std::string constants_path = temp.path("unsupported.cst");
+    const std::string summary_path = temp.path("failure_summary.json");
+    const std::string stdout_path = temp.path("stdout.txt");
+    const std::string stderr_path = temp.path("stderr.txt");
+    write_binary_file(hevm_path, make_unsupported_opcode_hevm_binary());
+    write_binary_file(constants_path, make_constant_file());
+
+    const std::string command =
+        shell_quote(tool_path) +
+        " --hevm " + shell_quote(hevm_path) +
+        " --constants " + shell_quote(constants_path) +
+        " --opcode-summary"
+        " --require-ready"
+        " --write-summary-json " + shell_quote(summary_path) +
+        " --no-schedule > " + shell_quote(stdout_path) +
+        " 2> " + shell_quote(stderr_path);
+
+    const int exit_code = std::system(command.c_str());
+    require(exit_code != 0, "unsupported opcode command should fail: " + command);
+
+    const std::string stdout_text = read_text_file(stdout_path);
+    const std::string stderr_text = read_text_file(stderr_path);
+    const std::string summary_text = read_text_file(summary_path);
+
+    require_not_contains(stdout_text, "mgpu.schedule");
+    require_contains(stderr_text, "unsupported HEVM opcode 4");
+    require_contains(summary_text, "\"status\": \"not_ready\"");
+    require_contains(summary_text, "\"schedule_built\": false");
+    require_contains(summary_text, "\"artifact_diagnostics\"");
+    require_contains(summary_text, "\"hevm_opcode_summary\"");
+    require_contains(summary_text, "\"name\": \"ModswitchC\"");
+    require_contains(summary_text, "\"supported\": false");
+    require_contains(summary_text, "unsupported HEVM opcode 4");
+}
+
 }  // namespace
 
 int main(int argc, char **argv)
@@ -276,6 +333,7 @@ int main(int argc, char **argv)
         require(argc == 3, "expected dump tool path and mgpu config directory");
         test_write_schedule_and_report(argv[1]);
         test_config_file_template_report(argv[1], argv[2]);
+        test_failure_report_for_unsupported_opcode(argv[1]);
     }
     catch (const std::exception &ex)
     {
