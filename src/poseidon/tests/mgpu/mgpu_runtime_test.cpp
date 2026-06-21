@@ -123,6 +123,32 @@ public:
     }
 };
 
+class WrongOutputKindHandler final : public ScheduleOpHandler
+{
+public:
+    void execute(const MgpuOp &op, MgpuObjectStore &object_store) override
+    {
+        if (op.kind == MgpuOpKind::UploadCipher)
+        {
+            object_store.define(
+                op.outputs[0].id, MgpuValueKind::Plaintext, op.device_id);
+        }
+    }
+};
+
+class WrongOutputDeviceHandler final : public ScheduleOpHandler
+{
+public:
+    void execute(const MgpuOp &op, MgpuObjectStore &object_store) override
+    {
+        if (op.kind == MgpuOpKind::UploadCipher)
+        {
+            object_store.define(
+                op.outputs[0].id, MgpuValueKind::Ciphertext, op.device_id + 1);
+        }
+    }
+};
+
 class ReturningGpuComm final : public GpuComm
 {
 public:
@@ -241,6 +267,36 @@ void test_handler_failure_stops_execution()
     require_contains(result.format_errors(), "injected handler failure");
 }
 
+void test_interpreter_rejects_handler_wrong_output_kind()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, 0, {}, { value(1) }));
+
+    WrongOutputKindHandler handler;
+    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 1 });
+    const ScheduleExecutionResult result = interpreter.run(schedule, handler);
+
+    require(!result.ok(), "wrong handler output kind should fail execution");
+    require_contains(
+        result.format_errors(),
+        "handler defined output %1 as plaintext, expected ciphertext");
+}
+
+void test_interpreter_rejects_handler_wrong_output_device()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op(MgpuOpKind::UploadCipher, 0, {}, { value(1) }));
+
+    WrongOutputDeviceHandler handler;
+    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 2 });
+    const ScheduleExecutionResult result = interpreter.run(schedule, handler);
+
+    require(!result.ok(), "wrong handler output device should fail execution");
+    require_contains(
+        result.format_errors(),
+        "handler defined output %1 on device 1, expected device 0");
+}
+
 void test_static_schedule_executor_routes_copies_to_comm()
 {
     MgpuSchedule schedule;
@@ -319,6 +375,8 @@ int main()
         test_interpreter_preserves_handler_defined_objects();
         test_interpreter_rejects_invalid_schedule_before_execution();
         test_handler_failure_stops_execution();
+        test_interpreter_rejects_handler_wrong_output_kind();
+        test_interpreter_rejects_handler_wrong_output_device();
         test_static_schedule_executor_routes_copies_to_comm();
         test_static_schedule_executor_reports_comm_errors();
         test_static_schedule_executor_rejects_metadata_only_copy_source();
