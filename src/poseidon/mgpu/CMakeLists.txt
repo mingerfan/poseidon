@@ -578,6 +578,7 @@ if(POSEIDON_BUILD_MGPU_CUDA_COMM)
 
     add_library(poseidon_mgpu_cuda_comm STATIC
         comm/cuda_peer_comm.cpp
+        comm/cuda_peer_probe.cpp
     )
 
     target_include_directories(poseidon_mgpu_cuda_comm
@@ -591,12 +592,32 @@ if(POSEIDON_BUILD_MGPU_CUDA_COMM)
             CUDA::cudart
     )
 
+    if(POSEIDON_BUILD_MGPU_TOOLS)
+        add_executable(poseidon_mgpu_cuda_peer_probe
+            ${POSEIDON_INCLUDES_DIR}/src/poseidon/mgpu/tools/cuda_peer_probe.cpp
+        )
+
+        target_link_libraries(poseidon_mgpu_cuda_peer_probe
+            PRIVATE
+                poseidon_mgpu_cuda_comm
+        )
+    endif()
+
     if(POSEIDON_BUILD_MGPU_TESTS)
         add_executable(poseidon_mgpu_cuda_comm_tests
             ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_cuda_comm_test.cpp
         )
 
+        add_executable(poseidon_mgpu_cuda_peer_probe_tests
+            ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_cuda_peer_probe_test.cpp
+        )
+
         target_link_libraries(poseidon_mgpu_cuda_comm_tests
+            PRIVATE
+                poseidon_mgpu_cuda_comm
+        )
+
+        target_link_libraries(poseidon_mgpu_cuda_peer_probe_tests
             PRIVATE
                 poseidon_mgpu_cuda_comm
         )
@@ -606,6 +627,13 @@ if(POSEIDON_BUILD_MGPU_CUDA_COMM)
             COMMAND poseidon_mgpu_cuda_comm_tests
         )
         set_tests_properties(poseidon_mgpu_cuda_comm_tests
+            PROPERTIES SKIP_RETURN_CODE 77)
+
+        add_test(
+            NAME poseidon_mgpu_cuda_peer_probe_tests
+            COMMAND poseidon_mgpu_cuda_peer_probe_tests
+        )
+        set_tests_properties(poseidon_mgpu_cuda_peer_probe_tests
             PROPERTIES SKIP_RETURN_CODE 77)
     endif()
 

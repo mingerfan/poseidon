@@ -87,6 +87,26 @@ cmake --build /tmp/poseidon-mgpu-tools \
            poseidon_mgpu_external_hevm_artifact_tests -j2
 ```
 
+On the single-node 8-GPU machine, build the optional CUDA communication probe
+before attempting execution:
+
+```bash
+cmake -S . -B /tmp/poseidon-mgpu-cuda-comm \
+  -DPOSEIDON_BUILD_MGPU=ON \
+  -DPOSEIDON_BUILD_MGPU_TOOLS=ON \
+  -DPOSEIDON_BUILD_MGPU_TESTS=ON \
+  -DPOSEIDON_BUILD_MGPU_CUDA_COMM=ON
+cmake --build /tmp/poseidon-mgpu-cuda-comm \
+  --target poseidon_mgpu_cuda_peer_probe \
+           poseidon_mgpu_cuda_peer_probe_tests \
+           poseidon_mgpu_cuda_comm_tests -j2
+/tmp/poseidon-mgpu-cuda-comm/bin/poseidon_mgpu_cuda_peer_probe \
+  --require-devices 8 \
+  --require-full-peer-access
+ctest --test-dir /tmp/poseidon-mgpu-cuda-comm --output-on-failure \
+  -R 'poseidon_mgpu_cuda_peer_probe_tests|poseidon_mgpu_cuda_comm_tests'
+```
+
 Then inspect the ResNet20 artifact without executing GPU operators:
 
 ```bash
@@ -237,3 +257,25 @@ routes executable by the currently available backend. For the single-node path,
 also pass `--execution-cuda-peer-available`. Do not pass
 `--execution-inter-node-available` until a real cluster transport backend has
 been implemented and wired behind the mgpu communication layer.
+
+## CUDA Peer Probe
+
+`POSEIDON_BUILD_MGPU_CUDA_COMM=ON` builds the optional CUDA peer-copy backend
+and, when tools are enabled, `poseidon_mgpu_cuda_peer_probe`. This target is not
+part of the default mgpu build.
+
+Use it on the 8-GPU node before running a scheduled artifact:
+
+```bash
+poseidon_mgpu_cuda_peer_probe \
+  --summary-json \
+  --require-devices 8 \
+  --require-full-peer-access
+```
+
+The probe prints visible CUDA devices, basic device properties, and the
+destination-by-source peer-access matrix. `--require-devices 8` fails when fewer
+than eight devices are visible. `--require-full-peer-access` fails when any
+required off-diagonal peer route is unavailable; in that case the CUDA comm
+backend can still host-stage copies, but the run should not be treated as a
+clean CUDA P2P validation.

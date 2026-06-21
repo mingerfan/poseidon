@@ -35,6 +35,7 @@
 | `MaterializedGpuComm` | Bridge logical copy requests to materialized full-object buffer copy requests. |
 | `PoseidonGpuObjectCopyMaterializer` | Optional CUDA/RMM-gated bridge from Poseidon GPU objects to full-object copy buffers. |
 | `CudaPeerComm` | Implement same-device copy, CUDA peer copy, and host-staging fallback as a materialized object-copy backend. |
+| CUDA peer probe | Optional CUDA/RMM-free diagnostic that reports visible devices and CUDA peer-access matrix before single-node 8-GPU execution. |
 | Communication topology planner | CPU-only classification of copy ops as same-device, intra-node CUDA peer, or inter-node transport for future cluster expansion. |
 | Communication execution preflight | CPU-only check that planned copy routes are executable by the currently available same-device, CUDA peer, or inter-node backend set. |
 | Schedule IR | Represent upload, copy, compute, bootstrap fallback, and download operations independent of Dacapo format. |
@@ -134,6 +135,17 @@ Optional Poseidon GPU schedule execution:
 - The handler may execute only full single-device objects (`fields_.size() == 1`) and must reject copy ops; copy ops remain owned by the mgpu communication layer.
 - It is a runtime executor, not a scheduler: device IDs and `integer_attributes` must already be present in the static schedule.
 
+Optional CUDA peer communication diagnostics:
+
+- `POSEIDON_BUILD_MGPU_CUDA_COMM=ON` builds the CUDA peer-copy backend and
+  optional CUDA peer probe without requiring RMM or the Poseidon GPU runtime.
+- `poseidon_mgpu_cuda_peer_probe --require-devices 8 --require-full-peer-access`
+  is the single-node 8-GPU pre-execution check. It reports visible CUDA devices
+  and the destination-by-source peer-access matrix.
+- A failed full-peer-access probe does not change static schedule validity. It
+  means the run is not a clean CUDA P2P validation and may rely on host-staged
+  fallback copies.
+
 Runtime IO binding:
 
 - `IoBindingScheduleHandler` is format-agnostic and stores opaque object handles by `ValueId`.
@@ -220,6 +232,9 @@ ResNet20 artifact runbook:
   --communication-execution-preflight --poseidon-gpu-preflight --require-ready
   --summary-json --no-schedule` with explicit `--hevm`, `--constants`,
   placement flags, and available-backend flags.
+- On an 8-GPU node, build with `POSEIDON_BUILD_MGPU_CUDA_COMM=ON` and run
+  `poseidon_mgpu_cuda_peer_probe --require-devices 8 --require-full-peer-access`
+  before treating `--execution-cuda-peer-available` as validated.
 - Repeatable artifact validation uses the skipped-by-default
   `poseidon_mgpu_external_hevm_artifact_tests` with
   `POSEIDON_MGPU_EXTERNAL_HEVM`, `POSEIDON_MGPU_EXTERNAL_CST`, and explicit
@@ -253,6 +268,7 @@ ResNet20 artifact runbook:
 | Communication topology tests | CPU-only tests classify scheduled copy ops for single-node and uniform cluster topologies without linking NCCL/MPI. |
 | Communication execution preflight tests | CPU-only tests report when same-device, CUDA peer, or inter-node planned routes lack an executable backend. |
 | HEVM artifact readiness tests | CPU-only tests combine opcode support, Poseidon GPU preflight, communication planning, and execution preflight into an optional hard gate. |
+| CUDA peer probe tests | Optional CUDA tests report visible devices and peer-access matrix, skipping when CUDA devices are unavailable. |
 
 ## 6. Phases
 
