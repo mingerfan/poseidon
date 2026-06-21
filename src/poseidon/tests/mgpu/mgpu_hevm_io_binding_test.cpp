@@ -179,6 +179,61 @@ void test_binds_plain_inputs_by_hevm_constant_index()
     require(*uploaded_plain == "plain_const_7", "plain upload object mismatch");
 }
 
+void test_binds_reused_plain_constant_to_each_upload_value()
+{
+    MgpuSchedule schedule;
+    schedule.ops.push_back(op_with_attrs(
+        MgpuOpKind::UploadPlain, 0, {}, { value(10) },
+        {
+            { "hevm_plain_register", 1 },
+            { "hevm_constant_index", 7 },
+            { "encode_level", 4 },
+            { "encode_scale", 40 },
+        }));
+    schedule.ops.push_back(op_with_attrs(
+        MgpuOpKind::UploadPlain, 0, {}, { value(11) },
+        {
+            { "hevm_plain_register", 0 },
+            { "hevm_constant_index", 7 },
+            { "encode_level", 4 },
+            { "encode_scale", 40 },
+        }));
+
+    const HevmIoBindingPlanResult plan_result =
+        build_hevm_io_binding_plan(schedule);
+    require(
+        plan_result.ok(),
+        "reused HEVM plaintext constant plan should pass:\n" +
+            plan_result.format_diagnostics());
+    require(
+        plan_result.plan.plain_inputs.size() == 2,
+        "expected two plaintext upload slots");
+    require(
+        plan_result.plan.plain_inputs[0].register_id == 0,
+        "plaintext slots should be sorted by register id");
+    require(
+        plan_result.plan.plain_inputs[1].register_id == 1,
+        "second plaintext register mismatch");
+
+    IoBindingScheduleHandler io;
+    const auto reused_plain = string_object("plain_const_7");
+    bind_hevm_plain_inputs_by_constant_index(
+        io, plan_result.plan,
+        {
+            { 7, reused_plain },
+        });
+
+    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 1 });
+    const ScheduleExecutionResult execution = interpreter.run(schedule, io);
+    require(execution.ok(), "interpreter failed:\n" + execution.format_errors());
+    require(
+        execution.object_store.object_as<std::string>(10) == reused_plain,
+        "first reused plaintext upload mismatch");
+    require(
+        execution.object_store.object_as<std::string>(11) == reused_plain,
+        "second reused plaintext upload mismatch");
+}
+
 void test_reports_duplicate_hevm_input_indices()
 {
     MgpuSchedule schedule;
@@ -273,6 +328,7 @@ int main()
     {
         test_builds_plan_and_binds_cipher_inputs_by_hevm_index();
         test_binds_plain_inputs_by_hevm_constant_index();
+        test_binds_reused_plain_constant_to_each_upload_value();
         test_reports_duplicate_hevm_input_indices();
         test_reports_incomplete_hevm_metadata();
         test_bind_rejects_input_count_mismatch();
