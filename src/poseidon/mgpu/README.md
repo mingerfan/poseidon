@@ -13,15 +13,15 @@ V1 scope:
 Subdirectories:
 
 - `ir/`: internal schedule representation and debug text support;
-- `compiler/`: Dacapo adapter, placement, copy insertion, verification;
+- `compiler/`: placement, copy insertion, verification, generic schedule pipeline;
 - `runtime/`: device contexts, object store, schedule executor;
 - `comm/`: object-level GPU communication backends;
-- `third_party/dacapo/`: planned Dacapo submodule location.
+- `configs/`: static execution config templates.
 
-The Dacapo submodule is source-only in this build. Poseidon does not build
-Dacapo or MLIR as part of `poseidon_mgpu`; use the adapter boundary in
-`compiler/` to translate captured Dacapo output into the internal IR once the
-output format is fixed.
+Dacapo/HEVM/CST import code lives outside this core tree under
+`src/poseidon/frontends/dacapo/`. The Dacapo submodule is source-only at
+`third_party/dacapo`; Poseidon does not build Dacapo or MLIR as part of
+`poseidon_mgpu`.
 
 ## Dacapo Dependency Isolation
 
@@ -29,11 +29,11 @@ Use Nix for Dacapo/MLIR dependency experiments instead of installing packages
 into the system environment:
 
 ```bash
-nix-shell src/poseidon/mgpu/nix/dacapo-shell.nix
+nix-shell src/poseidon/tools/dacapo/dacapo-shell.nix
 ```
 
-The shell points `DACAPO_ROOT` at `src/poseidon/mgpu/third_party/dacapo` and
-keeps Dacapo source-only with respect to the normal Poseidon build.
+The shell points `DACAPO_ROOT` at `third_party/dacapo` and keeps Dacapo
+source-only with respect to the normal Poseidon build.
 
 The upstream Dacapo helper functions in `config.sh` currently expect the
 compiler binary at `$DACAPO_ROOT/build/bin/hecate-opt`. If you use a different
@@ -46,7 +46,7 @@ Generate real Dacapo ResNet20 artifacts inside the isolated Dacapo shell, not
 from the normal Poseidon build:
 
 ```bash
-nix-shell src/poseidon/mgpu/nix/dacapo-shell.nix
+nix-shell src/poseidon/tools/dacapo/dacapo-shell.nix
 cd "$DACAPO_ROOT"
 cmake -S . -B build -G Ninja
 cmake --build build -j2
@@ -372,7 +372,7 @@ code.
 
 Use `--write-summary-json <file>` when you need a durable report while keeping
 human-readable text output. The JSON report is produced by the shared
-`runtime/hevm_artifact_report.*` builder and contains artifact paths, effective
+`frontends/dacapo/hevm_artifact_report.*` builder and contains artifact paths, effective
 execution config, schedule summary, HEVM I/O counts, opcode summary, readiness,
 communication diagnostics, the aggregate Poseidon GPU execution preflight, and
 a top-level `execution_gate` summary for scripts that only need the ready/not

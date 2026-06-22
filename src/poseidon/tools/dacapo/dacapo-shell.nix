@@ -27,7 +27,7 @@ pkgs.mkShell {
       export POSEIDON_ROOT
     fi
 
-    export DACAPO_ROOT="$POSEIDON_ROOT/src/poseidon/mgpu/third_party/dacapo"
+    export DACAPO_ROOT="$POSEIDON_ROOT/third_party/dacapo"
     export DACAPO_BUILD_DIR="$DACAPO_ROOT/build/nix"
 
     echo "Dacapo root: $DACAPO_ROOT"

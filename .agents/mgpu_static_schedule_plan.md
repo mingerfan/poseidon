@@ -5,7 +5,7 @@
 | Layer | Goal | Decision |
 |---|---|---|
 | V1 | Single-node 8-GPU ciphertext-level parallelism | Each ciphertext/plaintext is a full single-device object at every compute op. |
-| Scheduling | Static | Dacapo emits an instruction sequence, then a placement/copy pass annotates devices and inserts explicit copies. |
+| Scheduling | Static | A frontend emits an instruction sequence, then a placement/copy pass annotates devices and inserts explicit copies. |
 | Execution | Interpreter | The interpreter executes the static schedule and validates invariants; it does not dynamically schedule. |
 | Operators | Existing GPU operators | Every compute op calls the existing single-GPU `GpuEvaluator` on one target GPU. |
 | Communication | CUDA P2P first | V1 uses a CUDA peer-copy backend; NCCL/MPI are planned for later cluster support. |
@@ -16,13 +16,17 @@
 | Path | Purpose |
 |---|---|
 | `src/poseidon/mgpu/` | New multi-GPU compiler, IR, interpreter, runtime, and communication root. |
-| `src/poseidon/mgpu/compiler/` | Dacapo adapter, placement pass, copy insertion pass, schedule verifier. |
+| `src/poseidon/mgpu/compiler/` | Placement pass, copy insertion pass, schedule verifier, and format-agnostic schedule pipeline. |
 | `src/poseidon/mgpu/runtime/` | Device contexts, object store, and schedule interpreter. |
 | `src/poseidon/mgpu/comm/` | Communication abstraction and CUDA P2P implementation. |
 | `src/poseidon/mgpu/ir/` | Internal schedule IR and readable debug dump/parser utilities. |
 | `src/poseidon/mgpu/configs/` | Bundled CPU-side static schedule config templates for single GPU, single-node 8-GPU, and 4x8 cluster preview diagnostics. |
-| `src/poseidon/mgpu/third_party/dacapo/` | Dacapo git submodule from `git@github.com:corelab-src/dacapo.git`. |
-| `src/poseidon/tests/mgpu/` | Multi-GPU runtime tests; cross-device tests must skip on single-GPU machines. |
+| `src/poseidon/frontends/dacapo/` | Dacapo/HEVM/CST import, artifact reports, and HEVM-specific execution wrappers. |
+| `src/poseidon/tools/dacapo/` | Dacapo artifact tools and the isolated Dacapo Nix shell template. |
+| `third_party/dacapo/` | Dacapo git submodule from `git@github.com:corelab-src/dacapo.git`. |
+| `src/poseidon/tests/mgpu/` | Format-agnostic multi-GPU runtime tests; cross-device tests must skip on single-GPU machines. |
+| `src/poseidon/tests/frontends/dacapo/` | Dacapo/HEVM/CST frontend tests. |
+| `src/poseidon/tests/tools/dacapo/` | Dacapo tool and ResNet20 artifact path wrapper tests. |
 
 ## 3. Modules
 
@@ -44,7 +48,7 @@
 | Inter-node transport interface | CPU-only boundary that adapts planned inter-node routes plus full-object copy buffers into a future NCCL/MPI-style backend request; the default backend fails clearly. |
 | Poseidon GPU execution preflight | CPU-only aggregate gate for schedule verification, Poseidon GPU executor prerequisites, communication planning, and communication execution availability. |
 | Schedule IR | Represent upload, copy, compute, bootstrap fallback, and download operations independent of Dacapo format. |
-| Dacapo adapter | Translate internal JSON debug input and Dacapo HEVM binary output into internal IR. |
+| Dacapo frontend | Translate internal JSON debug input and Dacapo HEVM/CST artifacts into internal IR plus frontend-owned metadata. |
 | Placement pass | Assign each op/value to a GPU. |
 | Copy insertion pass | Insert explicit copy operations when input placement differs from compute placement. |
 | Static schedule execution config | CPU-only JSON config for placement, topology, preflight gates, and declared communication backends. |
@@ -99,7 +103,7 @@ struct MgpuSchedule {
 
 Execution pipeline:
 
-1. Dacapo adapter, internal JSON debug input, or handcrafted tests produce internal IR.
+1. A frontend such as Dacapo, internal JSON debug input, or handcrafted tests produces internal IR.
 2. Placement pass assigns devices.
 3. Copy insertion pass inserts `CopyPlain`/`CopyCipher`.
 4. Verifier checks schedule invariants.
@@ -371,7 +375,7 @@ Dacapo artifact debugging:
 ResNet20 artifact runbook:
 
 - Use only the Nix-isolated Dacapo environment for Dacapo dependencies:
-  `nix-shell src/poseidon/mgpu/nix/dacapo-shell.nix`.
+  `nix-shell src/poseidon/tools/dacapo/dacapo-shell.nix`.
 - Dacapo's upstream helper functions in `config.sh` expect
   `$DACAPO_ROOT/build/bin/hecate-opt`; keep that build path when using
   `hc-trace`, `hopts`, or `hbt`, or invoke the optimizer directly.

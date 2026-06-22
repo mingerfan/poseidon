@@ -20,11 +20,11 @@ Mandatory constraints:
 - When inputs, compute, or downloads live on different devices, rely on the
   copy insertion pass and the mgpu communication layer. Do not add ad hoc
   copies in GPU evaluators or operator handlers.
-- Dacapo is expected at `src/poseidon/mgpu/third_party/dacapo` from
+- Dacapo is expected at `third_party/dacapo` from
   `git@github.com:corelab-src/dacapo.git`.
 - Use Nix for Dacapo dependency isolation when needed. Do not modify the system
   package environment for Dacapo dependencies.
-  The local shell template is `src/poseidon/mgpu/nix/dacapo-shell.nix`.
+  The local shell template is `src/poseidon/tools/dacapo/dacapo-shell.nix`.
 - Do not delete files outside this repository. Do not delete unrelated untracked
   cache directories inside the repository.
 - Keep memory use conservative. Avoid broad parallel builds unless needed.
