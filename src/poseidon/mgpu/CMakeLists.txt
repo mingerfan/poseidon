@@ -331,6 +331,10 @@ if(POSEIDON_BUILD_MGPU_TESTS)
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/frontends/dacapo/dacapo_constants_test.cpp
     )
 
+    add_executable(poseidon_mgpu_dacapo_schedule_pipeline_tests
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/frontends/dacapo/dacapo_schedule_pipeline_test.cpp
+    )
+
     add_executable(poseidon_mgpu_runtime_tests
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_runtime_test.cpp
     )
@@ -462,6 +466,11 @@ if(POSEIDON_BUILD_MGPU_TESTS)
             poseidon_dacapo_frontend
     )
 
+    target_link_libraries(poseidon_mgpu_dacapo_schedule_pipeline_tests
+        PRIVATE
+            poseidon_dacapo_frontend
+    )
+
     target_link_libraries(poseidon_mgpu_runtime_tests
         PRIVATE
             poseidon_mgpu
@@ -524,7 +533,7 @@ if(POSEIDON_BUILD_MGPU_TESTS)
 
     target_link_libraries(poseidon_mgpu_static_pipeline_tests
         PRIVATE
-            poseidon_dacapo_frontend
+            poseidon_mgpu
     )
 
     target_link_libraries(poseidon_mgpu_static_pipeline_execution_tests
@@ -897,6 +906,11 @@ if(POSEIDON_BUILD_MGPU_TESTS)
     )
 
     add_test(
+        NAME poseidon_mgpu_dacapo_schedule_pipeline_tests
+        COMMAND poseidon_mgpu_dacapo_schedule_pipeline_tests
+    )
+
+    add_test(
         NAME poseidon_mgpu_runtime_tests
         COMMAND poseidon_mgpu_runtime_tests
     )
@@ -1111,7 +1125,7 @@ if(POSEIDON_BUILD_MGPU_GPU_RUNTIME)
 
     if(POSEIDON_BUILD_MGPU_TESTS)
         add_executable(poseidon_mgpu_gpu_runtime_smoke_tests
-            ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_gpu_runtime_smoke_test.cpp
+            ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/frontends/dacapo/dacapo_gpu_runtime_smoke_test.cpp
         )
 
         target_link_libraries(poseidon_mgpu_gpu_runtime_smoke_tests
