@@ -1,6 +1,6 @@
 #include "poseidon/mgpu/compiler/static_schedule_pipeline.h"
 #include "poseidon/mgpu/runtime/hevm_io_binding.h"
-#include "poseidon/mgpu/runtime/schedule_interpreter.h"
+#include "poseidon/mgpu/runtime/sequential_schedule_executor.h"
 #include "poseidon/tests/mgpu/hevm_test_utils.h"
 
 #include <cstdlib>
@@ -125,7 +125,7 @@ void test_builds_plan_and_binds_cipher_inputs_by_hevm_index()
     require(plan.results[1].scale == 41, "second result scale mismatch");
     require(plan.results[1].level == 9, "second result level mismatch");
 
-    IoBindingScheduleHandler io;
+    IoBindingExecutionBackend io;
     bind_hevm_cipher_inputs(
         io, plan,
         {
@@ -133,9 +133,9 @@ void test_builds_plan_and_binds_cipher_inputs_by_hevm_index()
             string_object("cipher_arg_1"),
         });
 
-    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 1 });
-    const ScheduleExecutionResult execution = interpreter.run(pipeline.schedule, io);
-    require(execution.ok(), "interpreter failed:\n" + execution.format_errors());
+    SequentialScheduleExecutor executor(SequentialScheduleExecutorOptions{ 1 });
+    const ScheduleExecutionResult execution = executor.run(pipeline.schedule, io);
+    require(execution.ok(), "executor failed:\n" + execution.format_errors());
 
     const std::vector<std::shared_ptr<void>> raw_results = collect_hevm_results(io, plan);
     require(raw_results.size() == 2, "expected two collected HEVM results");
@@ -162,7 +162,7 @@ void test_binds_plain_inputs_by_hevm_constant_index()
     require(plan.plain_inputs[0].level == 4, "plain encode level metadata mismatch");
     require(plan.plain_inputs[0].scale == 40, "plain encode scale metadata mismatch");
 
-    IoBindingScheduleHandler io;
+    IoBindingExecutionBackend io;
     bind_hevm_cipher_inputs(io, plan, { string_object("cipher_arg_0") });
     bind_hevm_plain_inputs_by_constant_index(
         io, plan,
@@ -170,9 +170,9 @@ void test_binds_plain_inputs_by_hevm_constant_index()
             { 7, string_object("plain_const_7") },
         });
 
-    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 1 });
-    const ScheduleExecutionResult execution = interpreter.run(pipeline.schedule, io);
-    require(execution.ok(), "interpreter failed:\n" + execution.format_errors());
+    SequentialScheduleExecutor executor(SequentialScheduleExecutorOptions{ 1 });
+    const ScheduleExecutionResult execution = executor.run(pipeline.schedule, io);
+    require(execution.ok(), "executor failed:\n" + execution.format_errors());
 
     const auto uploaded_plain =
         execution.object_store.object_as<std::string>(plan.plain_inputs[0].value_id);
@@ -215,7 +215,7 @@ void test_binds_reused_plain_constant_to_each_upload_value()
         plan_result.plan.plain_inputs[1].register_id == 1,
         "second plaintext register mismatch");
 
-    IoBindingScheduleHandler io;
+    IoBindingExecutionBackend io;
     const auto reused_plain = string_object("plain_const_7");
     bind_hevm_plain_inputs_by_constant_index(
         io, plan_result.plan,
@@ -223,9 +223,9 @@ void test_binds_reused_plain_constant_to_each_upload_value()
             { 7, reused_plain },
         });
 
-    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 1 });
-    const ScheduleExecutionResult execution = interpreter.run(schedule, io);
-    require(execution.ok(), "interpreter failed:\n" + execution.format_errors());
+    SequentialScheduleExecutor executor(SequentialScheduleExecutorOptions{ 1 });
+    const ScheduleExecutionResult execution = executor.run(schedule, io);
+    require(execution.ok(), "executor failed:\n" + execution.format_errors());
     require(
         execution.object_store.object_as<std::string>(10) == reused_plain,
         "first reused plaintext upload mismatch");
@@ -284,7 +284,7 @@ void test_bind_rejects_input_count_mismatch()
         build_hevm_io_binding_plan(pipeline.schedule);
     require(plan_result.ok(), "HEVM IO plan failed:\n" + plan_result.format_diagnostics());
 
-    IoBindingScheduleHandler io;
+    IoBindingExecutionBackend io;
     try
     {
         bind_hevm_cipher_inputs(io, plan_result.plan, { string_object("only_arg") });
@@ -306,7 +306,7 @@ void test_plain_bind_rejects_missing_constant()
         build_hevm_io_binding_plan(pipeline.schedule);
     require(plan_result.ok(), "HEVM IO plan failed:\n" + plan_result.format_diagnostics());
 
-    IoBindingScheduleHandler io;
+    IoBindingExecutionBackend io;
     try
     {
         bind_hevm_plain_inputs_by_constant_index(io, plan_result.plan, {});
@@ -332,7 +332,7 @@ void test_collect_results_rejects_missing_download()
         /*level=*/2,
     });
 
-    IoBindingScheduleHandler io;
+    IoBindingExecutionBackend io;
     try
     {
         (void)collect_hevm_results(io, plan);

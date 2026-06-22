@@ -14,7 +14,7 @@ Subdirectories:
 
 - `ir/`: internal schedule representation and debug text support;
 - `compiler/`: Dacapo adapter, placement, copy insertion, verification;
-- `runtime/`: device contexts, object store, schedule interpreter;
+- `runtime/`: device contexts, object store, schedule executor;
 - `comm/`: object-level GPU communication backends;
 - `third_party/dacapo/`: planned Dacapo submodule location.
 
@@ -223,7 +223,7 @@ Interpret the diagnostics conservatively:
   scheduled, but the current Poseidon GPU execution path cannot run it end to
   end until a fallback or native bootstrap path is designed.
 - Missing relinearization or Galois keys must be fixed by key provisioning, not
-  by changing placement in the interpreter.
+  by changing placement in the executor.
 - `communication_plan` entries marked `inter_node` are diagnostic only today.
   Single-node 8-GPU execution should use CUDA peer communication first; cluster
   transport is a later backend behind the same mgpu communication interface.
@@ -490,20 +490,21 @@ buffers, and then delegates to `RoutedGpuObjectCopyBackend`. This keeps
 transport choice tied to the planned schedule rather than inferred inside
 evaluator or kernel code.
 
-The runtime copy handler requires the source value to carry an object handle
-before calling the communication layer. Metadata-only values remain valid for
-diagnostic interpreter paths, but they cannot be copied as materialized GPU
+The runtime copy-dispatch backend requires the source value to carry an object
+handle before calling the communication layer. Metadata-only values remain valid
+for diagnostic executor paths, but they cannot be copied as materialized GPU
 objects.
 
 `runtime/planned_communication_executor.*` wires that planned communication path
-into the static interpreter. It computes `MgpuCommunicationPlan` from the static
-schedule and topology before execution, checks declared communication execution
+into a planned schedule executor. It computes `MgpuCommunicationPlan` from the
+static schedule and topology before execution, checks declared communication execution
 availability, returns route or backend diagnostics without running any op, then
-executes the schedule through `StaticScheduleExecutor` with
-`PlannedMaterializedGpuComm`. It is CPU-side glue for the static schedule path,
-not a dynamic scheduler. Use `from_config` when a
-`StaticScheduleExecutionConfig` is available so topology, device count, and
-declared backend availability are consumed from the same static config.
+executes the schedule through `SequentialScheduleExecutor` with
+`CopyDispatchingExecutionBackend` and `PlannedMaterializedGpuComm`. It is
+CPU-side glue for the static schedule path, not a dynamic scheduler. Use
+`from_config` when a `StaticScheduleExecutionConfig` is available so topology,
+device count, and declared backend availability are consumed from the same
+static config.
 
 ## CUDA Peer Probe
 

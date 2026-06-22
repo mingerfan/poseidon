@@ -1,5 +1,5 @@
-#include "poseidon/mgpu/runtime/schedule_interpreter.h"
-#include "poseidon/mgpu/runtime/static_schedule_executor.h"
+#include "poseidon/mgpu/runtime/copy_dispatching_backend.h"
+#include "poseidon/mgpu/runtime/sequential_schedule_executor.h"
 
 #include <cstdlib>
 #include <iostream>
@@ -42,10 +42,10 @@ void require_contains(const std::string &text, const std::string &needle)
     }
 }
 
-class RecordingHandler final : public ScheduleOpHandler
+class RecordingBackend final : public ScheduleExecutionBackend
 {
 public:
-    explicit RecordingHandler(std::size_t fail_at = static_cast<std::size_t>(-1))
+    explicit RecordingBackend(std::size_t fail_at = static_cast<std::size_t>(-1))
         : fail_at_(fail_at)
     {
     }
@@ -54,7 +54,7 @@ public:
     {
         if (records.size() == fail_at_)
         {
-            throw std::runtime_error("injected handler failure");
+            throw std::runtime_error("injected backend failure");
         }
 
         if (!op.inputs.empty())
@@ -79,7 +79,7 @@ private:
     std::size_t fail_at_ = static_cast<std::size_t>(-1);
 };
 
-class ObjectDefiningHandler final : public ScheduleOpHandler
+class ObjectDefiningBackend final : public ScheduleExecutionBackend
 {
 public:
     void execute(const MgpuOp &op, MgpuObjectStore &object_store) override
@@ -110,7 +110,7 @@ public:
     }
 };
 
-class MetadataOnlyUploadHandler final : public ScheduleOpHandler
+class MetadataOnlyUploadBackend final : public ScheduleExecutionBackend
 {
 public:
     void execute(const MgpuOp &op, MgpuObjectStore &object_store) override
@@ -123,7 +123,7 @@ public:
     }
 };
 
-class WrongOutputKindHandler final : public ScheduleOpHandler
+class WrongOutputKindBackend final : public ScheduleExecutionBackend
 {
 public:
     void execute(const MgpuOp &op, MgpuObjectStore &object_store) override
@@ -136,7 +136,7 @@ public:
     }
 };
 
-class WrongOutputDeviceHandler final : public ScheduleOpHandler
+class WrongOutputDeviceBackend final : public ScheduleExecutionBackend
 {
 public:
     void execute(const MgpuOp &op, MgpuObjectStore &object_store) override
@@ -204,13 +204,22 @@ void test_object_store()
     require(duplicate_failed, "duplicate object define should fail");
 }
 
-void test_interpreter_preserves_handler_defined_objects()
+ScheduleExecutionResult run_with_copy_dispatch(
+    const MgpuSchedule &schedule, GpuComm &comm, ScheduleExecutionBackend &backend,
+    SequentialScheduleExecutorOptions options)
 {
-    ObjectDefiningHandler handler;
-    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 1 });
-    const ScheduleExecutionResult result = interpreter.run(make_single_device_schedule(), handler);
+    CopyDispatchingExecutionBackend copy_backend(comm, &backend);
+    SequentialScheduleExecutor executor(options);
+    return executor.run(schedule, copy_backend);
+}
 
-    require(result.ok(), "expected interpreter success, got:\n" + result.format_errors());
+void test_sequential_executor_preserves_backend_defined_objects()
+{
+    ObjectDefiningBackend backend;
+    SequentialScheduleExecutor executor(SequentialScheduleExecutorOptions{ 1 });
+    const ScheduleExecutionResult result = executor.run(make_single_device_schedule(), backend);
+
+    require(result.ok(), "expected executor success, got:\n" + result.format_errors());
     require(result.object_store.has_object(1), "upload ciphertext object should be retained");
     require(result.object_store.has_object(2), "upload plaintext object should be retained");
     require(result.object_store.has_object(3), "compute output object should be retained");
@@ -220,84 +229,84 @@ void test_interpreter_preserves_handler_defined_objects()
         "compute output object mismatch");
 }
 
-void test_interpreter_runs_static_order()
+void test_sequential_executor_runs_static_order()
 {
-    RecordingHandler handler;
-    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 1 });
-    const ScheduleExecutionResult result = interpreter.run(make_single_device_schedule(), handler);
+    RecordingBackend backend;
+    SequentialScheduleExecutor executor(SequentialScheduleExecutorOptions{ 1 });
+    const ScheduleExecutionResult result = executor.run(make_single_device_schedule(), backend);
 
-    require(result.ok(), "expected interpreter success, got:\n" + result.format_errors());
-    require(handler.records.size() == 5, "handler record count mismatch");
-    require(handler.records[0].kind == MgpuOpKind::UploadCipher, "first op mismatch");
-    require(handler.records[2].kind == MgpuOpKind::MultiplyPlain, "third op mismatch");
-    require(handler.records[4].kind == MgpuOpKind::Download, "last op mismatch");
-    require(handler.records[2].device_id == 0, "interpreter should use scheduled device");
-    require(handler.observed_first_input_devices[0] == 0, "input device should come from store");
+    require(result.ok(), "expected executor success, got:\n" + result.format_errors());
+    require(backend.records.size() == 5, "backend record count mismatch");
+    require(backend.records[0].kind == MgpuOpKind::UploadCipher, "first op mismatch");
+    require(backend.records[2].kind == MgpuOpKind::MultiplyPlain, "third op mismatch");
+    require(backend.records[4].kind == MgpuOpKind::Download, "last op mismatch");
+    require(backend.records[2].device_id == 0, "executor should use scheduled device");
+    require(backend.observed_first_input_devices[0] == 0, "input device should come from store");
 
     require(result.object_store.size() == 4, "download should not define a new GPU object");
     require(result.object_store.at(4).kind == MgpuValueKind::Ciphertext, "rescale output kind mismatch");
     require(result.object_store.at(4).device_id == 0, "rescale output device mismatch");
 }
 
-void test_interpreter_rejects_invalid_schedule_before_execution()
+void test_sequential_executor_rejects_invalid_schedule_before_execution()
 {
     MgpuSchedule schedule;
     schedule.ops.push_back(op(MgpuOpKind::UploadCipher, 0, {}, { value(1) }));
     schedule.ops.push_back(op(MgpuOpKind::Rescale, 1, { value(1) }, { value(2) }));
 
-    RecordingHandler handler;
-    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 2 });
-    const ScheduleExecutionResult result = interpreter.run(schedule, handler);
+    RecordingBackend backend;
+    SequentialScheduleExecutor executor(SequentialScheduleExecutorOptions{ 2 });
+    const ScheduleExecutionResult result = executor.run(schedule, backend);
 
     require(!result.ok(), "invalid schedule should fail");
-    require(handler.records.empty(), "invalid schedule should not execute any op");
+    require(backend.records.empty(), "invalid schedule should not execute any op");
     require_contains(result.format_errors(), "input value %1 is on device 0 but op runs on device 1");
 }
 
-void test_handler_failure_stops_execution()
+void test_backend_failure_stops_execution()
 {
-    RecordingHandler handler(2);
-    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 1 });
-    const ScheduleExecutionResult result = interpreter.run(make_single_device_schedule(), handler);
+    RecordingBackend backend(2);
+    SequentialScheduleExecutor executor(SequentialScheduleExecutorOptions{ 1 });
+    const ScheduleExecutionResult result = executor.run(make_single_device_schedule(), backend);
 
-    require(!result.ok(), "handler failure should fail execution");
-    require(handler.records.size() == 2, "handler should stop at injected failure");
+    require(!result.ok(), "backend failure should fail execution");
+    require(backend.records.size() == 2, "backend should stop at injected failure");
     require(result.object_store.contains(1), "completed upload should remain in result store");
     require(!result.object_store.contains(3), "failed op output should not be defined");
-    require_contains(result.format_errors(), "injected handler failure");
+    require_contains(result.format_errors(), "injected backend failure");
 }
 
-void test_interpreter_rejects_handler_wrong_output_kind()
+void test_sequential_executor_rejects_wrong_backend_output_kind()
 {
     MgpuSchedule schedule;
     schedule.ops.push_back(op(MgpuOpKind::UploadCipher, 0, {}, { value(1) }));
 
-    WrongOutputKindHandler handler;
-    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 1 });
-    const ScheduleExecutionResult result = interpreter.run(schedule, handler);
+    WrongOutputKindBackend backend;
+    SequentialScheduleExecutor executor(SequentialScheduleExecutorOptions{ 1 });
+    const ScheduleExecutionResult result = executor.run(schedule, backend);
 
-    require(!result.ok(), "wrong handler output kind should fail execution");
+    require(!result.ok(), "wrong backend output kind should fail execution");
     require_contains(
         result.format_errors(),
-        "handler defined output %1 as plaintext, expected ciphertext");
+        "backend defined output %1 as plaintext, expected ciphertext");
 }
 
-void test_interpreter_rejects_handler_wrong_output_device()
+void test_sequential_executor_rejects_wrong_backend_output_device()
 {
     MgpuSchedule schedule;
     schedule.ops.push_back(op(MgpuOpKind::UploadCipher, 0, {}, { value(1) }));
 
-    WrongOutputDeviceHandler handler;
-    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 2 });
-    const ScheduleExecutionResult result = interpreter.run(schedule, handler);
+    WrongOutputDeviceBackend backend;
+    SequentialScheduleExecutor executor(SequentialScheduleExecutorOptions{ 2 });
+    const ScheduleExecutionResult result = executor.run(schedule, backend);
 
-    require(!result.ok(), "wrong handler output device should fail execution");
+    require(!result.ok(), "wrong backend output device should fail execution");
     require_contains(
         result.format_errors(),
-        "handler defined output %1 on device 1, expected device 0");
+        "backend defined output %1 on device 1, expected device 0");
 }
 
-void test_static_schedule_executor_routes_copies_to_comm()
+void test_copy_dispatch_backend_routes_copies_to_comm()
 {
     MgpuSchedule schedule;
     schedule.ops.push_back(op(MgpuOpKind::UploadCipher, 0, {}, { value(1) }));
@@ -305,12 +314,11 @@ void test_static_schedule_executor_routes_copies_to_comm()
     schedule.ops.push_back(op(MgpuOpKind::Download, 1, { value(2) }, {}));
 
     ReturningGpuComm comm;
-    ObjectDefiningHandler handler;
-    StaticScheduleExecutor executor(comm, handler, StaticScheduleExecutorOptions{ 2 });
+    ObjectDefiningBackend backend;
+    const ScheduleExecutionResult result = run_with_copy_dispatch(
+        schedule, comm, backend, SequentialScheduleExecutorOptions{ 2 });
 
-    const ScheduleExecutionResult result = executor.run(schedule);
-
-    require(result.ok(), "static executor should run copy schedule:\n" + result.format_errors());
+    require(result.ok(), "copy-dispatch execution should run schedule:\n" + result.format_errors());
     require(comm.requests.size() == 1, "copy should be dispatched through comm");
     require(comm.requests[0].source_id == 1, "comm source id mismatch");
     require(comm.requests[0].destination_id == 2, "comm destination id mismatch");
@@ -320,7 +328,7 @@ void test_static_schedule_executor_routes_copies_to_comm()
     require(result.object_store.has_object(2), "copied object handle should be retained");
 }
 
-void test_static_schedule_executor_reports_comm_errors()
+void test_copy_dispatch_backend_reports_comm_errors()
 {
     MgpuSchedule schedule;
     schedule.ops.push_back(op(MgpuOpKind::UploadCipher, 0, {}, { value(1) }));
@@ -328,10 +336,9 @@ void test_static_schedule_executor_reports_comm_errors()
     schedule.ops.push_back(op(MgpuOpKind::Download, 1, { value(2) }, {}));
 
     SameDeviceGpuComm comm;
-    ObjectDefiningHandler handler;
-    StaticScheduleExecutor executor(comm, handler, StaticScheduleExecutorOptions{ 2 });
-
-    const ScheduleExecutionResult result = executor.run(schedule);
+    ObjectDefiningBackend backend;
+    const ScheduleExecutionResult result = run_with_copy_dispatch(
+        schedule, comm, backend, SequentialScheduleExecutorOptions{ 2 });
 
     require(!result.ok(), "same-device comm should reject executor cross-device copy");
     require_contains(result.format_errors(), "requires a multi-GPU communication backend");
@@ -341,7 +348,7 @@ void test_static_schedule_executor_reports_comm_errors()
         "failed copy output should not be retained");
 }
 
-void test_static_schedule_executor_rejects_metadata_only_copy_source()
+void test_copy_dispatch_backend_rejects_metadata_only_copy_source()
 {
     MgpuSchedule schedule;
     schedule.ops.push_back(op(MgpuOpKind::UploadCipher, 0, {}, { value(1) }));
@@ -349,10 +356,9 @@ void test_static_schedule_executor_rejects_metadata_only_copy_source()
         op(MgpuOpKind::CopyCipher, 1, { value(1) }, { value(2) }));
 
     ReturningGpuComm comm;
-    MetadataOnlyUploadHandler handler;
-    StaticScheduleExecutor executor(comm, handler, StaticScheduleExecutorOptions{ 2 });
-
-    const ScheduleExecutionResult result = executor.run(schedule);
+    MetadataOnlyUploadBackend backend;
+    const ScheduleExecutionResult result = run_with_copy_dispatch(
+        schedule, comm, backend, SequentialScheduleExecutorOptions{ 2 });
 
     require(!result.ok(), "metadata-only copy source should fail");
     require_contains(
@@ -371,15 +377,15 @@ int main()
     try
     {
         test_object_store();
-        test_interpreter_runs_static_order();
-        test_interpreter_preserves_handler_defined_objects();
-        test_interpreter_rejects_invalid_schedule_before_execution();
-        test_handler_failure_stops_execution();
-        test_interpreter_rejects_handler_wrong_output_kind();
-        test_interpreter_rejects_handler_wrong_output_device();
-        test_static_schedule_executor_routes_copies_to_comm();
-        test_static_schedule_executor_reports_comm_errors();
-        test_static_schedule_executor_rejects_metadata_only_copy_source();
+        test_sequential_executor_runs_static_order();
+        test_sequential_executor_preserves_backend_defined_objects();
+        test_sequential_executor_rejects_invalid_schedule_before_execution();
+        test_backend_failure_stops_execution();
+        test_sequential_executor_rejects_wrong_backend_output_kind();
+        test_sequential_executor_rejects_wrong_backend_output_device();
+        test_copy_dispatch_backend_routes_copies_to_comm();
+        test_copy_dispatch_backend_reports_comm_errors();
+        test_copy_dispatch_backend_rejects_metadata_only_copy_source();
     }
     catch (const std::exception &ex)
     {

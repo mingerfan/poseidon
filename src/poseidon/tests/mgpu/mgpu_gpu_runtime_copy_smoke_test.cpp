@@ -6,8 +6,9 @@
 #include "poseidon/mgpu/comm/cuda_peer_comm.h"
 #include "poseidon/mgpu/comm/gpu_object_materializer.h"
 #include "poseidon/mgpu/comm/materialized_gpu_comm.h"
-#include "poseidon/mgpu/runtime/poseidon_gpu_schedule_handler.h"
-#include "poseidon/mgpu/runtime/static_schedule_executor.h"
+#include "poseidon/mgpu/runtime/copy_dispatching_backend.h"
+#include "poseidon/mgpu/runtime/poseidon_gpu_execution_backend.h"
+#include "poseidon/mgpu/runtime/sequential_schedule_executor.h"
 #include "poseidon/parameters_literal.h"
 #include "poseidon/plaintext.h"
 #include "poseidon/poseidon_context.h"
@@ -215,19 +216,20 @@ void run_cross_device_copy_smoke()
         op(MgpuOpKind::Add, destination_device, { value(3), value(4) }, { value(5) }));
     schedule.ops.push_back(op(MgpuOpKind::Download, destination_device, { value(5) }, {}));
 
-    PoseidonGpuScheduleHandler gpu_handler(context);
-    gpu_handler.bind_cipher_upload(1, std::make_shared<Ciphertext>(cipher0));
-    gpu_handler.bind_cipher_upload(2, std::make_shared<Ciphertext>(cipher1));
+    PoseidonGpuExecutionBackend gpu_backend(context);
+    gpu_backend.bind_cipher_upload(1, std::make_shared<Ciphertext>(cipher0));
+    gpu_backend.bind_cipher_upload(2, std::make_shared<Ciphertext>(cipher1));
 
     PoseidonGpuObjectCopyMaterializer materializer;
     CudaPeerComm peer_backend;
     MaterializedGpuComm comm(materializer, peer_backend);
-    StaticScheduleExecutor executor(comm, gpu_handler, StaticScheduleExecutorOptions{ 2 });
+    CopyDispatchingExecutionBackend copy_backend(comm, &gpu_backend);
+    SequentialScheduleExecutor executor(SequentialScheduleExecutorOptions{ 2 });
 
-    const ScheduleExecutionResult result = executor.run(schedule);
+    const ScheduleExecutionResult result = executor.run(schedule, copy_backend);
     require(result.ok(), "GPU runtime cross-device schedule failed:\n" + result.format_errors());
-    require(gpu_handler.has_cipher_download(5), "missing add output download");
-    require_ciphertexts_equal(expected_sum, *gpu_handler.cipher_download(5));
+    require(gpu_backend.has_cipher_download(5), "missing add output download");
+    require_ciphertexts_equal(expected_sum, *gpu_backend.cipher_download(5));
 }
 
 }  // namespace

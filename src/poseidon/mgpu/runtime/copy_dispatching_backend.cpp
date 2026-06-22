@@ -1,4 +1,4 @@
-#include "poseidon/mgpu/runtime/comm_schedule_handler.h"
+#include "poseidon/mgpu/runtime/copy_dispatching_backend.h"
 
 #include <memory>
 #include <sstream>
@@ -37,13 +37,13 @@ void validate_copy_source_has_object(
 
 }  // namespace
 
-CopyDispatchingScheduleHandler::CopyDispatchingScheduleHandler(
-    GpuComm &comm, ScheduleOpHandler *fallback)
+CopyDispatchingExecutionBackend::CopyDispatchingExecutionBackend(
+    GpuComm &comm, ScheduleExecutionBackend *fallback)
     : comm_(comm), fallback_(fallback)
 {
 }
 
-void CopyDispatchingScheduleHandler::execute(
+void CopyDispatchingExecutionBackend::execute(
     const MgpuOp &op, MgpuObjectStore &object_store)
 {
     if (!is_comm_copy_op(op.kind))

@@ -9,8 +9,8 @@
 #include "poseidon/mgpu/compiler/static_schedule_pipeline.h"
 #include "poseidon/mgpu/runtime/hevm_static_execution_plan.h"
 #include "poseidon/mgpu/runtime/poseidon_gpu_hevm_executor.h"
-#include "poseidon/mgpu/runtime/poseidon_gpu_schedule_handler.h"
-#include "poseidon/mgpu/runtime/schedule_interpreter.h"
+#include "poseidon/mgpu/runtime/poseidon_gpu_execution_backend.h"
+#include "poseidon/mgpu/runtime/sequential_schedule_executor.h"
 #include "poseidon/parameters_literal.h"
 #include "poseidon/plaintext.h"
 #include "poseidon/poseidon_context.h"
@@ -331,20 +331,20 @@ void run_gpu_runtime_smoke()
     schedule.ops.push_back(op(MgpuOpKind::Download, device_id, { value(3) }, {}));
     schedule.ops.push_back(op(MgpuOpKind::Download, device_id, { value(4) }, {}));
 
-    PoseidonGpuScheduleHandler handler(context);
-    handler.bind_cipher_upload(1, std::make_shared<Ciphertext>(cipher0));
-    handler.bind_cipher_upload(2, std::make_shared<Ciphertext>(cipher1));
-    handler.bind_plain_upload(3, std::make_shared<Plaintext>(plain0));
+    PoseidonGpuExecutionBackend backend(context);
+    backend.bind_cipher_upload(1, std::make_shared<Ciphertext>(cipher0));
+    backend.bind_cipher_upload(2, std::make_shared<Ciphertext>(cipher1));
+    backend.bind_plain_upload(3, std::make_shared<Plaintext>(plain0));
 
-    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 1 });
-    const ScheduleExecutionResult result = interpreter.run(schedule, handler);
+    SequentialScheduleExecutor executor(SequentialScheduleExecutorOptions{ 1 });
+    const ScheduleExecutionResult result = executor.run(schedule, backend);
     require(result.ok(), "GPU runtime schedule failed:\n" + result.format_errors());
-    require(handler.has_cipher_download(1), "missing ciphertext download");
-    require(handler.has_plain_download(3), "missing plaintext download");
-    require(handler.has_cipher_download(4), "missing add output download");
-    require_ciphertexts_equal(cipher0, *handler.cipher_download(1));
-    require_plaintexts_equal(plain0, *handler.plain_download(3));
-    require_ciphertexts_equal(expected_sum, *handler.cipher_download(4));
+    require(backend.has_cipher_download(1), "missing ciphertext download");
+    require(backend.has_plain_download(3), "missing plaintext download");
+    require(backend.has_cipher_download(4), "missing add output download");
+    require_ciphertexts_equal(cipher0, *backend.cipher_download(1));
+    require_plaintexts_equal(plain0, *backend.plain_download(3));
+    require_ciphertexts_equal(expected_sum, *backend.cipher_download(4));
 }
 
 void run_gpu_runtime_multiply_plain_smoke()
@@ -380,15 +380,15 @@ void run_gpu_runtime_multiply_plain_smoke()
         op(MgpuOpKind::MultiplyPlain, device_id, { value(10), value(11) }, { value(12) }));
     schedule.ops.push_back(op(MgpuOpKind::Download, device_id, { value(12) }, {}));
 
-    PoseidonGpuScheduleHandler handler(context);
-    handler.bind_cipher_upload(10, std::make_shared<Ciphertext>(cipher0));
-    handler.bind_plain_upload(11, std::make_shared<Plaintext>(plain1));
+    PoseidonGpuExecutionBackend backend(context);
+    backend.bind_cipher_upload(10, std::make_shared<Ciphertext>(cipher0));
+    backend.bind_plain_upload(11, std::make_shared<Plaintext>(plain1));
 
-    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 1 });
-    const ScheduleExecutionResult result = interpreter.run(schedule, handler);
+    SequentialScheduleExecutor executor(SequentialScheduleExecutorOptions{ 1 });
+    const ScheduleExecutionResult result = executor.run(schedule, backend);
     require(result.ok(), "GPU runtime multiply_plain schedule failed:\n" + result.format_errors());
-    require(handler.has_cipher_download(12), "missing multiply_plain output download");
-    require_ciphertexts_equal(expected_product, *handler.cipher_download(12));
+    require(backend.has_cipher_download(12), "missing multiply_plain output download");
+    require_ciphertexts_equal(expected_product, *backend.cipher_download(12));
 }
 
 void run_gpu_runtime_hevm_constants_smoke()
@@ -585,21 +585,21 @@ void run_gpu_runtime_add_plain_rescale_smoke()
     schedule.ops.push_back(op(MgpuOpKind::Download, device_id, { value(23) }, {}));
     schedule.ops.push_back(op(MgpuOpKind::Download, device_id, { value(24) }, {}));
 
-    PoseidonGpuScheduleHandler handler(context);
-    handler.bind_cipher_upload(20, std::make_shared<Ciphertext>(input_cipher));
-    handler.bind_plain_upload(21, std::make_shared<Plaintext>(bias_plain));
+    PoseidonGpuExecutionBackend backend(context);
+    backend.bind_cipher_upload(20, std::make_shared<Ciphertext>(input_cipher));
+    backend.bind_plain_upload(21, std::make_shared<Plaintext>(bias_plain));
 
-    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 1 });
-    const ScheduleExecutionResult result = interpreter.run(schedule, handler);
+    SequentialScheduleExecutor executor(SequentialScheduleExecutorOptions{ 1 });
+    const ScheduleExecutionResult result = executor.run(schedule, backend);
     require(
         result.ok(),
         "GPU runtime add_plain/rescale schedule failed:\n" + result.format_errors());
-    require(handler.has_cipher_download(22), "missing add_plain output download");
-    require(handler.has_cipher_download(23), "missing rescale output download");
-    require(handler.has_cipher_download(24), "missing negate output download");
-    require_ciphertexts_equal(expected_add_plain, *handler.cipher_download(22));
-    require_ciphertexts_equal(expected_rescale, *handler.cipher_download(23));
-    require_ciphertexts_equal(expected_negate, *handler.cipher_download(24));
+    require(backend.has_cipher_download(22), "missing add_plain output download");
+    require(backend.has_cipher_download(23), "missing rescale output download");
+    require(backend.has_cipher_download(24), "missing negate output download");
+    require_ciphertexts_equal(expected_add_plain, *backend.cipher_download(22));
+    require_ciphertexts_equal(expected_rescale, *backend.cipher_download(23));
+    require_ciphertexts_equal(expected_negate, *backend.cipher_download(24));
 }
 
 void run_gpu_runtime_rotate_smoke()
@@ -636,15 +636,15 @@ void run_gpu_runtime_rotate_smoke()
         "rotate_step", rotate_step));
     schedule.ops.push_back(op(MgpuOpKind::Download, device_id, { value(31) }, {}));
 
-    PoseidonGpuScheduleHandler handler(context);
-    handler.bind_cipher_upload(30, std::make_shared<Ciphertext>(cipher));
-    handler.upload_keys_for_device(device_id, nullptr, &galois_keys);
+    PoseidonGpuExecutionBackend backend(context);
+    backend.bind_cipher_upload(30, std::make_shared<Ciphertext>(cipher));
+    backend.upload_keys_for_device(device_id, nullptr, &galois_keys);
 
-    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 1 });
-    const ScheduleExecutionResult result = interpreter.run(schedule, handler);
+    SequentialScheduleExecutor executor(SequentialScheduleExecutorOptions{ 1 });
+    const ScheduleExecutionResult result = executor.run(schedule, backend);
     require(result.ok(), "GPU runtime rotate schedule failed:\n" + result.format_errors());
-    require(handler.has_cipher_download(31), "missing rotate output download");
-    require_ciphertexts_equal(expected_rotate, *handler.cipher_download(31));
+    require(backend.has_cipher_download(31), "missing rotate output download");
+    require_ciphertexts_equal(expected_rotate, *backend.cipher_download(31));
 }
 
 void run_gpu_runtime_multiply_relinearize_rescale_smoke()
@@ -692,23 +692,23 @@ void run_gpu_runtime_multiply_relinearize_rescale_smoke()
     schedule.ops.push_back(op(MgpuOpKind::Download, device_id, { value(43) }, {}));
     schedule.ops.push_back(op(MgpuOpKind::Download, device_id, { value(44) }, {}));
 
-    PoseidonGpuScheduleHandler handler(context);
-    handler.bind_cipher_upload(40, std::make_shared<Ciphertext>(cipher0));
-    handler.bind_cipher_upload(41, std::make_shared<Ciphertext>(cipher1));
-    handler.upload_keys_for_device(device_id, &relin_keys, nullptr);
+    PoseidonGpuExecutionBackend backend(context);
+    backend.bind_cipher_upload(40, std::make_shared<Ciphertext>(cipher0));
+    backend.bind_cipher_upload(41, std::make_shared<Ciphertext>(cipher1));
+    backend.upload_keys_for_device(device_id, &relin_keys, nullptr);
 
-    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 1 });
-    const ScheduleExecutionResult result = interpreter.run(schedule, handler);
+    SequentialScheduleExecutor executor(SequentialScheduleExecutorOptions{ 1 });
+    const ScheduleExecutionResult result = executor.run(schedule, backend);
     require(
         result.ok(),
         "GPU runtime multiply/relinearize/rescale schedule failed:\n" +
             result.format_errors());
-    require(handler.has_cipher_download(42), "missing multiply output download");
-    require(handler.has_cipher_download(43), "missing relinearize output download");
-    require(handler.has_cipher_download(44), "missing relin/rescale output download");
-    require_ciphertexts_equal(expected_multiply, *handler.cipher_download(42));
-    require_ciphertexts_equal(expected_relinearize, *handler.cipher_download(43));
-    require_ciphertexts_equal(expected_rescale, *handler.cipher_download(44));
+    require(backend.has_cipher_download(42), "missing multiply output download");
+    require(backend.has_cipher_download(43), "missing relinearize output download");
+    require(backend.has_cipher_download(44), "missing relin/rescale output download");
+    require_ciphertexts_equal(expected_multiply, *backend.cipher_download(42));
+    require_ciphertexts_equal(expected_relinearize, *backend.cipher_download(43));
+    require_ciphertexts_equal(expected_rescale, *backend.cipher_download(44));
 }
 
 }  // namespace

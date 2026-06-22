@@ -2,7 +2,7 @@
 
 #include "poseidon/mgpu/compiler/dacapo_constants.h"
 #include "poseidon/mgpu/runtime/hevm_io_binding.h"
-#include "poseidon/mgpu/runtime/io_binding_handler.h"
+#include "poseidon/mgpu/runtime/io_binding_backend.h"
 #include "poseidon/plaintext.h"
 #include "poseidon/poseidon_context.h"
 
@@ -50,6 +50,6 @@ HevmPlaintextEncodingResult encode_hevm_plain_inputs(
     const DacapoConstantTable &constants);
 
 void bind_hevm_encoded_plain_inputs(
-    IoBindingScheduleHandler &io, const std::vector<HevmEncodedPlaintext> &plaintexts);
+    IoBindingExecutionBackend &io, const std::vector<HevmEncodedPlaintext> &plaintexts);
 
 }  // namespace poseidon::mgpu

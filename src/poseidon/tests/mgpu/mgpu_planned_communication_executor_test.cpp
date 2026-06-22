@@ -45,7 +45,7 @@ void require_contains(const std::string &text, const std::string &needle)
     }
 }
 
-class UploadVectorHandler final : public ScheduleOpHandler
+class UploadVectorBackend final : public ScheduleExecutionBackend
 {
 public:
     void execute(const MgpuOp &op, MgpuObjectStore &object_store) override
@@ -152,21 +152,21 @@ MgpuSchedule make_same_device_copy_schedule()
 
 void test_executor_uses_static_plan_for_copy_routes()
 {
-    UploadVectorHandler handler;
+    UploadVectorBackend backend;
     VectorCopyMaterializer materializer;
     CopyingLocalBackend local_backend;
     CopyingInterNodeBackend inter_node_backend;
-    PlannedCommunicationStaticScheduleExecutor executor(
+    PlannedCommunicationScheduleExecutor executor(
         make_uniform_cluster_topology(2, 4), materializer, local_backend,
-        inter_node_backend, handler, StaticScheduleExecutorOptions{ 5 },
+        inter_node_backend, backend, SequentialScheduleExecutorOptions{ 5 },
         all_routes_available());
 
     const ScheduleExecutionResult result = executor.run(make_two_route_schedule());
 
     require(result.ok(), "planned executor should run:\n" + result.format_errors());
     require(
-        handler.executed_ops.size() == 2,
-        "handler should see upload and download only");
+        backend.executed_ops.size() == 2,
+        "backend should see upload and download only");
     require(
         materializer.requests.size() == 2,
         "materializer should receive both planned copies");
@@ -197,13 +197,13 @@ void test_executor_uses_static_plan_for_copy_routes()
 
 void test_executor_routes_same_device_copy_through_comm_layer()
 {
-    UploadVectorHandler handler;
+    UploadVectorBackend backend;
     VectorCopyMaterializer materializer;
     CopyingLocalBackend local_backend;
     CopyingInterNodeBackend inter_node_backend;
-    PlannedCommunicationStaticScheduleExecutor executor(
+    PlannedCommunicationScheduleExecutor executor(
         make_single_node_topology(1), materializer, local_backend,
-        inter_node_backend, handler, StaticScheduleExecutorOptions{ 1 });
+        inter_node_backend, backend, SequentialScheduleExecutorOptions{ 1 });
 
     const ScheduleExecutionResult result =
         executor.run(make_same_device_copy_schedule());
@@ -213,8 +213,8 @@ void test_executor_routes_same_device_copy_through_comm_layer()
         "planned executor should run same-device copy:\n" +
             result.format_errors());
     require(
-        handler.executed_ops.size() == 2,
-        "handler should see upload and download only");
+        backend.executed_ops.size() == 2,
+        "backend should see upload and download only");
     require(
         materializer.requests.size() == 1,
         "same-device copy should still be materialized explicitly");
@@ -248,13 +248,13 @@ void test_executor_reports_plan_diagnostics_before_execution()
     schedule.ops.push_back(
         op(MgpuOpKind::CopyCipher, 1, { value(1) }, { value(2) }));
 
-    UploadVectorHandler handler;
+    UploadVectorBackend backend;
     VectorCopyMaterializer materializer;
     CopyingLocalBackend local_backend;
     CopyingInterNodeBackend inter_node_backend;
-    PlannedCommunicationStaticScheduleExecutor executor(
+    PlannedCommunicationScheduleExecutor executor(
         make_single_node_topology(1), materializer, local_backend,
-        inter_node_backend, handler, StaticScheduleExecutorOptions{ 2 });
+        inter_node_backend, backend, SequentialScheduleExecutorOptions{ 2 });
 
     const ScheduleExecutionResult result = executor.run(schedule);
 
@@ -262,7 +262,7 @@ void test_executor_reports_plan_diagnostics_before_execution()
     require_contains(
         result.format_errors(), "copy destination device 1 is not present");
     require(
-        handler.executed_ops.empty(),
+        backend.executed_ops.empty(),
         "plan diagnostics should stop execution before upload");
     require(
         materializer.requests.empty(),
@@ -275,7 +275,7 @@ void test_executor_reports_plan_diagnostics_before_execution()
 
 void test_executor_reports_missing_backend_before_execution()
 {
-    UploadVectorHandler handler;
+    UploadVectorBackend backend;
     VectorCopyMaterializer materializer;
     CopyingLocalBackend local_backend;
     CopyingInterNodeBackend inter_node_backend;
@@ -284,9 +284,9 @@ void test_executor_reports_missing_backend_before_execution()
     options.cuda_peer_available = true;
     options.inter_node_available = false;
 
-    PlannedCommunicationStaticScheduleExecutor executor(
+    PlannedCommunicationScheduleExecutor executor(
         make_uniform_cluster_topology(2, 4), materializer, local_backend,
-        inter_node_backend, handler, StaticScheduleExecutorOptions{ 5 },
+        inter_node_backend, backend, SequentialScheduleExecutorOptions{ 5 },
         options);
 
     const ScheduleExecutionResult result = executor.run(make_two_route_schedule());
@@ -303,7 +303,7 @@ void test_executor_reports_missing_backend_before_execution()
         result.format_errors(),
         "inter-node communication backend is not available");
     require(
-        handler.executed_ops.empty(),
+        backend.executed_ops.empty(),
         "backend preflight should stop execution before upload");
     require(
         materializer.requests.empty(),
@@ -316,7 +316,7 @@ void test_executor_reports_missing_backend_before_execution()
 
 void test_executor_reports_missing_cuda_peer_backend_at_copy_op()
 {
-    UploadVectorHandler handler;
+    UploadVectorBackend backend;
     VectorCopyMaterializer materializer;
     CopyingLocalBackend local_backend;
     CopyingInterNodeBackend inter_node_backend;
@@ -325,9 +325,9 @@ void test_executor_reports_missing_cuda_peer_backend_at_copy_op()
     options.cuda_peer_available = false;
     options.inter_node_available = true;
 
-    PlannedCommunicationStaticScheduleExecutor executor(
+    PlannedCommunicationScheduleExecutor executor(
         make_uniform_cluster_topology(2, 4), materializer, local_backend,
-        inter_node_backend, handler, StaticScheduleExecutorOptions{ 5 },
+        inter_node_backend, backend, SequentialScheduleExecutorOptions{ 5 },
         options);
 
     const ScheduleExecutionResult result = executor.run(make_two_route_schedule());
@@ -344,7 +344,7 @@ void test_executor_reports_missing_cuda_peer_backend_at_copy_op()
         result.format_errors(),
         "CUDA peer or host-staged copy backend is not available");
     require(
-        handler.executed_ops.empty(),
+        backend.executed_ops.empty(),
         "CUDA backend preflight should stop execution before upload");
     require(
         materializer.requests.empty(),
@@ -364,14 +364,14 @@ void test_executor_from_config_uses_topology_and_backend_declarations()
     config.communication_execution.cuda_peer_available = true;
     config.communication_execution.inter_node_available = false;
 
-    UploadVectorHandler handler;
+    UploadVectorBackend backend;
     VectorCopyMaterializer materializer;
     CopyingLocalBackend local_backend;
     CopyingInterNodeBackend inter_node_backend;
 
-    PlannedCommunicationStaticScheduleExecutor executor =
-        PlannedCommunicationStaticScheduleExecutor::from_config(
-            config, materializer, local_backend, inter_node_backend, handler);
+    PlannedCommunicationScheduleExecutor executor =
+        PlannedCommunicationScheduleExecutor::from_config(
+            config, materializer, local_backend, inter_node_backend, backend);
 
     const ScheduleExecutionResult result = executor.run(make_two_route_schedule());
 
@@ -381,7 +381,7 @@ void test_executor_from_config_uses_topology_and_backend_declarations()
     require_contains(
         result.format_errors(),
         "inter-node communication backend is not available");
-    require(handler.executed_ops.empty(), "config backend gate should stop upload");
+    require(backend.executed_ops.empty(), "config backend gate should stop upload");
     require(
         materializer.requests.empty(),
         "config backend gate should stop before materialization");
@@ -391,9 +391,9 @@ void test_executor_from_config_uses_topology_and_backend_declarations()
         "inter-node backend should not run");
 
     config.communication_execution.inter_node_available = true;
-    PlannedCommunicationStaticScheduleExecutor cluster_executor =
-        PlannedCommunicationStaticScheduleExecutor::from_config(
-            config, materializer, local_backend, inter_node_backend, handler);
+    PlannedCommunicationScheduleExecutor cluster_executor =
+        PlannedCommunicationScheduleExecutor::from_config(
+            config, materializer, local_backend, inter_node_backend, backend);
 
     const ScheduleExecutionResult cluster_result =
         cluster_executor.run(make_two_route_schedule());

@@ -192,7 +192,7 @@ void test_reports_non_ckks_context()
 
 void test_bind_rejects_null_encoded_plaintext()
 {
-    IoBindingScheduleHandler io;
+    IoBindingExecutionBackend io;
     HevmEncodedPlaintext plaintext;
     plaintext.value_id = 10;
 

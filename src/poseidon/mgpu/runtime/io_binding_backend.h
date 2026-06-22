@@ -1,6 +1,6 @@
 #pragma once
 
-#include "poseidon/mgpu/runtime/schedule_interpreter.h"
+#include "poseidon/mgpu/runtime/sequential_schedule_executor.h"
 
 #include <memory>
 #include <unordered_map>
@@ -14,10 +14,10 @@ struct BoundScheduleObject
     std::shared_ptr<void> object;
 };
 
-class IoBindingScheduleHandler final : public ScheduleOpHandler
+class IoBindingExecutionBackend final : public ScheduleExecutionBackend
 {
 public:
-    explicit IoBindingScheduleHandler(ScheduleOpHandler *fallback = nullptr);
+    explicit IoBindingExecutionBackend(ScheduleExecutionBackend *fallback = nullptr);
 
     void bind_upload(ValueId id, MgpuValueKind kind, std::shared_ptr<void> object);
     void bind_plain_upload(ValueId id, std::shared_ptr<void> object);
@@ -35,7 +35,7 @@ private:
         const MgpuOp &op, MgpuObjectStore &object_store, MgpuValueKind expected_kind);
     void execute_download(const MgpuOp &op, MgpuObjectStore &object_store);
 
-    ScheduleOpHandler *fallback_ = nullptr;
+    ScheduleExecutionBackend *fallback_ = nullptr;
     std::unordered_map<ValueId, BoundScheduleObject> uploads_;
     std::unordered_map<ValueId, std::shared_ptr<void>> downloads_;
 };

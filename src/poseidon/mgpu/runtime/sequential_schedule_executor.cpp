@@ -1,4 +1,4 @@
-#include "poseidon/mgpu/runtime/schedule_interpreter.h"
+#include "poseidon/mgpu/runtime/sequential_schedule_executor.h"
 
 #include <exception>
 #include <sstream>
@@ -32,14 +32,14 @@ void define_output(
         if (existing->kind != kind)
         {
             std::ostringstream stream;
-            stream << "handler defined output %" << op.outputs[0].id << " as "
+            stream << "backend defined output %" << op.outputs[0].id << " as "
                    << to_string(existing->kind) << ", expected " << to_string(kind);
             throw std::runtime_error(stream.str());
         }
         if (existing->device_id != op.device_id)
         {
             std::ostringstream stream;
-            stream << "handler defined output %" << op.outputs[0].id << " on device "
+            stream << "backend defined output %" << op.outputs[0].id << " on device "
                    << existing->device_id << ", expected device " << op.device_id;
             throw std::runtime_error(stream.str());
         }
@@ -92,13 +92,13 @@ std::string ScheduleExecutionResult::format_errors() const
     return stream.str();
 }
 
-ScheduleInterpreter::ScheduleInterpreter(ScheduleInterpreterOptions options)
+SequentialScheduleExecutor::SequentialScheduleExecutor(SequentialScheduleExecutorOptions options)
     : options_(options)
 {
 }
 
-ScheduleExecutionResult ScheduleInterpreter::run(
-    const MgpuSchedule &schedule, ScheduleOpHandler &handler) const
+ScheduleExecutionResult SequentialScheduleExecutor::run(
+    const MgpuSchedule &schedule, ScheduleExecutionBackend &backend) const
 {
     ScheduleExecutionResult result;
 
@@ -116,7 +116,7 @@ ScheduleExecutionResult ScheduleInterpreter::run(
 
         try
         {
-            handler.execute(op, result.object_store);
+            backend.execute(op, result.object_store);
             apply_completed_op(result.object_store, op);
         }
         catch (const std::exception &ex)

@@ -1,4 +1,4 @@
-#include "poseidon/mgpu/runtime/poseidon_gpu_schedule_handler.h"
+#include "poseidon/mgpu/runtime/poseidon_gpu_execution_backend.h"
 
 #include "poseidon/gpu/gpu_uploader.h"
 #include "poseidon/key/galoiskeys.h"
@@ -48,7 +48,7 @@ void ensure_full_single_device_ciphertext(
     if (ciphertext.fields_.size() != 1)
     {
         throw std::invalid_argument(
-            "PoseidonGpuScheduleHandler V1 requires full single-device ciphertexts");
+            "PoseidonGpuExecutionBackend V1 requires full single-device ciphertexts");
     }
     if (ciphertext.fields_[0].device_id != expected_device)
     {
@@ -65,7 +65,7 @@ void ensure_full_single_device_plaintext(
     if (plaintext.fields_.size() != 1)
     {
         throw std::invalid_argument(
-            "PoseidonGpuScheduleHandler V1 requires full single-device plaintexts");
+            "PoseidonGpuExecutionBackend V1 requires full single-device plaintexts");
     }
     if (plaintext.fields_[0].device_id != expected_device)
     {
@@ -116,7 +116,7 @@ std::shared_ptr<gpu::GpuPlaintextData> make_plain_handle(
 
 }  // namespace
 
-PoseidonGpuScheduleHandler::PoseidonGpuScheduleHandler(
+PoseidonGpuExecutionBackend::PoseidonGpuExecutionBackend(
     const PoseidonContext &context,
     std::vector<PoseidonGpuDeviceContext> devices)
     : context_(context)
@@ -127,7 +127,7 @@ PoseidonGpuScheduleHandler::PoseidonGpuScheduleHandler(
     }
 }
 
-void PoseidonGpuScheduleHandler::add_device(PoseidonGpuDeviceContext device)
+void PoseidonGpuExecutionBackend::add_device(PoseidonGpuDeviceContext device)
 {
     if (device.device_id < 0)
     {
@@ -149,7 +149,7 @@ void PoseidonGpuScheduleHandler::add_device(PoseidonGpuDeviceContext device)
     }
 }
 
-void PoseidonGpuScheduleHandler::upload_keys_for_device(
+void PoseidonGpuExecutionBackend::upload_keys_for_device(
     int device_id, const RelinKeys *relin_keys, const GaloisKeys *galois_keys)
 {
     PoseidonGpuDeviceContext &device = device_context(device_id);
@@ -165,7 +165,7 @@ void PoseidonGpuScheduleHandler::upload_keys_for_device(
     }
 }
 
-void PoseidonGpuScheduleHandler::bind_plain_upload(
+void PoseidonGpuExecutionBackend::bind_plain_upload(
     ValueId id, std::shared_ptr<const Plaintext> plaintext)
 {
     if (id == 0 || plaintext == nullptr)
@@ -180,7 +180,7 @@ void PoseidonGpuScheduleHandler::bind_plain_upload(
     }
 }
 
-void PoseidonGpuScheduleHandler::bind_cipher_upload(
+void PoseidonGpuExecutionBackend::bind_cipher_upload(
     ValueId id, std::shared_ptr<const Ciphertext> ciphertext)
 {
     if (id == 0 || ciphertext == nullptr)
@@ -195,17 +195,17 @@ void PoseidonGpuScheduleHandler::bind_cipher_upload(
     }
 }
 
-bool PoseidonGpuScheduleHandler::has_plain_download(ValueId id) const
+bool PoseidonGpuExecutionBackend::has_plain_download(ValueId id) const
 {
     return plain_downloads_.find(id) != plain_downloads_.end();
 }
 
-bool PoseidonGpuScheduleHandler::has_cipher_download(ValueId id) const
+bool PoseidonGpuExecutionBackend::has_cipher_download(ValueId id) const
 {
     return cipher_downloads_.find(id) != cipher_downloads_.end();
 }
 
-std::shared_ptr<Plaintext> PoseidonGpuScheduleHandler::plain_download(ValueId id) const
+std::shared_ptr<Plaintext> PoseidonGpuExecutionBackend::plain_download(ValueId id) const
 {
     const auto iter = plain_downloads_.find(id);
     if (iter == plain_downloads_.end())
@@ -215,7 +215,7 @@ std::shared_ptr<Plaintext> PoseidonGpuScheduleHandler::plain_download(ValueId id
     return iter->second;
 }
 
-std::shared_ptr<Ciphertext> PoseidonGpuScheduleHandler::cipher_download(ValueId id) const
+std::shared_ptr<Ciphertext> PoseidonGpuExecutionBackend::cipher_download(ValueId id) const
 {
     const auto iter = cipher_downloads_.find(id);
     if (iter == cipher_downloads_.end())
@@ -225,7 +225,7 @@ std::shared_ptr<Ciphertext> PoseidonGpuScheduleHandler::cipher_download(ValueId 
     return iter->second;
 }
 
-void PoseidonGpuScheduleHandler::execute(const MgpuOp &op, MgpuObjectStore &object_store)
+void PoseidonGpuExecutionBackend::execute(const MgpuOp &op, MgpuObjectStore &object_store)
 {
     switch (op.kind)
     {
@@ -262,7 +262,7 @@ void PoseidonGpuScheduleHandler::execute(const MgpuOp &op, MgpuObjectStore &obje
     }
 }
 
-PoseidonGpuDeviceContext &PoseidonGpuScheduleHandler::device_context(int device_id)
+PoseidonGpuDeviceContext &PoseidonGpuExecutionBackend::device_context(int device_id)
 {
     const auto iter = devices_.find(device_id);
     if (iter == devices_.end())
@@ -273,7 +273,7 @@ PoseidonGpuDeviceContext &PoseidonGpuScheduleHandler::device_context(int device_
     return iter->second;
 }
 
-const PoseidonGpuDeviceContext &PoseidonGpuScheduleHandler::device_context(int device_id) const
+const PoseidonGpuDeviceContext &PoseidonGpuExecutionBackend::device_context(int device_id) const
 {
     const auto iter = devices_.find(device_id);
     if (iter == devices_.end())
@@ -283,7 +283,7 @@ const PoseidonGpuDeviceContext &PoseidonGpuScheduleHandler::device_context(int d
     return iter->second;
 }
 
-const gpu::GpuEvaluator &PoseidonGpuScheduleHandler::evaluator(int device_id)
+const gpu::GpuEvaluator &PoseidonGpuExecutionBackend::evaluator(int device_id)
 {
     const PoseidonGpuDeviceContext &device = device_context(device_id);
     if (device.evaluator == nullptr)
@@ -293,7 +293,7 @@ const gpu::GpuEvaluator &PoseidonGpuScheduleHandler::evaluator(int device_id)
     return *device.evaluator;
 }
 
-void PoseidonGpuScheduleHandler::execute_upload_plain(
+void PoseidonGpuExecutionBackend::execute_upload_plain(
     const MgpuOp &op, MgpuObjectStore &object_store)
 {
     const ValueId id = output_id(op);
@@ -310,7 +310,7 @@ void PoseidonGpuScheduleHandler::execute_upload_plain(
     object_store.define(id, MgpuValueKind::Plaintext, op.device_id, std::move(gpu_plaintext));
 }
 
-void PoseidonGpuScheduleHandler::execute_upload_cipher(
+void PoseidonGpuExecutionBackend::execute_upload_cipher(
     const MgpuOp &op, MgpuObjectStore &object_store)
 {
     const ValueId id = output_id(op);
@@ -327,7 +327,7 @@ void PoseidonGpuScheduleHandler::execute_upload_cipher(
     object_store.define(id, MgpuValueKind::Ciphertext, op.device_id, std::move(gpu_ciphertext));
 }
 
-void PoseidonGpuScheduleHandler::execute_download(
+void PoseidonGpuExecutionBackend::execute_download(
     const MgpuOp &op, MgpuObjectStore &object_store)
 {
     const ValueId id = input_id(op, 0);
@@ -345,7 +345,7 @@ void PoseidonGpuScheduleHandler::execute_download(
     cipher_downloads_[id] = std::move(ciphertext);
 }
 
-void PoseidonGpuScheduleHandler::execute_cipher_binary(
+void PoseidonGpuExecutionBackend::execute_cipher_binary(
     const MgpuOp &op, MgpuObjectStore &object_store)
 {
     auto left = cipher_object(object_store, input_id(op, 0));
@@ -374,7 +374,7 @@ void PoseidonGpuScheduleHandler::execute_cipher_binary(
         make_cipher_handle(std::move(result)));
 }
 
-void PoseidonGpuScheduleHandler::execute_cipher_plain_binary(
+void PoseidonGpuExecutionBackend::execute_cipher_plain_binary(
     const MgpuOp &op, MgpuObjectStore &object_store)
 {
     auto cipher = cipher_object(object_store, input_id(op, 0));
@@ -400,7 +400,7 @@ void PoseidonGpuScheduleHandler::execute_cipher_plain_binary(
         make_cipher_handle(std::move(result)));
 }
 
-void PoseidonGpuScheduleHandler::execute_cipher_unary(
+void PoseidonGpuExecutionBackend::execute_cipher_unary(
     const MgpuOp &op, MgpuObjectStore &object_store)
 {
     auto cipher = cipher_object(object_store, input_id(op, 0));
@@ -443,7 +443,7 @@ void PoseidonGpuScheduleHandler::execute_cipher_unary(
         make_cipher_handle(std::move(result)));
 }
 
-std::shared_ptr<gpu::GpuCiphertextData> PoseidonGpuScheduleHandler::cipher_object(
+std::shared_ptr<gpu::GpuCiphertextData> PoseidonGpuExecutionBackend::cipher_object(
     const MgpuObjectStore &object_store, ValueId id) const
 {
     const MgpuObjectMetadata &metadata = object_store.at(id);
@@ -458,7 +458,7 @@ std::shared_ptr<gpu::GpuCiphertextData> PoseidonGpuScheduleHandler::cipher_objec
     return std::static_pointer_cast<gpu::GpuCiphertextData>(metadata.object);
 }
 
-std::shared_ptr<gpu::GpuPlaintextData> PoseidonGpuScheduleHandler::plain_object(
+std::shared_ptr<gpu::GpuPlaintextData> PoseidonGpuExecutionBackend::plain_object(
     const MgpuObjectStore &object_store, ValueId id) const
 {
     const MgpuObjectMetadata &metadata = object_store.at(id);
@@ -474,7 +474,7 @@ std::shared_ptr<gpu::GpuPlaintextData> PoseidonGpuScheduleHandler::plain_object(
 }
 
 void bind_hevm_cipher_inputs(
-    PoseidonGpuScheduleHandler &handler, const HevmIoBindingPlan &plan,
+    PoseidonGpuExecutionBackend &backend, const HevmIoBindingPlan &plan,
     const std::vector<std::shared_ptr<const Ciphertext>> &cipher_inputs)
 {
     if (cipher_inputs.size() != plan.cipher_inputs.size())
@@ -496,12 +496,12 @@ void bind_hevm_cipher_inputs(
                    << " must not be null";
             throw std::invalid_argument(stream.str());
         }
-        handler.bind_cipher_upload(slot.value_id, ciphertext);
+        backend.bind_cipher_upload(slot.value_id, ciphertext);
     }
 }
 
 void bind_hevm_encoded_plain_inputs(
-    PoseidonGpuScheduleHandler &handler,
+    PoseidonGpuExecutionBackend &backend,
     const std::vector<HevmEncodedPlaintext> &plaintexts)
 {
     for (const HevmEncodedPlaintext &plaintext : plaintexts)
@@ -510,24 +510,24 @@ void bind_hevm_encoded_plain_inputs(
         {
             throw std::invalid_argument("encoded HEVM plaintext must not be null");
         }
-        handler.bind_plain_upload(plaintext.value_id, plaintext.plaintext);
+        backend.bind_plain_upload(plaintext.value_id, plaintext.plaintext);
     }
 }
 
 std::vector<std::shared_ptr<Ciphertext>> collect_hevm_results(
-    const PoseidonGpuScheduleHandler &handler, const HevmIoBindingPlan &plan)
+    const PoseidonGpuExecutionBackend &backend, const HevmIoBindingPlan &plan)
 {
     std::vector<std::shared_ptr<Ciphertext>> results(plan.results.size());
     for (const HevmResultSlot &slot : plan.results)
     {
         validate_hevm_index_range(slot.index, results.size(), "result");
-        if (!handler.has_cipher_download(slot.value_id))
+        if (!backend.has_cipher_download(slot.value_id))
         {
             throw std::out_of_range(
                 "missing HEVM ciphertext result for " + value_name(slot.value_id));
         }
         results[static_cast<std::size_t>(slot.index)] =
-            handler.cipher_download(slot.value_id);
+            backend.cipher_download(slot.value_id);
     }
     return results;
 }

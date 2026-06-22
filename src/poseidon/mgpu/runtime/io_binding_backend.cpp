@@ -1,4 +1,4 @@
-#include "poseidon/mgpu/runtime/io_binding_handler.h"
+#include "poseidon/mgpu/runtime/io_binding_backend.h"
 
 #include <sstream>
 #include <stdexcept>
@@ -40,12 +40,12 @@ std::string value_name(ValueId id)
 
 }  // namespace
 
-IoBindingScheduleHandler::IoBindingScheduleHandler(ScheduleOpHandler *fallback)
+IoBindingExecutionBackend::IoBindingExecutionBackend(ScheduleExecutionBackend *fallback)
     : fallback_(fallback)
 {
 }
 
-void IoBindingScheduleHandler::bind_upload(
+void IoBindingExecutionBackend::bind_upload(
     ValueId id, MgpuValueKind kind, std::shared_ptr<void> object)
 {
     if (id == 0)
@@ -65,22 +65,22 @@ void IoBindingScheduleHandler::bind_upload(
     }
 }
 
-void IoBindingScheduleHandler::bind_plain_upload(ValueId id, std::shared_ptr<void> object)
+void IoBindingExecutionBackend::bind_plain_upload(ValueId id, std::shared_ptr<void> object)
 {
     bind_upload(id, MgpuValueKind::Plaintext, std::move(object));
 }
 
-void IoBindingScheduleHandler::bind_cipher_upload(ValueId id, std::shared_ptr<void> object)
+void IoBindingExecutionBackend::bind_cipher_upload(ValueId id, std::shared_ptr<void> object)
 {
     bind_upload(id, MgpuValueKind::Ciphertext, std::move(object));
 }
 
-bool IoBindingScheduleHandler::has_download(ValueId id) const
+bool IoBindingExecutionBackend::has_download(ValueId id) const
 {
     return downloads_.find(id) != downloads_.end();
 }
 
-std::shared_ptr<void> IoBindingScheduleHandler::downloaded_object(ValueId id) const
+std::shared_ptr<void> IoBindingExecutionBackend::downloaded_object(ValueId id) const
 {
     const auto iter = downloads_.find(id);
     if (iter == downloads_.end())
@@ -91,17 +91,17 @@ std::shared_ptr<void> IoBindingScheduleHandler::downloaded_object(ValueId id) co
 }
 
 const std::unordered_map<ValueId, std::shared_ptr<void>> &
-IoBindingScheduleHandler::downloads() const noexcept
+IoBindingExecutionBackend::downloads() const noexcept
 {
     return downloads_;
 }
 
-void IoBindingScheduleHandler::clear_downloads() noexcept
+void IoBindingExecutionBackend::clear_downloads() noexcept
 {
     downloads_.clear();
 }
 
-void IoBindingScheduleHandler::execute(const MgpuOp &op, MgpuObjectStore &object_store)
+void IoBindingExecutionBackend::execute(const MgpuOp &op, MgpuObjectStore &object_store)
 {
     switch (op.kind)
     {
@@ -123,7 +123,7 @@ void IoBindingScheduleHandler::execute(const MgpuOp &op, MgpuObjectStore &object
     }
 }
 
-void IoBindingScheduleHandler::execute_upload(
+void IoBindingExecutionBackend::execute_upload(
     const MgpuOp &op, MgpuObjectStore &object_store, MgpuValueKind expected_kind)
 {
     const ValueId output_id = single_output_id(op);
@@ -144,7 +144,7 @@ void IoBindingScheduleHandler::execute_upload(
     object_store.define(output_id, expected_kind, op.device_id, iter->second.object);
 }
 
-void IoBindingScheduleHandler::execute_download(
+void IoBindingExecutionBackend::execute_download(
     const MgpuOp &op, MgpuObjectStore &object_store)
 {
     const ValueId input_id = single_input_id(op);

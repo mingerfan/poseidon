@@ -18,19 +18,18 @@ add_library(poseidon_mgpu STATIC
     ir/schedule.cpp
     ir/schedule_json.cpp
     ir/schedule_summary.cpp
-    runtime/comm_schedule_handler.cpp
+    runtime/copy_dispatching_backend.cpp
     runtime/gpu_execution_preflight.cpp
     runtime/hevm_artifact_report.cpp
     runtime/hevm_artifact_readiness.cpp
     runtime/hevm_io_binding.cpp
     runtime/hevm_plaintext_encoding.cpp
     runtime/hevm_static_execution_plan.cpp
-    runtime/io_binding_handler.cpp
+    runtime/io_binding_backend.cpp
     runtime/object_store.cpp
     runtime/planned_communication_executor.cpp
     runtime/poseidon_gpu_schedule_preflight.cpp
-    runtime/schedule_interpreter.cpp
-    runtime/static_schedule_executor.cpp
+    runtime/sequential_schedule_executor.cpp
 )
 
 target_include_directories(poseidon_mgpu
@@ -955,7 +954,7 @@ if(POSEIDON_BUILD_MGPU_TESTS)
     )
 endif()
 
-option(POSEIDON_BUILD_MGPU_GPU_RUNTIME "Build optional Poseidon GPU schedule handler for multi-GPU runtime" OFF)
+option(POSEIDON_BUILD_MGPU_GPU_RUNTIME "Build optional Poseidon GPU execution backend for multi-GPU runtime" OFF)
 message(STATUS "POSEIDON_BUILD_MGPU_GPU_RUNTIME: ${POSEIDON_BUILD_MGPU_GPU_RUNTIME}")
 
 option(POSEIDON_BUILD_MGPU_GPU_OBJECTS "Build optional GPU object materializer for multi-GPU runtime" OFF)
@@ -1047,7 +1046,7 @@ endif()
 if(POSEIDON_BUILD_MGPU_GPU_RUNTIME)
     add_library(poseidon_mgpu_gpu_runtime STATIC
         runtime/poseidon_gpu_hevm_executor.cpp
-        runtime/poseidon_gpu_schedule_handler.cpp
+        runtime/poseidon_gpu_execution_backend.cpp
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/gpu/gpu_ciphertext.cpp
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/gpu/gpu_key.cpp
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/gpu/gpu_parameter.cpp

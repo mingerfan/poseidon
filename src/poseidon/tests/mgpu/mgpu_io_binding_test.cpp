@@ -1,4 +1,4 @@
-#include "poseidon/mgpu/runtime/io_binding_handler.h"
+#include "poseidon/mgpu/runtime/io_binding_backend.h"
 
 #include <cstdlib>
 #include <iostream>
@@ -41,7 +41,7 @@ void require_contains(const std::string &text, const std::string &needle)
     }
 }
 
-class StringComputeHandler final : public ScheduleOpHandler
+class StringComputeBackend final : public ScheduleExecutionBackend
 {
 public:
     void execute(const MgpuOp &op, MgpuObjectStore &object_store) override
@@ -71,15 +71,15 @@ MgpuSchedule make_bound_io_schedule()
 
 void test_bound_uploads_feed_fallback_and_downloads()
 {
-    StringComputeHandler compute;
-    IoBindingScheduleHandler io(&compute);
+    StringComputeBackend compute;
+    IoBindingExecutionBackend io(&compute);
     io.bind_cipher_upload(1, std::make_shared<std::string>("cipher"));
     io.bind_plain_upload(2, std::make_shared<std::string>("plain"));
 
-    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 1 });
-    const ScheduleExecutionResult result = interpreter.run(make_bound_io_schedule(), io);
+    SequentialScheduleExecutor executor(SequentialScheduleExecutorOptions{ 1 });
+    const ScheduleExecutionResult result = executor.run(make_bound_io_schedule(), io);
 
-    require(result.ok(), "expected interpreter success, got:\n" + result.format_errors());
+    require(result.ok(), "expected executor success, got:\n" + result.format_errors());
     require(result.object_store.has_object(1), "cipher upload should define an object");
     require(result.object_store.has_object(2), "plain upload should define an object");
     require(result.object_store.has_object(3), "fallback compute should define an object");
@@ -91,12 +91,12 @@ void test_bound_uploads_feed_fallback_and_downloads()
 
 void test_missing_upload_binding_fails()
 {
-    StringComputeHandler compute;
-    IoBindingScheduleHandler io(&compute);
+    StringComputeBackend compute;
+    IoBindingExecutionBackend io(&compute);
     io.bind_cipher_upload(1, std::make_shared<std::string>("cipher"));
 
-    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 1 });
-    const ScheduleExecutionResult result = interpreter.run(make_bound_io_schedule(), io);
+    SequentialScheduleExecutor executor(SequentialScheduleExecutorOptions{ 1 });
+    const ScheduleExecutionResult result = executor.run(make_bound_io_schedule(), io);
 
     require(!result.ok(), "missing upload binding should fail");
     require_contains(result.format_errors(), "missing upload binding for %2");
@@ -104,13 +104,13 @@ void test_missing_upload_binding_fails()
 
 void test_upload_kind_mismatch_fails()
 {
-    StringComputeHandler compute;
-    IoBindingScheduleHandler io(&compute);
+    StringComputeBackend compute;
+    IoBindingExecutionBackend io(&compute);
     io.bind_cipher_upload(1, std::make_shared<std::string>("cipher"));
     io.bind_upload(2, MgpuValueKind::Ciphertext, std::make_shared<std::string>("plain"));
 
-    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 1 });
-    const ScheduleExecutionResult result = interpreter.run(make_bound_io_schedule(), io);
+    SequentialScheduleExecutor executor(SequentialScheduleExecutorOptions{ 1 });
+    const ScheduleExecutionResult result = executor.run(make_bound_io_schedule(), io);
 
     require(!result.ok(), "upload kind mismatch should fail");
     require_contains(result.format_errors(), "expected plaintext");
@@ -123,11 +123,11 @@ void test_download_requires_object_handle()
     schedule.ops.push_back(op(MgpuOpKind::Rescale, 0, { value(1) }, { value(2) }));
     schedule.ops.push_back(op(MgpuOpKind::Download, 0, { value(2) }, {}));
 
-    IoBindingScheduleHandler io;
+    IoBindingExecutionBackend io;
     io.bind_cipher_upload(1, std::make_shared<std::string>("cipher"));
 
-    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 1 });
-    const ScheduleExecutionResult result = interpreter.run(schedule, io);
+    SequentialScheduleExecutor executor(SequentialScheduleExecutorOptions{ 1 });
+    const ScheduleExecutionResult result = executor.run(schedule, io);
 
     require(!result.ok(), "metadata-only output download should fail");
     require_contains(result.format_errors(), "download input %2 has no object handle");

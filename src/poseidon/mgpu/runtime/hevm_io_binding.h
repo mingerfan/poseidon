@@ -1,7 +1,7 @@
 #pragma once
 
 #include "poseidon/mgpu/ir/schedule.h"
-#include "poseidon/mgpu/runtime/io_binding_handler.h"
+#include "poseidon/mgpu/runtime/io_binding_backend.h"
 
 #include <cstddef>
 #include <cstdint>
@@ -72,14 +72,14 @@ struct HevmIoBindingPlanResult
 HevmIoBindingPlanResult build_hevm_io_binding_plan(const MgpuSchedule &schedule);
 
 void bind_hevm_cipher_inputs(
-    IoBindingScheduleHandler &io, const HevmIoBindingPlan &plan,
+    IoBindingExecutionBackend &io, const HevmIoBindingPlan &plan,
     const std::vector<std::shared_ptr<void>> &cipher_inputs);
 
 void bind_hevm_plain_inputs_by_constant_index(
-    IoBindingScheduleHandler &io, const HevmIoBindingPlan &plan,
+    IoBindingExecutionBackend &io, const HevmIoBindingPlan &plan,
     const std::unordered_map<std::uint64_t, std::shared_ptr<void>> &plain_inputs);
 
 std::vector<std::shared_ptr<void>> collect_hevm_results(
-    const IoBindingScheduleHandler &io, const HevmIoBindingPlan &plan);
+    const IoBindingExecutionBackend &io, const HevmIoBindingPlan &plan);
 
 }  // namespace poseidon::mgpu

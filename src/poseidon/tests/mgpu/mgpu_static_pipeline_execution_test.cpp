@@ -1,8 +1,9 @@
 #include "poseidon/mgpu/compiler/dacapo_constants.h"
 #include "poseidon/mgpu/compiler/static_schedule_pipeline.h"
 #include "poseidon/mgpu/runtime/hevm_io_binding.h"
-#include "poseidon/mgpu/runtime/io_binding_handler.h"
-#include "poseidon/mgpu/runtime/static_schedule_executor.h"
+#include "poseidon/mgpu/runtime/io_binding_backend.h"
+#include "poseidon/mgpu/runtime/copy_dispatching_backend.h"
+#include "poseidon/mgpu/runtime/sequential_schedule_executor.h"
 #include "poseidon/tests/mgpu/hevm_test_utils.h"
 
 #include <cstdint>
@@ -102,7 +103,7 @@ public:
     std::vector<GpuCommCopyRequest> requests;
 };
 
-class ExpressionComputeHandler final : public ScheduleOpHandler
+class ExpressionComputeBackend final : public ScheduleExecutionBackend
 {
 public:
     void execute(const MgpuOp &op, MgpuObjectStore &object_store) override
@@ -175,7 +176,7 @@ private:
         const auto iter = op.integer_attributes.find("rotate_step");
         if (iter == op.integer_attributes.end())
         {
-            throw std::runtime_error("missing rotate_step in compute handler");
+            throw std::runtime_error("missing rotate_step in compute backend");
         }
 
         std::ostringstream stream;
@@ -251,7 +252,7 @@ StaticSchedulePipelineResult prepare_constants_pipeline_schedule()
         DacapoAdapterOptions{ DacapoInputFormat::HevmBinary }, options);
 }
 
-void bind_uploads(const MgpuSchedule &schedule, IoBindingScheduleHandler &io)
+void bind_uploads(const MgpuSchedule &schedule, IoBindingExecutionBackend &io)
 {
     int cipher_index = 0;
     int plain_index = 0;
@@ -270,20 +271,29 @@ void bind_uploads(const MgpuSchedule &schedule, IoBindingScheduleHandler &io)
     }
 }
 
-void test_static_hevm_pipeline_executes_through_interpreter_handlers()
+ScheduleExecutionResult run_with_copy_dispatch(
+    const MgpuSchedule &schedule, GpuComm &comm, ScheduleExecutionBackend &backend,
+    SequentialScheduleExecutorOptions options)
+{
+    CopyDispatchingExecutionBackend copy_backend(comm, &backend);
+    SequentialScheduleExecutor executor(options);
+    return executor.run(schedule, copy_backend);
+}
+
+void test_static_hevm_pipeline_executes_through_executor_backends()
 {
     const StaticSchedulePipelineResult pipeline = prepare_resnet_like_schedule();
     require(pipeline.ok(), "pipeline failed:\n" + pipeline.format_diagnostics());
 
-    ExpressionComputeHandler compute;
+    ExpressionComputeBackend compute;
     RecordingGpuComm comm;
-    IoBindingScheduleHandler io(&compute);
+    IoBindingExecutionBackend io(&compute);
     bind_uploads(pipeline.schedule, io);
 
-    StaticScheduleExecutor executor(comm, io, StaticScheduleExecutorOptions{ 2 });
-    const ScheduleExecutionResult execution = executor.run(pipeline.schedule);
+    const ScheduleExecutionResult execution = run_with_copy_dispatch(
+        pipeline.schedule, comm, io, SequentialScheduleExecutorOptions{ 2 });
 
-    require(execution.ok(), "interpreter failed:\n" + execution.format_errors());
+    require(execution.ok(), "executor failed:\n" + execution.format_errors());
     require(comm.requests.size() == 9, "expected nine explicit copy requests");
     require(compute.executed_ops.size() == 8, "expected eight compute operations");
 
@@ -328,9 +338,9 @@ void test_static_hevm_pipeline_binds_constants_by_dacapo_index()
     require(plan_result.plan.plain_inputs.size() == 2, "expected two plaintext constants");
     require(plan_result.plan.results.size() == 1, "expected one result");
 
-    ExpressionComputeHandler compute;
+    ExpressionComputeBackend compute;
     RecordingGpuComm comm;
-    IoBindingScheduleHandler io(&compute);
+    IoBindingExecutionBackend io(&compute);
     bind_hevm_cipher_inputs(io, plan_result.plan, { erased_object("cipher_arg_0") });
     bind_hevm_plain_inputs_by_constant_index(
         io, plan_result.plan,
@@ -339,9 +349,9 @@ void test_static_hevm_pipeline_binds_constants_by_dacapo_index()
             { 1, erased_object("const1:-2.0") },
         });
 
-    StaticScheduleExecutor executor(comm, io, StaticScheduleExecutorOptions{ 2 });
-    const ScheduleExecutionResult execution = executor.run(pipeline.schedule);
-    require(execution.ok(), "interpreter failed:\n" + execution.format_errors());
+    const ScheduleExecutionResult execution = run_with_copy_dispatch(
+        pipeline.schedule, comm, io, SequentialScheduleExecutorOptions{ 2 });
+    require(execution.ok(), "executor failed:\n" + execution.format_errors());
 
     const std::vector<std::shared_ptr<void>> raw_results =
         collect_hevm_results(io, plan_result.plan);
@@ -360,7 +370,7 @@ int main()
 {
     try
     {
-        test_static_hevm_pipeline_executes_through_interpreter_handlers();
+        test_static_hevm_pipeline_executes_through_executor_backends();
         test_static_hevm_pipeline_binds_constants_by_dacapo_index();
     }
     catch (const std::exception &ex)

@@ -10,7 +10,7 @@
 namespace poseidon::mgpu
 {
 
-struct ScheduleInterpreterOptions
+struct SequentialScheduleExecutorOptions
 {
     int device_count = 1;
 };
@@ -34,23 +34,23 @@ struct ScheduleExecutionResult
     std::string format_errors() const;
 };
 
-class ScheduleOpHandler
+class ScheduleExecutionBackend
 {
 public:
-    virtual ~ScheduleOpHandler() = default;
+    virtual ~ScheduleExecutionBackend() = default;
 
     virtual void execute(const MgpuOp &op, MgpuObjectStore &object_store) = 0;
 };
 
-class ScheduleInterpreter
+class SequentialScheduleExecutor
 {
 public:
-    explicit ScheduleInterpreter(ScheduleInterpreterOptions options = {});
+    explicit SequentialScheduleExecutor(SequentialScheduleExecutorOptions options = {});
 
-    ScheduleExecutionResult run(const MgpuSchedule &schedule, ScheduleOpHandler &handler) const;
+    ScheduleExecutionResult run(const MgpuSchedule &schedule, ScheduleExecutionBackend &backend) const;
 
 private:
-    ScheduleInterpreterOptions options_;
+    SequentialScheduleExecutorOptions options_;
 };
 
 }  // namespace poseidon::mgpu

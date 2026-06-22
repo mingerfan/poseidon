@@ -1,4 +1,4 @@
-#include "poseidon/mgpu/runtime/comm_schedule_handler.h"
+#include "poseidon/mgpu/runtime/copy_dispatching_backend.h"
 
 #include <cstdlib>
 #include <iostream>
@@ -65,7 +65,7 @@ public:
     std::vector<GpuCommCopyRequest> requests;
 };
 
-class RecordingFallback final : public ScheduleOpHandler
+class RecordingBackend final : public ScheduleExecutionBackend
 {
 public:
     void execute(const MgpuOp &op, MgpuObjectStore &object_store) override
@@ -106,12 +106,12 @@ MgpuSchedule make_cross_device_copy_schedule()
 void test_copy_dispatch_uses_comm_layer()
 {
     RecordingGpuComm comm;
-    RecordingFallback fallback;
-    CopyDispatchingScheduleHandler handler(comm, &fallback);
-    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 1 });
+    RecordingBackend fallback;
+    CopyDispatchingExecutionBackend copy_backend(comm, &fallback);
+    SequentialScheduleExecutor executor(SequentialScheduleExecutorOptions{ 1 });
 
     const ScheduleExecutionResult result =
-        interpreter.run(make_same_device_copy_schedule(), handler);
+        executor.run(make_same_device_copy_schedule(), copy_backend);
 
     require(result.ok(), "same-device copy schedule should pass:\n" + result.format_errors());
     require(comm.requests.size() == 1, "copy op should produce one comm request");
@@ -133,12 +133,12 @@ void test_copy_dispatch_uses_comm_layer()
 void test_copy_dispatch_rejects_null_comm_output()
 {
     NullReturningGpuComm comm;
-    RecordingFallback fallback;
-    CopyDispatchingScheduleHandler handler(comm, &fallback);
-    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 1 });
+    RecordingBackend fallback;
+    CopyDispatchingExecutionBackend copy_backend(comm, &fallback);
+    SequentialScheduleExecutor executor(SequentialScheduleExecutorOptions{ 1 });
 
     const ScheduleExecutionResult result =
-        interpreter.run(make_same_device_copy_schedule(), handler);
+        executor.run(make_same_device_copy_schedule(), copy_backend);
 
     require(!result.ok(), "null comm output should fail copy dispatch");
     require(comm.requests.size() == 1, "comm should be called before null output failure");
@@ -153,12 +153,12 @@ void test_copy_dispatch_rejects_null_comm_output()
 void test_same_device_comm_rejects_cross_device_copy()
 {
     SameDeviceGpuComm comm;
-    RecordingFallback fallback;
-    CopyDispatchingScheduleHandler handler(comm, &fallback);
-    ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ 2 });
+    RecordingBackend fallback;
+    CopyDispatchingExecutionBackend copy_backend(comm, &fallback);
+    SequentialScheduleExecutor executor(SequentialScheduleExecutorOptions{ 2 });
 
     const ScheduleExecutionResult result =
-        interpreter.run(make_cross_device_copy_schedule(), handler);
+        executor.run(make_cross_device_copy_schedule(), copy_backend);
 
     require(!result.ok(), "same-device comm should reject cross-device copy");
     require_contains(result.format_errors(), "requires a multi-GPU communication backend");

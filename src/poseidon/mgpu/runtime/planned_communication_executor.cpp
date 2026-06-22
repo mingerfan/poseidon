@@ -3,6 +3,7 @@
 #include "poseidon/mgpu/comm/planned_materialized_gpu_comm.h"
 #include "poseidon/mgpu/comm/routed_object_copy.h"
 #include "poseidon/mgpu/compiler/static_schedule_config.h"
+#include "poseidon/mgpu/runtime/copy_dispatching_backend.h"
 
 #include <cstddef>
 #include <exception>
@@ -76,37 +77,37 @@ void copy_communication_execution_errors(
 
 }  // namespace
 
-PlannedCommunicationStaticScheduleExecutor::
-    PlannedCommunicationStaticScheduleExecutor(
+PlannedCommunicationScheduleExecutor::
+    PlannedCommunicationScheduleExecutor(
         MgpuTopology topology, GpuObjectCopyMaterializer &materializer,
         GpuObjectCopyBackend &local_backend,
         InterNodeTransportBackend &inter_node_backend,
-        ScheduleOpHandler &non_copy_handler,
-        StaticScheduleExecutorOptions options,
+        ScheduleExecutionBackend &non_copy_backend,
+        SequentialScheduleExecutorOptions options,
         MgpuCommunicationExecutionOptions communication_options)
     : topology_(std::move(topology)), materializer_(materializer),
       local_backend_(local_backend), inter_node_backend_(inter_node_backend),
-      non_copy_handler_(non_copy_handler), options_(options),
+      non_copy_backend_(non_copy_backend), options_(options),
       communication_options_(communication_options)
 {
 }
 
-PlannedCommunicationStaticScheduleExecutor
-PlannedCommunicationStaticScheduleExecutor::from_config(
+PlannedCommunicationScheduleExecutor
+PlannedCommunicationScheduleExecutor::from_config(
     const StaticScheduleExecutionConfig &config,
     GpuObjectCopyMaterializer &materializer,
     GpuObjectCopyBackend &local_backend,
     InterNodeTransportBackend &inter_node_backend,
-    ScheduleOpHandler &non_copy_handler)
+    ScheduleExecutionBackend &non_copy_backend)
 {
-    return PlannedCommunicationStaticScheduleExecutor(
+    return PlannedCommunicationScheduleExecutor(
         make_static_schedule_execution_topology(config), materializer,
-        local_backend, inter_node_backend, non_copy_handler,
-        StaticScheduleExecutorOptions{ config.pipeline.device_count },
+        local_backend, inter_node_backend, non_copy_backend,
+        SequentialScheduleExecutorOptions{ config.pipeline.device_count },
         config.communication_execution);
 }
 
-ScheduleExecutionResult PlannedCommunicationStaticScheduleExecutor::run(
+ScheduleExecutionResult PlannedCommunicationScheduleExecutor::run(
     const MgpuSchedule &schedule) const
 {
     ScheduleExecutionResult result;
@@ -134,8 +135,9 @@ ScheduleExecutionResult PlannedCommunicationStaticScheduleExecutor::run(
             topology_, local_backend_, inter_node_backend_);
         PlannedMaterializedGpuComm comm(
             communication_plan, materializer_, routed_backend);
-        StaticScheduleExecutor executor(comm, non_copy_handler_, options_);
-        return executor.run(schedule);
+        CopyDispatchingExecutionBackend copy_backend(comm, &non_copy_backend_);
+        SequentialScheduleExecutor executor(options_);
+        return executor.run(schedule, copy_backend);
     }
     catch (const std::exception &ex)
     {

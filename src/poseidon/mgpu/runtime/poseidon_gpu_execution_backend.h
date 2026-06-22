@@ -8,7 +8,7 @@
 #include "poseidon/gpu/gpu_plaintext.h"
 #include "poseidon/mgpu/runtime/hevm_io_binding.h"
 #include "poseidon/mgpu/runtime/hevm_plaintext_encoding.h"
-#include "poseidon/mgpu/runtime/schedule_interpreter.h"
+#include "poseidon/mgpu/runtime/sequential_schedule_executor.h"
 #include "poseidon/plaintext.h"
 #include "poseidon/poseidon_context.h"
 
@@ -34,10 +34,10 @@ struct PoseidonGpuDeviceContext
     std::shared_ptr<gpu::GpuGaloisKeysData> galois_keys;
 };
 
-class PoseidonGpuScheduleHandler final : public ScheduleOpHandler
+class PoseidonGpuExecutionBackend final : public ScheduleExecutionBackend
 {
 public:
-    explicit PoseidonGpuScheduleHandler(
+    explicit PoseidonGpuExecutionBackend(
         const PoseidonContext &context,
         std::vector<PoseidonGpuDeviceContext> devices = {});
 
@@ -86,15 +86,15 @@ private:
 };
 
 void bind_hevm_cipher_inputs(
-    PoseidonGpuScheduleHandler &handler, const HevmIoBindingPlan &plan,
+    PoseidonGpuExecutionBackend &backend, const HevmIoBindingPlan &plan,
     const std::vector<std::shared_ptr<const Ciphertext>> &cipher_inputs);
 
 void bind_hevm_encoded_plain_inputs(
-    PoseidonGpuScheduleHandler &handler,
+    PoseidonGpuExecutionBackend &backend,
     const std::vector<HevmEncodedPlaintext> &plaintexts);
 
 std::vector<std::shared_ptr<Ciphertext>> collect_hevm_results(
-    const PoseidonGpuScheduleHandler &handler, const HevmIoBindingPlan &plan);
+    const PoseidonGpuExecutionBackend &backend, const HevmIoBindingPlan &plan);
 
 }  // namespace mgpu
 }  // namespace poseidon

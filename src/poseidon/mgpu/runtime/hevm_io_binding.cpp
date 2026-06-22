@@ -291,7 +291,7 @@ HevmIoBindingPlanResult build_hevm_io_binding_plan(const MgpuSchedule &schedule)
 }
 
 void bind_hevm_cipher_inputs(
-    IoBindingScheduleHandler &io, const HevmIoBindingPlan &plan,
+    IoBindingExecutionBackend &io, const HevmIoBindingPlan &plan,
     const std::vector<std::shared_ptr<void>> &cipher_inputs)
 {
     if (cipher_inputs.size() != plan.cipher_inputs.size())
@@ -310,7 +310,7 @@ void bind_hevm_cipher_inputs(
 }
 
 void bind_hevm_plain_inputs_by_constant_index(
-    IoBindingScheduleHandler &io, const HevmIoBindingPlan &plan,
+    IoBindingExecutionBackend &io, const HevmIoBindingPlan &plan,
     const std::unordered_map<std::uint64_t, std::shared_ptr<void>> &plain_inputs)
 {
     for (const HevmPlainInputSlot &slot : plan.plain_inputs)
@@ -328,7 +328,7 @@ void bind_hevm_plain_inputs_by_constant_index(
 }
 
 std::vector<std::shared_ptr<void>> collect_hevm_results(
-    const IoBindingScheduleHandler &io, const HevmIoBindingPlan &plan)
+    const IoBindingExecutionBackend &io, const HevmIoBindingPlan &plan)
 {
     std::vector<std::shared_ptr<void>> results(plan.results.size());
     for (const HevmResultSlot &slot : plan.results)

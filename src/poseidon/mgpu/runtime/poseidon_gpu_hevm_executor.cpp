@@ -1,8 +1,9 @@
 #include "poseidon/mgpu/runtime/poseidon_gpu_hevm_executor.h"
 
-#include "poseidon/mgpu/runtime/poseidon_gpu_schedule_handler.h"
+#include "poseidon/mgpu/runtime/copy_dispatching_backend.h"
+#include "poseidon/mgpu/runtime/poseidon_gpu_execution_backend.h"
 #include "poseidon/mgpu/runtime/poseidon_gpu_schedule_preflight.h"
-#include "poseidon/mgpu/runtime/static_schedule_executor.h"
+#include "poseidon/mgpu/runtime/sequential_schedule_executor.h"
 
 #include <algorithm>
 #include <exception>
@@ -51,7 +52,7 @@ std::vector<int> schedule_devices(const MgpuSchedule &schedule)
 }
 
 void upload_keys_for_schedule_devices(
-    PoseidonGpuScheduleHandler &handler, const MgpuSchedule &schedule,
+    PoseidonGpuExecutionBackend &backend, const MgpuSchedule &schedule,
     const PoseidonGpuHevmExecutionOptions &options)
 {
     if (options.relin_keys == nullptr && options.galois_keys == nullptr)
@@ -61,18 +62,18 @@ void upload_keys_for_schedule_devices(
 
     for (const int device_id : schedule_devices(schedule))
     {
-        handler.upload_keys_for_device(device_id, options.relin_keys, options.galois_keys);
+        backend.upload_keys_for_device(device_id, options.relin_keys, options.galois_keys);
     }
 }
 
 void bind_hevm_plan_inputs(
-    PoseidonGpuScheduleHandler &handler, const HevmStaticExecutionPlan &plan,
+    PoseidonGpuExecutionBackend &backend, const HevmStaticExecutionPlan &plan,
     const std::vector<std::shared_ptr<const Ciphertext>> &cipher_inputs,
     const PoseidonGpuHevmExecutionOptions &options)
 {
-    bind_hevm_cipher_inputs(handler, plan.io_plan, cipher_inputs);
-    bind_hevm_encoded_plain_inputs(handler, plan.encoded_plaintexts);
-    upload_keys_for_schedule_devices(handler, plan.schedule, options);
+    bind_hevm_cipher_inputs(backend, plan.io_plan, cipher_inputs);
+    bind_hevm_encoded_plain_inputs(backend, plan.encoded_plaintexts);
+    upload_keys_for_schedule_devices(backend, plan.schedule, options);
 }
 
 }  // namespace
@@ -111,16 +112,17 @@ PoseidonGpuHevmExecutionResult execute_hevm_static_plan_with_poseidon_gpu(
 
     try
     {
-        PoseidonGpuScheduleHandler handler(context);
-        bind_hevm_plan_inputs(handler, plan, cipher_inputs, options);
-        ScheduleInterpreter interpreter(ScheduleInterpreterOptions{ options.device_count });
-        result.execution = interpreter.run(plan.schedule, handler);
+        PoseidonGpuExecutionBackend backend(context);
+        bind_hevm_plan_inputs(backend, plan, cipher_inputs, options);
+        SequentialScheduleExecutor executor(
+            SequentialScheduleExecutorOptions{ options.device_count });
+        result.execution = executor.run(plan.schedule, backend);
         if (!result.execution.ok())
         {
             return result;
         }
 
-        result.results = collect_hevm_results(handler, plan.io_plan);
+        result.results = collect_hevm_results(backend, plan.io_plan);
     }
     catch (const std::exception &ex)
     {
@@ -163,17 +165,18 @@ PoseidonGpuHevmExecutionResult execute_hevm_static_plan_with_poseidon_gpu(
 
     try
     {
-        PoseidonGpuScheduleHandler handler(context);
-        bind_hevm_plan_inputs(handler, plan, cipher_inputs, options);
-        StaticScheduleExecutor executor(
-            comm, handler, StaticScheduleExecutorOptions{ options.device_count });
-        result.execution = executor.run(plan.schedule);
+        PoseidonGpuExecutionBackend backend(context);
+        bind_hevm_plan_inputs(backend, plan, cipher_inputs, options);
+        CopyDispatchingExecutionBackend copy_backend(comm, &backend);
+        SequentialScheduleExecutor executor(
+            SequentialScheduleExecutorOptions{ options.device_count });
+        result.execution = executor.run(plan.schedule, copy_backend);
         if (!result.execution.ok())
         {
             return result;
         }
 
-        result.results = collect_hevm_results(handler, plan.io_plan);
+        result.results = collect_hevm_results(backend, plan.io_plan);
     }
     catch (const std::exception &ex)
     {

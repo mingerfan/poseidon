@@ -160,7 +160,7 @@ HevmPlaintextEncodingResult encode_hevm_plain_inputs(
 }
 
 void bind_hevm_encoded_plain_inputs(
-    IoBindingScheduleHandler &io, const std::vector<HevmEncodedPlaintext> &plaintexts)
+    IoBindingExecutionBackend &io, const std::vector<HevmEncodedPlaintext> &plaintexts)
 {
     for (const HevmEncodedPlaintext &plaintext : plaintexts)
     {
