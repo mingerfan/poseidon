@@ -33,6 +33,10 @@ constexpr const char *kFusedMatrixCacheDirEnv =
     "POSEIDON_NTT_FUSED_MATRIX_CACHE_DIR";
 constexpr const char *kFusedMatrixProgressEnv =
     "POSEIDON_NTT_FUSED_MATRIX_PROGRESS";
+constexpr const char *kFusedMatrixFp64TablesEnv =
+    "POSEIDON_NTT_FUSED_MATRIX_FP64_TABLES";
+constexpr const char *kFusedMatrixMaxLevelsEnv =
+    "POSEIDON_NTT_FUSED_MATRIX_MAX_LEVELS";
 constexpr std::uint64_t kFusedMatrixCacheMagic = 0x314d41544e445350ULL;
 constexpr std::uint32_t kFusedMatrixCacheVersion = 1;
 
@@ -179,6 +183,27 @@ struct FusedNttMatrixTables
     std::vector<GpuWord> matrices;
 };
 
+struct FusedNttMatrixFp64SplitTables
+{
+    std::vector<double> lo;
+    std::vector<double> hi;
+};
+
+FusedNttMatrixFp64SplitTables split_fused_matrices_for_fp64(
+    const std::vector<GpuWord> &matrices)
+{
+    FusedNttMatrixFp64SplitTables result;
+    result.lo.reserve(matrices.size());
+    result.hi.reserve(matrices.size());
+    for (GpuWord value : matrices)
+    {
+        /*B按照高低位进行存储，边于32*16的乘法保证精度*/
+        result.lo.push_back(static_cast<double>(value & 0xffffu));
+        result.hi.push_back(static_cast<double>(value >> 16));
+    }
+    return result;
+}
+
 bool env_enabled(const char *name)
 {
     const char *raw = std::getenv(name);
@@ -194,6 +219,46 @@ bool env_enabled(const char *name)
 bool fused_matrix_progress_enabled()
 {
     return env_enabled(kFusedMatrixProgressEnv);
+}
+
+bool is_fp64_tensor_ntt_algorithm(const std::string &value)
+{
+    return value == "tensor_fp64" || value == "fp64" ||
+           value == "tam_fp64" || value == "neo" ||
+           value == "tensor_neo_fp64";
+}
+
+bool fused_matrix_fp64_tables_enabled()
+{
+    const char *raw = std::getenv(kFusedMatrixFp64TablesEnv);
+    if (raw != nullptr && raw[0] != '\0')
+    {
+        return env_enabled(kFusedMatrixFp64TablesEnv);
+    }
+
+    const char *algorithm = std::getenv("POSEIDON_NTT_ALGO");
+    return algorithm != nullptr &&
+           is_fp64_tensor_ntt_algorithm(std::string(algorithm));
+}
+
+std::size_t read_fused_matrix_max_levels()
+{
+    const char *raw = std::getenv(kFusedMatrixMaxLevelsEnv);
+    if (raw == nullptr || raw[0] == '\0')
+    {
+        return std::numeric_limits<std::size_t>::max();
+    }
+
+    char *end = nullptr;
+    errno = 0;
+    const unsigned long long value = std::strtoull(raw, &end, 10);
+    if (errno != 0 || end == raw || *end != '\0')
+    {
+        throw std::invalid_argument(
+            "POSEIDON_NTT_FUSED_MATRIX_MAX_LEVELS must be a non-negative integer");
+    }
+
+    return static_cast<std::size_t>(value);
 }
 
 void print_progress_bar(
@@ -489,7 +554,10 @@ int read_precomputed_fused_matrix_stages()
         {
             const std::string value(algorithm);
             if (value == "tensor" || value == "tensor_core" ||
-                value == "tam_tensor" || value == "matrix")
+                value == "tam_tensor" || value == "matrix" ||
+                value == "tensor_fp64" || value == "fp64" ||
+                value == "tam_fp64" || value == "neo" ||
+                value == "tensor_neo_fp64")
             {
                 return kMaxPrecomputedFusedMatrixStages;
             }
@@ -1487,12 +1555,18 @@ void GpuParameterData::build_from_poseidon_context(
         context.parameters_literal()->q().size();
     const int precomputed_fused_matrix_stages =
         read_precomputed_fused_matrix_stages();
+    const bool precompute_fused_matrix_fp64_tables =
+        precomputed_fused_matrix_stages > 0 &&
+        fused_matrix_fp64_tables_enabled();
+    const std::size_t fused_matrix_max_levels =
+        read_fused_matrix_max_levels();
 
     auto context_data = crt_context->key_context_data();
     if (!context_data)
     {
         context_data = crt_context->first_context_data();
     }
+    std::size_t level_index = 0;
     while (context_data)
     {
         const auto &parms = context_data->parms();
@@ -1573,18 +1647,35 @@ void GpuParameterData::build_from_poseidon_context(
             q.size(),
             p_ntt_tables,
             parameter_p.size());
+        const int level_fused_matrix_stages =
+            level_index < fused_matrix_max_levels
+                ? precomputed_fused_matrix_stages
+                : 0;
+        const bool level_precompute_fused_matrix_fp64_tables =
+            level_fused_matrix_stages > 0 &&
+            precompute_fused_matrix_fp64_tables;
+
         const auto rns_fused_ntt_matrices =
             load_or_build_fused_matrix_tables(
                 rns_ntt_table_ptrs,
                 level.degree,
-                precomputed_fused_matrix_stages,
+                level_fused_matrix_stages,
                 false);
         const auto rns_fused_intt_matrices =
             load_or_build_fused_matrix_tables(
                 rns_ntt_table_ptrs,
                 level.degree,
-                precomputed_fused_matrix_stages,
+                level_fused_matrix_stages,
                 true);
+        FusedNttMatrixFp64SplitTables rns_fused_ntt_matrices_fp64;
+        FusedNttMatrixFp64SplitTables rns_fused_intt_matrices_fp64;
+        if (level_precompute_fused_matrix_fp64_tables)
+        {
+            rns_fused_ntt_matrices_fp64 =
+                split_fused_matrices_for_fp64(rns_fused_ntt_matrices.matrices);
+            rns_fused_intt_matrices_fp64 =
+                split_fused_matrices_for_fp64(rns_fused_intt_matrices.matrices);
+        }
         auto half_q_last_mod_q =
             compute_half_q_last_mod_q(q, shard.half_q_last);
         auto inv_q_last_mod_q = copy_inv_q_last_mod_q_operands(
@@ -1701,6 +1792,14 @@ void GpuParameterData::build_from_poseidon_context(
             copy_to_device_vector(
                 rns_fused_ntt_matrices.matrices,
                 device_id);
+        shard.ntt_fused_matrices_fp64_lo =
+            copy_to_device_vector(
+                rns_fused_ntt_matrices_fp64.lo,
+                device_id);
+        shard.ntt_fused_matrices_fp64_hi =
+            copy_to_device_vector(
+                rns_fused_ntt_matrices_fp64.hi,
+                device_id);
 
         shard.intt_fused_matrix_fusion_stages =
             rns_fused_intt_matrices.fusion_stages;
@@ -1720,6 +1819,14 @@ void GpuParameterData::build_from_poseidon_context(
             copy_to_device_vector(
                 rns_fused_intt_matrices.matrices,
                 device_id);
+        shard.intt_fused_matrices_fp64_lo =
+            copy_to_device_vector(
+                rns_fused_intt_matrices_fp64.lo,
+                device_id);
+        shard.intt_fused_matrices_fp64_hi =
+            copy_to_device_vector(
+                rns_fused_intt_matrices_fp64.hi,
+                device_id);
 
         copy_hybrid_key_switch_tables(rns_qp, shard, device_id);
 
@@ -1727,6 +1834,7 @@ void GpuParameterData::build_from_poseidon_context(
         levels_.push_back(std::move(level));
 
         context_data = context_data->next_context_data();
+        ++level_index;
     }
 }
 

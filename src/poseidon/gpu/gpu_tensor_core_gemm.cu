@@ -31,6 +31,12 @@ using nvcuda::wmma::store_matrix_sync;
 constexpr int kWmmaM = 16;
 constexpr int kWmmaN = 16;
 constexpr int kWmmaK = 16;
+#if !defined(__CUDA_ARCH__) || (__CUDA_ARCH__ >= 800)
+constexpr int kFp64TileElements =
+    kTensorCoreFp64TileM * kTensorCoreFp64TileN;
+constexpr int kFp64TileElementsPerLane =
+    (kFp64TileElements + 31) / 32;
+#endif
 
 constexpr int kSimtTileM = 16;
 constexpr int kSimtTileN = 16;
@@ -104,6 +110,19 @@ void validate_u8_accumulator_limit(GpuGemmShape shape, const char *name)
     }
 }
 
+void validate_fp64_wmma_shape(GpuGemmShape shape, const char *name)
+{
+    validate_positive_shape(shape, name);
+    if (shape.m % kTensorCoreFp64TileM != 0 ||
+        shape.n % kTensorCoreFp64TileN != 0 ||
+        shape.k % kTensorCoreFp64TileK != 0)
+    {
+        throw std::invalid_argument(
+            std::string(name) +
+            ": FP64 tensor-core path requires M and N divisible by 8 and K divisible by 4");
+    }
+}
+
 void validate_batch_count(int batch_count, const char *name)
 {
     if (batch_count <= 0)
@@ -124,6 +143,16 @@ void require_tensor_core_integer_support(const char *name)
     {
         throw std::runtime_error(
             std::string(name) + ": integer WMMA requires SM 7.5 or newer");
+    }
+}
+
+void require_tensor_core_fp64_support(const char *name)
+{
+    if (!supports_tensor_core_fp64_gemm())
+    {
+        throw std::runtime_error(
+            std::string(name) +
+            ": FP64 WMMA requires a GPU with FP64 Tensor Core support");
     }
 }
 
@@ -292,7 +321,58 @@ __device__ __forceinline__ void lazy_add_u64_mod_term(
     acc += term;
 }
 
-	__global__ void u8_wmma_mod_gemm_kernel(
+__device__ __forceinline__ std::uint32_t barrett_reduce_u64_u32(
+    std::uint64_t value,
+    std::uint32_t modulus,
+    std::uint64_t barrett_ratio)
+{
+    const std::uint64_t quotient = __umul64hi(value, barrett_ratio);
+    std::uint64_t reduced =
+        value - quotient * static_cast<std::uint64_t>(modulus);
+    if (reduced >= modulus)
+    {
+        reduced -= modulus;
+    }
+    if (reduced >= modulus)
+    {
+        reduced -= modulus;
+    }
+    return static_cast<std::uint32_t>(reduced);
+}
+
+__device__ __forceinline__ void build_u32_segment_pow2_factors_barrett(
+    std::uint32_t *factors,
+    std::uint32_t modulus,
+    std::uint64_t barrett_ratio)
+{
+    const std::uint32_t byte_radix_mod =
+        barrett_reduce_u64_u32(256ULL, modulus, barrett_ratio);
+    factors[0] = 1;
+#pragma unroll
+    for (int i = 1; i < kTensorCoreU32Pow2FactorCount; ++i)
+    {
+        factors[i] = barrett_reduce_u64_u32(
+            static_cast<std::uint64_t>(factors[i - 1]) *
+                static_cast<std::uint64_t>(byte_radix_mod),
+            modulus,
+            barrett_ratio);
+    }
+}
+
+__device__ __forceinline__ void lazy_add_u64_mod_term_barrett(
+    std::uint64_t &acc,
+    std::uint64_t term,
+    std::uint32_t modulus,
+    std::uint64_t barrett_ratio)
+{
+    if (acc > ~static_cast<std::uint64_t>(0) - term)
+    {
+        acc = barrett_reduce_u64_u32(acc, modulus, barrett_ratio);
+    }
+    acc += term;
+}
+
+		__global__ void u8_wmma_mod_gemm_kernel(
     const std::uint8_t *a_segments,
     const std::uint8_t *b_segments_col_major,
     std::uint32_t *c,
@@ -432,7 +512,8 @@ __device__ __forceinline__ void lazy_add_u64_mod_term(
         int n,
         int k,
         int batch_count,
-        const std::uint32_t *modulus_ptr)
+        const std::uint32_t *modulus_ptr,
+        const std::uint64_t *barrett_ratio_ptr)
     {
 #if defined(__CUDA_ARCH__) && (__CUDA_ARCH__ >= 750)
         constexpr int kWarpTilesPerBlock =
@@ -462,6 +543,9 @@ __device__ __forceinline__ void lazy_add_u64_mod_term(
         }
 
         const std::uint32_t modulus = *modulus_ptr;
+        const bool use_barrett = barrett_ratio_ptr != nullptr;
+        const std::uint64_t barrett_ratio =
+            use_barrett ? *barrett_ratio_ptr : 0;
         const std::size_t per_batch_a =
             static_cast<std::size_t>(m) * static_cast<std::size_t>(k);
         const std::size_t per_batch_b =
@@ -477,7 +561,17 @@ __device__ __forceinline__ void lazy_add_u64_mod_term(
 
         if (lane == 0)
         {
-            build_u32_segment_pow2_factors(factors, modulus);
+            if (use_barrett)
+            {
+                build_u32_segment_pow2_factors_barrett(
+                    factors,
+                    modulus,
+                    barrett_ratio);
+            }
+            else
+            {
+                build_u32_segment_pow2_factors(factors, modulus);
+            }
         }
         __syncwarp();
 
@@ -534,7 +628,21 @@ __device__ __forceinline__ void lazy_add_u64_mod_term(
                             static_cast<std::uint64_t>(
                                 static_cast<std::uint32_t>(tile[elem])) *
                             static_cast<std::uint64_t>(factor);
-                        lazy_add_u64_mod_term(lane_acc[slot], term, modulus);
+                        if (use_barrett)
+                        {
+                            lazy_add_u64_mod_term_barrett(
+                                lane_acc[slot],
+                                term,
+                                modulus,
+                                barrett_ratio);
+                        }
+                        else
+                        {
+                            lazy_add_u64_mod_term(
+                                lane_acc[slot],
+                                term,
+                                modulus);
+                        }
                     }
                 }
                 __syncwarp();
@@ -557,7 +665,12 @@ __device__ __forceinline__ void lazy_add_u64_mod_term(
                         static_cast<std::size_t>(batch) * per_batch_c +
                         static_cast<std::size_t>(global_row) * n +
                         static_cast<std::size_t>(global_col);
-                    c[c_index] = static_cast<std::uint32_t>(lane_acc[slot] % modulus);
+                    c[c_index] = use_barrett ?
+                        barrett_reduce_u64_u32(
+                            lane_acc[slot],
+                            modulus,
+                            barrett_ratio) :
+                        static_cast<std::uint32_t>(lane_acc[slot] % modulus);
                 }
             }
         }
@@ -570,13 +683,197 @@ __device__ __forceinline__ void lazy_add_u64_mod_term(
         (void)k;
         (void)batch_count;
         (void)modulus_ptr;
+        (void)barrett_ratio_ptr;
         asm("trap;");
 #endif
     }
 
-__global__ void s8_simt_dp4a_gemm_kernel(
-    const std::int8_t *a,
-    const std::int8_t *b_col_major,
+    __global__ void fp64_split_b_mod_batched_gemm_kernel(
+        const double *a,
+        const double *b_lo_col_major,
+        const double *b_hi_col_major,
+        std::uint32_t *c,
+        int m,
+        int n,
+        int k,
+        int batch_count,
+        const std::uint32_t *modulus_ptr,
+        const std::uint64_t *barrett_ratio_ptr)
+    {
+#if defined(__CUDA_ARCH__) && (__CUDA_ARCH__ >= 800)
+        constexpr int kWarpTilesPerBlock =
+            (128 / 32) * 4;
+        __shared__ double tile_lo_storage
+            [kWarpTilesPerBlock][kFp64TileElements];
+        __shared__ double tile_hi_storage
+            [kWarpTilesPerBlock][kFp64TileElements];
+
+        const int batch = static_cast<int>(blockIdx.z);
+        if (batch >= batch_count)
+        {
+            return;
+        }
+
+        const int warp_x = threadIdx.x / warpSize;
+        const int lane = threadIdx.x % warpSize;
+        const int warp_in_block =
+            threadIdx.y * (blockDim.x / warpSize) + warp_x;
+        const int warp_m = (blockIdx.x * blockDim.x + threadIdx.x) / warpSize;
+        const int warp_n = blockIdx.y * blockDim.y + threadIdx.y;
+        const int row = warp_m * kTensorCoreFp64TileM;
+        const int col = warp_n * kTensorCoreFp64TileN;
+
+        if (row >= m || col >= n)
+        {
+            return;
+        }
+
+        const std::uint32_t modulus = *modulus_ptr;
+        const std::uint64_t barrett_ratio = *barrett_ratio_ptr;
+        const std::size_t per_batch_a =
+            static_cast<std::size_t>(m) * static_cast<std::size_t>(k);
+        const std::size_t per_batch_b =
+            static_cast<std::size_t>(n) * static_cast<std::size_t>(k);
+        const std::size_t per_batch_c =
+            static_cast<std::size_t>(m) * static_cast<std::size_t>(n);
+        const double *a_base =
+            a + static_cast<std::size_t>(batch) * per_batch_a;
+        const double *b_lo_base =
+            b_lo_col_major + static_cast<std::size_t>(batch) * per_batch_b;
+        const double *b_hi_base =
+            b_hi_col_major + static_cast<std::size_t>(batch) * per_batch_b;
+
+        fragment<
+            matrix_a,
+            kTensorCoreFp64TileM,
+            kTensorCoreFp64TileN,
+            kTensorCoreFp64TileK,
+            double,
+            row_major> a_frag;
+        fragment<
+            matrix_b,
+            kTensorCoreFp64TileM,
+            kTensorCoreFp64TileN,
+            kTensorCoreFp64TileK,
+            double,
+            col_major> b_lo_frag;
+        fragment<
+            matrix_b,
+            kTensorCoreFp64TileM,
+            kTensorCoreFp64TileN,
+            kTensorCoreFp64TileK,
+            double,
+            col_major> b_hi_frag;
+        fragment<
+            accumulator,
+            kTensorCoreFp64TileM,
+            kTensorCoreFp64TileN,
+            kTensorCoreFp64TileK,
+            double> acc_lo_frag;
+        fragment<
+            accumulator,
+            kTensorCoreFp64TileM,
+            kTensorCoreFp64TileN,
+            kTensorCoreFp64TileK,
+            double> acc_hi_frag;
+
+        fill_fragment(acc_lo_frag, 0.0);
+        fill_fragment(acc_hi_frag, 0.0);
+        for (int kk = 0; kk < k; kk += kTensorCoreFp64TileK)
+        {
+            load_matrix_sync(
+                a_frag,
+                a_base + static_cast<std::size_t>(row) * k + kk,
+                k);
+            load_matrix_sync(
+                b_lo_frag,
+                b_lo_base + static_cast<std::size_t>(col) * k + kk,
+                k);
+            load_matrix_sync(
+                b_hi_frag,
+                b_hi_base + static_cast<std::size_t>(col) * k + kk,
+                k);
+            mma_sync(acc_lo_frag, a_frag, b_lo_frag, acc_lo_frag);
+            mma_sync(acc_hi_frag, a_frag, b_hi_frag, acc_hi_frag);
+        }
+
+        double *tile_lo = tile_lo_storage[warp_in_block];
+        double *tile_hi = tile_hi_storage[warp_in_block];
+        store_matrix_sync(
+            tile_lo,
+            acc_lo_frag,
+            kTensorCoreFp64TileN,
+            mem_row_major);
+        store_matrix_sync(
+            tile_hi,
+            acc_hi_frag,
+            kTensorCoreFp64TileN,
+            mem_row_major);
+        __syncwarp();
+
+        const std::uint32_t split_factor = barrett_reduce_u64_u32(
+            65536ULL,
+            modulus,
+            barrett_ratio);
+#pragma unroll
+        for (int slot = 0; slot < kFp64TileElementsPerLane; ++slot)
+        {
+            const int elem = lane + slot * warpSize;
+            if (elem < kFp64TileElements)
+            {
+                const int local_row = elem / kTensorCoreFp64TileN;
+                const int local_col = elem - local_row * kTensorCoreFp64TileN;
+                const int global_row = row + local_row;
+                const int global_col = col + local_col;
+                if (global_row < m && global_col < n)
+                {
+                    const std::uint64_t lo =
+                        static_cast<std::uint64_t>(tile_lo[elem]);
+                    const std::uint64_t hi =
+                        static_cast<std::uint64_t>(tile_hi[elem]);
+                    const std::uint32_t lo_reduced =
+                        barrett_reduce_u64_u32(lo, modulus, barrett_ratio);
+                    const std::uint32_t hi_reduced =
+                        barrett_reduce_u64_u32(hi, modulus, barrett_ratio);
+                    const std::uint32_t hi_scaled =
+                        barrett_reduce_u64_u32(
+                            static_cast<std::uint64_t>(hi_reduced) *
+                                static_cast<std::uint64_t>(split_factor),
+                            modulus,
+                            barrett_ratio);
+                    std::uint64_t reduced =
+                        static_cast<std::uint64_t>(lo_reduced) +
+                        static_cast<std::uint64_t>(hi_scaled);
+                    if (reduced >= modulus)
+                    {
+                        reduced -= modulus;
+                    }
+                    const std::size_t c_index =
+                        static_cast<std::size_t>(batch) * per_batch_c +
+                        static_cast<std::size_t>(global_row) * n +
+                        static_cast<std::size_t>(global_col);
+                    c[c_index] = static_cast<std::uint32_t>(reduced);
+                }
+            }
+        }
+#else
+        (void)a;
+        (void)b_lo_col_major;
+        (void)b_hi_col_major;
+        (void)c;
+        (void)m;
+        (void)n;
+        (void)k;
+        (void)batch_count;
+        (void)modulus_ptr;
+        (void)barrett_ratio_ptr;
+        asm("trap;");
+#endif
+    }
+
+    __global__ void s8_simt_dp4a_gemm_kernel(
+        const std::int8_t *a,
+        const std::int8_t *b_col_major,
     std::int32_t *c,
     int m,
     int n,
@@ -930,6 +1227,7 @@ void launch_u8_wmma_mod_batched_unchecked(
     GpuGemmShape shape,
     int batch_count,
     const std::uint32_t *modulus,
+    const std::uint64_t *barrett_ratio,
     cudaStream_t stream)
 {
     dim3 block(128, 4, 1);
@@ -945,10 +1243,45 @@ void launch_u8_wmma_mod_batched_unchecked(
         shape.n,
         shape.k,
         batch_count,
-        modulus);
+        modulus,
+        barrett_ratio);
     check_cuda(
         cudaGetLastError(),
         "launch_tensor_core_u32_mod_batched_gemm kernel");
+}
+
+void launch_fp64_split_b_mod_batched_unchecked(
+    const double *a,
+    const double *b_lo_col_major,
+    const double *b_hi_col_major,
+    std::uint32_t *c,
+    GpuGemmShape shape,
+    int batch_count,
+    const std::uint32_t *modulus,
+    const std::uint64_t *barrett_ratio,
+    cudaStream_t stream)
+{
+    dim3 block(128, 4, 1);
+    dim3 grid(
+        ceil_div(
+            shape.m,
+            kTensorCoreFp64TileM * (static_cast<int>(block.x) / 32)),
+        ceil_div(shape.n, kTensorCoreFp64TileN * static_cast<int>(block.y)),
+        batch_count);
+    fp64_split_b_mod_batched_gemm_kernel<<<grid, block, 0, stream>>>(
+        a,
+        b_lo_col_major,
+        b_hi_col_major,
+        c,
+        shape.m,
+        shape.n,
+        shape.k,
+        batch_count,
+        modulus,
+        barrett_ratio);
+    check_cuda(
+        cudaGetLastError(),
+        "launch_tensor_core_fp64_u32_mod_batched_gemm_split_b kernel");
 }
 
 void launch_fuse_low32_partial_unchecked(
@@ -1014,6 +1347,41 @@ bool supports_tensor_core_integer_gemm(int device_id)
     }
 
     return prop.major * 10 + prop.minor >= 75;
+}
+
+bool supports_tensor_core_fp64_gemm(int device_id)
+{
+    int device_count = 0;
+    if (cudaGetDeviceCount(&device_count) != cudaSuccess || device_count <= 0)
+    {
+        (void)cudaGetLastError();
+        return false;
+    }
+
+    if (device_id < 0)
+    {
+        if (cudaGetDevice(&device_id) != cudaSuccess)
+        {
+            (void)cudaGetLastError();
+            return false;
+        }
+    }
+
+    if (device_id < 0 || device_id >= device_count)
+    {
+        return false;
+    }
+
+    cudaDeviceProp prop{};
+    if (cudaGetDeviceProperties(&prop, device_id) != cudaSuccess)
+    {
+        (void)cudaGetLastError();
+        return false;
+    }
+
+    return (prop.major == 8 && prop.minor == 0) ||
+           (prop.major == 9 && prop.minor == 0) ||
+           (prop.major == 10 && prop.minor == 0);
 }
 
 TensorCoreU32GemmWorkspaceSizes tensor_core_u32_workspace_sizes(
@@ -1403,6 +1771,55 @@ void launch_tensor_core_u32_mod_batched_gemm_from_segments(
         per_batch_shape,
         batch_count,
         modulus,
+        nullptr,
+        stream);
+}
+
+void launch_tensor_core_u32_mod_batched_gemm_from_segments(
+    const std::uint8_t *a_segments,
+    const std::uint8_t *b_segments_col_major,
+    std::uint32_t *c_row_major,
+    GpuGemmShape per_batch_shape,
+    int batch_count,
+    const std::uint32_t *modulus,
+    const std::uint64_t *barrett_ratio,
+    cudaStream_t stream)
+{
+    validate_not_null(
+        a_segments,
+        "launch_tensor_core_u32_mod_batched_gemm_from_segments A segments");
+    validate_not_null(
+        b_segments_col_major,
+        "launch_tensor_core_u32_mod_batched_gemm_from_segments B segments");
+    validate_not_null(
+        c_row_major,
+        "launch_tensor_core_u32_mod_batched_gemm_from_segments C");
+    validate_not_null(
+        modulus,
+        "launch_tensor_core_u32_mod_batched_gemm_from_segments modulus");
+    validate_not_null(
+        barrett_ratio,
+        "launch_tensor_core_u32_mod_batched_gemm_from_segments Barrett ratio");
+    validate_wmma_shape(
+        per_batch_shape,
+        "launch_tensor_core_u32_mod_batched_gemm_from_segments");
+    validate_u8_accumulator_limit(
+        per_batch_shape,
+        "launch_tensor_core_u32_mod_batched_gemm_from_segments");
+    validate_batch_count(
+        batch_count,
+        "launch_tensor_core_u32_mod_batched_gemm_from_segments");
+    require_tensor_core_integer_support(
+        "launch_tensor_core_u32_mod_batched_gemm_from_segments");
+
+    launch_u8_wmma_mod_batched_unchecked(
+        a_segments,
+        b_segments_col_major,
+        c_row_major,
+        per_batch_shape,
+        batch_count,
+        modulus,
+        barrett_ratio,
         stream);
 }
 
@@ -1459,6 +1876,56 @@ void launch_tensor_core_u32_mod_batched_gemm_device_modulus(
         per_batch_shape,
         batch_count,
         modulus,
+        stream);
+}
+
+void launch_tensor_core_fp64_u32_mod_batched_gemm_split_b(
+    const double *a_row_major,
+    const double *b_lo_col_major,
+    const double *b_hi_col_major,
+    std::uint32_t *c_row_major,
+    GpuGemmShape per_batch_shape,
+    int batch_count,
+    const std::uint32_t *modulus,
+    const std::uint64_t *barrett_ratio,
+    cudaStream_t stream)
+{
+    validate_not_null(
+        a_row_major,
+        "launch_tensor_core_fp64_u32_mod_batched_gemm_split_b A");
+    validate_not_null(
+        b_lo_col_major,
+        "launch_tensor_core_fp64_u32_mod_batched_gemm_split_b B lo");
+    validate_not_null(
+        b_hi_col_major,
+        "launch_tensor_core_fp64_u32_mod_batched_gemm_split_b B hi");
+    validate_not_null(
+        c_row_major,
+        "launch_tensor_core_fp64_u32_mod_batched_gemm_split_b C");
+    validate_not_null(
+        modulus,
+        "launch_tensor_core_fp64_u32_mod_batched_gemm_split_b modulus");
+    validate_not_null(
+        barrett_ratio,
+        "launch_tensor_core_fp64_u32_mod_batched_gemm_split_b Barrett ratio");
+    validate_fp64_wmma_shape(
+        per_batch_shape,
+        "launch_tensor_core_fp64_u32_mod_batched_gemm_split_b");
+    validate_batch_count(
+        batch_count,
+        "launch_tensor_core_fp64_u32_mod_batched_gemm_split_b");
+    require_tensor_core_fp64_support(
+        "launch_tensor_core_fp64_u32_mod_batched_gemm_split_b");
+
+    launch_fp64_split_b_mod_batched_unchecked(
+        a_row_major,
+        b_lo_col_major,
+        b_hi_col_major,
+        c_row_major,
+        per_batch_shape,
+        batch_count,
+        modulus,
+        barrett_ratio,
         stream);
 }
 

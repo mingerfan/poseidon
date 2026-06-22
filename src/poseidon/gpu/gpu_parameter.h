@@ -129,12 +129,16 @@ struct GpuParameterShard
     DeviceVector<GpuWide> ntt_fused_matrix_group_counts;
     DeviceVector<GpuWide> ntt_fused_matrix_stage_offsets;
     DeviceVector<GpuWord> ntt_fused_matrices;
+    DeviceVector<double> ntt_fused_matrices_fp64_lo;
+    DeviceVector<double> ntt_fused_matrices_fp64_hi;
 
     std::size_t intt_fused_matrix_fusion_stages = 0;
     DeviceVector<GpuWord> intt_fused_matrix_stage_counts;
     DeviceVector<GpuWide> intt_fused_matrix_group_counts;
     DeviceVector<GpuWide> intt_fused_matrix_stage_offsets;
     DeviceVector<GpuWord> intt_fused_matrices;
+    DeviceVector<double> intt_fused_matrices_fp64_lo;
+    DeviceVector<double> intt_fused_matrices_fp64_hi;
 };
 
 /**

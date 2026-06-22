@@ -53,7 +53,10 @@ bool requested_tensor_ntt_algorithm()
 
     const std::string value(raw);
     return value == "tensor" || value == "tensor_core" ||
-           value == "tam_tensor" || value == "matrix";
+           value == "tam_tensor" || value == "matrix" ||
+           value == "tensor_fp64" || value == "fp64" ||
+           value == "tam_fp64" || value == "neo" ||
+           value == "tensor_neo_fp64";
 }
 
 bool tensor_ciphertext_batch_layout_supported(

@@ -25,7 +25,8 @@ enum class NttAlgorithm
     Stage,
     Fused,
     FourStep,
-    Tensor
+    Tensor,
+    TensorFp64
 };
 
 bool g_ntt_stage_profile_enabled = false;
@@ -231,14 +232,20 @@ NttAlgorithm requested_ntt_algorithm()
     {
         return NttAlgorithm::Tensor;
     }
+    if (value == "tensor_fp64" || value == "fp64" ||
+        value == "tam_fp64" || value == "neo" ||
+        value == "tensor_neo_fp64")
+    {
+        return NttAlgorithm::TensorFp64;
+    }
 
     throw std::invalid_argument(
-        "POSEIDON_NTT_ALGO must be stage, fused, fourstep, or tensor");
+        "POSEIDON_NTT_ALGO must be stage, fused, fourstep, tensor, or tensor_fp64");
 }
 
 int requested_ntt_fusion_stages()
 {
-    constexpr int kDefaultFusionStages = 1;
+    constexpr int kDefaultFusionStages = 3;
     constexpr int kMaxFusionStages = 4;
 
     const char *raw = std::getenv("POSEIDON_NTT_FUSION_STAGES");
@@ -262,6 +269,12 @@ int requested_ntt_fusion_stages()
 
 int requested_tensor_ntt_fusion_stages()
 {
+    const char *raw = std::getenv("POSEIDON_NTT_FUSION_STAGES");
+    if (raw == nullptr || *raw == '\0')
+    {
+        return 4;
+    }
+
     const int fusion_stages = requested_ntt_fusion_stages();
     return fusion_stages > 1 ? fusion_stages : 4;
 }
@@ -822,6 +835,92 @@ __global__ void unpack_inverse_tam_batched_gemm_output_kernel(
             local_limb * degree +
             group * (gap << stage_count) + row;
         values[base_index + col * gap] = packed[index];
+    }
+}
+
+/*将输入向量打包为输入A矩阵--cuda core*/
+__global__ void prepare_forward_tam_batched_gemm_fp64_a_kernel(
+    const GpuWord *values,
+    const GpuWord *modulus_ptr,
+    double *a_fp64,
+    std::size_t local_limb,
+    std::size_t degree,
+    std::size_t gap,
+    std::size_t stage_count,
+    std::size_t group_count,
+    std::size_t matrix_size,
+    std::size_t component_count,
+    std::size_t component_stride)
+{
+    /*matrix_size表示TAM矩阵的大小，group_count表示共用TAM的个数，rows同一个 group、同一个 component、同一个 limb 下，有多少个 16-vector 可以共用这一张 TAM 矩阵*/
+    const std::size_t rows = gap >> (stage_count - 1);
+    const std::size_t matrix_rows = component_count * rows;
+    const std::size_t total = group_count * matrix_rows * matrix_size;
+    (void)modulus_ptr;
+    const std::size_t stride =
+        static_cast<std::size_t>(blockDim.x) *
+        static_cast<std::size_t>(gridDim.x);
+
+    for (std::size_t index =
+             static_cast<std::size_t>(blockIdx.x) * blockDim.x + threadIdx.x;
+         index < total;
+         index += stride)
+    {
+        const std::size_t group = index / (matrix_rows * matrix_size);
+        const std::size_t group_offset =
+            index - group * matrix_rows * matrix_size;
+        const std::size_t packed_row = group_offset / matrix_size;
+        const std::size_t col = group_offset - packed_row * matrix_size;
+        const std::size_t component = packed_row / rows;
+        const std::size_t row = packed_row - component * rows;
+        const std::size_t base_index =
+            component * component_stride +
+            local_limb * degree + group * (gap << 1) + row;
+        const GpuWord value = values[base_index + col * rows];
+        /*将FP64的数据类型存入变量，连续写友好，但是value = values[base_index + col * rows]并不友好*/
+        a_fp64[index] = static_cast<double>(value);
+    }
+}
+
+__global__ void prepare_inverse_tam_batched_gemm_fp64_a_kernel(
+    const GpuWord *values,
+    const GpuWord *modulus_ptr,
+    double *a_fp64,
+    std::size_t local_limb,
+    std::size_t degree,
+    std::size_t gap,
+    std::size_t stage_count,
+    std::size_t group_count,
+    std::size_t matrix_size,
+    std::size_t component_count,
+    std::size_t component_stride)
+{
+    const std::size_t rows = gap;
+    const std::size_t matrix_rows = component_count * rows;
+    const std::size_t total = group_count * matrix_rows * matrix_size;
+    (void)modulus_ptr;
+    const std::size_t stride =
+        static_cast<std::size_t>(blockDim.x) *
+        static_cast<std::size_t>(gridDim.x);
+
+    for (std::size_t index =
+             static_cast<std::size_t>(blockIdx.x) * blockDim.x + threadIdx.x;
+         index < total;
+         index += stride)
+    {
+        const std::size_t group = index / (matrix_rows * matrix_size);
+        const std::size_t group_offset =
+            index - group * matrix_rows * matrix_size;
+        const std::size_t packed_row = group_offset / matrix_size;
+        const std::size_t col = group_offset - packed_row * matrix_size;
+        const std::size_t component = packed_row / rows;
+        const std::size_t row = packed_row - component * rows;
+        const std::size_t base_index =
+            component * component_stride +
+            local_limb * degree +
+            group * (gap << stage_count) + row;
+        const GpuWord value = values[base_index + col * gap];
+        a_fp64[index] = static_cast<double>(value);
     }
 }
 
@@ -1470,6 +1569,12 @@ struct TensorTamNttScratch
     TensorCoreU32GemmWorkspace workspace;
 };
 
+struct TensorFp64TamNttScratch
+{
+    DeviceVector<GpuWord> c;
+    DeviceVector<double> a;
+};
+
 struct TensorTamNttScratchLimits
 {
     std::size_t rows_per_component = 0;
@@ -1483,6 +1588,15 @@ bool tensor_tam_stage_eligible(
     return stage_count == 4 &&
            rows_per_tam >= static_cast<std::size_t>(kTensorCoreIntegerTile) &&
            rows_per_tam % static_cast<std::size_t>(kTensorCoreIntegerTile) == 0;
+}
+
+bool tensor_fp64_tam_stage_eligible(
+    std::size_t stage_count,
+    std::size_t rows_per_tam)
+{
+    return stage_count == 4 &&
+           rows_per_tam >= static_cast<std::size_t>(kTensorCoreFp64TileM) &&
+           rows_per_tam % static_cast<std::size_t>(kTensorCoreFp64TileM) == 0;
 }
 
 TensorTamNttScratch make_tensor_tam_ntt_scratch(
@@ -1536,6 +1650,32 @@ TensorTamNttScratch make_tensor_tam_ntt_scratch(
     return scratch;
 }
 
+TensorFp64TamNttScratch make_tensor_fp64_tam_ntt_scratch(
+    std::size_t max_rows_per_component,
+    std::size_t component_count,
+    int device_id)
+{
+    const std::size_t max_rows = checked_size_mul(
+        max_rows_per_component,
+        component_count,
+        "FP64 tensor TAM NTT scratch rows");
+    const std::size_t tile =
+        static_cast<std::size_t>(kTensorCoreIntegerTile);
+    const std::size_t max_a_values = checked_size_mul(
+        max_rows,
+        tile,
+        "FP64 tensor TAM NTT A workspace");
+
+    TensorFp64TamNttScratch scratch;
+    scratch.c = DeviceVector<GpuWord>(
+        max_a_values,
+        device_id);
+    scratch.a = DeviceVector<double>(
+        max_a_values,
+        device_id);
+    return scratch;
+}
+
 TensorTamNttScratchLimits forward_tensor_tam_scratch_limits(
     std::size_t degree,
     int fusion_stages)
@@ -1564,6 +1704,44 @@ TensorTamNttScratchLimits forward_tensor_tam_scratch_limits(
                     m,
                     rows_per_tam,
                     "forward tensor TAM scratch rows"));
+            result.matrix_count = std::max(result.matrix_count, m);
+        }
+
+        m <<= stage_count;
+        gap >>= stage_count;
+        remaining_stages -= stage_count;
+    }
+    return result;
+}
+
+TensorTamNttScratchLimits forward_tensor_fp64_tam_scratch_limits(
+    std::size_t degree,
+    int fusion_stages)
+{
+    TensorTamNttScratchLimits result;
+    std::size_t remaining_stages = log2_power_of_two(degree);
+
+    for (std::size_t m = 1, gap = degree >> 1; remaining_stages > 0;)
+    {
+        std::size_t stage_count = 1;
+        if (fusion_stages > 1)
+        {
+            stage_count = remaining_stages % fusion_stages;
+            if (stage_count == 0)
+            {
+                stage_count = static_cast<std::size_t>(fusion_stages);
+            }
+        }
+
+        const std::size_t rows_per_tam = gap >> (stage_count - 1);
+        if (tensor_fp64_tam_stage_eligible(stage_count, rows_per_tam))
+        {
+            result.rows_per_component = std::max(
+                result.rows_per_component,
+                checked_size_mul(
+                    m,
+                    rows_per_tam,
+                    "forward FP64 tensor TAM scratch rows"));
             result.matrix_count = std::max(result.matrix_count, m);
         }
 
@@ -1610,6 +1788,42 @@ TensorTamNttScratchLimits inverse_tensor_tam_scratch_limits(
     return result;
 }
 
+TensorTamNttScratchLimits inverse_tensor_fp64_tam_scratch_limits(
+    std::size_t degree,
+    int fusion_stages)
+{
+    TensorTamNttScratchLimits result;
+    std::size_t remaining_stages = log2_power_of_two(degree);
+
+    for (std::size_t gap = 1; remaining_stages > 0;)
+    {
+        std::size_t stage_count = 1;
+        if (fusion_stages > 1)
+        {
+            stage_count =
+                remaining_stages > static_cast<std::size_t>(fusion_stages)
+                    ? static_cast<std::size_t>(fusion_stages)
+                    : remaining_stages;
+        }
+
+        const std::size_t group_count = (degree >> stage_count) / gap;
+        if (tensor_fp64_tam_stage_eligible(stage_count, gap))
+        {
+            result.rows_per_component = std::max(
+                result.rows_per_component,
+                checked_size_mul(
+                    group_count,
+                    gap,
+                    "inverse FP64 tensor TAM scratch rows"));
+            result.matrix_count = std::max(result.matrix_count, group_count);
+        }
+
+        gap <<= stage_count;
+        remaining_stages -= stage_count;
+    }
+    return result;
+}
+
 void require_tensor_tam_tables(
     const char *name,
     const GpuParameterShard &parameter_shard,
@@ -1627,7 +1841,40 @@ void require_tensor_tam_tables(
     {
         throw std::invalid_argument(
             std::string(name) +
-            ": tensor path requires matching precomputed TAM matrices");
+            ": tensor path requires matching precomputed TAM matrices "
+            "(expected fusion=" + std::to_string(fusion_stages) +
+            ", table fusion=" + std::to_string(table_fusion_stages) +
+            ", matrices=" + (matrices == nullptr ? "null" : "present") + ")");
+    }
+}
+
+void require_tensor_fp64_tam_tables(
+    const char *name,
+    const GpuParameterShard &parameter_shard,
+    std::size_t fusion_stages,
+    bool inverse)
+{
+    const std::size_t table_fusion_stages = inverse
+        ? parameter_shard.intt_fused_matrix_fusion_stages
+        : parameter_shard.ntt_fused_matrix_fusion_stages;
+    const double *matrices_lo = inverse
+        ? parameter_shard.intt_fused_matrices_fp64_lo.data()
+        : parameter_shard.ntt_fused_matrices_fp64_lo.data();
+    const double *matrices_hi = inverse
+        ? parameter_shard.intt_fused_matrices_fp64_hi.data()
+        : parameter_shard.ntt_fused_matrices_fp64_hi.data();
+
+    if (table_fusion_stages != fusion_stages ||
+        matrices_lo == nullptr ||
+        matrices_hi == nullptr)
+    {
+        throw std::invalid_argument(
+            std::string(name) +
+            ": FP64 tensor path requires matching precomputed TAM matrices "
+            "(expected fusion=" + std::to_string(fusion_stages) +
+            ", table fusion=" + std::to_string(table_fusion_stages) +
+            ", lo=" + (matrices_lo == nullptr ? "null" : "present") +
+            ", hi=" + (matrices_hi == nullptr ? "null" : "present") + ")");
     }
 }
 
@@ -1654,9 +1901,10 @@ std::size_t checked_matrix_stage_elements(
     return limb_groups * matrix_elements;
 }
 
+template <typename T>
 void check_matrix_stage_range(
     const char *name,
-    const DeviceVector<GpuWord> &matrices,
+    const DeviceVector<T> &matrices,
     std::size_t stage_offset,
     std::size_t stage_elements)
 {
@@ -1734,6 +1982,8 @@ void launch_forward_tensor_tam_stage(
         const std::size_t table_limb = modulus_offset + local_limb;
         const GpuWord *modulus =
             parameter_shard.rns_primes.data() + table_limb;
+        const GpuWide *barrett_ratio =
+            parameter_shard.rns_modulus_constants.data() + table_limb;
         const std::size_t limb_matrix_offset =
             matrix_stage_offset +
             table_limb * group_count * matrix_elements;
@@ -1764,7 +2014,8 @@ void launch_forward_tensor_tam_stage(
             scratch.c.data(),
             shape,
             batch_count,
-            modulus);
+            modulus,
+            barrett_ratio);
 
         unpack_forward_tam_batched_gemm_output_kernel<<<
             unpack_grid_size, block_size>>>(
@@ -1849,6 +2100,8 @@ void launch_inverse_tensor_tam_stage(
         const std::size_t table_limb = modulus_offset + local_limb;
         const GpuWord *modulus =
             parameter_shard.rns_primes.data() + table_limb;
+        const GpuWide *barrett_ratio =
+            parameter_shard.rns_modulus_constants.data() + table_limb;
         const std::size_t limb_matrix_offset =
             matrix_stage_offset +
             table_limb * group_count * matrix_elements;
@@ -1879,7 +2132,8 @@ void launch_inverse_tensor_tam_stage(
             scratch.c.data(),
             shape,
             batch_count,
-            modulus);
+            modulus,
+            barrett_ratio);
 
         unpack_inverse_tam_batched_gemm_output_kernel<<<
             unpack_grid_size, block_size>>>(
@@ -1896,6 +2150,251 @@ void launch_inverse_tensor_tam_stage(
         gpu_check_cuda(
             cudaGetLastError(),
             "launch_inverse_ntt_poly_shard tensor TAM unpack");
+    }
+}
+
+void launch_forward_tensor_fp64_tam_stage(
+    const GpuPolyShardView &shard,
+    const GpuParameterShard &parameter_shard,
+    TensorFp64TamNttScratch &scratch,
+    std::size_t degree,
+    std::size_t modulus_offset,
+    std::size_t m,
+    std::size_t gap,
+    std::size_t stage_count,
+    std::size_t matrix_stage_offset,
+    std::size_t component_count,
+    std::size_t component_stride)
+{
+    const std::size_t matrix_size =
+        static_cast<std::size_t>(1) << stage_count;
+    const std::size_t matrix_elements = matrix_size * matrix_size;
+    const std::size_t group_count = m;
+    const std::size_t rows_per_tam = gap >> (stage_count - 1);
+    const std::size_t matrix_rows = rows_per_tam * component_count;
+    const std::size_t total_matrix_rows =
+        checked_size_mul(
+            group_count,
+            matrix_rows,
+            "forward FP64 tensor TAM NTT batched rows");
+    const GpuGemmShape shape{
+        checked_gemm_dim(matrix_rows, "forward FP64 tensor TAM NTT rows"),
+        checked_gemm_dim(matrix_size, "forward FP64 tensor TAM NTT cols"),
+        checked_gemm_dim(matrix_size, "forward FP64 tensor TAM NTT k")};
+    const int batch_count =
+        checked_gemm_dim(group_count, "forward FP64 tensor TAM NTT batch count");
+    constexpr int block_size = 256;
+    const std::size_t total_a_values =
+        checked_size_mul(
+            total_matrix_rows,
+            matrix_size,
+            "forward FP64 tensor TAM NTT A values");
+    const int prepare_grid_size = checked_grid_size(
+        total_a_values,
+        block_size,
+        "forward FP64 tensor TAM NTT prepare");
+    const int unpack_grid_size = checked_grid_size(
+        total_a_values,
+        block_size,
+        "forward FP64 tensor TAM NTT unpack");
+    const std::size_t stage_elements = checked_matrix_stage_elements(
+        "forward FP64 tensor TAM NTT",
+        parameter_shard,
+        group_count,
+        matrix_elements);
+    check_matrix_stage_range(
+        "forward FP64 tensor TAM NTT lo",
+        parameter_shard.ntt_fused_matrices_fp64_lo,
+        matrix_stage_offset,
+        stage_elements);
+    check_matrix_stage_range(
+        "forward FP64 tensor TAM NTT hi",
+        parameter_shard.ntt_fused_matrices_fp64_hi,
+        matrix_stage_offset,
+        stage_elements);
+
+    for (std::size_t local_limb = 0; local_limb < shard.limb_count;
+         ++local_limb)
+    {
+        const std::size_t table_limb = modulus_offset + local_limb;
+        const GpuWord *modulus =
+            parameter_shard.rns_primes.data() + table_limb;
+        const GpuWide *barrett_ratio =
+            parameter_shard.rns_modulus_constants.data() + table_limb;
+        const std::size_t limb_matrix_offset =
+            matrix_stage_offset +
+            table_limb * group_count * matrix_elements;
+
+        const double *matrices_lo =
+            parameter_shard.ntt_fused_matrices_fp64_lo.data() +
+            limb_matrix_offset;
+        const double *matrices_hi =
+            parameter_shard.ntt_fused_matrices_fp64_hi.data() +
+            limb_matrix_offset;
+        prepare_forward_tam_batched_gemm_fp64_a_kernel<<<
+            prepare_grid_size, block_size>>>(
+            shard.ptr,
+            modulus,
+            scratch.a.data(),
+            local_limb,
+            degree,
+            gap,
+            stage_count,
+            group_count,
+            matrix_size,
+            component_count,
+            component_stride);
+        gpu_check_cuda(
+            cudaGetLastError(),
+            "launch_forward_ntt_poly_shard FP64 tensor TAM prepare");
+
+        launch_tensor_core_fp64_u32_mod_batched_gemm_split_b(
+            scratch.a.data(),
+            matrices_lo,
+            matrices_hi,
+            scratch.c.data(),
+            shape,
+            batch_count,
+            modulus,
+            barrett_ratio);
+
+        unpack_forward_tam_batched_gemm_output_kernel<<<
+            unpack_grid_size, block_size>>>(
+            scratch.c.data(),
+            shard.ptr,
+            local_limb,
+            degree,
+            gap,
+            stage_count,
+            group_count,
+            matrix_size,
+            component_count,
+            component_stride);
+        gpu_check_cuda(
+            cudaGetLastError(),
+            "launch_forward_ntt_poly_shard FP64 tensor TAM unpack");
+    }
+}
+
+void launch_inverse_tensor_fp64_tam_stage(
+    const GpuPolyShardView &shard,
+    const GpuParameterShard &parameter_shard,
+    TensorFp64TamNttScratch &scratch,
+    std::size_t degree,
+    std::size_t modulus_offset,
+    std::size_t gap,
+    std::size_t stage_count,
+    std::size_t matrix_stage_offset,
+    std::size_t component_count,
+    std::size_t component_stride)
+{
+    const std::size_t matrix_size =
+        static_cast<std::size_t>(1) << stage_count;
+    const std::size_t matrix_elements = matrix_size * matrix_size;
+    const std::size_t group_count = (degree >> stage_count) / gap;
+    const std::size_t rows_per_tam = gap;
+    const std::size_t matrix_rows = rows_per_tam * component_count;
+    const std::size_t total_matrix_rows =
+        checked_size_mul(
+            group_count,
+            matrix_rows,
+            "inverse FP64 tensor TAM NTT batched rows");
+    const GpuGemmShape shape{
+        checked_gemm_dim(matrix_rows, "inverse FP64 tensor TAM NTT rows"),
+        checked_gemm_dim(matrix_size, "inverse FP64 tensor TAM NTT cols"),
+        checked_gemm_dim(matrix_size, "inverse FP64 tensor TAM NTT k")};
+    const int batch_count =
+        checked_gemm_dim(group_count, "inverse FP64 tensor TAM NTT batch count");
+    constexpr int block_size = 256;
+    const std::size_t total_a_values =
+        checked_size_mul(
+            total_matrix_rows,
+            matrix_size,
+            "inverse FP64 tensor TAM NTT A values");
+    const int prepare_grid_size = checked_grid_size(
+        total_a_values,
+        block_size,
+        "inverse FP64 tensor TAM NTT prepare");
+    const int unpack_grid_size = checked_grid_size(
+        total_a_values,
+        block_size,
+        "inverse FP64 tensor TAM NTT unpack");
+    const std::size_t stage_elements = checked_matrix_stage_elements(
+        "inverse FP64 tensor TAM NTT",
+        parameter_shard,
+        group_count,
+        matrix_elements);
+    check_matrix_stage_range(
+        "inverse FP64 tensor TAM NTT lo",
+        parameter_shard.intt_fused_matrices_fp64_lo,
+        matrix_stage_offset,
+        stage_elements);
+    check_matrix_stage_range(
+        "inverse FP64 tensor TAM NTT hi",
+        parameter_shard.intt_fused_matrices_fp64_hi,
+        matrix_stage_offset,
+        stage_elements);
+
+    for (std::size_t local_limb = 0; local_limb < shard.limb_count;
+         ++local_limb)
+    {
+        const std::size_t table_limb = modulus_offset + local_limb;
+        const GpuWord *modulus =
+            parameter_shard.rns_primes.data() + table_limb;
+        const GpuWide *barrett_ratio =
+            parameter_shard.rns_modulus_constants.data() + table_limb;
+        const std::size_t limb_matrix_offset =
+            matrix_stage_offset +
+            table_limb * group_count * matrix_elements;
+
+        const double *matrices_lo =
+            parameter_shard.intt_fused_matrices_fp64_lo.data() +
+            limb_matrix_offset;
+        const double *matrices_hi =
+            parameter_shard.intt_fused_matrices_fp64_hi.data() +
+            limb_matrix_offset;
+        prepare_inverse_tam_batched_gemm_fp64_a_kernel<<<
+            prepare_grid_size, block_size>>>(
+            shard.ptr,
+            modulus,
+            scratch.a.data(),
+            local_limb,
+            degree,
+            gap,
+            stage_count,
+            group_count,
+            matrix_size,
+            component_count,
+            component_stride);
+        gpu_check_cuda(
+            cudaGetLastError(),
+            "launch_inverse_ntt_poly_shard FP64 tensor TAM prepare");
+
+        launch_tensor_core_fp64_u32_mod_batched_gemm_split_b(
+            scratch.a.data(),
+            matrices_lo,
+            matrices_hi,
+            scratch.c.data(),
+            shape,
+            batch_count,
+            modulus,
+            barrett_ratio);
+
+        unpack_inverse_tam_batched_gemm_output_kernel<<<
+            unpack_grid_size, block_size>>>(
+            scratch.c.data(),
+            shard.ptr,
+            local_limb,
+            degree,
+            gap,
+            stage_count,
+            group_count,
+            matrix_size,
+            component_count,
+            component_stride);
+        gpu_check_cuda(
+            cudaGetLastError(),
+            "launch_inverse_ntt_poly_shard FP64 tensor TAM unpack");
     }
 }
 
@@ -2454,6 +2953,247 @@ void launch_inverse_tensor_tam_schedule(
     }
 }
 
+void launch_forward_tensor_fp64_tam_schedule(
+    const GpuPolyShardView &shard,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree,
+    int fusion_stages,
+    std::size_t component_count = 1,
+    std::size_t component_stride = 0)
+{
+    if (component_count == 0)
+    {
+        return;
+    }
+    if (component_stride == 0)
+    {
+        component_stride = shard.limb_count * degree;
+    }
+    const TensorTamNttScratchLimits scratch_limits =
+        forward_tensor_fp64_tam_scratch_limits(degree, fusion_stages);
+    if (scratch_limits.rows_per_component == 0)
+    {
+        launch_forward_stage_schedule(
+            shard,
+            parameter_shard,
+            degree,
+            fusion_stages);
+        return;
+    }
+    if (!supports_tensor_core_fp64_gemm(shard.device_id))
+    {
+        throw std::runtime_error(
+            "launch_forward_ntt_poly_shard: FP64 tensor TAM path requires a GPU with FP64 Tensor Core support");
+    }
+
+    require_tensor_fp64_tam_tables(
+        "launch_forward_ntt_poly_shard",
+        parameter_shard,
+        static_cast<std::size_t>(fusion_stages),
+        false);
+
+    TensorFp64TamNttScratch scratch =
+        make_tensor_fp64_tam_ntt_scratch(
+            scratch_limits.rows_per_component,
+            component_count,
+            shard.device_id);
+    const std::size_t modulus_offset =
+        shard.limb_begin - parameter_shard.limb_begin;
+    std::size_t remaining_stages = log2_power_of_two(degree);
+    std::size_t matrix_stage_offset = 0;
+    std::size_t phase_index = 0;
+
+    for (std::size_t m = 1, gap = degree >> 1;
+         remaining_stages > 0;)
+    {
+        std::size_t stage_count = 1;
+        if (fusion_stages > 1)
+        {
+            stage_count = remaining_stages % fusion_stages;
+            if (stage_count == 0)
+            {
+                stage_count = static_cast<std::size_t>(fusion_stages);
+            }
+        }
+
+        const std::size_t matrix_size =
+            static_cast<std::size_t>(1) << stage_count;
+        const std::size_t matrix_elements = matrix_size * matrix_size;
+        const std::size_t group_count = m;
+        const std::size_t stage_elements = checked_matrix_stage_elements(
+            "launch_forward_ntt_poly_shard FP64 tensor schedule",
+            parameter_shard,
+            group_count,
+            matrix_elements);
+        const std::size_t rows_per_tam = gap >> (stage_count - 1);
+
+        launch_profiled_ntt_stage(
+            phase_index,
+            "launch_forward_ntt_poly_shard profiled FP64 tensor stage",
+            [&]()
+            {
+                if (tensor_fp64_tam_stage_eligible(stage_count, rows_per_tam))
+                {
+                    launch_forward_tensor_fp64_tam_stage(
+                        shard,
+                        parameter_shard,
+                        scratch,
+                        degree,
+                        modulus_offset,
+                        m,
+                        gap,
+                        stage_count,
+                        matrix_stage_offset,
+                        component_count,
+                        component_stride);
+                }
+                else
+                {
+                    for (std::size_t component = 0; component < component_count;
+                         ++component)
+                    {
+                        GpuPolyShardView component_shard = shard;
+                        component_shard.ptr =
+                            shard.ptr + component * component_stride;
+                        launch_forward_stage_group(
+                            component_shard,
+                            parameter_shard,
+                            degree,
+                            modulus_offset,
+                            m,
+                            gap,
+                            stage_count);
+                    }
+                }
+            });
+
+        ++phase_index;
+        matrix_stage_offset += stage_elements;
+        m <<= stage_count;
+        gap >>= stage_count;
+        remaining_stages -= stage_count;
+    }
+}
+
+void launch_inverse_tensor_fp64_tam_schedule(
+    const GpuPolyShardView &shard,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree,
+    int fusion_stages,
+    std::size_t component_count = 1,
+    std::size_t component_stride = 0)
+{
+    if (component_count == 0)
+    {
+        return;
+    }
+    if (component_stride == 0)
+    {
+        component_stride = shard.limb_count * degree;
+    }
+    const TensorTamNttScratchLimits scratch_limits =
+        inverse_tensor_fp64_tam_scratch_limits(degree, fusion_stages);
+    if (scratch_limits.rows_per_component == 0)
+    {
+        launch_inverse_stage_schedule(
+            shard,
+            parameter_shard,
+            degree,
+            fusion_stages);
+        return;
+    }
+    if (!supports_tensor_core_fp64_gemm(shard.device_id))
+    {
+        throw std::runtime_error(
+            "launch_inverse_ntt_poly_shard: FP64 tensor TAM path requires a GPU with FP64 Tensor Core support");
+    }
+
+    require_tensor_fp64_tam_tables(
+        "launch_inverse_ntt_poly_shard",
+        parameter_shard,
+        static_cast<std::size_t>(fusion_stages),
+        true);
+
+    TensorFp64TamNttScratch scratch =
+        make_tensor_fp64_tam_ntt_scratch(
+            scratch_limits.rows_per_component,
+            component_count,
+            shard.device_id);
+    const std::size_t modulus_offset =
+        shard.limb_begin - parameter_shard.limb_begin;
+    std::size_t remaining_stages = log2_power_of_two(degree);
+    std::size_t matrix_stage_offset = 0;
+    std::size_t phase_index = 0;
+
+    for (std::size_t m = degree >> 1, gap = 1;
+         remaining_stages > 0;)
+    {
+        std::size_t stage_count = 1;
+        if (fusion_stages > 1)
+        {
+            stage_count =
+                remaining_stages > static_cast<std::size_t>(fusion_stages)
+                    ? static_cast<std::size_t>(fusion_stages)
+                    : remaining_stages;
+        }
+
+        const std::size_t matrix_size =
+            static_cast<std::size_t>(1) << stage_count;
+        const std::size_t matrix_elements = matrix_size * matrix_size;
+        const std::size_t group_count = (degree >> stage_count) / gap;
+        const std::size_t stage_elements = checked_matrix_stage_elements(
+            "launch_inverse_ntt_poly_shard FP64 tensor schedule",
+            parameter_shard,
+            group_count,
+            matrix_elements);
+
+        launch_profiled_ntt_stage(
+            phase_index,
+            "launch_inverse_ntt_poly_shard profiled FP64 tensor stage",
+            [&]()
+            {
+                if (tensor_fp64_tam_stage_eligible(stage_count, gap))
+                {
+                    launch_inverse_tensor_fp64_tam_stage(
+                        shard,
+                        parameter_shard,
+                        scratch,
+                        degree,
+                        modulus_offset,
+                        gap,
+                        stage_count,
+                        matrix_stage_offset,
+                        component_count,
+                        component_stride);
+                }
+                else
+                {
+                    for (std::size_t component = 0; component < component_count;
+                         ++component)
+                    {
+                        GpuPolyShardView component_shard = shard;
+                        component_shard.ptr =
+                            shard.ptr + component * component_stride;
+                        launch_inverse_stage_group(
+                            component_shard,
+                            parameter_shard,
+                            degree,
+                            modulus_offset,
+                            m,
+                            gap,
+                            stage_count);
+                    }
+                }
+            });
+
+        ++phase_index;
+        matrix_stage_offset += stage_elements;
+        m >>= stage_count;
+        gap <<= stage_count;
+        remaining_stages -= stage_count;
+    }
+}
+
 void launch_forward_fourstep_stages(
     const GpuPolyShardView &shard,
     const GpuParameterShard &parameter_shard,
@@ -2557,6 +3297,13 @@ void launch_forward_stages(
             degree,
             requested_tensor_ntt_fusion_stages());
         break;
+    case NttAlgorithm::TensorFp64:
+        launch_forward_tensor_fp64_tam_schedule(
+            shard,
+            parameter_shard,
+            degree,
+            requested_tensor_ntt_fusion_stages());
+        break;
     }
 }
 
@@ -2582,6 +3329,13 @@ void launch_inverse_stages(
         break;
     case NttAlgorithm::Tensor:
         launch_inverse_tensor_tam_schedule(
+            shard,
+            parameter_shard,
+            degree,
+            requested_tensor_ntt_fusion_stages());
+        break;
+    case NttAlgorithm::TensorFp64:
+        launch_inverse_tensor_fp64_tam_schedule(
             shard,
             parameter_shard,
             degree,
@@ -2719,13 +3473,26 @@ void launch_forward_ntt_components_shard_tensor(
         component_count,
         component_stride);
 
-    launch_forward_tensor_tam_schedule(
-        first_destination_shard,
-        parameter_shard,
-        degree,
-        requested_tensor_ntt_fusion_stages(),
-        component_count,
-        component_stride);
+    if (requested_ntt_algorithm() == NttAlgorithm::TensorFp64)
+    {
+        launch_forward_tensor_fp64_tam_schedule(
+            first_destination_shard,
+            parameter_shard,
+            degree,
+            requested_tensor_ntt_fusion_stages(),
+            component_count,
+            component_stride);
+    }
+    else
+    {
+        launch_forward_tensor_tam_schedule(
+            first_destination_shard,
+            parameter_shard,
+            degree,
+            requested_tensor_ntt_fusion_stages(),
+            component_count,
+            component_stride);
+    }
 }
 
 void launch_inverse_ntt_components_shard_tensor(
@@ -2763,13 +3530,26 @@ void launch_inverse_ntt_components_shard_tensor(
         component_count,
         component_stride);
 
-    launch_inverse_tensor_tam_schedule(
-        first_destination_shard,
-        parameter_shard,
-        degree,
-        requested_tensor_ntt_fusion_stages(),
-        component_count,
-        component_stride);
+    if (requested_ntt_algorithm() == NttAlgorithm::TensorFp64)
+    {
+        launch_inverse_tensor_fp64_tam_schedule(
+            first_destination_shard,
+            parameter_shard,
+            degree,
+            requested_tensor_ntt_fusion_stages(),
+            component_count,
+            component_stride);
+    }
+    else
+    {
+        launch_inverse_tensor_tam_schedule(
+            first_destination_shard,
+            parameter_shard,
+            degree,
+            requested_tensor_ntt_fusion_stages(),
+            component_count,
+            component_stride);
+    }
 
     const std::size_t modulus_offset =
         first_destination_shard.limb_begin - parameter_shard.limb_begin;

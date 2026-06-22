@@ -10,12 +10,14 @@
 #include "poseidon/gpu/gpu_parameter.h"
 #include "poseidon/gpu/gpu_tensor_core_gemm.h"
 #include "poseidon/gpu/gpu_uploader.h"
+#include "poseidon/gpu/kernels/gpu_keyswitch_kernels.h"
 #include "poseidon/gpu/kernels/gpu_ntt_kernels.h"
 #include "poseidon/keygenerator.h"
 #include "poseidon/parameters_literal.h"
 #include "poseidon/plaintext.h"
 #include "poseidon/poseidon_context.h"
 #include "poseidon/basics/randomgen.h"
+#include "poseidon/util/rns_tool_qp.h"
 
 #include <cuda_profiler_api.h>
 #include <cuda_runtime_api.h>
@@ -30,6 +32,7 @@
 #include <cstdlib>
 #include <iomanip>
 #include <iostream>
+#include <limits>
 #include <memory>
 #include <optional>
 #include <sstream>
@@ -43,7 +46,8 @@ namespace
 
 constexpr int kSkip = 77;
 constexpr bool kRunCorrectnessChecks = false;
-constexpr bool kRunOperationTimingSummary = false;
+constexpr bool kRunOperationTimingSummary = true;
+constexpr bool kRunNttTimingSummary = false;
 constexpr const char *kNttAlgorithmEnv = "POSEIDON_NTT_ALGO";
 constexpr const char *kNttFusionStagesEnv = "POSEIDON_NTT_FUSION_STAGES";
 constexpr const char *kNttFusedMatrixStagesEnv =
@@ -52,6 +56,14 @@ constexpr const char *kNttFusedMatrixCacheDirEnv =
     "POSEIDON_NTT_FUSED_MATRIX_CACHE_DIR";
 constexpr const char *kNttFusedMatrixProgressEnv =
     "POSEIDON_NTT_FUSED_MATRIX_PROGRESS";
+constexpr const char *kNttFusedMatrixFp64TablesEnv =
+    "POSEIDON_NTT_FUSED_MATRIX_FP64_TABLES";
+constexpr const char *kNttFusedMatrixMaxLevelsEnv =
+    "POSEIDON_NTT_FUSED_MATRIX_MAX_LEVELS";
+constexpr const char *kDemoSkipTensorNttEnv =
+    "POSEIDON_DEMO_SKIP_TENSOR_NTT";
+constexpr const char *kDemoSkipTensorFp64NttEnv =
+    "POSEIDON_DEMO_SKIP_TENSOR_FP64_NTT";
 constexpr const char *kDefaultNttFusedMatrixCacheDir =
     "/tmp/poseidon_ntt_tam_cache";
 
@@ -270,6 +282,7 @@ struct OperationTimingRow
 {
     std::string operation;
     TimingResult timing;
+    bool has_cpu_gpu_comparison = true;
 };
 
 struct GpuSampleStats
@@ -378,8 +391,8 @@ poseidon::ParametersLiteral make_demo_parameters()
         poseidon::sec_level_type::none);
 
     parms.set_log_modulus(
-        std::vector<std::uint32_t>(32, 30),
-        std::vector<std::uint32_t>(6, 30));
+        std::vector<std::uint32_t>(8, 30),
+        std::vector<std::uint32_t>(2, 30));
     return parms;
 }
 
@@ -624,6 +637,177 @@ TimingResult benchmark_cpu_gpu_average(
     return result;
 }
 
+struct CpuHybridBconvScratch
+{
+    std::vector<std::uint64_t> modup_q;
+    std::vector<std::uint64_t> modup_p;
+    poseidon::util::PolyIter modup_q_iter;
+    poseidon::util::PolyIter modup_p_iter;
+
+    CpuHybridBconvScratch(
+        std::size_t decomp_count,
+        std::size_t degree,
+        std::size_t base_q_size,
+        std::size_t base_p_size)
+        : modup_q(decomp_count * degree * base_q_size),
+          modup_p(decomp_count * degree * base_p_size),
+          modup_q_iter(modup_q.data(), degree, base_q_size),
+          modup_p_iter(modup_p.data(), degree, base_p_size)
+    {}
+};
+
+struct GpuHybridBconvScratch
+{
+    poseidon::gpu::DeviceVector<poseidon::gpu::GpuWord> c2_coeff;
+    poseidon::gpu::DeviceVector<poseidon::gpu::GpuWord> modup_q;
+    poseidon::gpu::DeviceVector<poseidon::gpu::GpuWord> modup_p;
+};
+
+std::size_t checked_benchmark_mul(
+    std::size_t left,
+    std::size_t right,
+    const char *name)
+{
+    if (left != 0 &&
+        right > std::numeric_limits<std::size_t>::max() / left)
+    {
+        throw std::overflow_error(name);
+    }
+    return left * right;
+}
+
+void run_cpu_hybrid_bconv_modup(
+    const poseidon::PoseidonContext &context,
+    const poseidon::RNSPoly &c2_coeff,
+    CpuHybridBconvScratch &scratch)
+{
+    const auto context_data =
+        context.crt_context()->get_context_data(c2_coeff.parms_id());
+    if (!context_data)
+    {
+        throw std::invalid_argument("BConv CPU benchmark: invalid parms_id");
+    }
+
+    const auto rns_qp = context_data->qp_rns_tool();
+    const auto base_q_size = rns_qp->base_q()->size();
+    const auto base_p_size = rns_qp->base_p()->size();
+    const auto decomp_count =
+        (base_q_size + base_p_size - 1) / base_p_size;
+    const auto pool = poseidon::MemoryManager::GetPool();
+
+    for (std::size_t decomp_index = 0; decomp_index < decomp_count;
+         ++decomp_index)
+    {
+        const auto decomp_limb_count =
+            base_q_size > base_p_size * (decomp_index + 1)
+                ? base_p_size
+                : base_q_size % base_p_size;
+
+        rns_qp->mod_up_copy_q(
+            c2_coeff.const_poly_iter()[0],
+            decomp_index,
+            scratch.modup_q_iter[decomp_index],
+            pool);
+        if (decomp_limb_count == 1)
+        {
+            rns_qp->mod_up_from_one_base_q(
+                scratch.modup_q_iter[decomp_index],
+                decomp_index,
+                pool);
+            rns_qp->mod_up_from_one_base_p(
+                scratch.modup_q_iter[decomp_index],
+                decomp_index,
+                scratch.modup_p_iter[decomp_index],
+                pool);
+        }
+        else
+        {
+            rns_qp->mod_up_base_q(
+                scratch.modup_q_iter[decomp_index],
+                decomp_index,
+                pool);
+            rns_qp->mod_up_base_p(
+                scratch.modup_q_iter[decomp_index],
+                decomp_index,
+                scratch.modup_p_iter[decomp_index],
+                pool);
+        }
+    }
+}
+
+const poseidon::gpu::GpuParameterShard &find_benchmark_parameter_shard(
+    const poseidon::gpu::GpuLevelInfo &level_info,
+    const poseidon::gpu::GpuConstPolyShardView &source_shard)
+{
+    for (const auto &candidate : level_info.shards)
+    {
+        const bool same_device = candidate.device_id == source_shard.device_id;
+        const bool covers_limb =
+            source_shard.limb_begin >= candidate.limb_begin &&
+            source_shard.limb_begin + source_shard.limb_count <=
+                candidate.limb_begin + candidate.limb_count;
+        if (same_device && covers_limb)
+        {
+            return candidate;
+        }
+    }
+
+    throw std::invalid_argument(
+        "BConv GPU benchmark: no matching parameter shard");
+}
+
+void prepare_gpu_hybrid_bconv_c2_coeff(
+    GpuHybridBconvScratch &scratch,
+    const poseidon::gpu::GpuConstPolyShardView &c2_ntt_shard,
+    const poseidon::gpu::GpuParameterShard &parameter_shard,
+    std::size_t degree,
+    std::size_t q_count)
+{
+    poseidon::gpu::GpuPolyShardView c2_coeff_shard;
+    c2_coeff_shard.device_id = c2_ntt_shard.device_id;
+    c2_coeff_shard.ptr = scratch.c2_coeff.data();
+    c2_coeff_shard.limb_begin = 0;
+    c2_coeff_shard.limb_count = q_count;
+    c2_coeff_shard.coeff_begin = 0;
+    c2_coeff_shard.coeff_count = degree;
+
+    poseidon::gpu::kernel::launch_inverse_ntt_poly_shard(
+        c2_coeff_shard,
+        c2_ntt_shard,
+        parameter_shard,
+        degree);
+}
+
+void run_gpu_hybrid_bconv_modup(
+    GpuHybridBconvScratch &scratch,
+    const poseidon::gpu::GpuConstPolyShardView &c2_ntt_shard,
+    const poseidon::gpu::GpuParameterShard &parameter_shard,
+    std::size_t degree,
+    std::size_t base_q_size,
+    std::size_t base_p_size,
+    std::size_t decomp_count)
+{
+    (void)c2_ntt_shard;
+    for (std::size_t decomp_index = 0; decomp_index < decomp_count;
+         ++decomp_index)
+    {
+        const std::size_t decomp_limb_begin = decomp_index * base_p_size;
+        const std::size_t decomp_limb_count = std::min(
+            base_p_size,
+            base_q_size - decomp_limb_begin);
+        poseidon::gpu::kernel::launch_hybrid_modup_decomposition(
+            scratch.modup_q.data(),
+            scratch.modup_p.data(),
+            scratch.c2_coeff.data(),
+            c2_ntt_shard.ptr,
+            decomp_index,
+            decomp_limb_begin,
+            decomp_limb_count,
+            parameter_shard,
+            degree);
+    }
+}
+
 template <typename GpuOnce>
 GpuSampleStats benchmark_gpu_event_samples(
     int device_id,
@@ -841,7 +1025,8 @@ void print_operation_timing_table(
               << " average\n";
     std::cout << "benchmark input: deterministic key/encrypt randomness\n";
     std::cout << "excluded from timing: encode/encrypt/upload/download/decrypt/decode\n";
-    std::cout << "ntt variants: ntt_inv/ntt_fwd use fusion=1; see NTT table for fusion sweep\n";
+    std::cout << "ntt variants: ntt_inv/ntt_fwd use default CUDA fused3 unless POSEIDON_NTT_ALGO or POSEIDON_NTT_FUSION_STAGES overrides it\n";
+    std::cout << "keyswitch_bconv_modup: HYBRID ModUp/BConv only; c2 INTT and later NTT/key multiply/ModDown are excluded\n";
 }
 
 void print_ntt_timing_table(
@@ -913,15 +1098,15 @@ void print_ntt_timing_table(
     print_border();
     for (const auto &row : rows)
     {
-        const bool skipped = row.correct == "SKIP";
+        const bool skipped = row.correct == "/";
         print_row(
             row.operation,
             row.mode,
-            skipped ? "-" : format_fixed(row.timing.avg_ms, 6),
-            skipped ? "-" : format_fixed(row.timing.min_ms, 6),
-            skipped ? "-" : format_fixed(row.timing.median_ms, 6),
-            skipped ? "-" : format_fixed(row.timing.p90_ms, 6),
-            skipped ? "-" : format_fixed(row.timing.max_ms, 6),
+            skipped ? "/" : format_fixed(row.timing.avg_ms, 6),
+            skipped ? "/" : format_fixed(row.timing.min_ms, 6),
+            skipped ? "/" : format_fixed(row.timing.median_ms, 6),
+            skipped ? "/" : format_fixed(row.timing.p90_ms, 6),
+            skipped ? "/" : format_fixed(row.timing.max_ms, 6),
             row.correct);
     }
     print_border();
@@ -934,7 +1119,8 @@ void print_ntt_timing_table(
               << " per NTT mode\n";
     std::cout << "benchmark scope: preallocated GpuCiphertextData + GpuNTTHandler only\n";
     std::cout << "correct: raw residues and metadata compared with CPU NTT result\n";
-    std::cout << "algorithm: stage/fused2/fused3/fused4/fourstep/tensor are selected by POSEIDON_NTT_ALGO\n";
+    std::cout << "algorithm: stage/fused2/fused3/fused4/fourstep/tensor/tensor_fp64 are selected by POSEIDON_NTT_ALGO\n";
+    std::cout << "skip controls: POSEIDON_DEMO_SKIP_TENSOR_NTT=1, POSEIDON_DEMO_SKIP_TENSOR_FP64_NTT=1\n";
     std::cout << "phase rows: extra profiled pass; phase0..phase3 split FD=4 chunks and exclude outer copy/final INTT normalization\n";
 }
 
@@ -1545,6 +1731,21 @@ struct NsysMultiplyRelinRescaleCase
             evaluator->rescale(gpu_relinearize_result, gpu_result);
         }
     }
+
+    void prepare_relinearize_input()
+    {
+        NvtxRange range("relinearize_setup.multiply");
+        evaluator->multiply(gpu_ct0, gpu_ct1, gpu_multiply_result);
+    }
+
+    void run_relinearize_once()
+    {
+        NvtxRange range("relinearize");
+        evaluator->relinearize(
+            gpu_multiply_result,
+            gpu_relin_keys,
+            gpu_relinearize_result);
+    }
 };
 
 NsysMultiplyRelinRescaleCase prepare_nsys_multiply_relin_rescale_case(
@@ -1668,6 +1869,112 @@ int run_nsys_multiply_relin_rescale_probe()
     for (std::size_t i = 0; i < timing_iterations; ++i)
     {
         current_case.run_once();
+    }
+    gpu_check_cuda(cudaEventRecord(gpu_stop), "nsys cudaEventRecord stop");
+    gpu_check_cuda(
+        cudaEventSynchronize(gpu_stop),
+        "nsys cudaEventSynchronize stop");
+    const auto wall_end = std::chrono::steady_clock::now();
+    nvtxRangePop();
+    gpu_check_cuda(cudaProfilerStop(), "nsys cudaProfilerStop");
+
+    float gpu_event_total_ms = 0.0F;
+    gpu_check_cuda(
+        cudaEventElapsedTime(&gpu_event_total_ms, gpu_start, gpu_stop),
+        "nsys cudaEventElapsedTime");
+
+    gpu_check_cuda(cudaEventDestroy(gpu_start), "nsys cudaEventDestroy start");
+    gpu_check_cuda(cudaEventDestroy(gpu_stop), "nsys cudaEventDestroy stop");
+
+    const double wall_total_ms =
+        std::chrono::duration<double, std::milli>(wall_end - wall_begin).count();
+    const double wall_avg_ms = wall_total_ms / timing_iterations;
+    const double event_avg_ms =
+        static_cast<double>(gpu_event_total_ms) / timing_iterations;
+
+    std::cout << std::fixed << std::setprecision(6);
+    std::cout << "gpu wall total ms      = " << wall_total_ms << "\n";
+    std::cout << "gpu wall avg ms        = " << wall_avg_ms << "\n";
+    std::cout << "gpu event total ms     = " << gpu_event_total_ms << "\n";
+    std::cout << "gpu event avg ms       = " << event_avg_ms << "\n";
+
+    return EXIT_SUCCESS;
+}
+
+int run_nsys_relinearize_probe()
+{
+    using poseidon::gpu::gpu_check_cuda;
+
+    const int device_id = 0;
+    RmmPoolScope rmm_scope(device_id);
+
+    const std::size_t degree =
+        env_size_or("POSEIDON_NSYS_DEGREE", 65536);
+    const std::size_t q_count =
+        env_size_or("POSEIDON_NSYS_Q_COUNT", 8);
+    const std::size_t p_count =
+        env_size_or("POSEIDON_NSYS_P_COUNT", 2);
+    const std::size_t timing_iterations =
+        env_size_or("POSEIDON_NSYS_ITERATIONS", 1);
+    const std::size_t warmup_iterations =
+        env_size_or("POSEIDON_NSYS_WARMUP", 0);
+
+    if (timing_iterations == 0)
+    {
+        throw std::invalid_argument(
+            "POSEIDON_NSYS_ITERATIONS must be greater than zero");
+    }
+
+    auto current_case = prepare_nsys_multiply_relin_rescale_case(
+        degree,
+        q_count,
+        p_count,
+        device_id);
+
+    gpu_check_cuda(
+        cudaSetDevice(device_id),
+        "nsys relinearize cudaSetDevice");
+    current_case.prepare_relinearize_input();
+    gpu_check_cuda(
+        cudaDeviceSynchronize(),
+        "nsys relinearize input synchronize");
+    for (std::size_t i = 0; i < warmup_iterations; ++i)
+    {
+        current_case.run_relinearize_once();
+    }
+    gpu_check_cuda(
+        cudaDeviceSynchronize(),
+        "nsys relinearize warmup synchronize");
+
+    const std::string range_name =
+        "relinearize N=" + std::to_string(degree) +
+        " q=" + std::to_string(q_count) +
+        " p=" + std::to_string(p_count);
+
+    std::cout << "\n[nsys relinearize probe]\n";
+    std::cout << "degree                 = " << degree << "\n";
+    std::cout << "q_count                = " << q_count << "\n";
+    std::cout << "p_count                = " << p_count << "\n";
+    std::cout << "warmup iterations      = " << warmup_iterations << "\n";
+    std::cout << "timing iterations      = " << timing_iterations << "\n";
+    std::cout << "included in capture    = GpuEvaluator::relinearize only\n";
+    std::cout << "excluded from capture  = context/keygen/encode/encrypt/upload/input multiply/warmup/download\n";
+    std::cout << "capture range          = cudaProfilerStart/Stop\n";
+    std::cout << "nvtx range             = " << range_name << "\n";
+    std::cout << "inner nvtx ranges      = keyswitch.intt_switch_poly, keyswitch.dnum.*, keyswitch.finalize.*\n";
+
+    cudaEvent_t gpu_start = nullptr;
+    cudaEvent_t gpu_stop = nullptr;
+    gpu_check_cuda(cudaEventCreate(&gpu_start), "nsys cudaEventCreate start");
+    gpu_check_cuda(cudaEventCreate(&gpu_stop), "nsys cudaEventCreate stop");
+
+    gpu_check_cuda(cudaProfilerStart(), "nsys cudaProfilerStart");
+    nvtxRangePushA(range_name.c_str());
+    const auto wall_begin = std::chrono::steady_clock::now();
+    gpu_check_cuda(cudaEventRecord(gpu_start), "nsys cudaEventRecord start");
+    for (std::size_t i = 0; i < timing_iterations; ++i)
+    {
+        current_case.run_relinearize_once();
     }
     gpu_check_cuda(cudaEventRecord(gpu_stop), "nsys cudaEventRecord stop");
     gpu_check_cuda(
@@ -1920,25 +2227,30 @@ int run_demo()
         cudaDeviceSynchronize(),
         "GpuEvaluator::multiply_plain precompute sync");
 
+    Ciphertext cpu_multiply_result;
+    cpu_evaluator->multiply(ct0, ct1, cpu_multiply_result);
+
+    GpuCiphertextData gpu_multiply_output;
+    gpu_evaluator.multiply(gpu_ct0, gpu_ct1, gpu_multiply_output);
+    gpu_check_cuda(
+        cudaDeviceSynchronize(),
+        "GpuEvaluator::multiply precompute sync");
+
     Ciphertext cpu_ntt_inv_result;
     cpu_evaluator->ntt_inv(ct0, cpu_ntt_inv_result);
     Ciphertext cpu_ntt_fwd_result;
     cpu_evaluator->ntt_fwd(cpu_ntt_inv_result, cpu_ntt_fwd_result);
 
     GpuCiphertextData gpu_ntt_inv_output;
-    {
-        ScopedEnvironmentValue ntt_algorithm(kNttAlgorithmEnv, "stage");
-        ScopedEnvironmentValue ntt_fusion(kNttFusionStagesEnv, "1");
-        gpu_evaluator.ntt_inv(gpu_ct0, gpu_ntt_inv_output);
-    }
+    gpu_evaluator.ntt_inv(gpu_ct0, gpu_ntt_inv_output);
     gpu_check_cuda(
         cudaDeviceSynchronize(),
         "GpuEvaluator::ntt_inv precompute sync");
 
     const int timing_iterations =
-        static_cast<int>(env_size_or("POSEIDON_DEMO_ITERATIONS", 40));
+        static_cast<int>(env_size_or("POSEIDON_DEMO_ITERATIONS", 20));
     const std::size_t warmup_iterations =
-        env_size_or("POSEIDON_DEMO_WARMUP", 40);
+        env_size_or("POSEIDON_DEMO_WARMUP", 20);
     if (timing_iterations <= 0)
     {
         throw std::invalid_argument(
@@ -1949,9 +2261,11 @@ int run_demo()
         Ciphertext cpu_timing_result;
         Ciphertext cpu_chain_multiply_result;
         Ciphertext cpu_chain_relinearize_result;
+        Ciphertext cpu_relinearize_timing_result;
         GpuCiphertextData gpu_timing_output;
         GpuCiphertextData gpu_chain_multiply_output;
         GpuCiphertextData gpu_chain_relinearize_output;
+        GpuCiphertextData gpu_relinearize_timing_output;
         std::vector<OperationTimingRow> timing_rows;
 
         auto benchmark_operation =
@@ -1969,20 +2283,90 @@ int run_demo()
                         warmup_iterations)});
         };
 
-        auto benchmark_ntt_operation =
-            [&](const std::string &name,
-                const char *fusion_stages,
-                auto cpu_once,
-                auto gpu_once)
+        poseidon::RNSPoly cpu_bconv_c2_coeff(
+            context,
+            cpu_multiply_result.parms_id());
+        cpu_bconv_c2_coeff.copy(cpu_multiply_result[2]);
+        cpu_bconv_c2_coeff.dot_to_coeff();
+
+        const auto bconv_context_data =
+            context.crt_context()->get_context_data(
+                cpu_multiply_result.parms_id());
+        if (!bconv_context_data)
         {
-            const std::string algorithm =
-                std::string(fusion_stages) == "1" ? "stage" : "fused";
-            ScopedEnvironmentValue ntt_algorithm(
-                kNttAlgorithmEnv,
-                algorithm.c_str());
-            ScopedEnvironmentValue ntt_fusion(kNttFusionStagesEnv, fusion_stages);
-            benchmark_operation(name, cpu_once, gpu_once);
-        };
+            throw std::invalid_argument(
+                "BConv benchmark: invalid multiply result parms_id");
+        }
+        const auto bconv_rns_qp = bconv_context_data->qp_rns_tool();
+        const std::size_t bconv_base_q_size =
+            bconv_rns_qp->base_q()->size();
+        const std::size_t bconv_base_p_size =
+            bconv_rns_qp->base_p()->size();
+        if (bconv_base_p_size == 0)
+        {
+            throw std::invalid_argument(
+                "BConv benchmark requires HYBRID P limbs");
+        }
+        const std::size_t bconv_decomp_count =
+            (bconv_base_q_size + bconv_base_p_size - 1) /
+            bconv_base_p_size;
+        CpuHybridBconvScratch cpu_bconv_scratch(
+            bconv_decomp_count,
+            parms.degree(),
+            bconv_base_q_size,
+            bconv_base_p_size);
+
+        auto gpu_bconv_source_view = gpu_multiply_output.make_const_view();
+        const auto &gpu_bconv_c2_ntt_shard =
+            gpu_bconv_source_view.polys[2].shards.front();
+        const auto &gpu_bconv_level_info =
+            gpu_params.get_level(gpu_multiply_output.meta.parms_id);
+        const auto &gpu_bconv_parameter_shard =
+            find_benchmark_parameter_shard(
+                gpu_bconv_level_info,
+                gpu_bconv_c2_ntt_shard);
+        if (gpu_bconv_parameter_shard.hybrid_base_q_count !=
+                bconv_base_q_size ||
+            gpu_bconv_parameter_shard.hybrid_base_p_count !=
+                bconv_base_p_size ||
+            gpu_bconv_parameter_shard.hybrid_decomp_count <
+                bconv_decomp_count)
+        {
+            throw std::invalid_argument(
+                "BConv benchmark: CPU/GPU HYBRID base shape mismatch");
+        }
+
+        GpuHybridBconvScratch gpu_bconv_scratch;
+        gpu_bconv_scratch.c2_coeff =
+            poseidon::gpu::DeviceVector<poseidon::gpu::GpuWord>(
+                checked_benchmark_mul(
+                    bconv_base_q_size,
+                    parms.degree(),
+                    "BConv c2 coeff scratch size overflow"),
+                device_id);
+        gpu_bconv_scratch.modup_q =
+            poseidon::gpu::DeviceVector<poseidon::gpu::GpuWord>(
+                checked_benchmark_mul(
+                    bconv_base_q_size,
+                    parms.degree(),
+                    "BConv modup_q scratch size overflow"),
+                device_id);
+        gpu_bconv_scratch.modup_p =
+            poseidon::gpu::DeviceVector<poseidon::gpu::GpuWord>(
+                checked_benchmark_mul(
+                    bconv_base_p_size,
+                    parms.degree(),
+                    "BConv modup_p scratch size overflow"),
+                device_id);
+        prepare_gpu_hybrid_bconv_c2_coeff(
+            gpu_bconv_scratch,
+            gpu_bconv_c2_ntt_shard,
+            gpu_bconv_parameter_shard,
+            parms.degree(),
+            bconv_base_q_size);
+        gpu_check_cuda(
+            cudaDeviceSynchronize(),
+            "BConv benchmark c2 INTT precompute sync");
 
         benchmark_operation(
             "multiply_relinearize_rescale",
@@ -2007,6 +2391,44 @@ int run_demo()
                 gpu_evaluator.rescale(
                     gpu_chain_relinearize_output,
                     gpu_timing_output);
+            });
+
+        benchmark_operation(
+            "relinearize",
+            [&]()
+            {
+                cpu_evaluator->relinearize(
+                    cpu_multiply_result,
+                    cpu_relinearize_timing_result,
+                    relin_keys);
+            },
+            [&]()
+            {
+                gpu_evaluator.relinearize(
+                    gpu_multiply_output,
+                    gpu_relin_keys,
+                    gpu_relinearize_timing_output);
+            });
+
+        benchmark_operation(
+            "keyswitch_bconv_modup",
+            [&]()
+            {
+                run_cpu_hybrid_bconv_modup(
+                    context,
+                    cpu_bconv_c2_coeff,
+                    cpu_bconv_scratch);
+            },
+            [&]()
+            {
+                run_gpu_hybrid_bconv_modup(
+                    gpu_bconv_scratch,
+                    gpu_bconv_c2_ntt_shard,
+                    gpu_bconv_parameter_shard,
+                    parms.degree(),
+                    bconv_base_q_size,
+                    bconv_base_p_size,
+                    bconv_decomp_count);
             });
 
         benchmark_operation(
@@ -2091,15 +2513,13 @@ int run_demo()
             [&]() { cpu_evaluator->rescale(cpu_multiply_plain_result, cpu_timing_result); },
             [&]() { gpu_evaluator.rescale(gpu_multiply_plain_output, gpu_timing_output); });
 
-        benchmark_ntt_operation(
+        benchmark_operation(
             "ntt_inv",
-            "1",
             [&]() { cpu_evaluator->ntt_inv(ct0, cpu_timing_result); },
             [&]() { gpu_evaluator.ntt_inv(gpu_ct0, gpu_timing_output); });
 
-        benchmark_ntt_operation(
+        benchmark_operation(
             "ntt_fwd",
-            "1",
             [&]() { cpu_evaluator->ntt_fwd(cpu_ntt_inv_result, cpu_timing_result); },
             [&]() { gpu_evaluator.ntt_fwd(gpu_ntt_inv_output, gpu_timing_output); });
 
@@ -2112,6 +2532,8 @@ int run_demo()
             warmup_iterations);
     }
 
+    if constexpr (kRunNttTimingSummary)
+    {
     GpuNTTHandler ntt_handler(gpu_params);
     auto gpu_ntt_fwd_source =
         GpuUploader::upload_ciphertext(cpu_ntt_inv_result, device_id);
@@ -2149,10 +2571,18 @@ int run_demo()
         gpu_params.get_level(gpu_ntt_fwd_source.meta.parms_id);
 
     std::vector<NttTimingRow> ntt_timing_rows;
+    const bool tensor_ntt_requested =
+        !env_flag_enabled(kDemoSkipTensorNttEnv);
+    const bool tensor_fp64_ntt_requested =
+        !env_flag_enabled(kDemoSkipTensorFp64NttEnv);
     const bool tensor_ntt_supported =
+        tensor_ntt_requested &&
         poseidon::gpu::supports_tensor_core_integer_gemm(device_id);
+    const bool tensor_fp64_ntt_supported =
+        tensor_fp64_ntt_requested &&
+        poseidon::gpu::supports_tensor_core_fp64_gemm(device_id);
     constexpr std::size_t regular_ntt_row_count = 10;
-    constexpr std::size_t tensor_ntt_row_count = 2;
+    constexpr std::size_t tensor_ntt_row_count = 4;
     const std::size_t ntt_progress_total =
         regular_ntt_row_count + tensor_ntt_row_count;
     std::size_t ntt_progress_current = 0;
@@ -2203,7 +2633,7 @@ int run_demo()
                     warmup_iterations),
                 correct ? "OK" : "FAIL"});
 
-        if (mode == "fused4" || mode == "tensor")
+        if (mode == "fused4" || mode == "tensor" || mode == "tensor_fp64")
         {
             const std::string profile_name = timing_name + "_phase_profile";
             const auto phase_stats =
@@ -2241,7 +2671,7 @@ int run_demo()
                 operation,
                 mode,
                 GpuSampleStats{},
-                "SKIP"});
+                "/"});
     };
 
     const int ntt_fusion_modes[] = {1, 2, 3, 4};
@@ -2319,7 +2749,7 @@ int run_demo()
                 ntt_fwd_level_info);
         });
 
-    if (tensor_ntt_supported)
+    if (tensor_ntt_supported || tensor_fp64_ntt_supported)
     {
         const auto tam_cache_dir = env_string_or(
             kNttFusedMatrixCacheDirEnv,
@@ -2338,6 +2768,12 @@ int run_demo()
             ScopedDefaultEnvironmentValue ntt_fused_matrix_progress(
                 kNttFusedMatrixProgressEnv,
                 "1");
+            ScopedEnvironmentValue ntt_fused_matrix_fp64_tables(
+                kNttFusedMatrixFp64TablesEnv,
+                tensor_fp64_ntt_supported ? "1" : "0");
+            ScopedDefaultEnvironmentValue ntt_fused_matrix_max_levels(
+                kNttFusedMatrixMaxLevelsEnv,
+                "2");
             tensor_gpu_params.build_from_poseidon_context(context, device_id);
         }
 
@@ -2347,39 +2783,86 @@ int run_demo()
         const auto &tensor_ntt_fwd_level_info =
             tensor_gpu_params.get_level(gpu_ntt_fwd_source.meta.parms_id);
 
-        benchmark_ntt_mode(
-            "ntt_inv",
-            "tensor",
-            "tensor",
-            "4",
-            cpu_ntt_inv_result,
-            ntt_inv_destination,
-            [&]()
-            {
-                tensor_ntt_handler.inverse_ciphertext(
-                    ntt_inv_destination_view,
-                    ntt_inv_source_view,
-                    tensor_ntt_inv_level_info);
-            });
-        benchmark_ntt_mode(
-            "ntt_fwd",
-            "tensor",
-            "tensor",
-            "4",
-            cpu_ntt_fwd_result,
-            ntt_fwd_destination,
-            [&]()
-            {
-                tensor_ntt_handler.forward_ciphertext(
-                    ntt_fwd_destination_view,
-                    ntt_fwd_source_view,
-                    tensor_ntt_fwd_level_info);
-            });
+        if (tensor_ntt_supported)
+        {
+            benchmark_ntt_mode(
+                "ntt_inv",
+                "tensor",
+                "tensor",
+                "4",
+                cpu_ntt_inv_result,
+                ntt_inv_destination,
+                [&]()
+                {
+                    tensor_ntt_handler.inverse_ciphertext(
+                        ntt_inv_destination_view,
+                        ntt_inv_source_view,
+                        tensor_ntt_inv_level_info);
+                });
+            benchmark_ntt_mode(
+                "ntt_fwd",
+                "tensor",
+                "tensor",
+                "4",
+                cpu_ntt_fwd_result,
+                ntt_fwd_destination,
+                [&]()
+                {
+                    tensor_ntt_handler.forward_ciphertext(
+                        ntt_fwd_destination_view,
+                        ntt_fwd_source_view,
+                        tensor_ntt_fwd_level_info);
+                });
+        }
+        else
+        {
+            append_skipped_ntt_mode("ntt_inv", "tensor");
+            append_skipped_ntt_mode("ntt_fwd", "tensor");
+        }
+
+        if (tensor_fp64_ntt_supported)
+        {
+            benchmark_ntt_mode(
+                "ntt_inv",
+                "tensor_fp64",
+                "tensor_fp64",
+                "4",
+                cpu_ntt_inv_result,
+                ntt_inv_destination,
+                [&]()
+                {
+                    tensor_ntt_handler.inverse_ciphertext(
+                        ntt_inv_destination_view,
+                        ntt_inv_source_view,
+                        tensor_ntt_inv_level_info);
+                });
+            benchmark_ntt_mode(
+                "ntt_fwd",
+                "tensor_fp64",
+                "tensor_fp64",
+                "4",
+                cpu_ntt_fwd_result,
+                ntt_fwd_destination,
+                [&]()
+                {
+                    tensor_ntt_handler.forward_ciphertext(
+                        ntt_fwd_destination_view,
+                        ntt_fwd_source_view,
+                        tensor_ntt_fwd_level_info);
+                });
+        }
+        else
+        {
+            append_skipped_ntt_mode("ntt_inv", "tensor_fp64");
+            append_skipped_ntt_mode("ntt_fwd", "tensor_fp64");
+        }
     }
     else
     {
         append_skipped_ntt_mode("ntt_inv", "tensor");
         append_skipped_ntt_mode("ntt_fwd", "tensor");
+        append_skipped_ntt_mode("ntt_inv", "tensor_fp64");
+        append_skipped_ntt_mode("ntt_fwd", "tensor_fp64");
     }
 
     print_ntt_timing_table(
@@ -2389,6 +2872,7 @@ int run_demo()
         parms.p().size(),
         timing_iterations,
         warmup_iterations);
+    }
 
     // run_parameter_sweep_benchmarks(device_id);
 
@@ -2411,6 +2895,10 @@ int main()
         if (env_flag_enabled("POSEIDON_NSYS_MUL_RELIN_RESCALE"))
         {
             return run_nsys_multiply_relin_rescale_probe();
+        }
+        if (env_flag_enabled("POSEIDON_NSYS_RELINEARIZE"))
+        {
+            return run_nsys_relinearize_probe();
         }
         if (env_flag_enabled("POSEIDON_NSYS_MULTIPLY_PLAIN"))
         {

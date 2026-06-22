@@ -40,8 +40,13 @@ inline constexpr int kTensorCoreIntegerTile = 16;
 inline constexpr int kTensorCoreU32SegmentCount = 4;
 inline constexpr int kTensorCoreU32Low32U8GemmCount = 10;
 inline constexpr int kTensorCoreU8MaxKWithoutAccumulatorOverflow = 33025;
+inline constexpr int kTensorCoreFp64TileM = 8;
+inline constexpr int kTensorCoreFp64TileN = 8;
+inline constexpr int kTensorCoreFp64TileK = 4;
 
 bool supports_tensor_core_integer_gemm(int device_id = -1);
+
+bool supports_tensor_core_fp64_gemm(int device_id = -1);
 
 TensorCoreU32GemmWorkspaceSizes tensor_core_u32_workspace_sizes(
     GpuGemmShape shape);
@@ -146,6 +151,16 @@ void launch_tensor_core_u32_mod_batched_gemm_from_segments(
     const std::uint32_t *modulus,
     cudaStream_t stream = nullptr);
 
+void launch_tensor_core_u32_mod_batched_gemm_from_segments(
+    const std::uint8_t *a_segments,
+    const std::uint8_t *b_segments_col_major,
+    std::uint32_t *c_row_major,
+    GpuGemmShape per_batch_shape,
+    int batch_count,
+    const std::uint32_t *modulus,
+    const std::uint64_t *barrett_ratio,
+    cudaStream_t stream = nullptr);
+
 void launch_tensor_core_u32_mod_batched_gemm_device_modulus(
     const std::uint32_t *a_row_major,
     const std::uint32_t *b_col_major,
@@ -154,6 +169,17 @@ void launch_tensor_core_u32_mod_batched_gemm_device_modulus(
     int batch_count,
     const std::uint32_t *modulus,
     const TensorCoreU32GemmWorkspace &workspace,
+    cudaStream_t stream = nullptr);
+
+void launch_tensor_core_fp64_u32_mod_batched_gemm_split_b(
+    const double *a_row_major,
+    const double *b_lo_col_major,
+    const double *b_hi_col_major,
+    std::uint32_t *c_row_major,
+    GpuGemmShape per_batch_shape,
+    int batch_count,
+    const std::uint32_t *modulus,
+    const std::uint64_t *barrett_ratio,
     cudaStream_t stream = nullptr);
 
 }  // namespace gpu
