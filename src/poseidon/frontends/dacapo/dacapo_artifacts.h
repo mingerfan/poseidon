@@ -1,11 +1,12 @@
 #pragma once
 
+#include "poseidon/frontends/dacapo/dacapo_adapter.h"
 #include "poseidon/frontends/dacapo/dacapo_constants.h"
-#include "poseidon/frontends/dacapo/dacapo_schedule_pipeline.h"
 #include "poseidon/mgpu/compiler/static_schedule_pipeline.h"
 
 #include <cstddef>
 #include <string>
+#include <string_view>
 #include <vector>
 
 namespace poseidon::mgpu
@@ -39,6 +40,10 @@ struct DacapoHevmArtifactResult
 
     std::string format_diagnostics() const;
 };
+
+StaticSchedulePipelineResult prepare_dacapo_static_schedule(
+    std::string_view input, const DacapoAdapterOptions &adapter_options,
+    const StaticSchedulePipelineOptions &pipeline_options = {});
 
 DacapoHevmArtifactResult prepare_dacapo_hevm_artifacts_from_files(
     const DacapoHevmArtifactPaths &paths,

@@ -5,7 +5,6 @@
 #include "poseidon/mgpu/ir/schedule_summary.h"
 #include "poseidon/mgpu/runtime/gpu_execution_preflight.h"
 #include "poseidon/frontends/dacapo/hevm_artifact_report.h"
-#include "poseidon/frontends/dacapo/hevm_artifact_readiness.h"
 #include "poseidon/frontends/dacapo/hevm_io_binding.h"
 #include "poseidon/mgpu/runtime/poseidon_gpu_schedule_preflight.h"
 

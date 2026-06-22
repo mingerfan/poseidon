@@ -1,4 +1,4 @@
-#include "poseidon/frontends/dacapo/hevm_artifact_readiness.h"
+#include "poseidon/frontends/dacapo/hevm_artifact_report.h"
 #include "poseidon/util/json.h"
 
 #include <cstdlib>

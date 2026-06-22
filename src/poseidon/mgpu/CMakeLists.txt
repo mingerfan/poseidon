@@ -38,8 +38,6 @@ add_library(poseidon_dacapo_frontend STATIC
     ${POSEIDON_INCLUDES_DIR}/src/poseidon/frontends/dacapo/dacapo_adapter.cpp
     ${POSEIDON_INCLUDES_DIR}/src/poseidon/frontends/dacapo/dacapo_artifacts.cpp
     ${POSEIDON_INCLUDES_DIR}/src/poseidon/frontends/dacapo/dacapo_constants.cpp
-    ${POSEIDON_INCLUDES_DIR}/src/poseidon/frontends/dacapo/dacapo_schedule_pipeline.cpp
-    ${POSEIDON_INCLUDES_DIR}/src/poseidon/frontends/dacapo/hevm_artifact_readiness.cpp
     ${POSEIDON_INCLUDES_DIR}/src/poseidon/frontends/dacapo/hevm_artifact_report.cpp
     ${POSEIDON_INCLUDES_DIR}/src/poseidon/frontends/dacapo/hevm_io_binding.cpp
     ${POSEIDON_INCLUDES_DIR}/src/poseidon/frontends/dacapo/hevm_plaintext_encoding.cpp

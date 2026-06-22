@@ -1,4 +1,4 @@
-#include "poseidon/frontends/dacapo/dacapo_schedule_pipeline.h"
+#include "poseidon/frontends/dacapo/dacapo_artifacts.h"
 #include "poseidon/tests/frontends/dacapo/hevm_test_utils.h"
 
 #include <cstdint>

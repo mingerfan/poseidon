@@ -1,4 +1,4 @@
-#include "poseidon/frontends/dacapo/dacapo_schedule_pipeline.h"
+#include "poseidon/frontends/dacapo/dacapo_artifacts.h"
 #include "poseidon/batchencoder.h"
 #include "poseidon/ciphertext.h"
 #include "poseidon/ckks_encoder.h"

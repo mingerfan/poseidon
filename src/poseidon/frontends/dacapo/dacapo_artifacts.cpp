@@ -21,6 +21,14 @@ void add_diagnostic(
     });
 }
 
+void add_diagnostic(
+    StaticSchedulePipelineResult &result, std::string stage, std::size_t op_index,
+    std::string message)
+{
+    result.diagnostics.push_back(
+        StaticSchedulePipelineDiagnostic{ std::move(stage), op_index, std::move(message) });
+}
+
 std::string read_binary_file(
     DacapoHevmArtifactResult &result, const std::string &path, const char *stage)
 {
@@ -70,6 +78,27 @@ void add_constant_diagnostics(
 }
 
 }  // namespace
+
+StaticSchedulePipelineResult prepare_dacapo_static_schedule(
+    std::string_view input, const DacapoAdapterOptions &adapter_options,
+    const StaticSchedulePipelineOptions &pipeline_options)
+{
+    StaticSchedulePipelineResult result;
+
+    const DacapoAdapterResult adapter_result =
+        translate_dacapo_schedule(input, adapter_options);
+    for (const DacapoAdapterDiagnostic &diagnostic : adapter_result.diagnostics)
+    {
+        add_diagnostic(
+            result, "dacapo_adapter", diagnostic.offset, diagnostic.message);
+    }
+    if (!adapter_result.ok())
+    {
+        return result;
+    }
+
+    return prepare_static_schedule(adapter_result.schedule, pipeline_options);
+}
 
 std::string DacapoHevmArtifactResult::format_diagnostics() const
 {
