@@ -8,9 +8,6 @@ add_library(poseidon_mgpu STATIC
     comm/routed_object_copy.cpp
     comm/topology.cpp
     compiler/copy_insertion.cpp
-    compiler/dacapo_artifacts.cpp
-    compiler/dacapo_adapter.cpp
-    compiler/dacapo_constants.cpp
     compiler/schedule_verifier.cpp
     compiler/static_placement.cpp
     compiler/static_schedule_config.cpp
@@ -20,11 +17,6 @@ add_library(poseidon_mgpu STATIC
     ir/schedule_summary.cpp
     runtime/copy_dispatching_backend.cpp
     runtime/gpu_execution_preflight.cpp
-    runtime/hevm_artifact_report.cpp
-    runtime/hevm_artifact_readiness.cpp
-    runtime/hevm_io_binding.cpp
-    runtime/hevm_plaintext_encoding.cpp
-    runtime/hevm_static_execution_plan.cpp
     runtime/io_binding_backend.cpp
     runtime/object_store.cpp
     runtime/planned_communication_executor.cpp
@@ -42,31 +34,53 @@ target_link_libraries(poseidon_mgpu
         poseidon_shared
 )
 
+add_library(poseidon_dacapo_frontend STATIC
+    ${POSEIDON_INCLUDES_DIR}/src/poseidon/frontends/dacapo/dacapo_adapter.cpp
+    ${POSEIDON_INCLUDES_DIR}/src/poseidon/frontends/dacapo/dacapo_artifacts.cpp
+    ${POSEIDON_INCLUDES_DIR}/src/poseidon/frontends/dacapo/dacapo_constants.cpp
+    ${POSEIDON_INCLUDES_DIR}/src/poseidon/frontends/dacapo/dacapo_schedule_pipeline.cpp
+    ${POSEIDON_INCLUDES_DIR}/src/poseidon/frontends/dacapo/hevm_artifact_readiness.cpp
+    ${POSEIDON_INCLUDES_DIR}/src/poseidon/frontends/dacapo/hevm_artifact_report.cpp
+    ${POSEIDON_INCLUDES_DIR}/src/poseidon/frontends/dacapo/hevm_io_binding.cpp
+    ${POSEIDON_INCLUDES_DIR}/src/poseidon/frontends/dacapo/hevm_plaintext_encoding.cpp
+    ${POSEIDON_INCLUDES_DIR}/src/poseidon/frontends/dacapo/hevm_static_execution_plan.cpp
+)
+
+target_include_directories(poseidon_dacapo_frontend
+    PUBLIC
+        ${POSEIDON_INCLUDES_DIR}/src
+)
+
+target_link_libraries(poseidon_dacapo_frontend
+    PUBLIC
+        poseidon_mgpu
+)
+
 option(POSEIDON_BUILD_MGPU_TOOLS "Build multi-GPU static schedule command-line tools" OFF)
 message(STATUS "POSEIDON_BUILD_MGPU_TOOLS: ${POSEIDON_BUILD_MGPU_TOOLS}")
 
 if(POSEIDON_BUILD_MGPU_TOOLS)
     add_executable(poseidon_mgpu_dacapo_hevm_dump
-        ${POSEIDON_INCLUDES_DIR}/src/poseidon/mgpu/tools/dacapo_hevm_dump.cpp
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tools/dacapo/dacapo_hevm_dump.cpp
     )
 
     add_executable(poseidon_mgpu_resnet20_artifact_check
-        ${POSEIDON_INCLUDES_DIR}/src/poseidon/mgpu/tools/resnet20_artifact_check.cpp
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tools/dacapo/resnet20_artifact_check.cpp
     )
 
     target_link_libraries(poseidon_mgpu_dacapo_hevm_dump
         PRIVATE
-            poseidon_mgpu
+            poseidon_dacapo_frontend
     )
 
     if(POSEIDON_BUILD_MGPU_TESTS)
         add_executable(poseidon_mgpu_dacapo_hevm_dump_tool_tests
-            ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_dacapo_hevm_dump_tool_test.cpp
+            ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/tools/dacapo/dacapo_hevm_dump_tool_test.cpp
         )
 
         target_link_libraries(poseidon_mgpu_dacapo_hevm_dump_tool_tests
             PRIVATE
-                poseidon_mgpu
+                poseidon_dacapo_frontend
         )
         add_dependencies(
             poseidon_mgpu_dacapo_hevm_dump_tool_tests
@@ -80,15 +94,15 @@ if(POSEIDON_BUILD_MGPU_TOOLS)
         )
 
         add_executable(poseidon_mgpu_resnet20_artifact_check_tool_tests
-            ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_resnet20_artifact_check_tool_test.cpp
+            ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/tools/dacapo/resnet20_artifact_check_tool_test.cpp
         )
 
         add_executable(poseidon_mgpu_resnet20_artifact_path_tests
-            ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_resnet20_artifact_path_test.cpp
+            ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/tools/dacapo/resnet20_artifact_path_test.cpp
         )
 
         add_executable(poseidon_mgpu_resnet20_dump_preflight_tests
-            ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_resnet20_dump_preflight_test.cpp
+            ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/tools/dacapo/resnet20_dump_preflight_test.cpp
         )
 
         add_dependencies(
@@ -101,7 +115,7 @@ if(POSEIDON_BUILD_MGPU_TOOLS)
 
         target_link_libraries(poseidon_mgpu_resnet20_dump_preflight_tests
             PRIVATE
-                poseidon_mgpu
+                poseidon_dacapo_frontend
         )
         add_dependencies(
             poseidon_mgpu_resnet20_dump_preflight_tests
@@ -302,19 +316,19 @@ if(POSEIDON_BUILD_MGPU_TESTS)
     )
 
     add_executable(poseidon_mgpu_dacapo_adapter_tests
-        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_dacapo_adapter_test.cpp
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/frontends/dacapo/dacapo_adapter_test.cpp
     )
 
     add_executable(poseidon_mgpu_dacapo_artifact_tests
-        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_dacapo_artifact_test.cpp
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/frontends/dacapo/dacapo_artifact_test.cpp
     )
 
     add_executable(poseidon_mgpu_external_hevm_artifact_tests
-        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_external_hevm_artifact_test.cpp
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/frontends/dacapo/external_hevm_artifact_test.cpp
     )
 
     add_executable(poseidon_mgpu_dacapo_constants_tests
-        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_dacapo_constants_test.cpp
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/frontends/dacapo/dacapo_constants_test.cpp
     )
 
     add_executable(poseidon_mgpu_runtime_tests
@@ -330,23 +344,23 @@ if(POSEIDON_BUILD_MGPU_TESTS)
     )
 
     add_executable(poseidon_mgpu_hevm_io_binding_tests
-        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_hevm_io_binding_test.cpp
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/frontends/dacapo/hevm_io_binding_test.cpp
     )
 
     add_executable(poseidon_mgpu_hevm_plaintext_encoding_tests
-        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_hevm_plaintext_encoding_test.cpp
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/frontends/dacapo/hevm_plaintext_encoding_test.cpp
     )
 
     add_executable(poseidon_mgpu_hevm_static_execution_plan_tests
-        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_hevm_static_execution_plan_test.cpp
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/frontends/dacapo/hevm_static_execution_plan_test.cpp
     )
 
     add_executable(poseidon_mgpu_hevm_artifact_readiness_tests
-        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_hevm_artifact_readiness_test.cpp
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/frontends/dacapo/hevm_artifact_readiness_test.cpp
     )
 
     add_executable(poseidon_mgpu_hevm_artifact_report_tests
-        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_hevm_artifact_report_test.cpp
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/frontends/dacapo/hevm_artifact_report_test.cpp
     )
 
     add_executable(poseidon_mgpu_gpu_execution_preflight_tests
@@ -370,7 +384,7 @@ if(POSEIDON_BUILD_MGPU_TESTS)
     )
 
     add_executable(poseidon_mgpu_static_pipeline_execution_tests
-        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_static_pipeline_execution_test.cpp
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/frontends/dacapo/dacapo_static_pipeline_execution_test.cpp
     )
 
     target_link_libraries(poseidon_mgpu_ir_tests
@@ -430,22 +444,22 @@ if(POSEIDON_BUILD_MGPU_TESTS)
 
     target_link_libraries(poseidon_mgpu_dacapo_adapter_tests
         PRIVATE
-            poseidon_mgpu
+            poseidon_dacapo_frontend
     )
 
     target_link_libraries(poseidon_mgpu_dacapo_artifact_tests
         PRIVATE
-            poseidon_mgpu
+            poseidon_dacapo_frontend
     )
 
     target_link_libraries(poseidon_mgpu_external_hevm_artifact_tests
         PRIVATE
-            poseidon_mgpu
+            poseidon_dacapo_frontend
     )
 
     target_link_libraries(poseidon_mgpu_dacapo_constants_tests
         PRIVATE
-            poseidon_mgpu
+            poseidon_dacapo_frontend
     )
 
     target_link_libraries(poseidon_mgpu_runtime_tests
@@ -465,27 +479,27 @@ if(POSEIDON_BUILD_MGPU_TESTS)
 
     target_link_libraries(poseidon_mgpu_hevm_io_binding_tests
         PRIVATE
-            poseidon_mgpu
+            poseidon_dacapo_frontend
     )
 
     target_link_libraries(poseidon_mgpu_hevm_plaintext_encoding_tests
         PRIVATE
-            poseidon_mgpu
+            poseidon_dacapo_frontend
     )
 
     target_link_libraries(poseidon_mgpu_hevm_static_execution_plan_tests
         PRIVATE
-            poseidon_mgpu
+            poseidon_dacapo_frontend
     )
 
     target_link_libraries(poseidon_mgpu_hevm_artifact_readiness_tests
         PRIVATE
-            poseidon_mgpu
+            poseidon_dacapo_frontend
     )
 
     target_link_libraries(poseidon_mgpu_hevm_artifact_report_tests
         PRIVATE
-            poseidon_mgpu
+            poseidon_dacapo_frontend
     )
 
     target_link_libraries(poseidon_mgpu_gpu_execution_preflight_tests
@@ -510,12 +524,12 @@ if(POSEIDON_BUILD_MGPU_TESTS)
 
     target_link_libraries(poseidon_mgpu_static_pipeline_tests
         PRIVATE
-            poseidon_mgpu
+            poseidon_dacapo_frontend
     )
 
     target_link_libraries(poseidon_mgpu_static_pipeline_execution_tests
         PRIVATE
-            poseidon_mgpu
+            poseidon_dacapo_frontend
     )
 
     add_test(
@@ -1045,7 +1059,6 @@ endif()
 
 if(POSEIDON_BUILD_MGPU_GPU_RUNTIME)
     add_library(poseidon_mgpu_gpu_runtime STATIC
-        runtime/poseidon_gpu_hevm_executor.cpp
         runtime/poseidon_gpu_execution_backend.cpp
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/gpu/gpu_ciphertext.cpp
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/gpu/gpu_key.cpp
@@ -1081,6 +1094,21 @@ if(POSEIDON_BUILD_MGPU_GPU_RUNTIME)
             $<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>
     )
 
+    add_library(poseidon_dacapo_gpu_runtime STATIC
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/frontends/dacapo/poseidon_gpu_hevm_executor.cpp
+    )
+
+    target_include_directories(poseidon_dacapo_gpu_runtime
+        PUBLIC
+            ${POSEIDON_INCLUDES_DIR}/src
+    )
+
+    target_link_libraries(poseidon_dacapo_gpu_runtime
+        PUBLIC
+            poseidon_dacapo_frontend
+            poseidon_mgpu_gpu_runtime
+    )
+
     if(POSEIDON_BUILD_MGPU_TESTS)
         add_executable(poseidon_mgpu_gpu_runtime_smoke_tests
             ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_gpu_runtime_smoke_test.cpp
@@ -1088,7 +1116,7 @@ if(POSEIDON_BUILD_MGPU_GPU_RUNTIME)
 
         target_link_libraries(poseidon_mgpu_gpu_runtime_smoke_tests
             PRIVATE
-                poseidon_mgpu_gpu_runtime
+                poseidon_dacapo_gpu_runtime
         )
 
         add_test(

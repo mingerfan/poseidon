@@ -1,5 +1,6 @@
+#include "poseidon/frontends/dacapo/dacapo_schedule_pipeline.h"
 #include "poseidon/mgpu/compiler/static_schedule_pipeline.h"
-#include "poseidon/tests/mgpu/hevm_test_utils.h"
+#include "poseidon/tests/frontends/dacapo/hevm_test_utils.h"
 
 #include <cstdlib>
 #include <cstdint>

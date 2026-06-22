@@ -1,13 +1,11 @@
 #pragma once
 
-#include "poseidon/mgpu/compiler/dacapo_adapter.h"
 #include "poseidon/mgpu/compiler/copy_insertion.h"
 #include "poseidon/mgpu/compiler/static_placement.h"
 #include "poseidon/mgpu/ir/schedule.h"
 
 #include <cstddef>
 #include <string>
-#include <string_view>
 #include <vector>
 
 namespace poseidon::mgpu
@@ -44,9 +42,5 @@ struct StaticSchedulePipelineResult
 
 StaticSchedulePipelineResult prepare_static_schedule(
     const MgpuSchedule &schedule, const StaticSchedulePipelineOptions &options = {});
-
-StaticSchedulePipelineResult prepare_dacapo_static_schedule(
-    std::string_view input, const DacapoAdapterOptions &adapter_options,
-    const StaticSchedulePipelineOptions &pipeline_options = {});
 
 }  // namespace poseidon::mgpu

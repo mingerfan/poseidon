@@ -1,3 +1,4 @@
+#include "poseidon/frontends/dacapo/dacapo_schedule_pipeline.h"
 #include "poseidon/batchencoder.h"
 #include "poseidon/ciphertext.h"
 #include "poseidon/ckks_encoder.h"
@@ -5,16 +6,16 @@
 #include "poseidon/factory/poseidon_factory.h"
 #include "poseidon/keygenerator.h"
 #include "poseidon/mgpu/comm/gpu_comm.h"
-#include "poseidon/mgpu/compiler/dacapo_constants.h"
+#include "poseidon/frontends/dacapo/dacapo_constants.h"
 #include "poseidon/mgpu/compiler/static_schedule_pipeline.h"
-#include "poseidon/mgpu/runtime/hevm_static_execution_plan.h"
-#include "poseidon/mgpu/runtime/poseidon_gpu_hevm_executor.h"
+#include "poseidon/frontends/dacapo/hevm_static_execution_plan.h"
+#include "poseidon/frontends/dacapo/poseidon_gpu_hevm_executor.h"
 #include "poseidon/mgpu/runtime/poseidon_gpu_execution_backend.h"
 #include "poseidon/mgpu/runtime/sequential_schedule_executor.h"
 #include "poseidon/parameters_literal.h"
 #include "poseidon/plaintext.h"
 #include "poseidon/poseidon_context.h"
-#include "poseidon/tests/mgpu/hevm_test_utils.h"
+#include "poseidon/tests/frontends/dacapo/hevm_test_utils.h"
 
 #include <cuda_runtime_api.h>
 #include <rmm/mr/cuda_memory_resource.hpp>

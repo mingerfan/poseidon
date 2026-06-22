@@ -6,8 +6,6 @@
 #include "poseidon/gpu/gpu_key.h"
 #include "poseidon/gpu/gpu_parameter.h"
 #include "poseidon/gpu/gpu_plaintext.h"
-#include "poseidon/mgpu/runtime/hevm_io_binding.h"
-#include "poseidon/mgpu/runtime/hevm_plaintext_encoding.h"
 #include "poseidon/mgpu/runtime/sequential_schedule_executor.h"
 #include "poseidon/plaintext.h"
 #include "poseidon/poseidon_context.h"
@@ -84,17 +82,6 @@ private:
     std::shared_ptr<gpu::GpuPlaintextData> plain_object(
         const MgpuObjectStore &object_store, ValueId id) const;
 };
-
-void bind_hevm_cipher_inputs(
-    PoseidonGpuExecutionBackend &backend, const HevmIoBindingPlan &plan,
-    const std::vector<std::shared_ptr<const Ciphertext>> &cipher_inputs);
-
-void bind_hevm_encoded_plain_inputs(
-    PoseidonGpuExecutionBackend &backend,
-    const std::vector<HevmEncodedPlaintext> &plaintexts);
-
-std::vector<std::shared_ptr<Ciphertext>> collect_hevm_results(
-    const PoseidonGpuExecutionBackend &backend, const HevmIoBindingPlan &plan);
 
 }  // namespace mgpu
 }  // namespace poseidon
