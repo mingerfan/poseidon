@@ -1,9 +1,9 @@
-#include "poseidon/mgpu/runtime/planned_communication_executor.h"
+#include "poseidon/mgpu/runtime/executor/planned_communication_executor.h"
 
 #include "poseidon/mgpu/comm/planned_materialized_gpu_comm.h"
 #include "poseidon/mgpu/comm/routed_object_copy.h"
 #include "poseidon/mgpu/compiler/static_schedule_config.h"
-#include "poseidon/mgpu/runtime/copy_dispatching_backend.h"
+#include "poseidon/mgpu/runtime/backend/copy_dispatching_backend.h"
 
 #include <cstddef>
 #include <exception>

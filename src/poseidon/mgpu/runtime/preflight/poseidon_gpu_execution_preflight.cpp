@@ -1,4 +1,4 @@
-#include "poseidon/mgpu/runtime/gpu_execution_preflight.h"
+#include "poseidon/mgpu/runtime/preflight/poseidon_gpu_execution_preflight.h"
 
 #include "poseidon/util/json.h"
 

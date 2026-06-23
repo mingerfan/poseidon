@@ -1,7 +1,7 @@
 #pragma once
 
 #include "poseidon/mgpu/comm/gpu_comm.h"
-#include "poseidon/mgpu/runtime/sequential_schedule_executor.h"
+#include "poseidon/mgpu/runtime/backend/schedule_execution_backend.h"
 
 namespace poseidon::mgpu
 {

@@ -3,7 +3,7 @@
 #include "poseidon/ciphertext.h"
 #include "poseidon/mgpu/comm/gpu_comm.h"
 #include "poseidon/frontends/dacapo/hevm_static_execution_plan.h"
-#include "poseidon/mgpu/runtime/sequential_schedule_executor.h"
+#include "poseidon/mgpu/runtime/type_def/schedule_execution_result.h"
 #include "poseidon/poseidon_context.h"
 
 #include <memory>

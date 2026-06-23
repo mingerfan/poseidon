@@ -1,4 +1,4 @@
-#include "poseidon/mgpu/runtime/object_store.h"
+#include "poseidon/mgpu/runtime/type_def/object_store.h"
 
 #include <sstream>
 #include <stdexcept>

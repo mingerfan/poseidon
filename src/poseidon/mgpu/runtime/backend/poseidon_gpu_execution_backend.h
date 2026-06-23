@@ -6,7 +6,7 @@
 #include "poseidon/gpu/gpu_key.h"
 #include "poseidon/gpu/gpu_parameter.h"
 #include "poseidon/gpu/gpu_plaintext.h"
-#include "poseidon/mgpu/runtime/sequential_schedule_executor.h"
+#include "poseidon/mgpu/runtime/backend/schedule_execution_backend.h"
 #include "poseidon/plaintext.h"
 #include "poseidon/poseidon_context.h"
 

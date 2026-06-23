@@ -1,4 +1,4 @@
-#include "poseidon/mgpu/runtime/planned_communication_executor.h"
+#include "poseidon/mgpu/runtime/executor/planned_communication_executor.h"
 
 #include "poseidon/mgpu/compiler/static_schedule_config.h"
 

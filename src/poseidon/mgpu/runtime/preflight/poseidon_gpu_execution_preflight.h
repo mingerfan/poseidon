@@ -3,7 +3,7 @@
 #include "poseidon/mgpu/comm/execution_preflight.h"
 #include "poseidon/mgpu/comm/topology.h"
 #include "poseidon/mgpu/compiler/schedule_verifier.h"
-#include "poseidon/mgpu/runtime/poseidon_gpu_schedule_preflight.h"
+#include "poseidon/mgpu/runtime/preflight/poseidon_gpu_schedule_preflight.h"
 
 #include <iosfwd>
 #include <string>

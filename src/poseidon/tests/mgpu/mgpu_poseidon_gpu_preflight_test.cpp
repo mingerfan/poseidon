@@ -1,4 +1,4 @@
-#include "poseidon/mgpu/runtime/poseidon_gpu_schedule_preflight.h"
+#include "poseidon/mgpu/runtime/preflight/poseidon_gpu_schedule_preflight.h"
 
 #include <cstdlib>
 #include <iostream>

@@ -3,10 +3,10 @@
 #include "poseidon/mgpu/comm/execution_preflight.h"
 #include "poseidon/mgpu/comm/topology.h"
 #include "poseidon/mgpu/ir/schedule_summary.h"
-#include "poseidon/mgpu/runtime/gpu_execution_preflight.h"
+#include "poseidon/mgpu/runtime/preflight/poseidon_gpu_execution_preflight.h"
 #include "poseidon/frontends/dacapo/hevm_artifact_report.h"
 #include "poseidon/frontends/dacapo/hevm_io_binding.h"
-#include "poseidon/mgpu/runtime/poseidon_gpu_schedule_preflight.h"
+#include "poseidon/mgpu/runtime/preflight/poseidon_gpu_schedule_preflight.h"
 
 #include <cstdint>
 #include <cstdlib>

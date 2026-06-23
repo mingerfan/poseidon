@@ -6,9 +6,9 @@
 #include "poseidon/frontends/dacapo/dacapo_artifacts.h"
 #include "poseidon/mgpu/compiler/static_schedule_config.h"
 #include "poseidon/mgpu/ir/schedule_summary.h"
-#include "poseidon/mgpu/runtime/gpu_execution_preflight.h"
+#include "poseidon/mgpu/runtime/preflight/poseidon_gpu_execution_preflight.h"
 #include "poseidon/frontends/dacapo/hevm_io_binding.h"
-#include "poseidon/mgpu/runtime/poseidon_gpu_schedule_preflight.h"
+#include "poseidon/mgpu/runtime/preflight/poseidon_gpu_schedule_preflight.h"
 
 #include <cstddef>
 #include <iosfwd>

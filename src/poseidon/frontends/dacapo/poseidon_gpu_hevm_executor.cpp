@@ -1,9 +1,9 @@
 #include "poseidon/frontends/dacapo/poseidon_gpu_hevm_executor.h"
 
-#include "poseidon/mgpu/runtime/copy_dispatching_backend.h"
-#include "poseidon/mgpu/runtime/poseidon_gpu_execution_backend.h"
-#include "poseidon/mgpu/runtime/poseidon_gpu_schedule_preflight.h"
-#include "poseidon/mgpu/runtime/sequential_schedule_executor.h"
+#include "poseidon/mgpu/runtime/backend/copy_dispatching_backend.h"
+#include "poseidon/mgpu/runtime/backend/poseidon_gpu_execution_backend.h"
+#include "poseidon/mgpu/runtime/preflight/poseidon_gpu_schedule_preflight.h"
+#include "poseidon/mgpu/runtime/executor/sequential_schedule_executor.h"
 
 #include <algorithm>
 #include <cstdint>

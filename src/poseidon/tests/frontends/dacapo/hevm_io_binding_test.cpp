@@ -1,7 +1,7 @@
 #include "poseidon/frontends/dacapo/dacapo_artifacts.h"
 #include "poseidon/mgpu/compiler/static_schedule_pipeline.h"
 #include "poseidon/frontends/dacapo/hevm_io_binding.h"
-#include "poseidon/mgpu/runtime/sequential_schedule_executor.h"
+#include "poseidon/mgpu/runtime/executor/sequential_schedule_executor.h"
 #include "poseidon/tests/frontends/dacapo/hevm_test_utils.h"
 
 #include <cstdlib>

@@ -15,13 +15,14 @@ add_library(poseidon_mgpu STATIC
     ir/schedule.cpp
     ir/schedule_json.cpp
     ir/schedule_summary.cpp
-    runtime/copy_dispatching_backend.cpp
-    runtime/gpu_execution_preflight.cpp
-    runtime/io_binding_backend.cpp
-    runtime/object_store.cpp
-    runtime/planned_communication_executor.cpp
-    runtime/poseidon_gpu_schedule_preflight.cpp
-    runtime/sequential_schedule_executor.cpp
+    runtime/backend/copy_dispatching_backend.cpp
+    runtime/backend/io_binding_backend.cpp
+    runtime/executor/planned_communication_executor.cpp
+    runtime/executor/sequential_schedule_executor.cpp
+    runtime/preflight/poseidon_gpu_execution_preflight.cpp
+    runtime/preflight/poseidon_gpu_schedule_preflight.cpp
+    runtime/type_def/object_store.cpp
+    runtime/type_def/schedule_execution_result.cpp
 )
 
 target_include_directories(poseidon_mgpu
@@ -1071,7 +1072,7 @@ endif()
 
 if(POSEIDON_BUILD_MGPU_GPU_RUNTIME)
     add_library(poseidon_mgpu_gpu_runtime STATIC
-        runtime/poseidon_gpu_execution_backend.cpp
+        runtime/backend/poseidon_gpu_execution_backend.cpp
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/gpu/gpu_ciphertext.cpp
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/gpu/gpu_key.cpp
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/gpu/gpu_parameter.cpp

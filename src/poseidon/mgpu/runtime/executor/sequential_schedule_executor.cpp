@@ -1,4 +1,6 @@
-#include "poseidon/mgpu/runtime/sequential_schedule_executor.h"
+#include "poseidon/mgpu/runtime/executor/sequential_schedule_executor.h"
+
+#include "poseidon/mgpu/compiler/schedule_verifier.h"
 
 #include <exception>
 #include <sstream>
@@ -77,20 +79,6 @@ void apply_completed_op(MgpuObjectStore &object_store, const MgpuOp &op)
 }
 
 }  // namespace
-
-std::string ScheduleExecutionResult::format_errors() const
-{
-    std::ostringstream stream;
-    for (std::size_t i = 0; i < errors.size(); ++i)
-    {
-        if (i > 0)
-        {
-            stream << '\n';
-        }
-        stream << "op #" << errors[i].op_index << ": " << errors[i].message;
-    }
-    return stream.str();
-}
 
 SequentialScheduleExecutor::SequentialScheduleExecutor(SequentialScheduleExecutorOptions options)
     : options_(options)

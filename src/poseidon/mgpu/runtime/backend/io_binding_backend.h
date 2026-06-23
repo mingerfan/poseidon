@@ -1,18 +1,12 @@
 #pragma once
 
-#include "poseidon/mgpu/runtime/sequential_schedule_executor.h"
+#include "poseidon/mgpu/runtime/backend/schedule_execution_backend.h"
 
 #include <memory>
 #include <unordered_map>
 
 namespace poseidon::mgpu
 {
-
-struct BoundScheduleObject
-{
-    MgpuValueKind kind = MgpuValueKind::Ciphertext;
-    std::shared_ptr<void> object;
-};
 
 class IoBindingExecutionBackend final : public ScheduleExecutionBackend
 {
@@ -31,6 +25,12 @@ public:
     void execute(const MgpuOp &op, MgpuObjectStore &object_store) override;
 
 private:
+    struct BoundScheduleObject
+    {
+        MgpuValueKind kind = MgpuValueKind::Ciphertext;
+        std::shared_ptr<void> object;
+    };
+
     void execute_upload(
         const MgpuOp &op, MgpuObjectStore &object_store, MgpuValueKind expected_kind);
     void execute_download(const MgpuOp &op, MgpuObjectStore &object_store);
