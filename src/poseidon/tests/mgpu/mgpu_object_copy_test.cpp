@@ -1,4 +1,4 @@
-#include "poseidon/mgpu/comm/gpu_object_copy.h"
+#include "poseidon/mgpu/comm/gpu_comm.h"
 
 #include <cstdlib>
 #include <iostream>

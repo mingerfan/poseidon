@@ -1,4 +1,4 @@
-#include "poseidon/mgpu/comm/planned_materialized_gpu_comm.h"
+#include "poseidon/mgpu/comm/gpu_comm.h"
 
 #include <cstdlib>
 #include <cstring>
@@ -86,6 +86,36 @@ public:
     std::vector<GpuCommCopyRequest> requests;
 };
 
+class MismatchedBufferMaterializer final : public GpuObjectCopyMaterializer
+{
+public:
+    MaterializedGpuObjectCopy materialize_copy(
+        const GpuCommCopyRequest &request) override
+    {
+        requests.push_back(request);
+
+        auto source =
+            std::static_pointer_cast<std::vector<int>>(request.source_object);
+        auto destination = std::make_shared<std::vector<int>>(source->size(), 0);
+
+        MaterializedGpuObjectCopy result;
+        result.destination_object = destination;
+        result.object_copy.source_id = request.source_id;
+        result.object_copy.destination_id = request.destination_id;
+        result.object_copy.kind = request.kind;
+        result.object_copy.buffers.push_back(GpuObjectBufferCopy{
+            source->data(),
+            destination->data(),
+            source->size() * sizeof(int),
+            request.source_device,
+            request.destination_device + 1,
+        });
+        return result;
+    }
+
+    std::vector<GpuCommCopyRequest> requests;
+};
+
 class CopyingLocalBackend final : public GpuObjectCopyBackend
 {
 public:
@@ -153,10 +183,9 @@ void test_local_planned_route_uses_local_backend()
     VectorCopyMaterializer materializer;
     CopyingLocalBackend local_backend;
     CopyingInterNodeBackend inter_node_backend;
-    RoutedGpuObjectCopyBackend routed_backend(
-        make_uniform_cluster_topology(2, 4), local_backend, inter_node_backend);
     PlannedMaterializedGpuComm comm(
-        plan_with_route(cuda_peer), materializer, routed_backend);
+        plan_with_route(cuda_peer), make_uniform_cluster_topology(2, 4),
+        materializer, local_backend, inter_node_backend);
 
     auto source = std::make_shared<std::vector<int>>(
         std::initializer_list<int>{ 1, 2, 3 });
@@ -180,10 +209,9 @@ void test_inter_node_planned_route_uses_inter_node_backend()
     VectorCopyMaterializer materializer;
     CopyingLocalBackend local_backend;
     CopyingInterNodeBackend inter_node_backend;
-    RoutedGpuObjectCopyBackend routed_backend(
-        make_uniform_cluster_topology(2, 4), local_backend, inter_node_backend);
     PlannedMaterializedGpuComm comm(
-        plan_with_route(inter_node), materializer, routed_backend);
+        plan_with_route(inter_node), make_uniform_cluster_topology(2, 4),
+        materializer, local_backend, inter_node_backend);
 
     auto source =
         std::make_shared<std::vector<int>>(std::initializer_list<int>{ 4, 5 });
@@ -212,10 +240,9 @@ void test_missing_planned_route_fails_before_materialization()
     VectorCopyMaterializer materializer;
     CopyingLocalBackend local_backend;
     CopyingInterNodeBackend inter_node_backend;
-    RoutedGpuObjectCopyBackend routed_backend(
-        make_uniform_cluster_topology(2, 4), local_backend, inter_node_backend);
     PlannedMaterializedGpuComm comm(
-        plan_with_route(cuda_peer), materializer, routed_backend);
+        plan_with_route(cuda_peer), make_uniform_cluster_topology(2, 4),
+        materializer, local_backend, inter_node_backend);
 
     bool failed = false;
     try
@@ -252,10 +279,9 @@ void test_request_route_device_mismatch_fails_before_materialization()
     VectorCopyMaterializer materializer;
     CopyingLocalBackend local_backend;
     CopyingInterNodeBackend inter_node_backend;
-    RoutedGpuObjectCopyBackend routed_backend(
-        make_uniform_cluster_topology(2, 4), local_backend, inter_node_backend);
     PlannedMaterializedGpuComm comm(
-        plan_with_route(cuda_peer), materializer, routed_backend);
+        plan_with_route(cuda_peer), make_uniform_cluster_topology(2, 4),
+        materializer, local_backend, inter_node_backend);
 
     GpuCommCopyRequest request =
         request_from_route(cuda_peer, std::make_shared<std::vector<int>>(1, 7));
@@ -289,10 +315,9 @@ void test_request_route_kind_mismatch_fails_before_materialization()
     VectorCopyMaterializer materializer;
     CopyingLocalBackend local_backend;
     CopyingInterNodeBackend inter_node_backend;
-    RoutedGpuObjectCopyBackend routed_backend(
-        make_uniform_cluster_topology(2, 4), local_backend, inter_node_backend);
     PlannedMaterializedGpuComm comm(
-        plan_with_route(cuda_peer), materializer, routed_backend);
+        plan_with_route(cuda_peer), make_uniform_cluster_topology(2, 4),
+        materializer, local_backend, inter_node_backend);
 
     GpuCommCopyRequest request =
         request_from_route(cuda_peer, std::make_shared<std::vector<int>>(1, 7));
@@ -326,10 +351,9 @@ void test_null_source_object_fails_before_materialization()
     VectorCopyMaterializer materializer;
     CopyingLocalBackend local_backend;
     CopyingInterNodeBackend inter_node_backend;
-    RoutedGpuObjectCopyBackend routed_backend(
-        make_uniform_cluster_topology(2, 4), local_backend, inter_node_backend);
     PlannedMaterializedGpuComm comm(
-        plan_with_route(cuda_peer), materializer, routed_backend);
+        plan_with_route(cuda_peer), make_uniform_cluster_topology(2, 4),
+        materializer, local_backend, inter_node_backend);
 
     GpuCommCopyRequest request;
     request.source_id = cuda_peer.source_id;
@@ -368,13 +392,13 @@ void test_invalid_plan_is_rejected()
     VectorCopyMaterializer materializer;
     CopyingLocalBackend local_backend;
     CopyingInterNodeBackend inter_node_backend;
-    RoutedGpuObjectCopyBackend routed_backend(
-        make_uniform_cluster_topology(2, 4), local_backend, inter_node_backend);
 
     bool failed = false;
     try
     {
-        PlannedMaterializedGpuComm comm(plan, materializer, routed_backend);
+        PlannedMaterializedGpuComm comm(
+            plan, make_uniform_cluster_topology(2, 4), materializer,
+            local_backend, inter_node_backend);
     }
     catch (const std::invalid_argument &ex)
     {
@@ -393,13 +417,13 @@ void test_reserved_value_id_planned_route_is_rejected()
     VectorCopyMaterializer materializer;
     CopyingLocalBackend local_backend;
     CopyingInterNodeBackend inter_node_backend;
-    RoutedGpuObjectCopyBackend routed_backend(
-        make_uniform_cluster_topology(2, 4), local_backend, inter_node_backend);
 
     bool failed = false;
     try
     {
-        PlannedMaterializedGpuComm comm(plan, materializer, routed_backend);
+        PlannedMaterializedGpuComm comm(
+            plan, make_uniform_cluster_topology(2, 4), materializer,
+            local_backend, inter_node_backend);
     }
     catch (const std::invalid_argument &ex)
     {
@@ -413,7 +437,9 @@ void test_reserved_value_id_planned_route_is_rejected()
     failed = false;
     try
     {
-        PlannedMaterializedGpuComm comm(plan, materializer, routed_backend);
+        PlannedMaterializedGpuComm comm(
+            plan, make_uniform_cluster_topology(2, 4), materializer,
+            local_backend, inter_node_backend);
     }
     catch (const std::invalid_argument &ex)
     {
@@ -434,13 +460,13 @@ void test_duplicate_planned_route_is_rejected()
     VectorCopyMaterializer materializer;
     CopyingLocalBackend local_backend;
     CopyingInterNodeBackend inter_node_backend;
-    RoutedGpuObjectCopyBackend routed_backend(
-        make_uniform_cluster_topology(2, 4), local_backend, inter_node_backend);
 
     bool failed = false;
     try
     {
-        PlannedMaterializedGpuComm comm(plan, materializer, routed_backend);
+        PlannedMaterializedGpuComm comm(
+            plan, make_uniform_cluster_topology(2, 4), materializer,
+            local_backend, inter_node_backend);
     }
     catch (const std::invalid_argument &ex)
     {
@@ -457,10 +483,9 @@ void test_null_materialized_destination_fails_before_backend()
     NullDestinationMaterializer materializer;
     CopyingLocalBackend local_backend;
     CopyingInterNodeBackend inter_node_backend;
-    RoutedGpuObjectCopyBackend routed_backend(
-        make_uniform_cluster_topology(2, 4), local_backend, inter_node_backend);
     PlannedMaterializedGpuComm comm(
-        plan_with_route(cuda_peer), materializer, routed_backend);
+        plan_with_route(cuda_peer), make_uniform_cluster_topology(2, 4),
+        materializer, local_backend, inter_node_backend);
 
     bool failed = false;
     try
@@ -485,6 +510,133 @@ void test_null_materialized_destination_fails_before_backend()
         "inter-node backend should not run");
 }
 
+void test_materialized_buffer_route_mismatch_fails_before_backend()
+{
+    const MgpuCopyRoute cuda_peer =
+        route(72, 73, 1, 2, MgpuTransportKind::CudaPeer);
+    MismatchedBufferMaterializer materializer;
+    CopyingLocalBackend local_backend;
+    CopyingInterNodeBackend inter_node_backend;
+    PlannedMaterializedGpuComm comm(
+        plan_with_route(cuda_peer), make_uniform_cluster_topology(2, 4),
+        materializer, local_backend, inter_node_backend);
+
+    bool failed = false;
+    try
+    {
+        (void)comm.copy(
+            request_from_route(
+                cuda_peer, std::make_shared<std::vector<int>>(1, 7)));
+    }
+    catch (const std::invalid_argument &ex)
+    {
+        failed = true;
+        require_contains(ex.what(), "buffer devices do not match copy route");
+    }
+
+    require(failed, "materialized buffer route mismatch should fail");
+    require(
+        materializer.requests.size() == 1,
+        "buffer mismatch should be detected after materialization");
+    require(local_backend.requests.empty(), "local backend should not run");
+    require(
+        inter_node_backend.requests.empty(),
+        "inter-node backend should not run");
+}
+
+void expect_route_topology_failure(
+    const MgpuCopyRoute &copy_route, const MgpuTopology &topology,
+    const std::string &message)
+{
+    VectorCopyMaterializer materializer;
+    CopyingLocalBackend local_backend;
+    CopyingInterNodeBackend inter_node_backend;
+    PlannedMaterializedGpuComm comm(
+        plan_with_route(copy_route), topology, materializer, local_backend,
+        inter_node_backend);
+
+    bool failed = false;
+    try
+    {
+        (void)comm.copy(
+            request_from_route(
+                copy_route, std::make_shared<std::vector<int>>(1, 7)));
+    }
+    catch (const std::invalid_argument &ex)
+    {
+        failed = true;
+        require_contains(ex.what(), message);
+    }
+
+    require(failed, "invalid route topology should fail");
+    require(
+        materializer.requests.size() == 1,
+        "route topology validation should run after materialization");
+    require(local_backend.requests.empty(), "local backend should not run");
+    require(
+        inter_node_backend.requests.empty(),
+        "inter-node backend should not run");
+}
+
+void test_route_topology_validation_fails_before_backend()
+{
+    expect_route_topology_failure(
+        route(80, 81, 8, 2, MgpuTransportKind::CudaPeer),
+        make_uniform_cluster_topology(1, 4),
+        "source device 8 is not present in topology");
+    expect_route_topology_failure(
+        route(82, 83, 1, 8, MgpuTransportKind::CudaPeer),
+        make_uniform_cluster_topology(1, 4),
+        "destination device 8 is not present in topology");
+    expect_route_topology_failure(
+        route(84, 85, 1, 2, MgpuTransportKind::SameDevice),
+        make_uniform_cluster_topology(2, 4),
+        "same-device copy route endpoints are different logical devices");
+    expect_route_topology_failure(
+        route(86, 87, 1, 1, MgpuTransportKind::CudaPeer),
+        make_uniform_cluster_topology(2, 4),
+        "CUDA peer copy route uses the same source and destination device");
+    expect_route_topology_failure(
+        route(88, 89, 1, 4, MgpuTransportKind::CudaPeer),
+        make_uniform_cluster_topology(2, 4),
+        "CUDA peer copy route endpoints are on different nodes");
+    expect_route_topology_failure(
+        route(90, 91, 1, 2, MgpuTransportKind::InterNode),
+        make_uniform_cluster_topology(2, 4),
+        "inter-node copy route endpoints are on the same node");
+}
+
+void test_missing_inter_node_backend_fails_clearly()
+{
+    const MgpuCopyRoute inter_node =
+        route(92, 93, 1, 4, MgpuTransportKind::InterNode);
+    VectorCopyMaterializer materializer;
+    CopyingLocalBackend local_backend;
+    MissingInterNodeTransportBackend inter_node_backend;
+    PlannedMaterializedGpuComm comm(
+        plan_with_route(inter_node), make_uniform_cluster_topology(2, 4),
+        materializer, local_backend, inter_node_backend);
+
+    bool failed = false;
+    try
+    {
+        (void)comm.copy(
+            request_from_route(
+                inter_node, std::make_shared<std::vector<int>>(1, 7)));
+    }
+    catch (const std::runtime_error &ex)
+    {
+        failed = true;
+        require_contains(
+            ex.what(), "inter-node communication backend is not configured");
+        require_contains(ex.what(), "device 1 -> 4");
+    }
+
+    require(failed, "missing inter-node backend should fail");
+    require(materializer.requests.size() == 1, "materializer request mismatch");
+    require(local_backend.requests.empty(), "local backend should not run");
+}
+
 }  // namespace
 
 int main()
@@ -501,6 +653,9 @@ int main()
         test_reserved_value_id_planned_route_is_rejected();
         test_duplicate_planned_route_is_rejected();
         test_null_materialized_destination_fails_before_backend();
+        test_materialized_buffer_route_mismatch_fails_before_backend();
+        test_route_topology_validation_fails_before_backend();
+        test_missing_inter_node_backend_fails_clearly();
     }
     catch (const std::exception &ex)
     {

@@ -1,8 +1,7 @@
 #pragma once
 
 #include "poseidon/mgpu/comm/execution_preflight.h"
-#include "poseidon/mgpu/comm/inter_node_transport.h"
-#include "poseidon/mgpu/comm/materialized_gpu_comm.h"
+#include "poseidon/mgpu/comm/gpu_comm.h"
 #include "poseidon/mgpu/comm/topology.h"
 #include "poseidon/mgpu/runtime/executor/sequential_schedule_executor.h"
 

@@ -467,28 +467,21 @@ The JSON diagnostics include each missing route's index, transport kind,
 source device, and destination device so cluster scripts can report the exact
 backend gap without parsing human-readable text.
 
-`comm/inter_node_transport.*` defines the CPU-only boundary for a future
-cluster transport backend. It converts planned inter-node routes and
-full-object copy buffers into requests with source/destination node and local
-device metadata. `MissingInterNodeTransportBackend` intentionally fails; it is
-not an implementation and must not be advertised as an available inter-node
-backend.
+`comm/gpu_comm.*` defines the object-level communication interface and its
+materialized full-object copy path. `PlannedMaterializedGpuComm` connects the
+static communication plan to execution: it looks up a precomputed route by copy
+value IDs, rejects invalid, ambiguous, missing, or request-mismatched routes,
+materializes the full-object buffers, validates the route against the topology,
+then dispatches same-device/CUDA-peer copies to the local `GpuObjectCopyBackend`
+and inter-node copies to `InterNodeTransportBackend`. This keeps transport
+choice tied to the planned schedule rather than inferred inside evaluator or
+kernel code.
 
-`comm/routed_object_copy.*` is the route-aware object-copy dispatcher. It
-consumes routes that were already produced by the topology planner, validates
-that the materialized full-object copy request and transport kind match the
-topology route, sends same-device and CUDA-peer routes to the local
-`GpuObjectCopyBackend`, and sends inter-node routes through
-`InterNodeTransportBackend`. It is still an interface boundary, not an NCCL/MPI
-implementation, and must not make placement decisions.
-
-`comm/planned_materialized_gpu_comm.*` connects the static communication plan to
-execution. It looks up a precomputed route by copy value IDs, rejects invalid,
-ambiguous, missing, or request-mismatched routes before backend execution,
-rejects null source objects before materialization, materializes the full-object
-buffers, and then delegates to `RoutedGpuObjectCopyBackend`. This keeps
-transport choice tied to the planned schedule rather than inferred inside
-evaluator or kernel code.
+`InterNodeTransportBackend` is the CPU-only boundary for a future cluster
+transport backend. Planned inter-node routes are adapted to requests with
+source/destination node and local device metadata. `MissingInterNodeTransportBackend`
+intentionally fails; it is not an implementation and must not be advertised as
+an available inter-node backend.
 
 The runtime copy-dispatch backend requires the source value to carry an object
 handle before calling the communication layer. Metadata-only values remain valid

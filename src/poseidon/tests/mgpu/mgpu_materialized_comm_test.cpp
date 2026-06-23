@@ -1,4 +1,4 @@
-#include "poseidon/mgpu/comm/materialized_gpu_comm.h"
+#include "poseidon/mgpu/comm/gpu_comm.h"
 
 #include <cstdlib>
 #include <cstring>

@@ -1,7 +1,5 @@
 #include "poseidon/mgpu/runtime/executor/planned_communication_executor.h"
 
-#include "poseidon/mgpu/comm/planned_materialized_gpu_comm.h"
-#include "poseidon/mgpu/comm/routed_object_copy.h"
 #include "poseidon/mgpu/compiler/static_schedule_config.h"
 #include "poseidon/mgpu/runtime/backend/copy_dispatching_backend.h"
 
@@ -131,10 +129,9 @@ ScheduleExecutionResult PlannedCommunicationScheduleExecutor::run(
 
     try
     {
-        RoutedGpuObjectCopyBackend routed_backend(
-            topology_, local_backend_, inter_node_backend_);
         PlannedMaterializedGpuComm comm(
-            communication_plan, materializer_, routed_backend);
+            communication_plan, topology_, materializer_, local_backend_,
+            inter_node_backend_);
         CopyDispatchingExecutionBackend copy_backend(comm, &non_copy_backend_);
         SequentialScheduleExecutor executor(options_);
         return executor.run(schedule, copy_backend);

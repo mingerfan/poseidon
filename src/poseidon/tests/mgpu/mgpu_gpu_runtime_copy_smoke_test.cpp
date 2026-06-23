@@ -5,7 +5,7 @@
 #include "poseidon/keygenerator.h"
 #include "poseidon/mgpu/comm/cuda_peer_comm.h"
 #include "poseidon/mgpu/comm/gpu_object_materializer.h"
-#include "poseidon/mgpu/comm/materialized_gpu_comm.h"
+#include "poseidon/mgpu/comm/gpu_comm.h"
 #include "poseidon/mgpu/runtime/backend/copy_dispatching_backend.h"
 #include "poseidon/mgpu/runtime/backend/poseidon_gpu_execution_backend.h"
 #include "poseidon/mgpu/runtime/executor/sequential_schedule_executor.h"
