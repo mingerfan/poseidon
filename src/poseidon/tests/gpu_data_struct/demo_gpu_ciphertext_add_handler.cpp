@@ -282,6 +282,7 @@ struct OperationTimingRow
 {
     std::string operation;
     TimingResult timing;
+    std::string correct;
     bool has_cpu_gpu_comparison = true;
 };
 
@@ -562,6 +563,88 @@ bool ciphertext_raw_equal(
            expected.coeff_modulus_size() == actual.coeff_modulus_size();
 }
 
+bool device_vector_matches_u64_segment(
+    const poseidon::gpu::DeviceVector<poseidon::gpu::GpuWord> &actual_device,
+    const std::vector<std::uint64_t> &expected,
+    std::size_t expected_offset,
+    const char *name)
+{
+    if (expected_offset > expected.size() ||
+        actual_device.size() > expected.size() - expected_offset)
+    {
+        return false;
+    }
+
+    std::vector<poseidon::gpu::GpuWord> actual(actual_device.size());
+    poseidon::gpu::gpu_check_cuda(
+        cudaMemcpy(
+            actual.data(),
+            actual_device.data(),
+            actual.size() * sizeof(poseidon::gpu::GpuWord),
+            cudaMemcpyDeviceToHost),
+        name);
+    for (std::size_t i = 0; i < actual.size(); ++i)
+    {
+        if (actual[i] !=
+            static_cast<poseidon::gpu::GpuWord>(expected[expected_offset + i]))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool hybrid_modup_q_matches_generated_reference(
+    const poseidon::gpu::DeviceVector<poseidon::gpu::GpuWord> &actual_device,
+    const std::vector<std::uint64_t> &expected_coeff_modup_q,
+    std::size_t expected_coeff_offset,
+    std::size_t decomp_limb_begin,
+    std::size_t decomp_limb_count,
+    std::size_t base_q_size,
+    std::size_t degree,
+    const char *name)
+{
+    const std::size_t expected_size = base_q_size * degree;
+    if (actual_device.size() != expected_size)
+    {
+        return false;
+    }
+    if (expected_coeff_offset > expected_coeff_modup_q.size() ||
+        expected_size > expected_coeff_modup_q.size() - expected_coeff_offset)
+    {
+        return false;
+    }
+
+    std::vector<poseidon::gpu::GpuWord> actual(actual_device.size());
+    poseidon::gpu::gpu_check_cuda(
+        cudaMemcpy(
+            actual.data(),
+            actual_device.data(),
+            actual.size() * sizeof(poseidon::gpu::GpuWord),
+            cudaMemcpyDeviceToHost),
+        name);
+
+    const std::size_t decomp_limb_end = decomp_limb_begin + decomp_limb_count;
+    for (std::size_t q_limb = 0; q_limb < base_q_size; ++q_limb)
+    {
+        if (q_limb >= decomp_limb_begin && q_limb < decomp_limb_end)
+        {
+            continue;
+        }
+        for (std::size_t coeff = 0; coeff < degree; ++coeff)
+        {
+            const std::size_t index = q_limb * degree + coeff;
+            const std::uint64_t expected =
+                expected_coeff_modup_q[expected_coeff_offset + index];
+            if (actual[index] != static_cast<poseidon::gpu::GpuWord>(expected))
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 [[maybe_unused]] void print_decoded_slots(
     const std::string &name,
     const std::vector<double> &slots,
@@ -698,10 +781,10 @@ void run_cpu_hybrid_bconv_modup(
     for (std::size_t decomp_index = 0; decomp_index < decomp_count;
          ++decomp_index)
     {
-        const auto decomp_limb_count =
-            base_q_size > base_p_size * (decomp_index + 1)
-                ? base_p_size
-                : base_q_size % base_p_size;
+        const auto decomp_limb_begin = decomp_index * base_p_size;
+        const auto decomp_limb_count = std::min(
+            base_p_size,
+            base_q_size - decomp_limb_begin);
 
         rns_qp->mod_up_copy_q(
             c2_coeff.const_poly_iter()[0],
@@ -960,6 +1043,7 @@ void print_operation_timing_table(
     constexpr int event_width = 20;
     constexpr int wall_speedup_width = 14;
     constexpr int event_speedup_width = 15;
+    constexpr int correct_width = 7;
 
     const auto print_border = [&]()
     {
@@ -975,6 +1059,8 @@ void print_operation_timing_table(
                   << std::string(wall_speedup_width + 2, '-')
                   << '+'
                   << std::string(event_speedup_width + 2, '-')
+                  << '+'
+                  << std::string(correct_width + 2, '-')
                   << "+\n";
     };
 
@@ -984,7 +1070,8 @@ void print_operation_timing_table(
         const std::string &gpu_wall_avg,
         const std::string &gpu_event_avg,
         const std::string &wall_speedup,
-        const std::string &event_speedup)
+        const std::string &event_speedup,
+        const std::string &correct)
     {
         std::cout << "| " << std::left << std::setw(op_width) << operation
                   << " | " << std::right << std::setw(cpu_width) << cpu_avg
@@ -992,6 +1079,7 @@ void print_operation_timing_table(
                   << " | " << std::right << std::setw(event_width) << gpu_event_avg
                   << " | " << std::right << std::setw(wall_speedup_width) << wall_speedup
                   << " | " << std::right << std::setw(event_speedup_width) << event_speedup
+                  << " | " << std::right << std::setw(correct_width) << correct
                   << " |\n";
     };
 
@@ -1003,7 +1091,8 @@ void print_operation_timing_table(
         "GPU wall avg (ms)",
         "GPU event avg (ms)",
         "wall speedup",
-        "event speedup");
+        "event speedup",
+        "correct");
     print_border();
     for (const auto &row : rows)
     {
@@ -1013,7 +1102,8 @@ void print_operation_timing_table(
             format_fixed(row.timing.gpu_wall_avg_ms, 6),
             format_fixed(row.timing.gpu_event_avg_ms, 6),
             format_speedup(row.timing.wall_speedup),
-            format_speedup(row.timing.event_speedup));
+            format_speedup(row.timing.event_speedup),
+            row.correct);
     }
     print_border();
 
@@ -1025,6 +1115,7 @@ void print_operation_timing_table(
               << " average\n";
     std::cout << "benchmark input: deterministic key/encrypt randomness\n";
     std::cout << "excluded from timing: encode/encrypt/upload/download/decrypt/decode\n";
+    std::cout << "correct: raw residues and metadata compared with CPU result; BConv compares generated limbs in the last HYBRID ModUp block\n";
     std::cout << "ntt variants: ntt_inv/ntt_fwd use default CUDA fused3 unless POSEIDON_NTT_ALGO or POSEIDON_NTT_FUSION_STAGES overrides it\n";
     std::cout << "keyswitch_bconv_modup: HYBRID ModUp/BConv only; c2 INTT and later NTT/key multiply/ModDown are excluded\n";
 }
@@ -2269,8 +2360,10 @@ int run_demo()
         std::vector<OperationTimingRow> timing_rows;
 
         auto benchmark_operation =
-            [&](const std::string &name, auto cpu_once, auto gpu_once)
+            [&](const std::string &name, auto cpu_once, auto gpu_once,
+                auto correctness_once)
         {
+            const std::string correct = correctness_once();
             timing_rows.push_back(
                 OperationTimingRow{
                     name,
@@ -2280,7 +2373,47 @@ int run_demo()
                         cpu_once,
                         gpu_once,
                         name.c_str(),
-                        warmup_iterations)});
+                        warmup_iterations),
+                    correct});
+        };
+
+        auto check_ciphertext_operation =
+            [&](auto cpu_once, auto gpu_once,
+                const Ciphertext &cpu_output,
+                const GpuCiphertextData &gpu_output,
+                const char *sync_name)
+        {
+            cpu_once();
+            gpu_once();
+            gpu_check_cuda(cudaDeviceSynchronize(), sync_name);
+            Ciphertext gpu_download;
+            GpuUploader::download_ciphertext(
+                gpu_output,
+                gpu_download,
+                context);
+            return ciphertext_raw_equal(cpu_output, gpu_download)
+                ? std::string("OK")
+                : std::string("FAIL");
+        };
+
+        auto benchmark_ciphertext_operation =
+            [&](const std::string &name, auto cpu_once, auto gpu_once,
+                const Ciphertext &cpu_output,
+                const GpuCiphertextData &gpu_output)
+        {
+            benchmark_operation(
+                name,
+                cpu_once,
+                gpu_once,
+                [&]()
+                {
+                    return check_ciphertext_operation(
+                        cpu_once,
+                        gpu_once,
+                        cpu_output,
+                        gpu_output,
+                        (name + "_correctness").c_str());
+                });
         };
 
         poseidon::RNSPoly cpu_bconv_c2_coeff(
@@ -2368,7 +2501,7 @@ int run_demo()
             cudaDeviceSynchronize(),
             "BConv benchmark c2 INTT precompute sync");
 
-        benchmark_operation(
+        benchmark_ciphertext_operation(
             "multiply_relinearize_rescale",
             [&]()
             {
@@ -2391,9 +2524,11 @@ int run_demo()
                 gpu_evaluator.rescale(
                     gpu_chain_relinearize_output,
                     gpu_timing_output);
-            });
+            },
+            cpu_timing_result,
+            gpu_timing_output);
 
-        benchmark_operation(
+        benchmark_ciphertext_operation(
             "relinearize",
             [&]()
             {
@@ -2408,7 +2543,9 @@ int run_demo()
                     gpu_multiply_output,
                     gpu_relin_keys,
                     gpu_relinearize_timing_output);
-            });
+            },
+            cpu_relinearize_timing_result,
+            gpu_relinearize_timing_output);
 
         benchmark_operation(
             "keyswitch_bconv_modup",
@@ -2429,19 +2566,68 @@ int run_demo()
                     bconv_base_q_size,
                     bconv_base_p_size,
                     bconv_decomp_count);
+            },
+            [&]()
+            {
+                run_cpu_hybrid_bconv_modup(
+                    context,
+                    cpu_bconv_c2_coeff,
+                    cpu_bconv_scratch);
+                run_gpu_hybrid_bconv_modup(
+                    gpu_bconv_scratch,
+                    gpu_bconv_c2_ntt_shard,
+                    gpu_bconv_parameter_shard,
+                    parms.degree(),
+                    bconv_base_q_size,
+                    bconv_base_p_size,
+                    bconv_decomp_count);
+                gpu_check_cuda(
+                    cudaDeviceSynchronize(),
+                    "keyswitch_bconv_modup_correctness");
+                const std::size_t last_decomp =
+                    bconv_decomp_count == 0 ? 0 : bconv_decomp_count - 1;
+                const std::size_t last_decomp_limb_begin =
+                    last_decomp * bconv_base_p_size;
+                const std::size_t last_decomp_limb_count =
+                    std::min(
+                        bconv_base_p_size,
+                        bconv_base_q_size - last_decomp_limb_begin);
+                const std::size_t q_offset =
+                    last_decomp * bconv_base_q_size * parms.degree();
+                const std::size_t p_offset =
+                    last_decomp * bconv_base_p_size * parms.degree();
+                const bool q_ok = hybrid_modup_q_matches_generated_reference(
+                    gpu_bconv_scratch.modup_q,
+                    cpu_bconv_scratch.modup_q,
+                    q_offset,
+                    last_decomp_limb_begin,
+                    last_decomp_limb_count,
+                    bconv_base_q_size,
+                    parms.degree(),
+                    "keyswitch_bconv_modup q download");
+                const bool p_ok = device_vector_matches_u64_segment(
+                    gpu_bconv_scratch.modup_p,
+                    cpu_bconv_scratch.modup_p,
+                    p_offset,
+                    "keyswitch_bconv_modup p download");
+                return q_ok && p_ok ? std::string("OK") : std::string("FAIL");
             });
 
-        benchmark_operation(
+        benchmark_ciphertext_operation(
             "add",
             [&]() { cpu_evaluator->add(ct0, ct1, cpu_timing_result); },
-            [&]() { gpu_evaluator.add(gpu_ct0, gpu_ct1, gpu_timing_output); });
+            [&]() { gpu_evaluator.add(gpu_ct0, gpu_ct1, gpu_timing_output); },
+            cpu_timing_result,
+            gpu_timing_output);
 
-        benchmark_operation(
+        benchmark_ciphertext_operation(
             "sub",
             [&]() { cpu_evaluator->sub(ct0, ct1, cpu_timing_result); },
-            [&]() { gpu_evaluator.sub(gpu_ct0, gpu_ct1, gpu_timing_output); });
+            [&]() { gpu_evaluator.sub(gpu_ct0, gpu_ct1, gpu_timing_output); },
+            cpu_timing_result,
+            gpu_timing_output);
 
-        benchmark_operation(
+        benchmark_ciphertext_operation(
             "negate",
             [&]()
             {
@@ -2451,28 +2637,36 @@ int run_demo()
                     cpu_timing_result[i].negate();
                 }
             },
-            [&]() { gpu_evaluator.negate(gpu_ct0, gpu_timing_output); });
+            [&]() { gpu_evaluator.negate(gpu_ct0, gpu_timing_output); },
+            cpu_timing_result,
+            gpu_timing_output);
 
-        benchmark_operation(
+        benchmark_ciphertext_operation(
             "add_plain",
             [&]() { cpu_evaluator->add_plain(ct0, plain1, cpu_timing_result); },
-            [&]() { gpu_evaluator.add_plain(gpu_ct0, gpu_plain1, gpu_timing_output); });
+            [&]() { gpu_evaluator.add_plain(gpu_ct0, gpu_plain1, gpu_timing_output); },
+            cpu_timing_result,
+            gpu_timing_output);
 
-        benchmark_operation(
+        benchmark_ciphertext_operation(
             "sub_plain",
             [&]()
             {
                 cpu_timing_result = ct0;
                 cpu_timing_result[0].sub(plain1.poly(), cpu_timing_result[0]);
             },
-            [&]() { gpu_evaluator.sub_plain(gpu_ct0, gpu_plain1, gpu_timing_output); });
+            [&]() { gpu_evaluator.sub_plain(gpu_ct0, gpu_plain1, gpu_timing_output); },
+            cpu_timing_result,
+            gpu_timing_output);
 
-        benchmark_operation(
+        benchmark_ciphertext_operation(
             "multiply_plain",
             [&]() { cpu_evaluator->multiply_plain(ct0, plain1, cpu_timing_result); },
-            [&]() { gpu_evaluator.multiply_plain(gpu_ct0, gpu_plain1, gpu_timing_output); });
+            [&]() { gpu_evaluator.multiply_plain(gpu_ct0, gpu_plain1, gpu_timing_output); },
+            cpu_timing_result,
+            gpu_timing_output);
 
-        benchmark_operation(
+        benchmark_ciphertext_operation(
             "rotate",
             [&]()
             {
@@ -2489,9 +2683,11 @@ int run_demo()
                     rotate_step,
                     gpu_galois_keys,
                     gpu_timing_output);
-            });
+            },
+            cpu_timing_result,
+            gpu_timing_output);
 
-        benchmark_operation(
+        benchmark_ciphertext_operation(
             "conjugate",
             [&]()
             {
@@ -2506,22 +2702,30 @@ int run_demo()
                     gpu_ct0,
                     gpu_galois_keys,
                     gpu_timing_output);
-            });
+            },
+            cpu_timing_result,
+            gpu_timing_output);
 
-        benchmark_operation(
+        benchmark_ciphertext_operation(
             "rescale",
             [&]() { cpu_evaluator->rescale(cpu_multiply_plain_result, cpu_timing_result); },
-            [&]() { gpu_evaluator.rescale(gpu_multiply_plain_output, gpu_timing_output); });
+            [&]() { gpu_evaluator.rescale(gpu_multiply_plain_output, gpu_timing_output); },
+            cpu_timing_result,
+            gpu_timing_output);
 
-        benchmark_operation(
+        benchmark_ciphertext_operation(
             "ntt_inv",
             [&]() { cpu_evaluator->ntt_inv(ct0, cpu_timing_result); },
-            [&]() { gpu_evaluator.ntt_inv(gpu_ct0, gpu_timing_output); });
+            [&]() { gpu_evaluator.ntt_inv(gpu_ct0, gpu_timing_output); },
+            cpu_timing_result,
+            gpu_timing_output);
 
-        benchmark_operation(
+        benchmark_ciphertext_operation(
             "ntt_fwd",
             [&]() { cpu_evaluator->ntt_fwd(cpu_ntt_inv_result, cpu_timing_result); },
-            [&]() { gpu_evaluator.ntt_fwd(gpu_ntt_inv_output, gpu_timing_output); });
+            [&]() { gpu_evaluator.ntt_fwd(gpu_ntt_inv_output, gpu_timing_output); },
+            cpu_timing_result,
+            gpu_timing_output);
 
         print_operation_timing_table(
             timing_rows,

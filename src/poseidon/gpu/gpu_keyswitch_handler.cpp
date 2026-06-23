@@ -1,5 +1,4 @@
 #include "poseidon/gpu/gpu_keyswitch_handler.h"
-#include "poseidon/gpu/kernels/gpu_elementwise_kernels.h"
 #include "poseidon/gpu/kernels/gpu_keyswitch_kernels.h"
 #include "poseidon/gpu/kernels/gpu_ntt_kernels.h"
 
@@ -369,10 +368,14 @@ void process_hybrid_decomposition_block(
             scratch.accum_p1.data(),
             scratch.modup_q.data(),
             scratch.modup_p.data(),
+            switch_poly_shard.ptr,
             key0_shard.ptr,
             key1_shard.ptr,
             *parameter_shard,
-            scratch.degree);
+            scratch.degree,
+            decomp_limb_begin,
+            decomp_limb_count,
+            decomp_index == 0);
     }
 }
 
@@ -398,8 +401,6 @@ void finalize_hybrid_relinearize(
         scratch,
         *parameter_shard);
 
-    auto accum_q0_view = make_scratch_q_view(scratch.accum_q0.data(), scratch);
-    auto accum_q1_view = make_scratch_q_view(scratch.accum_q1.data(), scratch);
     auto accum_p0_view = make_scratch_p_view(scratch.accum_p0.data(), scratch);
     auto accum_p1_view = make_scratch_p_view(scratch.accum_p1.data(), scratch);
     auto converted_q0_view = make_scratch_q_view(scratch.c2_intt.data(), scratch);
@@ -435,7 +436,7 @@ void finalize_hybrid_relinearize(
             scratch.degree);
     }
 
-    /* 将转换到Q的部分转回NTT域，然后在NTT域完成模降的减法和乘P逆 */
+    /* 将转换到Q的部分转回NTT域 */
     {
         NvtxRange range("keyswitch.finalize.forward_ntt_q0");
         kernel::launch_forward_ntt_poly_shard(
@@ -452,27 +453,17 @@ void finalize_hybrid_relinearize(
             *parameter_shard,
             scratch.degree);
     }
+
+    /* 在NTT域完成模降，并直接和d0/d1累加，避免额外读写accum_q0/accum_q1 */
     {
-        NvtxRange range("keyswitch.finalize.apply_moddown_ntt");
-        kernel::launch_hybrid_apply_moddown_ntt(
+        NvtxRange range("keyswitch.finalize.apply_moddown_ntt_add_back");
+        kernel::launch_hybrid_apply_moddown_ntt_add_back(
+            destination_shard0,
+            destination_shard1,
             scratch.accum_q0.data(),
             scratch.accum_q1.data(),
             scratch.c2_intt.data(),
             scratch.modup_q.data(),
-            *parameter_shard,
-            scratch.degree);
-    }
-
-    /* 和d0/d1累加 */
-    {
-        NvtxRange range("keyswitch.finalize.add_back");
-        kernel::launch_add_two_poly_shards(
-            destination_shard0,
-            destination_shard1,
-            as_const_shard(destination_shard0),
-            as_const_shard(destination_shard1),
-            as_const_shard(accum_q0_view),
-            as_const_shard(accum_q1_view),
             *parameter_shard,
             scratch.degree);
     }

@@ -49,10 +49,14 @@ void launch_hybrid_multiply_accumulate_two_components(
     GpuWord *accum_p1,
     const GpuWord *modup_q,
     const GpuWord *modup_p,
+    const GpuWord *c2_ntt,
     const GpuWord *key_qp0,
     const GpuWord *key_qp1,
     const GpuParameterShard &parameter_shard,
-    std::size_t degree);
+    std::size_t degree,
+    std::size_t decomp_limb_begin,
+    std::size_t decomp_limb_count,
+    bool overwrite_accum);
 
 void launch_hybrid_moddown(
     GpuWord *accum_q,
@@ -71,6 +75,16 @@ void launch_hybrid_convert_p_to_q(
 void launch_hybrid_apply_moddown_ntt(
     GpuWord *accum_q0,
     GpuWord *accum_q1,
+    const GpuWord *converted_q0,
+    const GpuWord *converted_q1,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+void launch_hybrid_apply_moddown_ntt_add_back(
+    const GpuPolyShardView &destination_shard0,
+    const GpuPolyShardView &destination_shard1,
+    const GpuWord *accum_q0,
+    const GpuWord *accum_q1,
     const GpuWord *converted_q0,
     const GpuWord *converted_q1,
     const GpuParameterShard &parameter_shard,
