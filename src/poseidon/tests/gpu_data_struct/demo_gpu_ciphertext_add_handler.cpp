@@ -47,7 +47,7 @@ namespace
 constexpr int kSkip = 77;
 constexpr bool kRunCorrectnessChecks = false;
 constexpr bool kRunOperationTimingSummary = true;
-constexpr bool kRunNttTimingSummary = true;
+constexpr bool kRunNttTimingSummary = false;
 constexpr const char *kNttAlgorithmEnv = "POSEIDON_NTT_ALGO";
 constexpr const char *kNttFusionStagesEnv = "POSEIDON_NTT_FUSION_STAGES";
 constexpr const char *kNttFusedMatrixStagesEnv =

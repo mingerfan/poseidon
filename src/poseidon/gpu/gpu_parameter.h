@@ -115,6 +115,11 @@ struct GpuParameterShard
     DeviceVector<GpuWord> intt_tables;
     DeviceVector<GpuWord> intt_tables_normalized;
     DeviceVector<GpuWord> inv_degree_modulo;
+    DeviceVector<GpuWord> montgomery_ntt_tables;
+    DeviceVector<GpuWord> montgomery_intt_tables;
+    DeviceVector<GpuWord> montgomery_intt_tables_normalized;
+    DeviceVector<GpuWord> montgomery_inv_degree_modulo;
+    DeviceVector<GpuWord> montgomery_neg_inv_modulo;
 
     /**
      * @brief Experimental fused butterfly/TAM matrices for NTT/INTT.

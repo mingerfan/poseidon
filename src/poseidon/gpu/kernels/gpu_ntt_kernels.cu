@@ -24,6 +24,7 @@ enum class NttAlgorithm
 {
     Stage,
     Fused,
+    Montgomery,
     FourStep,
     Tensor,
     TensorFp64
@@ -128,6 +129,45 @@ __device__ __forceinline__ GpuWord mul_mod(
         barrett_ratio);
 }
 
+__device__ __forceinline__ GpuWord montgomery_reduce_u64_u32(
+    GpuWide value,
+    GpuWord modulus,
+    GpuWord neg_inverse)
+{
+    constexpr GpuWide kWordMask = 0xffffffffULL;
+    const GpuWord m =
+        static_cast<GpuWord>(value) * neg_inverse;
+    const GpuWide mq =
+        static_cast<GpuWide>(m) * static_cast<GpuWide>(modulus);
+    const GpuWide carry =
+        ((value & kWordMask) + (mq & kWordMask)) >> 32;
+    GpuWide reduced = (value >> 32) + (mq >> 32) + carry;
+
+    if (reduced >= modulus)
+    {
+        reduced -= modulus;
+    }
+    if (reduced >= modulus)
+    {
+        reduced -= modulus;
+    }
+
+    return static_cast<GpuWord>(reduced);
+}
+
+__device__ __forceinline__ GpuWord montgomery_mul_mod(
+    GpuWord normal_left,
+    GpuWord montgomery_right,
+    GpuWord modulus,
+    GpuWord neg_inverse)
+{
+    return montgomery_reduce_u64_u32(
+        static_cast<GpuWide>(normal_left) *
+            static_cast<GpuWide>(montgomery_right),
+        modulus,
+        neg_inverse);
+}
+
 __device__ __forceinline__ void forward_butterfly(
     GpuWord &left,
     GpuWord &right,
@@ -222,6 +262,11 @@ NttAlgorithm requested_ntt_algorithm()
     {
         return NttAlgorithm::Fused;
     }
+    if (value == "montgomery" || value == "mont" ||
+        value == "montgomery_fused" || value == "mont_fused")
+    {
+        return NttAlgorithm::Montgomery;
+    }
     if (value == "fourstep" || value == "four_step" ||
         value == "cheddar")
     {
@@ -240,7 +285,7 @@ NttAlgorithm requested_ntt_algorithm()
     }
 
     throw std::invalid_argument(
-        "POSEIDON_NTT_ALGO must be stage, fused, fourstep, tensor, or tensor_fp64");
+        "POSEIDON_NTT_ALGO must be stage, fused, montgomery, fourstep, tensor, or tensor_fp64");
 }
 
 int requested_ntt_fusion_stages()
@@ -654,6 +699,206 @@ __global__ void inverse_ntt_fused_stage_kernel(
                     root,
                     modulus,
                     barrett_ratio);
+            }
+        }
+    }
+
+#pragma unroll
+    for (std::size_t i = 0; i < kLocalSize; ++i)
+    {
+        values[base_index + i * gap] = local[i];
+    }
+}
+
+template <int FusionStages>
+__global__ void forward_ntt_montgomery_fused_stage_kernel(
+    GpuWord *values,
+    const GpuWord *rns_primes,
+    const GpuWord *montgomery_neg_inv,
+    const GpuWord *montgomery_roots,
+    std::size_t modulus_offset,
+    std::size_t limb_count,
+    std::size_t degree,
+    std::size_t m,
+    std::size_t gap)
+{
+    static_assert(
+        FusionStages >= 1 && FusionStages <= 3,
+        "Montgomery NTT fusion currently supports 1-3 stages");
+
+    constexpr std::size_t kLocalSize =
+        static_cast<std::size_t>(1) << FusionStages;
+
+    const std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    const std::size_t tiles_per_limb = degree >> FusionStages;
+    const std::size_t total = limb_count * tiles_per_limb;
+    if (tid >= total)
+    {
+        return;
+    }
+
+    const std::size_t local_limb = tid / tiles_per_limb;
+    const std::size_t local_tile = tid % tiles_per_limb;
+    const std::size_t table_limb = modulus_offset + local_limb;
+    const std::size_t final_gap = gap >> (FusionStages - 1);
+    const std::size_t outer_group = local_tile / final_gap;
+    const std::size_t j = local_tile % final_gap;
+    const std::size_t base_index =
+        local_limb * degree + outer_group * (gap << 1) + j;
+
+    const GpuWord modulus = rns_primes[table_limb];
+    const GpuWord neg_inverse = montgomery_neg_inv[table_limb];
+    const GpuWord *limb_roots =
+        montgomery_roots + table_limb * degree;
+
+    GpuWord local[kLocalSize];
+#pragma unroll
+    for (std::size_t i = 0; i < kLocalSize; ++i)
+    {
+        local[i] = values[base_index + i * final_gap];
+    }
+
+#pragma unroll
+    for (int stage = 0; stage < FusionStages; ++stage)
+    {
+        const std::size_t local_stride =
+            static_cast<std::size_t>(1) << (FusionStages - 1 - stage);
+        const std::size_t stage_m = m << stage;
+        const std::size_t stage_group_base = outer_group << stage;
+
+#pragma unroll
+        for (std::size_t block = 0; block < kLocalSize;
+             block += (local_stride << 1))
+        {
+            const std::size_t block_group =
+                block / (local_stride << 1);
+            const GpuWord root =
+                limb_roots[stage_m + stage_group_base + block_group];
+
+#pragma unroll
+            for (std::size_t offset = 0; offset < local_stride; ++offset)
+            {
+                const GpuWord u = local[block + offset];
+                const GpuWord v = montgomery_mul_mod(
+                    local[block + offset + local_stride],
+                    root,
+                    modulus,
+                    neg_inverse);
+                local[block + offset] = add_mod(u, v, modulus);
+                local[block + offset + local_stride] =
+                    sub_mod(u, v, modulus);
+            }
+        }
+    }
+
+#pragma unroll
+    for (std::size_t i = 0; i < kLocalSize; ++i)
+    {
+        values[base_index + i * final_gap] = local[i];
+    }
+}
+
+template <int FusionStages, bool ScaleByInvDegree>
+__global__ void inverse_ntt_montgomery_fused_stage_kernel(
+    GpuWord *values,
+    const GpuWord *rns_primes,
+    const GpuWord *montgomery_neg_inv,
+    const GpuWord *montgomery_roots,
+    const GpuWord *montgomery_inv_degree,
+    std::size_t modulus_offset,
+    std::size_t limb_count,
+    std::size_t degree,
+    std::size_t m,
+    std::size_t gap)
+{
+    static_assert(
+        FusionStages >= 1 && FusionStages <= 3,
+        "Montgomery INTT fusion currently supports 1-3 stages");
+
+    constexpr std::size_t kLocalSize =
+        static_cast<std::size_t>(1) << FusionStages;
+
+    const std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    const std::size_t tiles_per_limb = degree >> FusionStages;
+    const std::size_t total = limb_count * tiles_per_limb;
+    if (tid >= total)
+    {
+        return;
+    }
+
+    const std::size_t local_limb = tid / tiles_per_limb;
+    const std::size_t local_tile = tid % tiles_per_limb;
+    const std::size_t table_limb = modulus_offset + local_limb;
+    const std::size_t outer_group = local_tile / gap;
+    const std::size_t j = local_tile % gap;
+    const std::size_t base_index =
+        local_limb * degree + outer_group * (gap << FusionStages) + j;
+
+    const GpuWord modulus = rns_primes[table_limb];
+    const GpuWord neg_inverse = montgomery_neg_inv[table_limb];
+    const GpuWord *limb_roots =
+        montgomery_roots + table_limb * degree;
+
+    GpuWord local[kLocalSize];
+#pragma unroll
+    for (std::size_t i = 0; i < kLocalSize; ++i)
+    {
+        local[i] = values[base_index + i * gap];
+    }
+
+#pragma unroll
+    for (int stage = 0; stage < FusionStages; ++stage)
+    {
+        const std::size_t local_stride =
+            static_cast<std::size_t>(1) << stage;
+        const std::size_t stage_m = m >> stage;
+        const std::size_t stage_root_base =
+            degree - (stage_m << 1) + 1;
+        const std::size_t stage_group_base =
+            outer_group << (FusionStages - 1 - stage);
+
+#pragma unroll
+        for (std::size_t block = 0; block < kLocalSize;
+             block += (local_stride << 1))
+        {
+            const std::size_t block_group =
+                block / (local_stride << 1);
+            const GpuWord root =
+                limb_roots[stage_root_base + stage_group_base + block_group];
+
+#pragma unroll
+            for (std::size_t offset = 0; offset < local_stride; ++offset)
+            {
+                GpuWord &left = local[block + offset];
+                GpuWord &right =
+                    local[block + offset + local_stride];
+                const GpuWord u = left;
+                const GpuWord v = right;
+                if constexpr (ScaleByInvDegree)
+                {
+                    if (stage == FusionStages - 1)
+                    {
+                        const GpuWord inv_degree =
+                            montgomery_inv_degree[table_limb];
+                        left = montgomery_mul_mod(
+                            add_mod(u, v, modulus),
+                            inv_degree,
+                            modulus,
+                            neg_inverse);
+                        right = montgomery_mul_mod(
+                            sub_mod(u, v, modulus),
+                            root,
+                            modulus,
+                            neg_inverse);
+                        continue;
+                    }
+                }
+                left = add_mod(u, v, modulus);
+                right = montgomery_mul_mod(
+                    sub_mod(u, v, modulus),
+                    root,
+                    modulus,
+                    neg_inverse);
             }
         }
     }
@@ -1683,6 +1928,309 @@ void launch_inverse_stage_group(
     default:
         throw std::invalid_argument(
             "launch_inverse_ntt_poly_shard: unsupported fusion stage count");
+    }
+}
+
+void validate_montgomery_ntt_tables(
+    const char *name,
+    const GpuPolyShardView &shard,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree,
+    bool inverse)
+{
+    const std::size_t modulus_offset =
+        shard.limb_begin - parameter_shard.limb_begin;
+    const std::size_t roots_size =
+        (modulus_offset + shard.limb_count) * degree;
+    const std::size_t scalars_size =
+        modulus_offset + shard.limb_count;
+
+    if (parameter_shard.montgomery_neg_inv_modulo.size() < scalars_size ||
+        parameter_shard.montgomery_neg_inv_modulo.data() == nullptr)
+    {
+        throw std::invalid_argument(
+            std::string(name) + ": Montgomery inverse table does not cover limb range");
+    }
+    if (parameter_shard.montgomery_ntt_tables.size() < roots_size ||
+        parameter_shard.montgomery_ntt_tables.data() == nullptr)
+    {
+        throw std::invalid_argument(
+            std::string(name) + ": Montgomery NTT roots do not cover limb range");
+    }
+    if (inverse &&
+        (parameter_shard.montgomery_intt_tables.size() < roots_size ||
+         parameter_shard.montgomery_intt_tables.data() == nullptr ||
+         parameter_shard.montgomery_intt_tables_normalized.size() < roots_size ||
+         parameter_shard.montgomery_intt_tables_normalized.data() == nullptr ||
+         parameter_shard.montgomery_inv_degree_modulo.size() < scalars_size ||
+         parameter_shard.montgomery_inv_degree_modulo.data() == nullptr))
+    {
+        throw std::invalid_argument(
+            std::string(name) + ": Montgomery inverse NTT tables do not cover limb range");
+    }
+}
+
+template <int FusionStages>
+void launch_forward_montgomery_fused_stage(
+    const GpuPolyShardView &shard,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree,
+    std::size_t modulus_offset,
+    std::size_t m,
+    std::size_t gap)
+{
+    const std::size_t total_tiles =
+        shard.limb_count * (degree >> FusionStages);
+
+    constexpr int block_size = 256;
+    const int grid_size = static_cast<int>(
+        (total_tiles + block_size - 1) / block_size);
+
+    forward_ntt_montgomery_fused_stage_kernel<FusionStages>
+        <<<grid_size, block_size>>>(
+            shard.ptr,
+            parameter_shard.rns_primes.data(),
+            parameter_shard.montgomery_neg_inv_modulo.data(),
+            parameter_shard.montgomery_ntt_tables.data(),
+            modulus_offset,
+            shard.limb_count,
+            degree,
+            m,
+            gap);
+    gpu_check_cuda(
+        cudaGetLastError(),
+        "launch_forward_ntt_poly_shard Montgomery fused stage kernel launch");
+}
+
+void launch_forward_montgomery_stage_group(
+    const GpuPolyShardView &shard,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree,
+    std::size_t modulus_offset,
+    std::size_t m,
+    std::size_t gap,
+    std::size_t stage_count)
+{
+    switch (stage_count)
+    {
+    case 1:
+        launch_forward_montgomery_fused_stage<1>(
+            shard, parameter_shard, degree, modulus_offset, m, gap);
+        break;
+    case 2:
+        launch_forward_montgomery_fused_stage<2>(
+            shard, parameter_shard, degree, modulus_offset, m, gap);
+        break;
+    case 3:
+        launch_forward_montgomery_fused_stage<3>(
+            shard, parameter_shard, degree, modulus_offset, m, gap);
+        break;
+    default:
+        throw std::invalid_argument(
+            "launch_forward_ntt_poly_shard: unsupported Montgomery fusion stage count");
+    }
+}
+
+template <int FusionStages>
+void launch_inverse_montgomery_fused_stage(
+    const GpuPolyShardView &shard,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree,
+    std::size_t modulus_offset,
+    std::size_t m,
+    std::size_t gap,
+    bool scale_by_inv_degree)
+{
+    const std::size_t total_tiles =
+        shard.limb_count * (degree >> FusionStages);
+
+    constexpr int block_size = 256;
+    const int grid_size = static_cast<int>(
+        (total_tiles + block_size - 1) / block_size);
+    const GpuWord *roots = scale_by_inv_degree
+        ? parameter_shard.montgomery_intt_tables_normalized.data()
+        : parameter_shard.montgomery_intt_tables.data();
+
+    if (scale_by_inv_degree)
+    {
+        inverse_ntt_montgomery_fused_stage_kernel<FusionStages, true>
+            <<<grid_size, block_size>>>(
+                shard.ptr,
+                parameter_shard.rns_primes.data(),
+                parameter_shard.montgomery_neg_inv_modulo.data(),
+                roots,
+                parameter_shard.montgomery_inv_degree_modulo.data(),
+                modulus_offset,
+                shard.limb_count,
+                degree,
+                m,
+                gap);
+    }
+    else
+    {
+        inverse_ntt_montgomery_fused_stage_kernel<FusionStages, false>
+            <<<grid_size, block_size>>>(
+                shard.ptr,
+                parameter_shard.rns_primes.data(),
+                parameter_shard.montgomery_neg_inv_modulo.data(),
+                roots,
+                parameter_shard.montgomery_inv_degree_modulo.data(),
+                modulus_offset,
+                shard.limb_count,
+                degree,
+                m,
+                gap);
+    }
+    gpu_check_cuda(
+        cudaGetLastError(),
+        "launch_inverse_ntt_poly_shard Montgomery fused stage kernel launch");
+}
+
+void launch_inverse_montgomery_stage_group(
+    const GpuPolyShardView &shard,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree,
+    std::size_t modulus_offset,
+    std::size_t m,
+    std::size_t gap,
+    std::size_t stage_count,
+    bool scale_by_inv_degree)
+{
+    switch (stage_count)
+    {
+    case 1:
+        launch_inverse_montgomery_fused_stage<1>(
+            shard,
+            parameter_shard,
+            degree,
+            modulus_offset,
+            m,
+            gap,
+            scale_by_inv_degree);
+        break;
+    case 2:
+        launch_inverse_montgomery_fused_stage<2>(
+            shard,
+            parameter_shard,
+            degree,
+            modulus_offset,
+            m,
+            gap,
+            scale_by_inv_degree);
+        break;
+    case 3:
+        launch_inverse_montgomery_fused_stage<3>(
+            shard,
+            parameter_shard,
+            degree,
+            modulus_offset,
+            m,
+            gap,
+            scale_by_inv_degree);
+        break;
+    default:
+        throw std::invalid_argument(
+            "launch_inverse_ntt_poly_shard: unsupported Montgomery fusion stage count");
+    }
+}
+
+void launch_forward_montgomery_stages(
+    const GpuPolyShardView &shard,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    validate_montgomery_ntt_tables(
+        "launch_forward_montgomery_stages",
+        shard,
+        parameter_shard,
+        degree,
+        false);
+
+    const std::size_t modulus_offset =
+        shard.limb_begin - parameter_shard.limb_begin;
+    constexpr std::size_t kFusionStages = 3;
+    std::size_t remaining_stages = log2_power_of_two(degree);
+    std::size_t stage_index = 0;
+
+    for (std::size_t m = 1, gap = degree >> 1;
+         remaining_stages > 0;)
+    {
+        std::size_t stage_count = remaining_stages % kFusionStages;
+        if (stage_count == 0)
+        {
+            stage_count = kFusionStages;
+        }
+
+        launch_profiled_ntt_stage(
+            stage_index,
+            "launch_forward_montgomery_stages",
+            [&]()
+            {
+                launch_forward_montgomery_stage_group(
+                    shard,
+                    parameter_shard,
+                    degree,
+                    modulus_offset,
+                    m,
+                    gap,
+                    stage_count);
+            });
+
+        m <<= stage_count;
+        gap >>= stage_count;
+        remaining_stages -= stage_count;
+        ++stage_index;
+    }
+}
+
+void launch_inverse_montgomery_stages(
+    const GpuPolyShardView &shard,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    validate_montgomery_ntt_tables(
+        "launch_inverse_montgomery_stages",
+        shard,
+        parameter_shard,
+        degree,
+        true);
+
+    const std::size_t modulus_offset =
+        shard.limb_begin - parameter_shard.limb_begin;
+    constexpr std::size_t kFusionStages = 3;
+    std::size_t remaining_stages = log2_power_of_two(degree);
+    std::size_t stage_index = 0;
+
+    for (std::size_t m = degree >> 1, gap = 1;
+         remaining_stages > 0;)
+    {
+        std::size_t stage_count = remaining_stages % kFusionStages;
+        if (stage_count == 0)
+        {
+            stage_count = kFusionStages;
+        }
+        const bool scale_by_inv_degree = remaining_stages == stage_count;
+
+        launch_profiled_ntt_stage(
+            stage_index,
+            "launch_inverse_montgomery_stages",
+            [&]()
+            {
+                launch_inverse_montgomery_stage_group(
+                    shard,
+                    parameter_shard,
+                    degree,
+                    modulus_offset,
+                    m,
+                    gap,
+                    stage_count,
+                    scale_by_inv_degree);
+            });
+
+        m >>= stage_count;
+        gap <<= stage_count;
+        remaining_stages -= stage_count;
+        ++stage_index;
     }
 }
 
@@ -3503,6 +4051,9 @@ void launch_forward_stages(
             degree,
             requested_ntt_fusion_stages());
         break;
+    case NttAlgorithm::Montgomery:
+        launch_forward_montgomery_stages(shard, parameter_shard, degree);
+        break;
     case NttAlgorithm::FourStep:
         launch_forward_fourstep_stages(shard, parameter_shard, degree);
         break;
@@ -3541,6 +4092,10 @@ void launch_inverse_stages(
             parameter_shard,
             degree,
             requested_ntt_fusion_stages());
+        needs_separate_inv_degree = false;
+        break;
+    case NttAlgorithm::Montgomery:
+        launch_inverse_montgomery_stages(shard, parameter_shard, degree);
         needs_separate_inv_degree = false;
         break;
     case NttAlgorithm::FourStep:

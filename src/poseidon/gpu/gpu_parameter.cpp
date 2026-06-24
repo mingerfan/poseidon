@@ -96,6 +96,103 @@ std::vector<GpuWide> copy_barrett_ratios(const std::vector<Modulus> &moduli)
     return result;
 }
 
+GpuWord montgomery_r_mod(const Modulus &modulus)
+{
+    const auto value = modulus.value();
+    if (value == 0 || value > std::numeric_limits<GpuWord>::max())
+    {
+        throw std::invalid_argument("GpuParameterData cannot build Montgomery R for invalid modulus");
+    }
+    const auto r = static_cast<unsigned __int128>(1) << 32;
+    return static_cast<GpuWord>(r % value);
+}
+
+GpuWord montgomery_neg_inverse_u32(const Modulus &modulus)
+{
+    const auto value = checked_gpu_word(
+        modulus.value(),
+        "GpuParameterData only supports Montgomery moduli that fit in GpuWord");
+    if ((value & 1U) == 0U)
+    {
+        throw std::invalid_argument("GpuParameterData Montgomery modulus must be odd");
+    }
+
+    GpuWord inverse = 1;
+    for (int i = 0; i < 5; ++i)
+    {
+        inverse *= static_cast<GpuWord>(2U - value * inverse);
+    }
+    return static_cast<GpuWord>(0U - inverse);
+}
+
+GpuWord multiply_mod_host(
+    GpuWord left,
+    GpuWord right,
+    const Modulus &modulus)
+{
+    return static_cast<GpuWord>(
+        (static_cast<GpuWide>(left) * static_cast<GpuWide>(right)) %
+        static_cast<GpuWide>(modulus.value()));
+}
+
+std::vector<GpuWord> make_montgomery_operands(
+    const std::vector<GpuWord> &values,
+    const std::vector<Modulus> &moduli,
+    std::size_t degree)
+{
+    if (values.size() != moduli.size() * degree)
+    {
+        throw std::invalid_argument("GpuParameterData Montgomery NTT table size mismatch");
+    }
+
+    std::vector<GpuWord> result(values.size());
+    for (std::size_t limb = 0; limb < moduli.size(); ++limb)
+    {
+        const GpuWord r_mod = montgomery_r_mod(moduli[limb]);
+        for (std::size_t coeff = 0; coeff < degree; ++coeff)
+        {
+            const std::size_t index = limb * degree + coeff;
+            result[index] = multiply_mod_host(
+                values[index],
+                r_mod,
+                moduli[limb]);
+        }
+    }
+    return result;
+}
+
+std::vector<GpuWord> make_montgomery_scalars(
+    const std::vector<GpuWord> &values,
+    const std::vector<Modulus> &moduli)
+{
+    if (values.size() != moduli.size())
+    {
+        throw std::invalid_argument("GpuParameterData Montgomery scalar table size mismatch");
+    }
+
+    std::vector<GpuWord> result(values.size());
+    for (std::size_t limb = 0; limb < moduli.size(); ++limb)
+    {
+        result[limb] = multiply_mod_host(
+            values[limb],
+            montgomery_r_mod(moduli[limb]),
+            moduli[limb]);
+    }
+    return result;
+}
+
+std::vector<GpuWord> copy_montgomery_neg_inverses(
+    const std::vector<Modulus> &moduli)
+{
+    std::vector<GpuWord> result;
+    result.reserve(moduli.size());
+    for (const auto &modulus : moduli)
+    {
+        result.push_back(montgomery_neg_inverse_u32(modulus));
+    }
+    return result;
+}
+
 template <typename T>
 std::vector<T> concatenate_vectors(
     const std::vector<T> &first,
@@ -1697,12 +1794,35 @@ void GpuParameterData::build_from_poseidon_context(
             concatenate_vectors(q_intt_roots, p_intt_roots);
         auto rns_inv_degree =
             concatenate_vectors(q_inv_degree, p_inv_degree);
+        auto rns_moduli =
+            concatenate_vectors(q, parameter_p);
         auto rns_normalized_intt_roots =
             make_normalized_final_intt_roots(
                 rns_intt_roots,
-                concatenate_vectors(q, parameter_p),
+                rns_moduli,
                 rns_inv_degree,
                 level.degree);
+        auto rns_montgomery_ntt_roots =
+            make_montgomery_operands(
+                rns_ntt_roots,
+                rns_moduli,
+                level.degree);
+        auto rns_montgomery_intt_roots =
+            make_montgomery_operands(
+                rns_intt_roots,
+                rns_moduli,
+                level.degree);
+        auto rns_montgomery_normalized_intt_roots =
+            make_montgomery_operands(
+                rns_normalized_intt_roots,
+                rns_moduli,
+                level.degree);
+        auto rns_montgomery_inv_degree =
+            make_montgomery_scalars(
+                rns_inv_degree,
+                rns_moduli);
+        auto rns_montgomery_neg_inv =
+            copy_montgomery_neg_inverses(rns_moduli);
         const auto rns_ntt_table_ptrs = collect_rns_ntt_table_pointers(
             small_ntt_tables,
             q.size(),
@@ -1844,6 +1964,61 @@ void GpuParameterData::build_from_poseidon_context(
             shard.inv_degree_modulo.copy_from_host(
                 rns_inv_degree.data(),
                 rns_inv_degree.size());
+        }
+
+        shard.montgomery_ntt_tables =
+            DeviceVector<GpuWord>(
+                rns_montgomery_ntt_roots.size(),
+                device_id);
+        if (!rns_montgomery_ntt_roots.empty())
+        {
+            shard.montgomery_ntt_tables.copy_from_host(
+                rns_montgomery_ntt_roots.data(),
+                rns_montgomery_ntt_roots.size());
+        }
+
+        shard.montgomery_intt_tables =
+            DeviceVector<GpuWord>(
+                rns_montgomery_intt_roots.size(),
+                device_id);
+        if (!rns_montgomery_intt_roots.empty())
+        {
+            shard.montgomery_intt_tables.copy_from_host(
+                rns_montgomery_intt_roots.data(),
+                rns_montgomery_intt_roots.size());
+        }
+
+        shard.montgomery_intt_tables_normalized =
+            DeviceVector<GpuWord>(
+                rns_montgomery_normalized_intt_roots.size(),
+                device_id);
+        if (!rns_montgomery_normalized_intt_roots.empty())
+        {
+            shard.montgomery_intt_tables_normalized.copy_from_host(
+                rns_montgomery_normalized_intt_roots.data(),
+                rns_montgomery_normalized_intt_roots.size());
+        }
+
+        shard.montgomery_inv_degree_modulo =
+            DeviceVector<GpuWord>(
+                rns_montgomery_inv_degree.size(),
+                device_id);
+        if (!rns_montgomery_inv_degree.empty())
+        {
+            shard.montgomery_inv_degree_modulo.copy_from_host(
+                rns_montgomery_inv_degree.data(),
+                rns_montgomery_inv_degree.size());
+        }
+
+        shard.montgomery_neg_inv_modulo =
+            DeviceVector<GpuWord>(
+                rns_montgomery_neg_inv.size(),
+                device_id);
+        if (!rns_montgomery_neg_inv.empty())
+        {
+            shard.montgomery_neg_inv_modulo.copy_from_host(
+                rns_montgomery_neg_inv.data(),
+                rns_montgomery_neg_inv.size());
         }
 
         shard.ntt_fused_matrix_fusion_stages =
