@@ -3,6 +3,7 @@
 #include "poseidon/mgpu/comm/gpu_comm.h"
 
 #include <cstddef>
+#include <vector>
 
 namespace poseidon::mgpu
 {
@@ -24,6 +25,7 @@ public:
 
     void copy_buffer(const CudaPeerCopyRequest &request) const;
     void copy_object(const GpuObjectCopyRequest &request) override;
+    void copy_objects(const std::vector<GpuObjectCopyRequest> &requests) override;
 };
 
 }  // namespace poseidon::mgpu

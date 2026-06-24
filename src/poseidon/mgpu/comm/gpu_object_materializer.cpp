@@ -162,4 +162,20 @@ MaterializedGpuObjectCopy PoseidonGpuObjectCopyMaterializer::materialize_copy(
     return result;
 }
 
+MaterializedGpuObjectBatchCopy PoseidonGpuObjectCopyMaterializer::materialize_copy_batch(
+    const std::vector<GpuCommCopyRequest> &requests)
+{
+    MaterializedGpuObjectBatchCopy result;
+    result.destination_objects.reserve(requests.size());
+    result.object_copies.reserve(requests.size());
+
+    for (const GpuCommCopyRequest &request : requests)
+    {
+        MaterializedGpuObjectCopy materialized = materialize_copy(request);
+        result.destination_objects.push_back(std::move(materialized.destination_object));
+        result.object_copies.push_back(std::move(materialized.object_copy));
+    }
+    return result;
+}
+
 }  // namespace poseidon::mgpu

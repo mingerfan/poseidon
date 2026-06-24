@@ -183,6 +183,102 @@ void test_cross_device_copy_if_available(int device_count)
     check_cuda(cudaFree(source), "cudaFree source");
 }
 
+void test_cross_device_batch_copy_if_available(int device_count)
+{
+    if (device_count < 2)
+    {
+        return;
+    }
+
+    CudaPeerComm comm;
+    std::vector<int *> sources(3, nullptr);
+    std::vector<int *> destinations(3, nullptr);
+    const std::vector<int> inputs{ 101, 202, 303 };
+    std::vector<int> outputs(3, 0);
+    std::vector<GpuObjectCopyRequest> requests;
+
+    try
+    {
+        for (std::size_t index = 0; index < inputs.size(); ++index)
+        {
+            check_cuda(cudaSetDevice(0), "cudaSetDevice source");
+            check_cuda(
+                cudaMalloc(reinterpret_cast<void **>(&sources[index]), sizeof(int)),
+                "cudaMalloc batch source");
+            check_cuda(
+                cudaMemcpy(
+                    sources[index],
+                    &inputs[index],
+                    sizeof(int),
+                    cudaMemcpyHostToDevice),
+                "cudaMemcpy host to batch source device");
+
+            check_cuda(cudaSetDevice(1), "cudaSetDevice destination");
+            check_cuda(
+                cudaMalloc(reinterpret_cast<void **>(&destinations[index]), sizeof(int)),
+                "cudaMalloc batch destination");
+
+            GpuObjectCopyRequest request;
+            request.source_id = static_cast<ValueId>(10 + index);
+            request.destination_id = static_cast<ValueId>(20 + index);
+            request.kind = MgpuValueKind::Ciphertext;
+            request.buffers.push_back(GpuObjectBufferCopy{
+                sources[index],
+                destinations[index],
+                sizeof(int),
+                0,
+                1,
+            });
+            requests.push_back(request);
+        }
+
+        comm.copy_objects(requests);
+        check_cuda(cudaSetDevice(1), "cudaSetDevice batch destination readback");
+        for (std::size_t index = 0; index < outputs.size(); ++index)
+        {
+            check_cuda(
+                cudaMemcpy(
+                    &outputs[index],
+                    destinations[index],
+                    sizeof(int),
+                    cudaMemcpyDeviceToHost),
+                "cudaMemcpy batch destination device to host");
+            require(outputs[index] == inputs[index], "cross-device CUDA batch copy result mismatch");
+        }
+    }
+    catch (...)
+    {
+        for (int *destination : destinations)
+        {
+            if (destination != nullptr)
+            {
+                cudaSetDevice(1);
+                cudaFree(destination);
+            }
+        }
+        for (int *source : sources)
+        {
+            if (source != nullptr)
+            {
+                cudaSetDevice(0);
+                cudaFree(source);
+            }
+        }
+        throw;
+    }
+
+    for (int *destination : destinations)
+    {
+        check_cuda(cudaSetDevice(1), "cudaSetDevice batch destination free");
+        check_cuda(cudaFree(destination), "cudaFree batch destination");
+    }
+    for (int *source : sources)
+    {
+        check_cuda(cudaSetDevice(0), "cudaSetDevice batch source free");
+        check_cuda(cudaFree(source), "cudaFree batch source");
+    }
+}
+
 }  // namespace
 
 int main()
@@ -193,6 +289,7 @@ int main()
         test_same_device_copy();
         test_same_device_object_copy();
         test_cross_device_copy_if_available(device_count);
+        test_cross_device_batch_copy_if_available(device_count);
     }
     catch (const std::exception &ex)
     {

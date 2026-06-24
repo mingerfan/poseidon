@@ -224,6 +224,10 @@ endif()
 option(POSEIDON_BUILD_MGPU "Build optional multi-GPU static schedule runtime" OFF)
 message(STATUS "POSEIDON_BUILD_MGPU: ${POSEIDON_BUILD_MGPU}")
 
+# [option] POSEIDON_BUILD_MGPU_BENCH (default: OFF)
+option(POSEIDON_BUILD_MGPU_BENCH "Build multi-GPU transfer benchmarks" OFF)
+message(STATUS "POSEIDON_BUILD_MGPU_BENCH: ${POSEIDON_BUILD_MGPU_BENCH}")
+
 add_library(poseidon_shared SHARED ${POSEIDON_SOURCE_FILES})    
 target_include_directories(poseidon_shared PUBLIC ${POSEIDON_INCLUDES_DIR}/src)
 target_link_libraries(poseidon_shared PRIVATE gmp)
@@ -284,6 +288,20 @@ if(POSEIDON_BUILD_MGPU)
     endif()
 
     add_subdirectory(src/poseidon/mgpu)
+endif()
+
+if(POSEIDON_BUILD_MGPU_BENCH)
+    if(NOT POSEIDON_BUILD_MGPU)
+        message(FATAL_ERROR "POSEIDON_BUILD_MGPU_BENCH requires POSEIDON_BUILD_MGPU=ON")
+    endif()
+    if(NOT POSEIDON_BUILD_MGPU_CUDA_COMM)
+        message(FATAL_ERROR "POSEIDON_BUILD_MGPU_BENCH requires POSEIDON_BUILD_MGPU_CUDA_COMM=ON")
+    endif()
+    if(NOT POSEIDON_BUILD_MGPU_GPU_OBJECTS)
+        message(FATAL_ERROR "POSEIDON_BUILD_MGPU_BENCH requires POSEIDON_BUILD_MGPU_GPU_OBJECTS=ON")
+    endif()
+
+    add_subdirectory(bench/mgpu)
 endif()
 
 install(

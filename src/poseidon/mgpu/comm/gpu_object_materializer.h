@@ -12,6 +12,8 @@ class PoseidonGpuObjectCopyMaterializer final : public GpuObjectCopyMaterializer
 public:
     MaterializedGpuObjectCopy materialize_copy(
         const GpuCommCopyRequest &request) override;
+    MaterializedGpuObjectBatchCopy materialize_copy_batch(
+        const std::vector<GpuCommCopyRequest> &requests) override;
 };
 
 GpuObjectCopyRequest make_full_object_copy_request(
