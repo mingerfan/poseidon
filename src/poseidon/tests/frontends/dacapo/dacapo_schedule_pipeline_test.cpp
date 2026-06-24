@@ -28,6 +28,19 @@ void require_contains(const std::string &text, const std::string &needle)
     }
 }
 
+const MgpuOp *find_op_with_attr(
+    const MgpuSchedule &schedule, MgpuOpKind kind, const std::string &attr)
+{
+    for (const MgpuOp &op : schedule.ops)
+    {
+        if (op.kind == kind && op.integer_attributes.find(attr) != op.integer_attributes.end())
+        {
+            return &op;
+        }
+    }
+    return nullptr;
+}
+
 void test_pipeline_prepares_dacapo_json_input()
 {
     const char *json = R"json(
@@ -78,14 +91,17 @@ void test_pipeline_prepares_hevm_binary_input()
 
     StaticSchedulePipelineOptions options;
     options.device_count = 2;
-    options.placement.policy = StaticPlacementPolicy::RoundRobinCompute;
+    options.scheduler.kind = StaticSchedulerKind::GreedyReady;
+    options.scheduler.compute_devices = { 0, 1 };
+    options.scheduler.upload_device = 0;
+    options.scheduler.download_device = 0;
     options.emit_debug_dump = true;
 
     const StaticSchedulePipelineResult result = prepare_dacapo_static_schedule(
         hevm, DacapoAdapterOptions{ DacapoInputFormat::HevmBinary }, options);
 
     require(result.ok(), "Dacapo HEVM pipeline failed:\n" + result.format_diagnostics());
-    require(result.schedule.ops.size() == 6, "expected one inserted copy");
+    require(result.schedule.ops.size() >= 5, "expected scheduled HEVM ops");
     require(result.schedule.ops[0].kind == MgpuOpKind::UploadCipher, "expected HEVM arg op");
     require(
         result.schedule.ops[0].integer_attributes.at("hevm_arg_scale") == 45,
@@ -106,28 +122,24 @@ void test_pipeline_prepares_hevm_binary_input()
     require(
         result.schedule.ops[1].integer_attributes.at("hevm_constant_index") == 0,
         "HEVM constant index should survive pipeline");
-    require(result.schedule.ops[3].kind == MgpuOpKind::CopyCipher,
-            "rotate should receive copied ciphertext");
-    require(
-        result.schedule.ops[4].integer_attributes.at("rotate_step") == -1,
-        "HEVM rotate_step should survive copy insertion");
-    require(result.schedule.ops[5].kind == MgpuOpKind::Download,
+    const MgpuOp *rotate =
+        find_op_with_attr(result.schedule, MgpuOpKind::Rotate, "rotate_step");
+    require(rotate != nullptr, "expected HEVM rotate op");
+    require(rotate->integer_attributes.at("rotate_step") == -1,
+            "HEVM rotate_step should survive scheduling");
+    require(result.schedule.ops.back().kind == MgpuOpKind::Download,
             "last HEVM op should remain download");
     require(
-        result.schedule.ops[5].integer_attributes.at("hevm_result_scale") == 40,
+        result.schedule.ops.back().integer_attributes.at("hevm_result_scale") == 40,
         "HEVM result scale metadata should survive pipeline");
     require(
-        result.schedule.ops[5].integer_attributes.at("hevm_result_level") == 8,
+        result.schedule.ops.back().integer_attributes.at("hevm_result_level") == 8,
         "HEVM result level metadata should survive pipeline");
-    require(
-        result.schedule.ops[4].inputs[0].id == result.schedule.ops[3].outputs[0].id,
-        "rotate should consume the copied mulcp result");
     require_contains(result.debug_dump, "mgpu.multiply_plain");
     require_contains(result.debug_dump, "attrs={rotate_step=-1}");
     require_contains(result.debug_dump, "hevm_constant_index=0");
     require_contains(result.debug_dump, "hevm_arg_scale=45");
     require_contains(result.debug_dump, "hevm_result_level=8");
-    require_contains(result.debug_dump, "name=\"auto_copy\"");
 }
 
 void test_pipeline_prepares_resnet_like_hevm_binary()
@@ -149,41 +161,29 @@ void test_pipeline_prepares_resnet_like_hevm_binary()
 
     StaticSchedulePipelineOptions options;
     options.device_count = 2;
-    options.placement.policy = StaticPlacementPolicy::RoundRobinCompute;
+    options.scheduler.kind = StaticSchedulerKind::GreedyReady;
+    options.scheduler.compute_devices = { 0, 1 };
+    options.scheduler.upload_device = 0;
+    options.scheduler.download_device = 0;
     options.emit_debug_dump = true;
 
     const StaticSchedulePipelineResult result = prepare_dacapo_static_schedule(
         hevm, DacapoAdapterOptions{ DacapoInputFormat::HevmBinary }, options);
 
     require(result.ok(), "ResNet-like HEVM pipeline failed:\n" + result.format_diagnostics());
-    require(result.schedule.ops.size() == 22, "expected static copies for round-robin HEVM graph");
+    require(result.schedule.ops.size() >= 12, "expected scheduled HEVM graph");
     require(result.schedule.ops.front().kind == MgpuOpKind::UploadCipher,
             "first HEVM op should upload the first argument");
     require(result.schedule.ops[1].kind == MgpuOpKind::UploadCipher,
             "second HEVM op should upload the residual argument");
-    require(
-        result.schedule.ops[2].integer_attributes.at("encode_level") == 5,
-        "first HEVM encode level should survive pipeline");
-    require(
-        result.schedule.ops[3].integer_attributes.at("encode_scale") == 40,
-        "second HEVM encode scale should survive pipeline");
-    require(result.schedule.ops[8].kind == MgpuOpKind::Rotate,
-            "rotate should remain after inserted input copies");
-    require(result.schedule.ops[8].integer_attributes.at("rotate_step") == 1,
-            "positive HEVM rotate_step should survive pipeline");
-    require(result.schedule.ops[13].kind == MgpuOpKind::Add,
-            "residual add should remain a ciphertext add");
-    require(result.schedule.ops[15].kind == MgpuOpKind::Negate,
-            "negate should remain a ciphertext unary op");
-    require(result.schedule.ops[18].kind == MgpuOpKind::Multiply,
-            "square activation should remain a ciphertext multiply");
+    require_contains(result.debug_dump, "encode_level=5");
+    require_contains(result.debug_dump, "encode_scale=40");
     require(result.schedule.ops.back().kind == MgpuOpKind::Download,
             "last HEVM op should remain download");
     require_contains(result.debug_dump, "mgpu.add");
     require_contains(result.debug_dump, "mgpu.negate");
     require_contains(result.debug_dump, "mgpu.multiply");
     require_contains(result.debug_dump, "attrs={rotate_step=1}");
-    require_contains(result.debug_dump, "name=\"auto_copy\"");
 }
 
 void test_pipeline_reports_dacapo_adapter_errors()

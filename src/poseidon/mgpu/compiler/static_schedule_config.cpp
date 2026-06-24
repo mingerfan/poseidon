@@ -182,35 +182,91 @@ std::int64_t topology_device_count(int node_count, int devices_per_node)
            static_cast<std::int64_t>(devices_per_node);
 }
 
-void parse_placement_policy(
-    StaticScheduleExecutionConfigParseResult &result, const Json &placement,
-    StaticScheduleExecutionConfig &config)
+void parse_scheduler_kind(
+    StaticScheduleExecutionConfigParseResult &result, const Json &scheduler,
+    StaticScheduleExecutionConfig &config, const std::string &path)
 {
-    const auto iter = placement.find("policy");
-    if (iter == placement.end())
+    const auto iter = scheduler.find("kind");
+    if (iter == scheduler.end())
     {
         return;
     }
 
     if (!iter->is_string())
     {
+        add_diagnostic(result, path + "/kind", "expected a string");
+        return;
+    }
+
+    const std::string kind = iter->get<std::string>();
+    const std::optional<StaticSchedulerKind> parsed =
+        static_scheduler_kind_from_string(kind);
+    if (parsed.has_value())
+    {
+        config.pipeline.scheduler.kind = *parsed;
+        return;
+    }
+
+    add_diagnostic(result, path + "/kind", "unknown scheduler kind '" + kind + "'");
+}
+
+void parse_scheduler_fields(
+    StaticScheduleExecutionConfigParseResult &result, const Json &object,
+    StaticScheduleExecutionConfig &config, const std::string &path)
+{
+    parse_scheduler_kind(result, object, config, path);
+    read_int(
+        result, object, "default_device", config.pipeline.scheduler.default_device,
+        path);
+    read_optional_int(
+        result, object, "upload_device", config.pipeline.scheduler.upload_device,
+        path);
+    read_optional_int(
+        result, object, "download_device", config.pipeline.scheduler.download_device,
+        path);
+    read_int_array(
+        result, object, "compute_devices",
+        config.pipeline.scheduler.compute_devices, path);
+}
+
+void parse_scheduler(
+    StaticScheduleExecutionConfigParseResult &result, const Json &root,
+    StaticScheduleExecutionConfig &config)
+{
+    const auto iter = root.find("scheduler");
+    if (iter == root.end())
+    {
+        return;
+    }
+    if (!iter->is_object())
+    {
+        add_diagnostic(result, "/scheduler", "expected an object");
+        return;
+    }
+    parse_scheduler_fields(result, *iter, config, "/scheduler");
+}
+
+void parse_legacy_placement_policy(
+    StaticScheduleExecutionConfigParseResult &result, const Json &placement)
+{
+    const auto iter = placement.find("policy");
+    if (iter == placement.end())
+    {
+        return;
+    }
+    if (!iter->is_string())
+    {
         add_diagnostic(result, "/placement/policy", "expected a string");
         return;
     }
-
     const std::string policy = iter->get<std::string>();
     if (policy == "single_device")
     {
-        config.pipeline.placement.policy = StaticPlacementPolicy::SingleDevice;
         return;
     }
-    if (policy == "round_robin_compute")
-    {
-        config.pipeline.placement.policy = StaticPlacementPolicy::RoundRobinCompute;
-        return;
-    }
-
-    add_diagnostic(result, "/placement/policy", "unknown placement policy '" + policy + "'");
+    add_diagnostic(
+        result, "/placement/policy",
+        "placement policy '" + policy + "' is no longer supported; use /scheduler/kind");
 }
 
 void parse_placement(
@@ -229,24 +285,8 @@ void parse_placement(
     }
 
     const Json &placement = *iter;
-    parse_placement_policy(result, placement, config);
-    read_int(
-        result, placement, "default_device", config.pipeline.placement.default_device,
-        "/placement");
-    read_optional_int(
-        result, placement, "upload_device", config.pipeline.placement.upload_device,
-        "/placement");
-    read_optional_int(
-        result, placement, "download_device", config.pipeline.placement.download_device,
-        "/placement");
-    if (read_int_array(
-            result, placement, "compute_devices",
-            config.pipeline.placement.compute_devices, "/placement") &&
-        !config.pipeline.placement.compute_devices.empty() &&
-        placement.find("policy") == placement.end())
-    {
-        config.pipeline.placement.policy = StaticPlacementPolicy::RoundRobinCompute;
-    }
+    parse_legacy_placement_policy(result, placement);
+    parse_scheduler_fields(result, placement, config, "/placement");
 }
 
 void parse_topology(
@@ -378,47 +418,47 @@ void validate_config(StaticScheduleExecutionConfigParseResult &result)
             "devices_per_node must be non-negative");
     }
     if (!is_valid_device(
-            config.pipeline.placement.default_device, config.pipeline.device_count))
+            config.pipeline.scheduler.default_device, config.pipeline.device_count))
     {
         add_diagnostic(
-            result, "/placement/default_device",
+            result, "/scheduler/default_device",
             "default_device must be in [0, device_count)");
     }
-    if (config.pipeline.placement.upload_device.has_value() &&
+    if (config.pipeline.scheduler.upload_device.has_value() &&
         !is_valid_device(
-            *config.pipeline.placement.upload_device, config.pipeline.device_count))
+            *config.pipeline.scheduler.upload_device, config.pipeline.device_count))
     {
         add_diagnostic(
-            result, "/placement/upload_device",
+            result, "/scheduler/upload_device",
             "upload_device must be in [0, device_count)");
     }
-    if (config.pipeline.placement.download_device.has_value() &&
+    if (config.pipeline.scheduler.download_device.has_value() &&
         !is_valid_device(
-            *config.pipeline.placement.download_device, config.pipeline.device_count))
+            *config.pipeline.scheduler.download_device, config.pipeline.device_count))
     {
         add_diagnostic(
-            result, "/placement/download_device",
+            result, "/scheduler/download_device",
             "download_device must be in [0, device_count)");
     }
 
-    for (std::size_t i = 0; i < config.pipeline.placement.compute_devices.size(); ++i)
+    for (std::size_t i = 0; i < config.pipeline.scheduler.compute_devices.size(); ++i)
     {
-        const int device = config.pipeline.placement.compute_devices[i];
+        const int device = config.pipeline.scheduler.compute_devices[i];
         if (!is_valid_device(device, config.pipeline.device_count))
         {
             add_diagnostic(
                 result,
-                "/placement/compute_devices/" + std::to_string(i),
+                "/scheduler/compute_devices/" + std::to_string(i),
                 "compute device must be in [0, device_count)");
             continue;
         }
         for (std::size_t j = 0; j < i; ++j)
         {
-            if (config.pipeline.placement.compute_devices[j] == device)
+            if (config.pipeline.scheduler.compute_devices[j] == device)
             {
                 add_diagnostic(
                     result,
-                    "/placement/compute_devices/" + std::to_string(i),
+                    "/scheduler/compute_devices/" + std::to_string(i),
                     "duplicate compute device");
                 break;
             }
@@ -466,17 +506,17 @@ Json int_vector_to_json(const std::vector<int> &values)
     return result;
 }
 
-Json placement_to_json(const StaticPlacementOptions &placement)
+Json scheduler_to_json(const StaticSchedulerOptions &scheduler)
 {
     Json result;
-    result["policy"] = to_string(placement.policy);
-    result["default_device"] = placement.default_device;
-    result["compute_devices"] = int_vector_to_json(placement.compute_devices);
-    result["upload_device"] = placement.upload_device.has_value()
-                                  ? Json(*placement.upload_device)
+    result["kind"] = to_string(scheduler.kind);
+    result["default_device"] = scheduler.default_device;
+    result["compute_devices"] = int_vector_to_json(scheduler.compute_devices);
+    result["upload_device"] = scheduler.upload_device.has_value()
+                                  ? Json(*scheduler.upload_device)
                                   : Json(nullptr);
-    result["download_device"] = placement.download_device.has_value()
-                                    ? Json(*placement.download_device)
+    result["download_device"] = scheduler.download_device.has_value()
+                                    ? Json(*scheduler.download_device)
                                     : Json(nullptr);
     return result;
 }
@@ -538,6 +578,7 @@ StaticScheduleExecutionConfigParseResult parse_static_schedule_execution_config_
     read_int(result, root, "device_count", result.config.pipeline.device_count, "/");
     read_bool(
         result, root, "emit_debug_dump", result.config.pipeline.emit_debug_dump, "/");
+    parse_scheduler(result, root, result.config);
     parse_placement(result, root, result.config);
     parse_topology(result, root, result.config);
     parse_preflight(result, root, result.config);
@@ -554,7 +595,7 @@ std::string static_schedule_execution_config_to_json(
     root["version"] = 1;
     root["device_count"] = config.pipeline.device_count;
     root["emit_debug_dump"] = config.pipeline.emit_debug_dump;
-    root["placement"] = placement_to_json(config.pipeline.placement);
+    root["scheduler"] = scheduler_to_json(config.pipeline.scheduler);
     root["topology"] = Json{
         { "nodes", config.node_count },
         { "devices_per_node", config.devices_per_node },

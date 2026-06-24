@@ -2,8 +2,8 @@
   "version": 1,
   "device_count": 32,
   "emit_debug_dump": false,
-  "placement": {
-    "policy": "round_robin_compute",
+  "scheduler": {
+    "kind": "greedy_ready",
     "default_device": 0,
     "upload_device": 0,
     "compute_devices": [

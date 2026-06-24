@@ -218,6 +218,7 @@ void test_write_schedule_and_report(const std::string &tool_path)
         " --constants " + shell_quote(constants_path) +
         " --devices 2"
         " --upload-device 0"
+        " --scheduler greedy_ready"
         " --compute-devices 1"
         " --download-device 0"
         " --opcode-summary"
@@ -245,7 +246,7 @@ void test_write_schedule_and_report(const std::string &tool_path)
     require_contains(summary_text, "\"communication_plan\"");
     require_contains(schedule_text, "mgpu.schedule");
     require_contains(schedule_text, "mgpu.copy_cipher");
-    require_contains(schedule_text, "mgpu.copy_plain");
+    require_not_contains(schedule_text, "mgpu.copy_plain");
 }
 
 void test_config_file_template_report(
@@ -281,8 +282,8 @@ void test_config_file_template_report(
     require_contains(summary_text, "\"require_ready\": true");
     require_contains(summary_text, "\"execution_gate\"");
     require_contains(summary_text, "\"status\": \"ready\"");
-    require_contains(summary_text, "\"copy_plain\": 1");
-    require_contains(summary_text, "\"copy_cipher\": 2");
+    require_contains(summary_text, "\"kind\": \"greedy_ready\"");
+    require_contains(summary_text, "\"copy_plain\": 0");
 }
 
 void test_config_file_command_line_overrides(
@@ -319,8 +320,8 @@ void test_config_file_command_line_overrides(
     require_contains(summary_text, "\"execution_gate\"");
     require_contains(summary_text, "\"status\": \"ready\"");
     require_contains(summary_text, "\"cuda_peer\": true");
-    require_contains(summary_text, "\"copy_plain\": 1");
-    require_contains(summary_text, "\"copy_cipher\": 2");
+    require_contains(summary_text, "\"kind\": \"greedy_ready\"");
+    require_contains(summary_text, "\"copy_plain\": 0");
 }
 
 void test_config_file_command_line_overrides_when_config_is_last(
@@ -447,6 +448,7 @@ void test_require_ready_not_ready_report_preserves_route_metadata(
         " --constants " + shell_quote(constants_path) +
         " --devices 2"
         " --upload-device 0"
+        " --scheduler greedy_ready"
         " --compute-devices 1"
         " --download-device 0"
         " --opcode-summary"

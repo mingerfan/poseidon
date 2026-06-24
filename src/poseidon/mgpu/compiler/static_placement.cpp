@@ -102,50 +102,6 @@ void define_output(
     }
 }
 
-int next_round_robin_device(
-    std::size_t &next_compute_device, const StaticPlacementOptions &options)
-{
-    if (!options.compute_devices.empty())
-    {
-        const int device_id = options.compute_devices[
-            next_compute_device % options.compute_devices.size()];
-        ++next_compute_device;
-        return device_id;
-    }
-
-    const int device_id = static_cast<int>(
-        next_compute_device % static_cast<std::size_t>(options.device_count));
-    ++next_compute_device;
-    return device_id;
-}
-
-bool validate_compute_devices(StaticPlacementResult &result, const StaticPlacementOptions &options)
-{
-    for (std::size_t i = 0; i < options.compute_devices.size(); ++i)
-    {
-        const int device_id = options.compute_devices[i];
-        if (!is_valid_device(device_id, options.device_count))
-        {
-            std::ostringstream stream;
-            stream << "invalid compute device " << device_id << " for device_count "
-                   << options.device_count;
-            add_diagnostic(result, 0, stream.str());
-            return false;
-        }
-        for (std::size_t j = 0; j < i; ++j)
-        {
-            if (options.compute_devices[j] == device_id)
-            {
-                std::ostringstream stream;
-                stream << "duplicate compute device " << device_id;
-                add_diagnostic(result, 0, stream.str());
-                return false;
-            }
-        }
-    }
-    return true;
-}
-
 bool validate_download_device(
     StaticPlacementResult &result, const StaticPlacementOptions &options)
 {
@@ -186,8 +142,7 @@ bool validate_upload_device(
 
 int choose_unassigned_device(
     StaticPlacementResult &result, const std::unordered_map<ValueId, ValueState> &values,
-    std::size_t op_index, const MgpuOp &op, const StaticPlacementOptions &options,
-    std::size_t &next_compute_device)
+    std::size_t op_index, const MgpuOp &op, const StaticPlacementOptions &options)
 {
     if (is_upload_op(op.kind))
     {
@@ -227,13 +182,6 @@ int choose_unassigned_device(
         return options.default_device;
     }
 
-    switch (options.policy)
-    {
-    case StaticPlacementPolicy::SingleDevice:
-        return options.default_device;
-    case StaticPlacementPolicy::RoundRobinCompute:
-        return next_round_robin_device(next_compute_device, options);
-    }
     return options.default_device;
 }
 
@@ -245,8 +193,6 @@ const char *to_string(StaticPlacementPolicy policy) noexcept
     {
     case StaticPlacementPolicy::SingleDevice:
         return "single_device";
-    case StaticPlacementPolicy::RoundRobinCompute:
-        return "round_robin_compute";
     }
     return "unknown";
 }
@@ -270,7 +216,6 @@ StaticPlacementResult place_static_schedule(
 {
     StaticPlacementResult result;
     std::unordered_map<ValueId, ValueState> values;
-    std::size_t next_compute_device = 0;
 
     if (options.device_count <= 0)
     {
@@ -286,10 +231,6 @@ StaticPlacementResult place_static_schedule(
         add_diagnostic(result, 0, stream.str());
         return result;
     }
-    if (!validate_compute_devices(result, options))
-    {
-        return result;
-    }
     if (!validate_upload_device(result, options))
     {
         return result;
@@ -298,10 +239,6 @@ StaticPlacementResult place_static_schedule(
     {
         return result;
     }
-    next_compute_device = options.compute_devices.empty()
-                              ? static_cast<std::size_t>(options.default_device)
-                              : 0;
-
     for (std::size_t op_index = 0; op_index < schedule.ops.size(); ++op_index)
     {
         MgpuOp op = schedule.ops[op_index];
@@ -321,7 +258,7 @@ StaticPlacementResult place_static_schedule(
         else
         {
             op.device_id = choose_unassigned_device(
-                result, values, op_index, op, options, next_compute_device);
+                result, values, op_index, op, options);
         }
 
         result.schedule.ops.push_back(op);

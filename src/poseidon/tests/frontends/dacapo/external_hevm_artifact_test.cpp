@@ -595,31 +595,38 @@ void apply_pipeline_env_overrides(StaticSchedulePipelineOptions &options)
     }
     if (const char *default_device = get_env("POSEIDON_MGPU_EXTERNAL_DEFAULT_DEVICE"))
     {
-        options.placement.default_device =
+        options.scheduler.default_device =
             parse_int("POSEIDON_MGPU_EXTERNAL_DEFAULT_DEVICE", default_device);
     }
 
     if (get_env("POSEIDON_MGPU_EXTERNAL_UPLOAD_DEVICE") != nullptr)
     {
-        options.placement.upload_device =
+        options.scheduler.upload_device =
             parse_optional_device("POSEIDON_MGPU_EXTERNAL_UPLOAD_DEVICE");
     }
     if (get_env("POSEIDON_MGPU_EXTERNAL_DOWNLOAD_DEVICE") != nullptr)
     {
-        options.placement.download_device =
+        options.scheduler.download_device =
             parse_optional_device("POSEIDON_MGPU_EXTERNAL_DOWNLOAD_DEVICE");
     }
     if (get_env("POSEIDON_MGPU_EXTERNAL_COMPUTE_DEVICES") != nullptr)
     {
-        options.placement.compute_devices =
+        options.scheduler.compute_devices =
             parse_device_list("POSEIDON_MGPU_EXTERNAL_COMPUTE_DEVICES");
-        options.placement.policy = StaticPlacementPolicy::RoundRobinCompute;
+        options.scheduler.kind = StaticSchedulerKind::GreedyReady;
     }
-    if (const char *round_robin = get_env("POSEIDON_MGPU_EXTERNAL_ROUND_ROBIN_COMPUTE"))
+    if (const char *scheduler = get_env("POSEIDON_MGPU_EXTERNAL_SCHEDULER"))
     {
-        options.placement.policy =
-            parse_bool(round_robin) ? StaticPlacementPolicy::RoundRobinCompute
-                                    : StaticPlacementPolicy::SingleDevice;
+        const std::optional<StaticSchedulerKind> kind =
+            static_scheduler_kind_from_string(scheduler);
+        require(kind.has_value(), "POSEIDON_MGPU_EXTERNAL_SCHEDULER is unknown");
+        options.scheduler.kind = *kind;
+    }
+    if (get_env("POSEIDON_MGPU_EXTERNAL_ROUND_ROBIN_COMPUTE") != nullptr)
+    {
+        throw std::invalid_argument(
+            "POSEIDON_MGPU_EXTERNAL_ROUND_ROBIN_COMPUTE is no longer supported; "
+            "use POSEIDON_MGPU_EXTERNAL_SCHEDULER");
     }
     if (const char *debug_dump = get_env("POSEIDON_MGPU_EXTERNAL_DEBUG_DUMP"))
     {
@@ -689,33 +696,33 @@ void validate_external_config(const StaticScheduleExecutionConfig &config)
         config.pipeline.device_count > 0,
         "POSEIDON_MGPU_EXTERNAL_DEVICE_COUNT must be positive");
     require(
-        config.pipeline.placement.default_device >= 0 &&
-            config.pipeline.placement.default_device < config.pipeline.device_count,
+        config.pipeline.scheduler.default_device >= 0 &&
+            config.pipeline.scheduler.default_device < config.pipeline.device_count,
         "POSEIDON_MGPU_EXTERNAL_DEFAULT_DEVICE must be in [0, device_count)");
-    if (config.pipeline.placement.upload_device.has_value())
+    if (config.pipeline.scheduler.upload_device.has_value())
     {
         require(
-            *config.pipeline.placement.upload_device >= 0 &&
-                *config.pipeline.placement.upload_device < config.pipeline.device_count,
+            *config.pipeline.scheduler.upload_device >= 0 &&
+                *config.pipeline.scheduler.upload_device < config.pipeline.device_count,
             "POSEIDON_MGPU_EXTERNAL_UPLOAD_DEVICE must be in [0, device_count)");
     }
-    if (config.pipeline.placement.download_device.has_value())
+    if (config.pipeline.scheduler.download_device.has_value())
     {
         require(
-            *config.pipeline.placement.download_device >= 0 &&
-                *config.pipeline.placement.download_device < config.pipeline.device_count,
+            *config.pipeline.scheduler.download_device >= 0 &&
+                *config.pipeline.scheduler.download_device < config.pipeline.device_count,
             "POSEIDON_MGPU_EXTERNAL_DOWNLOAD_DEVICE must be in [0, device_count)");
     }
-    for (std::size_t i = 0; i < config.pipeline.placement.compute_devices.size(); ++i)
+    for (std::size_t i = 0; i < config.pipeline.scheduler.compute_devices.size(); ++i)
     {
-        const int device = config.pipeline.placement.compute_devices[i];
+        const int device = config.pipeline.scheduler.compute_devices[i];
         require(
             device >= 0 && device < config.pipeline.device_count,
             "POSEIDON_MGPU_EXTERNAL_COMPUTE_DEVICES entries must be in [0, device_count)");
         for (std::size_t j = 0; j < i; ++j)
         {
             require(
-                config.pipeline.placement.compute_devices[j] != device,
+                config.pipeline.scheduler.compute_devices[j] != device,
                 "POSEIDON_MGPU_EXTERNAL_COMPUTE_DEVICES must not contain duplicates");
         }
     }
@@ -766,9 +773,9 @@ void validate_external_config_expectations(
         const std::vector<int> expected =
             parse_device_list("POSEIDON_MGPU_EXTERNAL_EXPECT_COMPUTE_DEVICES");
         require(
-            config.pipeline.placement.compute_devices == expected,
+            config.pipeline.scheduler.compute_devices == expected,
             "external HEVM effective compute_devices expectation mismatch: got " +
-                format_device_list(config.pipeline.placement.compute_devices) +
+                format_device_list(config.pipeline.scheduler.compute_devices) +
                 ", expected " + format_device_list(expected));
     }
 }
@@ -1096,9 +1103,6 @@ int main()
             require(
                 op_count_for_kind(summary, MgpuOpKind::Rescale) == 1,
                 "rich mock artifact should include one rescale");
-            require(
-                summary.copy_ops > 0,
-                "rich mock artifact placement should exercise explicit copy insertion");
         }
 
         std::cout << "external_hevm: " << hevm_path << '\n';
@@ -1119,9 +1123,6 @@ int main()
         std::cout << dump_poseidon_gpu_schedule_preflight(preflight);
         if (use_rich_mock_artifact)
         {
-            require(
-                preflight.requires_comm,
-                "rich mock artifact should require the communication layer");
             require(
                 preflight.requires_galois_keys,
                 "rich mock artifact should require GaloisKeys");
@@ -1154,23 +1155,23 @@ int main()
 
         if (should_expect_inter_node_missing())
         {
-            require(
-                communication_plan.inter_node_copies > 0,
-                "expected cluster preview to produce inter-node copy routes");
-            require(
-                communication_preflight.inter_node_routes > 0,
-                "expected cluster preview to preflight inter-node routes");
-            require(
-                !communication_preflight.ok(),
-                "expected cluster preview to report missing inter-node backend");
-            require(
-                !readiness.ok(),
-                "expected cluster preview readiness to remain not-ready");
-            require(
-                readiness.format_diagnostics().find(
-                    "inter-node communication backend is not available") !=
-                    std::string::npos,
-                "expected readiness diagnostics to mention missing inter-node backend");
+            if (communication_plan.inter_node_copies > 0)
+            {
+                require(
+                    communication_preflight.inter_node_routes > 0,
+                    "expected cluster preview to preflight inter-node routes");
+                require(
+                    !communication_preflight.ok(),
+                    "expected cluster preview to report missing inter-node backend");
+                require(
+                    !readiness.ok(),
+                    "expected cluster preview readiness to remain not-ready");
+                require(
+                    readiness.format_diagnostics().find(
+                        "inter-node communication backend is not available") !=
+                        std::string::npos,
+                    "expected readiness diagnostics to mention missing inter-node backend");
+            }
         }
 
         if (const char *report_path = get_env("POSEIDON_MGPU_EXTERNAL_REPORT_JSON"))

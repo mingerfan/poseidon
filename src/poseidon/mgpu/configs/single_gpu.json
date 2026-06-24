@@ -2,8 +2,8 @@
   "version": 1,
   "device_count": 1,
   "emit_debug_dump": false,
-  "placement": {
-    "policy": "single_device",
+  "scheduler": {
+    "kind": "single_device",
     "default_device": 0,
     "upload_device": 0,
     "compute_devices": [0],

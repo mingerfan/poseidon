@@ -49,7 +49,7 @@ void print_usage(std::ostream &stream)
            "[--config <file>] "
            "[--devices N] [--default-device N] [--upload-device N] "
            "[--compute-devices a,b,c] [--download-device N] "
-           "[--round-robin-compute] "
+           "[--scheduler single_device|greedy_ready|value_aware_heft|value_aware_peft] "
            "[--nodes N] [--devices-per-node N] "
            "[--execution-cuda-peer-available] "
            "[--execution-inter-node-available] "
@@ -116,14 +116,18 @@ ToolOptions parse_args(int argc, char **argv)
         if (arg == "--devices" || arg == "--default-device" ||
             arg == "--upload-device" || arg == "--compute-devices" ||
             arg == "--download-device" || arg == "--nodes" ||
-            arg == "--devices-per-node")
+            arg == "--devices-per-node" || arg == "--scheduler")
         {
             options.dump_overrides.push_back(arg);
             options.dump_overrides.push_back(require_value(i, argc, argv, arg));
             continue;
         }
-        if (arg == "--round-robin-compute" ||
-            arg == "--execution-cuda-peer-available" ||
+        if (arg == "--round-robin-compute")
+        {
+            throw std::invalid_argument(
+                "--round-robin-compute is no longer supported; use --scheduler");
+        }
+        if (arg == "--execution-cuda-peer-available" ||
             arg == "--execution-inter-node-available" ||
             arg == "--preflight-comm-available" ||
             arg == "--preflight-relin-keys" ||
@@ -301,6 +305,7 @@ std::string make_dump_command(
 
     command
         << " \\\n  --devices 8"
+        << " \\\n  --scheduler greedy_ready"
         << " \\\n  --upload-device 0"
         << " \\\n  --compute-devices 0,1,2,3,4,5,6,7"
         << " \\\n  --download-device 0"

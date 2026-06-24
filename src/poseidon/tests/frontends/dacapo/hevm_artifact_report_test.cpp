@@ -47,9 +47,9 @@ void test_report_includes_execution_evidence()
 {
     StaticScheduleExecutionConfig config;
     config.pipeline.device_count = 2;
-    config.pipeline.placement.upload_device = 0;
-    config.pipeline.placement.compute_devices = { 1 };
-    config.pipeline.placement.download_device = 1;
+    config.pipeline.scheduler.upload_device = 0;
+    config.pipeline.scheduler.compute_devices = { 1 };
+    config.pipeline.scheduler.download_device = 1;
     config.preflight_comm_available = true;
     config.communication_plan = true;
     config.communication_execution_preflight = true;
@@ -160,9 +160,9 @@ void test_report_execution_gate_reports_not_ready()
 {
     StaticScheduleExecutionConfig config;
     config.pipeline.device_count = 2;
-    config.pipeline.placement.upload_device = 0;
-    config.pipeline.placement.compute_devices = { 1 };
-    config.pipeline.placement.download_device = 1;
+    config.pipeline.scheduler.upload_device = 0;
+    config.pipeline.scheduler.compute_devices = { 1 };
+    config.pipeline.scheduler.download_device = 1;
     config.preflight_comm_available = true;
     config.communication_plan = true;
     config.communication_execution_preflight = true;

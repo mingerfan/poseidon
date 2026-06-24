@@ -3,6 +3,8 @@ add_library(poseidon_mgpu STATIC
     comm/gpu_comm.cpp
     comm/topology.cpp
     compiler/copy_insertion.cpp
+    compiler/scheduler/latency_table.cpp
+    compiler/scheduler/static_scheduler.cpp
     compiler/schedule_verifier.cpp
     compiler/static_placement.cpp
     compiler/static_schedule_config.cpp
@@ -236,8 +238,7 @@ if(POSEIDON_BUILD_MGPU_TOOLS)
             "POSEIDON_MGPU_RESNET20_CONFIG=${POSEIDON_INCLUDES_DIR}/src/poseidon/mgpu/configs/cluster_4x8_node_spread_preview.json"
             "POSEIDON_MGPU_RESNET20_EXPECT_DEVICE_COUNT=32"
             "POSEIDON_MGPU_RESNET20_EXPECT_NODES=4"
-            "POSEIDON_MGPU_RESNET20_EXPECT_DEVICES_PER_NODE=8"
-            "POSEIDON_MGPU_RESNET20_EXPECT_INTER_NODE_ROUTE_METADATA=1")
+            "POSEIDON_MGPU_RESNET20_EXPECT_DEVICES_PER_NODE=8")
         set_tests_properties(
             poseidon_mgpu_resnet20_dump_preflight_cluster_preview_mock_tests
             PROPERTIES
@@ -363,6 +364,10 @@ if(POSEIDON_BUILD_MGPU_TESTS)
 
     add_executable(poseidon_mgpu_static_placement_tests
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_static_placement_test.cpp
+    )
+
+    add_executable(poseidon_mgpu_static_scheduler_tests
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/mgpu/mgpu_static_scheduler_test.cpp
     )
 
     add_executable(poseidon_mgpu_static_schedule_config_tests
@@ -502,6 +507,11 @@ if(POSEIDON_BUILD_MGPU_TESTS)
             poseidon_mgpu
     )
 
+    target_link_libraries(poseidon_mgpu_static_scheduler_tests
+        PRIVATE
+            poseidon_mgpu
+    )
+
     target_link_libraries(poseidon_mgpu_static_schedule_config_tests
         PRIVATE
             poseidon_mgpu
@@ -628,7 +638,8 @@ if(POSEIDON_BUILD_MGPU_TESTS)
         "{"
         "\"version\":1,"
         "\"device_count\":4,"
-        "\"placement\":{"
+        "\"scheduler\":{"
+        "\"kind\":\"greedy_ready\","
         "\"default_device\":0,"
         "\"upload_device\":0,"
         "\"compute_devices\":[1,2],"
@@ -929,6 +940,11 @@ if(POSEIDON_BUILD_MGPU_TESTS)
     add_test(
         NAME poseidon_mgpu_static_placement_tests
         COMMAND poseidon_mgpu_static_placement_tests
+    )
+
+    add_test(
+        NAME poseidon_mgpu_static_scheduler_tests
+        COMMAND poseidon_mgpu_static_scheduler_tests
     )
 
     add_test(

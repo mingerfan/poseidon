@@ -170,7 +170,7 @@ void test_json_schedule_pipeline_integration()
 
     StaticSchedulePipelineOptions options;
     options.device_count = 2;
-    options.placement.default_device = 1;
+    options.scheduler.default_device = 1;
     const StaticSchedulePipelineResult prepared =
         prepare_static_schedule(parsed.schedule, options);
     require(prepared.ok(), "prepared JSON schedule should verify:\n" + prepared.format_diagnostics());

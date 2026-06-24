@@ -158,9 +158,8 @@ void append_dump_tool_overrides(std::string &command)
     append_optional_flag(
         command, "POSEIDON_MGPU_RESNET20_DEVICES_PER_NODE",
         "--devices-per-node");
-    append_optional_bool_flag(
-        command, "POSEIDON_MGPU_RESNET20_ROUND_ROBIN_COMPUTE",
-        "--round-robin-compute");
+    append_optional_flag(
+        command, "POSEIDON_MGPU_RESNET20_SCHEDULER", "--scheduler");
     append_optional_bool_flag(
         command, "POSEIDON_MGPU_RESNET20_EXECUTION_CUDA_PEER_AVAILABLE",
         "--execution-cuda-peer-available");

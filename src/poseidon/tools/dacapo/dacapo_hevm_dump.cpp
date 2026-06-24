@@ -42,7 +42,8 @@ void print_usage(std::ostream &stream)
     stream
         << "usage: poseidon_mgpu_dacapo_hevm_dump --hevm <file> --constants <file> "
            "[--config <file>] "
-           "[--devices N] [--default-device N] [--round-robin-compute] "
+           "[--devices N] [--default-device N] "
+           "[--scheduler single_device|greedy_ready|value_aware_heft|value_aware_peft] "
            "[--compute-devices a,b,c] "
            "[--upload-device N] "
            "[--download-device N] "
@@ -119,6 +120,7 @@ bool argument_requires_value(const std::string &arg)
 {
     return arg == "--config" || arg == "--hevm" || arg == "--constants" ||
            arg == "--devices" || arg == "--default-device" ||
+           arg == "--scheduler" ||
            arg == "--compute-devices" || arg == "--upload-device" ||
            arg == "--download-device" || arg == "--write-summary-json" ||
            arg == "--write-schedule" || arg == "--nodes" ||
@@ -235,15 +237,30 @@ ToolOptions parse_args(int argc, char **argv)
             {
                 throw std::invalid_argument("missing value for --default-device");
             }
-            options.config.pipeline.placement.default_device =
+            options.config.pipeline.scheduler.default_device =
                 parse_int_arg("--default-device", argv[i]);
+            continue;
+        }
+        if (arg == "--scheduler")
+        {
+            if (++i >= argc)
+            {
+                throw std::invalid_argument("missing value for --scheduler");
+            }
+            const std::optional<StaticSchedulerKind> kind =
+                static_scheduler_kind_from_string(argv[i]);
+            if (!kind.has_value())
+            {
+                throw std::invalid_argument(
+                    "unknown scheduler kind for --scheduler: " + std::string(argv[i]));
+            }
+            options.config.pipeline.scheduler.kind = *kind;
             continue;
         }
         if (arg == "--round-robin-compute")
         {
-            options.config.pipeline.placement.policy =
-                StaticPlacementPolicy::RoundRobinCompute;
-            continue;
+            throw std::invalid_argument(
+                "--round-robin-compute is no longer supported; use --scheduler");
         }
         if (arg == "--compute-devices")
         {
@@ -251,10 +268,8 @@ ToolOptions parse_args(int argc, char **argv)
             {
                 throw std::invalid_argument("missing value for --compute-devices");
             }
-            options.config.pipeline.placement.compute_devices =
+            options.config.pipeline.scheduler.compute_devices =
                 parse_compute_devices(argv[i]);
-            options.config.pipeline.placement.policy =
-                StaticPlacementPolicy::RoundRobinCompute;
             continue;
         }
         if (arg == "--upload-device")
@@ -263,7 +278,7 @@ ToolOptions parse_args(int argc, char **argv)
             {
                 throw std::invalid_argument("missing value for --upload-device");
             }
-            options.config.pipeline.placement.upload_device =
+            options.config.pipeline.scheduler.upload_device =
                 parse_int_arg("--upload-device", argv[i]);
             continue;
         }
@@ -273,7 +288,7 @@ ToolOptions parse_args(int argc, char **argv)
             {
                 throw std::invalid_argument("missing value for --download-device");
             }
-            options.config.pipeline.placement.download_device =
+            options.config.pipeline.scheduler.download_device =
                 parse_int_arg("--download-device", argv[i]);
             continue;
         }
@@ -404,31 +419,31 @@ ToolOptions parse_args(int argc, char **argv)
     {
         throw std::invalid_argument("--devices must be positive");
     }
-    if (options.config.pipeline.placement.default_device < 0 ||
-        options.config.pipeline.placement.default_device >=
+    if (options.config.pipeline.scheduler.default_device < 0 ||
+        options.config.pipeline.scheduler.default_device >=
             options.config.pipeline.device_count)
     {
         throw std::invalid_argument("--default-device must be in [0, devices)");
     }
-    if (options.config.pipeline.placement.upload_device.has_value() &&
-        (*options.config.pipeline.placement.upload_device < 0 ||
-         *options.config.pipeline.placement.upload_device >=
+    if (options.config.pipeline.scheduler.upload_device.has_value() &&
+        (*options.config.pipeline.scheduler.upload_device < 0 ||
+         *options.config.pipeline.scheduler.upload_device >=
              options.config.pipeline.device_count))
     {
         throw std::invalid_argument("--upload-device must be in [0, devices)");
     }
-    if (options.config.pipeline.placement.download_device.has_value() &&
-        (*options.config.pipeline.placement.download_device < 0 ||
-         *options.config.pipeline.placement.download_device >=
+    if (options.config.pipeline.scheduler.download_device.has_value() &&
+        (*options.config.pipeline.scheduler.download_device < 0 ||
+         *options.config.pipeline.scheduler.download_device >=
              options.config.pipeline.device_count))
     {
         throw std::invalid_argument("--download-device must be in [0, devices)");
     }
     for (std::size_t i = 0;
-         i < options.config.pipeline.placement.compute_devices.size(); ++i)
+         i < options.config.pipeline.scheduler.compute_devices.size(); ++i)
     {
         const int compute_device =
-            options.config.pipeline.placement.compute_devices[i];
+            options.config.pipeline.scheduler.compute_devices[i];
         if (compute_device < 0 ||
             compute_device >= options.config.pipeline.device_count)
         {
@@ -437,7 +452,7 @@ ToolOptions parse_args(int argc, char **argv)
         }
         for (std::size_t j = 0; j < i; ++j)
         {
-            if (options.config.pipeline.placement.compute_devices[j] ==
+            if (options.config.pipeline.scheduler.compute_devices[j] ==
                 compute_device)
             {
                 throw std::invalid_argument(

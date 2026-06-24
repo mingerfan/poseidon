@@ -14,8 +14,7 @@ constexpr int kUnassignedDevice = -1;
 
 enum class StaticPlacementPolicy
 {
-    SingleDevice,
-    RoundRobinCompute
+    SingleDevice
 };
 
 struct StaticPlacementOptions
@@ -24,7 +23,6 @@ struct StaticPlacementOptions
     int default_device = 0;
     StaticPlacementPolicy policy = StaticPlacementPolicy::SingleDevice;
     bool preserve_existing_devices = true;
-    std::vector<int> compute_devices;
     std::optional<int> upload_device;
     std::optional<int> download_device;
 };
