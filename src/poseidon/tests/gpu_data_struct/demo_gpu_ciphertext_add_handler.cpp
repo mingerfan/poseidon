@@ -47,7 +47,7 @@ namespace
 constexpr int kSkip = 77;
 constexpr bool kRunCorrectnessChecks = false;
 constexpr bool kRunOperationTimingSummary = true;
-constexpr bool kRunNttTimingSummary = false;
+constexpr bool kRunNttTimingSummary = true;
 constexpr const char *kNttAlgorithmEnv = "POSEIDON_NTT_ALGO";
 constexpr const char *kNttFusionStagesEnv = "POSEIDON_NTT_FUSION_STAGES";
 constexpr const char *kNttFusedMatrixStagesEnv =
@@ -2953,16 +2953,18 @@ int run_demo()
                 ntt_fwd_level_info);
         });
 
-    if (tensor_ntt_supported || tensor_fp64_ntt_supported)
+    const auto tam_cache_dir = env_string_or(
+        kNttFusedMatrixCacheDirEnv,
+        kDefaultNttFusedMatrixCacheDir);
+
+    if (tensor_ntt_supported)
     {
-        const auto tam_cache_dir = env_string_or(
-            kNttFusedMatrixCacheDirEnv,
-            kDefaultNttFusedMatrixCacheDir);
-        std::cout << "\n[NTT setup] building tensor GPU parameters with TAM matrices\n"
+        std::cout << "\n[NTT setup] building INT8 tensor GPU parameters with TAM matrices\n"
                   << "[NTT setup] TAM cache dir: " << tam_cache_dir << "\n";
 
         GpuParameterData tensor_gpu_params;
         {
+            ScopedEnvironmentValue ntt_algorithm(kNttAlgorithmEnv, "tensor");
             ScopedEnvironmentValue ntt_fused_matrix_stages(
                 kNttFusedMatrixStagesEnv,
                 "4");
@@ -2974,7 +2976,7 @@ int run_demo()
                 "1");
             ScopedEnvironmentValue ntt_fused_matrix_fp64_tables(
                 kNttFusedMatrixFp64TablesEnv,
-                tensor_fp64_ntt_supported ? "1" : "0");
+                "0");
             ScopedDefaultEnvironmentValue ntt_fused_matrix_max_levels(
                 kNttFusedMatrixMaxLevelsEnv,
                 "2");
@@ -2987,84 +2989,106 @@ int run_demo()
         const auto &tensor_ntt_fwd_level_info =
             tensor_gpu_params.get_level(gpu_ntt_fwd_source.meta.parms_id);
 
-        if (tensor_ntt_supported)
-        {
-            benchmark_ntt_mode(
-                "ntt_inv",
-                "tensor",
-                "tensor",
-                "4",
-                cpu_ntt_inv_result,
-                ntt_inv_destination,
-                [&]()
-                {
-                    tensor_ntt_handler.inverse_ciphertext(
-                        ntt_inv_destination_view,
-                        ntt_inv_source_view,
-                        tensor_ntt_inv_level_info);
-                });
-            benchmark_ntt_mode(
-                "ntt_fwd",
-                "tensor",
-                "tensor",
-                "4",
-                cpu_ntt_fwd_result,
-                ntt_fwd_destination,
-                [&]()
-                {
-                    tensor_ntt_handler.forward_ciphertext(
-                        ntt_fwd_destination_view,
-                        ntt_fwd_source_view,
-                        tensor_ntt_fwd_level_info);
-                });
-        }
-        else
-        {
-            append_skipped_ntt_mode("ntt_inv", "tensor");
-            append_skipped_ntt_mode("ntt_fwd", "tensor");
-        }
-
-        if (tensor_fp64_ntt_supported)
-        {
-            benchmark_ntt_mode(
-                "ntt_inv",
-                "tensor_fp64",
-                "tensor_fp64",
-                "4",
-                cpu_ntt_inv_result,
-                ntt_inv_destination,
-                [&]()
-                {
-                    tensor_ntt_handler.inverse_ciphertext(
-                        ntt_inv_destination_view,
-                        ntt_inv_source_view,
-                        tensor_ntt_inv_level_info);
-                });
-            benchmark_ntt_mode(
-                "ntt_fwd",
-                "tensor_fp64",
-                "tensor_fp64",
-                "4",
-                cpu_ntt_fwd_result,
-                ntt_fwd_destination,
-                [&]()
-                {
-                    tensor_ntt_handler.forward_ciphertext(
-                        ntt_fwd_destination_view,
-                        ntt_fwd_source_view,
-                        tensor_ntt_fwd_level_info);
-                });
-        }
-        else
-        {
-            append_skipped_ntt_mode("ntt_inv", "tensor_fp64");
-            append_skipped_ntt_mode("ntt_fwd", "tensor_fp64");
-        }
+        benchmark_ntt_mode(
+            "ntt_inv",
+            "tensor",
+            "tensor",
+            "4",
+            cpu_ntt_inv_result,
+            ntt_inv_destination,
+            [&]()
+            {
+                tensor_ntt_handler.inverse_ciphertext(
+                    ntt_inv_destination_view,
+                    ntt_inv_source_view,
+                    tensor_ntt_inv_level_info);
+            });
+        benchmark_ntt_mode(
+            "ntt_fwd",
+            "tensor",
+            "tensor",
+            "4",
+            cpu_ntt_fwd_result,
+            ntt_fwd_destination,
+            [&]()
+            {
+                tensor_ntt_handler.forward_ciphertext(
+                    ntt_fwd_destination_view,
+                    ntt_fwd_source_view,
+                    tensor_ntt_fwd_level_info);
+            });
     }
     else
     {
         append_skipped_ntt_mode("ntt_inv", "tensor");
         append_skipped_ntt_mode("ntt_fwd", "tensor");
+    }
+
+    if (tensor_fp64_ntt_supported)
+    {
+        std::cout << "\n[NTT setup] building FP64 tensor GPU parameters with TAM matrices\n"
+                  << "[NTT setup] TAM cache dir: " << tam_cache_dir << "\n";
+
+        GpuParameterData tensor_fp64_gpu_params;
+        {
+            ScopedEnvironmentValue ntt_algorithm(
+                kNttAlgorithmEnv,
+                "tensor_fp64");
+            ScopedEnvironmentValue ntt_fused_matrix_stages(
+                kNttFusedMatrixStagesEnv,
+                "4");
+            ScopedDefaultEnvironmentValue ntt_fused_matrix_cache_dir(
+                kNttFusedMatrixCacheDirEnv,
+                tam_cache_dir.c_str());
+            ScopedDefaultEnvironmentValue ntt_fused_matrix_progress(
+                kNttFusedMatrixProgressEnv,
+                "1");
+            ScopedEnvironmentValue ntt_fused_matrix_fp64_tables(
+                kNttFusedMatrixFp64TablesEnv,
+                "1");
+            ScopedDefaultEnvironmentValue ntt_fused_matrix_max_levels(
+                kNttFusedMatrixMaxLevelsEnv,
+                "2");
+            tensor_fp64_gpu_params.build_from_poseidon_context(context, device_id);
+        }
+
+        GpuNTTHandler tensor_fp64_ntt_handler(tensor_fp64_gpu_params);
+        const auto &tensor_fp64_ntt_inv_level_info =
+            tensor_fp64_gpu_params.get_level(gpu_ct0.meta.parms_id);
+        const auto &tensor_fp64_ntt_fwd_level_info =
+            tensor_fp64_gpu_params.get_level(gpu_ntt_fwd_source.meta.parms_id);
+
+        benchmark_ntt_mode(
+            "ntt_inv",
+            "tensor_fp64",
+            "tensor_fp64",
+            "4",
+            cpu_ntt_inv_result,
+            ntt_inv_destination,
+            [&]()
+            {
+                tensor_fp64_ntt_handler.inverse_ciphertext(
+                    ntt_inv_destination_view,
+                    ntt_inv_source_view,
+                    tensor_fp64_ntt_inv_level_info);
+            });
+        benchmark_ntt_mode(
+            "ntt_fwd",
+            "tensor_fp64",
+            "tensor_fp64",
+            "4",
+            cpu_ntt_fwd_result,
+            ntt_fwd_destination,
+            [&]()
+            {
+                tensor_fp64_ntt_handler.forward_ciphertext(
+                    ntt_fwd_destination_view,
+                    ntt_fwd_source_view,
+                    tensor_fp64_ntt_fwd_level_info);
+            });
+    }
+    else
+    {
         append_skipped_ntt_mode("ntt_inv", "tensor_fp64");
         append_skipped_ntt_mode("ntt_fwd", "tensor_fp64");
     }

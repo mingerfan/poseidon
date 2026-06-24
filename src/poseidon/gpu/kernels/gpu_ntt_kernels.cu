@@ -303,6 +303,7 @@ void validate_ntt_launch_shape(
     }
     if (inverse &&
         (parameter_shard.intt_tables.data() == nullptr ||
+         parameter_shard.intt_tables_normalized.data() == nullptr ||
          parameter_shard.inv_degree_modulo.data() == nullptr))
     {
         throw std::invalid_argument(std::string(name) + ": null inverse NTT table pointer");
@@ -360,6 +361,7 @@ void validate_ntt_launch_shape(
     }
     if (inverse &&
         (parameter_shard.intt_tables.size() < roots_size ||
+         parameter_shard.intt_tables_normalized.size() < roots_size ||
          parameter_shard.inv_degree_modulo.size() <
              modulus_offset + destination_shard.limb_count))
     {
@@ -497,12 +499,14 @@ __global__ void forward_ntt_fused_stage_kernel(
     }
 }
 
-// INTT,NTT的逆操作，最后还需要multiply_inv_degree_kernel整体除以N
+// INTT, NTT的逆操作。普通CUDA stage/fused路径在最后一层蝶形中完成N^{-1}归一化。
+template <bool ScaleByInvDegree>
 __global__ void inverse_ntt_stage_kernel(
     GpuWord *values,
     const GpuWord *rns_primes,
     const GpuWide *rns_modulus_constants,
     const GpuWord *roots,
+    const GpuWord *inv_degree_modulo,
     std::size_t modulus_offset,
     std::size_t limb_count,
     std::size_t degree,
@@ -534,20 +538,29 @@ __global__ void inverse_ntt_stage_kernel(
     const GpuWord u = values[x_index];
     const GpuWord v = values[y_index];
 
-    values[x_index] = add_mod(u, v, modulus);
-    values[y_index] = mul_mod(
+    GpuWord x_value = add_mod(u, v, modulus);
+    GpuWord y_value = mul_mod(
         sub_mod(u, v, modulus),
         root,
         modulus,
         barrett_ratio);
+    if constexpr (ScaleByInvDegree)
+    {
+        const GpuWord inv_degree = inv_degree_modulo[table_limb];
+        x_value = mul_mod(x_value, inv_degree, modulus, barrett_ratio);
+    }
+
+    values[x_index] = x_value;
+    values[y_index] = y_value;
 }
 
-template <int FusionStages>
+template <int FusionStages, bool ScaleByInvDegree>
 __global__ void inverse_ntt_fused_stage_kernel(
     GpuWord *values,
     const GpuWord *rns_primes,
     const GpuWide *rns_modulus_constants,
     const GpuWord *roots,
+    const GpuWord *inv_degree_modulo,
     std::size_t modulus_offset,
     std::size_t limb_count,
     std::size_t degree,
@@ -611,9 +624,33 @@ __global__ void inverse_ntt_fused_stage_kernel(
 #pragma unroll
             for (std::size_t offset = 0; offset < local_stride; ++offset)
             {
+                GpuWord &left = local[block + offset];
+                GpuWord &right =
+                    local[block + offset + local_stride];
+                if constexpr (ScaleByInvDegree)
+                {
+                    if (stage == FusionStages - 1)
+                    {
+                        const GpuWord u = left;
+                        const GpuWord v = right;
+                        const GpuWord inv_degree =
+                            inv_degree_modulo[table_limb];
+                        left = mul_mod(
+                            add_mod(u, v, modulus),
+                            inv_degree,
+                            modulus,
+                            barrett_ratio);
+                        right = mul_mod(
+                            sub_mod(u, v, modulus),
+                            root,
+                            modulus,
+                            barrett_ratio);
+                        continue;
+                    }
+                }
                 inverse_butterfly(
-                    local[block + offset],
-                    local[block + offset + local_stride],
+                    left,
+                    right,
                     root,
                     modulus,
                     barrett_ratio);
@@ -1118,12 +1155,13 @@ __global__ void forward_ntt_fourstep_phase_kernel(
     }
 }
 
-template <int StageCount>
+template <int StageCount, bool ScaleByInvDegree>
 __global__ void inverse_ntt_fourstep_phase_kernel(
     GpuWord *values,
     const GpuWord *rns_primes,
     const GpuWide *rns_modulus_constants,
     const GpuWord *roots,
+    const GpuWord *inv_degree_modulo,
     std::size_t modulus_offset,
     std::size_t limb_count,
     std::size_t degree,
@@ -1263,9 +1301,33 @@ __global__ void inverse_ntt_fourstep_phase_kernel(
                     {
                         if (offset < local_stride)
                         {
+                            GpuWord &left = local[block + offset];
+                            GpuWord &right =
+                                local[block + offset + local_stride];
+                            if constexpr (ScaleByInvDegree)
+                            {
+                                if (global_stage == StageCount - 1)
+                                {
+                                    const GpuWord u = left;
+                                    const GpuWord v = right;
+                                    const GpuWord inv_degree =
+                                        inv_degree_modulo[table_limb];
+                                    left = mul_mod(
+                                        add_mod(u, v, modulus),
+                                        inv_degree,
+                                        modulus,
+                                        barrett_ratio);
+                                    right = mul_mod(
+                                        sub_mod(u, v, modulus),
+                                        root,
+                                        modulus,
+                                        barrett_ratio);
+                                    continue;
+                                }
+                            }
                             inverse_butterfly(
-                                local[block + offset],
-                                local[block + offset + local_stride],
+                                left,
+                                right,
                                 root,
                                 modulus,
                                 barrett_ratio);
@@ -1482,7 +1544,8 @@ void launch_inverse_fused_stage(
     std::size_t degree,
     std::size_t modulus_offset,
     std::size_t m,
-    std::size_t gap)
+    std::size_t gap,
+    bool scale_by_inv_degree)
 {
     const std::size_t total_tiles =
         shard.limb_count * (degree >> FusionStages);
@@ -1490,17 +1553,40 @@ void launch_inverse_fused_stage(
     constexpr int block_size = 256;
     const int grid_size = static_cast<int>(
         (total_tiles + block_size - 1) / block_size);
+    const GpuWord *roots = scale_by_inv_degree
+        ? parameter_shard.intt_tables_normalized.data()
+        : parameter_shard.intt_tables.data();
 
-    inverse_ntt_fused_stage_kernel<FusionStages><<<grid_size, block_size>>>(
-        shard.ptr,
-        parameter_shard.rns_primes.data(),
-        parameter_shard.rns_modulus_constants.data(),
-        parameter_shard.intt_tables.data(),
-        modulus_offset,
-        shard.limb_count,
-        degree,
-        m,
-        gap);
+    if (scale_by_inv_degree)
+    {
+        inverse_ntt_fused_stage_kernel<FusionStages, true>
+            <<<grid_size, block_size>>>(
+                shard.ptr,
+                parameter_shard.rns_primes.data(),
+                parameter_shard.rns_modulus_constants.data(),
+                roots,
+                parameter_shard.inv_degree_modulo.data(),
+                modulus_offset,
+                shard.limb_count,
+                degree,
+                m,
+                gap);
+    }
+    else
+    {
+        inverse_ntt_fused_stage_kernel<FusionStages, false>
+            <<<grid_size, block_size>>>(
+                shard.ptr,
+                parameter_shard.rns_primes.data(),
+                parameter_shard.rns_modulus_constants.data(),
+                roots,
+                parameter_shard.inv_degree_modulo.data(),
+                modulus_offset,
+                shard.limb_count,
+                degree,
+                m,
+                gap);
+    }
     gpu_check_cuda(
         cudaGetLastError(),
         "launch_inverse_ntt_poly_shard fused stage kernel launch");
@@ -1513,7 +1599,8 @@ void launch_inverse_stage_group(
     std::size_t modulus_offset,
     std::size_t m,
     std::size_t gap,
-    std::size_t stage_count)
+    std::size_t stage_count,
+    bool scale_by_inv_degree)
 {
     if (stage_count == 1)
     {
@@ -1523,17 +1610,38 @@ void launch_inverse_stage_group(
         constexpr int block_size = 256;
         const int grid_size = static_cast<int>(
             (total_butterflies + block_size - 1) / block_size);
+        const GpuWord *roots = scale_by_inv_degree
+            ? parameter_shard.intt_tables_normalized.data()
+            : parameter_shard.intt_tables.data();
 
-        inverse_ntt_stage_kernel<<<grid_size, block_size>>>(
-            shard.ptr,
-            parameter_shard.rns_primes.data(),
-            parameter_shard.rns_modulus_constants.data(),
-            parameter_shard.intt_tables.data(),
-            modulus_offset,
-            shard.limb_count,
-            degree,
-            m,
-            gap);
+        if (scale_by_inv_degree)
+        {
+            inverse_ntt_stage_kernel<true><<<grid_size, block_size>>>(
+                shard.ptr,
+                parameter_shard.rns_primes.data(),
+                parameter_shard.rns_modulus_constants.data(),
+                roots,
+                parameter_shard.inv_degree_modulo.data(),
+                modulus_offset,
+                shard.limb_count,
+                degree,
+                m,
+                gap);
+        }
+        else
+        {
+            inverse_ntt_stage_kernel<false><<<grid_size, block_size>>>(
+                shard.ptr,
+                parameter_shard.rns_primes.data(),
+                parameter_shard.rns_modulus_constants.data(),
+                roots,
+                parameter_shard.inv_degree_modulo.data(),
+                modulus_offset,
+                shard.limb_count,
+                degree,
+                m,
+                gap);
+        }
         gpu_check_cuda(
             cudaGetLastError(),
             "launch_inverse_ntt_poly_shard stage kernel launch");
@@ -1544,15 +1652,33 @@ void launch_inverse_stage_group(
     {
     case 2:
         launch_inverse_fused_stage<2>(
-            shard, parameter_shard, degree, modulus_offset, m, gap);
+            shard,
+            parameter_shard,
+            degree,
+            modulus_offset,
+            m,
+            gap,
+            scale_by_inv_degree);
         break;
     case 3:
         launch_inverse_fused_stage<3>(
-            shard, parameter_shard, degree, modulus_offset, m, gap);
+            shard,
+            parameter_shard,
+            degree,
+            modulus_offset,
+            m,
+            gap,
+            scale_by_inv_degree);
         break;
     case 4:
         launch_inverse_fused_stage<4>(
-            shard, parameter_shard, degree, modulus_offset, m, gap);
+            shard,
+            parameter_shard,
+            degree,
+            modulus_offset,
+            m,
+            gap,
+            scale_by_inv_degree);
         break;
     default:
         throw std::invalid_argument(
@@ -2474,7 +2600,8 @@ void launch_inverse_fourstep_phase(
     std::size_t degree,
     std::size_t modulus_offset,
     std::size_t m,
-    std::size_t gap)
+    std::size_t gap,
+    bool scale_by_inv_degree)
 {
     const std::size_t sets_per_limb = degree >> StageCount;
     const std::size_t sets_per_block =
@@ -2490,20 +2617,44 @@ void launch_inverse_fourstep_phase(
         sets_per_block *
         (static_cast<std::size_t>(1) << StageCount) *
         sizeof(GpuWord);
+    const GpuWord *roots = scale_by_inv_degree
+        ? parameter_shard.intt_tables_normalized.data()
+        : parameter_shard.intt_tables.data();
 
-    inverse_ntt_fourstep_phase_kernel<StageCount>
-        <<<grid_size, block_size, shared_bytes>>>(
-            shard.ptr,
-            parameter_shard.rns_primes.data(),
-            parameter_shard.rns_modulus_constants.data(),
-            parameter_shard.intt_tables.data(),
-            modulus_offset,
-            shard.limb_count,
-            degree,
-            m,
-            gap,
-            sets_per_block,
-            set_blocks_per_limb);
+    if (scale_by_inv_degree)
+    {
+        inverse_ntt_fourstep_phase_kernel<StageCount, true>
+            <<<grid_size, block_size, shared_bytes>>>(
+                shard.ptr,
+                parameter_shard.rns_primes.data(),
+                parameter_shard.rns_modulus_constants.data(),
+                roots,
+                parameter_shard.inv_degree_modulo.data(),
+                modulus_offset,
+                shard.limb_count,
+                degree,
+                m,
+                gap,
+                sets_per_block,
+                set_blocks_per_limb);
+    }
+    else
+    {
+        inverse_ntt_fourstep_phase_kernel<StageCount, false>
+            <<<grid_size, block_size, shared_bytes>>>(
+                shard.ptr,
+                parameter_shard.rns_primes.data(),
+                parameter_shard.rns_modulus_constants.data(),
+                roots,
+                parameter_shard.inv_degree_modulo.data(),
+                modulus_offset,
+                shard.limb_count,
+                degree,
+                m,
+                gap,
+                sets_per_block,
+                set_blocks_per_limb);
+    }
     gpu_check_cuda(
         cudaGetLastError(),
         "launch_inverse_ntt_poly_shard fourstep phase kernel launch");
@@ -2571,7 +2722,8 @@ void launch_inverse_fourstep_phase_by_count(
     std::size_t modulus_offset,
     std::size_t m,
     std::size_t gap,
-    std::size_t stage_count)
+    std::size_t stage_count,
+    bool scale_by_inv_degree)
 {
     switch (stage_count)
     {
@@ -2579,39 +2731,93 @@ void launch_inverse_fourstep_phase_by_count(
         break;
     case 1:
         launch_inverse_fourstep_phase<1>(
-            shard, parameter_shard, degree, modulus_offset, m, gap);
+            shard,
+            parameter_shard,
+            degree,
+            modulus_offset,
+            m,
+            gap,
+            scale_by_inv_degree);
         break;
     case 2:
         launch_inverse_fourstep_phase<2>(
-            shard, parameter_shard, degree, modulus_offset, m, gap);
+            shard,
+            parameter_shard,
+            degree,
+            modulus_offset,
+            m,
+            gap,
+            scale_by_inv_degree);
         break;
     case 3:
         launch_inverse_fourstep_phase<3>(
-            shard, parameter_shard, degree, modulus_offset, m, gap);
+            shard,
+            parameter_shard,
+            degree,
+            modulus_offset,
+            m,
+            gap,
+            scale_by_inv_degree);
         break;
     case 4:
         launch_inverse_fourstep_phase<4>(
-            shard, parameter_shard, degree, modulus_offset, m, gap);
+            shard,
+            parameter_shard,
+            degree,
+            modulus_offset,
+            m,
+            gap,
+            scale_by_inv_degree);
         break;
     case 5:
         launch_inverse_fourstep_phase<5>(
-            shard, parameter_shard, degree, modulus_offset, m, gap);
+            shard,
+            parameter_shard,
+            degree,
+            modulus_offset,
+            m,
+            gap,
+            scale_by_inv_degree);
         break;
     case 6:
         launch_inverse_fourstep_phase<6>(
-            shard, parameter_shard, degree, modulus_offset, m, gap);
+            shard,
+            parameter_shard,
+            degree,
+            modulus_offset,
+            m,
+            gap,
+            scale_by_inv_degree);
         break;
     case 7:
         launch_inverse_fourstep_phase<7>(
-            shard, parameter_shard, degree, modulus_offset, m, gap);
+            shard,
+            parameter_shard,
+            degree,
+            modulus_offset,
+            m,
+            gap,
+            scale_by_inv_degree);
         break;
     case 8:
         launch_inverse_fourstep_phase<8>(
-            shard, parameter_shard, degree, modulus_offset, m, gap);
+            shard,
+            parameter_shard,
+            degree,
+            modulus_offset,
+            m,
+            gap,
+            scale_by_inv_degree);
         break;
     case 9:
         launch_inverse_fourstep_phase<9>(
-            shard, parameter_shard, degree, modulus_offset, m, gap);
+            shard,
+            parameter_shard,
+            degree,
+            modulus_offset,
+            m,
+            gap,
+            scale_by_inv_degree);
         break;
     default:
         throw std::invalid_argument(
@@ -2669,7 +2875,8 @@ void launch_inverse_stage_schedule(
     const GpuPolyShardView &shard,
     const GpuParameterShard &parameter_shard,
     std::size_t degree,
-    int fusion_stages)
+    int fusion_stages,
+    bool scale_final_stage = true)
 {
     const std::size_t modulus_offset =
         shard.limb_begin - parameter_shard.limb_begin;
@@ -2687,6 +2894,8 @@ void launch_inverse_stage_schedule(
                     ? static_cast<std::size_t>(fusion_stages)
                     : remaining_stages;
         }
+        const bool scale_by_inv_degree =
+            scale_final_stage && remaining_stages == stage_count;
 
         launch_profiled_ntt_stage(
             phase_index,
@@ -2700,7 +2909,8 @@ void launch_inverse_stage_schedule(
                     modulus_offset,
                     m,
                     gap,
-                    stage_count);
+                    stage_count,
+                    scale_by_inv_degree);
             });
 
         ++phase_index;
@@ -2857,7 +3067,8 @@ void launch_inverse_tensor_tam_schedule(
             shard,
             parameter_shard,
             degree,
-            fusion_stages);
+            fusion_stages,
+            false);
         return;
     }
     if (!supports_tensor_core_integer_gemm(shard.device_id))
@@ -2940,7 +3151,8 @@ void launch_inverse_tensor_tam_schedule(
                             modulus_offset,
                             m,
                             gap,
-                            stage_count);
+                            stage_count,
+                            false);
                     }
                 }
             });
@@ -3099,7 +3311,8 @@ void launch_inverse_tensor_fp64_tam_schedule(
             shard,
             parameter_shard,
             degree,
-            fusion_stages);
+            fusion_stages,
+            false);
         return;
     }
     if (!supports_tensor_core_fp64_gemm(shard.device_id))
@@ -3181,7 +3394,8 @@ void launch_inverse_tensor_fp64_tam_schedule(
                             modulus_offset,
                             m,
                             gap,
-                            stage_count);
+                            stage_count,
+                            false);
                     }
                 }
             });
@@ -3255,7 +3469,8 @@ void launch_inverse_fourstep_stages(
         modulus_offset,
         m,
         gap,
-        phase1_stages);
+        phase1_stages,
+        false);
 
     m >>= phase1_stages;
     gap <<= phase1_stages;
@@ -3267,7 +3482,8 @@ void launch_inverse_fourstep_stages(
         modulus_offset,
         m,
         gap,
-        phase2_stages);
+        phase2_stages,
+        true);
 }
 
 void launch_forward_stages(
@@ -3312,10 +3528,12 @@ void launch_inverse_stages(
     const GpuParameterShard &parameter_shard,
     std::size_t degree)
 {
+    bool needs_separate_inv_degree = true;
     switch (requested_ntt_algorithm())
     {
     case NttAlgorithm::Stage:
         launch_inverse_stage_schedule(shard, parameter_shard, degree, 1);
+        needs_separate_inv_degree = false;
         break;
     case NttAlgorithm::Fused:
         launch_inverse_stage_schedule(
@@ -3323,9 +3541,11 @@ void launch_inverse_stages(
             parameter_shard,
             degree,
             requested_ntt_fusion_stages());
+        needs_separate_inv_degree = false;
         break;
     case NttAlgorithm::FourStep:
         launch_inverse_fourstep_stages(shard, parameter_shard, degree);
+        needs_separate_inv_degree = false;
         break;
     case NttAlgorithm::Tensor:
         launch_inverse_tensor_tam_schedule(
@@ -3341,6 +3561,11 @@ void launch_inverse_stages(
             degree,
             requested_tensor_ntt_fusion_stages());
         break;
+    }
+
+    if (!needs_separate_inv_degree)
+    {
+        return;
     }
 
     const std::size_t modulus_offset =

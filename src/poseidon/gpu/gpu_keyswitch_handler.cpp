@@ -346,22 +346,10 @@ void process_hybrid_decomposition_block(
             scratch.degree);
     }
 
-    /* 当前dnum块内的Q limb直接复用原始c2的NTT值，只对新模升产生的 Q/P limb做NTT操作 */
+    /* 当前dnum块内的Q limb直接复用原始c2的NTT值；新模升产生的Q/P limb在最后一段NTT中直接完成IP乘加。 */
     {
-        NvtxRange range("keyswitch.dnum.forward_ntt_qp");
-        kernel::launch_hybrid_forward_ntt_qp(
-            scratch.modup_q.data(),
-            scratch.modup_p.data(),
-            decomp_limb_begin,
-            decomp_limb_count,
-            *parameter_shard,
-            scratch.degree);
-    }
-
-    /* 同时和ksk0/ksk1相乘并且累加 */
-    {
-        NvtxRange range("keyswitch.dnum.mul_accum.c01");
-        kernel::launch_hybrid_multiply_accumulate_two_components(
+        NvtxRange range("keyswitch.dnum.forward_ntt_qp_mul_accum.c01");
+        kernel::launch_hybrid_forward_ntt_qp_mul_accumulate_two_components(
             scratch.accum_q0.data(),
             scratch.accum_p0.data(),
             scratch.accum_q1.data(),
@@ -371,10 +359,10 @@ void process_hybrid_decomposition_block(
             switch_poly_shard.ptr,
             key0_shard.ptr,
             key1_shard.ptr,
-            *parameter_shard,
-            scratch.degree,
             decomp_limb_begin,
             decomp_limb_count,
+            *parameter_shard,
+            scratch.degree,
             decomp_index == 0);
     }
 }

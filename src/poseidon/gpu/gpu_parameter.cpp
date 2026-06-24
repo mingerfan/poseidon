@@ -174,6 +174,51 @@ std::vector<GpuWord> copy_inv_degree_operands(
     return result;
 }
 
+GpuWord multiply_mod_host(
+    GpuWord left,
+    GpuWord right,
+    GpuWord modulus)
+{
+    return static_cast<GpuWord>(
+        (static_cast<GpuWide>(left) * static_cast<GpuWide>(right)) %
+        static_cast<GpuWide>(modulus));
+}
+
+std::vector<GpuWord> make_normalized_final_intt_roots(
+    std::vector<GpuWord> roots,
+    const std::vector<Modulus> &moduli,
+    const std::vector<GpuWord> &inv_degree,
+    std::size_t degree)
+{
+    if (degree == 0)
+    {
+        return roots;
+    }
+    if (moduli.size() != inv_degree.size())
+    {
+        throw std::invalid_argument(
+            "GpuParameterData normalized INTT table shape mismatch");
+    }
+    if (roots.size() != moduli.size() * degree)
+    {
+        throw std::invalid_argument(
+            "GpuParameterData normalized INTT root table shape mismatch");
+    }
+
+    for (std::size_t limb = 0; limb < moduli.size(); ++limb)
+    {
+        const GpuWord modulus = checked_gpu_word(
+            moduli[limb].value(),
+            "GpuParameterData only supports moduli that fit in GpuWord");
+        const std::size_t final_root_index = limb * degree + degree - 1;
+        roots[final_root_index] = multiply_mod_host(
+            roots[final_root_index],
+            inv_degree[limb],
+            modulus);
+    }
+    return roots;
+}
+
 struct FusedNttMatrixTables
 {
     std::size_t fusion_stages = 0;
@@ -236,6 +281,13 @@ bool fused_matrix_fp64_tables_enabled()
         return env_enabled(kFusedMatrixFp64TablesEnv);
     }
 
+    const char *algorithm = std::getenv("POSEIDON_NTT_ALGO");
+    return algorithm != nullptr &&
+           is_fp64_tensor_ntt_algorithm(std::string(algorithm));
+}
+
+bool fp64_tensor_ntt_algorithm_requested()
+{
     const char *algorithm = std::getenv("POSEIDON_NTT_ALGO");
     return algorithm != nullptr &&
            is_fp64_tensor_ntt_algorithm(std::string(algorithm));
@@ -1558,6 +1610,9 @@ void GpuParameterData::build_from_poseidon_context(
     const bool precompute_fused_matrix_fp64_tables =
         precomputed_fused_matrix_stages > 0 &&
         fused_matrix_fp64_tables_enabled();
+    const bool precompute_word_fused_matrix_tables =
+        precomputed_fused_matrix_stages > 0 &&
+        !fp64_tensor_ntt_algorithm_requested();
     const std::size_t fused_matrix_max_levels =
         read_fused_matrix_max_levels();
 
@@ -1642,6 +1697,12 @@ void GpuParameterData::build_from_poseidon_context(
             concatenate_vectors(q_intt_roots, p_intt_roots);
         auto rns_inv_degree =
             concatenate_vectors(q_inv_degree, p_inv_degree);
+        auto rns_normalized_intt_roots =
+            make_normalized_final_intt_roots(
+                rns_intt_roots,
+                concatenate_vectors(q, parameter_p),
+                rns_inv_degree,
+                level.degree);
         const auto rns_ntt_table_ptrs = collect_rns_ntt_table_pointers(
             small_ntt_tables,
             q.size(),
@@ -1765,6 +1826,17 @@ void GpuParameterData::build_from_poseidon_context(
                 rns_intt_roots.size());
         }
 
+        shard.intt_tables_normalized =
+            DeviceVector<GpuWord>(
+                rns_normalized_intt_roots.size(),
+                device_id);
+        if (!rns_normalized_intt_roots.empty())
+        {
+            shard.intt_tables_normalized.copy_from_host(
+                rns_normalized_intt_roots.data(),
+                rns_normalized_intt_roots.size());
+        }
+
         shard.inv_degree_modulo =
             DeviceVector<GpuWord>(rns_inv_degree.size(), device_id);
         if (!rns_inv_degree.empty())
@@ -1788,10 +1860,13 @@ void GpuParameterData::build_from_poseidon_context(
             copy_to_device_vector(
                 rns_fused_ntt_matrices.stage_offsets,
                 device_id);
-        shard.ntt_fused_matrices =
-            copy_to_device_vector(
-                rns_fused_ntt_matrices.matrices,
-                device_id);
+        if (precompute_word_fused_matrix_tables)
+        {
+            shard.ntt_fused_matrices =
+                copy_to_device_vector(
+                    rns_fused_ntt_matrices.matrices,
+                    device_id);
+        }
         shard.ntt_fused_matrices_fp64_lo =
             copy_to_device_vector(
                 rns_fused_ntt_matrices_fp64.lo,
@@ -1815,10 +1890,13 @@ void GpuParameterData::build_from_poseidon_context(
             copy_to_device_vector(
                 rns_fused_intt_matrices.stage_offsets,
                 device_id);
-        shard.intt_fused_matrices =
-            copy_to_device_vector(
-                rns_fused_intt_matrices.matrices,
-                device_id);
+        if (precompute_word_fused_matrix_tables)
+        {
+            shard.intt_fused_matrices =
+                copy_to_device_vector(
+                    rns_fused_intt_matrices.matrices,
+                    device_id);
+        }
         shard.intt_fused_matrices_fp64_lo =
             copy_to_device_vector(
                 rns_fused_intt_matrices_fp64.lo,
