@@ -120,43 +120,6 @@ const GpuParameterShard *find_parameter_shard(
     return nullptr;
 }
 
-void copy_poly_shard(
-    const char *name,
-    const GpuPolyShardView &destination,
-    const GpuConstPolyShardView &source)
-{
-    if (!same_shard_placement(destination, source))
-    {
-        throw std::invalid_argument(std::string(name) + ": shard placement mismatch");
-    }
-
-    const std::size_t word_count = checked_mul(
-        destination.limb_count,
-        destination.coeff_count,
-        "GpuKeySwitchHandler copy word count overflow");
-    gpu_check_cuda(cudaSetDevice(destination.device_id), name);
-    gpu_check_cuda(
-        cudaMemcpy(
-            destination.ptr,
-            source.ptr,
-            word_count * sizeof(GpuWord),
-            cudaMemcpyDeviceToDevice),
-        name);
-}
-
-void copy_initial_components(
-    GpuCiphertextView &destination,
-    const GpuConstCiphertextView &source)
-{
-    for (std::size_t component = 0; component < destination.polys.size(); ++component)
-    {
-        copy_poly_shard(
-            "GpuKeySwitchHandler::copy_initial_components",
-            destination.polys[component].shards.front(),
-            source.polys[component].shards.front());
-    }
-}
-
 struct HybridScratch
 {
     int device_id = 0;
@@ -369,6 +332,8 @@ void process_hybrid_decomposition_block(
 
 void finalize_hybrid_relinearize(
     GpuCiphertextView &destination,
+    const GpuConstPolyShardView &add_back_source_shard0,
+    const GpuConstPolyShardView &add_back_source_shard1,
     HybridScratch &scratch,
     const GpuLevelInfo &level_info)
 {
@@ -448,6 +413,8 @@ void finalize_hybrid_relinearize(
         kernel::launch_hybrid_apply_moddown_ntt_add_back(
             destination_shard0,
             destination_shard1,
+            add_back_source_shard0,
+            add_back_source_shard1,
             scratch.accum_q0.data(),
             scratch.accum_q1.data(),
             scratch.c2_intt.data(),
@@ -672,7 +639,9 @@ void GpuKeySwitchHandler::switch_key_hybrid_ciphertext(
     const GpuConstEvaluationKeyView &switch_keys_view,
     const GpuEvaluationKeyData &switch_keys_data,
     std::size_t key_index,/*可以自由选择密钥切换的密钥类型*/
-    const GpuLevelInfo &level_info) const
+    const GpuLevelInfo &level_info,
+    const GpuConstRNSPolyView *add_back_source0,
+    const GpuConstRNSPolyView *add_back_source1) const
 {
     NvtxRange range("keyswitch.hybrid");
     (void)params_;
@@ -767,9 +736,18 @@ void GpuKeySwitchHandler::switch_key_hybrid_ciphertext(
             level_info);
     }
 
-    /* INTT 模降 NTT 和原密文分量求和*/
+    const auto add_back_shard0 = add_back_source0 == nullptr
+        ? as_const_shard(destination_view.polys[0].shards.front())
+        : add_back_source0->shards.front();
+    const auto add_back_shard1 = add_back_source1 == nullptr
+        ? as_const_shard(destination_view.polys[1].shards.front())
+        : add_back_source1->shards.front();
+
+    /* INTT 模降 NTT，并和指定的原密文分量求和 */
     finalize_hybrid_relinearize(
         destination_view,
+        add_back_shard0,
+        add_back_shard1,
         scratch,
         level_info);
 }
@@ -788,16 +766,17 @@ void GpuKeySwitchHandler::relinearize_hybrid_ciphertext(
         relin_keys_data,
         level_info);
 
-    /*relin = 先复制 c0/c1，再对 c2 做通用 switch-key*/
-    copy_initial_components(destination_view, source_view);
-    /*直接调用密钥切换,第三个分量需要被密钥切换*/
+    /* relin = source.c0/c1 + switch_key(source.c2)，不再提前复制 c0/c1 */
+    /* 直接调用密钥切换，第三个分量需要被密钥切换 */
     switch_key_hybrid_ciphertext(
         destination_view,
         source_view.polys[2],
         relin_keys_view,
         relin_keys_data,
         kRelinKeyPower2Index,/*数值为0，表示该密钥为重线性化密钥*/
-        level_info);
+        level_info,
+        &source_view.polys[0],
+        &source_view.polys[1]);
 }
 
 }  // namespace gpu

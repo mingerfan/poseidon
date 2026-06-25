@@ -2416,6 +2416,26 @@ int run_demo()
                 });
         };
 
+        auto preallocate_gpu_timing_output_like =
+            [&](const GpuCiphertextData &reference, std::size_t component_count)
+        {
+            if (reference.empty() || reference.fields_.empty())
+            {
+                throw std::invalid_argument(
+                    "preallocate_gpu_timing_output_like: empty reference");
+            }
+            gpu_timing_output =
+                GpuCiphertextData::allocate_single_device_sharded(
+                    reference.meta.degree,
+                    reference.meta.q_count,
+                    component_count,
+                    reference.fields_.front().device_id,
+                    reference.polys_.front().shards,
+                    reference.meta.p_count);
+            gpu_timing_output.meta = reference.meta;
+            gpu_timing_output.meta.component_count = component_count;
+        };
+
         poseidon::RNSPoly cpu_bconv_c2_coeff(
             context,
             cpu_multiply_result.parms_id());
@@ -2613,6 +2633,9 @@ int run_demo()
                 return q_ok && p_ok ? std::string("OK") : std::string("FAIL");
             });
 
+        preallocate_gpu_timing_output_like(
+            gpu_ct0,
+            std::max(gpu_ct0.size(), gpu_ct1.size()));
         benchmark_ciphertext_operation(
             "add",
             [&]() { cpu_evaluator->add(ct0, ct1, cpu_timing_result); },
@@ -2620,6 +2643,9 @@ int run_demo()
             cpu_timing_result,
             gpu_timing_output);
 
+        preallocate_gpu_timing_output_like(
+            gpu_ct0,
+            std::max(gpu_ct0.size(), gpu_ct1.size()));
         benchmark_ciphertext_operation(
             "sub",
             [&]() { cpu_evaluator->sub(ct0, ct1, cpu_timing_result); },
@@ -2627,6 +2653,7 @@ int run_demo()
             cpu_timing_result,
             gpu_timing_output);
 
+        preallocate_gpu_timing_output_like(gpu_ct0, gpu_ct0.size());
         benchmark_ciphertext_operation(
             "negate",
             [&]()
@@ -2641,6 +2668,7 @@ int run_demo()
             cpu_timing_result,
             gpu_timing_output);
 
+        preallocate_gpu_timing_output_like(gpu_ct0, gpu_ct0.size());
         benchmark_ciphertext_operation(
             "add_plain",
             [&]() { cpu_evaluator->add_plain(ct0, plain1, cpu_timing_result); },
@@ -2648,6 +2676,7 @@ int run_demo()
             cpu_timing_result,
             gpu_timing_output);
 
+        preallocate_gpu_timing_output_like(gpu_ct0, gpu_ct0.size());
         benchmark_ciphertext_operation(
             "sub_plain",
             [&]()

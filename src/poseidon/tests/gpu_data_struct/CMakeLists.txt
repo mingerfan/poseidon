@@ -9,6 +9,12 @@ enable_testing()
 option(POSEIDON_GPU_DATA_STRUCT_ENABLE_GPU_TESTS
     "Build GPU data-structure tests that require CUDA and RMM"
     ON)
+option(POSEIDON_GPU_DATA_STRUCT_BUILD_CPU_TEST
+    "Build the auxiliary CPU ciphertext-generation test"
+    OFF)
+option(POSEIDON_GPU_DATA_STRUCT_BUILD_GPU_STORAGE_TEST
+    "Build the auxiliary GPU data-structure generation test"
+    OFF)
 
 set(POSEIDON_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../.." CACHE PATH
     "Path to the Poseidon source tree")
@@ -22,19 +28,21 @@ set(POSEIDON_USE_MSGSL OFF CACHE BOOL "" FORCE)
 
 add_subdirectory("${POSEIDON_ROOT}" "${CMAKE_BINARY_DIR}/poseidon_build")
 
-add_executable(test_cpu_ciphertext_generation
-    test_cpu_ciphertext_generation.cpp
-)
+if(POSEIDON_GPU_DATA_STRUCT_BUILD_CPU_TEST)
+    add_executable(test_cpu_ciphertext_generation
+        test_cpu_ciphertext_generation.cpp
+    )
 
-target_link_libraries(test_cpu_ciphertext_generation
-    PRIVATE
-        poseidon_shared
-)
+    target_link_libraries(test_cpu_ciphertext_generation
+        PRIVATE
+            poseidon_shared
+    )
 
-add_test(
-    NAME test_cpu_ciphertext_generation
-    COMMAND test_cpu_ciphertext_generation
-)
+    add_test(
+        NAME test_cpu_ciphertext_generation
+        COMMAND test_cpu_ciphertext_generation
+    )
+endif()
 
 if(POSEIDON_GPU_DATA_STRUCT_ENABLE_GPU_TESTS)
     enable_language(CUDA)
@@ -97,24 +105,26 @@ if(POSEIDON_GPU_DATA_STRUCT_ENABLE_GPU_TESTS)
         "${POSEIDON_ROOT}/src/poseidon/gpu/kernels/gpu_rescale_kernels.cu"
     )
 
-    add_executable(test_gpu_data_struct_generation
-        test_gpu_data_struct_generation.cpp
-        ${POSEIDON_GPU_DATA_STRUCT_SOURCES}
-    )
+    if(POSEIDON_GPU_DATA_STRUCT_BUILD_GPU_STORAGE_TEST)
+        add_executable(test_gpu_data_struct_generation
+            test_gpu_data_struct_generation.cpp
+            ${POSEIDON_GPU_DATA_STRUCT_SOURCES}
+        )
 
-    target_link_libraries(test_gpu_data_struct_generation
-        PRIVATE
-            poseidon_shared
-            CUDA::cudart
-            rmm::rmm
-    )
+        target_link_libraries(test_gpu_data_struct_generation
+            PRIVATE
+                poseidon_shared
+                CUDA::cudart
+                rmm::rmm
+        )
 
-    add_test(
-        NAME test_gpu_data_struct_generation
-        COMMAND test_gpu_data_struct_generation
-    )
-    set_tests_properties(test_gpu_data_struct_generation
-        PROPERTIES SKIP_RETURN_CODE 77)
+        add_test(
+            NAME test_gpu_data_struct_generation
+            COMMAND test_gpu_data_struct_generation
+        )
+        set_tests_properties(test_gpu_data_struct_generation
+            PROPERTIES SKIP_RETURN_CODE 77)
+    endif()
 
     add_executable(demo_gpu_ciphertext_add_handler
         demo_gpu_ciphertext_add_handler.cpp
