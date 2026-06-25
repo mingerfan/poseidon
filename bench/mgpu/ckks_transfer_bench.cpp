@@ -53,6 +53,13 @@ struct Stats
     double max_ms = 0.0;
 };
 
+struct BenchCaseResult
+{
+    Stats stats;
+    std::size_t ciphertext_bytes = 0;
+    std::size_t total_bytes = 0;
+};
+
 class RmmPoolScope
 {
 public:
@@ -244,15 +251,47 @@ std::size_t checked_mul(std::size_t a, std::size_t b, const char *what)
     return a * b;
 }
 
-std::size_t ciphertext_bytes(
-    const BenchOptions &options, const LevelShape &level)
+std::size_t checked_add(std::size_t a, std::size_t b, const char *what)
 {
-    const std::size_t limbs = level.q_count + options.p_count;
-    const std::size_t words = checked_mul(
-        checked_mul(options.degree, limbs, "ciphertext word count overflow"),
-        options.component_count,
-        "ciphertext word count overflow");
-    return checked_mul(words, sizeof(gpu::GpuWord), "ciphertext byte count overflow");
+    if (b > std::numeric_limits<std::size_t>::max() - a)
+    {
+        throw std::overflow_error(what);
+    }
+    return a + b;
+}
+
+std::size_t copy_request_payload_bytes(const GpuObjectCopyRequest &request)
+{
+    std::size_t bytes = 0;
+    for (const GpuObjectBufferCopy &buffer : request.buffers)
+    {
+        bytes = checked_add(bytes, buffer.bytes, "copy request byte count overflow");
+    }
+    return bytes;
+}
+
+std::size_t copy_requests_payload_bytes(
+    const std::vector<GpuObjectCopyRequest> &requests)
+{
+    std::size_t bytes = 0;
+    for (const GpuObjectCopyRequest &request : requests)
+    {
+        bytes = checked_add(
+            bytes,
+            copy_request_payload_bytes(request),
+            "copy request batch byte count overflow");
+    }
+    return bytes;
+}
+
+std::size_t first_copy_request_payload_bytes(
+    const std::vector<GpuObjectCopyRequest> &requests)
+{
+    if (requests.empty())
+    {
+        throw std::invalid_argument("cannot get ciphertext bytes from an empty copy batch");
+    }
+    return copy_request_payload_bytes(requests.front());
 }
 
 std::shared_ptr<gpu::GpuCiphertextData> make_ciphertext(
@@ -342,7 +381,7 @@ Stats summarize(const std::vector<double> &samples)
     return stats;
 }
 
-Stats run_case(
+BenchCaseResult run_case(
     const BenchOptions &options,
     const LevelShape &level,
     std::size_t batch_size,
@@ -355,6 +394,10 @@ Stats run_case(
         make_requests(options, level, batch_size, sources);
     MaterializedGpuObjectBatchCopy materialized =
         materializer.materialize_copy_batch(requests);
+    const std::size_t ciphertext_bytes =
+        first_copy_request_payload_bytes(materialized.object_copies);
+    const std::size_t total_bytes =
+        copy_requests_payload_bytes(materialized.object_copies);
 
     cudaEvent_t start = nullptr;
     cudaEvent_t stop = nullptr;
@@ -407,7 +450,7 @@ Stats run_case(
 
         check_cuda(cudaEventDestroy(stop), "cudaEventDestroy stop");
         check_cuda(cudaEventDestroy(start), "cudaEventDestroy start");
-        return summarize(samples);
+        return BenchCaseResult{ summarize(samples), ciphertext_bytes, total_bytes };
     }
     catch (...)
     {
@@ -462,7 +505,8 @@ void print_header(const BenchOptions &options)
         << std::setw(8) << "count"
         << std::setw(10) << "level"
         << std::setw(10) << "q_count"
-        << std::setw(14) << "bytes"
+        << std::setw(14) << "ct_bytes"
+        << std::setw(14) << "total_bytes"
         << std::setw(14) << "avg_ms"
         << std::setw(14) << "min_ms"
         << std::setw(14) << "max_ms"
@@ -474,6 +518,7 @@ void print_result(
     const char *mode,
     std::size_t batch_size,
     const LevelShape &level,
+    std::size_t ciphertext_bytes,
     std::size_t total_bytes,
     const Stats &stats)
 {
@@ -485,6 +530,7 @@ void print_result(
         << std::setw(8) << batch_size
         << std::setw(10) << level.name
         << std::setw(10) << level.q_count
+        << std::setw(14) << ciphertext_bytes
         << std::setw(14) << total_bytes
         << std::setw(14) << std::fixed << std::setprecision(4) << stats.average_ms
         << std::setw(14) << std::fixed << std::setprecision(4) << stats.min_ms
@@ -506,7 +552,7 @@ int main(int argc, char **argv)
         PoseidonGpuObjectCopyMaterializer materializer;
         CudaPeerComm peer_backend;
 
-        const std::vector<std::size_t> batch_sizes{ 1, 3, 5 };
+        const std::vector<std::size_t> batch_sizes{ 1, 5, 10 };
         const std::vector<LevelShape> levels{
             { "L4", 4 },
             { "L8", 8 },
@@ -519,29 +565,35 @@ int main(int argc, char **argv)
         {
             for (const LevelShape &level : levels)
             {
-                const std::size_t total_bytes =
-                    checked_mul(
-                        ciphertext_bytes(options, level),
-                        batch_size,
-                        "total transfer bytes overflow");
-
-                const Stats single_stats = run_case(
+                const BenchCaseResult single_result = run_case(
                     options,
                     level,
                     batch_size,
                     false,
                     materializer,
                     peer_backend);
-                print_result("single", batch_size, level, total_bytes, single_stats);
+                print_result(
+                    "single",
+                    batch_size,
+                    level,
+                    single_result.ciphertext_bytes,
+                    single_result.total_bytes,
+                    single_result.stats);
 
-                const Stats batch_stats = run_case(
+                const BenchCaseResult batch_result = run_case(
                     options,
                     level,
                     batch_size,
                     true,
                     materializer,
                     peer_backend);
-                print_result("batch", batch_size, level, total_bytes, batch_stats);
+                print_result(
+                    "batch",
+                    batch_size,
+                    level,
+                    batch_result.ciphertext_bytes,
+                    batch_result.total_bytes,
+                    batch_result.stats);
             }
         }
     }

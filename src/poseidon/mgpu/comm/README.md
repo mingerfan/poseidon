@@ -43,6 +43,10 @@ and peer-access reporting. It is also built only under
 Poseidon GPU ciphertext/plaintext objects. It is built only when
 `POSEIDON_BUILD_MGPU_GPU_OBJECTS=ON`.
 
+`nccl_comm.h/.cpp` is the optional NCCL communication wrapper used by the
+multi-GPU transfer benchmark. It is built only when
+`POSEIDON_BUILD_MGPU_NCCL_COMM=ON` and is not wired into the mgpu runtime path.
+
 ## Execution Flow
 
 The normal planned execution path is:
@@ -87,8 +91,14 @@ The Poseidon GPU executor is separate from communication:
 -DPOSEIDON_BUILD_MGPU_GPU_RUNTIME=ON
 ```
 
-Do not move CUDA runtime, RMM, or existing single-GPU evaluator dependencies
-into the default communication target.
+NCCL communication for benchmarks is optional:
+
+```bash
+-DPOSEIDON_BUILD_MGPU_NCCL_COMM=ON
+```
+
+Do not move CUDA runtime, NCCL, RMM, or existing single-GPU evaluator
+dependencies into the default communication target.
 
 ## V1 Invariants
 

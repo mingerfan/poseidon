@@ -1211,3 +1211,57 @@ if(POSEIDON_BUILD_MGPU_CUDA_COMM)
             PROPERTIES SKIP_RETURN_CODE 77)
     endif()
 endif()
+
+option(POSEIDON_BUILD_MGPU_NCCL_COMM "Build optional NCCL communication backend" OFF)
+message(STATUS "POSEIDON_BUILD_MGPU_NCCL_COMM: ${POSEIDON_BUILD_MGPU_NCCL_COMM}")
+
+if(POSEIDON_BUILD_MGPU_NCCL_COMM)
+    find_package(CUDAToolkit REQUIRED)
+    find_path(NCCL_INCLUDE_DIR nccl.h)
+    find_library(NCCL_LIBRARY nccl)
+    if(NOT NCCL_INCLUDE_DIR OR NOT NCCL_LIBRARY)
+        message(FATAL_ERROR "NCCL was not found; install NCCL or disable POSEIDON_BUILD_MGPU_NCCL_COMM")
+    endif()
+
+    set(POSEIDON_MGPU_NCCL_REQUIRED_INCLUDES_OLD "${CMAKE_REQUIRED_INCLUDES}")
+    set(POSEIDON_MGPU_NCCL_REQUIRED_LIBRARIES_OLD "${CMAKE_REQUIRED_LIBRARIES}")
+    set(CMAKE_REQUIRED_INCLUDES "${NCCL_INCLUDE_DIR};${CUDAToolkit_INCLUDE_DIRS}")
+    set(CMAKE_REQUIRED_LIBRARIES "${NCCL_LIBRARY};CUDA::cudart")
+    unset(POSEIDON_MGPU_NCCL_HAS_GATHER CACHE)
+    check_cxx_source_compiles(
+        "#include <nccl.h>
+int main()
+{
+    auto gather = &ncclGather;
+    (void)gather;
+    return 0;
+}"
+        POSEIDON_MGPU_NCCL_HAS_GATHER)
+    set(CMAKE_REQUIRED_INCLUDES "${POSEIDON_MGPU_NCCL_REQUIRED_INCLUDES_OLD}")
+    set(CMAKE_REQUIRED_LIBRARIES "${POSEIDON_MGPU_NCCL_REQUIRED_LIBRARIES_OLD}")
+
+    add_library(poseidon_mgpu_nccl_comm STATIC
+        comm/nccl_comm.cpp
+    )
+
+    target_include_directories(poseidon_mgpu_nccl_comm
+        PUBLIC
+            ${POSEIDON_INCLUDES_DIR}/src
+            ${NCCL_INCLUDE_DIR}
+    )
+
+    target_link_libraries(poseidon_mgpu_nccl_comm
+        PUBLIC
+            poseidon_mgpu
+            CUDA::cudart
+            ${NCCL_LIBRARY}
+    )
+
+    if(POSEIDON_MGPU_NCCL_HAS_GATHER)
+        target_compile_definitions(poseidon_mgpu_nccl_comm
+            PRIVATE POSEIDON_MGPU_HAS_NCCL_GATHER=1)
+    else()
+        target_compile_definitions(poseidon_mgpu_nccl_comm
+            PRIVATE POSEIDON_MGPU_HAS_NCCL_GATHER=0)
+    endif()
+endif()
