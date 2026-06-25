@@ -64,6 +64,74 @@ bool all_components_use_layout(
     return true;
 }
 
+bool ciphertext_storage_matches(
+    const GpuCiphertextData &ciphertext,
+    std::size_t degree,
+    std::size_t q_count,
+    std::size_t p_count,
+    std::size_t component_count,
+    int device_id,
+    const GpuRNSPoly &reference_layout)
+{
+    if (ciphertext.empty() ||
+        ciphertext.fields_.empty() ||
+        ciphertext.size() != component_count)
+    {
+        return false;
+    }
+    if (ciphertext.fields_.front().device_id != device_id)
+    {
+        return false;
+    }
+    for (const auto &poly : ciphertext.polys_)
+    {
+        if (poly.degree != degree ||
+            poly.q_count != q_count ||
+            poly.p_count != p_count ||
+            !same_logical_shard_layout(reference_layout, poly))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+void prepare_ciphertext_destination(
+    GpuCiphertextData &destination,
+    const GpuCiphertextData *alias_source0,
+    const GpuCiphertextData *alias_source1,
+    const GpuCiphertextMeta &meta,
+    std::size_t component_count,
+    int device_id,
+    const GpuRNSPoly &reference_layout)
+{
+    const bool aliases_input =
+        &destination == alias_source0 ||
+        (alias_source1 != nullptr && &destination == alias_source1);
+    if (aliases_input ||
+        !ciphertext_storage_matches(
+            destination,
+            meta.degree,
+            meta.q_count,
+            meta.p_count,
+            component_count,
+            device_id,
+            reference_layout))
+    {
+        destination =
+            GpuCiphertextData::allocate_single_device_sharded(
+                meta.degree,
+                meta.q_count,
+                component_count,
+                device_id,
+                reference_layout.shards,
+                meta.p_count);
+    }
+
+    destination.meta = meta;
+    destination.meta.component_count = component_count;
+}
+
 std::size_t checked_mul(std::size_t a, std::size_t b, const char *what)
 {
     if (a != 0 && b > std::numeric_limits<std::size_t>::max() / a)
@@ -306,21 +374,18 @@ void GpuEvaluator::add(
         throw std::invalid_argument("GpuEvaluator::add: shard layout mismatch");
     }
 
-    GpuCiphertextData result =
-        GpuCiphertextData::allocate_single_device_sharded(
-            left_ciphertext.meta.degree,
-            left_ciphertext.meta.q_count,
-            result_components,
-            device_id,
-            reference_layout.shards,
-            left_ciphertext.meta.p_count);
-
-    result.meta = left_ciphertext.meta;
-    result.meta.component_count = result_components;
+    prepare_ciphertext_destination(
+        destination_ciphertext,
+        &left_ciphertext,
+        &right_ciphertext,
+        left_ciphertext.meta,
+        result_components,
+        device_id,
+        reference_layout);
 
     auto left_view = left_ciphertext.make_const_view();
     auto right_view = right_ciphertext.make_const_view();
-    auto destination_view = result.make_view();
+    auto destination_view = destination_ciphertext.make_view();
 
     const auto &level_info = params_.get_level(left_ciphertext.meta.parms_id);
 
@@ -329,8 +394,6 @@ void GpuEvaluator::add(
         left_view,
         right_view,
         level_info);
-
-    destination_ciphertext = std::move(result);
 }
 
 void GpuEvaluator::sub(
@@ -389,21 +452,18 @@ void GpuEvaluator::sub(
         throw std::invalid_argument("GpuEvaluator::sub: shard layout mismatch");
     }
 
-    GpuCiphertextData result =
-        GpuCiphertextData::allocate_single_device_sharded(
-            left_ciphertext.meta.degree,
-            left_ciphertext.meta.q_count,
-            result_components,
-            device_id,
-            reference_layout.shards,
-            left_ciphertext.meta.p_count);
-
-    result.meta = left_ciphertext.meta;
-    result.meta.component_count = result_components;
+    prepare_ciphertext_destination(
+        destination_ciphertext,
+        &left_ciphertext,
+        &right_ciphertext,
+        left_ciphertext.meta,
+        result_components,
+        device_id,
+        reference_layout);
 
     auto left_view = left_ciphertext.make_const_view();
     auto right_view = right_ciphertext.make_const_view();
-    auto destination_view = result.make_view();
+    auto destination_view = destination_ciphertext.make_view();
 
     const auto &level_info = params_.get_level(left_ciphertext.meta.parms_id);
 
@@ -412,8 +472,6 @@ void GpuEvaluator::sub(
         left_view,
         right_view,
         level_info);
-
-    destination_ciphertext = std::move(result);
 }
 
 void GpuEvaluator::negate(
@@ -446,20 +504,17 @@ void GpuEvaluator::negate(
         throw std::invalid_argument("GpuEvaluator::negate: shard layout mismatch");
     }
 
-    GpuCiphertextData result =
-        GpuCiphertextData::allocate_single_device_sharded(
-            source_ciphertext.meta.degree,
-            source_ciphertext.meta.q_count,
-            result_components,
-            device_id,
-            reference_layout.shards,
-            source_ciphertext.meta.p_count);
-
-    result.meta = source_ciphertext.meta;
-    result.meta.component_count = result_components;
+    prepare_ciphertext_destination(
+        destination_ciphertext,
+        &source_ciphertext,
+        nullptr,
+        source_ciphertext.meta,
+        result_components,
+        device_id,
+        reference_layout);
 
     auto source_view = source_ciphertext.make_const_view();
-    auto destination_view = result.make_view();
+    auto destination_view = destination_ciphertext.make_view();
 
     const auto &level_info = params_.get_level(source_ciphertext.meta.parms_id);
 
@@ -467,8 +522,6 @@ void GpuEvaluator::negate(
         destination_view,
         source_view,
         level_info);
-
-    destination_ciphertext = std::move(result);
 }
 
 void GpuEvaluator::add_plain(
@@ -535,21 +588,18 @@ void GpuEvaluator::add_plain(
         throw std::invalid_argument("GpuEvaluator::add_plain: plaintext shard layout mismatch");
     }
 
-    GpuCiphertextData result =
-        GpuCiphertextData::allocate_single_device_sharded(
-            source_ciphertext.meta.degree,
-            source_ciphertext.meta.q_count,
-            result_components,
-            device_id,
-            reference_layout.shards,
-            source_ciphertext.meta.p_count);
-
-    result.meta = source_ciphertext.meta;
-    result.meta.component_count = result_components;
+    prepare_ciphertext_destination(
+        destination_ciphertext,
+        &source_ciphertext,
+        nullptr,
+        source_ciphertext.meta,
+        result_components,
+        device_id,
+        reference_layout);
 
     auto ciphertext_view = source_ciphertext.make_const_view();
     auto plaintext_view = source_plaintext.make_const_view();
-    auto destination_view = result.make_view();
+    auto destination_view = destination_ciphertext.make_view();
 
     const auto &level_info = params_.get_level(source_ciphertext.meta.parms_id);
 
@@ -558,8 +608,6 @@ void GpuEvaluator::add_plain(
         ciphertext_view,
         plaintext_view,
         level_info);
-
-    destination_ciphertext = std::move(result);
 }
 
 void GpuEvaluator::sub_plain(
@@ -625,21 +673,18 @@ void GpuEvaluator::sub_plain(
         throw std::invalid_argument("GpuEvaluator::sub_plain: plaintext shard layout mismatch");
     }
 
-    GpuCiphertextData result =
-        GpuCiphertextData::allocate_single_device_sharded(
-            source_ciphertext.meta.degree,
-            source_ciphertext.meta.q_count,
-            result_components,
-            device_id,
-            reference_layout.shards,
-            source_ciphertext.meta.p_count);
-
-    result.meta = source_ciphertext.meta;
-    result.meta.component_count = result_components;
+    prepare_ciphertext_destination(
+        destination_ciphertext,
+        &source_ciphertext,
+        nullptr,
+        source_ciphertext.meta,
+        result_components,
+        device_id,
+        reference_layout);
 
     auto ciphertext_view = source_ciphertext.make_const_view();
     auto plaintext_view = source_plaintext.make_const_view();
-    auto destination_view = result.make_view();
+    auto destination_view = destination_ciphertext.make_view();
 
     const auto &level_info = params_.get_level(source_ciphertext.meta.parms_id);
 
@@ -648,8 +693,6 @@ void GpuEvaluator::sub_plain(
         ciphertext_view,
         plaintext_view,
         level_info);
-
-    destination_ciphertext = std::move(result);
 }
 
 void GpuEvaluator::multiply_plain(
