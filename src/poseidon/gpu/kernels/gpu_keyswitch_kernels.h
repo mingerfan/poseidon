@@ -99,8 +99,6 @@ void launch_hybrid_apply_moddown_ntt(
 void launch_hybrid_apply_moddown_ntt_add_back(
     const GpuPolyShardView &destination_shard0,
     const GpuPolyShardView &destination_shard1,
-    const GpuConstPolyShardView &add_back_source_shard0,
-    const GpuConstPolyShardView &add_back_source_shard1,
     const GpuWord *accum_q0,
     const GpuWord *accum_q1,
     const GpuWord *converted_q0,

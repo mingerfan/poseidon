@@ -1092,8 +1092,6 @@ __global__ void hybrid_apply_moddown_ntt_two_components_kernel(
 __global__ void hybrid_apply_moddown_ntt_add_back_two_components_kernel(
     GpuWord *destination0,
     GpuWord *destination1,
-    const GpuWord *add_back_source0,
-    const GpuWord *add_back_source1,
     const GpuWord *accum_q0,
     const GpuWord *accum_q1,
     const GpuWord *converted_q0,
@@ -1125,8 +1123,6 @@ __global__ void hybrid_apply_moddown_ntt_add_back_two_components_kernel(
     const GpuWord inv_p = inv_p_mod_q[table_limb];
 
     GpuWord *destination = second_component ? destination1 : destination0;
-    const GpuWord *add_back_source =
-        second_component ? add_back_source1 : add_back_source0;
     const GpuWord *accum_q = second_component ? accum_q1 : accum_q0;
     const GpuWord *converted_q = second_component ? converted_q1 : converted_q0;
 
@@ -1135,7 +1131,7 @@ __global__ void hybrid_apply_moddown_ntt_add_back_two_components_kernel(
     const GpuWord moddown =
         mul_mod(difference, inv_p, modulus, barrett);
     destination[local_index] =
-        add_mod(add_back_source[local_index], moddown, modulus);
+        add_mod(destination[local_index], moddown, modulus);
 }
 
 void validate_hybrid_tables(
@@ -1904,8 +1900,6 @@ void launch_hybrid_apply_moddown_ntt(
 void launch_hybrid_apply_moddown_ntt_add_back(
     const GpuPolyShardView &destination_shard0,
     const GpuPolyShardView &destination_shard1,
-    const GpuConstPolyShardView &add_back_source_shard0,
-    const GpuConstPolyShardView &add_back_source_shard1,
     const GpuWord *accum_q0,
     const GpuWord *accum_q1,
     const GpuWord *converted_q0,
@@ -1919,8 +1913,6 @@ void launch_hybrid_apply_moddown_ntt_add_back(
         degree);
     if (destination_shard0.ptr == nullptr ||
         destination_shard1.ptr == nullptr ||
-        add_back_source_shard0.ptr == nullptr ||
-        add_back_source_shard1.ptr == nullptr ||
         accum_q0 == nullptr || accum_q1 == nullptr ||
         converted_q0 == nullptr || converted_q1 == nullptr)
     {
@@ -1928,8 +1920,6 @@ void launch_hybrid_apply_moddown_ntt_add_back(
             "launch_hybrid_apply_moddown_ntt_add_back: null data pointer");
     }
     if (destination_shard0.device_id != destination_shard1.device_id ||
-        destination_shard0.device_id != add_back_source_shard0.device_id ||
-        destination_shard0.device_id != add_back_source_shard1.device_id ||
         destination_shard0.device_id != parameter_shard.device_id)
     {
         throw std::invalid_argument(
@@ -1945,15 +1935,7 @@ void launch_hybrid_apply_moddown_ntt_add_back(
     if (destination_shard0.limb_begin != destination_shard1.limb_begin ||
         destination_shard0.limb_count != destination_shard1.limb_count ||
         destination_shard0.coeff_begin != destination_shard1.coeff_begin ||
-        destination_shard0.coeff_count != destination_shard1.coeff_count ||
-        destination_shard0.limb_begin != add_back_source_shard0.limb_begin ||
-        destination_shard0.limb_count != add_back_source_shard0.limb_count ||
-        destination_shard0.coeff_begin != add_back_source_shard0.coeff_begin ||
-        destination_shard0.coeff_count != add_back_source_shard0.coeff_count ||
-        destination_shard0.limb_begin != add_back_source_shard1.limb_begin ||
-        destination_shard0.limb_count != add_back_source_shard1.limb_count ||
-        destination_shard0.coeff_begin != add_back_source_shard1.coeff_begin ||
-        destination_shard0.coeff_count != add_back_source_shard1.coeff_count)
+        destination_shard0.coeff_count != destination_shard1.coeff_count)
     {
         throw std::invalid_argument(
             "launch_hybrid_apply_moddown_ntt_add_back: shard shape mismatch");
@@ -1999,8 +1981,6 @@ void launch_hybrid_apply_moddown_ntt_add_back(
         <<<grid_size, block_size>>>(
             destination_shard0.ptr,
             destination_shard1.ptr,
-            add_back_source_shard0.ptr,
-            add_back_source_shard1.ptr,
             accum_q0,
             accum_q1,
             converted_q0,

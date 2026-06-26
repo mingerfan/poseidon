@@ -40,9 +40,7 @@ public:
         const GpuConstEvaluationKeyView &switch_keys_view,
         const GpuEvaluationKeyData &switch_keys_data,
         std::size_t key_index,
-        const GpuLevelInfo &level_info,
-        const GpuConstRNSPolyView *add_back_source0 = nullptr,
-        const GpuConstRNSPolyView *add_back_source1 = nullptr) const;
+        const GpuLevelInfo &level_info) const;
 
 private:
     const GpuParameterData &params_;
