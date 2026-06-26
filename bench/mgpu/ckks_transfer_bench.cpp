@@ -9,8 +9,11 @@
 #include <rmm/mr/pool_memory_resource.hpp>
 
 #include <algorithm>
+#include <chrono>
+#include <cstdint>
 #include <cstdlib>
 #include <iomanip>
+#include <initializer_list>
 #include <iostream>
 #include <limits>
 #include <memory>
@@ -151,6 +154,11 @@ int parse_int(const char *value, const char *name)
 
 std::size_t parse_size(const char *value, const char *name)
 {
+    if (value[0] == '-')
+    {
+        throw std::invalid_argument(std::string("invalid size for ") + name);
+    }
+
     char *end = nullptr;
     const unsigned long long parsed = std::strtoull(value, &end, 10);
     if (end == value || *end != '\0')
@@ -240,6 +248,19 @@ BenchOptions parse_options(int argc, char **argv)
         throw std::invalid_argument("degree and component count must be non-zero");
     }
     return options;
+}
+
+std::vector<int> unique_devices(std::initializer_list<int> devices)
+{
+    std::vector<int> result;
+    for (const int device : devices)
+    {
+        if (std::find(result.begin(), result.end(), device) == result.end())
+        {
+            result.push_back(device);
+        }
+    }
+    return result;
 }
 
 std::size_t checked_mul(std::size_t a, std::size_t b, const char *what)
@@ -346,23 +367,111 @@ std::vector<GpuCommCopyRequest> make_requests(
     return requests;
 }
 
-float elapsed_ms(cudaEvent_t start, cudaEvent_t stop)
+gpu::GpuWord expected_word(ValueId seed, std::size_t index)
 {
-    float ms = 0.0f;
-    check_cuda(cudaEventElapsedTime(&ms, start, stop), "cudaEventElapsedTime");
-    return ms;
+    return static_cast<gpu::GpuWord>(
+        0x9e3779b9u + static_cast<gpu::GpuWord>(seed * 131) +
+        static_cast<gpu::GpuWord>(index));
 }
 
-template <typename Fn>
-double measure_once(cudaEvent_t start, cudaEvent_t stop, int sync_device, Fn &&fn)
+std::vector<std::size_t> sample_indices(std::size_t word_count)
 {
-    check_cuda(cudaSetDevice(sync_device), "cudaSetDevice measure");
-    check_cuda(cudaEventRecord(start), "cudaEventRecord start");
-    fn();
-    check_cuda(cudaSetDevice(sync_device), "cudaSetDevice measure stop");
-    check_cuda(cudaEventRecord(stop), "cudaEventRecord stop");
-    check_cuda(cudaEventSynchronize(stop), "cudaEventSynchronize stop");
-    return static_cast<double>(elapsed_ms(start, stop));
+    if (word_count == 0)
+    {
+        throw std::invalid_argument("cannot sample an empty ciphertext");
+    }
+
+    std::vector<std::size_t> samples{
+        0,
+        word_count / 7,
+        word_count / 3,
+        word_count / 2,
+        (word_count * 5) / 7,
+        word_count - 1,
+    };
+    std::sort(samples.begin(), samples.end());
+    samples.erase(std::unique(samples.begin(), samples.end()), samples.end());
+    return samples;
+}
+
+gpu::GpuWord read_device_word(
+    const gpu::GpuCiphertextData &ciphertext, std::size_t word_index)
+{
+    if (ciphertext.fields_.size() != 1)
+    {
+        throw std::invalid_argument("benchmark ciphertext must have exactly one GPU field");
+    }
+
+    gpu::GpuWord value = 0;
+    const gpu::GpuFieldData &field = ciphertext.fields_[0];
+    check_cuda(cudaSetDevice(field.device_id), "cudaSetDevice read ciphertext");
+    check_cuda(
+        cudaMemcpy(
+            &value,
+            field.data() + word_index,
+            sizeof(gpu::GpuWord),
+            cudaMemcpyDeviceToHost),
+        "cudaMemcpy read ciphertext");
+    return value;
+}
+
+void validate_destinations(const MaterializedGpuObjectBatchCopy &materialized)
+{
+    for (std::size_t object_index = 0;
+         object_index < materialized.destination_objects.size();
+         ++object_index)
+    {
+        const auto destination =
+            std::static_pointer_cast<gpu::GpuCiphertextData>(
+                materialized.destination_objects[object_index]);
+        if (destination->fields_.empty())
+        {
+            throw std::invalid_argument("destination ciphertext has no GPU field");
+        }
+
+        const std::vector<std::size_t> samples =
+            sample_indices(destination->fields_[0].size());
+        const ValueId source_id = static_cast<ValueId>(1000 + object_index);
+        for (const std::size_t word_index : samples)
+        {
+            const gpu::GpuWord actual = read_device_word(*destination, word_index);
+            const gpu::GpuWord expected = expected_word(source_id, word_index);
+            if (actual != expected)
+            {
+                std::ostringstream stream;
+                stream << "copy validation failed for ciphertext " << object_index
+                       << " at word " << word_index
+                       << ": expected 0x" << std::hex << expected
+                       << " got 0x" << actual;
+                throw std::runtime_error(stream.str());
+            }
+        }
+    }
+}
+
+void synchronize_devices(const BenchOptions &options)
+{
+    check_cuda(cudaSetDevice(options.source_device), "cudaSetDevice source synchronize");
+    check_cuda(cudaDeviceSynchronize(), "cudaDeviceSynchronize source");
+    if (options.destination_device != options.source_device)
+    {
+        check_cuda(cudaSetDevice(options.destination_device), "cudaSetDevice destination synchronize");
+        check_cuda(cudaDeviceSynchronize(), "cudaDeviceSynchronize destination");
+    }
+}
+
+template <typename Operation>
+double measure_once(const BenchOptions &options, Operation &&operation)
+{
+    synchronize_devices(options);
+    const auto start = std::chrono::steady_clock::now();
+    operation();
+    synchronize_devices(options);
+    const auto stop = std::chrono::steady_clock::now();
+    const auto elapsed =
+        std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(
+            stop - start);
+    return elapsed.count();
 }
 
 Stats summarize(const std::vector<double> &samples)
@@ -399,71 +508,34 @@ BenchCaseResult run_case(
     const std::size_t total_bytes =
         copy_requests_payload_bytes(materialized.object_copies);
 
-    cudaEvent_t start = nullptr;
-    cudaEvent_t stop = nullptr;
-    check_cuda(cudaSetDevice(options.destination_device), "cudaSetDevice create events");
-    check_cuda(cudaEventCreate(&start), "cudaEventCreate start");
-    check_cuda(cudaEventCreate(&stop), "cudaEventCreate stop");
-
-    try
-    {
-        for (int iter = 0; iter < options.warmup_iterations; ++iter)
+    auto operation = [&]() {
+        if (batch_transfer)
         {
-            if (batch_transfer)
+            peer_backend.copy_objects(materialized.object_copies);
+        }
+        else
+        {
+            for (const GpuObjectCopyRequest &request : materialized.object_copies)
             {
-                peer_backend.copy_objects(materialized.object_copies);
+                peer_backend.copy_object(request);
             }
-            else
-            {
-                for (const GpuObjectCopyRequest &request : materialized.object_copies)
-                {
-                    peer_backend.copy_object(request);
-                }
-            }
-            check_cuda(cudaSetDevice(options.destination_device), "cudaSetDevice warmup sync");
-            check_cuda(cudaDeviceSynchronize(), "cudaDeviceSynchronize warmup");
         }
+    };
 
-        std::vector<double> samples;
-        samples.reserve(static_cast<std::size_t>(options.iterations));
-        for (int iter = 0; iter < options.iterations; ++iter)
-        {
-            const double sample_ms = measure_once(
-                start,
-                stop,
-                options.destination_device,
-                [&]() {
-                    if (batch_transfer)
-                    {
-                        peer_backend.copy_objects(materialized.object_copies);
-                    }
-                    else
-                    {
-                        for (const GpuObjectCopyRequest &request : materialized.object_copies)
-                        {
-                            peer_backend.copy_object(request);
-                        }
-                    }
-                });
-            samples.push_back(sample_ms);
-        }
-
-        check_cuda(cudaEventDestroy(stop), "cudaEventDestroy stop");
-        check_cuda(cudaEventDestroy(start), "cudaEventDestroy start");
-        return BenchCaseResult{ summarize(samples), ciphertext_bytes, total_bytes };
-    }
-    catch (...)
+    for (int iter = 0; iter < options.warmup_iterations; ++iter)
     {
-        if (stop != nullptr)
-        {
-            (void)cudaEventDestroy(stop);
-        }
-        if (start != nullptr)
-        {
-            (void)cudaEventDestroy(start);
-        }
-        throw;
+        operation();
+        synchronize_devices(options);
     }
+
+    std::vector<double> samples;
+    samples.reserve(static_cast<std::size_t>(options.iterations));
+    for (int iter = 0; iter < options.iterations; ++iter)
+    {
+        samples.push_back(measure_once(options, operation));
+    }
+    validate_destinations(materialized);
+    return BenchCaseResult{ summarize(samples), ciphertext_bytes, total_bytes };
 }
 
 void print_header(const BenchOptions &options)
@@ -548,7 +620,8 @@ int main(int argc, char **argv)
         const BenchOptions options = parse_options(argc, argv);
         print_header(options);
 
-        RmmPoolScope rmm_scope({ options.source_device, options.destination_device });
+        RmmPoolScope rmm_scope(
+            unique_devices({ options.source_device, options.destination_device }));
         PoseidonGpuObjectCopyMaterializer materializer;
         CudaPeerComm peer_backend;
 

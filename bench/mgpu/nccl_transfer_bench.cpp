@@ -37,6 +37,7 @@ enum class Mode
 {
     CudaPeerBroadcast,
     CudaPeerGather,
+    CudaPeerSendRecv,
     NcclBroadcast,
     NcclGather,
     NcclSendRecv,
@@ -50,6 +51,7 @@ struct BenchOptions
     std::vector<Mode> modes{
         Mode::CudaPeerBroadcast,
         Mode::CudaPeerGather,
+        Mode::CudaPeerSendRecv,
         Mode::NcclBroadcast,
         Mode::NcclGather,
         Mode::NcclSendRecv,
@@ -162,8 +164,8 @@ void print_usage(const char *program)
            " [--target-device N] [--modes MODE[,MODE...]]"
            " [--iterations N] [--warmup N] [--degree N]"
            " [--components N] [--p-count N]\n\n"
-        << "modes: cuda_peer_broadcast,cuda_peer_gather,nccl_broadcast,"
-           "nccl_gather,nccl_sendrecv\n";
+        << "modes: cuda_peer_broadcast,cuda_peer_gather,cuda_peer_sendrecv,"
+           "nccl_broadcast,nccl_gather,nccl_sendrecv\n";
 }
 
 int parse_int(const char *value, const char *name)
@@ -234,6 +236,10 @@ Mode parse_mode(const std::string &value)
     {
         return Mode::CudaPeerGather;
     }
+    if (value == "cuda_peer_sendrecv")
+    {
+        return Mode::CudaPeerSendRecv;
+    }
     if (value == "nccl_broadcast")
     {
         return Mode::NcclBroadcast;
@@ -257,6 +263,8 @@ const char *mode_name(Mode mode)
         return "cuda_peer_broadcast";
     case Mode::CudaPeerGather:
         return "cuda_peer_gather";
+    case Mode::CudaPeerSendRecv:
+        return "cuda_peer_sendrecv";
     case Mode::NcclBroadcast:
         return "nccl_broadcast";
     case Mode::NcclGather:
@@ -708,6 +716,42 @@ void memset_batch(CiphertextBatch &batch, int value)
     }
 }
 
+void copy_ciphertext_into_aggregate_slot(
+    const gpu::GpuCiphertextData &source, gpu::GpuCiphertextData &aggregate,
+    std::size_t rank, std::size_t bytes)
+{
+    check_cuda(
+        cudaMemcpy(
+            static_cast<unsigned char *>(ciphertext_data(aggregate)) + rank * bytes,
+            ciphertext_data(source),
+            bytes,
+            cudaMemcpyDeviceToDevice),
+        "cudaMemcpy root gather self");
+}
+
+void prepare_gather_root_slots(
+    const CiphertextBatch &root_batch,
+    std::vector<gpu::GpuCiphertextData> &aggregates,
+    std::size_t root_rank,
+    std::size_t bytes)
+{
+    if (root_batch.ciphertexts.size() != aggregates.size())
+    {
+        throw std::invalid_argument("root batch and gather aggregate count mismatch");
+    }
+    check_cuda(cudaSetDevice(ciphertext_device(aggregates.front())), "cudaSetDevice gather root slot");
+    for (std::size_t ciphertext_index = 0;
+         ciphertext_index < aggregates.size();
+         ++ciphertext_index)
+    {
+        copy_ciphertext_into_aggregate_slot(
+            root_batch.ciphertexts[ciphertext_index],
+            aggregates[ciphertext_index],
+            root_rank,
+            bytes);
+    }
+}
+
 std::vector<void *> mutable_rank_ptrs(
     std::vector<CiphertextBatch> &batches, std::size_t ciphertext_index)
 {
@@ -737,6 +781,20 @@ std::vector<const void *> const_rank_ptrs(
         }
         result.push_back(ciphertext_data(batch.ciphertexts[ciphertext_index]));
     }
+    return result;
+}
+
+std::vector<const void *> gather_rank_ptrs(
+    const std::vector<CiphertextBatch> &batches,
+    const std::vector<gpu::GpuCiphertextData> &aggregates,
+    std::size_t ciphertext_index, std::size_t root_rank,
+    std::size_t bytes)
+{
+    std::vector<const void *> result =
+        const_rank_ptrs(batches, ciphertext_index);
+    result[root_rank] =
+        static_cast<const unsigned char *>(ciphertext_data(aggregates[ciphertext_index])) +
+        root_rank * bytes;
     return result;
 }
 
@@ -1020,6 +1078,7 @@ Stats run_cuda_peer_broadcast(
     };
     auto synchronize = [&]() { synchronize_devices(options.devices); };
 
+    synchronize_devices(options.devices);
     Stats stats = measure(
         options.warmup_iterations, options.iterations, operation, synchronize);
     validate_broadcast(batches, options);
@@ -1045,6 +1104,14 @@ Stats run_cuda_peer_gather(
     }
 
     const int root_rank = rank_for_device(options.devices, options.root_device);
+    prepare_gather_root_slots(
+        send_batches[static_cast<std::size_t>(root_rank)],
+        aggregates,
+        static_cast<std::size_t>(root_rank),
+        bytes);
+    check_cuda(cudaSetDevice(options.root_device), "cudaSetDevice gather root slot sync");
+    check_cuda(cudaDeviceSynchronize(), "cudaDeviceSynchronize gather root slot");
+
     auto operation = [&]() {
         for (std::size_t rank = 0; rank < send_batches.size(); ++rank)
         {
@@ -1072,10 +1139,48 @@ Stats run_cuda_peer_gather(
     };
     auto synchronize = [&]() { synchronize_devices(options.devices); };
 
+    synchronize_devices(options.devices);
     Stats stats = measure(
         options.warmup_iterations, options.iterations, operation, synchronize);
     validate_gather(
-        aggregates, options, send_batches.front().words_per_ciphertext, false);
+        aggregates, options, send_batches.front().words_per_ciphertext, true);
+    return stats;
+}
+
+Stats run_cuda_peer_sendrecv(
+    const BenchOptions &options, const LevelShape &level, std::size_t count)
+{
+    CiphertextBatch source =
+        make_ciphertext_batch(options, level, count, options.root_device);
+    CiphertextBatch destination =
+        make_ciphertext_batch(options, level, count, options.target_device);
+    fill_batch(source, options.root_device);
+    memset_batch(destination, 0xa5);
+
+    const std::size_t bytes = source.ciphertext_bytes;
+    auto operation = [&]() {
+        for (std::size_t ciphertext_index = 0;
+             ciphertext_index < source.ciphertexts.size();
+             ++ciphertext_index)
+        {
+            check_cuda(
+                cudaMemcpyPeer(
+                    ciphertext_data(destination.ciphertexts[ciphertext_index]),
+                    options.target_device,
+                    ciphertext_data(source.ciphertexts[ciphertext_index]),
+                    options.root_device,
+                    bytes),
+                "cudaMemcpyPeer sendrecv");
+        }
+    };
+    auto synchronize = [&]() {
+        synchronize_devices({ options.root_device, options.target_device });
+    };
+
+    synchronize();
+    Stats stats = measure(
+        options.warmup_iterations, options.iterations, operation, synchronize);
+    validate_sendrecv(destination, options);
     return stats;
 }
 
@@ -1116,6 +1221,7 @@ Stats run_nccl_broadcast(
     };
     auto synchronize = [&]() { comm.synchronize_streams(); };
 
+    synchronize_devices(options.devices);
     Stats stats = measure(
         options.warmup_iterations, options.iterations, operation, synchronize);
     validate_broadcast(batches, options);
@@ -1141,15 +1247,28 @@ Stats run_nccl_gather(
         memset_ciphertext(aggregate, 0x5a);
     }
 
+    const int root_rank = rank_for_device(options.devices, options.root_device);
+    prepare_gather_root_slots(
+        send_batches[static_cast<std::size_t>(root_rank)],
+        aggregates,
+        static_cast<std::size_t>(root_rank),
+        bytes);
+    check_cuda(cudaSetDevice(options.root_device), "cudaSetDevice gather root slot sync");
+    check_cuda(cudaDeviceSynchronize(), "cudaDeviceSynchronize gather root slot");
+
     std::vector<std::vector<const void *>> ptrs_by_ciphertext;
     ptrs_by_ciphertext.reserve(count);
     for (std::size_t ciphertext_index = 0; ciphertext_index < count; ++ciphertext_index)
     {
         ptrs_by_ciphertext.push_back(
-            const_rank_ptrs(send_batches, ciphertext_index));
+            gather_rank_ptrs(
+                send_batches,
+                aggregates,
+                ciphertext_index,
+                static_cast<std::size_t>(root_rank),
+                bytes));
     }
 
-    const int root_rank = rank_for_device(options.devices, options.root_device);
     auto operation = [&]() {
         for (std::size_t ciphertext_index = 0;
              ciphertext_index < ptrs_by_ciphertext.size();
@@ -1164,6 +1283,7 @@ Stats run_nccl_gather(
     };
     auto synchronize = [&]() { comm.synchronize_streams(); };
 
+    synchronize_devices(options.devices);
     Stats stats = measure(
         options.warmup_iterations, options.iterations, operation, synchronize);
     validate_gather(
@@ -1199,8 +1319,11 @@ Stats run_nccl_sendrecv(
                 destination_rank);
         }
     };
-    auto synchronize = [&]() { comm.synchronize_streams(); };
+    auto synchronize = [&]() {
+        synchronize_devices({ options.root_device, options.target_device });
+    };
 
+    synchronize();
     Stats stats = measure(
         options.warmup_iterations, options.iterations, operation, synchronize);
     validate_sendrecv(destination, options);
@@ -1224,6 +1347,8 @@ Stats run_mode(
         return run_cuda_peer_broadcast(options, level, count);
     case Mode::CudaPeerGather:
         return run_cuda_peer_gather(options, level, count);
+    case Mode::CudaPeerSendRecv:
+        return run_cuda_peer_sendrecv(options, level, count);
     case Mode::NcclBroadcast:
         if (comm == nullptr)
         {
@@ -1260,7 +1385,9 @@ std::optional<double> speedup_for_mode(
         return std::nullopt;
     };
 
-    if (mode == Mode::CudaPeerBroadcast || mode == Mode::CudaPeerGather)
+    if (mode == Mode::CudaPeerBroadcast ||
+        mode == Mode::CudaPeerGather ||
+        mode == Mode::CudaPeerSendRecv)
     {
         return 1.0;
     }
@@ -1282,13 +1409,22 @@ std::optional<double> speedup_for_mode(
             return baseline->average_ms / current->average_ms;
         }
     }
+    if (mode == Mode::NcclSendRecv)
+    {
+        const std::optional<Stats> baseline = find_stats(Mode::CudaPeerSendRecv);
+        const std::optional<Stats> current = find_stats(mode);
+        if (baseline && current)
+        {
+            return baseline->average_ms / current->average_ms;
+        }
+    }
     return std::nullopt;
 }
 
 std::size_t transfer_bytes_for_mode(
     Mode mode, std::size_t total_bytes, std::size_t rank_count)
 {
-    if (mode == Mode::NcclSendRecv)
+    if (mode == Mode::CudaPeerSendRecv || mode == Mode::NcclSendRecv)
     {
         return total_bytes;
     }

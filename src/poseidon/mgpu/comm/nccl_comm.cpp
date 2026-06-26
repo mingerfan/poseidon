@@ -205,14 +205,19 @@ void NcclComm::gather(
 #else
     const auto root_index = static_cast<std::size_t>(root_rank);
     check_cuda(cudaSetDevice(devices_[root_index]), "NcclComm cudaSetDevice gather root");
-    check_cuda(
-        cudaMemcpyAsync(
-            static_cast<unsigned char *>(root_recv_buffer) + root_index * bytes,
-            send_buffers[root_index],
-            bytes,
-            cudaMemcpyDeviceToDevice,
-            streams_[root_index]),
-        "NcclComm cudaMemcpyAsync gather root self");
+    void *root_slot =
+        static_cast<unsigned char *>(root_recv_buffer) + root_index * bytes;
+    if (send_buffers[root_index] != root_slot)
+    {
+        check_cuda(
+            cudaMemcpyAsync(
+                root_slot,
+                send_buffers[root_index],
+                bytes,
+                cudaMemcpyDeviceToDevice,
+                streams_[root_index]),
+            "NcclComm cudaMemcpyAsync gather root self");
+    }
 
     check_nccl(ncclGroupStart(), "NcclComm ncclGroupStart gather");
     for (std::size_t rank = 0; rank < devices_.size(); ++rank)

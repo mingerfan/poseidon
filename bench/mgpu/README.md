@@ -107,6 +107,7 @@ Supported modes:
 
 - `cuda_peer_broadcast`
 - `cuda_peer_gather`
+- `cuda_peer_sendrecv`
 - `nccl_broadcast`
 - `nccl_gather`
 - `nccl_sendrecv`
@@ -116,7 +117,7 @@ Select a subset with `--modes`, for example:
 ```bash
 ./build-mgpu-nccl-bench/bin/poseidon_mgpu_nccl_transfer_bench \
   --devices 0,1 \
-  --modes cuda_peer_broadcast,nccl_broadcast,nccl_sendrecv
+  --modes cuda_peer_broadcast,nccl_broadcast,cuda_peer_sendrecv,nccl_sendrecv
 ```
 
 The benchmark runs ciphertext counts `1,5,10` across levels
@@ -128,18 +129,30 @@ The benchmark runs ciphertext counts `1,5,10` across levels
   batch rather than printed from a standalone formula.
 - `xfer_bytes` in the NCCL benchmark: effective transfer volume used for GB/s.
   Broadcast and gather use `total_bytes * (rank_count - 1)`;
-  `nccl_sendrecv` uses `total_bytes`.
+  `cuda_peer_sendrecv` and `nccl_sendrecv` use `total_bytes`.
 
 These byte counts exclude CPU-side object metadata, shared pointers, vectors,
 serialization headers, `parms_id`, and scale values because those are not part
 of the GPU communication payload.
 
+Latency is measured with host wall-clock time around the transfer operation
+and an explicit synchronization before and after each timed iteration. The
+CUDA peer object-copy benchmark therefore includes the batch path's pack,
+peer copy, unpack, and temporary allocation/free work. The NCCL benchmark
+uses NCCL stream synchronization for collective modes. Point-to-point
+send/recv modes synchronize only the root and target devices.
+
+Gather pre-fills the root's own slot before timing. The timed gather payload
+and `xfer_bytes` therefore count only data received from non-root ranks, which
+matches the CUDA peer gather loop and NCCL in-place gather semantics.
+
 Output includes mode, devices, root, ciphertext count, level, `q_count`,
-`ct_bytes`, `total_bytes`, latency statistics, GB/s, and
-`speedup_vs_cuda_peer`. NCCL broadcast speedup is relative to
-`cuda_peer_broadcast`; NCCL gather speedup is relative to `cuda_peer_gather`.
-`nccl_sendrecv` reports `n/a` because it is point-to-point and does not share
-the same broadcast/gather baseline.
+`ct_bytes`, `total_bytes`, `xfer_bytes`, latency statistics, aggregate GB/s,
+and `speedup_vs_cuda_peer`. The GB/s value is total timed payload divided by
+latency; it is not per-device average bandwidth. NCCL broadcast speedup is
+relative to `cuda_peer_broadcast`; NCCL gather speedup is relative to
+`cuda_peer_gather`; NCCL send/recv speedup is relative to
+`cuda_peer_sendrecv`.
 
 Each mode fills deterministic GPU data before timing and validates sampled
 payload words after timing. A single-GPU machine cannot produce real NCCL
