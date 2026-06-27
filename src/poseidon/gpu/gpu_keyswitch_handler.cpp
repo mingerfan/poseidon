@@ -5,10 +5,12 @@
 #include <nvtx3/nvToolsExt.h>
 
 #include <algorithm>
+#include <cstdlib>
 #include <limits>
 #include <stdexcept>
 #include <string>
 #include <utility>
+#include <vector>
 
 namespace poseidon
 {
@@ -19,6 +21,8 @@ namespace
 
 constexpr std::size_t kRelinKeyPower2Index = 0;
 constexpr std::size_t kSwitchKeyComponentCount = 2;
+constexpr const char *kPAccumAllDnumEnv =
+    "POSEIDON_KEYSWITCH_PACCUM_ALL_DNUM";
 
 class NvtxRange
 {
@@ -48,6 +52,25 @@ std::size_t checked_mul(std::size_t a, std::size_t b, const char *what)
         throw std::overflow_error(what);
     }
     return a * b;
+}
+
+bool use_paccum_all_dnum()
+{
+    static const bool enabled = [] {
+        const char *raw = std::getenv(kPAccumAllDnumEnv);
+        if (raw == nullptr || *raw == '\0')
+        {
+            return false;
+        }
+
+        const std::string value(raw);
+        return value != "0" &&
+               value != "OFF" &&
+               value != "off" &&
+               value != "false" &&
+               value != "FALSE";
+    }();
+    return enabled;
 }
 
 bool same_shard_placement(
@@ -174,6 +197,11 @@ struct HybridScratch
     DeviceVector<GpuWord> accum_p0;
     DeviceVector<GpuWord> accum_p1;
 
+    DeviceVector<GpuWord> all_modup_q;
+    DeviceVector<GpuWord> all_modup_p;
+    DeviceVector<const GpuWord *> key_qp0_by_dnum;
+    DeviceVector<const GpuWord *> key_qp1_by_dnum;
+
     GpuPolyShardView c2_intt_view()
     {
         GpuPolyShardView result;
@@ -269,11 +297,27 @@ HybridScratch allocate_hybrid_scratch(
     scratch.accum_p0.allocate(scratch.p_word_count, device_id);
     scratch.accum_p1.allocate(scratch.p_word_count, device_id);
 
-    scratch.accum_q0.fill_zero();
-    scratch.accum_q1.fill_zero();
-    scratch.accum_p0.fill_zero();
-    scratch.accum_p1.fill_zero();
     return scratch;
+}
+
+void allocate_hybrid_paccum_all_dnum_scratch(
+    HybridScratch &scratch,
+    std::size_t decomp_count)
+{
+    scratch.all_modup_q.allocate(
+        checked_mul(
+            decomp_count,
+            scratch.q_word_count,
+            "GpuKeySwitchHandler all-dnum Q scratch size overflow"),
+        scratch.device_id);
+    scratch.all_modup_p.allocate(
+        checked_mul(
+            decomp_count,
+            scratch.p_word_count,
+            "GpuKeySwitchHandler all-dnum P scratch size overflow"),
+        scratch.device_id);
+    scratch.key_qp0_by_dnum.allocate(decomp_count, scratch.device_id);
+    scratch.key_qp1_by_dnum.allocate(decomp_count, scratch.device_id);
 }
 
 void inverse_ntt_switch_poly(
@@ -296,6 +340,66 @@ void inverse_ntt_switch_poly(
         source_shard,
         *parameter_shard,
         scratch.degree);
+}
+
+void prepare_hybrid_decomposition_ntt_block(
+    std::size_t decomp_index,
+    std::size_t decomp_limb_begin,
+    std::size_t decomp_limb_count,
+    HybridScratch &scratch,
+    GpuWord *target_modup_q,
+    GpuWord *target_modup_p,
+    const GpuConstRNSPolyView &switch_poly_ntt,
+    const GpuConstRNSPolyView &key_component0,
+    const GpuConstRNSPolyView &key_component1,
+    const GpuLevelInfo &level_info)
+{
+    NvtxRange block_range(
+        "keyswitch.paccum.prepare_dnum[" + std::to_string(decomp_index) + "]");
+    const auto &switch_poly_shard = switch_poly_ntt.shards.front();
+    const auto &key0_shard = key_component0.shards.front();
+    const auto &key1_shard = key_component1.shards.front();
+    if (!same_shard_placement(key0_shard, key1_shard))
+    {
+        throw std::invalid_argument(
+            "GpuKeySwitchHandler::prepare_hybrid_decomposition_ntt_block: key shard placement mismatch");
+    }
+
+    const auto *parameter_shard = find_parameter_shard(level_info, key0_shard);
+    if (parameter_shard == nullptr)
+    {
+        throw std::invalid_argument(
+            "GpuKeySwitchHandler::prepare_hybrid_decomposition_ntt_block: no matching parameter shard");
+    }
+    validate_hybrid_parameter_shape(
+        "GpuKeySwitchHandler::prepare_hybrid_decomposition_ntt_block",
+        scratch,
+        *parameter_shard);
+
+    {
+        NvtxRange range("keyswitch.paccum.modup");
+        kernel::launch_hybrid_modup_decomposition(
+            target_modup_q,
+            target_modup_p,
+            scratch.c2_intt.data(),
+            switch_poly_shard.ptr,
+            decomp_index,
+            decomp_limb_begin,
+            decomp_limb_count,
+            *parameter_shard,
+            scratch.degree);
+    }
+
+    {
+        NvtxRange range("keyswitch.paccum.forward_ntt_qp");
+        kernel::launch_hybrid_forward_ntt_qp(
+            target_modup_q,
+            target_modup_p,
+            decomp_limb_begin,
+            decomp_limb_count,
+            *parameter_shard,
+            scratch.degree);
+    }
 }
 
 /* 处理单个dnum分量的计算函数 */
@@ -718,53 +822,162 @@ void GpuKeySwitchHandler::switch_key_hybrid_ciphertext(
         switch_poly_ntt,
         level_info);
 
-    /* 分块循环：每个 dnum 分块做 ModUp + NTT + 密钥乘加累加 */
-    for (std::size_t decomp_index = 0;
-         decomp_index < expected_decomposition_count;
-         ++decomp_index)
+    if (use_paccum_all_dnum())
     {
-        /* 计算在dnum块中的起始位置，因为是按照p_size进行分块的，所以现在在块内循环，块index*块大小可以定位起始地址位置*/
-        const std::size_t decomp_limb_begin = decomp_index * base_p_size;
-        const std::size_t decomp_limb_count = std::min(
-            base_p_size,
-            base_q_size - decomp_limb_begin);
-
-        /* find_key_poly主要用来从已经上传到 GPU 里，找到某一个具体的 key 多项式 */
-        /* 主要原因是 CPU 侧的密钥是分层的：key index + dnum 分块 + ksk0/ksk1 分量 */
-        const auto &key_component0 = find_key_poly(
-            switch_keys_view,
-            switch_keys_data,
-            key_index,
-            decomp_index,
-            0);
-        const auto &key_component1 = find_key_poly(
-            switch_keys_view,
-            switch_keys_data,
-            key_index,
-            decomp_index,
-            1);
-
-        validate_single_full_shard(
-            "GpuKeySwitchHandler switch key c0",
-            key_component0,
-            switch_keys_view.meta.degree,
-            switch_keys_view.meta.q_count + switch_keys_view.meta.p_count);
-        validate_single_full_shard(
-            "GpuKeySwitchHandler switch key c1",
-            key_component1,
-            switch_keys_view.meta.degree,
-            switch_keys_view.meta.q_count + switch_keys_view.meta.p_count);
-
-        /* 处理每一个 dnum 分块的函数，负责模升+NTT+乘密钥累加*/
-        process_hybrid_decomposition_block(
-            decomp_index,
-            decomp_limb_begin,
-            decomp_limb_count,
+        NvtxRange paccum_range("keyswitch.paccum_all_dnum");
+        allocate_hybrid_paccum_all_dnum_scratch(
             scratch,
-            switch_poly_ntt,
-            key_component0,
-            key_component1,
-            level_info);
+            expected_decomposition_count);
+
+        std::vector<const GpuWord *> key0_ptrs(expected_decomposition_count);
+        std::vector<const GpuWord *> key1_ptrs(expected_decomposition_count);
+        const GpuParameterShard *paccum_parameter_shard = nullptr;
+
+        for (std::size_t decomp_index = 0;
+             decomp_index < expected_decomposition_count;
+             ++decomp_index)
+        {
+            const std::size_t decomp_limb_begin = decomp_index * base_p_size;
+            const std::size_t decomp_limb_count = std::min(
+                base_p_size,
+                base_q_size - decomp_limb_begin);
+
+            const auto &key_component0 = find_key_poly(
+                switch_keys_view,
+                switch_keys_data,
+                key_index,
+                decomp_index,
+                0);
+            const auto &key_component1 = find_key_poly(
+                switch_keys_view,
+                switch_keys_data,
+                key_index,
+                decomp_index,
+                1);
+
+            validate_single_full_shard(
+                "GpuKeySwitchHandler switch key c0",
+                key_component0,
+                switch_keys_view.meta.degree,
+                switch_keys_view.meta.q_count + switch_keys_view.meta.p_count);
+            validate_single_full_shard(
+                "GpuKeySwitchHandler switch key c1",
+                key_component1,
+                switch_keys_view.meta.degree,
+                switch_keys_view.meta.q_count + switch_keys_view.meta.p_count);
+
+            const auto &key0_shard = key_component0.shards.front();
+            const auto *parameter_shard =
+                find_parameter_shard(level_info, key0_shard);
+            if (parameter_shard == nullptr)
+            {
+                throw std::invalid_argument(
+                    "GpuKeySwitchHandler::switch_key_hybrid_ciphertext: no matching parameter shard");
+            }
+            if (paccum_parameter_shard == nullptr)
+            {
+                paccum_parameter_shard = parameter_shard;
+            }
+
+            key0_ptrs[decomp_index] = key0_shard.ptr;
+            key1_ptrs[decomp_index] =
+                key_component1.shards.front().ptr;
+
+            prepare_hybrid_decomposition_ntt_block(
+                decomp_index,
+                decomp_limb_begin,
+                decomp_limb_count,
+                scratch,
+                scratch.all_modup_q.data() +
+                    decomp_index * scratch.q_word_count,
+                scratch.all_modup_p.data() +
+                    decomp_index * scratch.p_word_count,
+                switch_poly_ntt,
+                key_component0,
+                key_component1,
+                level_info);
+        }
+
+        scratch.key_qp0_by_dnum.copy_from_host(
+            key0_ptrs.data(),
+            key0_ptrs.size());
+        scratch.key_qp1_by_dnum.copy_from_host(
+            key1_ptrs.data(),
+            key1_ptrs.size());
+
+        if (paccum_parameter_shard == nullptr)
+        {
+            throw std::invalid_argument(
+                "GpuKeySwitchHandler::switch_key_hybrid_ciphertext: missing PAccum parameter shard");
+        }
+
+        {
+            NvtxRange range("keyswitch.paccum.accumulate_all_dnum");
+            kernel::launch_hybrid_paccum_all_dnum_two_components(
+                scratch.accum_q0.data(),
+                scratch.accum_p0.data(),
+                scratch.accum_q1.data(),
+                scratch.accum_p1.data(),
+                scratch.all_modup_q.data(),
+                scratch.all_modup_p.data(),
+                switch_poly_ntt.shards.front().ptr,
+                scratch.key_qp0_by_dnum.data(),
+                scratch.key_qp1_by_dnum.data(),
+                expected_decomposition_count,
+                *paccum_parameter_shard,
+                scratch.degree);
+        }
+    }
+    else
+    {
+        /* 分块循环：每个 dnum 分块做 ModUp + NTT + 密钥乘加累加 */
+        for (std::size_t decomp_index = 0;
+             decomp_index < expected_decomposition_count;
+             ++decomp_index)
+        {
+            /* 计算在dnum块中的起始位置，因为是按照p_size进行分块的，所以现在在块内循环，块index*块大小可以定位起始地址位置*/
+            const std::size_t decomp_limb_begin = decomp_index * base_p_size;
+            const std::size_t decomp_limb_count = std::min(
+                base_p_size,
+                base_q_size - decomp_limb_begin);
+
+            /* find_key_poly主要用来从已经上传到 GPU 里，找到某一个具体的 key 多项式 */
+            /* 主要原因是 CPU 侧的密钥是分层的：key index + dnum 分块 + ksk0/ksk1 分量 */
+            const auto &key_component0 = find_key_poly(
+                switch_keys_view,
+                switch_keys_data,
+                key_index,
+                decomp_index,
+                0);
+            const auto &key_component1 = find_key_poly(
+                switch_keys_view,
+                switch_keys_data,
+                key_index,
+                decomp_index,
+                1);
+
+            validate_single_full_shard(
+                "GpuKeySwitchHandler switch key c0",
+                key_component0,
+                switch_keys_view.meta.degree,
+                switch_keys_view.meta.q_count + switch_keys_view.meta.p_count);
+            validate_single_full_shard(
+                "GpuKeySwitchHandler switch key c1",
+                key_component1,
+                switch_keys_view.meta.degree,
+                switch_keys_view.meta.q_count + switch_keys_view.meta.p_count);
+
+            /* 处理每一个 dnum 分块的函数，负责模升+NTT+乘密钥累加*/
+            process_hybrid_decomposition_block(
+                decomp_index,
+                decomp_limb_begin,
+                decomp_limb_count,
+                scratch,
+                switch_poly_ntt,
+                key_component0,
+                key_component1,
+                level_info);
+        }
     }
 
     /* INTT 模降 NTT 和原密文分量求和*/

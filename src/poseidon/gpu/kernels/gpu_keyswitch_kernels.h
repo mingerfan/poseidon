@@ -49,6 +49,20 @@ void launch_hybrid_forward_ntt_qp_mul_accumulate_two_components(
     std::size_t degree,
     bool overwrite_accum);
 
+void launch_hybrid_paccum_all_dnum_two_components(
+    GpuWord *accum_q0,
+    GpuWord *accum_p0,
+    GpuWord *accum_q1,
+    GpuWord *accum_p1,
+    const GpuWord *all_modup_q,
+    const GpuWord *all_modup_p,
+    const GpuWord *c2_ntt,
+    const GpuWord *const *key_qp0_by_dnum,
+    const GpuWord *const *key_qp1_by_dnum,
+    std::size_t decomp_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
 void launch_hybrid_multiply_accumulate(
     GpuWord *accum_q,
     GpuWord *accum_p,

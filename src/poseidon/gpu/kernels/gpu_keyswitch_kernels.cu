@@ -782,6 +782,98 @@ __global__ void hybrid_decomp_q_multiply_accumulate_two_components_kernel(
         overwrite_accum);
 }
 
+__global__ void hybrid_paccum_all_dnum_two_components_kernel(
+    GpuWord *accum_q0,
+    GpuWord *accum_p0,
+    GpuWord *accum_q1,
+    GpuWord *accum_p1,
+    const GpuWord *all_modup_q,
+    const GpuWord *all_modup_p,
+    const GpuWord *c2_ntt,
+    const GpuWord *const *key_qp0_by_dnum,
+    const GpuWord *const *key_qp1_by_dnum,
+    const GpuWord *rns_primes,
+    const GpuWide *rns_modulus_constants,
+    std::size_t decomp_count,
+    std::size_t base_q_size,
+    std::size_t base_p_size,
+    std::size_t degree,
+    unsigned int degree_power)
+{
+    const std::size_t q_word_count = base_q_size * degree;
+    const std::size_t p_word_count = base_p_size * degree;
+    const std::size_t total = q_word_count + p_word_count;
+    const std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    if (tid >= total)
+    {
+        return;
+    }
+
+    const bool p_limb = tid >= q_word_count;
+    const std::size_t local_offset = p_limb ? tid - q_word_count : tid;
+    const std::size_t local_limb = local_offset >> degree_power;
+    const std::size_t coeff = local_offset & (degree - 1);
+    const std::size_t table_limb = p_limb
+        ? base_q_size + local_limb
+        : local_limb;
+    const GpuWord modulus = rns_primes[table_limb];
+    const GpuWide barrett_ratio = rns_modulus_constants[table_limb];
+
+    GpuWord acc0 = 0;
+    GpuWord acc1 = 0;
+
+    for (std::size_t decomp_index = 0;
+         decomp_index < decomp_count;
+         ++decomp_index)
+    {
+        const GpuWord *key_qp0 = key_qp0_by_dnum[decomp_index];
+        const GpuWord *key_qp1 = key_qp1_by_dnum[decomp_index];
+        GpuWord value = 0;
+        std::size_t key_offset = 0;
+
+        if (p_limb)
+        {
+            value =
+                all_modup_p[decomp_index * p_word_count + local_offset];
+            key_offset = q_word_count + local_offset;
+        }
+        else
+        {
+            const std::size_t decomp_limb_begin =
+                decomp_index * base_p_size;
+            const std::size_t remaining_q =
+                base_q_size - decomp_limb_begin;
+            const std::size_t decomp_limb_count =
+                remaining_q < base_p_size ? remaining_q : base_p_size;
+            const bool reuse_c2_ntt =
+                local_limb >= decomp_limb_begin &&
+                local_limb < decomp_limb_begin + decomp_limb_count;
+            value = reuse_c2_ntt
+                ? c2_ntt[local_offset]
+                : all_modup_q[decomp_index * q_word_count + local_offset];
+            key_offset = local_offset;
+        }
+
+        const GpuWord product0 =
+            mul_mod(value, key_qp0[key_offset], modulus, barrett_ratio);
+        const GpuWord product1 =
+            mul_mod(value, key_qp1[key_offset], modulus, barrett_ratio);
+        acc0 = add_mod(acc0, product0, modulus);
+        acc1 = add_mod(acc1, product1, modulus);
+    }
+
+    if (p_limb)
+    {
+        accum_p0[local_offset] = acc0;
+        accum_p1[local_offset] = acc1;
+    }
+    else
+    {
+        accum_q0[local_offset] = acc0;
+        accum_q1[local_offset] = acc1;
+    }
+}
+
 __global__ void hybrid_multiply_accumulate_kernel(
     GpuWord *accum_q,
     GpuWord *accum_p,
@@ -1633,6 +1725,90 @@ void launch_hybrid_forward_ntt_qp_mul_accumulate_two_components(
     gpu_check_cuda(
         cudaGetLastError(),
         "launch_hybrid_forward_ntt_qp_mul_accumulate_two_components decomp Q kernel launch");
+}
+
+void launch_hybrid_paccum_all_dnum_two_components(
+    GpuWord *accum_q0,
+    GpuWord *accum_p0,
+    GpuWord *accum_q1,
+    GpuWord *accum_p1,
+    const GpuWord *all_modup_q,
+    const GpuWord *all_modup_p,
+    const GpuWord *c2_ntt,
+    const GpuWord *const *key_qp0_by_dnum,
+    const GpuWord *const *key_qp1_by_dnum,
+    std::size_t decomp_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    validate_hybrid_tables(
+        "launch_hybrid_paccum_all_dnum_two_components",
+        parameter_shard,
+        degree);
+    if (accum_q0 == nullptr || accum_p0 == nullptr ||
+        accum_q1 == nullptr || accum_p1 == nullptr ||
+        all_modup_q == nullptr || all_modup_p == nullptr ||
+        c2_ntt == nullptr ||
+        key_qp0_by_dnum == nullptr || key_qp1_by_dnum == nullptr)
+    {
+        throw std::invalid_argument(
+            "launch_hybrid_paccum_all_dnum_two_components: null data pointer");
+    }
+    if (decomp_count == 0 ||
+        decomp_count > parameter_shard.hybrid_decomp_count)
+    {
+        throw std::invalid_argument(
+            "launch_hybrid_paccum_all_dnum_two_components: invalid decomposition count");
+    }
+    if (parameter_shard.limb_begin != 0 ||
+        parameter_shard.limb_count <
+            parameter_shard.hybrid_base_q_count +
+                parameter_shard.hybrid_base_p_count)
+    {
+        throw std::invalid_argument(
+            "launch_hybrid_paccum_all_dnum_two_components: parameter shard must cover full QP limb range");
+    }
+
+    gpu_check_cuda(
+        cudaSetDevice(parameter_shard.device_id),
+        "launch_hybrid_paccum_all_dnum_two_components cudaSetDevice");
+
+    const std::size_t base_q_size = parameter_shard.hybrid_base_q_count;
+    const std::size_t base_p_size = parameter_shard.hybrid_base_p_count;
+    const std::size_t total = (base_q_size + base_p_size) * degree;
+    if (total == 0)
+    {
+        return;
+    }
+
+    constexpr int block_size = 256;
+    const int grid_size =
+        static_cast<int>((total + block_size - 1) / block_size);
+    const unsigned int degree_power = checked_log2_degree(
+        degree,
+        "launch_hybrid_paccum_all_dnum_two_components");
+
+    hybrid_paccum_all_dnum_two_components_kernel
+        <<<grid_size, block_size>>>(
+            accum_q0,
+            accum_p0,
+            accum_q1,
+            accum_p1,
+            all_modup_q,
+            all_modup_p,
+            c2_ntt,
+            key_qp0_by_dnum,
+            key_qp1_by_dnum,
+            parameter_shard.rns_primes.data(),
+            parameter_shard.rns_modulus_constants.data(),
+            decomp_count,
+            base_q_size,
+            base_p_size,
+            degree,
+            degree_power);
+    gpu_check_cuda(
+        cudaGetLastError(),
+        "launch_hybrid_paccum_all_dnum_two_components kernel launch");
 }
 
 void launch_hybrid_multiply_accumulate(
