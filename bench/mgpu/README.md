@@ -41,7 +41,7 @@ Extra command-line arguments are appended to the benchmark invocation:
 
 ```bash
 MODES=cuda_peer_broadcast,nccl_broadcast bench/mgpu/run_nccl.sh --p-count 1
-bench/mgpu/run_memcpy.sh --modes object_loop,copy_objects,pack_unpack,pack_unpack_scratch
+bench/mgpu/run_memcpy.sh --modes object_loop,copy_objects
 ```
 
 ## Manual Build
@@ -92,23 +92,14 @@ Supported CUDA peer transfer modes:
 
 - `object_loop`: explicitly loops over `copy_object`.
 - `copy_objects`: calls the production batch API. This is a correctness API
-  first and defaults to the same object-loop policy unless a measured strategy
-  is selected elsewhere.
-- `pack_unpack`: runs the old batch path that packs all source objects into a
-  temporary source buffer, transfers one aggregate buffer, then unpacks into
-  destination objects. It allocates and frees both temporary pack buffers in
-  each call.
-- `pack_unpack_scratch`: runs the same pack/copy/unpack experiment with an
-  explicitly owned reusable scratch buffer. The benchmark reserves or grows
-  scratch outside the timed iterations and reuses it across later cases when
-  capacity is sufficient.
+  first and currently uses the same object-loop policy.
 
 Select a subset with `--modes`, for example:
 
 ```bash
 ./build-mgpu-bench/bin/poseidon_mgpu_ckks_transfer_bench \
   --source-device 0 --destination-device 1 \
-  --modes object_loop,pack_unpack,pack_unpack_scratch
+  --modes object_loop,copy_objects
 ```
 
 ## NCCL Transfer Comparison Bench
@@ -162,14 +153,9 @@ of the GPU communication payload.
 Latency is measured with host wall-clock time around the transfer operation
 and an explicit synchronization before and after each timed iteration. The
 CUDA peer object-copy benchmark therefore includes all work in the selected
-mode. For `pack_unpack`, that includes pack, peer copy, unpack, and temporary
-allocation/free work. For `pack_unpack_scratch`, reusable pack buffers are
-owned by the benchmark and grown outside timed iterations. The memcpy benchmark
-prints `pack_allocs_pre` for pack-buffer allocation events before timing and
-`pack_allocs_timed` for events inside timed iterations, so a warmed scratch
-case should show zero timed pack allocations. The NCCL benchmark uses NCCL
-stream synchronization for collective modes. Point-to-point send/recv modes
-synchronize only the root and target devices.
+mode. The NCCL benchmark uses NCCL stream synchronization for collective
+modes. Point-to-point send/recv modes synchronize only the root and target
+devices.
 
 Gather pre-fills the root's own slot before timing. The timed gather payload
 and `xfer_bytes` therefore count only data received from non-root ranks, which
