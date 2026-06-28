@@ -31,6 +31,14 @@ using namespace poseidon::mgpu;
 namespace
 {
 
+enum class TransferMode
+{
+    ObjectLoop,
+    CopyObjects,
+    PackUnpack,
+    PackUnpackScratch,
+};
+
 struct BenchOptions
 {
     int source_device = 0;
@@ -41,6 +49,12 @@ struct BenchOptions
     std::size_t component_count = 2;
     std::size_t p_count = 0;
     bool allow_same_device = false;
+    std::vector<TransferMode> modes{
+        TransferMode::ObjectLoop,
+        TransferMode::CopyObjects,
+        TransferMode::PackUnpack,
+        TransferMode::PackUnpackScratch,
+    };
 };
 
 struct LevelShape
@@ -61,6 +75,8 @@ struct BenchCaseResult
     Stats stats;
     std::size_t ciphertext_bytes = 0;
     std::size_t total_bytes = 0;
+    std::size_t pack_allocations_outside_timing = 0;
+    std::size_t pack_allocations_during_timing = 0;
 };
 
 class RmmPoolScope
@@ -136,7 +152,9 @@ void print_usage(const char *program)
         << "usage: " << program
         << " [--source-device N] [--destination-device N]"
            " [--iterations N] [--warmup N] [--degree N]"
-           " [--components N] [--p-count N] [--allow-same-device]\n";
+           " [--components N] [--p-count N] [--modes LIST]"
+           " [--allow-same-device]\n"
+           "modes: object_loop,copy_objects,pack_unpack,pack_unpack_scratch\n";
 }
 
 int parse_int(const char *value, const char *name)
@@ -166,6 +184,77 @@ std::size_t parse_size(const char *value, const char *name)
         throw std::invalid_argument(std::string("invalid size for ") + name);
     }
     return static_cast<std::size_t>(parsed);
+}
+
+TransferMode parse_mode_token(const std::string &token)
+{
+    if (token == "object_loop" || token == "single")
+    {
+        return TransferMode::ObjectLoop;
+    }
+    if (token == "copy_objects" || token == "batch")
+    {
+        return TransferMode::CopyObjects;
+    }
+    if (token == "pack_unpack" || token == "packed")
+    {
+        return TransferMode::PackUnpack;
+    }
+    if (token == "pack_unpack_scratch" || token == "packed_scratch")
+    {
+        return TransferMode::PackUnpackScratch;
+    }
+    throw std::invalid_argument("unknown transfer mode: " + token);
+}
+
+std::vector<TransferMode> parse_modes(const char *value)
+{
+    std::vector<TransferMode> modes;
+    std::stringstream stream(value);
+    std::string token;
+    while (std::getline(stream, token, ','))
+    {
+        if (token.empty())
+        {
+            throw std::invalid_argument("empty transfer mode in --modes");
+        }
+        modes.push_back(parse_mode_token(token));
+    }
+    if (modes.empty())
+    {
+        throw std::invalid_argument("--modes must not be empty");
+    }
+    return modes;
+}
+
+const char *mode_name(TransferMode mode)
+{
+    switch (mode)
+    {
+    case TransferMode::ObjectLoop:
+        return "object_loop";
+    case TransferMode::CopyObjects:
+        return "copy_objects";
+    case TransferMode::PackUnpack:
+        return "pack_unpack";
+    case TransferMode::PackUnpackScratch:
+        return "pack_unpack_scratch";
+    }
+    return "unknown";
+}
+
+std::string format_modes(const std::vector<TransferMode> &modes)
+{
+    std::ostringstream stream;
+    for (std::size_t index = 0; index < modes.size(); ++index)
+    {
+        if (index != 0)
+        {
+            stream << ',';
+        }
+        stream << mode_name(modes[index]);
+    }
+    return stream.str();
 }
 
 BenchOptions parse_options(int argc, char **argv)
@@ -210,6 +299,10 @@ BenchOptions parse_options(int argc, char **argv)
         {
             options.p_count = parse_size(require_value("--p-count"), arg.c_str());
         }
+        else if (arg == "--modes")
+        {
+            options.modes = parse_modes(require_value("--modes"));
+        }
         else if (arg == "--allow-same-device")
         {
             options.allow_same_device = true;
@@ -246,6 +339,10 @@ BenchOptions parse_options(int argc, char **argv)
     if (options.degree == 0 || options.component_count == 0)
     {
         throw std::invalid_argument("degree and component count must be non-zero");
+    }
+    if (options.modes.empty())
+    {
+        throw std::invalid_argument("--modes must not be empty");
     }
     return options;
 }
@@ -313,6 +410,13 @@ std::size_t first_copy_request_payload_bytes(
         throw std::invalid_argument("cannot get ciphertext bytes from an empty copy batch");
     }
     return copy_request_payload_bytes(requests.front());
+}
+
+std::size_t scratch_allocation_count(const CudaPeerPackScratch &scratch)
+{
+    const CudaPeerPackScratchSnapshot snapshot = scratch.snapshot();
+    return snapshot.source_allocation_count +
+           snapshot.destination_allocation_count;
 }
 
 std::shared_ptr<gpu::GpuCiphertextData> make_ciphertext(
@@ -494,9 +598,10 @@ BenchCaseResult run_case(
     const BenchOptions &options,
     const LevelShape &level,
     std::size_t batch_size,
-    bool batch_transfer,
+    TransferMode mode,
     PoseidonGpuObjectCopyMaterializer &materializer,
-    CudaPeerComm &peer_backend)
+    CudaPeerComm &peer_backend,
+    CudaPeerPackScratch &pack_scratch)
 {
     std::vector<std::shared_ptr<gpu::GpuCiphertextData>> sources;
     const std::vector<GpuCommCopyRequest> requests =
@@ -508,17 +613,37 @@ BenchCaseResult run_case(
     const std::size_t total_bytes =
         copy_requests_payload_bytes(materialized.object_copies);
 
+    BenchCaseResult result;
+    result.ciphertext_bytes = ciphertext_bytes;
+    result.total_bytes = total_bytes;
+
+    std::size_t scratch_allocations_start = 0;
+    if (mode == TransferMode::PackUnpackScratch)
+    {
+        scratch_allocations_start = scratch_allocation_count(pack_scratch);
+        pack_scratch.reserve(
+            options.source_device, options.destination_device, total_bytes);
+    }
+
     auto operation = [&]() {
-        if (batch_transfer)
+        switch (mode)
         {
-            peer_backend.copy_objects(materialized.object_copies);
-        }
-        else
-        {
+        case TransferMode::ObjectLoop:
             for (const GpuObjectCopyRequest &request : materialized.object_copies)
             {
                 peer_backend.copy_object(request);
             }
+            return;
+        case TransferMode::CopyObjects:
+            peer_backend.copy_objects(materialized.object_copies);
+            return;
+        case TransferMode::PackUnpack:
+            peer_backend.copy_objects_pack_unpack(materialized.object_copies);
+            return;
+        case TransferMode::PackUnpackScratch:
+            peer_backend.copy_objects_pack_unpack(
+                materialized.object_copies, pack_scratch);
+            return;
         }
     };
 
@@ -528,14 +653,43 @@ BenchCaseResult run_case(
         synchronize_devices(options);
     }
 
+    std::size_t scratch_allocations_before_timing = 0;
+    if (mode == TransferMode::PackUnpackScratch)
+    {
+        scratch_allocations_before_timing = scratch_allocation_count(pack_scratch);
+        result.pack_allocations_outside_timing =
+            scratch_allocations_before_timing - scratch_allocations_start;
+    }
+    else if (mode == TransferMode::PackUnpack && total_bytes != 0)
+    {
+        result.pack_allocations_outside_timing = checked_mul(
+            static_cast<std::size_t>(options.warmup_iterations),
+            static_cast<std::size_t>(2),
+            "pack allocation count overflow");
+    }
+
     std::vector<double> samples;
     samples.reserve(static_cast<std::size_t>(options.iterations));
     for (int iter = 0; iter < options.iterations; ++iter)
     {
         samples.push_back(measure_once(options, operation));
     }
+    if (mode == TransferMode::PackUnpackScratch)
+    {
+        result.pack_allocations_during_timing =
+            scratch_allocation_count(pack_scratch) -
+            scratch_allocations_before_timing;
+    }
+    else if (mode == TransferMode::PackUnpack && total_bytes != 0)
+    {
+        result.pack_allocations_during_timing = checked_mul(
+            static_cast<std::size_t>(options.iterations),
+            static_cast<std::size_t>(2),
+            "pack allocation count overflow");
+    }
     validate_destinations(materialized);
-    return BenchCaseResult{ summarize(samples), ciphertext_bytes, total_bytes };
+    result.stats = summarize(samples);
+    return result;
 }
 
 void print_header(const BenchOptions &options)
@@ -570,15 +724,18 @@ void print_header(const BenchOptions &options)
               << " warmup=" << options.warmup_iterations
               << " degree=" << options.degree
               << " components=" << options.component_count
-              << " p_count=" << options.p_count << "\n\n";
+              << " p_count=" << options.p_count
+              << " modes=" << format_modes(options.modes) << "\n\n";
     std::cout
         << std::left
-        << std::setw(12) << "mode"
+        << std::setw(22) << "mode"
         << std::setw(8) << "count"
         << std::setw(10) << "level"
         << std::setw(10) << "q_count"
         << std::setw(14) << "ct_bytes"
         << std::setw(14) << "total_bytes"
+        << std::setw(18) << "pack_allocs_pre"
+        << std::setw(20) << "pack_allocs_timed"
         << std::setw(14) << "avg_ms"
         << std::setw(14) << "min_ms"
         << std::setw(14) << "max_ms"
@@ -592,18 +749,22 @@ void print_result(
     const LevelShape &level,
     std::size_t ciphertext_bytes,
     std::size_t total_bytes,
+    std::size_t pack_allocations_outside_timing,
+    std::size_t pack_allocations_during_timing,
     const Stats &stats)
 {
     const double gbps =
         (static_cast<double>(total_bytes) / 1.0e9) / (stats.average_ms / 1000.0);
     std::cout
         << std::left
-        << std::setw(12) << mode
+        << std::setw(22) << mode
         << std::setw(8) << batch_size
         << std::setw(10) << level.name
         << std::setw(10) << level.q_count
         << std::setw(14) << ciphertext_bytes
         << std::setw(14) << total_bytes
+        << std::setw(18) << pack_allocations_outside_timing
+        << std::setw(20) << pack_allocations_during_timing
         << std::setw(14) << std::fixed << std::setprecision(4) << stats.average_ms
         << std::setw(14) << std::fixed << std::setprecision(4) << stats.min_ms
         << std::setw(14) << std::fixed << std::setprecision(4) << stats.max_ms
@@ -624,6 +785,7 @@ int main(int argc, char **argv)
             unique_devices({ options.source_device, options.destination_device }));
         PoseidonGpuObjectCopyMaterializer materializer;
         CudaPeerComm peer_backend;
+        CudaPeerPackScratch pack_scratch;
 
         const std::vector<std::size_t> batch_sizes{ 1, 5, 10 };
         const std::vector<LevelShape> levels{
@@ -638,35 +800,26 @@ int main(int argc, char **argv)
         {
             for (const LevelShape &level : levels)
             {
-                const BenchCaseResult single_result = run_case(
-                    options,
-                    level,
-                    batch_size,
-                    false,
-                    materializer,
-                    peer_backend);
-                print_result(
-                    "single",
-                    batch_size,
-                    level,
-                    single_result.ciphertext_bytes,
-                    single_result.total_bytes,
-                    single_result.stats);
-
-                const BenchCaseResult batch_result = run_case(
-                    options,
-                    level,
-                    batch_size,
-                    true,
-                    materializer,
-                    peer_backend);
-                print_result(
-                    "batch",
-                    batch_size,
-                    level,
-                    batch_result.ciphertext_bytes,
-                    batch_result.total_bytes,
-                    batch_result.stats);
+                for (const TransferMode mode : options.modes)
+                {
+                    const BenchCaseResult result = run_case(
+                        options,
+                        level,
+                        batch_size,
+                        mode,
+                        materializer,
+                        peer_backend,
+                        pack_scratch);
+                    print_result(
+                        mode_name(mode),
+                        batch_size,
+                        level,
+                        result.ciphertext_bytes,
+                        result.total_bytes,
+                        result.pack_allocations_outside_timing,
+                        result.pack_allocations_during_timing,
+                        result.stats);
+                }
             }
         }
     }

@@ -135,6 +135,147 @@ void test_same_device_object_copy()
     check_cuda(cudaFree(source), "cudaFree source");
 }
 
+void test_same_device_pack_unpack_scratch_copy()
+{
+    CudaPeerComm comm;
+    CudaPeerPackScratch scratch;
+    std::vector<int *> sources(3, nullptr);
+    std::vector<int *> destinations(3, nullptr);
+    const std::vector<int> inputs{ 111, 222, 333 };
+    std::vector<int> outputs(inputs.size(), 0);
+    std::vector<GpuObjectCopyRequest> requests;
+
+    try
+    {
+        for (std::size_t index = 0; index < inputs.size(); ++index)
+        {
+            check_cuda(cudaSetDevice(0), "cudaSetDevice same-device scratch");
+            check_cuda(
+                cudaMalloc(reinterpret_cast<void **>(&sources[index]), sizeof(int)),
+                "cudaMalloc scratch source");
+            check_cuda(
+                cudaMemcpy(
+                    sources[index],
+                    &inputs[index],
+                    sizeof(int),
+                    cudaMemcpyHostToDevice),
+                "cudaMemcpy host to scratch source");
+            check_cuda(
+                cudaMalloc(
+                    reinterpret_cast<void **>(&destinations[index]),
+                    sizeof(int)),
+                "cudaMalloc scratch destination");
+
+            GpuObjectCopyRequest request;
+            request.source_id = static_cast<ValueId>(30 + index);
+            request.destination_id = static_cast<ValueId>(40 + index);
+            request.kind = MgpuValueKind::Ciphertext;
+            request.buffers.push_back(GpuObjectBufferCopy{
+                sources[index],
+                destinations[index],
+                sizeof(int),
+                0,
+                0,
+            });
+            requests.push_back(request);
+        }
+
+        comm.copy_objects_pack_unpack(requests, scratch);
+        CudaPeerPackScratchSnapshot snapshot = scratch.snapshot();
+        require(
+            snapshot.source_capacity_bytes >= inputs.size() * sizeof(int),
+            "scratch source capacity was not reserved");
+        require(
+            snapshot.destination_capacity_bytes >= inputs.size() * sizeof(int),
+            "scratch destination capacity was not reserved");
+        require(snapshot.source_device == 0, "scratch source device mismatch");
+        require(
+            snapshot.destination_device == 0,
+            "scratch destination device mismatch");
+        require(
+            snapshot.source_allocation_count == 1,
+            "scratch source allocated more than once on first copy");
+        require(
+            snapshot.destination_allocation_count == 1,
+            "scratch destination allocated more than once on first copy");
+
+        check_cuda(cudaSetDevice(0), "cudaSetDevice scratch readback");
+        for (std::size_t index = 0; index < outputs.size(); ++index)
+        {
+            check_cuda(
+                cudaMemcpy(
+                    &outputs[index],
+                    destinations[index],
+                    sizeof(int),
+                    cudaMemcpyDeviceToHost),
+                "cudaMemcpy scratch destination device to host");
+            require(
+                outputs[index] == inputs[index],
+                "same-device CUDA scratch pack/unpack result mismatch");
+        }
+
+        for (int *destination : destinations)
+        {
+            check_cuda(cudaMemset(destination, 0, sizeof(int)), "cudaMemset scratch destination");
+        }
+        outputs.assign(outputs.size(), 0);
+
+        comm.copy_objects_pack_unpack(requests, scratch);
+        snapshot = scratch.snapshot();
+        require(
+            snapshot.source_allocation_count == 1,
+            "scratch source was reallocated for same-size copy");
+        require(
+            snapshot.destination_allocation_count == 1,
+            "scratch destination was reallocated for same-size copy");
+
+        for (std::size_t index = 0; index < outputs.size(); ++index)
+        {
+            check_cuda(
+                cudaMemcpy(
+                    &outputs[index],
+                    destinations[index],
+                    sizeof(int),
+                    cudaMemcpyDeviceToHost),
+                "cudaMemcpy repeated scratch destination device to host");
+            require(
+                outputs[index] == inputs[index],
+                "same-device CUDA repeated scratch pack/unpack result mismatch");
+        }
+    }
+    catch (...)
+    {
+        for (int *destination : destinations)
+        {
+            if (destination != nullptr)
+            {
+                cudaSetDevice(0);
+                cudaFree(destination);
+            }
+        }
+        for (int *source : sources)
+        {
+            if (source != nullptr)
+            {
+                cudaSetDevice(0);
+                cudaFree(source);
+            }
+        }
+        throw;
+    }
+
+    for (int *destination : destinations)
+    {
+        check_cuda(cudaSetDevice(0), "cudaSetDevice scratch destination free");
+        check_cuda(cudaFree(destination), "cudaFree scratch destination");
+    }
+    for (int *source : sources)
+    {
+        check_cuda(cudaSetDevice(0), "cudaSetDevice scratch source free");
+        check_cuda(cudaFree(source), "cudaFree scratch source");
+    }
+}
+
 void test_cross_device_copy_if_available(int device_count)
 {
     if (device_count < 2)
@@ -233,6 +374,31 @@ void test_cross_device_batch_copy_if_available(int device_count)
         }
 
         comm.copy_objects(requests);
+        const CudaPeerAccessSnapshot default_snapshot =
+            comm.peer_access_snapshot(1, 0);
+        require(default_snapshot.cached, "cross-device CUDA peer access cache was not populated");
+        if (CudaPeerComm::can_access_peer(1, 0))
+        {
+            require(
+                default_snapshot.peer_access_supported,
+                "cross-device CUDA peer access support was not cached");
+            require(
+                default_snapshot.peer_access_enabled,
+                "cross-device CUDA peer access enablement was not cached");
+            require(
+                default_snapshot.enable_call_count == 1,
+                "cross-device CUDA batch copy repeated peer access enablement");
+        }
+        else
+        {
+            require(
+                !default_snapshot.peer_access_supported,
+                "unsupported CUDA peer access pair was cached as supported");
+            require(
+                default_snapshot.enable_call_count == 0,
+                "unsupported CUDA peer access pair attempted peer enablement");
+        }
+
         check_cuda(cudaSetDevice(1), "cudaSetDevice batch destination readback");
         for (std::size_t index = 0; index < outputs.size(); ++index)
         {
@@ -244,6 +410,33 @@ void test_cross_device_batch_copy_if_available(int device_count)
                     cudaMemcpyDeviceToHost),
                 "cudaMemcpy batch destination device to host");
             require(outputs[index] == inputs[index], "cross-device CUDA batch copy result mismatch");
+        }
+
+        for (int *destination : destinations)
+        {
+            check_cuda(cudaSetDevice(1), "cudaSetDevice batch destination clear");
+            check_cuda(cudaMemset(destination, 0, sizeof(int)), "cudaMemset batch destination");
+        }
+        outputs.assign(outputs.size(), 0);
+
+        comm.copy_objects_pack_unpack(requests);
+        const CudaPeerAccessSnapshot packed_snapshot =
+            comm.peer_access_snapshot(1, 0);
+        require(
+            packed_snapshot.enable_call_count == default_snapshot.enable_call_count,
+            "pack/unpack batch copy repeated cached peer access enablement");
+
+        check_cuda(cudaSetDevice(1), "cudaSetDevice packed destination readback");
+        for (std::size_t index = 0; index < outputs.size(); ++index)
+        {
+            check_cuda(
+                cudaMemcpy(
+                    &outputs[index],
+                    destinations[index],
+                    sizeof(int),
+                    cudaMemcpyDeviceToHost),
+                "cudaMemcpy packed destination device to host");
+            require(outputs[index] == inputs[index], "cross-device CUDA pack/unpack copy result mismatch");
         }
     }
     catch (...)
@@ -288,6 +481,7 @@ int main()
         const int device_count = visible_device_count_or_skip();
         test_same_device_copy();
         test_same_device_object_copy();
+        test_same_device_pack_unpack_scratch_copy();
         test_cross_device_copy_if_available(device_count);
         test_cross_device_batch_copy_if_available(device_count);
     }
