@@ -70,10 +70,12 @@ constexpr const char *kKeySwitchFuseModupNttHeadEnv =
     "POSEIDON_KEYSWITCH_FUSE_MODUP_NTT_HEAD";
 constexpr const char *kKeySwitchBconvRowTiledEnv =
     "POSEIDON_KEYSWITCH_BCONV_ROW_TILED";
-constexpr const char *kKeySwitchBconvWarpShuffleEnv =
-    "POSEIDON_KEYSWITCH_BCONV_WARP_SHUFFLE";
+constexpr const char *kKeySwitchBconvRowTiled8Env =
+    "POSEIDON_KEYSWITCH_BCONV_ROW_TILED_8";
 constexpr const char *kKeySwitchPAccumAllDnumEnv =
     "POSEIDON_KEYSWITCH_PACCUM_ALL_DNUM";
+constexpr const char *kKeySwitchPAccumFinalTailEnv =
+    "POSEIDON_KEYSWITCH_PACCUM_FINAL_TAIL";
 constexpr const char *kDefaultNttFusedMatrixCacheDir =
     "/tmp/poseidon_ntt_tam_cache";
 
@@ -2265,14 +2267,17 @@ int run_nsys_relinearize_probe()
         "1");
 
     poseidon::Ciphertext current_output;
-    poseidon::Ciphertext row_tiled_output;
-    poseidon::Ciphertext warp_shuffle_output;
+    poseidon::Ciphertext row_tiled8_output;
+    poseidon::Ciphertext final_tail_output;
     {
+        ScopedEnvironmentValue select_final_tail(
+            kKeySwitchPAccumFinalTailEnv,
+            "0");
         ScopedEnvironmentValue select_row_tiled(
             kKeySwitchBconvRowTiledEnv,
             "0");
-        ScopedEnvironmentValue select_warp_shuffle(
-            kKeySwitchBconvWarpShuffleEnv,
+        ScopedEnvironmentValue select_row_tiled8(
+            kKeySwitchBconvRowTiled8Env,
             "0");
         current_case.run_relinearize_once();
         gpu_check_cuda(
@@ -2284,57 +2289,64 @@ int run_nsys_relinearize_probe()
             *current_case.context);
     }
     {
-        ScopedEnvironmentValue select_row_tiled(
-            kKeySwitchBconvRowTiledEnv,
-            "1");
-        ScopedEnvironmentValue select_warp_shuffle(
-            kKeySwitchBconvWarpShuffleEnv,
+        ScopedEnvironmentValue select_final_tail(
+            kKeySwitchPAccumFinalTailEnv,
             "0");
-        current_case.run_relinearize_once();
-        gpu_check_cuda(
-            cudaDeviceSynchronize(),
-            "nsys relinearize row-tiled correctness synchronize");
-        poseidon::gpu::GpuUploader::download_ciphertext(
-            current_case.gpu_relinearize_result,
-            row_tiled_output,
-            *current_case.context);
-    }
-    {
         ScopedEnvironmentValue select_row_tiled(
             kKeySwitchBconvRowTiledEnv,
             "0");
-        ScopedEnvironmentValue select_warp_shuffle(
-            kKeySwitchBconvWarpShuffleEnv,
+        ScopedEnvironmentValue select_row_tiled8(
+            kKeySwitchBconvRowTiled8Env,
             "1");
         current_case.run_relinearize_once();
         gpu_check_cuda(
             cudaDeviceSynchronize(),
-            "nsys relinearize warp-shuffle correctness synchronize");
+            "nsys relinearize row-tiled8 correctness synchronize");
         poseidon::gpu::GpuUploader::download_ciphertext(
             current_case.gpu_relinearize_result,
-            warp_shuffle_output,
+            row_tiled8_output,
             *current_case.context);
     }
-    if (!ciphertext_raw_equal(current_output, row_tiled_output))
     {
-        throw std::runtime_error(
-            "row-tiled BConv relinearize result differs from original implementation");
-    }
-    if (!ciphertext_raw_equal(current_output, warp_shuffle_output))
-    {
-        throw std::runtime_error(
-            "warp-shuffle BConv relinearize result differs from original implementation");
-    }
-
-    const auto warmup_variant = [&](const char *row_tiled_value,
-        const char *warp_shuffle_value)
-    {
+        ScopedEnvironmentValue select_final_tail(
+            kKeySwitchPAccumFinalTailEnv,
+            "1");
         ScopedEnvironmentValue select_row_tiled(
             kKeySwitchBconvRowTiledEnv,
-            row_tiled_value);
-        ScopedEnvironmentValue select_warp_shuffle(
-            kKeySwitchBconvWarpShuffleEnv,
-            warp_shuffle_value);
+            "0");
+        ScopedEnvironmentValue select_row_tiled8(
+            kKeySwitchBconvRowTiled8Env,
+            "1");
+        current_case.run_relinearize_once();
+        gpu_check_cuda(
+            cudaDeviceSynchronize(),
+            "nsys relinearize final-tail correctness synchronize");
+        poseidon::gpu::GpuUploader::download_ciphertext(
+            current_case.gpu_relinearize_result,
+            final_tail_output,
+            *current_case.context);
+    }
+    if (!ciphertext_raw_equal(current_output, row_tiled8_output))
+    {
+        throw std::runtime_error(
+            "row-tiled8 BConv relinearize result differs from original implementation");
+    }
+    if (!ciphertext_raw_equal(current_output, final_tail_output))
+    {
+        throw std::runtime_error(
+            "all-dnum final-tail relinearize result differs from original implementation");
+    }
+    const auto warmup_variant = [&](const char *final_tail_value)
+    {
+        ScopedEnvironmentValue select_final_tail(
+            kKeySwitchPAccumFinalTailEnv,
+            final_tail_value);
+        ScopedEnvironmentValue select_row_tiled(
+            kKeySwitchBconvRowTiledEnv,
+            "0");
+        ScopedEnvironmentValue select_row_tiled8(
+            kKeySwitchBconvRowTiled8Env,
+            "1");
         for (std::size_t i = 0; i < warmup_iterations; ++i)
         {
             current_case.run_relinearize_once();
@@ -2343,23 +2355,17 @@ int run_nsys_relinearize_probe()
             cudaDeviceSynchronize(),
             "nsys relinearize variant warmup synchronize");
     };
-    warmup_variant("0", "0");
-    warmup_variant("1", "0");
-    warmup_variant("0", "1");
+    warmup_variant("0");
+    warmup_variant("1");
 
-    const std::string current_range_name =
-        "relinearize.original N=" + std::to_string(degree) +
+    const std::string row_tiled8_range_name =
+        "relinearize.bconv-row-tiled8 N=" + std::to_string(degree) +
         " q=" + std::to_string(q_count) +
         " p=" + std::to_string(p_count);
-    const std::string row_tiled_range_name =
-        "relinearize.bconv-row-tiled N=" + std::to_string(degree) +
+    const std::string final_tail_range_name =
+        "relinearize.all-dnum-final-tail N=" + std::to_string(degree) +
         " q=" + std::to_string(q_count) +
         " p=" + std::to_string(p_count);
-    const std::string warp_shuffle_range_name =
-        "relinearize.bconv-warp-shuffle N=" + std::to_string(degree) +
-        " q=" + std::to_string(q_count) +
-        " p=" + std::to_string(p_count);
-
     std::cout << "\n[nsys relinearize probe]\n";
     std::cout << "degree                 = " << degree << "\n";
     std::cout << "q_count                = " << q_count << "\n";
@@ -2369,15 +2375,13 @@ int run_nsys_relinearize_probe()
     std::cout << "included in capture    = GpuEvaluator::relinearize only\n";
     std::cout << "excluded from capture  = context/keygen/encode/encrypt/upload/input multiply/warmup/download\n";
     std::cout << "capture range          = cudaProfilerStart/Stop\n";
-    std::cout << "nvtx original range    = " << current_range_name << "\n";
-    std::cout << "nvtx tiled range       = " << row_tiled_range_name << "\n";
-    std::cout << "nvtx shuffle range     = " << warp_shuffle_range_name << "\n";
+    std::cout << "nvtx tiled8 range      = " << row_tiled8_range_name << "\n";
+    std::cout << "nvtx final-tail range  = " << final_tail_range_name << "\n";
     std::cout << "active finalize path   = fused P->Q/NTT head + batched two-component Q NTT\n";
-    std::cout << "original               = existing ModUp<2> + NTT head\n";
-    std::cout << "bconv-row-tiled        = default; shared source tile across four target-limb warps\n";
-    std::cout << "bconv-warp-shuffle     = four 8-lane target subgroups sharing source via shuffle\n";
+    std::cout << "bconv-row-tiled-8      = default baseline; shared source tile across eight target-limb warps\n";
+    std::cout << "all-dnum-final-tail    = experimental; final fused3 NTT and two-component IP across all dnum\n";
     std::cout << "measurement passes     = 2 (reported totals are pass averages)\n";
-    std::cout << "measurement order      = original,row,shuffle,shuffle,row,original\n";
+    std::cout << "measurement order      = row8,final-tail,final-tail,row8\n";
     std::cout << "raw residue comparison = equal\n";
     std::cout << "inner nvtx ranges      = keyswitch.intt_switch_poly, keyswitch.dnum.*, keyswitch.finalize.*\n";
 
@@ -2388,16 +2392,18 @@ int run_nsys_relinearize_probe()
     };
 
     const auto measure_variant = [&](
-        const char *row_tiled_value,
-        const char *warp_shuffle_value,
+        const char *final_tail_value,
         const std::string &range_name)
     {
+        ScopedEnvironmentValue select_final_tail(
+            kKeySwitchPAccumFinalTailEnv,
+            final_tail_value);
         ScopedEnvironmentValue select_row_tiled(
             kKeySwitchBconvRowTiledEnv,
-            row_tiled_value);
-        ScopedEnvironmentValue select_warp_shuffle(
-            kKeySwitchBconvWarpShuffleEnv,
-            warp_shuffle_value);
+            "0");
+        ScopedEnvironmentValue select_row_tiled8(
+            kKeySwitchBconvRowTiled8Env,
+            "1");
         cudaEvent_t start = nullptr;
         cudaEvent_t stop = nullptr;
         gpu_check_cuda(cudaEventCreate(&start), "nsys cudaEventCreate variant start");
@@ -2429,18 +2435,14 @@ int run_nsys_relinearize_probe()
     };
 
     gpu_check_cuda(cudaProfilerStart(), "nsys cudaProfilerStart");
-    const VariantTiming current_forward =
-        measure_variant("0", "0", current_range_name);
-    const VariantTiming row_tiled_forward =
-        measure_variant("1", "0", row_tiled_range_name);
-    const VariantTiming warp_shuffle_forward =
-        measure_variant("0", "1", warp_shuffle_range_name);
-    const VariantTiming warp_shuffle_reverse =
-        measure_variant("0", "1", warp_shuffle_range_name);
-    const VariantTiming row_tiled_reverse =
-        measure_variant("1", "0", row_tiled_range_name);
-    const VariantTiming current_reverse =
-        measure_variant("0", "0", current_range_name);
+    const VariantTiming row_tiled8_forward =
+        measure_variant("0", row_tiled8_range_name);
+    const VariantTiming final_tail_forward =
+        measure_variant("1", final_tail_range_name);
+    const VariantTiming final_tail_reverse =
+        measure_variant("1", final_tail_range_name);
+    const VariantTiming row_tiled8_reverse =
+        measure_variant("0", row_tiled8_range_name);
     gpu_check_cuda(cudaProfilerStop(), "nsys cudaProfilerStop");
 
     const auto average_timing = [](
@@ -2454,57 +2456,42 @@ int run_nsys_relinearize_probe()
             (first.event_total_ms + second.event_total_ms) * 0.5F;
         return result;
     };
-    const VariantTiming current =
-        average_timing(current_forward, current_reverse);
-    const VariantTiming row_tiled =
-        average_timing(row_tiled_forward, row_tiled_reverse);
-    const VariantTiming warp_shuffle =
-        average_timing(warp_shuffle_forward, warp_shuffle_reverse);
+    const VariantTiming row_tiled8 =
+        average_timing(row_tiled8_forward, row_tiled8_reverse);
+    const VariantTiming final_tail =
+        average_timing(final_tail_forward, final_tail_reverse);
 
-    const double current_wall_avg = current.wall_total_ms / timing_iterations;
-    const double current_event_avg =
-        static_cast<double>(current.event_total_ms) / timing_iterations;
-    const double row_tiled_wall_avg =
-        row_tiled.wall_total_ms / timing_iterations;
-    const double row_tiled_event_avg =
-        static_cast<double>(row_tiled.event_total_ms) / timing_iterations;
-    const double warp_shuffle_wall_avg =
-        warp_shuffle.wall_total_ms / timing_iterations;
-    const double warp_shuffle_event_avg =
-        static_cast<double>(warp_shuffle.event_total_ms) / timing_iterations;
-    const double row_tiled_delta_ms =
-        row_tiled_event_avg - current_event_avg;
-    const double warp_shuffle_delta_ms =
-        warp_shuffle_event_avg - current_event_avg;
-    const double row_tiled_speedup = row_tiled_event_avg == 0.0
+    const double row_tiled8_wall_avg =
+        row_tiled8.wall_total_ms / timing_iterations;
+    const double row_tiled8_event_avg =
+        static_cast<double>(row_tiled8.event_total_ms) / timing_iterations;
+    const double final_tail_wall_avg =
+        final_tail.wall_total_ms / timing_iterations;
+    const double final_tail_event_avg =
+        static_cast<double>(final_tail.event_total_ms) / timing_iterations;
+    const double final_tail_delta_ms =
+        final_tail_event_avg - row_tiled8_event_avg;
+    const double final_tail_speedup = final_tail_event_avg == 0.0
         ? 0.0
-        : current_event_avg / row_tiled_event_avg;
-    const double warp_shuffle_speedup = warp_shuffle_event_avg == 0.0
-        ? 0.0
-        : current_event_avg / warp_shuffle_event_avg;
+        : row_tiled8_event_avg / final_tail_event_avg;
 
     std::cout << std::fixed << std::setprecision(6);
     std::cout << "\n[relinearize BConv implementation comparison]\n";
     std::cout << "variant             wall_total_ms    wall_avg_ms    event_total_ms    event_avg_ms\n";
-    std::cout << std::left << std::setw(20) << "original"
-              << std::right << std::setw(16) << current.wall_total_ms
-              << std::setw(15) << current_wall_avg
-              << std::setw(18) << current.event_total_ms
-              << std::setw(16) << current_event_avg << "\n";
-    std::cout << std::left << std::setw(20) << "bconv-row-tiled"
-              << std::right << std::setw(16) << row_tiled.wall_total_ms
-              << std::setw(15) << row_tiled_wall_avg
-              << std::setw(18) << row_tiled.event_total_ms
-              << std::setw(16) << row_tiled_event_avg << "\n";
-    std::cout << std::left << std::setw(20) << "bconv-warp-shuffle"
-              << std::right << std::setw(16) << warp_shuffle.wall_total_ms
-              << std::setw(15) << warp_shuffle_wall_avg
-              << std::setw(18) << warp_shuffle.event_total_ms
-              << std::setw(16) << warp_shuffle_event_avg << "\n";
-    std::cout << "row-tiled - original event avg ms = " << row_tiled_delta_ms << "\n";
-    std::cout << "shuffle - original event avg ms   = " << warp_shuffle_delta_ms << "\n";
-    std::cout << "original / row-tiled speedup      = " << row_tiled_speedup << "x\n";
-    std::cout << "original / shuffle speedup        = " << warp_shuffle_speedup << "x\n";
+    std::cout << std::left << std::setw(20) << "bconv-row-tiled-8"
+              << std::right << std::setw(16) << row_tiled8.wall_total_ms
+              << std::setw(15) << row_tiled8_wall_avg
+              << std::setw(18) << row_tiled8.event_total_ms
+              << std::setw(16) << row_tiled8_event_avg << "\n";
+    std::cout << std::left << std::setw(20) << "all-dnum-final-tail"
+              << std::right << std::setw(16) << final_tail.wall_total_ms
+              << std::setw(15) << final_tail_wall_avg
+              << std::setw(18) << final_tail.event_total_ms
+              << std::setw(16) << final_tail_event_avg << "\n";
+    std::cout << "final-tail - row8 event avg ms    = "
+              << final_tail_delta_ms << "\n";
+    std::cout << "row8 / final-tail speedup         = "
+              << final_tail_speedup << "x\n";
 
     return EXIT_SUCCESS;
 }

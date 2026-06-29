@@ -23,14 +23,16 @@ constexpr std::size_t kRelinKeyPower2Index = 0;
 constexpr std::size_t kSwitchKeyComponentCount = 2;
 constexpr const char *kPAccumAllDnumEnv =
     "POSEIDON_KEYSWITCH_PACCUM_ALL_DNUM";
+constexpr const char *kPAccumFinalTailEnv =
+    "POSEIDON_KEYSWITCH_PACCUM_FINAL_TAIL";
 constexpr const char *kFuseDecompQEnv =
     "POSEIDON_KEYSWITCH_FUSE_DECOMP_Q";
 constexpr const char *kFuseModupNttHeadEnv =
     "POSEIDON_KEYSWITCH_FUSE_MODUP_NTT_HEAD";
 constexpr const char *kBconvRowTiledEnv =
     "POSEIDON_KEYSWITCH_BCONV_ROW_TILED";
-constexpr const char *kBconvWarpShuffleEnv =
-    "POSEIDON_KEYSWITCH_BCONV_WARP_SHUFFLE";
+constexpr const char *kBconvRowTiled8Env =
+    "POSEIDON_KEYSWITCH_BCONV_ROW_TILED_8";
 
 class NvtxRange
 {
@@ -81,6 +83,22 @@ bool use_paccum_all_dnum()
     return enabled;
 }
 
+bool use_paccum_final_tail()
+{
+    const char *raw = std::getenv(kPAccumFinalTailEnv);
+    if (raw == nullptr || *raw == '\0')
+    {
+        return false;
+    }
+
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
 bool use_fused_decomp_q()
 {
     const char *raw = std::getenv(kFuseDecompQEnv);
@@ -118,7 +136,7 @@ bool use_bconv_row_tiled()
     const char *raw = std::getenv(kBconvRowTiledEnv);
     if (raw == nullptr || *raw == '\0')
     {
-        return true;
+        return false;
     }
 
     const std::string value(raw);
@@ -129,12 +147,12 @@ bool use_bconv_row_tiled()
            value != "FALSE";
 }
 
-bool use_bconv_warp_shuffle()
+bool use_bconv_row_tiled8()
 {
-    const char *raw = std::getenv(kBconvWarpShuffleEnv);
+    const char *raw = std::getenv(kBconvRowTiled8Env);
     if (raw == nullptr || *raw == '\0')
     {
-        return false;
+        return true;
     }
 
     const std::string value(raw);
@@ -474,6 +492,65 @@ void prepare_hybrid_decomposition_ntt_block(
     }
 }
 
+void prepare_hybrid_decomposition_final_tail_block(
+    std::size_t decomp_index,
+    std::size_t decomp_limb_begin,
+    std::size_t decomp_limb_count,
+    HybridScratch &scratch,
+    GpuWord *target_modup_q,
+    GpuWord *target_modup_p,
+    const GpuConstRNSPolyView &key_component0,
+    const GpuConstRNSPolyView &key_component1,
+    const GpuLevelInfo &level_info)
+{
+    NvtxRange block_range(
+        "keyswitch.paccum_final_tail.prepare_dnum[" +
+        std::to_string(decomp_index) + "]");
+    const auto &key0_shard = key_component0.shards.front();
+    const auto &key1_shard = key_component1.shards.front();
+    if (!same_shard_placement(key0_shard, key1_shard))
+    {
+        throw std::invalid_argument(
+            "GpuKeySwitchHandler::prepare_hybrid_decomposition_final_tail_block: key shard placement mismatch");
+    }
+
+    const auto *parameter_shard = find_parameter_shard(level_info, key0_shard);
+    if (parameter_shard == nullptr)
+    {
+        throw std::invalid_argument(
+            "GpuKeySwitchHandler::prepare_hybrid_decomposition_final_tail_block: no matching parameter shard");
+    }
+    validate_hybrid_parameter_shape(
+        "GpuKeySwitchHandler::prepare_hybrid_decomposition_final_tail_block",
+        scratch,
+        *parameter_shard);
+
+    {
+        NvtxRange range(
+            "keyswitch.paccum_final_tail.modup_forward_ntt_head.row_tiled8");
+        kernel::launch_hybrid_modup_decomposition_forward_ntt_first_stage_row_tiled8(
+            target_modup_q,
+            target_modup_p,
+            scratch.c2_intt.data(),
+            decomp_index,
+            decomp_limb_begin,
+            decomp_limb_count,
+            *parameter_shard,
+            scratch.degree);
+    }
+
+    {
+        NvtxRange range("keyswitch.paccum_final_tail.forward_ntt_prefix");
+        kernel::launch_hybrid_forward_ntt_qp_prepare_final_tail(
+            target_modup_q,
+            target_modup_p,
+            decomp_limb_begin,
+            decomp_limb_count,
+            *parameter_shard,
+            scratch.degree);
+    }
+}
+
 /* 处理单个dnum分量的计算函数 */
 void process_hybrid_decomposition_block(
     std::size_t decomp_index,
@@ -487,7 +564,7 @@ void process_hybrid_decomposition_block(
     bool fuse_decomp_q,
     bool fuse_modup_ntt_head,
     bool bconv_row_tiled,
-    bool bconv_warp_shuffle)
+    bool bconv_row_tiled8)
 {
     NvtxRange block_range(
         "keyswitch.dnum[" + std::to_string(decomp_index) + "]");
@@ -515,16 +592,16 @@ void process_hybrid_decomposition_block(
     {
         NvtxRange range(!fuse_modup_ntt_head
             ? "keyswitch.dnum.modup"
-            : (bconv_warp_shuffle
-                ? "keyswitch.dnum.modup_forward_ntt_head.warp_shuffle"
+            : (bconv_row_tiled8
+                ? "keyswitch.dnum.modup_forward_ntt_head.row_tiled8"
                 : (bconv_row_tiled
                     ? "keyswitch.dnum.modup_forward_ntt_head.row_tiled"
                     : "keyswitch.dnum.modup_forward_ntt_head")));
         if (fuse_modup_ntt_head)
         {
-            if (bconv_warp_shuffle)
+            if (bconv_row_tiled8)
             {
-                kernel::launch_hybrid_modup_decomposition_forward_ntt_first_stage_warp_shuffle(
+                kernel::launch_hybrid_modup_decomposition_forward_ntt_first_stage_row_tiled8(
                     scratch.modup_q.data(),
                     scratch.modup_p.data(),
                     scratch.c2_intt.data(),
@@ -980,7 +1057,113 @@ void GpuKeySwitchHandler::switch_key_hybrid_ciphertext(
         switch_poly_ntt,
         level_info);
 
-    if (use_paccum_all_dnum())
+    if (use_paccum_final_tail())
+    {
+        NvtxRange paccum_range("keyswitch.paccum_final_tail");
+        allocate_hybrid_paccum_all_dnum_scratch(
+            scratch,
+            expected_decomposition_count);
+
+        std::vector<const GpuWord *> key0_ptrs(expected_decomposition_count);
+        std::vector<const GpuWord *> key1_ptrs(expected_decomposition_count);
+        const GpuParameterShard *paccum_parameter_shard = nullptr;
+
+        for (std::size_t decomp_index = 0;
+             decomp_index < expected_decomposition_count;
+             ++decomp_index)
+        {
+            const std::size_t decomp_limb_begin = decomp_index * base_p_size;
+            const std::size_t decomp_limb_count = std::min(
+                base_p_size,
+                base_q_size - decomp_limb_begin);
+
+            const auto &key_component0 = find_key_poly(
+                switch_keys_view,
+                switch_keys_data,
+                key_index,
+                decomp_index,
+                0);
+            const auto &key_component1 = find_key_poly(
+                switch_keys_view,
+                switch_keys_data,
+                key_index,
+                decomp_index,
+                1);
+
+            validate_single_full_shard(
+                "GpuKeySwitchHandler switch key c0",
+                key_component0,
+                switch_keys_view.meta.degree,
+                switch_keys_view.meta.q_count + switch_keys_view.meta.p_count);
+            validate_single_full_shard(
+                "GpuKeySwitchHandler switch key c1",
+                key_component1,
+                switch_keys_view.meta.degree,
+                switch_keys_view.meta.q_count + switch_keys_view.meta.p_count);
+
+            const auto &key0_shard = key_component0.shards.front();
+            const auto *parameter_shard =
+                find_parameter_shard(level_info, key0_shard);
+            if (parameter_shard == nullptr)
+            {
+                throw std::invalid_argument(
+                    "GpuKeySwitchHandler::switch_key_hybrid_ciphertext: no matching final-tail parameter shard");
+            }
+            if (paccum_parameter_shard == nullptr)
+            {
+                paccum_parameter_shard = parameter_shard;
+            }
+
+            key0_ptrs[decomp_index] = key0_shard.ptr;
+            key1_ptrs[decomp_index] =
+                key_component1.shards.front().ptr;
+
+            prepare_hybrid_decomposition_final_tail_block(
+                decomp_index,
+                decomp_limb_begin,
+                decomp_limb_count,
+                scratch,
+                scratch.all_modup_q.data() +
+                    decomp_index * scratch.q_word_count,
+                scratch.all_modup_p.data() +
+                    decomp_index * scratch.p_word_count,
+                key_component0,
+                key_component1,
+                level_info);
+        }
+
+        scratch.key_qp0_by_dnum.copy_from_host(
+            key0_ptrs.data(),
+            key0_ptrs.size());
+        scratch.key_qp1_by_dnum.copy_from_host(
+            key1_ptrs.data(),
+            key1_ptrs.size());
+
+        if (paccum_parameter_shard == nullptr)
+        {
+            throw std::invalid_argument(
+                "GpuKeySwitchHandler::switch_key_hybrid_ciphertext: missing final-tail PAccum parameter shard");
+        }
+
+        {
+            NvtxRange range(
+                "keyswitch.paccum_final_tail.final_ntt_accumulate_all_dnum");
+            kernel::launch_hybrid_final_ntt_paccum_all_dnum_two_components(
+                scratch.accum_q0.data(),
+                scratch.accum_p0.data(),
+                scratch.accum_q1.data(),
+                scratch.accum_p1.data(),
+                scratch.all_modup_q.data(),
+                scratch.all_modup_p.data(),
+                switch_poly_ntt.shards.front().ptr,
+                scratch.key_qp0_by_dnum.data(),
+                scratch.key_qp1_by_dnum.data(),
+                expected_decomposition_count,
+                *paccum_parameter_shard,
+                scratch.degree);
+        }
+    }
+    else if (use_paccum_all_dnum())
     {
         NvtxRange paccum_range("keyswitch.paccum_all_dnum");
         allocate_hybrid_paccum_all_dnum_scratch(
@@ -1091,7 +1274,7 @@ void GpuKeySwitchHandler::switch_key_hybrid_ciphertext(
         const bool fuse_decomp_q = use_fused_decomp_q();
         const bool fuse_modup_ntt_head = use_fused_modup_ntt_head();
         const bool bconv_row_tiled = use_bconv_row_tiled();
-        const bool bconv_warp_shuffle = use_bconv_warp_shuffle();
+        const bool bconv_row_tiled8 = use_bconv_row_tiled8();
         /* 分块循环：每个 dnum 分块做 ModUp + NTT + 密钥乘加累加 */
         for (std::size_t decomp_index = 0;
              decomp_index < expected_decomposition_count;
@@ -1142,7 +1325,7 @@ void GpuKeySwitchHandler::switch_key_hybrid_ciphertext(
                 fuse_decomp_q,
                 fuse_modup_ntt_head,
                 bconv_row_tiled,
-                bconv_warp_shuffle);
+                bconv_row_tiled8);
         }
     }
 
