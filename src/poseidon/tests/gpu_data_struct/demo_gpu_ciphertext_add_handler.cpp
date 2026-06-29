@@ -64,6 +64,16 @@ constexpr const char *kDemoSkipTensorNttEnv =
     "POSEIDON_DEMO_SKIP_TENSOR_NTT";
 constexpr const char *kDemoSkipTensorFp64NttEnv =
     "POSEIDON_DEMO_SKIP_TENSOR_FP64_NTT";
+constexpr const char *kKeySwitchFuseDecompQEnv =
+    "POSEIDON_KEYSWITCH_FUSE_DECOMP_Q";
+constexpr const char *kKeySwitchFuseModupNttHeadEnv =
+    "POSEIDON_KEYSWITCH_FUSE_MODUP_NTT_HEAD";
+constexpr const char *kKeySwitchBconvRowTiledEnv =
+    "POSEIDON_KEYSWITCH_BCONV_ROW_TILED";
+constexpr const char *kKeySwitchBconvWarpShuffleEnv =
+    "POSEIDON_KEYSWITCH_BCONV_WARP_SHUFFLE";
+constexpr const char *kKeySwitchPAccumAllDnumEnv =
+    "POSEIDON_KEYSWITCH_PACCUM_ALL_DNUM";
 constexpr const char *kDefaultNttFusedMatrixCacheDir =
     "/tmp/poseidon_ntt_tam_cache";
 
@@ -1992,6 +2002,8 @@ int run_nsys_multiply_relin_rescale_probe()
     return EXIT_SUCCESS;
 }
 
+#if 0
+/* Legacy three-way A/B probe retained for rollback experiments. */
 int run_nsys_relinearize_probe()
 {
     using poseidon::gpu::gpu_check_cuda;
@@ -2029,16 +2041,48 @@ int run_nsys_relinearize_probe()
     gpu_check_cuda(
         cudaDeviceSynchronize(),
         "nsys relinearize input synchronize");
-    for (std::size_t i = 0; i < warmup_iterations; ++i)
-    {
-        current_case.run_relinearize_once();
-    }
-    gpu_check_cuda(
-        cudaDeviceSynchronize(),
-        "nsys relinearize warmup synchronize");
 
-    const std::string range_name =
-        "relinearize N=" + std::to_string(degree) +
+    ScopedEnvironmentValue disable_paccum(
+        kKeySwitchPAccumAllDnumEnv,
+        "0");
+    const auto warmup_variant = [&](
+        const char *p_to_q_fuse_value,
+        const char *batch_q_ntt_value)
+    {
+        ScopedEnvironmentValue select_decomp_variant(
+            kKeySwitchFuseDecompQEnv,
+            "1");
+        ScopedEnvironmentValue select_modup_ntt_head(
+            kKeySwitchFuseModupNttHeadEnv,
+            "1");
+        ScopedEnvironmentValue select_p_to_q_ntt_head(
+            kKeySwitchFusePToQNttHeadEnv,
+            p_to_q_fuse_value);
+        ScopedEnvironmentValue select_q_ntt_batching(
+            kKeySwitchBatchQNttComponentsEnv,
+            batch_q_ntt_value);
+        for (std::size_t i = 0; i < warmup_iterations; ++i)
+        {
+            current_case.run_relinearize_once();
+        }
+        gpu_check_cuda(
+            cudaDeviceSynchronize(),
+            "nsys relinearize variant warmup synchronize");
+    };
+    warmup_variant("0", "0");
+    warmup_variant("0", "1");
+    warmup_variant("1", "1");
+
+    const std::string previous_range_name =
+        "relinearize.previous-modified N=" + std::to_string(degree) +
+        " q=" + std::to_string(q_count) +
+        " p=" + std::to_string(p_count);
+    const std::string q_ntt_batched_range_name =
+        "relinearize.q-ntt-batched N=" + std::to_string(degree) +
+        " q=" + std::to_string(q_count) +
+        " p=" + std::to_string(p_count);
+    const std::string p_to_q_range_name =
+        "relinearize.p2q-ntt-head-fused N=" + std::to_string(degree) +
         " q=" + std::to_string(q_count) +
         " p=" + std::to_string(p_count);
 
@@ -2051,49 +2095,416 @@ int run_nsys_relinearize_probe()
     std::cout << "included in capture    = GpuEvaluator::relinearize only\n";
     std::cout << "excluded from capture  = context/keygen/encode/encrypt/upload/input multiply/warmup/download\n";
     std::cout << "capture range          = cudaProfilerStart/Stop\n";
-    std::cout << "nvtx range             = " << range_name << "\n";
+    std::cout << "nvtx previous range    = " << previous_range_name << "\n";
+    std::cout << "nvtx batched range     = " << q_ntt_batched_range_name << "\n";
+    std::cout << "nvtx new range         = " << p_to_q_range_name << "\n";
+    std::cout << "previous-modified      = fused ModUp/NTT head + fused decomp-Q MAC\n";
+    std::cout << "q-ntt-batched          = previous-modified + batched two-component Q NTT\n";
+    std::cout << "p2q-ntt-head-fused     = q-ntt-batched + fused P->Q/NTT head\n";
     std::cout << "inner nvtx ranges      = keyswitch.intt_switch_poly, keyswitch.dnum.*, keyswitch.finalize.*\n";
 
-    cudaEvent_t gpu_start = nullptr;
-    cudaEvent_t gpu_stop = nullptr;
-    gpu_check_cuda(cudaEventCreate(&gpu_start), "nsys cudaEventCreate start");
-    gpu_check_cuda(cudaEventCreate(&gpu_stop), "nsys cudaEventCreate stop");
+    struct VariantTiming
+    {
+        double wall_total_ms = 0.0;
+        float event_total_ms = 0.0F;
+    };
+
+    const auto measure_variant = [&](
+        const char *p_to_q_fuse_value,
+        const char *batch_q_ntt_value,
+        const std::string &range_name)
+    {
+        ScopedEnvironmentValue select_decomp_variant(
+            kKeySwitchFuseDecompQEnv,
+            "1");
+        ScopedEnvironmentValue select_modup_ntt_head(
+            kKeySwitchFuseModupNttHeadEnv,
+            "1");
+        ScopedEnvironmentValue select_p_to_q_ntt_head(
+            kKeySwitchFusePToQNttHeadEnv,
+            p_to_q_fuse_value);
+        ScopedEnvironmentValue select_q_ntt_batching(
+            kKeySwitchBatchQNttComponentsEnv,
+            batch_q_ntt_value);
+        cudaEvent_t start = nullptr;
+        cudaEvent_t stop = nullptr;
+        gpu_check_cuda(cudaEventCreate(&start), "nsys cudaEventCreate variant start");
+        gpu_check_cuda(cudaEventCreate(&stop), "nsys cudaEventCreate variant stop");
+
+        nvtxRangePushA(range_name.c_str());
+        const auto wall_begin = std::chrono::steady_clock::now();
+        gpu_check_cuda(cudaEventRecord(start), "nsys cudaEventRecord variant start");
+        for (std::size_t i = 0; i < timing_iterations; ++i)
+        {
+            current_case.run_relinearize_once();
+        }
+        gpu_check_cuda(cudaEventRecord(stop), "nsys cudaEventRecord variant stop");
+        gpu_check_cuda(
+            cudaEventSynchronize(stop),
+            "nsys cudaEventSynchronize variant stop");
+        const auto wall_end = std::chrono::steady_clock::now();
+        nvtxRangePop();
+
+        VariantTiming result;
+        result.wall_total_ms =
+            std::chrono::duration<double, std::milli>(wall_end - wall_begin).count();
+        gpu_check_cuda(
+            cudaEventElapsedTime(&result.event_total_ms, start, stop),
+            "nsys cudaEventElapsedTime variant");
+        gpu_check_cuda(cudaEventDestroy(start), "nsys cudaEventDestroy variant start");
+        gpu_check_cuda(cudaEventDestroy(stop), "nsys cudaEventDestroy variant stop");
+        return result;
+    };
 
     gpu_check_cuda(cudaProfilerStart(), "nsys cudaProfilerStart");
-    nvtxRangePushA(range_name.c_str());
-    const auto wall_begin = std::chrono::steady_clock::now();
-    gpu_check_cuda(cudaEventRecord(gpu_start), "nsys cudaEventRecord start");
-    for (std::size_t i = 0; i < timing_iterations; ++i)
-    {
-        current_case.run_relinearize_once();
-    }
-    gpu_check_cuda(cudaEventRecord(gpu_stop), "nsys cudaEventRecord stop");
-    gpu_check_cuda(
-        cudaEventSynchronize(gpu_stop),
-        "nsys cudaEventSynchronize stop");
-    const auto wall_end = std::chrono::steady_clock::now();
-    nvtxRangePop();
+    const VariantTiming previous = measure_variant(
+        "0",
+        "0",
+        previous_range_name);
+    const VariantTiming q_ntt_batched = measure_variant(
+        "0",
+        "1",
+        q_ntt_batched_range_name);
+    const VariantTiming p_to_q_fused = measure_variant(
+        "1",
+        "1",
+        p_to_q_range_name);
     gpu_check_cuda(cudaProfilerStop(), "nsys cudaProfilerStop");
 
-    float gpu_event_total_ms = 0.0F;
-    gpu_check_cuda(
-        cudaEventElapsedTime(&gpu_event_total_ms, gpu_start, gpu_stop),
-        "nsys cudaEventElapsedTime");
-
-    gpu_check_cuda(cudaEventDestroy(gpu_start), "nsys cudaEventDestroy start");
-    gpu_check_cuda(cudaEventDestroy(gpu_stop), "nsys cudaEventDestroy stop");
-
-    const double wall_total_ms =
-        std::chrono::duration<double, std::milli>(wall_end - wall_begin).count();
-    const double wall_avg_ms = wall_total_ms / timing_iterations;
-    const double event_avg_ms =
-        static_cast<double>(gpu_event_total_ms) / timing_iterations;
+    const double previous_wall_avg = previous.wall_total_ms / timing_iterations;
+    const double previous_event_avg =
+        static_cast<double>(previous.event_total_ms) / timing_iterations;
+    const double q_ntt_batched_wall_avg =
+        q_ntt_batched.wall_total_ms / timing_iterations;
+    const double q_ntt_batched_event_avg =
+        static_cast<double>(q_ntt_batched.event_total_ms) / timing_iterations;
+    const double p_to_q_wall_avg =
+        p_to_q_fused.wall_total_ms / timing_iterations;
+    const double p_to_q_event_avg =
+        static_cast<double>(p_to_q_fused.event_total_ms) / timing_iterations;
+    const double batching_delta_ms =
+        q_ntt_batched_event_avg - previous_event_avg;
+    const double p_to_q_delta_ms =
+        p_to_q_event_avg - q_ntt_batched_event_avg;
+    const double overall_speedup = p_to_q_event_avg == 0.0
+        ? 0.0
+        : previous_event_avg / p_to_q_event_avg;
 
     std::cout << std::fixed << std::setprecision(6);
-    std::cout << "gpu wall total ms      = " << wall_total_ms << "\n";
-    std::cout << "gpu wall avg ms        = " << wall_avg_ms << "\n";
-    std::cout << "gpu event total ms     = " << gpu_event_total_ms << "\n";
-    std::cout << "gpu event avg ms       = " << event_avg_ms << "\n";
+    std::cout << "\n[relinearize Q-NTT batching and P->Q/NTT-head fusion]\n";
+    std::cout << "variant             wall_total_ms    wall_avg_ms    event_total_ms    event_avg_ms\n";
+    std::cout << std::left << std::setw(20) << "previous-modified"
+              << std::right << std::setw(16) << previous.wall_total_ms
+              << std::setw(15) << previous_wall_avg
+              << std::setw(18) << previous.event_total_ms
+              << std::setw(16) << previous_event_avg << "\n";
+    std::cout << std::left << std::setw(20) << "q-ntt-batched"
+              << std::right << std::setw(16) << q_ntt_batched.wall_total_ms
+              << std::setw(15) << q_ntt_batched_wall_avg
+              << std::setw(18) << q_ntt_batched.event_total_ms
+              << std::setw(16) << q_ntt_batched_event_avg << "\n";
+    std::cout << std::left << std::setw(20) << "p2q-ntt-head-fused"
+              << std::right << std::setw(16) << p_to_q_fused.wall_total_ms
+              << std::setw(15) << p_to_q_wall_avg
+              << std::setw(18) << p_to_q_fused.event_total_ms
+              << std::setw(16) << p_to_q_event_avg << "\n";
+    std::cout << "batched - previous event avg ms   = " << batching_delta_ms << "\n";
+    std::cout << "p2q-fused - batched event avg ms  = " << p_to_q_delta_ms << "\n";
+    std::cout << "previous / final speedup          = " << overall_speedup << "x\n";
+
+    return EXIT_SUCCESS;
+}
+#endif
+
+int run_nsys_relinearize_probe()
+{
+    using poseidon::gpu::gpu_check_cuda;
+
+    const int device_id = 0;
+    RmmPoolScope rmm_scope(device_id);
+
+    const std::size_t degree =
+        env_size_or("POSEIDON_NSYS_DEGREE", 65536);
+    const std::size_t q_count =
+        env_size_or("POSEIDON_NSYS_Q_COUNT", 8);
+    const std::size_t p_count =
+        env_size_or("POSEIDON_NSYS_P_COUNT", 2);
+    const std::size_t timing_iterations =
+        env_size_or("POSEIDON_NSYS_ITERATIONS", 1);
+    const std::size_t warmup_iterations =
+        env_size_or("POSEIDON_NSYS_WARMUP", 0);
+
+    if (timing_iterations == 0)
+    {
+        throw std::invalid_argument(
+            "POSEIDON_NSYS_ITERATIONS must be greater than zero");
+    }
+
+    auto current_case = prepare_nsys_multiply_relin_rescale_case(
+        degree,
+        q_count,
+        p_count,
+        device_id);
+
+    gpu_check_cuda(
+        cudaSetDevice(device_id),
+        "nsys relinearize cudaSetDevice");
+    current_case.prepare_relinearize_input();
+    gpu_check_cuda(
+        cudaDeviceSynchronize(),
+        "nsys relinearize input synchronize");
+
+    ScopedEnvironmentValue disable_paccum(
+        kKeySwitchPAccumAllDnumEnv,
+        "0");
+    ScopedEnvironmentValue select_decomp_variant(
+        kKeySwitchFuseDecompQEnv,
+        "1");
+    ScopedEnvironmentValue select_modup_ntt_head(
+        kKeySwitchFuseModupNttHeadEnv,
+        "1");
+
+    poseidon::Ciphertext current_output;
+    poseidon::Ciphertext row_tiled_output;
+    poseidon::Ciphertext warp_shuffle_output;
+    {
+        ScopedEnvironmentValue select_row_tiled(
+            kKeySwitchBconvRowTiledEnv,
+            "0");
+        ScopedEnvironmentValue select_warp_shuffle(
+            kKeySwitchBconvWarpShuffleEnv,
+            "0");
+        current_case.run_relinearize_once();
+        gpu_check_cuda(
+            cudaDeviceSynchronize(),
+            "nsys relinearize current correctness synchronize");
+        poseidon::gpu::GpuUploader::download_ciphertext(
+            current_case.gpu_relinearize_result,
+            current_output,
+            *current_case.context);
+    }
+    {
+        ScopedEnvironmentValue select_row_tiled(
+            kKeySwitchBconvRowTiledEnv,
+            "1");
+        ScopedEnvironmentValue select_warp_shuffle(
+            kKeySwitchBconvWarpShuffleEnv,
+            "0");
+        current_case.run_relinearize_once();
+        gpu_check_cuda(
+            cudaDeviceSynchronize(),
+            "nsys relinearize row-tiled correctness synchronize");
+        poseidon::gpu::GpuUploader::download_ciphertext(
+            current_case.gpu_relinearize_result,
+            row_tiled_output,
+            *current_case.context);
+    }
+    {
+        ScopedEnvironmentValue select_row_tiled(
+            kKeySwitchBconvRowTiledEnv,
+            "0");
+        ScopedEnvironmentValue select_warp_shuffle(
+            kKeySwitchBconvWarpShuffleEnv,
+            "1");
+        current_case.run_relinearize_once();
+        gpu_check_cuda(
+            cudaDeviceSynchronize(),
+            "nsys relinearize warp-shuffle correctness synchronize");
+        poseidon::gpu::GpuUploader::download_ciphertext(
+            current_case.gpu_relinearize_result,
+            warp_shuffle_output,
+            *current_case.context);
+    }
+    if (!ciphertext_raw_equal(current_output, row_tiled_output))
+    {
+        throw std::runtime_error(
+            "row-tiled BConv relinearize result differs from original implementation");
+    }
+    if (!ciphertext_raw_equal(current_output, warp_shuffle_output))
+    {
+        throw std::runtime_error(
+            "warp-shuffle BConv relinearize result differs from original implementation");
+    }
+
+    const auto warmup_variant = [&](const char *row_tiled_value,
+        const char *warp_shuffle_value)
+    {
+        ScopedEnvironmentValue select_row_tiled(
+            kKeySwitchBconvRowTiledEnv,
+            row_tiled_value);
+        ScopedEnvironmentValue select_warp_shuffle(
+            kKeySwitchBconvWarpShuffleEnv,
+            warp_shuffle_value);
+        for (std::size_t i = 0; i < warmup_iterations; ++i)
+        {
+            current_case.run_relinearize_once();
+        }
+        gpu_check_cuda(
+            cudaDeviceSynchronize(),
+            "nsys relinearize variant warmup synchronize");
+    };
+    warmup_variant("0", "0");
+    warmup_variant("1", "0");
+    warmup_variant("0", "1");
+
+    const std::string current_range_name =
+        "relinearize.original N=" + std::to_string(degree) +
+        " q=" + std::to_string(q_count) +
+        " p=" + std::to_string(p_count);
+    const std::string row_tiled_range_name =
+        "relinearize.bconv-row-tiled N=" + std::to_string(degree) +
+        " q=" + std::to_string(q_count) +
+        " p=" + std::to_string(p_count);
+    const std::string warp_shuffle_range_name =
+        "relinearize.bconv-warp-shuffle N=" + std::to_string(degree) +
+        " q=" + std::to_string(q_count) +
+        " p=" + std::to_string(p_count);
+
+    std::cout << "\n[nsys relinearize probe]\n";
+    std::cout << "degree                 = " << degree << "\n";
+    std::cout << "q_count                = " << q_count << "\n";
+    std::cout << "p_count                = " << p_count << "\n";
+    std::cout << "warmup iterations      = " << warmup_iterations << "\n";
+    std::cout << "timing iterations      = " << timing_iterations << "\n";
+    std::cout << "included in capture    = GpuEvaluator::relinearize only\n";
+    std::cout << "excluded from capture  = context/keygen/encode/encrypt/upload/input multiply/warmup/download\n";
+    std::cout << "capture range          = cudaProfilerStart/Stop\n";
+    std::cout << "nvtx original range    = " << current_range_name << "\n";
+    std::cout << "nvtx tiled range       = " << row_tiled_range_name << "\n";
+    std::cout << "nvtx shuffle range     = " << warp_shuffle_range_name << "\n";
+    std::cout << "active finalize path   = fused P->Q/NTT head + batched two-component Q NTT\n";
+    std::cout << "original               = existing ModUp<2> + NTT head\n";
+    std::cout << "bconv-row-tiled        = default; shared source tile across four target-limb warps\n";
+    std::cout << "bconv-warp-shuffle     = four 8-lane target subgroups sharing source via shuffle\n";
+    std::cout << "measurement passes     = 2 (reported totals are pass averages)\n";
+    std::cout << "measurement order      = original,row,shuffle,shuffle,row,original\n";
+    std::cout << "raw residue comparison = equal\n";
+    std::cout << "inner nvtx ranges      = keyswitch.intt_switch_poly, keyswitch.dnum.*, keyswitch.finalize.*\n";
+
+    struct VariantTiming
+    {
+        double wall_total_ms = 0.0;
+        float event_total_ms = 0.0F;
+    };
+
+    const auto measure_variant = [&](
+        const char *row_tiled_value,
+        const char *warp_shuffle_value,
+        const std::string &range_name)
+    {
+        ScopedEnvironmentValue select_row_tiled(
+            kKeySwitchBconvRowTiledEnv,
+            row_tiled_value);
+        ScopedEnvironmentValue select_warp_shuffle(
+            kKeySwitchBconvWarpShuffleEnv,
+            warp_shuffle_value);
+        cudaEvent_t start = nullptr;
+        cudaEvent_t stop = nullptr;
+        gpu_check_cuda(cudaEventCreate(&start), "nsys cudaEventCreate variant start");
+        gpu_check_cuda(cudaEventCreate(&stop), "nsys cudaEventCreate variant stop");
+
+        nvtxRangePushA(range_name.c_str());
+        const auto wall_begin = std::chrono::steady_clock::now();
+        gpu_check_cuda(cudaEventRecord(start), "nsys cudaEventRecord variant start");
+        for (std::size_t i = 0; i < timing_iterations; ++i)
+        {
+            current_case.run_relinearize_once();
+        }
+        gpu_check_cuda(cudaEventRecord(stop), "nsys cudaEventRecord variant stop");
+        gpu_check_cuda(
+            cudaEventSynchronize(stop),
+            "nsys cudaEventSynchronize variant stop");
+        const auto wall_end = std::chrono::steady_clock::now();
+        nvtxRangePop();
+
+        VariantTiming result;
+        result.wall_total_ms =
+            std::chrono::duration<double, std::milli>(wall_end - wall_begin).count();
+        gpu_check_cuda(
+            cudaEventElapsedTime(&result.event_total_ms, start, stop),
+            "nsys cudaEventElapsedTime variant");
+        gpu_check_cuda(cudaEventDestroy(start), "nsys cudaEventDestroy variant start");
+        gpu_check_cuda(cudaEventDestroy(stop), "nsys cudaEventDestroy variant stop");
+        return result;
+    };
+
+    gpu_check_cuda(cudaProfilerStart(), "nsys cudaProfilerStart");
+    const VariantTiming current_forward =
+        measure_variant("0", "0", current_range_name);
+    const VariantTiming row_tiled_forward =
+        measure_variant("1", "0", row_tiled_range_name);
+    const VariantTiming warp_shuffle_forward =
+        measure_variant("0", "1", warp_shuffle_range_name);
+    const VariantTiming warp_shuffle_reverse =
+        measure_variant("0", "1", warp_shuffle_range_name);
+    const VariantTiming row_tiled_reverse =
+        measure_variant("1", "0", row_tiled_range_name);
+    const VariantTiming current_reverse =
+        measure_variant("0", "0", current_range_name);
+    gpu_check_cuda(cudaProfilerStop(), "nsys cudaProfilerStop");
+
+    const auto average_timing = [](
+        const VariantTiming &first,
+        const VariantTiming &second)
+    {
+        VariantTiming result;
+        result.wall_total_ms =
+            (first.wall_total_ms + second.wall_total_ms) * 0.5;
+        result.event_total_ms =
+            (first.event_total_ms + second.event_total_ms) * 0.5F;
+        return result;
+    };
+    const VariantTiming current =
+        average_timing(current_forward, current_reverse);
+    const VariantTiming row_tiled =
+        average_timing(row_tiled_forward, row_tiled_reverse);
+    const VariantTiming warp_shuffle =
+        average_timing(warp_shuffle_forward, warp_shuffle_reverse);
+
+    const double current_wall_avg = current.wall_total_ms / timing_iterations;
+    const double current_event_avg =
+        static_cast<double>(current.event_total_ms) / timing_iterations;
+    const double row_tiled_wall_avg =
+        row_tiled.wall_total_ms / timing_iterations;
+    const double row_tiled_event_avg =
+        static_cast<double>(row_tiled.event_total_ms) / timing_iterations;
+    const double warp_shuffle_wall_avg =
+        warp_shuffle.wall_total_ms / timing_iterations;
+    const double warp_shuffle_event_avg =
+        static_cast<double>(warp_shuffle.event_total_ms) / timing_iterations;
+    const double row_tiled_delta_ms =
+        row_tiled_event_avg - current_event_avg;
+    const double warp_shuffle_delta_ms =
+        warp_shuffle_event_avg - current_event_avg;
+    const double row_tiled_speedup = row_tiled_event_avg == 0.0
+        ? 0.0
+        : current_event_avg / row_tiled_event_avg;
+    const double warp_shuffle_speedup = warp_shuffle_event_avg == 0.0
+        ? 0.0
+        : current_event_avg / warp_shuffle_event_avg;
+
+    std::cout << std::fixed << std::setprecision(6);
+    std::cout << "\n[relinearize BConv implementation comparison]\n";
+    std::cout << "variant             wall_total_ms    wall_avg_ms    event_total_ms    event_avg_ms\n";
+    std::cout << std::left << std::setw(20) << "original"
+              << std::right << std::setw(16) << current.wall_total_ms
+              << std::setw(15) << current_wall_avg
+              << std::setw(18) << current.event_total_ms
+              << std::setw(16) << current_event_avg << "\n";
+    std::cout << std::left << std::setw(20) << "bconv-row-tiled"
+              << std::right << std::setw(16) << row_tiled.wall_total_ms
+              << std::setw(15) << row_tiled_wall_avg
+              << std::setw(18) << row_tiled.event_total_ms
+              << std::setw(16) << row_tiled_event_avg << "\n";
+    std::cout << std::left << std::setw(20) << "bconv-warp-shuffle"
+              << std::right << std::setw(16) << warp_shuffle.wall_total_ms
+              << std::setw(15) << warp_shuffle_wall_avg
+              << std::setw(18) << warp_shuffle.event_total_ms
+              << std::setw(16) << warp_shuffle_event_avg << "\n";
+    std::cout << "row-tiled - original event avg ms = " << row_tiled_delta_ms << "\n";
+    std::cout << "shuffle - original event avg ms   = " << warp_shuffle_delta_ms << "\n";
+    std::cout << "original / row-tiled speedup      = " << row_tiled_speedup << "x\n";
+    std::cout << "original / shuffle speedup        = " << warp_shuffle_speedup << "x\n";
 
     return EXIT_SUCCESS;
 }

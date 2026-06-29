@@ -25,6 +25,36 @@ void launch_hybrid_modup_decomposition(
     const GpuParameterShard &parameter_shard,
     std::size_t degree);
 
+void launch_hybrid_modup_decomposition_forward_ntt_first_stage(
+    GpuWord *modup_q,
+    GpuWord *modup_p,
+    const GpuWord *c2_coeff,
+    std::size_t decomp_index,
+    std::size_t decomp_limb_begin,
+    std::size_t decomp_limb_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+void launch_hybrid_modup_decomposition_forward_ntt_first_stage_row_tiled(
+    GpuWord *modup_q,
+    GpuWord *modup_p,
+    const GpuWord *c2_coeff,
+    std::size_t decomp_index,
+    std::size_t decomp_limb_begin,
+    std::size_t decomp_limb_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+void launch_hybrid_modup_decomposition_forward_ntt_first_stage_warp_shuffle(
+    GpuWord *modup_q,
+    GpuWord *modup_p,
+    const GpuWord *c2_coeff,
+    std::size_t decomp_index,
+    std::size_t decomp_limb_begin,
+    std::size_t decomp_limb_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
 void launch_hybrid_forward_ntt_qp(
     GpuWord *modup_q,
     GpuWord *modup_p,
@@ -47,7 +77,9 @@ void launch_hybrid_forward_ntt_qp_mul_accumulate_two_components(
     std::size_t decomp_limb_count,
     const GpuParameterShard &parameter_shard,
     std::size_t degree,
-    bool overwrite_accum);
+    bool overwrite_accum,
+    bool fuse_decomp_q,
+    bool skip_first_ntt_stage);
 
 void launch_hybrid_paccum_all_dnum_two_components(
     GpuWord *accum_q0,
@@ -99,6 +131,20 @@ void launch_hybrid_convert_p_to_q(
     GpuWord *converted_q1,
     const GpuWord *accum_p0,
     const GpuWord *accum_p1,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+void launch_hybrid_convert_p_to_q_forward_ntt(
+    GpuWord *converted_q0,
+    GpuWord *converted_q1,
+    const GpuWord *accum_p0,
+    const GpuWord *accum_p1,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+void launch_hybrid_forward_ntt_q_two_components(
+    GpuWord *values0,
+    GpuWord *values1,
     const GpuParameterShard &parameter_shard,
     std::size_t degree);
 

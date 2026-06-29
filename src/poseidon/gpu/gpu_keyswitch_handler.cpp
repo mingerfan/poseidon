@@ -23,6 +23,14 @@ constexpr std::size_t kRelinKeyPower2Index = 0;
 constexpr std::size_t kSwitchKeyComponentCount = 2;
 constexpr const char *kPAccumAllDnumEnv =
     "POSEIDON_KEYSWITCH_PACCUM_ALL_DNUM";
+constexpr const char *kFuseDecompQEnv =
+    "POSEIDON_KEYSWITCH_FUSE_DECOMP_Q";
+constexpr const char *kFuseModupNttHeadEnv =
+    "POSEIDON_KEYSWITCH_FUSE_MODUP_NTT_HEAD";
+constexpr const char *kBconvRowTiledEnv =
+    "POSEIDON_KEYSWITCH_BCONV_ROW_TILED";
+constexpr const char *kBconvWarpShuffleEnv =
+    "POSEIDON_KEYSWITCH_BCONV_WARP_SHUFFLE";
 
 class NvtxRange
 {
@@ -71,6 +79,70 @@ bool use_paccum_all_dnum()
                value != "FALSE";
     }();
     return enabled;
+}
+
+bool use_fused_decomp_q()
+{
+    const char *raw = std::getenv(kFuseDecompQEnv);
+    if (raw == nullptr || *raw == '\0')
+    {
+        return true;
+    }
+
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
+bool use_fused_modup_ntt_head()
+{
+    const char *raw = std::getenv(kFuseModupNttHeadEnv);
+    if (raw == nullptr || *raw == '\0')
+    {
+        return true;
+    }
+
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
+bool use_bconv_row_tiled()
+{
+    const char *raw = std::getenv(kBconvRowTiledEnv);
+    if (raw == nullptr || *raw == '\0')
+    {
+        return true;
+    }
+
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
+bool use_bconv_warp_shuffle()
+{
+    const char *raw = std::getenv(kBconvWarpShuffleEnv);
+    if (raw == nullptr || *raw == '\0')
+    {
+        return false;
+    }
+
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
 }
 
 bool same_shard_placement(
@@ -411,7 +483,11 @@ void process_hybrid_decomposition_block(
     const GpuConstRNSPolyView &switch_poly_ntt,
     const GpuConstRNSPolyView &key_component0,
     const GpuConstRNSPolyView &key_component1,
-    const GpuLevelInfo &level_info)
+    const GpuLevelInfo &level_info,
+    bool fuse_decomp_q,
+    bool fuse_modup_ntt_head,
+    bool bconv_row_tiled,
+    bool bconv_warp_shuffle)
 {
     NvtxRange block_range(
         "keyswitch.dnum[" + std::to_string(decomp_index) + "]");
@@ -437,17 +513,65 @@ void process_hybrid_decomposition_block(
 
     /* 将dnum片段进行模升，每个片段扩展到完整的32+6=38个模数 */
     {
-        NvtxRange range("keyswitch.dnum.modup");
-        kernel::launch_hybrid_modup_decomposition(
-            scratch.modup_q.data(),
-            scratch.modup_p.data(),
-            scratch.c2_intt.data(),
-            switch_poly_shard.ptr,
-            decomp_index,
-            decomp_limb_begin,
-            decomp_limb_count,
-            *parameter_shard,
-            scratch.degree);
+        NvtxRange range(!fuse_modup_ntt_head
+            ? "keyswitch.dnum.modup"
+            : (bconv_warp_shuffle
+                ? "keyswitch.dnum.modup_forward_ntt_head.warp_shuffle"
+                : (bconv_row_tiled
+                    ? "keyswitch.dnum.modup_forward_ntt_head.row_tiled"
+                    : "keyswitch.dnum.modup_forward_ntt_head")));
+        if (fuse_modup_ntt_head)
+        {
+            if (bconv_warp_shuffle)
+            {
+                kernel::launch_hybrid_modup_decomposition_forward_ntt_first_stage_warp_shuffle(
+                    scratch.modup_q.data(),
+                    scratch.modup_p.data(),
+                    scratch.c2_intt.data(),
+                    decomp_index,
+                    decomp_limb_begin,
+                    decomp_limb_count,
+                    *parameter_shard,
+                    scratch.degree);
+            }
+            else if (bconv_row_tiled)
+            {
+                kernel::launch_hybrid_modup_decomposition_forward_ntt_first_stage_row_tiled(
+                    scratch.modup_q.data(),
+                    scratch.modup_p.data(),
+                    scratch.c2_intt.data(),
+                    decomp_index,
+                    decomp_limb_begin,
+                    decomp_limb_count,
+                    *parameter_shard,
+                    scratch.degree);
+            }
+            else
+            {
+                kernel::launch_hybrid_modup_decomposition_forward_ntt_first_stage(
+                    scratch.modup_q.data(),
+                    scratch.modup_p.data(),
+                    scratch.c2_intt.data(),
+                    decomp_index,
+                    decomp_limb_begin,
+                    decomp_limb_count,
+                    *parameter_shard,
+                    scratch.degree);
+            }
+        }
+        else
+        {
+            kernel::launch_hybrid_modup_decomposition(
+                scratch.modup_q.data(),
+                scratch.modup_p.data(),
+                scratch.c2_intt.data(),
+                switch_poly_shard.ptr,
+                decomp_index,
+                decomp_limb_begin,
+                decomp_limb_count,
+                *parameter_shard,
+                scratch.degree);
+        }
     }
 
     /* 当前dnum块内的Q limb直接复用原始c2的NTT值；新模升产生的Q/P limb在最后一段NTT中直接完成IP乘加。 */
@@ -467,7 +591,9 @@ void process_hybrid_decomposition_block(
             decomp_limb_count,
             *parameter_shard,
             scratch.degree,
-            decomp_index == 0);
+            decomp_index == 0,
+            fuse_decomp_q,
+            fuse_modup_ntt_head);
     }
 }
 
@@ -495,8 +621,6 @@ void finalize_hybrid_relinearize(
 
     auto accum_p0_view = make_scratch_p_view(scratch.accum_p0.data(), scratch);
     auto accum_p1_view = make_scratch_p_view(scratch.accum_p1.data(), scratch);
-    auto converted_q0_view = make_scratch_q_view(scratch.c2_intt.data(), scratch);
-    auto converted_q1_view = make_scratch_q_view(scratch.modup_q.data(), scratch);
 
     /* 只把P部分转回系数域，Q部分保持在NTT域 */
     {
@@ -516,10 +640,9 @@ void finalize_hybrid_relinearize(
             scratch.degree);
     }
 
-    /* P->Q基转换，结果先放在系数域临时buffer里 */
     {
-        NvtxRange range("keyswitch.finalize.convert_p_to_q");
-        kernel::launch_hybrid_convert_p_to_q(
+        NvtxRange range("keyswitch.finalize.convert_p_to_q_forward_ntt");
+        kernel::launch_hybrid_convert_p_to_q_forward_ntt(
             scratch.c2_intt.data(),
             scratch.modup_q.data(),
             scratch.accum_p0.data(),
@@ -528,23 +651,58 @@ void finalize_hybrid_relinearize(
             scratch.degree);
     }
 
-    /* 将转换到Q的部分转回NTT域 */
+#if 0
+    /* Legacy rollback path: separate P->Q conversion and Q forward NTT. */
     {
-        NvtxRange range("keyswitch.finalize.forward_ntt_q0");
-        kernel::launch_forward_ntt_poly_shard(
-            converted_q0_view,
-            as_const_shard(converted_q0_view),
-            *parameter_shard,
-            scratch.degree);
+        auto converted_q0_view =
+            make_scratch_q_view(scratch.c2_intt.data(), scratch);
+        auto converted_q1_view =
+            make_scratch_q_view(scratch.modup_q.data(), scratch);
+
+        {
+            NvtxRange range("keyswitch.finalize.convert_p_to_q");
+            kernel::launch_hybrid_convert_p_to_q(
+                scratch.c2_intt.data(),
+                scratch.modup_q.data(),
+                scratch.accum_p0.data(),
+                scratch.accum_p1.data(),
+                *parameter_shard,
+                scratch.degree);
+        }
+
+#if 1
+        /* Batched Q NTT rollback variant. */
+        {
+            NvtxRange range("keyswitch.finalize.forward_ntt_q_batched");
+            kernel::launch_hybrid_forward_ntt_q_two_components(
+                scratch.c2_intt.data(),
+                scratch.modup_q.data(),
+                *parameter_shard,
+                scratch.degree);
+        }
+#else
+        /* Separate-component Q NTT rollback variant. */
+        {
+            {
+                NvtxRange range("keyswitch.finalize.forward_ntt_q0");
+                kernel::launch_forward_ntt_poly_shard(
+                    converted_q0_view,
+                    as_const_shard(converted_q0_view),
+                    *parameter_shard,
+                    scratch.degree);
+            }
+            {
+                NvtxRange range("keyswitch.finalize.forward_ntt_q1");
+                kernel::launch_forward_ntt_poly_shard(
+                    converted_q1_view,
+                    as_const_shard(converted_q1_view),
+                    *parameter_shard,
+                    scratch.degree);
+            }
+        }
+#endif
     }
-    {
-        NvtxRange range("keyswitch.finalize.forward_ntt_q1");
-        kernel::launch_forward_ntt_poly_shard(
-            converted_q1_view,
-            as_const_shard(converted_q1_view),
-            *parameter_shard,
-            scratch.degree);
-    }
+#endif
 
     /* 在NTT域完成模降，并直接和d0/d1累加，避免额外读写accum_q0/accum_q1 */
     {
@@ -930,6 +1088,10 @@ void GpuKeySwitchHandler::switch_key_hybrid_ciphertext(
     }
     else
     {
+        const bool fuse_decomp_q = use_fused_decomp_q();
+        const bool fuse_modup_ntt_head = use_fused_modup_ntt_head();
+        const bool bconv_row_tiled = use_bconv_row_tiled();
+        const bool bconv_warp_shuffle = use_bconv_warp_shuffle();
         /* 分块循环：每个 dnum 分块做 ModUp + NTT + 密钥乘加累加 */
         for (std::size_t decomp_index = 0;
              decomp_index < expected_decomposition_count;
@@ -976,7 +1138,11 @@ void GpuKeySwitchHandler::switch_key_hybrid_ciphertext(
                 switch_poly_ntt,
                 key_component0,
                 key_component1,
-                level_info);
+                level_info,
+                fuse_decomp_q,
+                fuse_modup_ntt_head,
+                bconv_row_tiled,
+                bconv_warp_shuffle);
         }
     }
 
