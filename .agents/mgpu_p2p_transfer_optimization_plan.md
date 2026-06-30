@@ -1,5 +1,31 @@
 # Multi-GPU P2P Transfer Optimization And Benchmark Plan
 
+> Status: OUTDATED.
+>
+> This document is historical planning material. The main CUDA peer-access
+> caching, async P2P mode, and memcpy benchmark extension work has already been
+> implemented, and the final implementation intentionally differs from parts of
+> this plan. Use the current source and benchmark docs as the source of truth:
+>
+> - `src/poseidon/mgpu/comm/cuda_peer_comm.*`
+> - `bench/mgpu/ckks_transfer_bench.cpp`
+> - `bench/mgpu/run_memcpy_extended.sh`
+> - `bench/mgpu/README.md`
+>
+> Important differences from this plan:
+>
+> - `split_buffer` was not added because it only isolates raw multi-copy
+>   overhead and does not answer the desired end-to-end object-copy latency
+>   question.
+> - The extended memcpy benchmark now includes `object_loop_e2e`, which times
+>   destination materialization/allocation plus the `copy_object` loop.
+> - Extended memcpy logging and sweep CLI support were added to the existing
+>   CKKS transfer benchmark and `run_memcpy_extended.sh`.
+> - The extended NCCL benchmark plan below has not been implemented as part of
+>   the current work.
+> - `copy_objects` remains present for existing comparison, but extended memcpy
+>   defaults do not depend on it.
+
 ## Scope
 
 This plan covers the next focused work for single-node multi-GPU point-to-point

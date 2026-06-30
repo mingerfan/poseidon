@@ -1,0 +1,109 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+
+CMAKE_BIN="${CMAKE_BIN:-cmake}"
+BUILD_DIR="${BUILD_DIR:-${REPO_ROOT}/build-mgpu-memcpy-extended-bench}"
+BUILD_TYPE="${BUILD_TYPE:-Release}"
+CMAKE_POLICY_VERSION_MINIMUM="${CMAKE_POLICY_VERSION_MINIMUM:-3.5}"
+
+SOURCE_DEVICE="${SOURCE_DEVICE:-0}"
+DESTINATION_DEVICE="${DESTINATION_DEVICE:-1}"
+ITERATIONS="${ITERATIONS:-50}"
+WARMUP="${WARMUP:-5}"
+DEGREE="${DEGREE:-65536}"
+COMPONENTS="${COMPONENTS:-2}"
+P_COUNT="${P_COUNT:-0}"
+MIN_LEVEL="${MIN_LEVEL:-1}"
+MAX_LEVEL="${MAX_LEVEL:-40}"
+MIN_COUNT="${MIN_COUNT:-1}"
+MAX_COUNT="${MAX_COUNT:-32}"
+LEVELS="${LEVELS:-}"
+COUNTS="${COUNTS:-}"
+ALLOW_SAME_DEVICE="${ALLOW_SAME_DEVICE:-0}"
+MODES="${MODES:-contiguous_buffer,object_loop,object_loop_e2e}"
+LOG_FORMAT="${LOG_FORMAT:-csv}"
+APPEND_LOG="${APPEND_LOG:-0}"
+
+TIMESTAMP="${TIMESTAMP:-$(date +%Y%m%d_%H%M%S)}"
+LOG_DIR="${LOG_DIR:-${REPO_ROOT}/bench/mgpu/logs}"
+if [[ "${LOG_FORMAT}" == "jsonl" ]]; then
+    LOG_EXT="jsonl"
+else
+    LOG_EXT="csv"
+fi
+LOG="${LOG:-${LOG_DIR}/memcpy_extended_${TIMESTAMP}.${LOG_EXT}}"
+
+mkdir -p "${LOG_DIR}"
+
+CMAKE_ARGS=(
+    -S "${REPO_ROOT}"
+    -B "${BUILD_DIR}"
+    -DCMAKE_BUILD_TYPE="${BUILD_TYPE}"
+    -DPOSEIDON_BUILD_MGPU=ON
+    -DPOSEIDON_BUILD_MGPU_TESTS=OFF
+    -DPOSEIDON_BUILD_MGPU_BENCH=ON
+    -DPOSEIDON_BUILD_MGPU_CUDA_COMM=ON
+    -DPOSEIDON_BUILD_MGPU_GPU_OBJECTS=ON
+    -DPOSEIDON_BUILD_EXAMPLES=OFF
+    -DPOSEIDON_BUILD_BENCH=OFF
+    -DPOSEIDON_BUILD_DEPS=ON
+    -DPOSEIDON_USE_ZLIB=OFF
+    -DPOSEIDON_USE_ZSTD=OFF
+    -DPOSEIDON_USE_MSGSL=OFF
+    -DCMAKE_POLICY_VERSION_MINIMUM="${CMAKE_POLICY_VERSION_MINIMUM}"
+)
+
+RUN_ARGS=(
+    --source-device "${SOURCE_DEVICE}"
+    --destination-device "${DESTINATION_DEVICE}"
+    --iterations "${ITERATIONS}"
+    --warmup "${WARMUP}"
+    --degree "${DEGREE}"
+    --components "${COMPONENTS}"
+    --p-count "${P_COUNT}"
+    --modes "${MODES}"
+    --log "${LOG}"
+    --log-format "${LOG_FORMAT}"
+)
+
+if [[ -n "${LEVELS}" ]]; then
+    RUN_ARGS+=(--levels "${LEVELS}")
+else
+    RUN_ARGS+=(--min-level "${MIN_LEVEL}" --max-level "${MAX_LEVEL}")
+fi
+
+if [[ -n "${COUNTS}" ]]; then
+    RUN_ARGS+=(--counts "${COUNTS}")
+else
+    RUN_ARGS+=(--min-count "${MIN_COUNT}" --max-count "${MAX_COUNT}")
+fi
+
+if [[ "${ALLOW_SAME_DEVICE}" != "0" ]]; then
+    RUN_ARGS+=(--allow-same-device)
+fi
+
+if [[ "${APPEND_LOG}" != "0" ]]; then
+    RUN_ARGS+=(--append-log)
+fi
+
+RUN_ARGS+=("$@")
+
+echo "=== Configure extended cudaMemcpyPeer benchmark ==="
+"${CMAKE_BIN}" "${CMAKE_ARGS[@]}"
+
+echo "=== Build extended cudaMemcpyPeer benchmark ==="
+"${CMAKE_BIN}" --build "${BUILD_DIR}" --target poseidon_mgpu_ckks_transfer_bench -j"${JOBS:-2}"
+
+BENCH_BIN="${BUILD_DIR}/bin/poseidon_mgpu_ckks_transfer_bench"
+if [[ ! -x "${BENCH_BIN}" ]]; then
+    echo "Benchmark binary was not produced: ${BENCH_BIN}" >&2
+    exit 1
+fi
+
+echo "=== Run extended cudaMemcpyPeer benchmark ==="
+echo "Log: ${LOG}"
+echo "${BENCH_BIN} ${RUN_ARGS[*]}"
+"${BENCH_BIN}" "${RUN_ARGS[@]}"
