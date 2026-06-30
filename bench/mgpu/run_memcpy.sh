@@ -17,6 +17,7 @@ DEGREE="${DEGREE:-32768}"
 COMPONENTS="${COMPONENTS:-2}"
 P_COUNT="${P_COUNT:-0}"
 ALLOW_SAME_DEVICE="${ALLOW_SAME_DEVICE:-0}"
+MODES="${MODES:-}"
 
 CMAKE_ARGS=(
     -S "${REPO_ROOT}"
@@ -45,6 +46,10 @@ RUN_ARGS=(
 
 if [[ "${ALLOW_SAME_DEVICE}" != "0" ]]; then
     RUN_ARGS+=(--allow-same-device)
+fi
+
+if [[ -n "${MODES}" ]]; then
+    RUN_ARGS+=(--modes "${MODES}")
 fi
 
 RUN_ARGS+=("$@")

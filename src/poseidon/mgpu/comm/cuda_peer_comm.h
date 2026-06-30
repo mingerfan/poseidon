@@ -2,6 +2,8 @@
 
 #include "poseidon/mgpu/comm/gpu_comm.h"
 
+#include <cuda_runtime_api.h>
+
 #include <cstddef>
 #include <map>
 #include <mutex>
@@ -37,6 +39,10 @@ public:
         int destination_device, int source_device) const;
 
     void copy_buffer(const CudaPeerCopyRequest &request) const;
+    void copy_buffer_peer_async(
+        const CudaPeerCopyRequest &request, cudaStream_t stream) const;
+    void copy_object_peer_async(
+        const GpuObjectCopyRequest &request, cudaStream_t stream) const;
     void copy_object(const GpuObjectCopyRequest &request) override;
 
 private:

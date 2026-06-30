@@ -203,6 +203,72 @@ void CudaPeerComm::copy_buffer(const CudaPeerCopyRequest &request) const
     copy_with_host_staging(request);
 }
 
+void CudaPeerComm::copy_buffer_peer_async(
+    const CudaPeerCopyRequest &request, cudaStream_t stream) const
+{
+    validate_request(request);
+    if (request.bytes == 0)
+    {
+        return;
+    }
+
+    check_cuda(cudaSetDevice(request.destination_device), "CudaPeerComm cudaSetDevice");
+    if (request.source_device == request.destination_device)
+    {
+        check_cuda(
+            cudaMemcpyAsync(
+                request.destination,
+                request.source,
+                request.bytes,
+                cudaMemcpyDeviceToDevice,
+                stream),
+            "CudaPeerComm cudaMemcpyAsync device to device");
+        return;
+    }
+
+    if (!ensure_peer_access(request.destination_device, request.source_device))
+    {
+        std::ostringstream stream_message;
+        stream_message
+            << "CudaPeerComm async peer copy from device "
+            << request.source_device << " to device "
+            << request.destination_device
+            << " requires CUDA peer access; synchronous copy_buffer provides "
+               "host-staging fallback";
+        throw std::runtime_error(stream_message.str());
+    }
+
+    check_cuda(
+        cudaMemcpyPeerAsync(
+            request.destination,
+            request.destination_device,
+            request.source,
+            request.source_device,
+            request.bytes,
+            stream),
+        "CudaPeerComm cudaMemcpyPeerAsync");
+}
+
+void CudaPeerComm::copy_object_peer_async(
+    const GpuObjectCopyRequest &request, cudaStream_t stream) const
+{
+    const GpuObjectCopyValidationResult validation =
+        validate_full_object_copy_request(request);
+    if (!validation.ok())
+    {
+        throw std::invalid_argument(validation.format_errors());
+    }
+
+    const GpuObjectBufferCopy &buffer = request.buffers[0];
+    copy_buffer_peer_async(CudaPeerCopyRequest{
+        buffer.source,
+        buffer.destination,
+        buffer.bytes,
+        buffer.source_device,
+        buffer.destination_device,
+    }, stream);
+}
+
 void CudaPeerComm::copy_object(const GpuObjectCopyRequest &request)
 {
     const GpuObjectCopyValidationResult validation =

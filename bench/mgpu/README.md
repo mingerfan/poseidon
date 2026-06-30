@@ -41,6 +41,7 @@ Extra command-line arguments are appended to the benchmark invocation:
 
 ```bash
 MODES=cuda_peer_broadcast,nccl_broadcast bench/mgpu/run_nccl.sh --p-count 1
+MODES=object_loop,async_object_loop,contiguous_buffer bench/mgpu/run_memcpy.sh
 bench/mgpu/run_memcpy.sh --modes object_loop,copy_objects
 ```
 
@@ -90,16 +91,22 @@ Useful smoke run:
 
 Supported CUDA peer transfer modes:
 
-- `object_loop`: explicitly loops over `copy_object`.
+- `object_loop`: synchronous loop over `copy_object`.
 - `copy_objects`: calls the production batch API. This is a correctness API
   first and currently uses the same object-loop policy.
+- `async_object_loop`: experimental P2P path that queues every object copy with
+  `cudaMemcpyPeerAsync` on one benchmark-owned stream, then synchronizes that
+  stream once at the end of the timed operation. Cross-device runs require CUDA
+  peer access; the synchronous modes still keep their host-staging fallback.
+- `contiguous_buffer`: raw single-buffer transfer with the same total payload
+  size as the ciphertext batch, using `CudaPeerComm::copy_buffer`.
 
 Select a subset with `--modes`, for example:
 
 ```bash
 ./build-mgpu-bench/bin/poseidon_mgpu_ckks_transfer_bench \
   --source-device 0 --destination-device 1 \
-  --modes object_loop,copy_objects
+  --modes object_loop,async_object_loop,contiguous_buffer
 ```
 
 ## NCCL Transfer Comparison Bench

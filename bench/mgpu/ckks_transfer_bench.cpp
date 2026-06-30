@@ -35,6 +35,8 @@ enum class TransferMode
 {
     ObjectLoop,
     CopyObjects,
+    AsyncObjectLoop,
+    ContiguousBuffer,
 };
 
 struct BenchOptions
@@ -140,6 +142,81 @@ void check_cuda(cudaError_t status, const char *what)
     }
 }
 
+class CudaStreamScope
+{
+public:
+    explicit CudaStreamScope(int device_id) : device_id_(device_id)
+    {
+        check_cuda(cudaSetDevice(device_id_), "cudaSetDevice create stream");
+        check_cuda(
+            cudaStreamCreateWithFlags(&stream_, cudaStreamNonBlocking),
+            "cudaStreamCreateWithFlags");
+    }
+
+    CudaStreamScope(const CudaStreamScope &) = delete;
+    CudaStreamScope &operator=(const CudaStreamScope &) = delete;
+
+    ~CudaStreamScope()
+    {
+        if (stream_ != nullptr)
+        {
+            (void)cudaSetDevice(device_id_);
+            (void)cudaStreamDestroy(stream_);
+        }
+    }
+
+    cudaStream_t get() const noexcept
+    {
+        return stream_;
+    }
+
+private:
+    int device_id_ = 0;
+    cudaStream_t stream_ = nullptr;
+};
+
+class DeviceBuffer
+{
+public:
+    DeviceBuffer(int device_id, std::size_t bytes)
+        : device_id_(device_id), bytes_(bytes)
+    {
+        if (bytes_ == 0)
+        {
+            throw std::invalid_argument("device buffer byte count must be non-zero");
+        }
+        check_cuda(cudaSetDevice(device_id_), "cudaSetDevice allocate buffer");
+        check_cuda(cudaMalloc(&ptr_, bytes_), "cudaMalloc benchmark buffer");
+    }
+
+    DeviceBuffer(const DeviceBuffer &) = delete;
+    DeviceBuffer &operator=(const DeviceBuffer &) = delete;
+
+    ~DeviceBuffer()
+    {
+        if (ptr_ != nullptr)
+        {
+            (void)cudaSetDevice(device_id_);
+            (void)cudaFree(ptr_);
+        }
+    }
+
+    void *data() const noexcept
+    {
+        return ptr_;
+    }
+
+    std::size_t bytes() const noexcept
+    {
+        return bytes_;
+    }
+
+private:
+    int device_id_ = 0;
+    std::size_t bytes_ = 0;
+    void *ptr_ = nullptr;
+};
+
 void print_usage(const char *program)
 {
     std::cerr
@@ -148,7 +225,7 @@ void print_usage(const char *program)
            " [--iterations N] [--warmup N] [--degree N]"
            " [--components N] [--p-count N] [--modes LIST]"
            " [--allow-same-device]\n"
-           "modes: object_loop,copy_objects\n";
+           "modes: object_loop,copy_objects,async_object_loop,contiguous_buffer\n";
 }
 
 int parse_int(const char *value, const char *name)
@@ -190,6 +267,14 @@ TransferMode parse_mode_token(const std::string &token)
     {
         return TransferMode::CopyObjects;
     }
+    if (token == "async_object_loop" || token == "async_loop" || token == "async")
+    {
+        return TransferMode::AsyncObjectLoop;
+    }
+    if (token == "contiguous_buffer" || token == "raw_contiguous" || token == "contiguous")
+    {
+        return TransferMode::ContiguousBuffer;
+    }
     throw std::invalid_argument("unknown transfer mode: " + token);
 }
 
@@ -221,6 +306,10 @@ const char *mode_name(TransferMode mode)
         return "object_loop";
     case TransferMode::CopyObjects:
         return "copy_objects";
+    case TransferMode::AsyncObjectLoop:
+        return "async_object_loop";
+    case TransferMode::ContiguousBuffer:
+        return "contiguous_buffer";
     }
     return "unknown";
 }
@@ -351,6 +440,39 @@ std::size_t checked_add(std::size_t a, std::size_t b, const char *what)
     return a + b;
 }
 
+std::size_t checked_mul(std::size_t a, std::size_t b, const char *what)
+{
+    if (a != 0 && b > std::numeric_limits<std::size_t>::max() / a)
+    {
+        throw std::overflow_error(what);
+    }
+    return a * b;
+}
+
+std::size_t ciphertext_payload_bytes(
+    const BenchOptions &options, const LevelShape &level)
+{
+    const std::size_t limb_count =
+        checked_add(level.q_count, options.p_count, "ciphertext limb count overflow");
+    const std::size_t words_per_component =
+        checked_mul(options.degree, limb_count, "ciphertext word count overflow");
+    const std::size_t words =
+        checked_mul(
+            words_per_component,
+            options.component_count,
+            "ciphertext component word count overflow");
+    return checked_mul(words, sizeof(gpu::GpuWord), "ciphertext byte count overflow");
+}
+
+std::size_t total_payload_bytes(
+    const BenchOptions &options, const LevelShape &level, std::size_t batch_size)
+{
+    return checked_mul(
+        ciphertext_payload_bytes(options, level),
+        batch_size,
+        "benchmark total byte count overflow");
+}
+
 std::size_t copy_request_payload_bytes(const GpuObjectCopyRequest &request)
 {
     std::size_t bytes = 0;
@@ -444,6 +566,27 @@ gpu::GpuWord expected_word(ValueId seed, std::size_t index)
         static_cast<gpu::GpuWord>(index));
 }
 
+gpu::GpuWord expected_raw_word(std::size_t index)
+{
+    return static_cast<gpu::GpuWord>(
+        0x6d2b79f5u + static_cast<gpu::GpuWord>(index * 97));
+}
+
+std::vector<gpu::GpuWord> make_raw_payload(std::size_t bytes)
+{
+    if (bytes % sizeof(gpu::GpuWord) != 0)
+    {
+        throw std::invalid_argument("raw benchmark byte count must be GpuWord-aligned");
+    }
+
+    std::vector<gpu::GpuWord> host(bytes / sizeof(gpu::GpuWord));
+    for (std::size_t index = 0; index < host.size(); ++index)
+    {
+        host[index] = expected_raw_word(index);
+    }
+    return host;
+}
+
 std::vector<std::size_t> sample_indices(std::size_t word_count)
 {
     if (word_count == 0)
@@ -485,6 +628,22 @@ gpu::GpuWord read_device_word(
     return value;
 }
 
+gpu::GpuWord read_raw_device_word(
+    int device_id, const void *buffer, std::size_t word_index)
+{
+    gpu::GpuWord value = 0;
+    const auto *words = static_cast<const gpu::GpuWord *>(buffer);
+    check_cuda(cudaSetDevice(device_id), "cudaSetDevice read raw buffer");
+    check_cuda(
+        cudaMemcpy(
+            &value,
+            words + word_index,
+            sizeof(gpu::GpuWord),
+            cudaMemcpyDeviceToHost),
+        "cudaMemcpy read raw buffer");
+    return value;
+}
+
 void validate_destinations(const MaterializedGpuObjectBatchCopy &materialized)
 {
     for (std::size_t object_index = 0;
@@ -519,6 +678,27 @@ void validate_destinations(const MaterializedGpuObjectBatchCopy &materialized)
     }
 }
 
+void validate_raw_destination(
+    int destination_device, const DeviceBuffer &destination)
+{
+    const std::size_t word_count = destination.bytes() / sizeof(gpu::GpuWord);
+    const std::vector<std::size_t> samples = sample_indices(word_count);
+    for (const std::size_t word_index : samples)
+    {
+        const gpu::GpuWord actual =
+            read_raw_device_word(destination_device, destination.data(), word_index);
+        const gpu::GpuWord expected = expected_raw_word(word_index);
+        if (actual != expected)
+        {
+            std::ostringstream stream;
+            stream << "raw buffer validation failed at word " << word_index
+                   << ": expected 0x" << std::hex << expected
+                   << " got 0x" << actual;
+            throw std::runtime_error(stream.str());
+        }
+    }
+}
+
 void synchronize_devices(const BenchOptions &options)
 {
     check_cuda(cudaSetDevice(options.source_device), "cudaSetDevice source synchronize");
@@ -544,6 +724,20 @@ double measure_once(const BenchOptions &options, Operation &&operation)
     return elapsed.count();
 }
 
+template <typename Operation>
+double measure_once_with_operation_sync(
+    const BenchOptions &options, Operation &&operation)
+{
+    synchronize_devices(options);
+    const auto start = std::chrono::steady_clock::now();
+    operation();
+    const auto stop = std::chrono::steady_clock::now();
+    const auto elapsed =
+        std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(
+            stop - start);
+    return elapsed.count();
+}
+
 Stats summarize(const std::vector<double> &samples)
 {
     if (samples.empty())
@@ -560,7 +754,7 @@ Stats summarize(const std::vector<double> &samples)
     return stats;
 }
 
-BenchCaseResult run_case(
+BenchCaseResult run_object_copy_case(
     const BenchOptions &options,
     const LevelShape &level,
     std::size_t batch_size,
@@ -594,6 +788,10 @@ BenchCaseResult run_case(
         case TransferMode::CopyObjects:
             peer_backend.copy_objects(materialized.object_copies);
             return;
+        case TransferMode::AsyncObjectLoop:
+        case TransferMode::ContiguousBuffer:
+            throw std::invalid_argument(
+                std::string("invalid object copy mode: ") + mode_name(mode));
         }
     };
 
@@ -612,6 +810,149 @@ BenchCaseResult run_case(
     validate_destinations(materialized);
     result.stats = summarize(samples);
     return result;
+}
+
+BenchCaseResult run_async_object_loop_case(
+    const BenchOptions &options,
+    const LevelShape &level,
+    std::size_t batch_size,
+    PoseidonGpuObjectCopyMaterializer &materializer,
+    CudaPeerComm &peer_backend)
+{
+    std::vector<std::shared_ptr<gpu::GpuCiphertextData>> sources;
+    const std::vector<GpuCommCopyRequest> requests =
+        make_requests(options, level, batch_size, sources);
+    MaterializedGpuObjectBatchCopy materialized =
+        materializer.materialize_copy_batch(requests);
+    const std::size_t ciphertext_bytes =
+        first_copy_request_payload_bytes(materialized.object_copies);
+    const std::size_t total_bytes =
+        copy_requests_payload_bytes(materialized.object_copies);
+
+    BenchCaseResult result;
+    result.ciphertext_bytes = ciphertext_bytes;
+    result.total_bytes = total_bytes;
+
+    CudaStreamScope copy_stream(options.destination_device);
+    auto operation = [&]() {
+        for (const GpuObjectCopyRequest &request : materialized.object_copies)
+        {
+            peer_backend.copy_object_peer_async(request, copy_stream.get());
+        }
+        check_cuda(
+            cudaStreamSynchronize(copy_stream.get()),
+            "cudaStreamSynchronize async object loop");
+    };
+
+    for (int iter = 0; iter < options.warmup_iterations; ++iter)
+    {
+        operation();
+    }
+
+    std::vector<double> samples;
+    samples.reserve(static_cast<std::size_t>(options.iterations));
+    for (int iter = 0; iter < options.iterations; ++iter)
+    {
+        samples.push_back(measure_once_with_operation_sync(options, operation));
+    }
+    validate_destinations(materialized);
+    result.stats = summarize(samples);
+    return result;
+}
+
+BenchCaseResult run_contiguous_buffer_case(
+    const BenchOptions &options,
+    const LevelShape &level,
+    std::size_t batch_size,
+    CudaPeerComm &peer_backend)
+{
+    BenchCaseResult result;
+    result.ciphertext_bytes = ciphertext_payload_bytes(options, level);
+    result.total_bytes = total_payload_bytes(options, level, batch_size);
+
+    const std::vector<gpu::GpuWord> host_payload =
+        make_raw_payload(result.total_bytes);
+    DeviceBuffer source(options.source_device, result.total_bytes);
+    DeviceBuffer destination(options.destination_device, result.total_bytes);
+
+    check_cuda(cudaSetDevice(options.source_device), "cudaSetDevice raw source");
+    check_cuda(
+        cudaMemcpy(
+            source.data(),
+            host_payload.data(),
+            result.total_bytes,
+            cudaMemcpyHostToDevice),
+        "cudaMemcpy raw payload to source");
+
+    check_cuda(cudaSetDevice(options.destination_device), "cudaSetDevice raw destination");
+    check_cuda(
+        cudaMemset(destination.data(), 0, destination.bytes()),
+        "cudaMemset raw destination");
+
+    const CudaPeerCopyRequest copy_request{
+        source.data(),
+        destination.data(),
+        result.total_bytes,
+        options.source_device,
+        options.destination_device,
+    };
+    auto operation = [&]() {
+        peer_backend.copy_buffer(copy_request);
+    };
+
+    for (int iter = 0; iter < options.warmup_iterations; ++iter)
+    {
+        operation();
+        synchronize_devices(options);
+    }
+
+    std::vector<double> samples;
+    samples.reserve(static_cast<std::size_t>(options.iterations));
+    for (int iter = 0; iter < options.iterations; ++iter)
+    {
+        samples.push_back(measure_once(options, operation));
+    }
+    validate_raw_destination(options.destination_device, destination);
+    result.stats = summarize(samples);
+    return result;
+}
+
+BenchCaseResult run_case(
+    const BenchOptions &options,
+    const LevelShape &level,
+    std::size_t batch_size,
+    TransferMode mode,
+    PoseidonGpuObjectCopyMaterializer &materializer,
+    CudaPeerComm &peer_backend)
+{
+    switch (mode)
+    {
+    case TransferMode::ObjectLoop:
+    case TransferMode::CopyObjects:
+        return run_object_copy_case(
+            options,
+            level,
+            batch_size,
+            mode,
+            materializer,
+            peer_backend);
+    case TransferMode::AsyncObjectLoop:
+        return run_async_object_loop_case(
+            options,
+            level,
+            batch_size,
+            materializer,
+            peer_backend);
+    case TransferMode::ContiguousBuffer:
+        return run_contiguous_buffer_case(
+            options,
+            level,
+            batch_size,
+            peer_backend);
+    }
+
+    throw std::invalid_argument(
+        std::string("unknown transfer mode: ") + mode_name(mode));
 }
 
 void print_header(const BenchOptions &options)
@@ -650,7 +991,7 @@ void print_header(const BenchOptions &options)
               << " modes=" << format_modes(options.modes) << "\n\n";
     std::cout
         << std::left
-        << std::setw(14) << "mode"
+        << std::setw(22) << "mode"
         << std::setw(8) << "count"
         << std::setw(10) << "level"
         << std::setw(10) << "q_count"
@@ -675,7 +1016,7 @@ void print_result(
         (static_cast<double>(total_bytes) / 1.0e9) / (stats.average_ms / 1000.0);
     std::cout
         << std::left
-        << std::setw(14) << mode
+        << std::setw(22) << mode
         << std::setw(8) << batch_size
         << std::setw(10) << level.name
         << std::setw(10) << level.q_count
