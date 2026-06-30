@@ -81,18 +81,7 @@ public:
         std::memcpy(buffer.destination, buffer.source, buffer.bytes);
     }
 
-    void copy_objects(const std::vector<GpuObjectCopyRequest> &batch_requests) override
-    {
-        batches.push_back(batch_requests);
-        for (const GpuObjectCopyRequest &request : batch_requests)
-        {
-            const GpuObjectBufferCopy &buffer = request.buffers[0];
-            std::memcpy(buffer.destination, buffer.source, buffer.bytes);
-        }
-    }
-
     std::vector<GpuObjectCopyRequest> requests;
-    std::vector<std::vector<GpuObjectCopyRequest>> batches;
 };
 
 void test_materialized_comm_copies_object_buffer()
@@ -125,7 +114,7 @@ void test_materialized_comm_copies_object_buffer()
     require(copied_vector != source, "copy should return a destination object");
 }
 
-void test_materialized_comm_batch_copies_object_buffers()
+void test_materialized_comm_repeated_copies_object_buffers()
 {
     VectorCopyMaterializer materializer;
     MemcpyBackend backend;
@@ -136,37 +125,34 @@ void test_materialized_comm_batch_copies_object_buffers()
     auto source1 = std::make_shared<std::vector<int>>(
         std::initializer_list<int>{ 4, 5, 6, 7 });
 
-    const std::vector<std::shared_ptr<void>> copied = comm.copy_batch({
-        GpuCommCopyRequest{
-            10,
-            20,
-            MgpuValueKind::Ciphertext,
-            0,
-            1,
-            source0,
-        },
-        GpuCommCopyRequest{
-            11,
-            21,
-            MgpuValueKind::Ciphertext,
-            0,
-            1,
-            source1,
-        },
-    });
+    std::vector<std::shared_ptr<void>> copied;
+    copied.push_back(comm.copy(GpuCommCopyRequest{
+        10,
+        20,
+        MgpuValueKind::Ciphertext,
+        0,
+        1,
+        source0,
+    }));
+    copied.push_back(comm.copy(GpuCommCopyRequest{
+        11,
+        21,
+        MgpuValueKind::Ciphertext,
+        0,
+        1,
+        source1,
+    }));
 
-    require(copied.size() == 2, "batch copy result count mismatch");
-    require(materializer.requests.size() == 2, "batch materializer request count mismatch");
-    require(backend.requests.empty(), "batch backend should not use single-copy path");
-    require(backend.batches.size() == 1, "batch backend request count mismatch");
-    require(backend.batches[0].size() == 2, "batch backend copy count mismatch");
+    require(copied.size() == 2, "repeated copy result count mismatch");
+    require(materializer.requests.size() == 2, "repeated materializer request count mismatch");
+    require(backend.requests.size() == 2, "repeated backend request count mismatch");
 
     require(
         *std::static_pointer_cast<std::vector<int>>(copied[0]) == *source0,
-        "first batch copied vector mismatch");
+        "first copied vector mismatch");
     require(
         *std::static_pointer_cast<std::vector<int>>(copied[1]) == *source1,
-        "second batch copied vector mismatch");
+        "second copied vector mismatch");
 }
 
 void test_materialized_comm_rejects_invalid_object_copy()
@@ -235,7 +221,7 @@ int main()
     try
     {
         test_materialized_comm_copies_object_buffer();
-        test_materialized_comm_batch_copies_object_buffers();
+        test_materialized_comm_repeated_copies_object_buffers();
         test_materialized_comm_rejects_invalid_object_copy();
         test_materialized_comm_rejects_null_source_before_materializer();
     }

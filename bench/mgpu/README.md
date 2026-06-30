@@ -51,7 +51,7 @@ Extra command-line arguments are appended to the benchmark invocation:
 ```bash
 MODES=cuda_peer_broadcast,nccl_broadcast bench/mgpu/run_nccl.sh --p-count 1
 MODES=object_loop,async_object_loop,contiguous_buffer bench/mgpu/run_memcpy.sh
-bench/mgpu/run_memcpy.sh --modes object_loop,copy_objects
+bench/mgpu/run_memcpy.sh --modes object_loop,object_loop_e2e
 ```
 
 ## Manual Build
@@ -106,14 +106,12 @@ Supported CUDA peer transfer modes:
   creates object-copy requests, then runs a synchronous loop over
   `copy_object`. Source ciphertext construction and deterministic source data
   filling stay outside the timed region.
-- `copy_objects`: calls the production batch API. This is a correctness API
-  first and currently uses the same object-loop policy.
 - `async_object_loop`: experimental P2P path that queues every object copy with
   `cudaMemcpyPeerAsync` on one benchmark-owned stream, then synchronizes that
   stream once at the end of the timed operation. Cross-device runs require CUDA
   peer access; the synchronous modes still keep their host-staging fallback.
 - `contiguous_buffer`: raw single-buffer transfer with the same total payload
-  size as the ciphertext batch, using `CudaPeerComm::copy_buffer`. This is a
+  size as the selected ciphertext count, using `CudaPeerComm::copy_buffer`. This is a
   pure transfer upper bound, not a ciphertext end-to-end path.
 
 Select a subset with `--modes`, for example:
@@ -196,7 +194,7 @@ By default, both multi-GPU benchmarks report:
 - `ct_bytes`: actual GPU payload bytes in one constructed CKKS ciphertext,
   measured from the object's GPU field allocation.
 - `total_bytes`: `ct_bytes * count`, measured from the constructed ciphertext
-  batch rather than printed from a standalone formula.
+  objects rather than printed from a standalone formula.
 - `xfer_bytes`: effective transfer volume used for GB/s. The CUDA peer CKKS
   transfer benchmark uses `total_bytes`; NCCL broadcast and gather use
   `total_bytes * (rank_count - 1)`; `cuda_peer_sendrecv` and `nccl_sendrecv`

@@ -267,18 +267,6 @@ GpuObjectCopyValidationResult validate_full_object_copy_request(
     return result;
 }
 
-std::vector<std::shared_ptr<void>> GpuComm::copy_batch(
-    const std::vector<GpuCommCopyRequest> &requests)
-{
-    std::vector<std::shared_ptr<void>> results;
-    results.reserve(requests.size());
-    for (const GpuCommCopyRequest &request : requests)
-    {
-        results.push_back(copy(request));
-    }
-    return results;
-}
-
 std::shared_ptr<void> SameDeviceGpuComm::copy(const GpuCommCopyRequest &request)
 {
     if (request.source_device != request.destination_device)
@@ -290,30 +278,6 @@ std::shared_ptr<void> SameDeviceGpuComm::copy(const GpuCommCopyRequest &request)
         throw std::runtime_error(stream.str());
     }
     return request.source_object;
-}
-
-MaterializedGpuObjectBatchCopy GpuObjectCopyMaterializer::materialize_copy_batch(
-    const std::vector<GpuCommCopyRequest> &requests)
-{
-    MaterializedGpuObjectBatchCopy result;
-    result.destination_objects.reserve(requests.size());
-    result.object_copies.reserve(requests.size());
-    for (const GpuCommCopyRequest &request : requests)
-    {
-        MaterializedGpuObjectCopy materialized = materialize_copy(request);
-        result.destination_objects.push_back(std::move(materialized.destination_object));
-        result.object_copies.push_back(std::move(materialized.object_copy));
-    }
-    return result;
-}
-
-void GpuObjectCopyBackend::copy_objects(
-    const std::vector<GpuObjectCopyRequest> &requests)
-{
-    for (const GpuObjectCopyRequest &request : requests)
-    {
-        copy_object(request);
-    }
 }
 
 MaterializedGpuComm::MaterializedGpuComm(
@@ -341,42 +305,6 @@ std::shared_ptr<void> MaterializedGpuComm::copy(const GpuCommCopyRequest &reques
 
     backend_.copy_object(materialized.object_copy);
     return std::move(materialized.destination_object);
-}
-
-std::vector<std::shared_ptr<void>> MaterializedGpuComm::copy_batch(
-    const std::vector<GpuCommCopyRequest> &requests)
-{
-    for (const GpuCommCopyRequest &request : requests)
-    {
-        if (request.source_object == nullptr)
-        {
-            throw std::invalid_argument("materialized GPU copy source object is null");
-        }
-    }
-
-    MaterializedGpuObjectBatchCopy materialized =
-        materializer_.materialize_copy_batch(requests);
-    if (materialized.destination_objects.size() != requests.size() ||
-        materialized.object_copies.size() != requests.size())
-    {
-        throw std::invalid_argument(
-            "materialized GPU batch copy result size mismatch");
-    }
-
-    for (std::size_t index = 0; index < materialized.object_copies.size(); ++index)
-    {
-        validate_materialized_destination_object(
-            materialized.destination_objects[index]);
-        const GpuObjectCopyValidationResult validation =
-            validate_full_object_copy_request(materialized.object_copies[index]);
-        if (!validation.ok())
-        {
-            throw std::invalid_argument(validation.format_errors());
-        }
-    }
-
-    backend_.copy_objects(materialized.object_copies);
-    return std::move(materialized.destination_objects);
 }
 
 void MissingInterNodeTransportBackend::copy_object(
@@ -450,73 +378,6 @@ std::shared_ptr<void> PlannedMaterializedGpuComm::copy(
         topology_, local_backend_, inter_node_backend_, route,
         materialized.object_copy);
     return std::move(materialized.destination_object);
-}
-
-std::vector<std::shared_ptr<void>> PlannedMaterializedGpuComm::copy_batch(
-    const std::vector<GpuCommCopyRequest> &requests)
-{
-    if (requests.empty())
-    {
-        return {};
-    }
-
-    std::vector<const MgpuCopyRoute *> request_routes;
-    request_routes.reserve(requests.size());
-    bool has_inter_node_route = false;
-    for (const GpuCommCopyRequest &request : requests)
-    {
-        const auto route_iter =
-            route_indices_.find(route_key(request.source_id, request.destination_id));
-        if (route_iter == route_indices_.end())
-        {
-            throw std::invalid_argument(
-                "no planned communication route for object copy " +
-                format_route_key(request.source_id, request.destination_id));
-        }
-
-        const MgpuCopyRoute &route = routes_[route_iter->second];
-        validate_request_matches_route(route, request);
-        validate_request_has_source_object(request);
-        validate_route_matches_topology(topology_, route);
-        if (route.transport == MgpuTransportKind::InterNode)
-        {
-            has_inter_node_route = true;
-        }
-        request_routes.push_back(&route);
-    }
-
-    MaterializedGpuObjectBatchCopy materialized =
-        materializer_.materialize_copy_batch(requests);
-    if (materialized.destination_objects.size() != requests.size() ||
-        materialized.object_copies.size() != requests.size())
-    {
-        throw std::invalid_argument(
-            "materialized GPU batch copy result size mismatch");
-    }
-
-    for (std::size_t index = 0; index < materialized.object_copies.size(); ++index)
-    {
-        validate_materialized_destination_object(
-            materialized.destination_objects[index]);
-        validate_route_matches_object_copy(
-            *request_routes[index], materialized.object_copies[index]);
-    }
-
-    if (has_inter_node_route)
-    {
-        for (std::size_t index = 0; index < materialized.object_copies.size(); ++index)
-        {
-            copy_object_for_route(
-                topology_, local_backend_, inter_node_backend_,
-                *request_routes[index], materialized.object_copies[index]);
-        }
-    }
-    else
-    {
-        local_backend_.copy_objects(materialized.object_copies);
-    }
-
-    return std::move(materialized.destination_objects);
 }
 
 }  // namespace poseidon::mgpu

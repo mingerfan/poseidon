@@ -39,7 +39,6 @@ enum class TransferMode
 {
     ObjectLoop,
     ObjectLoopE2E,
-    CopyObjects,
     AsyncObjectLoop,
     ContiguousBuffer,
 };
@@ -62,7 +61,6 @@ struct BenchOptions
     bool allow_same_device = false;
     std::vector<TransferMode> modes{
         TransferMode::ObjectLoop,
-        TransferMode::CopyObjects,
     };
     std::vector<std::size_t> counts{ 1, 5, 10 };
     std::vector<std::size_t> levels{ 4, 8, 12, 16, 20 };
@@ -95,6 +93,12 @@ struct BenchCaseResult
     Stats stats;
     std::size_t ciphertext_bytes = 0;
     std::size_t total_bytes = 0;
+};
+
+struct MaterializedCopySet
+{
+    std::vector<std::shared_ptr<void>> destination_objects;
+    std::vector<GpuObjectCopyRequest> object_copies;
 };
 
 struct RuntimeMetadata
@@ -257,8 +261,8 @@ void print_usage(const char *program)
            " [--levels LIST | --min-level N --max-level N]"
            " [--log PATH] [--append-log] [--log-format csv|jsonl]"
            " [--allow-same-device]\n"
-           "modes: object_loop,object_loop_e2e,copy_objects,"
-           "async_object_loop,contiguous_buffer\n";
+           "modes: object_loop,object_loop_e2e,async_object_loop,"
+           "contiguous_buffer\n";
 }
 
 int parse_int(const char *value, const char *name)
@@ -388,10 +392,6 @@ TransferMode parse_mode_token(const std::string &token)
     {
         return TransferMode::ObjectLoopE2E;
     }
-    if (token == "copy_objects" || token == "batch")
-    {
-        return TransferMode::CopyObjects;
-    }
     if (token == "async_object_loop" || token == "async_loop" || token == "async")
     {
         return TransferMode::AsyncObjectLoop;
@@ -432,8 +432,6 @@ const char *mode_name(TransferMode mode)
         return "object_loop";
     case TransferMode::ObjectLoopE2E:
         return "object_loop_e2e";
-    case TransferMode::CopyObjects:
-        return "copy_objects";
     case TransferMode::AsyncObjectLoop:
         return "async_object_loop";
     case TransferMode::ContiguousBuffer:
@@ -766,7 +764,7 @@ std::size_t copy_requests_payload_bytes(
         bytes = checked_add(
             bytes,
             copy_request_payload_bytes(request),
-            "copy request batch byte count overflow");
+            "copy request byte count overflow");
     }
     return bytes;
 }
@@ -776,9 +774,27 @@ std::size_t first_copy_request_payload_bytes(
 {
     if (requests.empty())
     {
-        throw std::invalid_argument("cannot get ciphertext bytes from an empty copy batch");
+        throw std::invalid_argument("cannot get ciphertext bytes from an empty copy request list");
     }
     return copy_request_payload_bytes(requests.front());
+}
+
+MaterializedCopySet materialize_copy_requests(
+    PoseidonGpuObjectCopyMaterializer &materializer,
+    const std::vector<GpuCommCopyRequest> &requests)
+{
+    MaterializedCopySet result;
+    result.destination_objects.reserve(requests.size());
+    result.object_copies.reserve(requests.size());
+    for (const GpuCommCopyRequest &request : requests)
+    {
+        MaterializedGpuObjectCopy materialized =
+            materializer.materialize_copy(request);
+        result.destination_objects.push_back(
+            std::move(materialized.destination_object));
+        result.object_copies.push_back(std::move(materialized.object_copy));
+    }
+    return result;
 }
 
 std::shared_ptr<gpu::GpuCiphertextData> make_ciphertext(
@@ -925,7 +941,7 @@ gpu::GpuWord read_raw_device_word(
     return value;
 }
 
-void validate_destinations(const MaterializedGpuObjectBatchCopy &materialized)
+void validate_destinations(const MaterializedCopySet &materialized)
 {
     for (std::size_t object_index = 0;
          object_index < materialized.destination_objects.size();
@@ -1039,15 +1055,14 @@ BenchCaseResult run_object_copy_case(
     const BenchOptions &options,
     const LevelShape &level,
     std::size_t batch_size,
-    TransferMode mode,
     PoseidonGpuObjectCopyMaterializer &materializer,
     CudaPeerComm &peer_backend)
 {
     std::vector<std::shared_ptr<gpu::GpuCiphertextData>> sources;
     const std::vector<GpuCommCopyRequest> requests =
         make_requests(options, level, batch_size, sources);
-    MaterializedGpuObjectBatchCopy materialized =
-        materializer.materialize_copy_batch(requests);
+    MaterializedCopySet materialized =
+        materialize_copy_requests(materializer, requests);
     const std::size_t ciphertext_bytes =
         first_copy_request_payload_bytes(materialized.object_copies);
     const std::size_t total_bytes =
@@ -1058,22 +1073,9 @@ BenchCaseResult run_object_copy_case(
     result.total_bytes = total_bytes;
 
     auto operation = [&]() {
-        switch (mode)
+        for (const GpuObjectCopyRequest &request : materialized.object_copies)
         {
-        case TransferMode::ObjectLoop:
-            for (const GpuObjectCopyRequest &request : materialized.object_copies)
-            {
-                peer_backend.copy_object(request);
-            }
-            return;
-        case TransferMode::CopyObjects:
-            peer_backend.copy_objects(materialized.object_copies);
-            return;
-        case TransferMode::ObjectLoopE2E:
-        case TransferMode::AsyncObjectLoop:
-        case TransferMode::ContiguousBuffer:
-            throw std::invalid_argument(
-                std::string("invalid object copy mode: ") + mode_name(mode));
+            peer_backend.copy_object(request);
         }
     };
 
@@ -1109,14 +1111,14 @@ BenchCaseResult run_object_loop_e2e_case(
     result.ciphertext_bytes = ciphertext_payload_bytes(options, level);
     result.total_bytes = total_payload_bytes(options, level, batch_size);
 
-    MaterializedGpuObjectBatchCopy last_materialized;
+    MaterializedCopySet last_materialized;
     auto operation = [&]() {
-        MaterializedGpuObjectBatchCopy materialized =
-            materializer.materialize_copy_batch(requests);
+        MaterializedCopySet materialized =
+            materialize_copy_requests(materializer, requests);
         if (materialized.object_copies.size() != requests.size() ||
             materialized.destination_objects.size() != requests.size())
         {
-            throw std::logic_error("materialized copy batch size mismatch");
+            throw std::logic_error("materialized copy result size mismatch");
         }
 
         for (const GpuObjectCopyRequest &request : materialized.object_copies)
@@ -1155,8 +1157,8 @@ BenchCaseResult run_async_object_loop_case(
     std::vector<std::shared_ptr<gpu::GpuCiphertextData>> sources;
     const std::vector<GpuCommCopyRequest> requests =
         make_requests(options, level, batch_size, sources);
-    MaterializedGpuObjectBatchCopy materialized =
-        materializer.materialize_copy_batch(requests);
+    MaterializedCopySet materialized =
+        materialize_copy_requests(materializer, requests);
     const std::size_t ciphertext_bytes =
         first_copy_request_payload_bytes(materialized.object_copies);
     const std::size_t total_bytes =
@@ -1261,12 +1263,10 @@ BenchCaseResult run_case(
     switch (mode)
     {
     case TransferMode::ObjectLoop:
-    case TransferMode::CopyObjects:
         return run_object_copy_case(
             options,
             level,
             batch_size,
-            mode,
             materializer,
             peer_backend);
     case TransferMode::ObjectLoopE2E:
@@ -1303,7 +1303,6 @@ bool has_object_mode(const BenchOptions &options)
         [](TransferMode mode) {
             return mode == TransferMode::ObjectLoop ||
                    mode == TransferMode::ObjectLoopE2E ||
-                   mode == TransferMode::CopyObjects ||
                    mode == TransferMode::AsyncObjectLoop;
         });
 }
@@ -1342,12 +1341,12 @@ void preflight_largest_case(
             std::vector<std::shared_ptr<gpu::GpuCiphertextData>> sources;
             const std::vector<GpuCommCopyRequest> requests =
                 make_requests(options, max_level, max_count, sources, false);
-            MaterializedGpuObjectBatchCopy materialized =
-                materializer.materialize_copy_batch(requests);
+            MaterializedCopySet materialized =
+                materialize_copy_requests(materializer, requests);
             if (materialized.object_copies.size() != max_count ||
                 materialized.destination_objects.size() != max_count)
             {
-                throw std::logic_error("preflight materialized copy batch size mismatch");
+                throw std::logic_error("preflight materialized copy result size mismatch");
             }
         }
 

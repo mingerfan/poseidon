@@ -183,7 +183,7 @@ void test_cross_device_copy_if_available(int device_count)
     check_cuda(cudaFree(source), "cudaFree source");
 }
 
-void test_cross_device_batch_copy_if_available(int device_count)
+void test_cross_device_object_loop_copy_if_available(int device_count)
 {
     if (device_count < 2)
     {
@@ -204,19 +204,19 @@ void test_cross_device_batch_copy_if_available(int device_count)
             check_cuda(cudaSetDevice(0), "cudaSetDevice source");
             check_cuda(
                 cudaMalloc(reinterpret_cast<void **>(&sources[index]), sizeof(int)),
-                "cudaMalloc batch source");
+                "cudaMalloc loop source");
             check_cuda(
                 cudaMemcpy(
                     sources[index],
                     &inputs[index],
                     sizeof(int),
                     cudaMemcpyHostToDevice),
-                "cudaMemcpy host to batch source device");
+                "cudaMemcpy host to loop source device");
 
             check_cuda(cudaSetDevice(1), "cudaSetDevice destination");
             check_cuda(
                 cudaMalloc(reinterpret_cast<void **>(&destinations[index]), sizeof(int)),
-                "cudaMalloc batch destination");
+                "cudaMalloc loop destination");
 
             GpuObjectCopyRequest request;
             request.source_id = static_cast<ValueId>(10 + index);
@@ -232,7 +232,10 @@ void test_cross_device_batch_copy_if_available(int device_count)
             requests.push_back(request);
         }
 
-        comm.copy_objects(requests);
+        for (const GpuObjectCopyRequest &request : requests)
+        {
+            comm.copy_object(request);
+        }
         const CudaPeerAccessSnapshot default_snapshot =
             comm.peer_access_snapshot(1, 0);
         require(default_snapshot.cached, "cross-device CUDA peer access cache was not populated");
@@ -246,7 +249,7 @@ void test_cross_device_batch_copy_if_available(int device_count)
                 "cross-device CUDA peer access enablement was not cached");
             require(
                 default_snapshot.enable_call_count == 1,
-                "cross-device CUDA batch copy repeated peer access enablement");
+                "cross-device CUDA object loop repeated peer access enablement");
         }
         else
         {
@@ -258,7 +261,7 @@ void test_cross_device_batch_copy_if_available(int device_count)
                 "unsupported CUDA peer access pair attempted peer enablement");
         }
 
-        check_cuda(cudaSetDevice(1), "cudaSetDevice batch destination readback");
+        check_cuda(cudaSetDevice(1), "cudaSetDevice loop destination readback");
         for (std::size_t index = 0; index < outputs.size(); ++index)
         {
             check_cuda(
@@ -267,8 +270,10 @@ void test_cross_device_batch_copy_if_available(int device_count)
                     destinations[index],
                     sizeof(int),
                     cudaMemcpyDeviceToHost),
-                "cudaMemcpy batch destination device to host");
-            require(outputs[index] == inputs[index], "cross-device CUDA batch copy result mismatch");
+                "cudaMemcpy loop destination device to host");
+            require(
+                outputs[index] == inputs[index],
+                "cross-device CUDA object loop copy result mismatch");
         }
 
     }
@@ -295,13 +300,13 @@ void test_cross_device_batch_copy_if_available(int device_count)
 
     for (int *destination : destinations)
     {
-        check_cuda(cudaSetDevice(1), "cudaSetDevice batch destination free");
-        check_cuda(cudaFree(destination), "cudaFree batch destination");
+        check_cuda(cudaSetDevice(1), "cudaSetDevice loop destination free");
+        check_cuda(cudaFree(destination), "cudaFree loop destination");
     }
     for (int *source : sources)
     {
-        check_cuda(cudaSetDevice(0), "cudaSetDevice batch source free");
-        check_cuda(cudaFree(source), "cudaFree batch source");
+        check_cuda(cudaSetDevice(0), "cudaSetDevice loop source free");
+        check_cuda(cudaFree(source), "cudaFree loop source");
     }
 }
 
@@ -315,7 +320,7 @@ int main()
         test_same_device_copy();
         test_same_device_object_copy();
         test_cross_device_copy_if_available(device_count);
-        test_cross_device_batch_copy_if_available(device_count);
+        test_cross_device_object_loop_copy_if_available(device_count);
     }
     catch (const std::exception &ex)
     {

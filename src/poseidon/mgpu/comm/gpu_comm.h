@@ -60,8 +60,6 @@ public:
     virtual ~GpuComm() = default;
 
     virtual std::shared_ptr<void> copy(const GpuCommCopyRequest &request) = 0;
-    virtual std::vector<std::shared_ptr<void>> copy_batch(
-        const std::vector<GpuCommCopyRequest> &requests);
 };
 
 class SameDeviceGpuComm final : public GpuComm
@@ -76,12 +74,6 @@ struct MaterializedGpuObjectCopy
     GpuObjectCopyRequest object_copy;
 };
 
-struct MaterializedGpuObjectBatchCopy
-{
-    std::vector<std::shared_ptr<void>> destination_objects;
-    std::vector<GpuObjectCopyRequest> object_copies;
-};
-
 class GpuObjectCopyMaterializer
 {
 public:
@@ -89,8 +81,6 @@ public:
 
     virtual MaterializedGpuObjectCopy materialize_copy(
         const GpuCommCopyRequest &request) = 0;
-    virtual MaterializedGpuObjectBatchCopy materialize_copy_batch(
-        const std::vector<GpuCommCopyRequest> &requests);
 };
 
 class GpuObjectCopyBackend
@@ -99,7 +89,6 @@ public:
     virtual ~GpuObjectCopyBackend() = default;
 
     virtual void copy_object(const GpuObjectCopyRequest &request) = 0;
-    virtual void copy_objects(const std::vector<GpuObjectCopyRequest> &requests);
 };
 
 class MaterializedGpuComm final : public GpuComm
@@ -109,8 +98,6 @@ public:
         GpuObjectCopyMaterializer &materializer, GpuObjectCopyBackend &backend);
 
     std::shared_ptr<void> copy(const GpuCommCopyRequest &request) override;
-    std::vector<std::shared_ptr<void>> copy_batch(
-        const std::vector<GpuCommCopyRequest> &requests) override;
 
 private:
     GpuObjectCopyMaterializer &materializer_;
@@ -158,8 +145,6 @@ public:
         InterNodeTransportBackend &inter_node_backend);
 
     std::shared_ptr<void> copy(const GpuCommCopyRequest &request) override;
-    std::vector<std::shared_ptr<void>> copy_batch(
-        const std::vector<GpuCommCopyRequest> &requests) override;
 
 private:
     std::vector<MgpuCopyRoute> routes_;
