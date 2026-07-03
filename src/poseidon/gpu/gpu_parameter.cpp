@@ -271,6 +271,47 @@ std::vector<GpuWord> copy_inv_degree_operands(
     return result;
 }
 
+std::vector<GpuWord> make_fourstep_inverse_roots(
+    const std::vector<GpuWord> &inverse_roots,
+    std::size_t degree)
+{
+    if (inverse_roots.empty())
+    {
+        return {};
+    }
+    if (degree == 0 || inverse_roots.size() % degree != 0)
+    {
+        throw std::invalid_argument(
+            "GpuParameterData four-step inverse root shape mismatch");
+    }
+
+    int log_degree = 0;
+    for (std::size_t value = degree; value > 1; value >>= 1)
+    {
+        ++log_degree;
+    }
+
+    std::vector<GpuWord> result(inverse_roots.size());
+    const std::size_t limb_count = inverse_roots.size() / degree;
+    for (std::size_t limb = 0; limb < limb_count; ++limb)
+    {
+        const std::size_t limb_offset = limb * degree;
+        result[limb_offset] = inverse_roots[limb_offset];
+        for (std::size_t cheddar_index = 1;
+             cheddar_index < degree;
+             ++cheddar_index)
+        {
+            const std::size_t inverse_power =
+                util::reverse_bits(cheddar_index, log_degree);
+            const std::size_t poseidon_index =
+                util::reverse_bits(inverse_power - 1, log_degree) + 1;
+            result[limb_offset + cheddar_index] =
+                inverse_roots[limb_offset + poseidon_index];
+        }
+    }
+    return result;
+}
+
 GpuWord multiply_mod_host(
     GpuWord left,
     GpuWord right,
@@ -1792,6 +1833,8 @@ void GpuParameterData::build_from_poseidon_context(
             concatenate_vectors(q_ntt_roots, p_ntt_roots);
         auto rns_intt_roots =
             concatenate_vectors(q_intt_roots, p_intt_roots);
+        auto rns_fourstep_intt_roots =
+            make_fourstep_inverse_roots(rns_intt_roots, level.degree);
         auto rns_inv_degree =
             concatenate_vectors(q_inv_degree, p_inv_degree);
         auto rns_moduli =
@@ -1944,6 +1987,17 @@ void GpuParameterData::build_from_poseidon_context(
             shard.intt_tables.copy_from_host(
                 rns_intt_roots.data(),
                 rns_intt_roots.size());
+        }
+
+        shard.fourstep_intt_tables =
+            DeviceVector<GpuWord>(
+                rns_fourstep_intt_roots.size(),
+                device_id);
+        if (!rns_fourstep_intt_roots.empty())
+        {
+            shard.fourstep_intt_tables.copy_from_host(
+                rns_fourstep_intt_roots.data(),
+                rns_fourstep_intt_roots.size());
         }
 
         shard.intt_tables_normalized =

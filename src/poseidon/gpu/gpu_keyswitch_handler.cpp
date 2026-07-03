@@ -21,10 +21,6 @@ namespace
 
 constexpr std::size_t kRelinKeyPower2Index = 0;
 constexpr std::size_t kSwitchKeyComponentCount = 2;
-constexpr const char *kPAccumAllDnumEnv =
-    "POSEIDON_KEYSWITCH_PACCUM_ALL_DNUM";
-constexpr const char *kPAccumFinalTailEnv =
-    "POSEIDON_KEYSWITCH_PACCUM_FINAL_TAIL";
 constexpr const char *kFuseDecompQEnv =
     "POSEIDON_KEYSWITCH_FUSE_DECOMP_Q";
 constexpr const char *kFuseModupNttHeadEnv =
@@ -33,6 +29,16 @@ constexpr const char *kBconvRowTiledEnv =
     "POSEIDON_KEYSWITCH_BCONV_ROW_TILED";
 constexpr const char *kBconvRowTiled8Env =
     "POSEIDON_KEYSWITCH_BCONV_ROW_TILED_8";
+constexpr const char *kPToQRowTiled8Env =
+    "POSEIDON_KEYSWITCH_P_TO_Q_ROW_TILED_8";
+constexpr const char *kFourstepC2InttEnv =
+    "POSEIDON_KEYSWITCH_FOURSTEP_C2_INTT";
+constexpr const char *kFourstepAllNttEnv =
+    "POSEIDON_KEYSWITCH_FOURSTEP_ALL_NTT";
+constexpr const char *kFourstepPhase2MacEnv =
+    "POSEIDON_KEYSWITCH_FOURSTEP_PHASE2_MAC";
+constexpr const char *kFourstepFinalizeFusedEnv =
+    "POSEIDON_KEYSWITCH_FOURSTEP_FINALIZE_FUSED";
 
 class NvtxRange
 {
@@ -62,41 +68,6 @@ std::size_t checked_mul(std::size_t a, std::size_t b, const char *what)
         throw std::overflow_error(what);
     }
     return a * b;
-}
-
-bool use_paccum_all_dnum()
-{
-    static const bool enabled = [] {
-        const char *raw = std::getenv(kPAccumAllDnumEnv);
-        if (raw == nullptr || *raw == '\0')
-        {
-            return false;
-        }
-
-        const std::string value(raw);
-        return value != "0" &&
-               value != "OFF" &&
-               value != "off" &&
-               value != "false" &&
-               value != "FALSE";
-    }();
-    return enabled;
-}
-
-bool use_paccum_final_tail()
-{
-    const char *raw = std::getenv(kPAccumFinalTailEnv);
-    if (raw == nullptr || *raw == '\0')
-    {
-        return false;
-    }
-
-    const std::string value(raw);
-    return value != "0" &&
-           value != "OFF" &&
-           value != "off" &&
-           value != "false" &&
-           value != "FALSE";
 }
 
 bool use_fused_decomp_q()
@@ -150,6 +121,99 @@ bool use_bconv_row_tiled()
 bool use_bconv_row_tiled8()
 {
     const char *raw = std::getenv(kBconvRowTiled8Env);
+    if (raw == nullptr || *raw == '\0')
+    {
+        return true;
+    }
+
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
+bool use_p_to_q_row_tiled8()
+{
+    const char *raw = std::getenv(kPToQRowTiled8Env);
+    if (raw == nullptr || *raw == '\0')
+    {
+        return false;
+    }
+
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
+bool use_fourstep_c2_intt()
+{
+    const char *raw = std::getenv(kFourstepC2InttEnv);
+    if (raw == nullptr || *raw == '\0')
+    {
+        return false;
+    }
+
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
+bool use_fourstep_all_ntt(
+    std::size_t degree,
+    std::size_t base_q_size,
+    std::size_t base_p_size)
+{
+    const bool supported =
+        degree == 65536 &&
+        base_p_size == 2 &&
+        base_q_size >= 2 &&
+        (base_q_size & 1U) == 0;
+    if (!supported)
+    {
+        return false;
+    }
+
+    const char *raw = std::getenv(kFourstepAllNttEnv);
+    if (raw == nullptr || *raw == '\0')
+    {
+        return true;
+    }
+
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
+bool use_fourstep_phase2_mac()
+{
+    const char *raw = std::getenv(kFourstepPhase2MacEnv);
+    if (raw == nullptr || *raw == '\0')
+    {
+        return true;
+    }
+
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
+bool use_fourstep_finalize_fused()
+{
+    const char *raw = std::getenv(kFourstepFinalizeFusedEnv);
     if (raw == nullptr || *raw == '\0')
     {
         return true;
@@ -286,11 +350,10 @@ struct HybridScratch
     DeviceVector<GpuWord> accum_q1;
     DeviceVector<GpuWord> accum_p0;
     DeviceVector<GpuWord> accum_p1;
-
-    DeviceVector<GpuWord> all_modup_q;
-    DeviceVector<GpuWord> all_modup_p;
-    DeviceVector<const GpuWord *> key_qp0_by_dnum;
-    DeviceVector<const GpuWord *> key_qp1_by_dnum;
+    DeviceVector<GpuWord> fourstep_q0;
+    DeviceVector<GpuWord> fourstep_q1;
+    DeviceVector<GpuWord> fourstep_p0;
+    DeviceVector<GpuWord> fourstep_p1;
 
     GpuPolyShardView c2_intt_view()
     {
@@ -387,27 +450,15 @@ HybridScratch allocate_hybrid_scratch(
     scratch.accum_p0.allocate(scratch.p_word_count, device_id);
     scratch.accum_p1.allocate(scratch.p_word_count, device_id);
 
-    return scratch;
-}
+    if (use_fourstep_all_ntt(degree, base_q_size, base_p_size))
+    {
+        scratch.fourstep_q0.allocate(scratch.q_word_count, device_id);
+        scratch.fourstep_q1.allocate(scratch.q_word_count, device_id);
+        scratch.fourstep_p0.allocate(scratch.p_word_count, device_id);
+        scratch.fourstep_p1.allocate(scratch.p_word_count, device_id);
+    }
 
-void allocate_hybrid_paccum_all_dnum_scratch(
-    HybridScratch &scratch,
-    std::size_t decomp_count)
-{
-    scratch.all_modup_q.allocate(
-        checked_mul(
-            decomp_count,
-            scratch.q_word_count,
-            "GpuKeySwitchHandler all-dnum Q scratch size overflow"),
-        scratch.device_id);
-    scratch.all_modup_p.allocate(
-        checked_mul(
-            decomp_count,
-            scratch.p_word_count,
-            "GpuKeySwitchHandler all-dnum P scratch size overflow"),
-        scratch.device_id);
-    scratch.key_qp0_by_dnum.allocate(decomp_count, scratch.device_id);
-    scratch.key_qp1_by_dnum.allocate(decomp_count, scratch.device_id);
+    return scratch;
 }
 
 void inverse_ntt_switch_poly(
@@ -415,7 +466,13 @@ void inverse_ntt_switch_poly(
     const GpuConstRNSPolyView &switch_poly_ntt,
     const GpuLevelInfo &level_info)
 {
-    NvtxRange range("keyswitch.intt_switch_poly");
+    const bool fourstep = use_fourstep_c2_intt() || use_fourstep_all_ntt(
+        scratch.degree,
+        scratch.base_q_size,
+        scratch.base_p_size);
+    NvtxRange range(fourstep
+        ? "keyswitch.intt_switch_poly.fourstep"
+        : "keyswitch.intt_switch_poly.fused3");
     const auto &source_shard = switch_poly_ntt.shards.front();
     auto destination_shard = scratch.c2_intt_view();
     const auto *parameter_shard = find_parameter_shard(level_info, source_shard);
@@ -425,127 +482,19 @@ void inverse_ntt_switch_poly(
             "GpuKeySwitchHandler::inverse_ntt_switch_poly: no matching parameter shard");
     }
 
-    kernel::launch_inverse_ntt_poly_shard(
-        destination_shard,
-        source_shard,
-        *parameter_shard,
-        scratch.degree);
-}
-
-void prepare_hybrid_decomposition_ntt_block(
-    std::size_t decomp_index,
-    std::size_t decomp_limb_begin,
-    std::size_t decomp_limb_count,
-    HybridScratch &scratch,
-    GpuWord *target_modup_q,
-    GpuWord *target_modup_p,
-    const GpuConstRNSPolyView &switch_poly_ntt,
-    const GpuConstRNSPolyView &key_component0,
-    const GpuConstRNSPolyView &key_component1,
-    const GpuLevelInfo &level_info)
-{
-    NvtxRange block_range(
-        "keyswitch.paccum.prepare_dnum[" + std::to_string(decomp_index) + "]");
-    const auto &switch_poly_shard = switch_poly_ntt.shards.front();
-    const auto &key0_shard = key_component0.shards.front();
-    const auto &key1_shard = key_component1.shards.front();
-    if (!same_shard_placement(key0_shard, key1_shard))
+    if (fourstep)
     {
-        throw std::invalid_argument(
-            "GpuKeySwitchHandler::prepare_hybrid_decomposition_ntt_block: key shard placement mismatch");
-    }
-
-    const auto *parameter_shard = find_parameter_shard(level_info, key0_shard);
-    if (parameter_shard == nullptr)
-    {
-        throw std::invalid_argument(
-            "GpuKeySwitchHandler::prepare_hybrid_decomposition_ntt_block: no matching parameter shard");
-    }
-    validate_hybrid_parameter_shape(
-        "GpuKeySwitchHandler::prepare_hybrid_decomposition_ntt_block",
-        scratch,
-        *parameter_shard);
-
-    {
-        NvtxRange range("keyswitch.paccum.modup");
-        kernel::launch_hybrid_modup_decomposition(
-            target_modup_q,
-            target_modup_p,
-            scratch.c2_intt.data(),
-            switch_poly_shard.ptr,
-            decomp_index,
-            decomp_limb_begin,
-            decomp_limb_count,
+        kernel::launch_inverse_ntt_poly_shard_fourstep_65536(
+            destination_shard,
+            source_shard,
             *parameter_shard,
             scratch.degree);
     }
-
+    else
     {
-        NvtxRange range("keyswitch.paccum.forward_ntt_qp");
-        kernel::launch_hybrid_forward_ntt_qp(
-            target_modup_q,
-            target_modup_p,
-            decomp_limb_begin,
-            decomp_limb_count,
-            *parameter_shard,
-            scratch.degree);
-    }
-}
-
-void prepare_hybrid_decomposition_final_tail_block(
-    std::size_t decomp_index,
-    std::size_t decomp_limb_begin,
-    std::size_t decomp_limb_count,
-    HybridScratch &scratch,
-    GpuWord *target_modup_q,
-    GpuWord *target_modup_p,
-    const GpuConstRNSPolyView &key_component0,
-    const GpuConstRNSPolyView &key_component1,
-    const GpuLevelInfo &level_info)
-{
-    NvtxRange block_range(
-        "keyswitch.paccum_final_tail.prepare_dnum[" +
-        std::to_string(decomp_index) + "]");
-    const auto &key0_shard = key_component0.shards.front();
-    const auto &key1_shard = key_component1.shards.front();
-    if (!same_shard_placement(key0_shard, key1_shard))
-    {
-        throw std::invalid_argument(
-            "GpuKeySwitchHandler::prepare_hybrid_decomposition_final_tail_block: key shard placement mismatch");
-    }
-
-    const auto *parameter_shard = find_parameter_shard(level_info, key0_shard);
-    if (parameter_shard == nullptr)
-    {
-        throw std::invalid_argument(
-            "GpuKeySwitchHandler::prepare_hybrid_decomposition_final_tail_block: no matching parameter shard");
-    }
-    validate_hybrid_parameter_shape(
-        "GpuKeySwitchHandler::prepare_hybrid_decomposition_final_tail_block",
-        scratch,
-        *parameter_shard);
-
-    {
-        NvtxRange range(
-            "keyswitch.paccum_final_tail.modup_forward_ntt_head.row_tiled8");
-        kernel::launch_hybrid_modup_decomposition_forward_ntt_first_stage_row_tiled8(
-            target_modup_q,
-            target_modup_p,
-            scratch.c2_intt.data(),
-            decomp_index,
-            decomp_limb_begin,
-            decomp_limb_count,
-            *parameter_shard,
-            scratch.degree);
-    }
-
-    {
-        NvtxRange range("keyswitch.paccum_final_tail.forward_ntt_prefix");
-        kernel::launch_hybrid_forward_ntt_qp_prepare_final_tail(
-            target_modup_q,
-            target_modup_p,
-            decomp_limb_begin,
-            decomp_limb_count,
+        kernel::launch_inverse_ntt_poly_shard(
+            destination_shard,
+            source_shard,
             *parameter_shard,
             scratch.degree);
     }
@@ -588,6 +537,87 @@ void process_hybrid_decomposition_block(
         scratch,
         *parameter_shard);
 
+    if (use_fourstep_all_ntt(
+            scratch.degree,
+            scratch.base_q_size,
+            scratch.base_p_size))
+    {
+        const bool fuse_phase2_mac = use_fourstep_phase2_mac();
+        {
+            NvtxRange range("keyswitch.dnum.modup.row_tiled8.coeff");
+            kernel::launch_hybrid_modup_decomposition_row_tiled8(
+                scratch.modup_q.data(),
+                scratch.modup_p.data(),
+                scratch.c2_intt.data(),
+                decomp_index,
+                decomp_limb_begin,
+                decomp_limb_count,
+                *parameter_shard,
+                scratch.degree);
+        }
+
+        if (fuse_phase2_mac)
+        {
+            NvtxRange range(
+                "keyswitch.dnum.fourstep_forward_ntt_qp_active.phase2_mac");
+            kernel::launch_forward_ntt_qp_active_fourstep_mul_accumulate_two_components_65536(
+                scratch.fourstep_q0.data(),
+                scratch.fourstep_p0.data(),
+                scratch.modup_q.data(),
+                scratch.modup_p.data(),
+                scratch.accum_q0.data(),
+                scratch.accum_p0.data(),
+                scratch.accum_q1.data(),
+                scratch.accum_p1.data(),
+                switch_poly_shard.ptr,
+                key0_shard.ptr,
+                key1_shard.ptr,
+                decomp_limb_begin,
+                decomp_limb_count,
+                decomp_index == 0,
+                *parameter_shard,
+                scratch.degree);
+        }
+        else
+        {
+            {
+                NvtxRange range(
+                    "keyswitch.dnum.fourstep_forward_ntt_qp_active");
+                kernel::launch_forward_ntt_qp_active_fourstep_65536(
+                    scratch.fourstep_q0.data(),
+                    scratch.fourstep_p0.data(),
+                    scratch.modup_q.data(),
+                    scratch.modup_p.data(),
+                    decomp_limb_begin,
+                    decomp_limb_count,
+                    *parameter_shard,
+                    scratch.degree);
+            }
+            {
+                NvtxRange range(
+                    "keyswitch.dnum.fourstep_multiply_accumulate.c01");
+                kernel::launch_hybrid_multiply_accumulate_two_components(
+                    scratch.accum_q0.data(),
+                    scratch.accum_p0.data(),
+                    scratch.accum_q1.data(),
+                    scratch.accum_p1.data(),
+                    scratch.fourstep_q0.data(),
+                    scratch.fourstep_p0.data(),
+                    switch_poly_shard.ptr,
+                    key0_shard.ptr,
+                    key1_shard.ptr,
+                    *parameter_shard,
+                    scratch.degree,
+                    decomp_limb_begin,
+                    decomp_limb_count,
+                    decomp_index == 0);
+            }
+        }
+        return;
+    }
+
+    /* Compatibility fallback for parameter shapes not supported by the
+       N=65536, P=2 four-step pipeline, or for an explicit env rollback. */
     /* 将dnum片段进行模升，每个片段扩展到完整的32+6=38个模数 */
     {
         NvtxRange range(!fuse_modup_ntt_head
@@ -699,6 +729,104 @@ void finalize_hybrid_relinearize(
     auto accum_p0_view = make_scratch_p_view(scratch.accum_p0.data(), scratch);
     auto accum_p1_view = make_scratch_p_view(scratch.accum_p1.data(), scratch);
 
+    if (use_fourstep_all_ntt(
+            scratch.degree,
+            scratch.base_q_size,
+            scratch.base_p_size))
+    {
+        auto p_coeff0_view = make_scratch_p_view(
+            scratch.fourstep_p0.data(),
+            scratch);
+        auto p_coeff1_view = make_scratch_p_view(
+            scratch.fourstep_p1.data(),
+            scratch);
+        {
+            NvtxRange range("keyswitch.finalize.fourstep_intt_p0");
+            kernel::launch_inverse_ntt_poly_shard_fourstep_65536(
+                p_coeff0_view,
+                as_const_shard(accum_p0_view),
+                *parameter_shard,
+                scratch.degree);
+        }
+        {
+            NvtxRange range("keyswitch.finalize.fourstep_intt_p1");
+            kernel::launch_inverse_ntt_poly_shard_fourstep_65536(
+                p_coeff1_view,
+                as_const_shard(accum_p1_view),
+                *parameter_shard,
+                scratch.degree);
+        }
+
+        if (use_fourstep_finalize_fused())
+        {
+            NvtxRange range(
+                "keyswitch.finalize.convert_p_to_q_fourstep_q01");
+            kernel::launch_hybrid_convert_p_to_q_forward_ntt_two_components_fourstep_65536(
+                scratch.fourstep_q0.data(),
+                scratch.fourstep_q1.data(),
+                scratch.fourstep_p0.data(),
+                scratch.fourstep_p1.data(),
+                *parameter_shard,
+                scratch.degree);
+        }
+        else
+        {
+            {
+                NvtxRange range("keyswitch.finalize.convert_p_to_q.coeff");
+                kernel::launch_hybrid_convert_p_to_q(
+                    scratch.c2_intt.data(),
+                    scratch.modup_q.data(),
+                    scratch.fourstep_p0.data(),
+                    scratch.fourstep_p1.data(),
+                    *parameter_shard,
+                    scratch.degree);
+            }
+
+            auto q_coeff0_view = make_scratch_q_view(
+                scratch.c2_intt.data(),
+                scratch);
+            auto q_coeff1_view = make_scratch_q_view(
+                scratch.modup_q.data(),
+                scratch);
+            auto q_ntt0_view = make_scratch_q_view(
+                scratch.fourstep_q0.data(),
+                scratch);
+            auto q_ntt1_view = make_scratch_q_view(
+                scratch.fourstep_q1.data(),
+                scratch);
+            {
+                NvtxRange range("keyswitch.finalize.fourstep_forward_ntt_q0");
+                kernel::launch_forward_ntt_poly_shard_fourstep_65536(
+                    q_ntt0_view,
+                    as_const_shard(q_coeff0_view),
+                    *parameter_shard,
+                    scratch.degree);
+            }
+            {
+                NvtxRange range("keyswitch.finalize.fourstep_forward_ntt_q1");
+                kernel::launch_forward_ntt_poly_shard_fourstep_65536(
+                    q_ntt1_view,
+                    as_const_shard(q_coeff1_view),
+                    *parameter_shard,
+                    scratch.degree);
+            }
+        }
+
+        {
+            NvtxRange range("keyswitch.finalize.fourstep_apply_moddown_add_back");
+            kernel::launch_hybrid_apply_moddown_ntt_add_back(
+                destination_shard0,
+                destination_shard1,
+                scratch.accum_q0.data(),
+                scratch.accum_q1.data(),
+                scratch.fourstep_q0.data(),
+                scratch.fourstep_q1.data(),
+                *parameter_shard,
+                scratch.degree);
+        }
+        return;
+    }
+
     /* 只把P部分转回系数域，Q部分保持在NTT域 */
     {
         NvtxRange range("keyswitch.finalize.intt_p0");
@@ -717,6 +845,19 @@ void finalize_hybrid_relinearize(
             scratch.degree);
     }
 
+    if (use_p_to_q_row_tiled8())
+    {
+        NvtxRange range(
+            "keyswitch.finalize.convert_p_to_q_forward_ntt.row_tiled8");
+        kernel::launch_hybrid_convert_p_to_q_forward_ntt_row_tiled8(
+            scratch.c2_intt.data(),
+            scratch.modup_q.data(),
+            scratch.accum_p0.data(),
+            scratch.accum_p1.data(),
+            *parameter_shard,
+            scratch.degree);
+    }
+    else
     {
         NvtxRange range("keyswitch.finalize.convert_p_to_q_forward_ntt");
         kernel::launch_hybrid_convert_p_to_q_forward_ntt(
@@ -1057,6 +1198,8 @@ void GpuKeySwitchHandler::switch_key_hybrid_ciphertext(
         switch_poly_ntt,
         level_info);
 
+#if 0
+    /* Retired all-dnum PAccum experiments. */
     if (use_paccum_final_tail())
     {
         NvtxRange paccum_range("keyswitch.paccum_final_tail");
@@ -1270,6 +1413,7 @@ void GpuKeySwitchHandler::switch_key_hybrid_ciphertext(
         }
     }
     else
+#endif
     {
         const bool fuse_decomp_q = use_fused_decomp_q();
         const bool fuse_modup_ntt_head = use_fused_modup_ntt_head();

@@ -113,6 +113,7 @@ struct GpuParameterShard
      */
     DeviceVector<GpuWord> ntt_tables;
     DeviceVector<GpuWord> intt_tables;
+    DeviceVector<GpuWord> fourstep_intt_tables;
     DeviceVector<GpuWord> intt_tables_normalized;
     DeviceVector<GpuWord> inv_degree_modulo;
     DeviceVector<GpuWord> montgomery_ntt_tables;

@@ -64,6 +64,7 @@ private:
     {
         DeviceVector<GpuWord> q_last;
         DeviceVector<GpuWord> correction;
+        DeviceVector<GpuWord> correction_ntt;
         std::size_t q_last_capacity = 0;
         std::size_t correction_capacity = 0;
         int device_id = -1;

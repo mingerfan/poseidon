@@ -187,7 +187,8 @@ void rescale_poly(
     std::size_t source_q_count,
     std::size_t degree,
     GpuWord *scratch_q_last,
-    GpuWord *scratch_correction)
+    GpuWord *scratch_correction,
+    GpuWord *scratch_correction_ntt)
 {
     const std::size_t destination_q_count = source_q_count - 1;
     const std::size_t q_last_limb = source_q_count - 1;
@@ -224,6 +225,9 @@ void rescale_poly(
     correction_shard.coeff_begin = 0;
     correction_shard.coeff_count = degree;
 
+    GpuPolyShardView correction_ntt_shard = correction_shard;
+    correction_ntt_shard.ptr = scratch_correction_ntt;
+
     {
         NvtxRange range("rescale.build_correction");
         kernel::launch_build_q_last_rescale_correction_poly_shard(
@@ -236,7 +240,7 @@ void rescale_poly(
     {
         NvtxRange range("rescale.forward_ntt_correction");
         kernel::launch_forward_ntt_poly_shard(
-            correction_shard,
+            correction_ntt_shard,
             make_const_shard_view(correction_shard),
             parameter_shard,
             degree);
@@ -253,7 +257,7 @@ void rescale_poly(
         kernel::launch_apply_q_last_rescale_correction_poly_shard(
             destination_shard,
             source_without_q_last,
-            make_const_shard_view(correction_shard),
+            make_const_shard_view(correction_ntt_shard),
             parameter_shard,
             degree);
     }
@@ -320,6 +324,7 @@ void GpuModSwitchHandler::ensure_rescale_scratch(
 
     rescale_scratch_.q_last.allocate(q_last_size, device_id);
     rescale_scratch_.correction.allocate(correction_size, device_id);
+    rescale_scratch_.correction_ntt.allocate(correction_size, device_id);
     rescale_scratch_.q_last_capacity = q_last_size;
     rescale_scratch_.correction_capacity = correction_size;
     rescale_scratch_.device_id = device_id;
@@ -388,7 +393,8 @@ void GpuModSwitchHandler::rescale_ciphertext(
                 source_q_count,
                 degree,
                 rescale_scratch_.q_last.data(),
-                rescale_scratch_.correction.data());
+                rescale_scratch_.correction.data(),
+                rescale_scratch_.correction_ntt.data());
         }
     }
 }

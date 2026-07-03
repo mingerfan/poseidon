@@ -28,6 +28,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <cmath>
 #include <cstdint>
 #include <cstdlib>
 #include <iomanip>
@@ -72,10 +73,16 @@ constexpr const char *kKeySwitchBconvRowTiledEnv =
     "POSEIDON_KEYSWITCH_BCONV_ROW_TILED";
 constexpr const char *kKeySwitchBconvRowTiled8Env =
     "POSEIDON_KEYSWITCH_BCONV_ROW_TILED_8";
-constexpr const char *kKeySwitchPAccumAllDnumEnv =
-    "POSEIDON_KEYSWITCH_PACCUM_ALL_DNUM";
-constexpr const char *kKeySwitchPAccumFinalTailEnv =
-    "POSEIDON_KEYSWITCH_PACCUM_FINAL_TAIL";
+constexpr const char *kKeySwitchPToQRowTiled8Env =
+    "POSEIDON_KEYSWITCH_P_TO_Q_ROW_TILED_8";
+constexpr const char *kKeySwitchFourstepC2InttEnv =
+    "POSEIDON_KEYSWITCH_FOURSTEP_C2_INTT";
+constexpr const char *kKeySwitchFourstepAllNttEnv =
+    "POSEIDON_KEYSWITCH_FOURSTEP_ALL_NTT";
+constexpr const char *kKeySwitchFourstepPhase2MacEnv =
+    "POSEIDON_KEYSWITCH_FOURSTEP_PHASE2_MAC";
+constexpr const char *kKeySwitchFourstepFinalizeFusedEnv =
+    "POSEIDON_KEYSWITCH_FOURSTEP_FINALIZE_FUSED";
 constexpr const char *kDefaultNttFusedMatrixCacheDir =
     "/tmp/poseidon_ntt_tam_cache";
 
@@ -1128,7 +1135,7 @@ void print_operation_timing_table(
     std::cout << "benchmark input: deterministic key/encrypt randomness\n";
     std::cout << "excluded from timing: encode/encrypt/upload/download/decrypt/decode\n";
     std::cout << "correct: raw residues and metadata compared with CPU result; BConv compares generated limbs in the last HYBRID ModUp block\n";
-    std::cout << "ntt variants: ntt_inv/ntt_fwd use default CUDA fused3 unless POSEIDON_NTT_ALGO or POSEIDON_NTT_FUSION_STAGES overrides it\n";
+    std::cout << "ntt variants: N=65536 out-of-place NTT/INTT use shared-memory four-step by default; POSEIDON_NTT_ALGO=fused restores fused3\n";
     std::cout << "keyswitch_bconv_modup: HYBRID ModUp/BConv only; c2 INTT and later NTT/key multiply/ModDown are excluded\n";
 }
 
@@ -1141,7 +1148,7 @@ void print_ntt_timing_table(
     std::size_t warmup_iterations)
 {
     constexpr int op_width = 12;
-    constexpr int mode_width = 8;
+    constexpr int mode_width = 16;
     constexpr int value_width = 13;
     constexpr int correct_width = 7;
 
@@ -1160,8 +1167,6 @@ void print_ntt_timing_table(
                   << '+'
                   << std::string(value_width + 2, '-')
                   << '+'
-                  << std::string(value_width + 2, '-')
-                  << '+'
                   << std::string(correct_width + 2, '-')
                   << "+\n";
     };
@@ -1169,20 +1174,18 @@ void print_ntt_timing_table(
     const auto print_row = [&](
         const std::string &operation,
         const std::string &mode,
-        const std::string &avg,
         const std::string &min,
-        const std::string &median,
-        const std::string &p90,
         const std::string &max,
+        const std::string &avg,
+        const std::string &median,
         const std::string &correct)
     {
         std::cout << "| " << std::left << std::setw(op_width) << operation
                   << " | " << std::right << std::setw(mode_width) << mode
-                  << " | " << std::right << std::setw(value_width) << avg
                   << " | " << std::right << std::setw(value_width) << min
-                  << " | " << std::right << std::setw(value_width) << median
-                  << " | " << std::right << std::setw(value_width) << p90
                   << " | " << std::right << std::setw(value_width) << max
+                  << " | " << std::right << std::setw(value_width) << avg
+                  << " | " << std::right << std::setw(value_width) << median
                   << " | " << std::right << std::setw(correct_width) << correct
                   << " |\n";
     };
@@ -1192,11 +1195,10 @@ void print_ntt_timing_table(
     print_row(
         "operation",
         "mode",
-        "avg (ms)",
         "min (ms)",
-        "median (ms)",
-        "p90 (ms)",
         "max (ms)",
+        "avg (ms)",
+        "median (ms)",
         "correct");
     print_border();
     for (const auto &row : rows)
@@ -1205,11 +1207,10 @@ void print_ntt_timing_table(
         print_row(
             row.operation,
             row.mode,
-            skipped ? "/" : format_fixed(row.timing.avg_ms, 6),
             skipped ? "/" : format_fixed(row.timing.min_ms, 6),
-            skipped ? "/" : format_fixed(row.timing.median_ms, 6),
-            skipped ? "/" : format_fixed(row.timing.p90_ms, 6),
             skipped ? "/" : format_fixed(row.timing.max_ms, 6),
+            skipped ? "/" : format_fixed(row.timing.avg_ms, 6),
+            skipped ? "/" : format_fixed(row.timing.median_ms, 6),
             row.correct);
     }
     print_border();
@@ -1222,9 +1223,7 @@ void print_ntt_timing_table(
               << " per NTT mode\n";
     std::cout << "benchmark scope: preallocated GpuCiphertextData + GpuNTTHandler only\n";
     std::cout << "correct: raw residues and metadata compared with CPU NTT result\n";
-    std::cout << "algorithm: stage/fused2/fused3/fused4/fourstep/tensor/tensor_fp64 are selected by POSEIDON_NTT_ALGO\n";
-    std::cout << "skip controls: POSEIDON_DEMO_SKIP_TENSOR_NTT=1, POSEIDON_DEMO_SKIP_TENSOR_FP64_NTT=1\n";
-    std::cout << "phase rows: extra profiled pass; phase0..phase3 split FD=4 chunks and exclude outer copy/final INTT normalization\n";
+    std::cout << "comparison: fused3 versus shared-memory four-step NTT\n";
 }
 
 void append_sweep_row(
@@ -2029,7 +2028,6 @@ int run_nsys_relinearize_probe()
         throw std::invalid_argument(
             "POSEIDON_NSYS_ITERATIONS must be greater than zero");
     }
-
     auto current_case = prepare_nsys_multiply_relin_rescale_case(
         degree,
         q_count,
@@ -2044,9 +2042,6 @@ int run_nsys_relinearize_probe()
         cudaDeviceSynchronize(),
         "nsys relinearize input synchronize");
 
-    ScopedEnvironmentValue disable_paccum(
-        kKeySwitchPAccumAllDnumEnv,
-        "0");
     const auto warmup_variant = [&](
         const char *p_to_q_fuse_value,
         const char *batch_q_ntt_value)
@@ -2235,11 +2230,18 @@ int run_nsys_relinearize_probe()
         env_size_or("POSEIDON_NSYS_ITERATIONS", 1);
     const std::size_t warmup_iterations =
         env_size_or("POSEIDON_NSYS_WARMUP", 0);
+    const std::size_t paired_rounds =
+        env_size_or("POSEIDON_NSYS_ROUNDS", 20);
 
     if (timing_iterations == 0)
     {
         throw std::invalid_argument(
             "POSEIDON_NSYS_ITERATIONS must be greater than zero");
+    }
+    if (paired_rounds == 0)
+    {
+        throw std::invalid_argument(
+            "POSEIDON_NSYS_ROUNDS must be greater than zero");
     }
 
     auto current_case = prepare_nsys_multiply_relin_rescale_case(
@@ -2256,41 +2258,36 @@ int run_nsys_relinearize_probe()
         cudaDeviceSynchronize(),
         "nsys relinearize input synchronize");
 
-    ScopedEnvironmentValue disable_paccum(
-        kKeySwitchPAccumAllDnumEnv,
-        "0");
     ScopedEnvironmentValue select_decomp_variant(
         kKeySwitchFuseDecompQEnv,
         "1");
     ScopedEnvironmentValue select_modup_ntt_head(
         kKeySwitchFuseModupNttHeadEnv,
         "1");
+    ScopedEnvironmentValue select_ntt_algorithm(
+        kNttAlgorithmEnv,
+        "fused");
+    ScopedEnvironmentValue select_ntt_fusion_stages(
+        kNttFusionStagesEnv,
+        "3");
+    ScopedEnvironmentValue select_current_best_c2_fused3(
+        kKeySwitchFourstepC2InttEnv,
+        "0");
 
-    poseidon::Ciphertext current_output;
-    poseidon::Ciphertext row_tiled8_output;
-    poseidon::Ciphertext final_tail_output;
+    poseidon::Ciphertext current_best_output;
+    poseidon::Ciphertext fourstep_all_ntt_output;
     {
-        ScopedEnvironmentValue select_final_tail(
-            kKeySwitchPAccumFinalTailEnv,
+        ScopedEnvironmentValue select_fourstep_all_ntt(
+            kKeySwitchFourstepAllNttEnv,
             "0");
-        ScopedEnvironmentValue select_row_tiled(
-            kKeySwitchBconvRowTiledEnv,
+        ScopedEnvironmentValue select_fourstep_phase2_mac(
+            kKeySwitchFourstepPhase2MacEnv,
             "0");
-        ScopedEnvironmentValue select_row_tiled8(
-            kKeySwitchBconvRowTiled8Env,
+        ScopedEnvironmentValue select_fourstep_finalize_fused(
+            kKeySwitchFourstepFinalizeFusedEnv,
             "0");
-        current_case.run_relinearize_once();
-        gpu_check_cuda(
-            cudaDeviceSynchronize(),
-            "nsys relinearize current correctness synchronize");
-        poseidon::gpu::GpuUploader::download_ciphertext(
-            current_case.gpu_relinearize_result,
-            current_output,
-            *current_case.context);
-    }
-    {
-        ScopedEnvironmentValue select_final_tail(
-            kKeySwitchPAccumFinalTailEnv,
+        ScopedEnvironmentValue select_p_to_q_row_tiled8(
+            kKeySwitchPToQRowTiled8Env,
             "0");
         ScopedEnvironmentValue select_row_tiled(
             kKeySwitchBconvRowTiledEnv,
@@ -2304,13 +2301,22 @@ int run_nsys_relinearize_probe()
             "nsys relinearize row-tiled8 correctness synchronize");
         poseidon::gpu::GpuUploader::download_ciphertext(
             current_case.gpu_relinearize_result,
-            row_tiled8_output,
+            current_best_output,
             *current_case.context);
     }
     {
-        ScopedEnvironmentValue select_final_tail(
-            kKeySwitchPAccumFinalTailEnv,
+        ScopedEnvironmentValue select_fourstep_all_ntt(
+            kKeySwitchFourstepAllNttEnv,
             "1");
+        ScopedEnvironmentValue select_fourstep_phase2_mac(
+            kKeySwitchFourstepPhase2MacEnv,
+            "1");
+        ScopedEnvironmentValue select_fourstep_finalize_fused(
+            kKeySwitchFourstepFinalizeFusedEnv,
+            "1");
+        ScopedEnvironmentValue select_p_to_q_row_tiled8(
+            kKeySwitchPToQRowTiled8Env,
+            "0");
         ScopedEnvironmentValue select_row_tiled(
             kKeySwitchBconvRowTiledEnv,
             "0");
@@ -2320,50 +2326,62 @@ int run_nsys_relinearize_probe()
         current_case.run_relinearize_once();
         gpu_check_cuda(
             cudaDeviceSynchronize(),
-            "nsys relinearize final-tail correctness synchronize");
+            "nsys relinearize four-step all NTT correctness synchronize");
         poseidon::gpu::GpuUploader::download_ciphertext(
             current_case.gpu_relinearize_result,
-            final_tail_output,
+            fourstep_all_ntt_output,
             *current_case.context);
     }
-    if (!ciphertext_raw_equal(current_output, row_tiled8_output))
+    if (!ciphertext_raw_equal(current_best_output, fourstep_all_ntt_output))
     {
         throw std::runtime_error(
-            "row-tiled8 BConv relinearize result differs from original implementation");
+            "four-step all-NTT relinearize result differs from current best implementation");
     }
-    if (!ciphertext_raw_equal(current_output, final_tail_output))
+    const auto warmup_once = [&](const char *fourstep_all_ntt_value)
     {
-        throw std::runtime_error(
-            "all-dnum final-tail relinearize result differs from original implementation");
-    }
-    const auto warmup_variant = [&](const char *final_tail_value)
-    {
-        ScopedEnvironmentValue select_final_tail(
-            kKeySwitchPAccumFinalTailEnv,
-            final_tail_value);
+        ScopedEnvironmentValue select_fourstep_all_ntt(
+            kKeySwitchFourstepAllNttEnv,
+            fourstep_all_ntt_value);
+        ScopedEnvironmentValue select_fourstep_phase2_mac(
+            kKeySwitchFourstepPhase2MacEnv,
+            fourstep_all_ntt_value);
+        ScopedEnvironmentValue select_fourstep_finalize_fused(
+            kKeySwitchFourstepFinalizeFusedEnv,
+            fourstep_all_ntt_value);
+        ScopedEnvironmentValue select_p_to_q_row_tiled8(
+            kKeySwitchPToQRowTiled8Env,
+            "0");
         ScopedEnvironmentValue select_row_tiled(
             kKeySwitchBconvRowTiledEnv,
             "0");
         ScopedEnvironmentValue select_row_tiled8(
             kKeySwitchBconvRowTiled8Env,
             "1");
-        for (std::size_t i = 0; i < warmup_iterations; ++i)
-        {
-            current_case.run_relinearize_once();
-        }
-        gpu_check_cuda(
-            cudaDeviceSynchronize(),
-            "nsys relinearize variant warmup synchronize");
+        current_case.run_relinearize_once();
     };
-    warmup_variant("0");
-    warmup_variant("1");
+    for (std::size_t i = 0; i < warmup_iterations; ++i)
+    {
+        if ((i & 1U) == 0)
+        {
+            warmup_once("0");
+            warmup_once("1");
+        }
+        else
+        {
+            warmup_once("1");
+            warmup_once("0");
+        }
+    }
+    gpu_check_cuda(
+        cudaDeviceSynchronize(),
+        "nsys relinearize paired warmup synchronize");
 
-    const std::string row_tiled8_range_name =
-        "relinearize.bconv-row-tiled8 N=" + std::to_string(degree) +
+    const std::string current_best_range_name =
+        "relinearize.current-best N=" + std::to_string(degree) +
         " q=" + std::to_string(q_count) +
         " p=" + std::to_string(p_count);
-    const std::string final_tail_range_name =
-        "relinearize.all-dnum-final-tail N=" + std::to_string(degree) +
+    const std::string fourstep_all_ntt_range_name =
+        "relinearize.fourstep-phase2-mac-finalize-fused N=" + std::to_string(degree) +
         " q=" + std::to_string(q_count) +
         " p=" + std::to_string(p_count);
     std::cout << "\n[nsys relinearize probe]\n";
@@ -2371,127 +2389,351 @@ int run_nsys_relinearize_probe()
     std::cout << "q_count                = " << q_count << "\n";
     std::cout << "p_count                = " << p_count << "\n";
     std::cout << "warmup iterations      = " << warmup_iterations << "\n";
-    std::cout << "timing iterations      = " << timing_iterations << "\n";
+    std::cout << "batch iterations       = " << timing_iterations << "\n";
+    std::cout << "paired rounds          = " << paired_rounds << "\n";
+    std::cout << "timed ops per variant  = "
+              << paired_rounds * 2 * timing_iterations << "\n";
     std::cout << "included in capture    = GpuEvaluator::relinearize only\n";
     std::cout << "excluded from capture  = context/keygen/encode/encrypt/upload/input multiply/warmup/download\n";
     std::cout << "capture range          = cudaProfilerStart/Stop\n";
-    std::cout << "nvtx tiled8 range      = " << row_tiled8_range_name << "\n";
-    std::cout << "nvtx final-tail range  = " << final_tail_range_name << "\n";
-    std::cout << "active finalize path   = fused P->Q/NTT head + batched two-component Q NTT\n";
-    std::cout << "bconv-row-tiled-8      = default baseline; shared source tile across eight target-limb warps\n";
-    std::cout << "all-dnum-final-tail    = experimental; final fused3 NTT and two-component IP across all dnum\n";
-    std::cout << "measurement passes     = 2 (reported totals are pass averages)\n";
-    std::cout << "measurement order      = row8,final-tail,final-tail,row8\n";
+    std::cout << "nvtx current range     = " << current_best_range_name << "\n";
+    std::cout << "nvtx four-step range   = "
+              << fourstep_all_ntt_range_name << "\n";
+    std::cout << "current-best           = row-tiled8 keyswitch with fused3 c2 INTT\n";
+    std::cout << "fourstep-fused        = active QP phase2+MAC plus fused P->Q/two-component four-step finalize\n";
+    std::cout << "measurement order      = alternating ABBA / BAAB per round\n";
     std::cout << "raw residue comparison = equal\n";
-    std::cout << "inner nvtx ranges      = keyswitch.intt_switch_poly, keyswitch.dnum.*, keyswitch.finalize.*\n";
+    std::cout << "inner nvtx ranges      = keyswitch.intt_switch_poly.*, keyswitch.dnum.*, keyswitch.finalize.*\n";
 
     struct VariantTiming
     {
         double wall_total_ms = 0.0;
-        float event_total_ms = 0.0F;
+        double event_total_ms = 0.0;
     };
 
+    struct RoundTiming
+    {
+        const char *order = nullptr;
+        double current_wall_avg_ms = 0.0;
+        double fourstep_wall_avg_ms = 0.0;
+        double current_event_avg_ms = 0.0;
+        double fourstep_event_avg_ms = 0.0;
+        double delta_ms = 0.0;
+        double speedup = 0.0;
+    };
+
+    cudaEvent_t block_start = nullptr;
+    cudaEvent_t block_stop = nullptr;
+    gpu_check_cuda(
+        cudaEventCreate(&block_start),
+        "nsys cudaEventCreate paired block start");
+    gpu_check_cuda(
+        cudaEventCreate(&block_stop),
+        "nsys cudaEventCreate paired block stop");
+
     const auto measure_variant = [&](
-        const char *final_tail_value,
+        const char *fourstep_all_ntt_value,
         const std::string &range_name)
     {
-        ScopedEnvironmentValue select_final_tail(
-            kKeySwitchPAccumFinalTailEnv,
-            final_tail_value);
+        ScopedEnvironmentValue select_fourstep_all_ntt(
+            kKeySwitchFourstepAllNttEnv,
+            fourstep_all_ntt_value);
+        ScopedEnvironmentValue select_fourstep_phase2_mac(
+            kKeySwitchFourstepPhase2MacEnv,
+            fourstep_all_ntt_value);
+        ScopedEnvironmentValue select_fourstep_finalize_fused(
+            kKeySwitchFourstepFinalizeFusedEnv,
+            fourstep_all_ntt_value);
+        ScopedEnvironmentValue select_p_to_q_row_tiled8(
+            kKeySwitchPToQRowTiled8Env,
+            "0");
         ScopedEnvironmentValue select_row_tiled(
             kKeySwitchBconvRowTiledEnv,
             "0");
         ScopedEnvironmentValue select_row_tiled8(
             kKeySwitchBconvRowTiled8Env,
             "1");
-        cudaEvent_t start = nullptr;
-        cudaEvent_t stop = nullptr;
-        gpu_check_cuda(cudaEventCreate(&start), "nsys cudaEventCreate variant start");
-        gpu_check_cuda(cudaEventCreate(&stop), "nsys cudaEventCreate variant stop");
 
         nvtxRangePushA(range_name.c_str());
         const auto wall_begin = std::chrono::steady_clock::now();
-        gpu_check_cuda(cudaEventRecord(start), "nsys cudaEventRecord variant start");
+        gpu_check_cuda(
+            cudaEventRecord(block_start),
+            "nsys cudaEventRecord paired block start");
         for (std::size_t i = 0; i < timing_iterations; ++i)
         {
             current_case.run_relinearize_once();
         }
-        gpu_check_cuda(cudaEventRecord(stop), "nsys cudaEventRecord variant stop");
         gpu_check_cuda(
-            cudaEventSynchronize(stop),
-            "nsys cudaEventSynchronize variant stop");
+            cudaEventRecord(block_stop),
+            "nsys cudaEventRecord paired block stop");
+        gpu_check_cuda(
+            cudaEventSynchronize(block_stop),
+            "nsys cudaEventSynchronize paired block stop");
         const auto wall_end = std::chrono::steady_clock::now();
         nvtxRangePop();
 
         VariantTiming result;
         result.wall_total_ms =
             std::chrono::duration<double, std::milli>(wall_end - wall_begin).count();
+        float event_total_ms = 0.0F;
         gpu_check_cuda(
-            cudaEventElapsedTime(&result.event_total_ms, start, stop),
-            "nsys cudaEventElapsedTime variant");
-        gpu_check_cuda(cudaEventDestroy(start), "nsys cudaEventDestroy variant start");
-        gpu_check_cuda(cudaEventDestroy(stop), "nsys cudaEventDestroy variant stop");
+            cudaEventElapsedTime(
+                &event_total_ms,
+                block_start,
+                block_stop),
+            "nsys cudaEventElapsedTime paired block");
+        result.event_total_ms = static_cast<double>(event_total_ms);
         return result;
     };
+
+    const auto add_timing = [](
+        VariantTiming &destination,
+        const VariantTiming &source)
+    {
+        destination.wall_total_ms += source.wall_total_ms;
+        destination.event_total_ms += source.event_total_ms;
+    };
+
+    const auto make_range_name = [](
+        const std::string &base,
+        std::size_t round,
+        std::size_t pass)
+    {
+        return base + " round=" + std::to_string(round) +
+            " pass=" + std::to_string(pass);
+    };
+
+    std::vector<RoundTiming> round_timings;
+    round_timings.reserve(paired_rounds);
+    VariantTiming current_best_total;
+    VariantTiming fourstep_all_ntt_total;
 
     gpu_check_cuda(cudaProfilerStart(), "nsys cudaProfilerStart");
-    const VariantTiming row_tiled8_forward =
-        measure_variant("0", row_tiled8_range_name);
-    const VariantTiming final_tail_forward =
-        measure_variant("1", final_tail_range_name);
-    const VariantTiming final_tail_reverse =
-        measure_variant("1", final_tail_range_name);
-    const VariantTiming row_tiled8_reverse =
-        measure_variant("0", row_tiled8_range_name);
-    gpu_check_cuda(cudaProfilerStop(), "nsys cudaProfilerStop");
-
-    const auto average_timing = [](
-        const VariantTiming &first,
-        const VariantTiming &second)
+    for (std::size_t round = 0; round < paired_rounds; ++round)
     {
-        VariantTiming result;
-        result.wall_total_ms =
-            (first.wall_total_ms + second.wall_total_ms) * 0.5;
-        result.event_total_ms =
-            (first.event_total_ms + second.event_total_ms) * 0.5F;
-        return result;
-    };
-    const VariantTiming row_tiled8 =
-        average_timing(row_tiled8_forward, row_tiled8_reverse);
-    const VariantTiming final_tail =
-        average_timing(final_tail_forward, final_tail_reverse);
+        VariantTiming current_first;
+        VariantTiming current_second;
+        VariantTiming fourstep_first;
+        VariantTiming fourstep_second;
 
-    const double row_tiled8_wall_avg =
-        row_tiled8.wall_total_ms / timing_iterations;
-    const double row_tiled8_event_avg =
-        static_cast<double>(row_tiled8.event_total_ms) / timing_iterations;
-    const double final_tail_wall_avg =
-        final_tail.wall_total_ms / timing_iterations;
-    const double final_tail_event_avg =
-        static_cast<double>(final_tail.event_total_ms) / timing_iterations;
-    const double final_tail_delta_ms =
-        final_tail_event_avg - row_tiled8_event_avg;
-    const double final_tail_speedup = final_tail_event_avg == 0.0
+        if ((round & 1U) == 0)
+        {
+            current_first = measure_variant(
+                "0",
+                make_range_name(current_best_range_name, round, 0));
+            fourstep_first = measure_variant(
+                "1",
+                make_range_name(fourstep_all_ntt_range_name, round, 1));
+            fourstep_second = measure_variant(
+                "1",
+                make_range_name(fourstep_all_ntt_range_name, round, 2));
+            current_second = measure_variant(
+                "0",
+                make_range_name(current_best_range_name, round, 3));
+        }
+        else
+        {
+            fourstep_first = measure_variant(
+                "1",
+                make_range_name(fourstep_all_ntt_range_name, round, 0));
+            current_first = measure_variant(
+                "0",
+                make_range_name(current_best_range_name, round, 1));
+            current_second = measure_variant(
+                "0",
+                make_range_name(current_best_range_name, round, 2));
+            fourstep_second = measure_variant(
+                "1",
+                make_range_name(fourstep_all_ntt_range_name, round, 3));
+        }
+
+        add_timing(current_best_total, current_first);
+        add_timing(current_best_total, current_second);
+        add_timing(fourstep_all_ntt_total, fourstep_first);
+        add_timing(fourstep_all_ntt_total, fourstep_second);
+
+        const double round_operations =
+            2.0 * static_cast<double>(timing_iterations);
+        RoundTiming timing;
+        timing.order = (round & 1U) == 0 ? "ABBA" : "BAAB";
+        timing.current_wall_avg_ms =
+            (current_first.wall_total_ms + current_second.wall_total_ms) /
+            round_operations;
+        timing.fourstep_wall_avg_ms =
+            (fourstep_first.wall_total_ms +
+                fourstep_second.wall_total_ms) /
+            round_operations;
+        timing.current_event_avg_ms =
+            (current_first.event_total_ms + current_second.event_total_ms) /
+            round_operations;
+        timing.fourstep_event_avg_ms =
+            (fourstep_first.event_total_ms +
+                fourstep_second.event_total_ms) /
+            round_operations;
+        timing.delta_ms =
+            timing.fourstep_event_avg_ms - timing.current_event_avg_ms;
+        timing.speedup = timing.fourstep_event_avg_ms == 0.0
+            ? 0.0
+            : timing.current_event_avg_ms /
+                timing.fourstep_event_avg_ms;
+        round_timings.push_back(timing);
+    }
+    gpu_check_cuda(cudaProfilerStop(), "nsys cudaProfilerStop");
+    gpu_check_cuda(
+        cudaEventDestroy(block_start),
+        "nsys cudaEventDestroy paired block start");
+    gpu_check_cuda(
+        cudaEventDestroy(block_stop),
+        "nsys cudaEventDestroy paired block stop");
+
+    const double total_operations =
+        static_cast<double>(paired_rounds) * 2.0 *
+        static_cast<double>(timing_iterations);
+
+    const double current_best_wall_avg =
+        current_best_total.wall_total_ms / total_operations;
+    const double current_best_event_avg =
+        current_best_total.event_total_ms / total_operations;
+    const double fourstep_all_ntt_wall_avg =
+        fourstep_all_ntt_total.wall_total_ms / total_operations;
+    const double fourstep_all_ntt_event_avg =
+        fourstep_all_ntt_total.event_total_ms / total_operations;
+    const double fourstep_all_ntt_delta_ms =
+        fourstep_all_ntt_event_avg - current_best_event_avg;
+    const double fourstep_all_ntt_speedup =
+        fourstep_all_ntt_event_avg == 0.0
         ? 0.0
-        : row_tiled8_event_avg / final_tail_event_avg;
+        : current_best_event_avg / fourstep_all_ntt_event_avg;
+
+    std::vector<double> current_samples;
+    std::vector<double> fourstep_samples;
+    std::vector<double> deltas;
+    std::vector<double> speedups;
+    current_samples.reserve(round_timings.size());
+    fourstep_samples.reserve(round_timings.size());
+    deltas.reserve(round_timings.size());
+    speedups.reserve(round_timings.size());
+    std::size_t fourstep_all_ntt_win_count = 0;
+    for (const auto &timing : round_timings)
+    {
+        current_samples.push_back(timing.current_event_avg_ms);
+        fourstep_samples.push_back(timing.fourstep_event_avg_ms);
+        deltas.push_back(timing.delta_ms);
+        speedups.push_back(timing.speedup);
+        if (timing.delta_ms < 0.0)
+        {
+            ++fourstep_all_ntt_win_count;
+        }
+    }
+
+    const auto percentile = [](
+        std::vector<double> values,
+        double fraction)
+    {
+        if (values.empty())
+        {
+            return 0.0;
+        }
+        std::sort(values.begin(), values.end());
+        const double position =
+            fraction * static_cast<double>(values.size() - 1);
+        const std::size_t lower =
+            static_cast<std::size_t>(std::floor(position));
+        const std::size_t upper =
+            static_cast<std::size_t>(std::ceil(position));
+        const double weight = position - static_cast<double>(lower);
+        return values[lower] * (1.0 - weight) + values[upper] * weight;
+    };
+
+    const auto median_absolute_deviation = [&percentile](
+        const std::vector<double> &values,
+        double median)
+    {
+        std::vector<double> absolute_deviations;
+        absolute_deviations.reserve(values.size());
+        for (double value : values)
+        {
+            absolute_deviations.push_back(std::abs(value - median));
+        }
+        return percentile(absolute_deviations, 0.5);
+    };
+
+    const double median_current_ms = percentile(current_samples, 0.5);
+    const double median_fourstep_ms = percentile(fourstep_samples, 0.5);
+    const double median_delta_ms = percentile(deltas, 0.5);
+    const double median_speedup = percentile(speedups, 0.5);
+    const double p10_current_ms = percentile(current_samples, 0.1);
+    const double p10_fourstep_ms = percentile(fourstep_samples, 0.1);
+    const double p10_delta_ms = percentile(deltas, 0.1);
+    const double p90_current_ms = percentile(current_samples, 0.9);
+    const double p90_fourstep_ms = percentile(fourstep_samples, 0.9);
+    const double p90_delta_ms = percentile(deltas, 0.9);
+    const double mad_current_ms = median_absolute_deviation(
+        current_samples,
+        median_current_ms);
+    const double mad_fourstep_ms = median_absolute_deviation(
+        fourstep_samples,
+        median_fourstep_ms);
+    const double mad_delta_ms = median_absolute_deviation(
+        deltas,
+        median_delta_ms);
 
     std::cout << std::fixed << std::setprecision(6);
-    std::cout << "\n[relinearize BConv implementation comparison]\n";
-    std::cout << "variant             wall_total_ms    wall_avg_ms    event_total_ms    event_avg_ms\n";
-    std::cout << std::left << std::setw(20) << "bconv-row-tiled-8"
-              << std::right << std::setw(16) << row_tiled8.wall_total_ms
-              << std::setw(15) << row_tiled8_wall_avg
-              << std::setw(18) << row_tiled8.event_total_ms
-              << std::setw(16) << row_tiled8_event_avg << "\n";
-    std::cout << std::left << std::setw(20) << "all-dnum-final-tail"
-              << std::right << std::setw(16) << final_tail.wall_total_ms
-              << std::setw(15) << final_tail_wall_avg
-              << std::setw(18) << final_tail.event_total_ms
-              << std::setw(16) << final_tail_event_avg << "\n";
-    std::cout << "final-tail - row8 event avg ms    = "
-              << final_tail_delta_ms << "\n";
-    std::cout << "row8 / final-tail speedup         = "
-              << final_tail_speedup << "x\n";
+    std::cout << "\n[relinearize current-best vs four-step fused finalize]\n";
+    std::cout << "variant                    wall_total_ms    wall_avg_ms    event_total_ms    event_avg_ms\n";
+    std::cout << std::left << std::setw(27) << "current-best"
+              << std::right << std::setw(16) << current_best_total.wall_total_ms
+              << std::setw(15) << current_best_wall_avg
+              << std::setw(18) << current_best_total.event_total_ms
+              << std::setw(16) << current_best_event_avg << "\n";
+    std::cout << std::left << std::setw(27) << "fourstep-fused"
+              << std::right << std::setw(16)
+              << fourstep_all_ntt_total.wall_total_ms
+              << std::setw(15) << fourstep_all_ntt_wall_avg
+              << std::setw(18) << fourstep_all_ntt_total.event_total_ms
+              << std::setw(16) << fourstep_all_ntt_event_avg << "\n";
+    std::cout << "four-step - current event avg ms    = "
+              << fourstep_all_ntt_delta_ms << "\n";
+    std::cout << "current / four-step speedup         = "
+              << fourstep_all_ntt_speedup << "x\n";
+
+    std::cout << "\n[relinearize paired robust comparison]\n";
+    std::cout << "metric                 current-best   fourstep-fused      paired-delta\n";
+    const auto print_robust_row = [](
+        const char *metric,
+        double current,
+        double fourstep,
+        double delta)
+    {
+        std::cout << std::left << std::setw(22) << metric
+                  << std::right << std::setw(14) << current
+                  << std::setw(19) << fourstep
+                  << std::setw(15) << delta << "\n";
+    };
+    print_robust_row(
+        "median event ms",
+        median_current_ms,
+        median_fourstep_ms,
+        median_delta_ms);
+    print_robust_row(
+        "p10 event ms",
+        p10_current_ms,
+        p10_fourstep_ms,
+        p10_delta_ms);
+    print_robust_row(
+        "p90 event ms",
+        p90_current_ms,
+        p90_fourstep_ms,
+        p90_delta_ms);
+    print_robust_row(
+        "MAD event ms",
+        mad_current_ms,
+        mad_fourstep_ms,
+        mad_delta_ms);
+    std::cout << "median speedup                   = "
+              << median_speedup << "x\n";
+    std::cout << "four-step win count              = "
+              << fourstep_all_ntt_win_count << " / " << paired_rounds << "\n";
 
     return EXIT_SUCCESS;
 }
@@ -3202,20 +3444,7 @@ int run_demo()
         gpu_params.get_level(gpu_ntt_fwd_source.meta.parms_id);
 
     std::vector<NttTimingRow> ntt_timing_rows;
-    const bool tensor_ntt_requested =
-        !env_flag_enabled(kDemoSkipTensorNttEnv);
-    const bool tensor_fp64_ntt_requested =
-        !env_flag_enabled(kDemoSkipTensorFp64NttEnv);
-    const bool tensor_ntt_supported =
-        tensor_ntt_requested &&
-        poseidon::gpu::supports_tensor_core_integer_gemm(device_id);
-    const bool tensor_fp64_ntt_supported =
-        tensor_fp64_ntt_requested &&
-        poseidon::gpu::supports_tensor_core_fp64_gemm(device_id);
-    constexpr std::size_t regular_ntt_row_count = 10;
-    constexpr std::size_t tensor_ntt_row_count = 4;
-    const std::size_t ntt_progress_total =
-        regular_ntt_row_count + tensor_ntt_row_count;
+    constexpr std::size_t ntt_progress_total = 4;
     std::size_t ntt_progress_current = 0;
     auto benchmark_ntt_mode =
         [&](const std::string &operation,
@@ -3288,7 +3517,7 @@ int run_demo()
         }
     };
 
-    auto append_skipped_ntt_mode =
+    [[maybe_unused]] auto append_skipped_ntt_mode =
         [&](const std::string &operation, const std::string &mode)
     {
         ++ntt_progress_current;
@@ -3305,7 +3534,7 @@ int run_demo()
                 "/"});
     };
 
-    const int ntt_fusion_modes[] = {1, 2, 3, 4};
+    const int ntt_fusion_modes[] = {3};
     for (int fusion_stages : ntt_fusion_modes)
     {
         const std::string fusion_text = std::to_string(fusion_stages);
@@ -3330,7 +3559,7 @@ int run_demo()
     }
     benchmark_ntt_mode(
         "ntt_inv",
-        "fourstep",
+        "fourstep-shared",
         "fourstep",
         "1",
         cpu_ntt_inv_result,
@@ -3367,7 +3596,7 @@ int run_demo()
     }
     benchmark_ntt_mode(
         "ntt_fwd",
-        "fourstep",
+        "fourstep-shared",
         "fourstep",
         "1",
         cpu_ntt_fwd_result,
@@ -3380,6 +3609,7 @@ int run_demo()
                 ntt_fwd_level_info);
         });
 
+#if 0
     const auto tam_cache_dir = env_string_or(
         kNttFusedMatrixCacheDirEnv,
         kDefaultNttFusedMatrixCacheDir);
@@ -3519,6 +3749,7 @@ int run_demo()
         append_skipped_ntt_mode("ntt_inv", "tensor_fp64");
         append_skipped_ntt_mode("ntt_fwd", "tensor_fp64");
     }
+#endif
 
     print_ntt_timing_table(
         ntt_timing_rows,

@@ -55,17 +55,11 @@ void launch_hybrid_modup_decomposition_forward_ntt_first_stage_row_tiled8(
     const GpuParameterShard &parameter_shard,
     std::size_t degree);
 
-void launch_hybrid_forward_ntt_qp(
+void launch_hybrid_modup_decomposition_row_tiled8(
     GpuWord *modup_q,
     GpuWord *modup_p,
-    std::size_t decomp_limb_begin,
-    std::size_t decomp_limb_count,
-    const GpuParameterShard &parameter_shard,
-    std::size_t degree);
-
-void launch_hybrid_forward_ntt_qp_prepare_final_tail(
-    GpuWord *modup_q,
-    GpuWord *modup_p,
+    const GpuWord *c2_coeff,
+    std::size_t decomp_index,
     std::size_t decomp_limb_begin,
     std::size_t decomp_limb_count,
     const GpuParameterShard &parameter_shard,
@@ -88,34 +82,6 @@ void launch_hybrid_forward_ntt_qp_mul_accumulate_two_components(
     bool overwrite_accum,
     bool fuse_decomp_q,
     bool skip_first_ntt_stage);
-
-void launch_hybrid_paccum_all_dnum_two_components(
-    GpuWord *accum_q0,
-    GpuWord *accum_p0,
-    GpuWord *accum_q1,
-    GpuWord *accum_p1,
-    const GpuWord *all_modup_q,
-    const GpuWord *all_modup_p,
-    const GpuWord *c2_ntt,
-    const GpuWord *const *key_qp0_by_dnum,
-    const GpuWord *const *key_qp1_by_dnum,
-    std::size_t decomp_count,
-    const GpuParameterShard &parameter_shard,
-    std::size_t degree);
-
-void launch_hybrid_final_ntt_paccum_all_dnum_two_components(
-    GpuWord *accum_q0,
-    GpuWord *accum_p0,
-    GpuWord *accum_q1,
-    GpuWord *accum_p1,
-    const GpuWord *all_modup_q,
-    const GpuWord *all_modup_p,
-    const GpuWord *c2_ntt,
-    const GpuWord *const *key_qp0_by_dnum,
-    const GpuWord *const *key_qp1_by_dnum,
-    std::size_t decomp_count,
-    const GpuParameterShard &parameter_shard,
-    std::size_t degree);
 
 void launch_hybrid_multiply_accumulate(
     GpuWord *accum_q,
@@ -157,6 +123,14 @@ void launch_hybrid_convert_p_to_q(
     std::size_t degree);
 
 void launch_hybrid_convert_p_to_q_forward_ntt(
+    GpuWord *converted_q0,
+    GpuWord *converted_q1,
+    const GpuWord *accum_p0,
+    const GpuWord *accum_p1,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+void launch_hybrid_convert_p_to_q_forward_ntt_row_tiled8(
     GpuWord *converted_q0,
     GpuWord *converted_q1,
     const GpuWord *accum_p0,
