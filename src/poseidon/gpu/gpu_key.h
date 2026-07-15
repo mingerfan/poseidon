@@ -5,6 +5,8 @@
 #include "poseidon/gpu/gpu_rns_poly.h"
 
 #include <cstddef>
+#include <map>
+#include <memory>
 #include <vector>
 
 namespace poseidon
@@ -87,10 +89,28 @@ public:
      */
     std::vector<GpuEvaluationKeyPolyMeta> poly_metadata_;
 
+    /**
+     * @brief Optional setup-time compacted key copies indexed by active Q limb count.
+     *
+     * HYBRID key-switching needs a physical [Q_current | P] key layout.  CPU
+     * keys are uploaded at the full key level, so bootstrapping rotations at
+     * lower levels should precompute these compact views once during setup
+     * instead of repacking keys inside every timed rotate call.
+     */
+    std::map<std::size_t, std::shared_ptr<GpuEvaluationKeyData>> compacted_by_q_count_;
+
 public:
     GpuEvaluationKeyData() = default;
 
     bool empty() const;
+
+    bool has_compacted_key(std::size_t q_count) const;
+
+    void store_compacted_key(
+        std::size_t q_count,
+        GpuEvaluationKeyData compacted_key);
+
+    const GpuEvaluationKeyData &key_for_q_count(std::size_t q_count) const;
 
     /**
      * @brief Create mutable view of evaluation key data.

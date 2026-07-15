@@ -72,6 +72,18 @@ public:
         const GpuLevelInfo &level_info) const;
 
     /**
+     * @brief destination_ciphertext = source_ciphertext * scalar mod q.
+     *
+     * CKKS bootstrap scale matching uses this for integer constant
+     * multiplication without constructing a full plaintext.
+     */
+    void multiply_scalar_ciphertext(
+        GpuCiphertextView &destination_view,
+        const GpuConstCiphertextView &source_view,
+        GpuWord scalar,
+        const GpuLevelInfo &level_info) const;
+
+    /**
      * @brief destination_ciphertext = source_ciphertext + source_plaintext.
      *
      * CKKS rule:

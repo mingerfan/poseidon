@@ -1,5 +1,6 @@
 #include "poseidon/gpu/gpu_uploader.h"
 
+#include "poseidon/advance/homomorphic_linear_transform.h"
 #include "poseidon/ciphertext.h"
 #include "poseidon/key/galoiskeys.h"
 #include "poseidon/key/relinkeys.h"
@@ -349,6 +350,144 @@ GpuEvaluationKeyData upload_kswitch_keys(
     return dst;
 }
 
+GpuEvaluationKeyData compact_evaluation_key_to_q_count(
+    const GpuEvaluationKeyData &src,
+    std::size_t q_count)
+{
+    if (src.empty())
+    {
+        throw std::invalid_argument("cannot compact an empty evaluation key");
+    }
+    if (q_count == 0 || q_count > src.meta.q_count)
+    {
+        throw std::invalid_argument("invalid compacted evaluation-key q_count");
+    }
+
+    GpuEvaluationKeyData dst;
+    dst.meta = src.meta;
+    dst.meta.q_count = q_count;
+
+    const std::size_t compact_limb_count = q_count + src.meta.p_count;
+    const std::size_t compact_word_count = checked_mul(
+        compact_limb_count,
+        src.meta.degree,
+        "compacted evaluation-key word count overflow");
+    const std::size_t q_word_count = checked_mul(
+        q_count,
+        src.meta.degree,
+        "compacted evaluation-key Q word count overflow");
+    const std::size_t p_word_count = checked_mul(
+        src.meta.p_count,
+        src.meta.degree,
+        "compacted evaluation-key P word count overflow");
+    const std::size_t source_p_offset = checked_mul(
+        src.meta.q_count,
+        src.meta.degree,
+        "compacted evaluation-key source P offset overflow");
+
+    if (src.poly_metadata_.size() != src.polys_.size())
+    {
+        throw std::invalid_argument(
+            "evaluation-key metadata/poly count mismatch during compaction");
+    }
+
+    dst.fields_.reserve(src.polys_.size());
+    dst.polys_.reserve(src.polys_.size());
+    dst.poly_metadata_.reserve(src.poly_metadata_.size());
+
+    for (std::size_t poly_index = 0; poly_index < src.polys_.size(); ++poly_index)
+    {
+        const auto &source_poly = src.polys_[poly_index];
+        if (source_poly.degree != src.meta.degree ||
+            source_poly.q_count != src.meta.q_count ||
+            source_poly.p_count != src.meta.p_count ||
+            source_poly.shards.size() != 1)
+        {
+            throw std::invalid_argument(
+                "unexpected evaluation-key poly shape during compaction");
+        }
+
+        const auto &source_shard = source_poly.shards.front();
+        if (source_shard.field_index >= src.fields_.size())
+        {
+            throw std::out_of_range(
+                "evaluation-key shard field_index is out of range during compaction");
+        }
+        if (source_shard.limb_begin != 0 ||
+            source_shard.limb_count != src.meta.q_count + src.meta.p_count ||
+            source_shard.coeff_begin != 0 ||
+            source_shard.coeff_count != src.meta.degree)
+        {
+            throw std::invalid_argument(
+                "evaluation-key shard is not a full [Q|P] shard during compaction");
+        }
+
+        const auto &source_field = src.fields_[source_shard.field_index];
+        const auto source_field_end =
+            source_shard.field_offset + checked_mul(
+                source_shard.limb_count,
+                source_shard.coeff_count,
+                "evaluation-key source shard size overflow during compaction");
+        if (source_field_end > source_field.size())
+        {
+            throw std::out_of_range(
+                "evaluation-key source shard exceeds field during compaction");
+        }
+
+        GpuFieldData compact_field(source_field.device_id, compact_word_count);
+        gpu_check_cuda(
+            cudaSetDevice(source_field.device_id),
+            "compact evaluation key cudaSetDevice");
+
+        const auto *source_ptr = source_field.data() + source_shard.field_offset;
+        if (q_word_count != 0)
+        {
+            gpu_check_cuda(
+                cudaMemcpy(
+                    compact_field.data(),
+                    source_ptr,
+                    q_word_count * sizeof(GpuWord),
+                    cudaMemcpyDeviceToDevice),
+                "compact evaluation key copy Q");
+        }
+        if (p_word_count != 0)
+        {
+            gpu_check_cuda(
+                cudaMemcpy(
+                    compact_field.data() + q_word_count,
+                    source_ptr + source_p_offset,
+                    p_word_count * sizeof(GpuWord),
+                    cudaMemcpyDeviceToDevice),
+                "compact evaluation key copy P");
+        }
+
+        const std::size_t compact_field_index = dst.fields_.size();
+        dst.fields_.push_back(std::move(compact_field));
+
+        GpuRNSPoly compact_poly;
+        compact_poly.poly_id = dst.polys_.size();
+        compact_poly.degree = src.meta.degree;
+        compact_poly.q_count = q_count;
+        compact_poly.p_count = src.meta.p_count;
+
+        GpuPolyShard compact_shard;
+        compact_shard.field_index = compact_field_index;
+        compact_shard.field_offset = 0;
+        compact_shard.limb_begin = 0;
+        compact_shard.limb_count = compact_limb_count;
+        compact_shard.coeff_begin = 0;
+        compact_shard.coeff_count = src.meta.degree;
+        compact_poly.shards.push_back(compact_shard);
+
+        auto compact_meta = src.poly_metadata_[poly_index];
+        compact_meta.poly_id = compact_poly.poly_id;
+        dst.poly_metadata_.push_back(compact_meta);
+        dst.polys_.push_back(std::move(compact_poly));
+    }
+
+    return dst;
+}
+
 }  // namespace
 
 GpuCiphertextData GpuUploader::upload_ciphertext(
@@ -557,6 +696,44 @@ void GpuUploader::download_plaintext(
     copy_device_field_to_uint64(src.fields_[0], dst.data(), word_count);
 }
 
+GpuMatrixPlain GpuUploader::upload_matrix_plain(
+    const MatrixPlain &src,
+    int device_id)
+{
+    GpuMatrixPlain dst;
+    dst.log_slots = src.log_slots;
+    dst.n1 = src.n1;
+    dst.level = src.level;
+    dst.scale = src.scale;
+    dst.rot_index = src.rot_index;
+
+    for (const auto &entry : src.plain_vec)
+    {
+        dst.plain_vec.emplace(
+            entry.first,
+            upload_plaintext(entry.second, device_id));
+    }
+
+    return dst;
+}
+
+GpuLinearMatrixGroup GpuUploader::upload_linear_matrix_group(
+    const LinearMatrixGroup &src,
+    int device_id)
+{
+    GpuLinearMatrixGroup dst;
+    dst.rot_index() = src.rot_index();
+    dst.set_step(src.step());
+    dst.data().reserve(src.data().size());
+
+    for (const auto &matrix : src.data())
+    {
+        dst.data().push_back(upload_matrix_plain(matrix, device_id));
+    }
+
+    return dst;
+}
+
 GpuRelinKeysData GpuUploader::upload_relin_keys(
     const RelinKeys &src,
     int device_id)
@@ -569,6 +746,38 @@ GpuGaloisKeysData GpuUploader::upload_galois_keys(
     int device_id)
 {
     return upload_kswitch_keys(src, device_id);
+}
+
+void GpuUploader::precompute_compacted_keys_for_q_counts(
+    GpuEvaluationKeyData &keys,
+    const std::vector<std::size_t> &q_counts)
+{
+    if (keys.empty())
+    {
+        throw std::invalid_argument(
+            "GpuUploader::precompute_compacted_keys_for_q_counts: empty keys");
+    }
+
+    for (const auto q_count : q_counts)
+    {
+        if (q_count == keys.meta.q_count)
+        {
+            continue;
+        }
+        if (q_count == 0 || q_count > keys.meta.q_count)
+        {
+            throw std::invalid_argument(
+                "GpuUploader::precompute_compacted_keys_for_q_counts: invalid q_count");
+        }
+        if (keys.has_compacted_key(q_count))
+        {
+            continue;
+        }
+
+        keys.store_compacted_key(
+            q_count,
+            compact_evaluation_key_to_q_count(keys, q_count));
+    }
 }
 
 }  // namespace gpu

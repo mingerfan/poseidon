@@ -73,6 +73,36 @@ bool GpuEvaluationKeyData::empty() const
     return polys_.empty();
 }
 
+bool GpuEvaluationKeyData::has_compacted_key(std::size_t q_count) const
+{
+    return compacted_by_q_count_.find(q_count) != compacted_by_q_count_.end();
+}
+
+void GpuEvaluationKeyData::store_compacted_key(
+    std::size_t q_count,
+    GpuEvaluationKeyData compacted_key)
+{
+    compacted_by_q_count_[q_count] =
+        std::make_shared<GpuEvaluationKeyData>(std::move(compacted_key));
+}
+
+const GpuEvaluationKeyData &GpuEvaluationKeyData::key_for_q_count(
+    std::size_t q_count) const
+{
+    if (q_count == meta.q_count)
+    {
+        return *this;
+    }
+
+    const auto iter = compacted_by_q_count_.find(q_count);
+    if (iter == compacted_by_q_count_.end() || iter->second == nullptr)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluationKeyData::key_for_q_count: compacted key for current q_count was not precomputed");
+    }
+    return *iter->second;
+}
+
 GpuEvaluationKeyView GpuEvaluationKeyData::make_view()
 {
     GpuEvaluationKeyView result;

@@ -105,6 +105,24 @@ struct GpuParameterShard
     DeviceVector<GpuWord> hybrid_p_inv_punctured;
 
     /**
+     * @brief CKKS bootstrap ModRaise base-conversion constants.
+     *
+     * These tables convert the current q-only level Q_l into the missing
+     * suffix limbs of the first q-only level Q_L. The input level's existing
+     * q limbs are copied verbatim; these constants are used only for target
+     * limbs [bootstrap_raise_source_q_count, bootstrap_raise_target_q_count).
+     *
+     * - bootstrap_raise_inv_punctured[j] is the input base weight
+     *   prod(Q_l / q_j)^(-1) mod q_j;
+     * - bootstrap_raise_matrix is flattened as
+     *   [target_suffix_limb][source_q_limb].
+     */
+    std::size_t bootstrap_raise_source_q_count = 0;
+    std::size_t bootstrap_raise_target_q_count = 0;
+    DeviceVector<GpuWord> bootstrap_raise_inv_punctured;
+    DeviceVector<GpuWord> bootstrap_raise_matrix;
+
+    /**
      * @brief NTT tables for q/p RNS limbs.
      *
      * Root tables are stored as [limb][degree] operands copied from Poseidon's
@@ -219,6 +237,25 @@ public:
      * the context level after dropping the current last q modulus.
      */
     const GpuLevelInfo &get_next_level(const parms_id_type &parms_id) const;
+
+    /**
+     * @brief Query one q-only modulus-chain level by q limb count.
+     *
+     * This is useful for bootstrap scale-down, where the CPU path targets
+     * q0_level and q0_level + 1 by logical q-count rather than by stepping one
+     * level at a time.
+     */
+    const GpuLevelInfo &get_level_by_q_count(
+        std::size_t q_count,
+        std::size_t p_count = 0) const;
+
+    /**
+     * @brief Query the first q-only modulus-chain level.
+     *
+     * This is the full Q level used as the output level for CKKS bootstrap
+     * ModRaise.
+     */
+    const GpuLevelInfo &get_first_q_level() const;
 
     bool empty() const;
 

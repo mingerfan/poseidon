@@ -1,20 +1,14 @@
 cmake_minimum_required(VERSION 3.26.4)
 
-project(PoseidonGpuDataStructTests LANGUAGES CXX C)
+project(PoseidonGpuBootstrappingTests LANGUAGES CXX C)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 enable_testing()
 
-option(POSEIDON_GPU_DATA_STRUCT_ENABLE_GPU_TESTS
-    "Build GPU data-structure tests that require CUDA and RMM"
+option(POSEIDON_GPU_BOOTSTRAPPING_ENABLE_GPU_TESTS
+    "Build GPU bootstrapping tests that require CUDA and RMM"
     ON)
-option(POSEIDON_GPU_DATA_STRUCT_BUILD_CPU_TEST
-    "Build the auxiliary CPU ciphertext-generation test"
-    OFF)
-option(POSEIDON_GPU_DATA_STRUCT_BUILD_GPU_STORAGE_TEST
-    "Build the auxiliary GPU data-structure generation test"
-    OFF)
 
 set(POSEIDON_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../../.." CACHE PATH
     "Path to the Poseidon source tree")
@@ -26,38 +20,22 @@ set(POSEIDON_USE_ZLIB OFF CACHE BOOL "" FORCE)
 set(POSEIDON_USE_ZSTD OFF CACHE BOOL "" FORCE)
 set(POSEIDON_USE_MSGSL OFF CACHE BOOL "" FORCE)
 set(FETCHCONTENT_FULLY_DISCONNECTED ON CACHE BOOL
-    "Disable all FetchContent downloads for the offline GPU demo" FORCE)
+    "Disable all FetchContent downloads for the offline GPU bootstrap test" FORCE)
 set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE BOOL
-    "Disable FetchContent update checks for the offline GPU demo" FORCE)
+    "Disable FetchContent update checks for the offline GPU bootstrap test" FORCE)
 set(CPM_LOCAL_PACKAGES_ONLY ON CACHE BOOL
     "Require CPM dependencies to be available locally" FORCE)
 set(CPM_DOWNLOAD_ALL OFF CACHE BOOL "" FORCE)
 
 add_subdirectory("${POSEIDON_ROOT}" "${CMAKE_BINARY_DIR}/poseidon_build")
 
-if(POSEIDON_GPU_DATA_STRUCT_BUILD_CPU_TEST)
-    add_executable(test_cpu_ciphertext_generation
-        test_cpu_ciphertext_generation.cpp
-    )
-
-    target_link_libraries(test_cpu_ciphertext_generation
-        PRIVATE
-            poseidon_shared
-    )
-
-    add_test(
-        NAME test_cpu_ciphertext_generation
-        COMMAND test_cpu_ciphertext_generation
-    )
-endif()
-
-if(POSEIDON_GPU_DATA_STRUCT_ENABLE_GPU_TESTS)
+if(POSEIDON_GPU_BOOTSTRAPPING_ENABLE_GPU_TESTS)
     enable_language(CUDA)
     set(CMAKE_CUDA_STANDARD 17)
     set(CMAKE_CUDA_STANDARD_REQUIRED ON)
     if(NOT CMAKE_CUDA_ARCHITECTURES)
         set(CMAKE_CUDA_ARCHITECTURES 75 CACHE STRING
-            "CUDA architectures for GPU data-structure tests" FORCE)
+            "CUDA architectures for GPU bootstrapping tests" FORCE)
     endif()
 
     find_package(CUDAToolkit REQUIRED)
@@ -99,7 +77,7 @@ if(POSEIDON_GPU_DATA_STRUCT_ENABLE_GPU_TESTS)
         "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_uploader.cpp"
     )
 
-    set(POSEIDON_GPU_ELEMENTWISE_SOURCES
+    set(POSEIDON_GPU_OPERATOR_SOURCES
         "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_evaluator.cpp"
         "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_elementwise_handler.cpp"
         "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_keyswitch_handler.cpp"
@@ -112,43 +90,29 @@ if(POSEIDON_GPU_DATA_STRUCT_ENABLE_GPU_TESTS)
         "${POSEIDON_ROOT}/src/poseidon/gpu/kernels/gpu_rescale_kernels.cu"
     )
 
-    if(POSEIDON_GPU_DATA_STRUCT_BUILD_GPU_STORAGE_TEST)
-        add_executable(test_gpu_data_struct_generation
-            test_gpu_data_struct_generation.cpp
-            ${POSEIDON_GPU_DATA_STRUCT_SOURCES}
-        )
-
-        target_link_libraries(test_gpu_data_struct_generation
-            PRIVATE
-                poseidon_shared
-                CUDA::cudart
-                rmm::rmm
-        )
-
-        add_test(
-            NAME test_gpu_data_struct_generation
-            COMMAND test_gpu_data_struct_generation
-        )
-        set_tests_properties(test_gpu_data_struct_generation
-            PROPERTIES SKIP_RETURN_CODE 77)
-    endif()
-
-    add_executable(demo_gpu_ciphertext_add_handler
-        demo_gpu_ciphertext_add_handler.cpp
+    add_executable(test_gpu_bootstrap_modraise
+        test_gpu_bootstrap_modraise.cpp
         ${POSEIDON_GPU_DATA_STRUCT_SOURCES}
-        ${POSEIDON_GPU_ELEMENTWISE_SOURCES}
+        ${POSEIDON_GPU_OPERATOR_SOURCES}
     )
 
-    target_link_libraries(demo_gpu_ciphertext_add_handler
+    target_link_libraries(test_gpu_bootstrap_modraise
         PRIVATE
             poseidon_shared
             CUDA::cudart
             rmm::rmm
     )
-    target_compile_options(demo_gpu_ciphertext_add_handler
+    target_compile_options(test_gpu_bootstrap_modraise
         PRIVATE
             $<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>
     )
-    set_target_properties(demo_gpu_ciphertext_add_handler PROPERTIES
+    set_target_properties(test_gpu_bootstrap_modraise PROPERTIES
         CUDA_ARCHITECTURES 75)
+
+    add_test(
+        NAME test_gpu_bootstrap_modraise
+        COMMAND test_gpu_bootstrap_modraise
+    )
+    set_tests_properties(test_gpu_bootstrap_modraise
+        PROPERTIES SKIP_RETURN_CODE 77)
 endif()

@@ -3,6 +3,10 @@
 #include "poseidon/gpu/gpu_ciphertext.h"
 #include "poseidon/gpu/gpu_plaintext.h"
 #include "poseidon/gpu/gpu_key.h"
+#include "poseidon/gpu/gpu_linear_transform.h"
+
+#include <cstddef>
+#include <vector>
 
 namespace poseidon
 {
@@ -12,6 +16,8 @@ class Plaintext;
 class PoseidonContext;
 class RelinKeys;
 class GaloisKeys;
+class MatrixPlain;
+class LinearMatrixGroup;
 
 namespace gpu
 {
@@ -83,6 +89,23 @@ public:
         const PoseidonContext &context);
 
     /**
+     * @brief Upload one CPU pre-generated diagonal matrix.
+     *
+     * This copies MatrixPlain::plain_vec plaintext diagonals to GPU. Matrix
+     * generation and CPU encoding are intentionally outside the GPU timed path.
+     */
+    static GpuMatrixPlain upload_matrix_plain(
+        const MatrixPlain &src,
+        int device_id);
+
+    /**
+     * @brief Upload one CPU pre-generated linear-matrix group.
+     */
+    static GpuLinearMatrixGroup upload_linear_matrix_group(
+        const LinearMatrixGroup &src,
+        int device_id);
+
+    /**
      * @brief Upload CPU relinearization keys to GPU.
      *
      * - Preserve key-switching key layout;
@@ -101,6 +124,18 @@ public:
     static GpuGaloisKeysData upload_galois_keys(
         const GaloisKeys &src,
         int device_id);
+
+    /**
+     * @brief Precompute setup-time [Q_current | P] compact key copies.
+     *
+     * This is intended for bootstrapping-style rotation workloads where the
+     * same Galois keys are reused at several post-rescale Q levels.  The
+     * compaction cost and device-to-device copies are setup work and should be
+     * excluded from timed evaluator calls.
+     */
+    static void precompute_compacted_keys_for_q_counts(
+        GpuEvaluationKeyData &keys,
+        const std::vector<std::size_t> &q_counts);
 };
 
 }  // namespace gpu

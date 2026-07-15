@@ -297,6 +297,74 @@ void GpuElementwiseHandler::negate_ciphertext(
     }
 }
 
+void GpuElementwiseHandler::multiply_scalar_ciphertext(
+    GpuCiphertextView &destination_view,
+    const GpuConstCiphertextView &source_view,
+    GpuWord scalar,
+    const GpuLevelInfo &level_info) const
+{
+    if (!(source_view.meta.parms_id == destination_view.meta.parms_id) ||
+        !(source_view.meta.parms_id == level_info.parms_id))
+    {
+        throw std::invalid_argument("multiply_scalar_ciphertext: parms_id mismatch");
+    }
+    if (source_view.meta.is_ntt_form != destination_view.meta.is_ntt_form)
+    {
+        throw std::invalid_argument("multiply_scalar_ciphertext: NTT form mismatch");
+    }
+    if (source_view.meta.degree != destination_view.meta.degree ||
+        source_view.meta.degree != level_info.degree ||
+        source_view.meta.q_count != destination_view.meta.q_count ||
+        source_view.meta.q_count != level_info.q_count ||
+        source_view.meta.p_count != destination_view.meta.p_count ||
+        source_view.meta.p_count != level_info.p_count)
+    {
+        throw std::invalid_argument("multiply_scalar_ciphertext: shape mismatch");
+    }
+    if (destination_view.polys.size() != source_view.polys.size())
+    {
+        throw std::invalid_argument("multiply_scalar_ciphertext: component count mismatch");
+    }
+
+    for (std::size_t i = 0; i < source_view.polys.size(); ++i)
+    {
+        const auto &dst_poly = destination_view.polys[i];
+        const auto &src_poly = source_view.polys[i];
+        if (dst_poly.shards.size() != src_poly.shards.size())
+        {
+            throw std::invalid_argument("multiply_scalar_ciphertext: shard count mismatch");
+        }
+
+        for (std::size_t shard_index = 0; shard_index < dst_poly.shards.size(); ++shard_index)
+        {
+            const auto &dst = dst_poly.shards[shard_index];
+            const auto &src = src_poly.shards[shard_index];
+            if (dst.device_id != src.device_id ||
+                dst.limb_begin != src.limb_begin ||
+                dst.limb_count != src.limb_count ||
+                dst.coeff_begin != src.coeff_begin ||
+                dst.coeff_count != src.coeff_count)
+            {
+                throw std::invalid_argument("multiply_scalar_ciphertext: shard placement mismatch");
+            }
+
+            const GpuParameterShard *parameter_shard =
+                find_parameter_shard(level_info, dst);
+            if (parameter_shard == nullptr)
+            {
+                throw std::invalid_argument("multiply_scalar_ciphertext: no matching parameter shard");
+            }
+
+            kernel::launch_multiply_scalar_poly_shard(
+                dst,
+                src,
+                scalar,
+                *parameter_shard,
+                level_info.degree);
+        }
+    }
+}
+
 void GpuElementwiseHandler::add_plain_to_ciphertext(
     GpuCiphertextView &destination_view,
     const GpuConstCiphertextView &ciphertext_view,

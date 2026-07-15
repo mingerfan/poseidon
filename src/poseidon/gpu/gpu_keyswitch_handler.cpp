@@ -1169,7 +1169,7 @@ void GpuKeySwitchHandler::switch_key_hybrid_ciphertext(
     if (switch_keys_view.meta.q_count != base_q_size)
     {
         throw std::invalid_argument(
-            "GpuKeySwitchHandler::switch_key_hybrid_ciphertext: current implementation requires key q_count to match ciphertext q_count");
+            "GpuKeySwitchHandler::switch_key_hybrid_ciphertext: key q_count must match ciphertext q_count; precompute compacted keys during setup");
     }
     if (base_p_size == 0)
     {

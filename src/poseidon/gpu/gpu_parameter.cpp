@@ -1,6 +1,7 @@
 #include "poseidon/gpu/gpu_parameter.h"
 
 #include "poseidon/basics/util/ntt.h"
+#include "poseidon/basics/util/rns.h"
 #include "poseidon/poseidon_context.h"
 #include "poseidon/util/rns_tool_qp.h"
 
@@ -37,6 +38,40 @@ constexpr const char *kFusedMatrixFp64TablesEnv =
     "POSEIDON_NTT_FUSED_MATRIX_FP64_TABLES";
 constexpr const char *kFusedMatrixMaxLevelsEnv =
     "POSEIDON_NTT_FUSED_MATRIX_MAX_LEVELS";
+
+std::string format_parms_id_for_error(const parms_id_type &parms_id)
+{
+    std::ostringstream stream;
+    stream << std::hex << std::setfill('0');
+    for (std::size_t i = 0; i < parms_id.size(); ++i)
+    {
+        if (i != 0)
+        {
+            stream << ':';
+        }
+        stream << std::setw(16) << parms_id[i];
+    }
+    return stream.str();
+}
+
+std::string format_known_levels_for_error(
+    const std::vector<GpuLevelInfo> &levels)
+{
+    std::ostringstream stream;
+    for (std::size_t i = 0; i < levels.size(); ++i)
+    {
+        const auto &level = levels[i];
+        if (i != 0)
+        {
+            stream << "; ";
+        }
+        stream << "idx=" << i
+               << ",q=" << level.q_count
+               << ",p=" << level.p_count
+               << ",parms_id=" << format_parms_id_for_error(level.parms_id);
+    }
+    return stream.str();
+}
 constexpr std::uint64_t kFusedMatrixCacheMagic = 0x314d41544e445350ULL;
 constexpr std::uint32_t kFusedMatrixCacheVersion = 1;
 
@@ -1722,6 +1757,64 @@ void copy_hybrid_key_switch_tables(
     }
 }
 
+void copy_bootstrap_raise_tables(
+    const std::vector<Modulus> &source_q,
+    const std::vector<Modulus> &target_q,
+    GpuParameterShard &shard,
+    int device_id)
+{
+    const std::size_t source_q_count = source_q.size();
+    const std::size_t target_q_count = target_q.size();
+    if (source_q_count == 0 ||
+        target_q_count == 0 ||
+        source_q_count > target_q_count)
+    {
+        return;
+    }
+    if (source_q_count > std::numeric_limits<GpuWord>::max() ||
+        target_q_count > std::numeric_limits<GpuWord>::max())
+    {
+        throw std::invalid_argument(
+            "GpuParameterData bootstrap ModRaise table shape does not fit GpuWord");
+    }
+
+    shard.bootstrap_raise_source_q_count = source_q_count;
+    shard.bootstrap_raise_target_q_count = target_q_count;
+
+    if (source_q_count == target_q_count)
+    {
+        return;
+    }
+
+    std::vector<Modulus> raise_q;
+    raise_q.insert(
+        raise_q.end(),
+        target_q.begin() + source_q_count,
+        target_q.end());
+
+    auto pool = MemoryManager::GetPool();
+    util::RNSBase source_base(source_q, pool);
+    util::RNSBase raise_base(raise_q, pool);
+    util::BaseConverter converter(source_base, raise_base, pool);
+
+    auto inv_punctured = copy_mod_operand_array(
+        source_base.inv_punctured_prod_mod_base_array(),
+        source_base.size(),
+        "GpuParameterData bootstrap ModRaise inv punctured constant does not fit GpuWord");
+
+    std::vector<GpuWord> matrix;
+    append_base_converter_matrix_padded(
+        converter,
+        source_q_count,
+        matrix,
+        "GpuParameterData bootstrap ModRaise conversion constant does not fit GpuWord");
+
+    shard.bootstrap_raise_inv_punctured =
+        copy_to_device_vector(inv_punctured, device_id);
+    shard.bootstrap_raise_matrix =
+        copy_to_device_vector(matrix, device_id);
+}
+
 }  // namespace
 
 GpuParameterData::GpuParameterData(const PoseidonContext &context, int device_id)
@@ -1740,6 +1833,12 @@ void GpuParameterData::build_from_poseidon_context(
     {
         throw std::invalid_argument("GpuParameterData requires a valid PoseidonContext");
     }
+    auto first_context_data = crt_context->first_context_data();
+    if (!first_context_data)
+    {
+        throw std::invalid_argument("GpuParameterData requires a first q-only context level");
+    }
+    const auto &first_q = first_context_data->parms().q();
     const auto *small_ntt_tables = crt_context->small_ntt_tables();
     const std::size_t p_ntt_table_offset =
         context.parameters_literal()->q().size();
@@ -2136,6 +2235,10 @@ void GpuParameterData::build_from_poseidon_context(
                 device_id);
 
         copy_hybrid_key_switch_tables(rns_qp, shard, device_id);
+        if (level.p_count == 0)
+        {
+            copy_bootstrap_raise_tables(q, first_q, shard, device_id);
+        }
 
         level.shards.push_back(std::move(shard));
         levels_.push_back(std::move(level));
@@ -2155,7 +2258,10 @@ const GpuLevelInfo &GpuParameterData::get_level(const parms_id_type &parms_id) c
         }
     }
 
-    throw std::out_of_range("GpuParameterData level not found for parms_id");
+    throw std::out_of_range(
+        "GpuParameterData level not found for parms_id=" +
+        format_parms_id_for_error(parms_id) +
+        "; known levels: " + format_known_levels_for_error(levels_));
 }
 
 const GpuLevelInfo &GpuParameterData::get_next_level(const parms_id_type &parms_id) const
@@ -2172,7 +2278,46 @@ const GpuLevelInfo &GpuParameterData::get_next_level(const parms_id_type &parms_
         }
     }
 
-    throw std::out_of_range("GpuParameterData level not found for parms_id");
+    throw std::out_of_range(
+        "GpuParameterData level not found for parms_id=" +
+        format_parms_id_for_error(parms_id) +
+        "; known levels: " + format_known_levels_for_error(levels_));
+}
+
+const GpuLevelInfo &GpuParameterData::get_level_by_q_count(
+    std::size_t q_count,
+    std::size_t p_count) const
+{
+    for (const auto &level : levels_)
+    {
+        if (level.q_count == q_count && level.p_count == p_count)
+        {
+            return level;
+        }
+    }
+
+    throw std::out_of_range("GpuParameterData level not found for q_count");
+}
+
+const GpuLevelInfo &GpuParameterData::get_first_q_level() const
+{
+    const GpuLevelInfo *best = nullptr;
+    for (const auto &level : levels_)
+    {
+        if (level.p_count != 0)
+        {
+            continue;
+        }
+        if (best == nullptr || level.q_count > best->q_count)
+        {
+            best = &level;
+        }
+    }
+    if (best == nullptr)
+    {
+        throw std::out_of_range("GpuParameterData first q-only level not found");
+    }
+    return *best;
 }
 
 bool GpuParameterData::empty() const

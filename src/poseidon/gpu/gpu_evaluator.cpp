@@ -1,11 +1,14 @@
 #include "poseidon/gpu/gpu_evaluator.h"
 #include "poseidon/gpu/kernels/gpu_keyswitch_kernels.h"
 
+#include "poseidon/advance/homomorphic_linear_transform.h"
+
 #include <stdexcept>
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
 #include <limits>
+#include <map>
 #include <string>
 #include <utility>
 
@@ -1076,17 +1079,336 @@ void GpuEvaluator::drop_modulus(
     GpuCiphertextData &destination_ciphertext,
     parms_id_type target_parms_id) const
 {
-    // TODO:
-    // 1. Check target parms_id.
-    // 2. Prepare destination metadata and storage.
-    // 3. Query source and destination level info.
-    // 4. Call modswitch_handler_.drop_modulus_ciphertext(...).
+    if (source_ciphertext.empty())
+    {
+        throw std::invalid_argument("GpuEvaluator::drop_modulus: empty ciphertext");
+    }
+    if (source_ciphertext.fields_.empty())
+    {
+        throw std::invalid_argument("GpuEvaluator::drop_modulus: empty ciphertext storage");
+    }
+    if (source_ciphertext.meta.p_count != 0)
+    {
+        throw std::invalid_argument("GpuEvaluator::drop_modulus: p limbs are not supported yet");
+    }
+    if (source_ciphertext.meta.component_count != source_ciphertext.size())
+    {
+        throw std::invalid_argument("GpuEvaluator::drop_modulus: component metadata mismatch");
+    }
+    const auto &reference_layout = source_ciphertext.polys_.at(0);
+    if (!all_components_use_layout(source_ciphertext, reference_layout))
+    {
+        throw std::invalid_argument("GpuEvaluator::drop_modulus: shard layout mismatch");
+    }
+    if (reference_layout.shards.size() != 1 ||
+        reference_layout.shards.front().limb_begin != 0 ||
+        reference_layout.shards.front().limb_count != source_ciphertext.meta.q_count ||
+        reference_layout.shards.front().coeff_begin != 0 ||
+        reference_layout.shards.front().coeff_count != source_ciphertext.meta.degree)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::drop_modulus: first implementation requires one full q shard");
+    }
 
-    (void)source_ciphertext;
-    (void)destination_ciphertext;
-    (void)target_parms_id;
+    const auto &source_level_info =
+        params_.get_level(source_ciphertext.meta.parms_id);
+    const auto &destination_level_info =
+        params_.get_level(target_parms_id);
 
-    throw std::runtime_error("GpuEvaluator::drop_modulus is not implemented yet");
+    if (source_level_info.q_count != source_ciphertext.meta.q_count ||
+        destination_level_info.p_count != 0 ||
+        destination_level_info.q_count == 0 ||
+        destination_level_info.q_count > source_level_info.q_count)
+    {
+        throw std::invalid_argument("GpuEvaluator::drop_modulus: level q_count mismatch");
+    }
+    if (destination_level_info.degree != source_ciphertext.meta.degree)
+    {
+        throw std::invalid_argument("GpuEvaluator::drop_modulus: degree mismatch");
+    }
+
+    const int device_id = source_ciphertext.fields_.at(0).device_id;
+    GpuPolyShard destination_shard;
+    destination_shard.field_index = 0;
+    destination_shard.field_offset = 0;
+    destination_shard.limb_begin = 0;
+    destination_shard.limb_count = destination_level_info.q_count;
+    destination_shard.coeff_begin = 0;
+    destination_shard.coeff_count = source_ciphertext.meta.degree;
+
+    GpuCiphertextData result =
+        GpuCiphertextData::allocate_single_device_sharded(
+            source_ciphertext.meta.degree,
+            destination_level_info.q_count,
+            source_ciphertext.size(),
+            device_id,
+            std::vector<GpuPolyShard>{ destination_shard },
+            0);
+
+    result.meta = source_ciphertext.meta;
+    result.meta.parms_id = destination_level_info.parms_id;
+    result.meta.q_count = destination_level_info.q_count;
+    result.meta.p_count = 0;
+    result.meta.component_count = source_ciphertext.size();
+
+    auto source_view = source_ciphertext.make_const_view();
+    auto destination_view = result.make_view();
+    modswitch_handler_.drop_modulus_ciphertext(
+        destination_view,
+        source_view,
+        source_level_info,
+        destination_level_info);
+
+    destination_ciphertext = std::move(result);
+}
+
+void GpuEvaluator::multiply_scalar(
+    const GpuCiphertextData &source_ciphertext,
+    std::uint64_t scalar,
+    GpuCiphertextData &destination_ciphertext) const
+{
+    if (source_ciphertext.empty())
+    {
+        throw std::invalid_argument("GpuEvaluator::multiply_scalar: empty ciphertext");
+    }
+    if (source_ciphertext.fields_.empty())
+    {
+        throw std::invalid_argument("GpuEvaluator::multiply_scalar: empty ciphertext storage");
+    }
+    if (source_ciphertext.meta.p_count != 0)
+    {
+        throw std::invalid_argument("GpuEvaluator::multiply_scalar: p limbs are not supported yet");
+    }
+    if (scalar > std::numeric_limits<GpuWord>::max())
+    {
+        throw std::invalid_argument("GpuEvaluator::multiply_scalar: scalar exceeds GPU word size");
+    }
+    if (source_ciphertext.meta.component_count != source_ciphertext.size())
+    {
+        throw std::invalid_argument("GpuEvaluator::multiply_scalar: component metadata mismatch");
+    }
+
+    const auto &reference_layout = source_ciphertext.polys_.at(0);
+    if (!all_components_use_layout(source_ciphertext, reference_layout))
+    {
+        throw std::invalid_argument("GpuEvaluator::multiply_scalar: shard layout mismatch");
+    }
+
+    const int device_id = source_ciphertext.fields_.at(0).device_id;
+    const auto &level_info = params_.get_level(source_ciphertext.meta.parms_id);
+    if (level_info.q_count != source_ciphertext.meta.q_count ||
+        level_info.p_count != source_ciphertext.meta.p_count)
+    {
+        throw std::invalid_argument("GpuEvaluator::multiply_scalar: level shape mismatch");
+    }
+
+    GpuCiphertextMeta result_meta = source_ciphertext.meta;
+    prepare_ciphertext_destination(
+        destination_ciphertext,
+        &source_ciphertext,
+        nullptr,
+        result_meta,
+        source_ciphertext.size(),
+        device_id,
+        reference_layout);
+
+    auto source_view = source_ciphertext.make_const_view();
+    auto destination_view = destination_ciphertext.make_view();
+    elementwise_handler_.multiply_scalar_ciphertext(
+        destination_view,
+        source_view,
+        static_cast<GpuWord>(scalar),
+        level_info);
+}
+
+void GpuEvaluator::raise_modulus(
+    const GpuCiphertextData &source_ciphertext,
+    GpuCiphertextData &destination_ciphertext) const
+{
+    if (source_ciphertext.empty())
+    {
+        throw std::invalid_argument("GpuEvaluator::raise_modulus: empty ciphertext");
+    }
+    if (source_ciphertext.fields_.empty())
+    {
+        throw std::invalid_argument("GpuEvaluator::raise_modulus: empty ciphertext storage");
+    }
+    if (source_ciphertext.meta.p_count != 0)
+    {
+        throw std::invalid_argument("GpuEvaluator::raise_modulus: p limbs are not supported yet");
+    }
+    if (source_ciphertext.meta.component_count != source_ciphertext.size())
+    {
+        throw std::invalid_argument("GpuEvaluator::raise_modulus: component metadata mismatch");
+    }
+
+    const auto &source_level_info =
+        params_.get_level(source_ciphertext.meta.parms_id);
+    const auto &destination_level_info = params_.get_first_q_level();
+    if (source_level_info.p_count != 0 ||
+        destination_level_info.p_count != 0 ||
+        source_level_info.degree != source_ciphertext.meta.degree ||
+        source_level_info.q_count != source_ciphertext.meta.q_count ||
+        destination_level_info.degree != source_ciphertext.meta.degree ||
+        source_level_info.q_count > destination_level_info.q_count)
+    {
+        throw std::invalid_argument("GpuEvaluator::raise_modulus: level shape mismatch");
+    }
+
+    const auto &source_layout = source_ciphertext.polys_.at(0);
+    if (!all_components_use_layout(source_ciphertext, source_layout) ||
+        source_layout.shards.size() != 1 ||
+        source_layout.shards.front().limb_begin != 0 ||
+        source_layout.shards.front().limb_count != source_ciphertext.meta.q_count ||
+        source_layout.shards.front().coeff_begin != 0 ||
+        source_layout.shards.front().coeff_count != source_ciphertext.meta.degree)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::raise_modulus: first implementation requires one full q-prefix shard");
+    }
+
+    GpuCiphertextData coeff_source_storage;
+    const GpuCiphertextData *coeff_source = &source_ciphertext;
+    if (source_ciphertext.meta.is_ntt_form)
+    {
+        ntt_inv(source_ciphertext, coeff_source_storage);
+        coeff_source = &coeff_source_storage;
+    }
+
+    const int device_id = coeff_source->fields_.at(0).device_id;
+    GpuPolyShard destination_shard;
+    destination_shard.field_index = 0;
+    destination_shard.field_offset = 0;
+    destination_shard.limb_begin = 0;
+    destination_shard.limb_count = destination_level_info.q_count;
+    destination_shard.coeff_begin = 0;
+    destination_shard.coeff_count = coeff_source->meta.degree;
+
+    GpuCiphertextData coeff_raised =
+        GpuCiphertextData::allocate_single_device_sharded(
+            coeff_source->meta.degree,
+            destination_level_info.q_count,
+            coeff_source->size(),
+            device_id,
+            std::vector<GpuPolyShard>{ destination_shard },
+            0);
+
+    coeff_raised.meta = coeff_source->meta;
+    coeff_raised.meta.parms_id = destination_level_info.parms_id;
+    coeff_raised.meta.q_count = destination_level_info.q_count;
+    coeff_raised.meta.p_count = 0;
+    coeff_raised.meta.component_count = coeff_source->size();
+    coeff_raised.meta.is_ntt_form = false;
+
+    auto source_view = coeff_source->make_const_view();
+    auto destination_view = coeff_raised.make_view();
+    modswitch_handler_.raise_modulus_ciphertext(
+        destination_view,
+        source_view,
+        source_level_info,
+        destination_level_info);
+
+    ntt_fwd(coeff_raised, destination_ciphertext);
+}
+
+void GpuEvaluator::bootstrap_prepare_modraise_input(
+    const GpuCiphertextData &source_ciphertext,
+    GpuCiphertextData &destination_ciphertext,
+    parms_id_type q0_parms_id,
+    double q0_over_message_ratio) const
+{
+    validate_ntt_ciphertext_input(
+        "GpuEvaluator::bootstrap_prepare_modraise_input",
+        source_ciphertext,
+        true);
+    if (source_ciphertext.meta.p_count != 0)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::bootstrap_prepare_modraise_input: p limbs are not supported");
+    }
+    if (!(q0_over_message_ratio > 0.0) || !std::isfinite(q0_over_message_ratio))
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::bootstrap_prepare_modraise_input: invalid target scale");
+    }
+
+    const auto &q0_level_info = params_.get_level(q0_parms_id);
+    if (q0_level_info.p_count != 0 ||
+        q0_level_info.degree != source_ciphertext.meta.degree)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::bootstrap_prepare_modraise_input: invalid q0 level");
+    }
+
+    const GpuCiphertextData *current = &source_ciphertext;
+    GpuCiphertextData scratch0;
+    GpuCiphertextData scratch1;
+
+    auto next_scratch = [&]() -> GpuCiphertextData &
+    {
+        return (current == &scratch0) ? scratch1 : scratch0;
+    };
+
+    while (current->meta.scale > std::pow(2.0, 54.0))
+    {
+        const auto &level_info = params_.get_level(current->meta.parms_id);
+        if (level_info.shards.empty() || level_info.shards.front().q_last == 0)
+        {
+            throw std::invalid_argument(
+                "GpuEvaluator::bootstrap_prepare_modraise_input: missing q_last parameter");
+        }
+        const double q_last = static_cast<double>(level_info.shards.front().q_last);
+        if (current->meta.scale / q_last <= 1.6e+07)
+        {
+            throw std::invalid_argument(
+                "GpuEvaluator::bootstrap_prepare_modraise_input: scale cannot be safely rescaled for bootstrap");
+        }
+
+        GpuCiphertextData &next = next_scratch();
+        rescale(*current, next);
+        current = &next;
+    }
+
+    if (current->meta.q_count < q0_level_info.q_count)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::bootstrap_prepare_modraise_input: source is below q0 level");
+    }
+
+    const std::size_t q0_plus_one_count = q0_level_info.q_count + 1;
+    if (current->meta.q_count > q0_plus_one_count)
+    {
+        const auto &q0_plus_one_level =
+            params_.get_level_by_q_count(q0_plus_one_count, 0);
+        GpuCiphertextData &next = next_scratch();
+        drop_modulus(*current, next, q0_plus_one_level.parms_id);
+        current = &next;
+    }
+
+    const double scale_multiplier_double =
+        std::round(q0_over_message_ratio / current->meta.scale);
+    if (!std::isfinite(scale_multiplier_double))
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::bootstrap_prepare_modraise_input: invalid scale multiplier");
+    }
+    if (scale_multiplier_double > 1.0)
+    {
+        if (scale_multiplier_double >
+            static_cast<double>(std::numeric_limits<GpuWord>::max()))
+        {
+            throw std::invalid_argument(
+                "GpuEvaluator::bootstrap_prepare_modraise_input: scale multiplier exceeds GPU word size");
+        }
+        const auto scale_multiplier =
+            static_cast<std::uint64_t>(scale_multiplier_double);
+        GpuCiphertextData &next = next_scratch();
+        multiply_scalar(*current, scale_multiplier, next);
+        next.meta.scale = current->meta.scale * scale_multiplier_double;
+        current = &next;
+    }
+
+    drop_modulus(*current, destination_ciphertext, q0_level_info.parms_id);
 }
 
 /* GpuEvaluator::multiply(...) -> 输出 3 component: d0, d1, d2 */
@@ -1267,13 +1589,15 @@ void GpuEvaluator::rotate(
     /* c1 先清零，后续 switch-key 会把 rotated_c1 * galois_key 累加进去。 */
     zero_poly(destination_view.polys[1], "GpuEvaluator::rotate zero c1");
 
+    const auto &galois_keys_for_level =
+        galois_keys.key_for_q_count(source_ciphertext.meta.q_count);
     auto rotated_c1_const_view = rotated_c1.make_const_view();
-    auto galois_keys_view = galois_keys.make_const_view();
+    auto galois_keys_view = galois_keys_for_level.make_const_view();
     keyswitch_handler_.switch_key_hybrid_ciphertext(
         destination_view,
         rotated_c1_const_view.polys[0],
         galois_keys_view,
-        galois_keys,
+        galois_keys_for_level,
         key_index,
         level_info);
 
@@ -1359,17 +1683,219 @@ void GpuEvaluator::conjugate(
 
     zero_poly(destination_view.polys[1], "GpuEvaluator::conjugate zero c1");
 
+    const auto &galois_keys_for_level =
+        galois_keys.key_for_q_count(source_ciphertext.meta.q_count);
     auto conjugated_c1_const_view = conjugated_c1.make_const_view();
-    auto galois_keys_view = galois_keys.make_const_view();
+    auto galois_keys_view = galois_keys_for_level.make_const_view();
     keyswitch_handler_.switch_key_hybrid_ciphertext(
         destination_view,
         conjugated_c1_const_view.polys[0],
         galois_keys_view,
-        galois_keys,
+        galois_keys_for_level,
         key_index,
         level_info);
 
     destination_ciphertext = std::move(result);
+}
+
+void GpuEvaluator::multiply_by_diag_matrix_bsgs(
+    const GpuCiphertextData &source_ciphertext,
+    const GpuMatrixPlain &matrix,
+    const GpuGaloisKeysData &galois_keys,
+    GpuCiphertextData &destination_ciphertext) const
+{
+    validate_ntt_ciphertext_input(
+        "GpuEvaluator::multiply_by_diag_matrix_bsgs",
+        source_ciphertext,
+        true);
+    if (source_ciphertext.size() != 2)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::multiply_by_diag_matrix_bsgs: first implementation expects a size-2 ciphertext");
+    }
+    if (matrix.plain_vec.empty())
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::multiply_by_diag_matrix_bsgs: empty diagonal matrix");
+    }
+    if (matrix.n1 == 0)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::multiply_by_diag_matrix_bsgs: invalid BSGS n1");
+    }
+
+    const auto [index, unused_rot_n1, rot_n2] =
+        poseidon::bsgs_index(
+            matrix.plain_vec,
+            1 << matrix.log_slots,
+            static_cast<int>(matrix.n1));
+    (void)unused_rot_n1;
+
+    std::map<int, GpuCiphertextData> baby_rotations;
+    for (const int step : rot_n2)
+    {
+        if (step == 0)
+        {
+            continue;
+        }
+
+        GpuCiphertextData rotated;
+        rotate(source_ciphertext, step, galois_keys, rotated);
+        baby_rotations.emplace(step, std::move(rotated));
+    }
+
+    GpuCiphertextData result_accumulator;
+    GpuCiphertextData inner_sum;
+    GpuCiphertextData product;
+    GpuCiphertextData rotated_inner_sum;
+    bool have_result = false;
+
+    for (const auto &giant_entry : index)
+    {
+        const int giant_step = giant_entry.first;
+        bool have_inner_sum = false;
+
+        for (const int baby_step : giant_entry.second)
+        {
+            const int diagonal_index = giant_step + baby_step;
+            const auto plaintext_it = matrix.plain_vec.find(diagonal_index);
+            if (plaintext_it == matrix.plain_vec.end())
+            {
+                throw std::invalid_argument(
+                    "GpuEvaluator::multiply_by_diag_matrix_bsgs: missing plaintext diagonal");
+            }
+
+            const GpuCiphertextData &rotated_source =
+                baby_step == 0 ? source_ciphertext : baby_rotations.at(baby_step);
+
+            multiply_plain(rotated_source, plaintext_it->second, product);
+
+            if (!have_inner_sum)
+            {
+                inner_sum = std::move(product);
+                have_inner_sum = true;
+            }
+            else
+            {
+                GpuCiphertextData updated_inner_sum;
+                add(inner_sum, product, updated_inner_sum);
+                inner_sum = std::move(updated_inner_sum);
+            }
+        }
+
+        if (!have_inner_sum)
+        {
+            continue;
+        }
+
+        if (!have_result)
+        {
+            if (giant_step == 0)
+            {
+                result_accumulator = std::move(inner_sum);
+            }
+            else
+            {
+                rotate(inner_sum, giant_step, galois_keys, rotated_inner_sum);
+                result_accumulator = std::move(rotated_inner_sum);
+            }
+            have_result = true;
+        }
+        else
+        {
+            if (giant_step == 0)
+            {
+                GpuCiphertextData updated_accumulator;
+                add(result_accumulator, inner_sum, updated_accumulator);
+                result_accumulator = std::move(updated_accumulator);
+            }
+            else
+            {
+                rotate(inner_sum, giant_step, galois_keys, rotated_inner_sum);
+                GpuCiphertextData updated_accumulator;
+                add(result_accumulator, rotated_inner_sum, updated_accumulator);
+                result_accumulator = std::move(updated_accumulator);
+            }
+        }
+    }
+
+    if (!have_result)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::multiply_by_diag_matrix_bsgs: no nonzero diagonal contribution");
+    }
+
+    rescale(result_accumulator, destination_ciphertext);
+}
+
+void GpuEvaluator::dft(
+    const GpuCiphertextData &source_ciphertext,
+    const GpuLinearMatrixGroup &matrix_group,
+    const GpuGaloisKeysData &galois_keys,
+    GpuCiphertextData &destination_ciphertext) const
+{
+    if (matrix_group.data().empty())
+    {
+        throw std::invalid_argument("GpuEvaluator::dft: empty matrix group");
+    }
+
+    GpuCiphertextData current;
+    multiply_by_diag_matrix_bsgs(
+        source_ciphertext,
+        matrix_group.data().front(),
+        galois_keys,
+        current);
+
+    for (std::size_t i = 1; i < matrix_group.data().size(); ++i)
+    {
+        GpuCiphertextData next;
+        multiply_by_diag_matrix_bsgs(
+            current,
+            matrix_group.data()[i],
+            galois_keys,
+            next);
+        current = std::move(next);
+    }
+
+    destination_ciphertext = std::move(current);
+}
+
+void GpuEvaluator::coeff_to_slot(
+    const GpuCiphertextData &source_ciphertext,
+    const GpuLinearMatrixGroup &matrix_group,
+    const GpuPlaintextData &minus_i_plaintext,
+    const GpuGaloisKeysData &galois_keys,
+    GpuCiphertextData &result_real,
+    GpuCiphertextData &result_imag) const
+{
+    GpuCiphertextData dft_result;
+    dft(source_ciphertext, matrix_group, galois_keys, dft_result);
+
+    GpuCiphertextData conjugated;
+    conjugate(dft_result, galois_keys, conjugated);
+
+    add(dft_result, conjugated, result_real);
+
+    GpuCiphertextData imag_difference;
+    sub(dft_result, conjugated, imag_difference);
+    multiply_plain(imag_difference, minus_i_plaintext, result_imag);
+}
+
+void GpuEvaluator::slot_to_coeff(
+    const GpuCiphertextData &source_real,
+    const GpuCiphertextData &source_imag,
+    const GpuLinearMatrixGroup &matrix_group,
+    const GpuPlaintextData &plus_i_plaintext,
+    const GpuGaloisKeysData &galois_keys,
+    GpuCiphertextData &result) const
+{
+    GpuCiphertextData scaled_imag;
+    multiply_plain(source_imag, plus_i_plaintext, scaled_imag);
+
+    GpuCiphertextData merged_slots;
+    add(scaled_imag, source_real, merged_slots);
+
+    dft(merged_slots, matrix_group, galois_keys, result);
 }
 
 }  // namespace gpu

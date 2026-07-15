@@ -1,5 +1,6 @@
 #include "poseidon/gpu/gpu_modswitch_handler.h"
 
+#include "poseidon/gpu/kernels/gpu_elementwise_kernels.h"
 #include "poseidon/gpu/kernels/gpu_ntt_kernels.h"
 #include "poseidon/gpu/kernels/gpu_rescale_kernels.h"
 
@@ -38,9 +39,10 @@ private:
     std::string name_;
 };
 
+template <typename ShardView>
 const GpuParameterShard *find_parameter_shard(
     const GpuLevelInfo &level_info,
-    const GpuPolyShardView &shard)
+    const ShardView &shard)
 {
     for (const auto &candidate : level_info.shards)
     {
@@ -96,6 +98,83 @@ void validate_rescale_ciphertext_shape(
         destination_view.polys.size() != destination_view.meta.component_count)
     {
         throw std::invalid_argument("GpuModSwitchHandler::rescale_ciphertext: component count mismatch");
+    }
+}
+
+void validate_drop_modulus_ciphertext_shape(
+    const GpuCiphertextView &destination_view,
+    const GpuConstCiphertextView &source_view,
+    const GpuLevelInfo &source_level_info,
+    const GpuLevelInfo &destination_level_info)
+{
+    if (!(source_view.meta.parms_id == source_level_info.parms_id) ||
+        !(destination_view.meta.parms_id == destination_level_info.parms_id))
+    {
+        throw std::invalid_argument("GpuModSwitchHandler::drop_modulus_ciphertext: parms_id mismatch");
+    }
+    if (source_view.meta.p_count != 0 || destination_view.meta.p_count != 0)
+    {
+        throw std::invalid_argument("GpuModSwitchHandler::drop_modulus_ciphertext: p limbs are not supported yet");
+    }
+    if (source_view.meta.degree != destination_view.meta.degree ||
+        source_view.meta.degree != source_level_info.degree ||
+        destination_view.meta.degree != destination_level_info.degree)
+    {
+        throw std::invalid_argument("GpuModSwitchHandler::drop_modulus_ciphertext: degree mismatch");
+    }
+    if (source_level_info.q_count != source_view.meta.q_count ||
+        destination_level_info.q_count != destination_view.meta.q_count ||
+        destination_view.meta.q_count == 0 ||
+        destination_view.meta.q_count > source_view.meta.q_count)
+    {
+        throw std::invalid_argument("GpuModSwitchHandler::drop_modulus_ciphertext: q_count mismatch");
+    }
+    if (source_view.polys.size() != destination_view.polys.size() ||
+        source_view.polys.size() != source_view.meta.component_count ||
+        destination_view.polys.size() != destination_view.meta.component_count)
+    {
+        throw std::invalid_argument("GpuModSwitchHandler::drop_modulus_ciphertext: component count mismatch");
+    }
+}
+
+void validate_raise_modulus_ciphertext_shape(
+    const GpuCiphertextView &destination_view,
+    const GpuConstCiphertextView &source_view,
+    const GpuLevelInfo &source_level_info,
+    const GpuLevelInfo &destination_level_info)
+{
+    if (!(source_view.meta.parms_id == source_level_info.parms_id) ||
+        !(destination_view.meta.parms_id == destination_level_info.parms_id))
+    {
+        throw std::invalid_argument("GpuModSwitchHandler::raise_modulus_ciphertext: parms_id mismatch");
+    }
+    if (source_view.meta.is_ntt_form || destination_view.meta.is_ntt_form)
+    {
+        throw std::invalid_argument(
+            "GpuModSwitchHandler::raise_modulus_ciphertext: coefficient-domain input/output required");
+    }
+    if (source_view.meta.p_count != 0 || destination_view.meta.p_count != 0)
+    {
+        throw std::invalid_argument("GpuModSwitchHandler::raise_modulus_ciphertext: p limbs are not supported yet");
+    }
+    if (source_view.meta.degree != destination_view.meta.degree ||
+        source_view.meta.degree != source_level_info.degree ||
+        destination_view.meta.degree != destination_level_info.degree)
+    {
+        throw std::invalid_argument("GpuModSwitchHandler::raise_modulus_ciphertext: degree mismatch");
+    }
+    if (source_level_info.q_count != source_view.meta.q_count ||
+        destination_level_info.q_count != destination_view.meta.q_count ||
+        source_view.meta.q_count == 0 ||
+        destination_view.meta.q_count < source_view.meta.q_count)
+    {
+        throw std::invalid_argument("GpuModSwitchHandler::raise_modulus_ciphertext: q_count mismatch");
+    }
+    if (source_view.polys.size() != destination_view.polys.size() ||
+        source_view.polys.size() != source_view.meta.component_count ||
+        destination_view.polys.size() != destination_view.meta.component_count)
+    {
+        throw std::invalid_argument("GpuModSwitchHandler::raise_modulus_ciphertext: component count mismatch");
     }
 }
 
@@ -424,19 +503,118 @@ void GpuModSwitchHandler::drop_modulus_ciphertext(
     const GpuLevelInfo &source_level_info,
     const GpuLevelInfo &destination_level_info) const
 {
-    // TODO:
-    // Launch GPU drop-modulus logic.
-    //
-    // Depending on physical layout, this may be:
-    // - metadata/view update only;
-    // - or actual data compaction/copy.
+    NvtxRange range("modswitch.drop_modulus");
+    validate_drop_modulus_ciphertext_shape(
+        destination_view,
+        source_view,
+        source_level_info,
+        destination_level_info);
 
-    (void)destination_view;
-    (void)source_view;
-    (void)source_level_info;
-    (void)destination_level_info;
+    const std::size_t degree = source_view.meta.degree;
+    const std::size_t source_q_count = source_view.meta.q_count;
+    const std::size_t destination_q_count = destination_view.meta.q_count;
 
-    throw std::runtime_error("GpuModSwitchHandler::drop_modulus_ciphertext is not implemented yet");
+    for (std::size_t i = 0; i < source_view.polys.size(); ++i)
+    {
+        validate_single_shard_poly(
+            "GpuModSwitchHandler::drop_modulus_ciphertext source",
+            source_view.polys[i],
+            source_q_count,
+            degree);
+        validate_single_shard_poly(
+            "GpuModSwitchHandler::drop_modulus_ciphertext destination",
+            destination_view.polys[i],
+            destination_q_count,
+            degree);
+
+        const auto &destination_shard = destination_view.polys[i].shards.front();
+        const auto &source_shard = source_view.polys[i].shards.front();
+        if (destination_shard.device_id != source_shard.device_id)
+        {
+            throw std::invalid_argument(
+                "GpuModSwitchHandler::drop_modulus_ciphertext: source/destination device mismatch");
+        }
+
+        const auto source_prefix = make_source_limb_range(
+            source_shard,
+            0,
+            destination_q_count,
+            degree);
+
+        NvtxRange component_range(
+            "drop_modulus.component[" + std::to_string(i) + "]");
+        kernel::launch_copy_poly_shard(
+            destination_shard,
+            source_prefix,
+            degree);
+    }
+}
+
+void GpuModSwitchHandler::raise_modulus_ciphertext(
+    GpuCiphertextView &destination_view,
+    const GpuConstCiphertextView &source_view,
+    const GpuLevelInfo &source_level_info,
+    const GpuLevelInfo &destination_level_info) const
+{
+    NvtxRange range("modswitch.raise_modulus");
+    validate_raise_modulus_ciphertext_shape(
+        destination_view,
+        source_view,
+        source_level_info,
+        destination_level_info);
+
+    const std::size_t degree = source_view.meta.degree;
+    const std::size_t source_q_count = source_view.meta.q_count;
+    const std::size_t destination_q_count = destination_view.meta.q_count;
+
+    for (std::size_t i = 0; i < source_view.polys.size(); ++i)
+    {
+        validate_single_shard_poly(
+            "GpuModSwitchHandler::raise_modulus_ciphertext source",
+            source_view.polys[i],
+            source_q_count,
+            degree);
+        validate_single_shard_poly(
+            "GpuModSwitchHandler::raise_modulus_ciphertext destination",
+            destination_view.polys[i],
+            destination_q_count,
+            degree);
+
+        const auto &destination_shard = destination_view.polys[i].shards.front();
+        const auto &source_shard = source_view.polys[i].shards.front();
+        if (destination_shard.device_id != source_shard.device_id)
+        {
+            throw std::invalid_argument(
+                "GpuModSwitchHandler::raise_modulus_ciphertext: source/destination device mismatch");
+        }
+
+        const auto *source_parameter_shard =
+            find_parameter_shard(source_level_info, source_shard);
+        if (source_parameter_shard == nullptr)
+        {
+            throw std::invalid_argument(
+                "GpuModSwitchHandler::raise_modulus_ciphertext: no matching source parameter shard");
+        }
+
+        const auto *target_parameter_shard =
+            find_parameter_shard(destination_level_info, destination_shard);
+        if (target_parameter_shard == nullptr)
+        {
+            throw std::invalid_argument(
+                "GpuModSwitchHandler::raise_modulus_ciphertext: no matching target parameter shard");
+        }
+
+        NvtxRange component_range(
+            "raise_modulus.component[" + std::to_string(i) + "]");
+        kernel::launch_bootstrap_modraise_poly_shard(
+            destination_shard,
+            source_shard,
+            *source_parameter_shard,
+            *target_parameter_shard,
+            source_q_count,
+            destination_q_count,
+            degree);
+    }
 }
 
 }  // namespace gpu

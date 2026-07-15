@@ -225,6 +225,105 @@ __global__ void dyadic_product_poly_shard_kernel(
         barrett_reduce_u64_u32(product, modulus, barrett_ratio);
 }
 
+__global__ void multiply_scalar_poly_shard_kernel(
+    GpuWord *destination_values,
+    const GpuWord *source_values,
+    GpuWord scalar,
+    const GpuWord *q_primes,
+    const GpuWide *q_modulus_constants,
+    std::size_t limb_count,
+    std::size_t coeff_count)
+{
+    const std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    const std::size_t total = limb_count * coeff_count;
+
+    if (tid >= total)
+    {
+        return;
+    }
+
+    const std::size_t local_limb = tid / coeff_count;
+    const std::size_t offset = tid;
+
+    const GpuWord modulus = q_primes[local_limb];
+    const GpuWide barrett_ratio = q_modulus_constants[local_limb];
+    const GpuWord scalar_mod =
+        barrett_reduce_u64_u32(static_cast<GpuWide>(scalar), modulus, barrett_ratio);
+
+    const GpuWide product =
+        static_cast<GpuWide>(source_values[offset]) *
+        static_cast<GpuWide>(scalar_mod);
+
+    destination_values[offset] =
+        barrett_reduce_u64_u32(product, modulus, barrett_ratio);
+}
+
+__global__ void bootstrap_modraise_poly_shard_kernel(
+    GpuWord *destination_values,
+    const GpuWord *source_values,
+    const GpuWord *q_primes,
+    const GpuWide *q_modulus_constants,
+    const GpuWord *inv_punctured,
+    const GpuWord *conversion_matrix,
+    std::size_t source_q_count,
+    std::size_t target_q_count,
+    std::size_t coeff_count)
+{
+    const std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    const std::size_t total = target_q_count * coeff_count;
+
+    if (tid >= total)
+    {
+        return;
+    }
+
+    const std::size_t target_limb = tid / coeff_count;
+    const std::size_t coeff = tid % coeff_count;
+    const std::size_t destination_offset = target_limb * coeff_count + coeff;
+
+    if (target_limb < source_q_count)
+    {
+        destination_values[destination_offset] =
+            source_values[target_limb * coeff_count + coeff];
+        return;
+    }
+
+    const std::size_t row = target_limb - source_q_count;
+    const GpuWord target_modulus = q_primes[target_limb];
+    const GpuWide target_barrett = q_modulus_constants[target_limb];
+    GpuWord sum = 0;
+
+    for (std::size_t source_limb = 0; source_limb < source_q_count; ++source_limb)
+    {
+        const GpuWord source_modulus = q_primes[source_limb];
+        const GpuWide source_barrett = q_modulus_constants[source_limb];
+        const GpuWord source_value =
+            source_values[source_limb * coeff_count + coeff];
+        const GpuWord weighted_source = barrett_reduce_u64_u32(
+            static_cast<GpuWide>(source_value) *
+                static_cast<GpuWide>(inv_punctured[source_limb]),
+            source_modulus,
+            source_barrett);
+
+        const GpuWord matrix_value =
+            conversion_matrix[row * source_q_count + source_limb];
+        const GpuWord term = barrett_reduce_u64_u32(
+            static_cast<GpuWide>(weighted_source) *
+                static_cast<GpuWide>(matrix_value),
+            target_modulus,
+            target_barrett);
+
+        GpuWide next = static_cast<GpuWide>(sum) + static_cast<GpuWide>(term);
+        if (next >= target_modulus)
+        {
+            next -= target_modulus;
+        }
+        sum = static_cast<GpuWord>(next);
+    }
+
+    destination_values[destination_offset] = sum;
+}
+
 /**
  * @brief CUDA kernel skeleton for dyadic multiply-accumulate.
  * 简单来说就是进行result.c1 += a1 * b0这一步的操作，其中result.c1是对a0和b0的乘积，也就是构建密文密文乘的d1=a0 * b1 + a1 * b0的kernel实现
@@ -724,6 +823,205 @@ void launch_copy_poly_shard(
         "launch_copy_poly_shard cudaMemcpyDeviceToDevice");
 
     (void)degree;
+}
+
+void launch_multiply_scalar_poly_shard(
+    const GpuPolyShardView &destination_shard,
+    const GpuConstPolyShardView &source_shard,
+    GpuWord scalar,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    if (destination_shard.ptr == nullptr || source_shard.ptr == nullptr)
+    {
+        throw std::invalid_argument("launch_multiply_scalar_poly_shard: null data pointer");
+    }
+    if (parameter_shard.q_primes.data() == nullptr)
+    {
+        throw std::invalid_argument("launch_multiply_scalar_poly_shard: null q_primes pointer");
+    }
+    if (parameter_shard.q_modulus_constants.data() == nullptr)
+    {
+        throw std::invalid_argument(
+            "launch_multiply_scalar_poly_shard: null q_modulus_constants pointer");
+    }
+    if (degree == 0 ||
+        destination_shard.limb_count == 0 ||
+        destination_shard.coeff_count == 0)
+    {
+        throw std::invalid_argument("launch_multiply_scalar_poly_shard: empty shard shape");
+    }
+    if (destination_shard.device_id != source_shard.device_id ||
+        destination_shard.device_id != parameter_shard.device_id)
+    {
+        throw std::invalid_argument("launch_multiply_scalar_poly_shard: device mismatch");
+    }
+    if (destination_shard.limb_begin != source_shard.limb_begin ||
+        destination_shard.limb_count != source_shard.limb_count ||
+        destination_shard.coeff_begin != source_shard.coeff_begin ||
+        destination_shard.coeff_count != source_shard.coeff_count)
+    {
+        throw std::invalid_argument("launch_multiply_scalar_poly_shard: shard shape mismatch");
+    }
+    if (destination_shard.coeff_count > degree)
+    {
+        throw std::invalid_argument("launch_multiply_scalar_poly_shard: coeff_count exceeds degree");
+    }
+    if (destination_shard.limb_begin < parameter_shard.limb_begin)
+    {
+        throw std::invalid_argument(
+            "launch_multiply_scalar_poly_shard: parameter shard does not cover limb range");
+    }
+
+    const std::size_t modulus_offset =
+        destination_shard.limb_begin - parameter_shard.limb_begin;
+
+    if (modulus_offset + destination_shard.limb_count > parameter_shard.q_primes.size())
+    {
+        throw std::invalid_argument(
+            "launch_multiply_scalar_poly_shard: q_primes does not cover limb range");
+    }
+    if (modulus_offset + destination_shard.limb_count >
+        parameter_shard.q_modulus_constants.size())
+    {
+        throw std::invalid_argument(
+            "launch_multiply_scalar_poly_shard: q_modulus_constants does not cover limb range");
+    }
+
+    const std::size_t total_count =
+        destination_shard.limb_count * destination_shard.coeff_count;
+    if (total_count == 0)
+    {
+        return;
+    }
+
+    gpu_check_cuda(
+        cudaSetDevice(destination_shard.device_id),
+        "launch_multiply_scalar_poly_shard cudaSetDevice");
+
+    constexpr int block_size = 256;
+    const int grid_size =
+        static_cast<int>((total_count + block_size - 1) / block_size);
+
+    multiply_scalar_poly_shard_kernel<<<grid_size, block_size>>>(
+        destination_shard.ptr,
+        source_shard.ptr,
+        scalar,
+        parameter_shard.q_primes.data() + modulus_offset,
+        parameter_shard.q_modulus_constants.data() + modulus_offset,
+        destination_shard.limb_count,
+        destination_shard.coeff_count);
+
+    gpu_check_cuda(
+        cudaGetLastError(),
+        "launch_multiply_scalar_poly_shard kernel launch");
+
+    (void)degree;
+}
+
+void launch_bootstrap_modraise_poly_shard(
+    const GpuPolyShardView &destination_shard,
+    const GpuConstPolyShardView &source_shard,
+    const GpuParameterShard &source_parameter_shard,
+    const GpuParameterShard &target_parameter_shard,
+    std::size_t source_q_count,
+    std::size_t target_q_count,
+    std::size_t degree)
+{
+    if (destination_shard.ptr == nullptr || source_shard.ptr == nullptr)
+    {
+        throw std::invalid_argument("launch_bootstrap_modraise_poly_shard: null data pointer");
+    }
+    if (target_parameter_shard.q_primes.data() == nullptr ||
+        target_parameter_shard.q_modulus_constants.data() == nullptr)
+    {
+        throw std::invalid_argument(
+            "launch_bootstrap_modraise_poly_shard: null modulus table pointer");
+    }
+    if (degree == 0 ||
+        source_q_count == 0 ||
+        target_q_count == 0 ||
+        source_q_count > target_q_count)
+    {
+        throw std::invalid_argument("launch_bootstrap_modraise_poly_shard: invalid shape");
+    }
+    if (destination_shard.device_id != source_shard.device_id ||
+        destination_shard.device_id != source_parameter_shard.device_id ||
+        destination_shard.device_id != target_parameter_shard.device_id)
+    {
+        throw std::invalid_argument("launch_bootstrap_modraise_poly_shard: device mismatch");
+    }
+    if (source_shard.limb_begin != 0 ||
+        destination_shard.limb_begin != 0 ||
+        source_shard.limb_count != source_q_count ||
+        destination_shard.limb_count != target_q_count ||
+        source_shard.coeff_begin != 0 ||
+        destination_shard.coeff_begin != 0 ||
+        source_shard.coeff_count != degree ||
+        destination_shard.coeff_count != degree)
+    {
+        throw std::invalid_argument(
+            "launch_bootstrap_modraise_poly_shard: first implementation requires full prefix shards");
+    }
+    if (target_q_count > target_parameter_shard.q_primes.size() ||
+        target_q_count > target_parameter_shard.q_modulus_constants.size())
+    {
+        throw std::invalid_argument(
+            "launch_bootstrap_modraise_poly_shard: modulus table does not cover target Q");
+    }
+    if (source_parameter_shard.bootstrap_raise_source_q_count != source_q_count ||
+        source_parameter_shard.bootstrap_raise_target_q_count != target_q_count)
+    {
+        throw std::invalid_argument(
+            "launch_bootstrap_modraise_poly_shard: ModRaise table shape mismatch");
+    }
+    if (source_q_count < target_q_count)
+    {
+        if (source_parameter_shard.bootstrap_raise_inv_punctured.data() == nullptr ||
+            source_parameter_shard.bootstrap_raise_matrix.data() == nullptr)
+        {
+            throw std::invalid_argument(
+                "launch_bootstrap_modraise_poly_shard: null ModRaise table pointer");
+        }
+        const std::size_t suffix_q_count = target_q_count - source_q_count;
+        if (source_parameter_shard.bootstrap_raise_inv_punctured.size() <
+                source_q_count ||
+            source_parameter_shard.bootstrap_raise_matrix.size() <
+                suffix_q_count * source_q_count)
+        {
+            throw std::invalid_argument(
+                "launch_bootstrap_modraise_poly_shard: ModRaise table too small");
+        }
+    }
+
+    const std::size_t total_count = target_q_count * degree;
+    if (total_count == 0)
+    {
+        return;
+    }
+
+    gpu_check_cuda(
+        cudaSetDevice(destination_shard.device_id),
+        "launch_bootstrap_modraise_poly_shard cudaSetDevice");
+
+    constexpr int block_size = 256;
+    const int grid_size =
+        static_cast<int>((total_count + block_size - 1) / block_size);
+
+    bootstrap_modraise_poly_shard_kernel<<<grid_size, block_size>>>(
+        destination_shard.ptr,
+        source_shard.ptr,
+        target_parameter_shard.q_primes.data(),
+        target_parameter_shard.q_modulus_constants.data(),
+        source_parameter_shard.bootstrap_raise_inv_punctured.data(),
+        source_parameter_shard.bootstrap_raise_matrix.data(),
+        source_q_count,
+        target_q_count,
+        degree);
+
+    gpu_check_cuda(
+        cudaGetLastError(),
+        "launch_bootstrap_modraise_poly_shard kernel launch");
 }
 
 void launch_dyadic_product_poly_shard(

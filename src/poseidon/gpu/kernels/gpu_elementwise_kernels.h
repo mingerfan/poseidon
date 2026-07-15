@@ -91,6 +91,34 @@ void launch_dyadic_product_poly_shard(
     std::size_t degree);
 
 /**
+ * @brief Launch modular multiplication by one host scalar for one aligned shard.
+ *
+ * Used by bootstrap scale matching: destination = source * scalar mod q_i.
+ */
+void launch_multiply_scalar_poly_shard(
+    const GpuPolyShardView &destination_shard,
+    const GpuConstPolyShardView &source_shard,
+    GpuWord scalar,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+/**
+ * @brief Launch CKKS bootstrap ModRaise base conversion for one shard.
+ *
+ * Source is a q-only coefficient-domain prefix Q_l. Destination is the full
+ * q-only coefficient-domain Q_L. Existing source limbs are copied and missing
+ * suffix limbs are produced by the BaseConverter-compatible fast conversion.
+ */
+void launch_bootstrap_modraise_poly_shard(
+    const GpuPolyShardView &destination_shard,
+    const GpuConstPolyShardView &source_shard,
+    const GpuParameterShard &source_parameter_shard,
+    const GpuParameterShard &target_parameter_shard,
+    std::size_t source_q_count,
+    std::size_t target_q_count,
+    std::size_t degree);
+
+/**
  * @brief Launch dyadic modular multiply-accumulate kernel for one aligned shard.
  *
  * Used by ciphertext-ciphertext multiplication:

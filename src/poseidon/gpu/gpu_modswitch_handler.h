@@ -59,6 +59,18 @@ public:
         const GpuLevelInfo &source_level_info,
         const GpuLevelInfo &destination_level_info) const;
 
+    /**
+     * @brief Raise a q-only coefficient-domain ciphertext to the first Q level.
+     *
+     * This is the CKKS bootstrap ModRaise physical step after the input has
+     * been transformed out of the NTT domain.
+     */
+    void raise_modulus_ciphertext(
+        GpuCiphertextView &destination_view,
+        const GpuConstCiphertextView &source_view,
+        const GpuLevelInfo &source_level_info,
+        const GpuLevelInfo &destination_level_info) const;
+
 private:
     struct RescaleScratch
     {
