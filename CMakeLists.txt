@@ -279,6 +279,42 @@ if(POSEIDON_USE_INTEL_HEXL)
     )
 endif()
 
+# [option] POSEIDON_BUILD_CKKS_RUNTIME_API (default: OFF)
+option(POSEIDON_BUILD_CKKS_RUNTIME_API
+    "Build the optional CKKS Runtime CPU Api integration" OFF)
+message(STATUS "POSEIDON_BUILD_CKKS_RUNTIME_API: ${POSEIDON_BUILD_CKKS_RUNTIME_API}")
+
+set(POSEIDON_CKKS_RUNTIME_SOURCE_DIR "" CACHE PATH
+    "Path to the CKKS Runtime source tree")
+
+if(POSEIDON_BUILD_CKKS_RUNTIME_API)
+    if(POSEIDON_CKKS_RUNTIME_SOURCE_DIR STREQUAL "")
+        message(FATAL_ERROR
+            "POSEIDON_BUILD_CKKS_RUNTIME_API requires "
+            "POSEIDON_CKKS_RUNTIME_SOURCE_DIR")
+    endif()
+    if(NOT EXISTS "${POSEIDON_CKKS_RUNTIME_SOURCE_DIR}/CMakeLists.txt")
+        message(FATAL_ERROR
+            "CKKS Runtime CMakeLists.txt was not found at "
+            "${POSEIDON_CKKS_RUNTIME_SOURCE_DIR}")
+    endif()
+
+    add_subdirectory(
+        "${POSEIDON_CKKS_RUNTIME_SOURCE_DIR}"
+        "${CMAKE_CURRENT_BINARY_DIR}/ckks-runtime"
+        EXCLUDE_FROM_ALL)
+
+    option(POSEIDON_BUILD_CKKS_RUNTIME_TESTS
+        "Build CKKS Runtime CPU Api integration tests" ON)
+    message(STATUS
+        "POSEIDON_BUILD_CKKS_RUNTIME_TESTS: ${POSEIDON_BUILD_CKKS_RUNTIME_TESTS}")
+    if(POSEIDON_BUILD_CKKS_RUNTIME_TESTS)
+        enable_testing()
+    endif()
+
+    add_subdirectory(src/poseidon/runtime_api)
+endif()
+
 if(POSEIDON_BUILD_MGPU)
     option(POSEIDON_BUILD_MGPU_TESTS "Build multi-GPU static schedule tests" ON)
     message(STATUS "POSEIDON_BUILD_MGPU_TESTS: ${POSEIDON_BUILD_MGPU_TESTS}")
