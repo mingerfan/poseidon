@@ -318,10 +318,65 @@ void append_uploaded_ciphertext_as_key_polys(
     }
 }
 
+GpuCiphertextData upload_kswitch_ciphertext(
+    const Ciphertext &src,
+    int device_id,
+    std::size_t target_q_count)
+{
+    std::size_t full_q_count = 0;
+    std::size_t p_count = 0;
+    ciphertext_limb_shape(src, full_q_count, p_count);
+    if (target_q_count == 0 || target_q_count > full_q_count)
+    {
+        throw std::invalid_argument("evaluation-key target q_count is out of range");
+    }
+    if (target_q_count == full_q_count)
+    {
+        return GpuUploader::upload_ciphertext(src, device_id);
+    }
+
+    GpuPolyShard q_shard;
+    q_shard.limb_begin = 0;
+    q_shard.limb_count = target_q_count;
+    q_shard.coeff_begin = 0;
+    q_shard.coeff_count = src.poly_modulus_degree();
+    std::vector<GpuPolyShard> shards{q_shard};
+
+    if (p_count != 0)
+    {
+        GpuPolyShard p_shard;
+        p_shard.limb_begin = full_q_count;
+        p_shard.limb_count = p_count;
+        p_shard.coeff_begin = 0;
+        p_shard.coeff_count = src.poly_modulus_degree();
+        shards.push_back(p_shard);
+    }
+
+    auto result = GpuUploader::upload_ciphertext(src, device_id, shards);
+    result.meta.q_count = target_q_count;
+    const std::size_t compact_limb_count = target_q_count + p_count;
+    for (auto &poly : result.polys_)
+    {
+        const std::size_t field_offset = poly.shards.front().field_offset;
+        poly.q_count = target_q_count;
+
+        GpuPolyShard compact_shard;
+        compact_shard.field_index = 0;
+        compact_shard.field_offset = field_offset;
+        compact_shard.limb_begin = 0;
+        compact_shard.limb_count = compact_limb_count;
+        compact_shard.coeff_begin = 0;
+        compact_shard.coeff_count = result.meta.degree;
+        poly.shards = {compact_shard};
+    }
+    return result;
+}
+
 template <typename KSwitchKeyType>
 GpuEvaluationKeyData upload_kswitch_keys(
     const KSwitchKeyType &src,
-    int device_id)
+    int device_id,
+    std::size_t target_q_count)
 {
     GpuEvaluationKeyData dst;
     dst.meta.key_parms_id = src.parms_id();
@@ -335,9 +390,10 @@ GpuEvaluationKeyData upload_kswitch_keys(
 
         for (std::size_t decomp_index = 0; decomp_index < decompositions.size(); ++decomp_index)
         {
-            auto uploaded = GpuUploader::upload_ciphertext(
+            auto uploaded = upload_kswitch_ciphertext(
                 decompositions[decomp_index].data(),
-                device_id);
+                device_id,
+                target_q_count);
             append_uploaded_ciphertext_as_key_polys(
                 std::move(uploaded),
                 key_index,
@@ -561,14 +617,47 @@ GpuRelinKeysData GpuUploader::upload_relin_keys(
     const RelinKeys &src,
     int device_id)
 {
-    return upload_kswitch_keys(src, device_id);
+    if (src.data().empty() || src.data().front().empty())
+    {
+        return {};
+    }
+    std::size_t q_count = 0;
+    std::size_t p_count = 0;
+    ciphertext_limb_shape(src.data().front().front().data(), q_count, p_count);
+    return upload_kswitch_keys(src, device_id, q_count);
+}
+
+GpuRelinKeysData GpuUploader::upload_relin_keys(
+    const RelinKeys &src,
+    int device_id,
+    std::size_t q_count)
+{
+    return upload_kswitch_keys(src, device_id, q_count);
 }
 
 GpuGaloisKeysData GpuUploader::upload_galois_keys(
     const GaloisKeys &src,
     int device_id)
 {
-    return upload_kswitch_keys(src, device_id);
+    for (const auto &key : src.data())
+    {
+        if (!key.empty())
+        {
+            std::size_t q_count = 0;
+            std::size_t p_count = 0;
+            ciphertext_limb_shape(key.front().data(), q_count, p_count);
+            return upload_kswitch_keys(src, device_id, q_count);
+        }
+    }
+    return {};
+}
+
+GpuGaloisKeysData GpuUploader::upload_galois_keys(
+    const GaloisKeys &src,
+    int device_id,
+    std::size_t q_count)
+{
+    return upload_kswitch_keys(src, device_id, q_count);
 }
 
 }  // namespace gpu

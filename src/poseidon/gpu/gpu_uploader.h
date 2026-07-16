@@ -92,6 +92,11 @@ public:
         const RelinKeys &src,
         int device_id);
 
+    static GpuRelinKeysData upload_relin_keys(
+        const RelinKeys &src,
+        int device_id,
+        std::size_t q_count);
+
     /**
      * @brief Upload CPU Galois keys to GPU.
      *
@@ -101,6 +106,11 @@ public:
     static GpuGaloisKeysData upload_galois_keys(
         const GaloisKeys &src,
         int device_id);
+
+    static GpuGaloisKeysData upload_galois_keys(
+        const GaloisKeys &src,
+        int device_id,
+        std::size_t q_count);
 };
 
 }  // namespace gpu

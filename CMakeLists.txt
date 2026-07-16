@@ -281,7 +281,7 @@ endif()
 
 # [option] POSEIDON_BUILD_CKKS_RUNTIME_API (default: OFF)
 option(POSEIDON_BUILD_CKKS_RUNTIME_API
-    "Build the optional CKKS Runtime CPU Api integration" OFF)
+    "Build the optional CKKS Runtime CPU/GPU Api integration" OFF)
 message(STATUS "POSEIDON_BUILD_CKKS_RUNTIME_API: ${POSEIDON_BUILD_CKKS_RUNTIME_API}")
 
 set(POSEIDON_CKKS_RUNTIME_SOURCE_DIR "" CACHE PATH
@@ -305,13 +305,26 @@ if(POSEIDON_BUILD_CKKS_RUNTIME_API)
         EXCLUDE_FROM_ALL)
 
     option(POSEIDON_BUILD_CKKS_RUNTIME_TESTS
-        "Build CKKS Runtime CPU Api integration tests" ON)
+        "Build CKKS Runtime Api integration tests" ON)
     message(STATUS
         "POSEIDON_BUILD_CKKS_RUNTIME_TESTS: ${POSEIDON_BUILD_CKKS_RUNTIME_TESTS}")
+    option(POSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS
+        "Build CKKS Runtime GPU Api tests that require a CUDA device" OFF)
+    message(STATUS
+        "POSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS: ${POSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS}")
     if(POSEIDON_BUILD_CKKS_RUNTIME_TESTS)
         enable_testing()
     endif()
 
+    enable_language(CUDA)
+    set(CMAKE_CUDA_STANDARD 17)
+    set(CMAKE_CUDA_STANDARD_REQUIRED ON)
+    if(NOT CMAKE_CUDA_ARCHITECTURES)
+        set(CMAKE_CUDA_ARCHITECTURES 75 CACHE STRING
+            "CUDA architectures for the Poseidon GPU library" FORCE)
+    endif()
+
+    add_subdirectory(src/poseidon/gpu)
     add_subdirectory(src/poseidon/runtime_api)
 endif()
 
