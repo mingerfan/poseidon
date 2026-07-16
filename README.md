@@ -10,6 +10,7 @@ source directory:
 
 ```bash
 cmake -S . -B build-runtime-cpu \
+  -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
   -DPOSEIDON_BUILD_CKKS_RUNTIME_API=ON \
   -DPOSEIDON_CKKS_RUNTIME_SOURCE_DIR=/path/to/ckks-runtime \
   -DPOSEIDON_BUILD_EXAMPLES=OFF
