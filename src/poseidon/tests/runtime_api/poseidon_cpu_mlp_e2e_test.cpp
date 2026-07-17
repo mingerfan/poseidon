@@ -12,13 +12,21 @@
 
 #include <nlohmann/json.hpp>
 
+#if defined(POSEIDON_RUNTIME_CPU_MPI)
+#include <mpi.h>
+#endif
+
 #include <algorithm>
+#include <array>
 #include <chrono>
 #include <cmath>
 #include <complex>
+#include <cstdint>
+#include <cstdio>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <limits>
 #include <memory>
 #include <set>
 #include <stdexcept>
@@ -200,85 +208,175 @@ void write_json(const std::filesystem::path &path, const Json &value)
     output << value.dump(2) << '\n';
 }
 
-} // namespace
-
-int main(int argc, char **argv)
+#if defined(POSEIDON_RUNTIME_CPU_MPI)
+void check_mpi(int code, const char *operation)
 {
-    if (argc != 7)
+    if (code == MPI_SUCCESS)
     {
-        std::cerr << "usage: poseidon_runtime_cpu_mlp_e2e PLAN OPERATOR_SPEC "
-                     "BUNDLE_DIR FIXTURE MOCK_RESULT REPORT_JSON\n";
-        return 2;
+        return;
     }
+    char message[MPI_MAX_ERROR_STRING];
+    int length = 0;
+    MPI_Error_string(code, message, &length);
+    throw std::runtime_error(std::string(operation) + " failed: " +
+                             std::string(message, static_cast<std::size_t>(length)));
+}
 
-    try
+void broadcast_secret_key(const poseidon::PoseidonContext &context,
+                          poseidon::SecretKey &secret_key, int rank)
+{
+    const auto mode = poseidon::compr_mode_type::none;
+    std::uint64_t byte_count = 0;
+    std::vector<poseidon::poseidon_byte> bytes;
+    if (rank == 0)
     {
-        const auto loaded_plan = fhegpu::RuntimePlanJsonReader::read_file(argv[1]);
-        const auto loaded_spec = fhegpu::OperatorSpecReader::read_file(argv[2]);
-        const Json fixture = read_json(argv[4]);
-        const Json mock_result = read_json(argv[5]);
-        if (fixture.at("format_version") != 1 ||
-            mock_result.at("format_version") != 1 ||
-            mock_result.at("passed") != true ||
-            fixture.at("seed") != mock_result.at("seed") ||
-            fixture.at("model_sha256") != mock_result.at("model_sha256"))
+        const std::streamoff size = secret_key.save_size(mode);
+        if (size <= 0 || static_cast<std::uint64_t>(size) >
+                             static_cast<std::uint64_t>(
+                                 std::numeric_limits<int>::max()))
         {
-            throw std::runtime_error("fixture and MockVecApi result do not match");
+            throw std::runtime_error("serialized secret key exceeds MPI count range");
         }
-        const std::vector<double> input = read_numbers(fixture, "input", 784);
-        const std::vector<double> python_output =
-            read_numbers(fixture, "python_output", 10);
-        const std::vector<double> mock_output =
-            read_numbers(mock_result, "output", 10);
-
-        const auto requirements = fhegpu::PlanVerifier::verify(
-            loaded_plan.plan, loaded_spec, false);
-        poseidon::PoseidonContext context = make_context(loaded_spec.spec);
-        poseidon::KeyGenerator key_generator(context);
-        auto public_key = std::make_shared<poseidon::PublicKey>();
-        auto secret_key =
-            std::make_shared<poseidon::SecretKey>(key_generator.secret_key());
-        key_generator.create_public_key(*public_key);
-
-        auto relin_keys = std::make_shared<poseidon::RelinKeys>();
-        auto galois_keys = std::make_shared<poseidon::GaloisKeys>();
-        bool needs_relin = false;
-        std::set<int> rotation_steps;
-        for (const auto &key : requirements.keys)
+        byte_count = static_cast<std::uint64_t>(size);
+        bytes.resize(static_cast<std::size_t>(byte_count));
+        if (secret_key.save(bytes.data(), bytes.size(), mode) != size)
         {
-            if (key.kind == fhegpu::KeyKind::Relin)
+            throw std::runtime_error("secret key serialization size mismatch");
+        }
+    }
+    check_mpi(MPI_Bcast(&byte_count, 1, MPI_UINT64_T, 0, MPI_COMM_WORLD),
+              "MPI_Bcast(secret key size)");
+    if (byte_count == 0 || byte_count >
+                               static_cast<std::uint64_t>(
+                                   std::numeric_limits<int>::max()))
+    {
+        throw std::runtime_error("invalid broadcast secret key size");
+    }
+    if (rank != 0)
+    {
+        bytes.resize(static_cast<std::size_t>(byte_count));
+    }
+    check_mpi(MPI_Bcast(bytes.data(), static_cast<int>(bytes.size()), MPI_BYTE, 0,
+                        MPI_COMM_WORLD),
+              "MPI_Bcast(secret key)");
+    if (rank != 0)
+    {
+        if (secret_key.load(context, bytes.data(), bytes.size()) !=
+            static_cast<std::streamoff>(bytes.size()))
+        {
+            throw std::runtime_error("secret key load size mismatch");
+        }
+        secret_key.data().resize(context, secret_key.parms_id(),
+                                 secret_key.data().coeff_count());
+    }
+}
+#endif
+
+std::size_t count_transfers(const fhegpu::RuntimePlan &plan)
+{
+    std::size_t result = 0;
+    const auto count_phase = [&](const std::vector<fhegpu::Instruction> &phase) {
+        result += static_cast<std::size_t>(std::count_if(
+            phase.begin(), phase.end(), [](const fhegpu::Instruction &instruction) {
+                return std::holds_alternative<fhegpu::CommAction>(instruction.body);
+            }));
+    };
+    count_phase(plan.initialization);
+    count_phase(plan.execution);
+    count_phase(plan.finalization);
+    return result;
+}
+
+int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
+{
+    const auto loaded_plan = fhegpu::RuntimePlanJsonReader::read_file(paths[0]);
+    const auto loaded_spec = fhegpu::OperatorSpecReader::read_file(paths[1]);
+    const Json fixture = read_json(paths[3]);
+    const Json mock_result = read_json(paths[4]);
+    if (fixture.at("format_version") != 1 ||
+        mock_result.at("format_version") != 1 ||
+        mock_result.at("passed") != true ||
+        fixture.at("seed") != mock_result.at("seed") ||
+        fixture.at("model_sha256") != mock_result.at("model_sha256"))
+    {
+        throw std::runtime_error("fixture and MockVecApi result do not match");
+    }
+    if (loaded_plan.plan.target.world_size != world_size)
+    {
+        throw std::runtime_error("RuntimePlan world size does not match execution mode");
+    }
+    const std::vector<double> input = read_numbers(fixture, "input", 784);
+    const std::vector<double> python_output =
+        read_numbers(fixture, "python_output", 10);
+    const std::vector<double> mock_output =
+        read_numbers(mock_result, "output", 10);
+
+    const auto requirements = fhegpu::PlanVerifier::verify(
+        loaded_plan.plan, loaded_spec, false);
+    poseidon::PoseidonContext context = make_context(loaded_spec.spec);
+    auto secret_key = std::make_shared<poseidon::SecretKey>();
+    if (rank == 0)
+    {
+        poseidon::KeyGenerator owner(context);
+        *secret_key = owner.secret_key();
+    }
+#if defined(POSEIDON_RUNTIME_CPU_MPI)
+    if (mpi_mode)
+    {
+        broadcast_secret_key(context, *secret_key, rank);
+    }
+#else
+    static_cast<void>(mpi_mode);
+#endif
+    poseidon::KeyGenerator key_generator(context, *secret_key);
+    auto public_key = std::make_shared<poseidon::PublicKey>();
+    auto relin_keys = std::make_shared<poseidon::RelinKeys>();
+    auto galois_keys = std::make_shared<poseidon::GaloisKeys>();
+    bool needs_relin = false;
+    std::set<int> rotation_steps;
+    for (const auto &key : requirements.keys)
+    {
+        if (key.place.rank != rank)
+        {
+            continue;
+        }
+        if (key.kind == fhegpu::KeyKind::Relin)
+        {
+            needs_relin = true;
+        }
+        else if (key.kind == fhegpu::KeyKind::Galois)
+        {
+            if (!key.rotation_step)
             {
-                needs_relin = true;
+                throw std::runtime_error("Galois key requirement has no rotation step");
             }
-            else if (key.kind == fhegpu::KeyKind::Galois)
-            {
-                if (!key.rotation_step)
-                {
-                    throw std::runtime_error("Galois key requirement has no rotation step");
-                }
-                rotation_steps.insert(*key.rotation_step);
-            }
+            rotation_steps.insert(*key.rotation_step);
         }
-        const auto key_start = std::chrono::steady_clock::now();
-        if (needs_relin)
-        {
-            key_generator.create_relin_keys(*relin_keys);
-        }
-        if (!rotation_steps.empty())
-        {
-            key_generator.create_galois_keys(
-                std::vector<int>(rotation_steps.begin(), rotation_steps.end()),
-                *galois_keys);
-        }
-        const auto key_finish = std::chrono::steady_clock::now();
+    }
+    const auto key_start = std::chrono::steady_clock::now();
+    key_generator.create_public_key(*public_key);
+    if (needs_relin)
+    {
+        key_generator.create_relin_keys(*relin_keys);
+    }
+    if (!rotation_steps.empty())
+    {
+        key_generator.create_galois_keys(
+            std::vector<int>(rotation_steps.begin(), rotation_steps.end()),
+            *galois_keys);
+    }
+    const auto key_finish = std::chrono::steady_clock::now();
 
-        if (loaded_plan.plan.external_inputs.size() != 1)
-        {
-            throw std::runtime_error("MLP plan must have one external input");
-        }
-        const fhegpu::ValueId input_id = loaded_plan.plan.external_inputs.front();
-        const auto &input_desc = find_value(loaded_plan.plan, input_id);
-        poseidon::CKKSEncoder encoder(context);
+    if (loaded_plan.plan.external_inputs.size() != 1)
+    {
+        throw std::runtime_error("MLP plan must have one external input");
+    }
+    const fhegpu::ValueId input_id = loaded_plan.plan.external_inputs.front();
+    const auto &input_desc = find_value(loaded_plan.plan, input_id);
+    std::unordered_map<fhegpu::ValueId, PoseidonCpuValue> inputs;
+    poseidon::CKKSEncoder encoder(context);
+    if (input_desc.place.rank == rank)
+    {
         poseidon::Plaintext input_plain;
         encoder.encode(
             pack_mlp_input(input),
@@ -288,24 +386,42 @@ int main(int argc, char **argv)
         poseidon::Encryptor encryptor(context, *public_key);
         poseidon::Ciphertext input_cipher;
         encryptor.encrypt(input_plain, input_cipher);
-
-        PoseidonCpuApi api(loaded_spec.spec.context_id, context, relin_keys,
-                           galois_keys, public_key, secret_key);
-        fhegpu::SequentialRuntime<PoseidonCpuApi> runtime(0, 1, 0, api);
-        const fhegpu::RuntimeResources resources{
-            loaded_spec, std::filesystem::path(argv[3]), false};
-        std::unordered_map<fhegpu::ValueId, PoseidonCpuValue> inputs;
         inputs.emplace(input_id,
                        PoseidonCpuValue::from_ciphertext(std::move(input_cipher)));
-        const auto run_start = std::chrono::steady_clock::now();
-        const auto artifact = runtime.run(loaded_plan, resources, inputs);
-        const auto run_finish = std::chrono::steady_clock::now();
+    }
 
-        if (loaded_plan.plan.final_outputs.size() != 1)
-        {
-            throw std::runtime_error("MLP plan must have one final output");
-        }
-        const auto final_id = loaded_plan.plan.final_outputs.front();
+    std::unique_ptr<PoseidonCpuApi> api;
+#if defined(POSEIDON_RUNTIME_CPU_MPI)
+    if (mpi_mode)
+    {
+        api = std::make_unique<PoseidonCpuApi>(
+            loaded_spec.spec.context_id, context, MPI_COMM_WORLD, relin_keys,
+            galois_keys, public_key, secret_key);
+    }
+    else
+#endif
+    {
+        api = std::make_unique<PoseidonCpuApi>(
+            loaded_spec.spec.context_id, context, relin_keys, galois_keys,
+            public_key, secret_key);
+    }
+    fhegpu::SequentialRuntime<PoseidonCpuApi> runtime(rank, world_size, 0, *api);
+    const fhegpu::RuntimeResources resources{
+        loaded_spec, std::filesystem::path(paths[2]), false};
+    const auto run_start = std::chrono::steady_clock::now();
+    const auto artifact = runtime.run(loaded_plan, resources, inputs);
+    const auto run_finish = std::chrono::steady_clock::now();
+
+    if (loaded_plan.plan.final_outputs.size() != 1)
+    {
+        throw std::runtime_error("MLP plan must have one final output");
+    }
+    const auto final_id = loaded_plan.plan.final_outputs.front();
+    const int final_rank = find_value(loaded_plan.plan, final_id).place.rank;
+    std::vector<double> poseidon_output(10, 0.0);
+    double max_imaginary = 0.0;
+    if (rank == final_rank)
+    {
         poseidon::Decryptor decryptor(context, *secret_key);
         poseidon::Plaintext output_plain;
         decryptor.decrypt(artifact.values.at(final_id).value.ciphertext(),
@@ -316,51 +432,159 @@ int main(int argc, char **argv)
         {
             throw std::runtime_error("decoded MLP output has fewer than 10 slots");
         }
-        std::vector<double> poseidon_output;
-        poseidon_output.reserve(10);
-        double max_imaginary = 0.0;
         for (std::size_t i = 0; i < 10; ++i)
         {
-            poseidon_output.push_back(decoded[i].real());
+            poseidon_output[i] = decoded[i].real();
             max_imaginary = std::max(max_imaginary, std::abs(decoded[i].imag()));
         }
+    }
+#if defined(POSEIDON_RUNTIME_CPU_MPI)
+    if (mpi_mode)
+    {
+        check_mpi(MPI_Bcast(poseidon_output.data(),
+                            static_cast<int>(poseidon_output.size()), MPI_DOUBLE,
+                            final_rank, MPI_COMM_WORLD),
+                  "MPI_Bcast(MLP output)");
+        check_mpi(MPI_Bcast(&max_imaginary, 1, MPI_DOUBLE, final_rank,
+                            MPI_COMM_WORLD),
+                  "MPI_Bcast(MLP imaginary error)");
+    }
+#endif
 
-        const Comparison against_python = compare(python_output, poseidon_output);
-        const Comparison against_mock = compare(mock_output, poseidon_output);
-        const bool passed = against_python.within_tolerance &&
-                            against_mock.within_tolerance &&
-                            max_imaginary <= kImaginaryTolerance;
-        const double key_seconds =
-            std::chrono::duration<double>(key_finish - key_start).count();
-        const double run_seconds =
-            std::chrono::duration<double>(run_finish - run_start).count();
-        const double compute_including_boot_seconds =
-            static_cast<double>(
-                artifact.timing.compute_including_boot_nanoseconds) *
-            1e-9;
-        const double boot_seconds =
-            static_cast<double>(artifact.timing.boot_nanoseconds) * 1e-9;
-        const double compute_excluding_boot_seconds =
-            static_cast<double>(
-                artifact.timing.compute_excluding_boot_nanoseconds()) *
-            1e-9;
+    const Comparison against_python = compare(python_output, poseidon_output);
+    const Comparison against_mock = compare(mock_output, poseidon_output);
+    bool passed = against_python.within_tolerance &&
+                  against_mock.within_tolerance &&
+                  max_imaginary <= kImaginaryTolerance;
+#if defined(POSEIDON_RUNTIME_CPU_MPI)
+    if (mpi_mode)
+    {
+        int local_passed = passed ? 1 : 0;
+        int all_passed = 0;
+        check_mpi(MPI_Allreduce(&local_passed, &all_passed, 1, MPI_INT, MPI_MIN,
+                                MPI_COMM_WORLD),
+                  "MPI_Allreduce(MLP result)");
+        passed = all_passed != 0;
+    }
+#endif
+
+    const double key_seconds =
+        std::chrono::duration<double>(key_finish - key_start).count();
+    const double run_seconds =
+        std::chrono::duration<double>(run_finish - run_start).count();
+    const double compute_including_boot_seconds =
+        static_cast<double>(artifact.timing.compute_including_boot_nanoseconds) *
+        1e-9;
+    const double boot_seconds =
+        static_cast<double>(artifact.timing.boot_nanoseconds) * 1e-9;
+    const double compute_excluding_boot_seconds =
+        static_cast<double>(
+            artifact.timing.compute_excluding_boot_nanoseconds()) *
+        1e-9;
+    const std::array<double, 5> local_seconds{
+        key_seconds, run_seconds, compute_including_boot_seconds, boot_seconds,
+        compute_excluding_boot_seconds};
+    const std::array<std::uint64_t, 4> local_counts{
+        static_cast<std::uint64_t>(artifact.timing.compute_calls),
+        static_cast<std::uint64_t>(artifact.timing.boot_calls),
+        static_cast<std::uint64_t>(rotation_steps.size()),
+        static_cast<std::uint64_t>(needs_relin ? 1 : 0)};
+    std::vector<double> gathered_seconds;
+    std::vector<std::uint64_t> gathered_counts;
+    if (rank == 0)
+    {
+        gathered_seconds.resize(static_cast<std::size_t>(world_size) *
+                                local_seconds.size());
+        gathered_counts.resize(static_cast<std::size_t>(world_size) *
+                               local_counts.size());
+    }
+#if defined(POSEIDON_RUNTIME_CPU_MPI)
+    if (mpi_mode)
+    {
+        check_mpi(MPI_Gather(local_seconds.data(),
+                             static_cast<int>(local_seconds.size()), MPI_DOUBLE,
+                             rank == 0 ? gathered_seconds.data() : nullptr,
+                             static_cast<int>(local_seconds.size()), MPI_DOUBLE, 0,
+                             MPI_COMM_WORLD),
+                  "MPI_Gather(MLP seconds)");
+        check_mpi(MPI_Gather(local_counts.data(),
+                             static_cast<int>(local_counts.size()), MPI_UINT64_T,
+                             rank == 0 ? gathered_counts.data() : nullptr,
+                             static_cast<int>(local_counts.size()), MPI_UINT64_T, 0,
+                             MPI_COMM_WORLD),
+                  "MPI_Gather(MLP counts)");
+    }
+    else
+#endif
+    {
+        gathered_seconds.assign(local_seconds.begin(), local_seconds.end());
+        gathered_counts.assign(local_counts.begin(), local_counts.end());
+    }
+
+    if (rank == 0)
+    {
+        Json rank_timings = Json::array();
+        double critical_key_seconds = 0.0;
+        double critical_run_seconds = 0.0;
+        double critical_compute_seconds = 0.0;
+        double critical_boot_seconds = 0.0;
+        double critical_non_boot_seconds = 0.0;
+        std::uint64_t total_compute_calls = 0;
+        std::uint64_t total_boot_calls = 0;
+        std::uint64_t total_rotation_keys = 0;
+        for (int measured_rank = 0; measured_rank < world_size; ++measured_rank)
+        {
+            const std::size_t seconds_offset =
+                static_cast<std::size_t>(measured_rank) * local_seconds.size();
+            const std::size_t counts_offset =
+                static_cast<std::size_t>(measured_rank) * local_counts.size();
+            critical_key_seconds =
+                std::max(critical_key_seconds, gathered_seconds[seconds_offset]);
+            critical_run_seconds = std::max(
+                critical_run_seconds, gathered_seconds[seconds_offset + 1]);
+            critical_compute_seconds = std::max(
+                critical_compute_seconds, gathered_seconds[seconds_offset + 2]);
+            critical_boot_seconds = std::max(
+                critical_boot_seconds, gathered_seconds[seconds_offset + 3]);
+            critical_non_boot_seconds = std::max(
+                critical_non_boot_seconds, gathered_seconds[seconds_offset + 4]);
+            total_compute_calls += gathered_counts[counts_offset];
+            total_boot_calls += gathered_counts[counts_offset + 1];
+            total_rotation_keys += gathered_counts[counts_offset + 2];
+            rank_timings.push_back(
+                {{"rank", measured_rank},
+                 {"key_generation_seconds", gathered_seconds[seconds_offset]},
+                 {"runtime_seconds", gathered_seconds[seconds_offset + 1]},
+                 {"compute_including_boot_seconds",
+                  gathered_seconds[seconds_offset + 2]},
+                 {"boot_seconds", gathered_seconds[seconds_offset + 3]},
+                 {"compute_excluding_boot_seconds",
+                  gathered_seconds[seconds_offset + 4]},
+                 {"compute_calls", gathered_counts[counts_offset]},
+                 {"boot_calls", gathered_counts[counts_offset + 1]},
+                 {"rotation_key_count", gathered_counts[counts_offset + 2]},
+                 {"has_relin_key", gathered_counts[counts_offset + 3] != 0}});
+        }
         Json report{
             {"format_version", 1},
             {"passed", passed},
+            {"world_size", world_size},
+            {"final_output_rank", final_rank},
+            {"transfer_count", count_transfers(loaded_plan.plan)},
             {"seed", fixture.at("seed")},
             {"model_sha256", fixture.at("model_sha256")},
             {"plan_sha256", loaded_plan.source_sha256},
-            {"rotation_key_count", rotation_steps.size()},
-            {"key_generation_seconds", key_seconds},
-            {"runtime_seconds", run_seconds},
+            {"rotation_key_count", total_rotation_keys},
+            {"key_generation_seconds", critical_key_seconds},
+            {"runtime_seconds", critical_run_seconds},
             {"runtime_timing",
-             {{"compute_calls", artifact.timing.compute_calls},
-              {"boot_calls", artifact.timing.boot_calls},
-              {"compute_including_boot_seconds",
-               compute_including_boot_seconds},
-              {"boot_seconds", boot_seconds},
-              {"compute_excluding_boot_seconds",
-               compute_excluding_boot_seconds}}},
+             {{"seconds_aggregation", "maximum_rank"},
+              {"compute_calls", total_compute_calls},
+              {"boot_calls", total_boot_calls},
+              {"compute_including_boot_seconds", critical_compute_seconds},
+              {"boot_seconds", critical_boot_seconds},
+              {"compute_excluding_boot_seconds", critical_non_boot_seconds}}},
+            {"rank_timings", std::move(rank_timings)},
             {"tolerances",
              {{"absolute", kAbsoluteTolerance},
               {"relative", kRelativeTolerance},
@@ -372,26 +596,96 @@ int main(int argc, char **argv)
             {"mock_output", mock_output},
             {"poseidon_output", poseidon_output},
         };
-        write_json(argv[6], report);
+        write_json(paths[5], report);
 
         std::cout << (passed ? "PASS" : "FAIL")
-                  << " rotations=" << rotation_steps.size()
-                  << " key_seconds=" << key_seconds
-                  << " runtime_seconds=" << run_seconds
+                  << " world_size=" << world_size
+                  << " transfers=" << count_transfers(loaded_plan.plan)
+                  << " final_rank=" << final_rank
+                  << " rotations=" << total_rotation_keys
+                  << " key_seconds=" << critical_key_seconds
+                  << " runtime_seconds=" << critical_run_seconds
                   << " compute_including_boot_seconds="
-                  << compute_including_boot_seconds
-                  << " boot_seconds=" << boot_seconds
+                  << critical_compute_seconds
+                  << " boot_seconds=" << critical_boot_seconds
                   << " compute_excluding_boot_seconds="
-                  << compute_excluding_boot_seconds
+                  << critical_non_boot_seconds
                   << " python_max_abs=" << against_python.max_abs
                   << " mock_max_abs=" << against_mock.max_abs
                   << " max_imaginary=" << max_imaginary << '\n'
-                  << "report_json=" << argv[6] << '\n';
-        return passed ? 0 : 1;
+                  << "report_json=" << paths[5] << '\n';
+    }
+    return passed ? 0 : 1;
+}
+
+} // namespace
+
+int main(int argc, char **argv)
+{
+    const bool mpi_mode = argc > 1 && std::string(argv[1]) == "--mpi";
+    int rank = 0;
+    int world_size = 1;
+#if defined(POSEIDON_RUNTIME_CPU_MPI)
+    if (mpi_mode)
+    {
+        int provided = MPI_THREAD_SINGLE;
+        MPI_Init_thread(&argc, &argv, MPI_THREAD_FUNNELED, &provided);
+        MPI_Comm_set_errhandler(MPI_COMM_WORLD, MPI_ERRORS_RETURN);
+        MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+        MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+        if (provided < MPI_THREAD_FUNNELED)
+        {
+            std::fprintf(stderr, "[rank %d] MPI_THREAD_FUNNELED is unavailable\n", rank);
+            MPI_Abort(MPI_COMM_WORLD, 1);
+            return 1;
+        }
+    }
+#else
+    if (mpi_mode)
+    {
+        std::cerr << "FAIL Poseidon CPU MPI support is not enabled\n";
+        return 2;
+    }
+#endif
+
+    const int expected_argc = mpi_mode ? 8 : 7;
+    if (argc != expected_argc)
+    {
+        if (rank == 0)
+        {
+            std::cerr << "usage: poseidon_runtime_cpu_mlp_e2e [--mpi] PLAN "
+                         "OPERATOR_SPEC BUNDLE_DIR FIXTURE MOCK_RESULT REPORT_JSON\n";
+        }
+#if defined(POSEIDON_RUNTIME_CPU_MPI)
+        if (mpi_mode)
+        {
+            MPI_Finalize();
+        }
+#endif
+        return 2;
+    }
+
+    int result = 1;
+    try
+    {
+        result = run_e2e(argv + (mpi_mode ? 2 : 1), mpi_mode, rank, world_size);
     }
     catch (const std::exception &error)
     {
-        std::cerr << "FAIL " << error.what() << '\n';
-        return 1;
+        std::fprintf(stderr, "[rank %d] FAIL %s\n", rank, error.what());
+#if defined(POSEIDON_RUNTIME_CPU_MPI)
+        if (mpi_mode)
+        {
+            MPI_Abort(MPI_COMM_WORLD, 1);
+            return 1;
+        }
+#endif
     }
+#if defined(POSEIDON_RUNTIME_CPU_MPI)
+    if (mpi_mode)
+    {
+        MPI_Finalize();
+    }
+#endif
+    return result;
 }
