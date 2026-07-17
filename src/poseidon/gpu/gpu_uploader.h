@@ -4,6 +4,7 @@
 #include "poseidon/gpu/gpu_plaintext.h"
 #include "poseidon/gpu/gpu_key.h"
 #include "poseidon/gpu/gpu_linear_transform.h"
+#include "poseidon/gpu/gpu_evaluator.h"
 
 #include <cstddef>
 #include <vector>
@@ -18,6 +19,8 @@ class RelinKeys;
 class GaloisKeys;
 class MatrixPlain;
 class LinearMatrixGroup;
+class CKKSEncoder;
+class EvalModPoly;
 
 namespace gpu
 {
@@ -104,6 +107,21 @@ public:
     static GpuLinearMatrixGroup upload_linear_matrix_group(
         const LinearMatrixGroup &src,
         int device_id);
+
+    /**
+     * @brief Generate and upload the fixed high-precision EvalMod BSGS plan.
+     *
+     * Polynomial splitting, level simulation, plaintext encoding and all
+     * host-to-device transfers are setup work. No ciphertext evaluation is
+     * performed here. When relin_keys is non-null, all per-level compact key
+     * views required by the generated plan are also prepared during setup.
+     */
+    static GpuBootstrapData::EvalModData upload_eval_mod_high_precision(
+        const EvalModPoly &eval_mod_poly,
+        const CKKSEncoder &encoder,
+        parms_id_type input_parms_id,
+        int device_id,
+        GpuRelinKeysData *relin_keys = nullptr);
 
     /**
      * @brief Upload CPU relinearization keys to GPU.

@@ -26,7 +26,7 @@ secret_key_array_type KSwitchGenBase::compute_secret_key_array(const SecretKey &
     // Size check
     if (!product_fits_in(coeff_count, coeff_modulus_size, max_power))
     {
-        throw logic_error("invalid parameters");
+        POSEIDON_THROW_LOGIC_ERROR("invalid parameters");
     }
 
     ReaderLock reader_lock(secret_key_array_locker_.acquire_read());
@@ -61,8 +61,7 @@ secret_key_array_type KSwitchGenBase::compute_secret_key_array(const SecretKey &
     // one we simply need to compute a dyadic product of the last one with the first one [which is
     // equal to NTT(secret_key_)].
     POSEIDON_ITERATE(iter(secret_key_power, next_secret_key_power), new_size - old_size,
-                     [&](auto I)
-                     {
+                     [&](auto I) {
                          dyadic_product_coeffmod(get<0>(I), secret_key, coeff_modulus_size,
                                                  coeff_modulus, get<1>(I));
                      });
@@ -139,7 +138,7 @@ RelinKeys KSwitchGenBase::create_relin_keys(std::size_t count,
     // Size check
     if (!product_fits_in(coeff_count, coeff_modulus_size))
     {
-        throw logic_error("invalid parameters");
+        POSEIDON_THROW_LOGIC_ERROR("invalid parameters");
     }
 
     // Make sure we have enough secret keys computed
@@ -194,7 +193,7 @@ GaloisKeys KSwitchGenBase::create_galois_keys(const std::vector<uint32_t> &galoi
     // Size check
     if (!product_fits_in(coeff_count, coeff_modulus_size, size_t(2)))
     {
-        throw logic_error("invalid parameters");
+        POSEIDON_THROW_LOGIC_ERROR("invalid parameters");
     }
 
     // Create the GaloisKeys object to return
@@ -203,8 +202,10 @@ GaloisKeys KSwitchGenBase::create_galois_keys(const std::vector<uint32_t> &galoi
     // The max number of keys is equal to number of coefficients
     galois_keys.data().resize(coeff_count);
 
-    for (auto galois_elt : galois_elts)
+#pragma omp parallel for
+    for (size_t i = 0; i < galois_elts.size(); i++)
     {
+        uint32_t galois_elt = galois_elts[i];
         // Verify coprime conditions.
         if (!(galois_elt & 1) || (galois_elt >= coeff_count << 1))
         {
@@ -227,8 +228,12 @@ GaloisKeys KSwitchGenBase::create_galois_keys(const std::vector<uint32_t> &galoi
         // This is the location in the galois_keys vector
         size_t index = GaloisKeys::get_index(galois_elt);
 
-        // Create Galois keys.
-        generate_one_kswitch_key(prev_secret_key, rotated_secret_key, galois_keys.data()[index]);
+// Create Galois keys.
+#pragma omp critical
+        {
+            generate_one_kswitch_key(prev_secret_key, rotated_secret_key,
+                                     galois_keys.data()[index]);
+        }
     }
 
     // Set the parms_id
@@ -238,7 +243,7 @@ GaloisKeys KSwitchGenBase::create_galois_keys(const std::vector<uint32_t> &galoi
 }
 
 GaloisKeys KSwitchGenBase::create_galois_keys_mt(const std::vector<uint32_t> &galois_elts,
-                                              const SecretKey &prev_secret_key) const
+                                                 const SecretKey &prev_secret_key) const
 {
     // TODO: maybe need fix
     // Check to see if secret key and public key have been generated
@@ -254,7 +259,7 @@ GaloisKeys KSwitchGenBase::create_galois_keys_mt(const std::vector<uint32_t> &ga
     // Size check
     if (!product_fits_in(coeff_count, coeff_modulus_size, size_t(2)))
     {
-        throw logic_error("invalid parameters");
+        POSEIDON_THROW_LOGIC_ERROR("invalid parameters");
     }
 
     // Create the GaloisKeys object to return
@@ -327,11 +332,12 @@ void KSwitchGenBase::generate_kswitch_keys(const SecretKey &prev_secret_key, Con
     // Size check
     if (!product_fits_in(coeff_count, coeff_modulus_size, num_keys))
     {
-        throw logic_error("invalid parameters");
+        POSEIDON_THROW_LOGIC_ERROR("invalid parameters");
     }
 
     destination.data().resize(num_keys);
-    POSEIDON_ITERATE(iter(new_keys, destination.data()), num_keys, [&](auto I)
+    POSEIDON_ITERATE(iter(new_keys, destination.data()), num_keys,
+                     [&](auto I)
                      { this->generate_one_kswitch_key(prev_secret_key, get<0>(I), get<1>(I)); });
 }
 
@@ -370,7 +376,7 @@ void KSwitchBase::conjugate_internal(Ciphertext &encrypted, const GaloisKeys &ga
     auto context_data_ptr = context_.crt_context()->get_context_data(encrypted.parms_id());
     if (!context_data_ptr)
     {
-        throw std::invalid_argument("encrypted is not valid for encryption parameters");
+        POSEIDON_THROW_INVALID_ARGUMENT("encrypted is not valid for encryption parameters");
     }
 
     // Extract encryption parameters.

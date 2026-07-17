@@ -11,12 +11,209 @@
 #include "poseidon/gpu/gpu_ntt_handler.h"
 #include "poseidon/gpu/gpu_modswitch_handler.h"
 
+#include <cstddef>
 #include <cstdint>
+#include <vector>
 
 namespace poseidon
 {
 namespace gpu
 {
+
+enum class GpuEvalModPolynomialBasis : std::uint8_t
+{
+    Monomial = 0,
+    Chebyshev = 1,
+};
+
+struct GpuEvalModPolynomialTerm
+{
+    std::uint32_t degree = 0;
+    GpuPlaintextData coefficient_plaintext;
+};
+
+/**
+ * @brief One setup-time scheduled ciphertext-basis operation for EvalMod.
+ *
+ * For the monomial basis this computes X^output = X^left * X^right.
+ * For the Chebyshev basis this computes
+ * T_output = 2*T_left*T_right - T_correction. A zero correction degree means
+ * subtracting the pre-uploaded plaintext constant one.
+ *
+ * Steps must be topologically sorted by CPU setup. The GPU runtime never
+ * recursively discovers powers or branches on polynomial coefficients.
+ */
+struct GpuEvalModBasisStep
+{
+    std::uint32_t output_degree = 0;
+    std::uint32_t left_degree = 0;
+    std::uint32_t right_degree = 0;
+    std::uint32_t correction_degree = 0;
+};
+
+/**
+ * @brief One low-degree leaf of the setup-time polynomial split tree.
+ */
+struct GpuEvalModPolynomialBlock
+{
+    std::vector<GpuEvalModPolynomialTerm> terms;
+    std::uint32_t rescale_count = 1;
+};
+
+/**
+ * @brief Fixed Q*T_k+R combine node used by the EvalMod BSGS tree.
+ */
+struct GpuEvalModPolynomialCombineStep
+{
+    std::uint32_t output_node = 0;
+    std::uint32_t quotient_node = 0;
+    std::uint32_t remainder_node = 0;
+    std::uint32_t basis_degree = 0;
+};
+
+/**
+ * @brief Build the fixed EvalMod basis DAG during untimed CPU setup.
+ *
+ * requested_degrees normally contains the non-zero degrees of the uploaded
+ * polynomial terms. The returned steps are topologically sorted and contain
+ * no run-time level/scale decisions.
+ */
+std::vector<GpuEvalModBasisStep> make_gpu_eval_mod_basis_plan(
+    GpuEvalModPolynomialBasis basis,
+    const std::vector<std::uint32_t> &requested_degrees);
+
+/**
+ * @brief GPU-resident bootstrapping constants and precomputed objects.
+ *
+ * Matrix/plaintext/key generation stays on the CPU side. This structure only
+ * stores objects that have already been uploaded to GPU memory and scalar
+ * parameters needed by the GPU bootstrapping scheduler.
+ */
+struct GpuBootstrapData
+{
+    parms_id_type q0_parms_id{};
+    double q0_over_message_ratio = 0.0;
+
+    double raised_scale_override = 0.0;
+    std::uint64_t post_raise_integer_multiplier = 1;
+    double post_raise_scale_multiplier = 1.0;
+    GpuPlaintextData post_raise_plaintext;
+
+    struct EvalModData
+    {
+        double target_scale = 0.0;
+        parms_id_type output_parms_id{};
+        std::size_t output_q_count = 0;
+        GpuPlaintextData input_offset_plaintext;
+
+        /*
+         * Preferred high-precision EvalMod plan.
+         *
+         * Each term is already encoded/uploaded by CPU setup at the exact
+         * parms_id and plaintext scale needed by the corresponding GPU basis
+         * ciphertext. Runtime GPU EvalMod only generates ciphertext bases,
+         * multiply_plain's these constants, and performs level-aligned sums.
+         * Non-constant terms should be ordered by nondecreasing q_count so the
+         * accumulator reaches its final level without repeated down-switches.
+         */
+        GpuEvalModPolynomialBasis polynomial_basis =
+            GpuEvalModPolynomialBasis::Monomial;
+        std::vector<GpuEvalModBasisStep> basis_steps;
+        std::vector<GpuEvalModPolynomialTerm> polynomial_terms;
+
+        /*
+         * Fixed number of ordinary rescale operations after the polynomial
+         * term sum. CPU setup derives this from the chosen plaintext scales;
+         * runtime does not search the modulus chain.
+         */
+        std::uint32_t polynomial_rescale_count = 1;
+
+        /*
+         * Preferred BSGS/recurse-equivalent schedule for the 59-degree path.
+         * Leaf blocks and combine steps are fully generated during CPU setup.
+         * Node ids [0, polynomial_blocks.size()) name leaf outputs; combine
+         * steps append/overwrite only the explicitly declared output nodes.
+         */
+        std::vector<GpuEvalModPolynomialBlock> polynomial_blocks;
+        std::vector<GpuEvalModPolynomialCombineStep> polynomial_combine_steps;
+        std::uint32_t polynomial_result_node = 0;
+
+        /*
+         * Plaintext constants used by GPU Chebyshev basis generation.
+         *
+         * For T_{2k}=2*T_k^2-1 and T_{a+b}=2*T_a*T_b-T_|a-b|,
+         * the degree-zero term requires a plaintext 1 encoded at the generated
+         * basis ciphertext parms_id. CPU setup should upload one plaintext for
+         * every EvalMod basis level that may be produced.
+         */
+        std::vector<GpuPlaintextData> chebyshev_one_plaintexts;
+
+        /*
+         * Legacy EvalMod polynomial coefficients uploaded as plaintexts.
+         *
+         * CPU setup may generate/encode these constants, but the polynomial
+         * evaluation itself is executed by GpuEvaluator::eval_mod_high_precision.
+         * New setup code should prefer polynomial_terms above. This field is
+         * kept only for compatibility with old bootstrapping tests.
+         */
+        std::vector<GpuPlaintextData> polynomial_coefficients;
+
+        /*
+         * Double-angle additive constants, one per iteration, already encoded
+         * and uploaded to GPU memory.
+         */
+        std::vector<GpuPlaintextData> double_angle_constants;
+
+        /* Q counts whose compact relinearization keys are needed at runtime. */
+        std::vector<std::size_t> required_relin_q_counts;
+    };
+
+    EvalModData eval_mod;
+
+    /*
+     * Backward-compatible flat fields for early bootstrap tests/setup code.
+     * Prefer eval_mod.* for new call sites.
+     */
+    double eval_mod_target_scale = 1.0;
+    GpuPlaintextData eval_mod_input_offset_plaintext;
+    std::vector<GpuPlaintextData> eval_mod_polynomial_plaintexts;
+    std::vector<GpuPlaintextData> double_angle_plaintexts;
+
+    GpuLinearMatrixGroup coeff_to_slot_matrix;
+    GpuLinearMatrixGroup slot_to_coeff_matrix;
+    GpuPlaintextData minus_i_plaintext;
+    GpuPlaintextData plus_i_plaintext;
+};
+
+/**
+ * @brief Reusable ciphertext storage for the GPU bootstrapping scheduler.
+ *
+ * The fields are intentionally explicit so the full bootstrap path can reuse
+ * storage across calls without changing the component/limb/coeff layout used
+ * by the existing GPU primitives.
+ */
+struct GpuBootstrapWorkspace
+{
+    GpuCiphertextData modraise_input;
+    GpuCiphertextData raised;
+    GpuCiphertextData raised_scaled;
+
+    GpuCiphertextData coeff_to_slot_real;
+    GpuCiphertextData coeff_to_slot_imag;
+
+    GpuCiphertextData eval_mod_real;
+    GpuCiphertextData eval_mod_imag;
+
+    GpuCiphertextData scratch0;
+    GpuCiphertextData scratch1;
+    GpuCiphertextData scratch2;
+    GpuCiphertextData scratch3;
+    GpuCiphertextData scratch4;
+    GpuCiphertextData scratch5;
+
+    std::vector<GpuCiphertextData> eval_mod_basis;
+    std::vector<GpuCiphertextData> eval_mod_nodes;
+};
 
 /**
  * @brief Top-level GPU evaluator.
@@ -230,7 +427,30 @@ public:
         const GpuGaloisKeysData &galois_keys,
         GpuCiphertextData &result) const;
 
+    /**
+     * @brief CKKS bootstrapping scheduler using GPU-resident precomputed data.
+     *
+     * This stitches together the already implemented GPU stages:
+     * prepare/ModRaise -> CoeffToSlot -> EvalMod -> SlotToCoeff.
+     * EvalMod is intentionally isolated behind a private helper so the next
+     * step can implement it without changing the public scheduler interface.
+     */
+    void bootstrap(
+        const GpuCiphertextData &source_ciphertext,
+        const GpuBootstrapData &bootstrap_data,
+        const GpuRelinKeysData &relin_keys,
+        const GpuGaloisKeysData &galois_keys,
+        GpuBootstrapWorkspace &workspace,
+        GpuCiphertextData &destination_ciphertext) const;
+
 private:
+    void eval_mod_high_precision(
+        const GpuCiphertextData &source_ciphertext,
+        const GpuBootstrapData &bootstrap_data,
+        const GpuRelinKeysData &relin_keys,
+        GpuBootstrapWorkspace &workspace,
+        GpuCiphertextData &destination_ciphertext) const;
+
     const GpuParameterData &params_;
 
     GpuElementwiseHandler elementwise_handler_;
