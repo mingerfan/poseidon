@@ -13,7 +13,6 @@
 #include <optional>
 #include <string>
 #include <string_view>
-#include <unordered_map>
 #include <variant>
 #include <vector>
 
@@ -73,12 +72,18 @@ public:
     PoseidonGpuApi(std::string context_id, PoseidonContext context, int cuda_device_id,
                    std::shared_ptr<const RelinKeys> relin_keys = {},
                    std::shared_ptr<const GaloisKeys> galois_keys = {});
+    PoseidonGpuApi(std::string context_id, PoseidonContext context,
+                   std::vector<int> cuda_device_ids,
+                   std::shared_ptr<const RelinKeys> relin_keys = {},
+                   std::shared_ptr<const GaloisKeys> galois_keys = {});
     ~PoseidonGpuApi();
 
     PoseidonGpuApi(const PoseidonGpuApi &) = delete;
     PoseidonGpuApi &operator=(const PoseidonGpuApi &) = delete;
 
     std::string name() const;
+    int local_device_count() const noexcept;
+    int cuda_device_id(int logical_device_index) const;
     Value encode_plaintext(const fhegpu::ValueDesc &output_desc,
                            const std::vector<double> &slots);
     Value compute(const fhegpu::ComputeOp &op, const std::vector<Value> &inputs);
@@ -94,22 +99,26 @@ public:
     void validate_value(const Value &value, const fhegpu::ValueDesc &expected) const;
 
 private:
-    void synchronize_device() const;
-    const gpu::GpuRelinKeysData &relin_keys_for(std::size_t q_count);
-    const gpu::GpuGaloisKeysData &galois_keys_for(std::size_t q_count);
+    struct DeviceState;
+
+    DeviceState &device_state(const fhegpu::Place &place, const char *where);
+    const DeviceState &device_state(const fhegpu::Place &place,
+                                    const char *where) const;
+    DeviceState &device_state(int logical_device_index);
+    const DeviceState &device_state(int logical_device_index) const;
+    void synchronize_device(int cuda_device_id) const;
+    void synchronize_all_devices() const;
+    const gpu::GpuRelinKeysData &relin_keys_for(DeviceState &device,
+                                                std::size_t q_count);
+    const gpu::GpuGaloisKeysData &galois_keys_for(DeviceState &device,
+                                                  std::size_t q_count);
 
     std::string context_id_;
     PoseidonContext context_;
-    int cuda_device_id_ = 0;
     std::unique_ptr<CKKSEncoder> encoder_;
-    std::unique_ptr<gpu::GpuParameterData> gpu_parameters_;
-    std::unique_ptr<gpu::GpuEvaluator> evaluator_;
+    std::vector<std::unique_ptr<DeviceState>> devices_;
     std::shared_ptr<const RelinKeys> relin_keys_;
     std::shared_ptr<const GaloisKeys> galois_keys_;
-    std::unordered_map<std::size_t, std::unique_ptr<gpu::GpuRelinKeysData>>
-        gpu_relin_keys_by_q_count_;
-    std::unordered_map<std::size_t, std::unique_ptr<gpu::GpuGaloisKeysData>>
-        gpu_galois_keys_by_q_count_;
     std::optional<int> max_rescale_levels_per_op_;
 };
 

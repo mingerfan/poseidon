@@ -7,12 +7,15 @@
 #include "poseidon/gpu/gpu_uploader.h"
 #include "poseidon/key/galoiskeys.h"
 #include "poseidon/key/relinkeys.h"
+#include "poseidon/runtime_api/communication/cuda_local_transfer.h"
+#include "poseidon/runtime_api/communication/gpu_object_copy.h"
 
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
 #include <limits>
 #include <stdexcept>
+#include <unordered_map>
 #include <utility>
 
 #include <cuda_runtime_api.h>
@@ -42,11 +45,39 @@ void require_host_place(const fhegpu::Place &place, const char *where)
 
 void require_device_place(const fhegpu::Place &place, const char *where)
 {
-    if (place.kind != fhegpu::PlaceKind::Device || place.rank != 0 || place.index != 0)
+    if (place.kind != fhegpu::PlaceKind::Device || place.rank != 0 || place.index < 0)
+    {
+        throw std::invalid_argument(std::string(where) + " requires a local Device Place");
+    }
+}
+
+int value_cuda_device_id(const PoseidonGpuValue &value, const char *where)
+{
+    if (value.place_kind() != fhegpu::PlaceKind::Device)
+    {
+        throw std::invalid_argument(std::string(where) + " requires a Device value");
+    }
+
+    if (value.kind() == fhegpu::ValueKind::Plaintext)
+    {
+        const auto &plain = value.device_plaintext();
+        if (plain.fields_.size() != 1 ||
+            plain.fields_.front().device_id != plain.fields_.front().buffer.device_id())
+        {
+            throw std::invalid_argument(std::string(where) +
+                                        " has invalid CUDA device metadata");
+        }
+        return plain.fields_.front().device_id;
+    }
+
+    const auto &cipher = value.device_ciphertext();
+    if (cipher.fields_.size() != 1 ||
+        cipher.fields_.front().device_id != cipher.fields_.front().buffer.device_id())
     {
         throw std::invalid_argument(std::string(where) +
-                                    " requires Device(rank=0,index=0)");
+                                    " has invalid CUDA device metadata");
     }
+    return cipher.fields_.front().device_id;
 }
 
 const gpu::GpuCiphertextData &require_ciphertext(const std::vector<PoseidonGpuValue> &inputs,
@@ -72,6 +103,22 @@ const gpu::GpuPlaintextData &require_plaintext(const std::vector<PoseidonGpuValu
 bool gpu_compute_supported(fhegpu::ComputeKind kind)
 {
     return kind != fhegpu::ComputeKind::ModSwitch && kind != fhegpu::ComputeKind::Boot;
+}
+
+communication::CudaTransferRoute cuda_transfer_route(fhegpu::CommHint hint)
+{
+    switch (hint)
+    {
+    case fhegpu::CommHint::HostStaged:
+        return communication::CudaTransferRoute::HostStaged;
+    case fhegpu::CommHint::Auto:
+    case fhegpu::CommHint::PointToPoint:
+    case fhegpu::CommHint::Broadcast:
+    case fhegpu::CommHint::Tree:
+    case fhegpu::CommHint::Ring:
+        return communication::CudaTransferRoute::Auto;
+    }
+    throw std::invalid_argument("Poseidon GPU communication hint is unknown");
 }
 
 template <class GpuValue>
@@ -115,6 +162,17 @@ void require_full_poly(const gpu::GpuRNSPoly &poly, std::size_t component,
 }
 
 } // namespace
+
+struct PoseidonGpuApi::DeviceState
+{
+    int cuda_device_id = 0;
+    std::unique_ptr<gpu::GpuParameterData> gpu_parameters;
+    std::unique_ptr<gpu::GpuEvaluator> evaluator;
+    std::unordered_map<std::size_t, std::unique_ptr<gpu::GpuRelinKeysData>>
+        relin_keys_by_q_count;
+    std::unordered_map<std::size_t, std::unique_ptr<gpu::GpuGaloisKeysData>>
+        galois_keys_by_q_count;
+};
 
 PoseidonGpuValue::PoseidonGpuValue(Storage storage) : storage_(std::move(storage)) {}
 
@@ -198,9 +256,17 @@ PoseidonGpuApi::PoseidonGpuApi(std::string context_id, PoseidonContext context,
                                int cuda_device_id,
                                std::shared_ptr<const RelinKeys> relin_keys,
                                std::shared_ptr<const GaloisKeys> galois_keys)
+    : PoseidonGpuApi(std::move(context_id), std::move(context),
+                     std::vector<int>{cuda_device_id}, std::move(relin_keys),
+                     std::move(galois_keys))
+{}
+
+PoseidonGpuApi::PoseidonGpuApi(std::string context_id, PoseidonContext context,
+                               std::vector<int> cuda_device_ids,
+                               std::shared_ptr<const RelinKeys> relin_keys,
+                               std::shared_ptr<const GaloisKeys> galois_keys)
     : context_id_(std::move(context_id)), context_(std::move(context)),
-      cuda_device_id_(cuda_device_id), relin_keys_(std::move(relin_keys)),
-      galois_keys_(std::move(galois_keys))
+      relin_keys_(std::move(relin_keys)), galois_keys_(std::move(galois_keys))
 {
     if (context_id_.empty())
     {
@@ -211,13 +277,26 @@ PoseidonGpuApi::PoseidonGpuApi(std::string context_id, PoseidonContext context,
         throw std::invalid_argument("Poseidon GPU Api requires a CKKS context");
     }
 
-    int device_count = 0;
-    gpu::gpu_check_cuda(cudaGetDeviceCount(&device_count), "cudaGetDeviceCount");
-    if (cuda_device_id_ < 0 || cuda_device_id_ >= device_count)
+    if (cuda_device_ids.empty())
     {
-        throw std::invalid_argument("Poseidon GPU Api CUDA device id is unavailable");
+        throw std::invalid_argument("Poseidon GPU Api requires at least one CUDA device");
     }
-    gpu::gpu_check_cuda(cudaSetDevice(cuda_device_id_), "cudaSetDevice");
+
+    int visible_device_count = 0;
+    gpu::gpu_check_cuda(cudaGetDeviceCount(&visible_device_count), "cudaGetDeviceCount");
+    for (std::size_t i = 0; i < cuda_device_ids.size(); ++i)
+    {
+        const int cuda_device_id = cuda_device_ids[i];
+        if (cuda_device_id < 0 || cuda_device_id >= visible_device_count)
+        {
+            throw std::invalid_argument("Poseidon GPU Api CUDA device id is unavailable");
+        }
+        if (std::find(cuda_device_ids.begin(), cuda_device_ids.begin() + i,
+                      cuda_device_id) != cuda_device_ids.begin() + i)
+        {
+            throw std::invalid_argument("Poseidon GPU Api CUDA device ids must be unique");
+        }
+    }
 
     const auto parameters = context_.parameters_literal();
     for (const auto &modulus : parameters->q())
@@ -236,26 +315,35 @@ PoseidonGpuApi::PoseidonGpuApi(std::string context_id, PoseidonContext context,
     }
 
     encoder_ = std::make_unique<CKKSEncoder>(context_);
-    gpu_parameters_ = std::make_unique<gpu::GpuParameterData>(context_, cuda_device_id_);
-    evaluator_ = std::make_unique<gpu::GpuEvaluator>(*gpu_parameters_);
     const std::size_t full_q_count = parameters->q().size();
-    if (relin_keys_ != nullptr)
+    devices_.reserve(cuda_device_ids.size());
+    for (const int cuda_device_id : cuda_device_ids)
     {
-        gpu_relin_keys_by_q_count_.emplace(
-            full_q_count,
-            std::make_unique<gpu::GpuRelinKeysData>(
-                gpu::GpuUploader::upload_relin_keys(
-                    *relin_keys_, cuda_device_id_, full_q_count)));
+        gpu::gpu_check_cuda(cudaSetDevice(cuda_device_id), "cudaSetDevice");
+        auto device = std::make_unique<DeviceState>();
+        device->cuda_device_id = cuda_device_id;
+        device->gpu_parameters =
+            std::make_unique<gpu::GpuParameterData>(context_, cuda_device_id);
+        device->evaluator = std::make_unique<gpu::GpuEvaluator>(*device->gpu_parameters);
+        if (relin_keys_ != nullptr)
+        {
+            device->relin_keys_by_q_count.emplace(
+                full_q_count,
+                std::make_unique<gpu::GpuRelinKeysData>(
+                    gpu::GpuUploader::upload_relin_keys(
+                        *relin_keys_, cuda_device_id, full_q_count)));
+        }
+        if (galois_keys_ != nullptr)
+        {
+            device->galois_keys_by_q_count.emplace(
+                full_q_count,
+                std::make_unique<gpu::GpuGaloisKeysData>(
+                    gpu::GpuUploader::upload_galois_keys(
+                        *galois_keys_, cuda_device_id, full_q_count)));
+        }
+        devices_.push_back(std::move(device));
     }
-    if (galois_keys_ != nullptr)
-    {
-        gpu_galois_keys_by_q_count_.emplace(
-            full_q_count,
-            std::make_unique<gpu::GpuGaloisKeysData>(
-                gpu::GpuUploader::upload_galois_keys(
-                    *galois_keys_, cuda_device_id_, full_q_count)));
-    }
-    synchronize_device();
+    synchronize_all_devices();
 }
 
 PoseidonGpuApi::~PoseidonGpuApi() = default;
@@ -263,6 +351,16 @@ PoseidonGpuApi::~PoseidonGpuApi() = default;
 std::string PoseidonGpuApi::name() const
 {
     return "PoseidonGpuApi";
+}
+
+int PoseidonGpuApi::local_device_count() const noexcept
+{
+    return static_cast<int>(devices_.size());
+}
+
+int PoseidonGpuApi::cuda_device_id(int logical_device_index) const
+{
+    return device_state(logical_device_index).cuda_device_id;
 }
 
 PoseidonGpuApi::Value PoseidonGpuApi::encode_plaintext(
@@ -288,32 +386,47 @@ PoseidonGpuApi::Value PoseidonGpuApi::encode_plaintext(
 PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
                                               const std::vector<Value> &inputs)
 {
-    require_device_place(op.place, "Poseidon GPU compute");
+    auto &device = device_state(op.place, "Poseidon GPU compute");
+    gpu::gpu_check_cuda(cudaSetDevice(device.cuda_device_id), "cudaSetDevice");
+    for (const auto &input : inputs)
+    {
+        if (value_cuda_device_id(input, "Poseidon GPU compute input") !=
+            device.cuda_device_id)
+        {
+            throw std::invalid_argument(
+                "Poseidon GPU compute input is not on the operation CUDA device");
+        }
+    }
     gpu::GpuCiphertextData output;
 
     switch (op.kind)
     {
     case fhegpu::ComputeKind::AddCC:
-        evaluator_->add(require_ciphertext(inputs, 0), require_ciphertext(inputs, 1), output);
+        device.evaluator->add(require_ciphertext(inputs, 0), require_ciphertext(inputs, 1),
+                              output);
         break;
     case fhegpu::ComputeKind::AddCP:
-        evaluator_->add_plain(require_ciphertext(inputs, 0), require_plaintext(inputs, 1), output);
+        device.evaluator->add_plain(require_ciphertext(inputs, 0),
+                                    require_plaintext(inputs, 1), output);
         break;
     case fhegpu::ComputeKind::SubCC:
-        evaluator_->sub(require_ciphertext(inputs, 0), require_ciphertext(inputs, 1), output);
+        device.evaluator->sub(require_ciphertext(inputs, 0), require_ciphertext(inputs, 1),
+                              output);
         break;
     case fhegpu::ComputeKind::SubCP:
-        evaluator_->sub_plain(require_ciphertext(inputs, 0), require_plaintext(inputs, 1), output);
+        device.evaluator->sub_plain(require_ciphertext(inputs, 0),
+                                    require_plaintext(inputs, 1), output);
         break;
     case fhegpu::ComputeKind::MulCC:
-        evaluator_->multiply(require_ciphertext(inputs, 0), require_ciphertext(inputs, 1), output);
+        device.evaluator->multiply(require_ciphertext(inputs, 0),
+                                   require_ciphertext(inputs, 1), output);
         break;
     case fhegpu::ComputeKind::MulCP:
-        evaluator_->multiply_plain(require_ciphertext(inputs, 0), require_plaintext(inputs, 1),
-                                   output);
+        device.evaluator->multiply_plain(require_ciphertext(inputs, 0),
+                                         require_plaintext(inputs, 1), output);
         break;
     case fhegpu::ComputeKind::Negate:
-        evaluator_->negate(require_ciphertext(inputs, 0), output);
+        device.evaluator->negate(require_ciphertext(inputs, 0), output);
         break;
     case fhegpu::ComputeKind::Rotate:
     {
@@ -322,8 +435,8 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
         {
             throw std::runtime_error("Poseidon GPU Rotate requires GaloisKeys");
         }
-        evaluator_->rotate(input, std::get<fhegpu::RotateAttrs>(op.attrs).steps,
-                           galois_keys_for(input.meta.q_count), output);
+        device.evaluator->rotate(input, std::get<fhegpu::RotateAttrs>(op.attrs).steps,
+                                 galois_keys_for(device, input.meta.q_count), output);
         break;
     }
     case fhegpu::ComputeKind::Rescale:
@@ -352,11 +465,11 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
         for (int dropped = 0; dropped < drop_count; ++dropped)
         {
             auto next = std::make_unique<gpu::GpuCiphertextData>();
-            evaluator_->rescale(*source, *next);
+            device.evaluator->rescale(*source, *next);
             source = next.get();
             intermediates.push_back(std::move(next));
         }
-        synchronize_device();
+        synchronize_device(device.cuda_device_id);
         intermediates.back()->meta.scale = exact_scale(attrs.target_scale_log2);
         output = std::move(*intermediates.back());
         break;
@@ -368,7 +481,8 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
         {
             throw std::runtime_error("Poseidon GPU Relinearize requires RelinKeys");
         }
-        evaluator_->relinearize(input, relin_keys_for(input.meta.q_count), output);
+        device.evaluator->relinearize(input, relin_keys_for(device, input.meta.q_count),
+                                      output);
         break;
     }
     case fhegpu::ComputeKind::ModSwitch:
@@ -377,89 +491,156 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
         throw std::runtime_error("Poseidon GPU Boot is not implemented");
     }
 
-    synchronize_device();
+    synchronize_device(device.cuda_device_id);
     return Value::from_device_ciphertext(std::move(output));
 }
 
 PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_async(
     const fhegpu::CommAction &action, const std::vector<Value> &local_inputs)
 {
-    if (action.kind != fhegpu::CommKind::Transfer)
+    if (action.inputs.size() != 1 || action.sources.size() != 1 ||
+        action.outputs.size() != action.destinations.size() ||
+        action.outputs.size() != action.output_types.size() || local_inputs.size() != 1)
     {
-        throw std::runtime_error("Poseidon GPU Api does not support Replicate");
+        throw std::invalid_argument("Poseidon GPU communication mapping is invalid");
     }
-    if (action.inputs.size() != 1 || action.outputs.size() != 1 ||
-        action.sources.size() != 1 || action.destinations.size() != 1 ||
-        action.output_types.size() != 1 || local_inputs.size() != 1)
+    if (action.kind == fhegpu::CommKind::Transfer && action.outputs.size() != 1)
     {
-        throw std::invalid_argument("Poseidon GPU Transfer requires one input and one output");
+        throw std::invalid_argument("Poseidon GPU Transfer requires one output");
+    }
+    if (action.kind == fhegpu::CommKind::Replicate && action.outputs.size() < 2)
+    {
+        throw std::invalid_argument("Poseidon GPU Replicate requires at least two outputs");
+    }
+    if (action.kind != fhegpu::CommKind::Transfer &&
+        action.kind != fhegpu::CommKind::Replicate)
+    {
+        throw std::invalid_argument("Poseidon GPU communication kind is unknown");
     }
 
     const auto &source_place = action.sources.front();
-    const auto &destination_place = action.destinations.front();
     const auto &input = local_inputs.front();
-    if (input.kind() != action.output_types.front())
+    if (source_place.kind == fhegpu::PlaceKind::Host)
     {
-        throw std::invalid_argument("Poseidon GPU Transfer value kind mismatch");
-    }
-
-    CommHandle handle;
-    if (source_place.kind == fhegpu::PlaceKind::Host &&
-        destination_place.kind == fhegpu::PlaceKind::Device)
-    {
-        require_host_place(source_place, "Poseidon GPU Transfer source");
-        require_device_place(destination_place, "Poseidon GPU Transfer destination");
+        require_host_place(source_place, "Poseidon GPU communication source");
         if (input.place_kind() != fhegpu::PlaceKind::Host)
         {
-            throw std::invalid_argument("Poseidon GPU Transfer expected a Host input");
+            throw std::invalid_argument("Poseidon GPU communication expected a Host input");
         }
-        if (input.kind() == fhegpu::ValueKind::Plaintext)
-        {
-            handle.outputs.push_back(Value::from_device_plaintext(
-                gpu::GpuUploader::upload_plaintext(input.host_plaintext(), cuda_device_id_)));
-        }
-        else
-        {
-            handle.outputs.push_back(Value::from_device_ciphertext(
-                gpu::GpuUploader::upload_ciphertext(input.host_ciphertext(), cuda_device_id_)));
-        }
-        synchronize_device();
-        return handle;
     }
-
-    if (source_place.kind == fhegpu::PlaceKind::Device &&
-        destination_place.kind == fhegpu::PlaceKind::Host)
+    else
     {
-        require_device_place(source_place, "Poseidon GPU Transfer source");
-        require_host_place(destination_place, "Poseidon GPU Transfer destination");
-        if (input.place_kind() != fhegpu::PlaceKind::Device)
+        const auto &source_device =
+            device_state(source_place, "Poseidon GPU communication source");
+        if (value_cuda_device_id(input, "Poseidon GPU communication input") !=
+            source_device.cuda_device_id)
         {
-            throw std::invalid_argument("Poseidon GPU Transfer expected a Device input");
+            throw std::invalid_argument(
+                "Poseidon GPU communication input is not on the source CUDA device");
         }
-        if (input.kind() == fhegpu::ValueKind::Plaintext)
+    }
+
+    for (std::size_t slot = 0; slot < action.destinations.size(); ++slot)
+    {
+        const auto &destination = action.destinations[slot];
+        if (input.kind() != action.output_types[slot])
         {
-            Plaintext output;
-            gpu::GpuUploader::download_plaintext(input.device_plaintext(), output, context_);
-            handle.outputs.push_back(Value::from_host_plaintext(std::move(output)));
+            throw std::invalid_argument("Poseidon GPU communication value kind mismatch");
+        }
+        if (destination == source_place)
+        {
+            throw std::invalid_argument(
+                "Poseidon GPU communication destination equals source Place");
+        }
+        if (std::find(action.destinations.begin(), action.destinations.begin() + slot,
+                      destination) != action.destinations.begin() + slot)
+        {
+            throw std::invalid_argument(
+                "Poseidon GPU communication destination is duplicated");
+        }
+        if (destination.kind == fhegpu::PlaceKind::Host)
+        {
+            require_host_place(destination, "Poseidon GPU communication destination");
         }
         else
         {
-            Ciphertext output;
-            gpu::GpuUploader::download_ciphertext(input.device_ciphertext(), output, context_);
-            handle.outputs.push_back(Value::from_host_ciphertext(std::move(output)));
+            static_cast<void>(
+                device_state(destination, "Poseidon GPU communication destination"));
         }
-        synchronize_device();
-        return handle;
     }
 
-    throw std::invalid_argument("Poseidon GPU Transfer only supports Host/Device conversion");
+    const auto requested_route = cuda_transfer_route(action.hint);
+    communication::CudaLocalTransfer cuda_transfer;
+    CommHandle handle;
+    handle.outputs.reserve(action.outputs.size());
+    for (const auto &destination : action.destinations)
+    {
+        if (source_place.kind == fhegpu::PlaceKind::Host)
+        {
+            const int destination_cuda_device =
+                device_state(destination, "Poseidon GPU communication destination")
+                    .cuda_device_id;
+            if (input.kind() == fhegpu::ValueKind::Plaintext)
+            {
+                handle.outputs.push_back(Value::from_device_plaintext(
+                    gpu::GpuUploader::upload_plaintext(input.host_plaintext(),
+                                                       destination_cuda_device)));
+            }
+            else
+            {
+                handle.outputs.push_back(Value::from_device_ciphertext(
+                    gpu::GpuUploader::upload_ciphertext(input.host_ciphertext(),
+                                                        destination_cuda_device)));
+            }
+            continue;
+        }
+
+        if (destination.kind == fhegpu::PlaceKind::Host)
+        {
+            if (input.kind() == fhegpu::ValueKind::Plaintext)
+            {
+                Plaintext output;
+                gpu::GpuUploader::download_plaintext(input.device_plaintext(), output, context_);
+                handle.outputs.push_back(Value::from_host_plaintext(std::move(output)));
+            }
+            else
+            {
+                Ciphertext output;
+                gpu::GpuUploader::download_ciphertext(input.device_ciphertext(), output,
+                                                       context_);
+                handle.outputs.push_back(Value::from_host_ciphertext(std::move(output)));
+            }
+            continue;
+        }
+
+        const int destination_cuda_device =
+            device_state(destination, "Poseidon GPU communication destination")
+                .cuda_device_id;
+        if (input.kind() == fhegpu::ValueKind::Plaintext)
+        {
+            gpu::GpuPlaintextData output;
+            const auto copies = communication::prepare_full_object_copy(
+                input.device_plaintext(), output, destination_cuda_device);
+            cuda_transfer.copy_sync(copies, requested_route);
+            handle.outputs.push_back(Value::from_device_plaintext(std::move(output)));
+        }
+        else
+        {
+            gpu::GpuCiphertextData output;
+            const auto copies = communication::prepare_full_object_copy(
+                input.device_ciphertext(), output, destination_cuda_device);
+            cuda_transfer.copy_sync(copies, requested_route);
+            handle.outputs.push_back(Value::from_device_ciphertext(std::move(output)));
+        }
+    }
+    return handle;
 }
 
 std::vector<PoseidonGpuApi::Value> PoseidonGpuApi::wait(CommHandle &handle)
 {
     if (handle.waited)
     {
-        throw std::runtime_error("Poseidon GPU Transfer handle was already waited");
+        throw std::runtime_error("Poseidon GPU communication handle was already waited");
     }
     handle.waited = true;
     return std::move(handle.outputs);
@@ -469,7 +650,17 @@ void PoseidonGpuApi::synchronize(Value &value)
 {
     if (value.place_kind() == fhegpu::PlaceKind::Device)
     {
-        synchronize_device();
+        const int value_device = value_cuda_device_id(value, "Poseidon GPU synchronize");
+        const auto configured =
+            std::find_if(devices_.begin(), devices_.end(), [value_device](const auto &device) {
+                return device->cuda_device_id == value_device;
+            });
+        if (configured == devices_.end())
+        {
+            throw std::invalid_argument(
+                "Poseidon GPU synchronize value is not on a configured CUDA device");
+        }
+        synchronize_device(value_device);
     }
 }
 
@@ -488,10 +679,16 @@ void PoseidonGpuApi::preflight(std::string_view plan_source_sha256,
     {
         throw std::invalid_argument("Poseidon GPU Api target is unsupported");
     }
-    if (target.world_size != 1 || target.device_counts != std::vector<int>{1})
+    if (target.world_size != 1)
     {
         throw std::invalid_argument(
-            "Poseidon GPU Api currently supports one process and one logical device");
+            "Poseidon GPU Api currently supports one local process");
+    }
+    if (target.device_counts.size() != 1 ||
+        target.device_counts.front() != local_device_count())
+    {
+        throw std::invalid_argument(
+            "Poseidon GPU Api target device count does not match configured CUDA devices");
     }
 
     const auto parameters = context_.parameters_literal();
@@ -546,7 +743,8 @@ void PoseidonGpuApi::preflight(std::string_view plan_source_sha256,
     for (const auto capability : requirements.capabilities)
     {
         if (capability != fhegpu::RequiredCapability::Encode &&
-            capability != fhegpu::RequiredCapability::Transfer)
+            capability != fhegpu::RequiredCapability::Transfer &&
+            capability != fhegpu::RequiredCapability::Replicate)
         {
             throw std::runtime_error("Poseidon GPU Api lacks required capability: " +
                                      fhegpu::to_string(capability));
@@ -555,10 +753,10 @@ void PoseidonGpuApi::preflight(std::string_view plan_source_sha256,
 
     for (const auto &key : requirements.keys)
     {
-        require_device_place(key.place, "Poseidon GPU key");
+        const auto &device = device_state(key.place, "Poseidon GPU key");
         if (key.kind == fhegpu::KeyKind::Relin)
         {
-            if (relin_keys_ == nullptr || gpu_relin_keys_by_q_count_.empty() ||
+            if (relin_keys_ == nullptr || device.relin_keys_by_q_count.empty() ||
                 !relin_keys_->has_key(2))
             {
                 throw std::runtime_error("Poseidon GPU Api lacks RelinKeys");
@@ -566,7 +764,7 @@ void PoseidonGpuApi::preflight(std::string_view plan_source_sha256,
         }
         else if (key.kind == fhegpu::KeyKind::Galois)
         {
-            if (galois_keys_ == nullptr || gpu_galois_keys_by_q_count_.empty() ||
+            if (galois_keys_ == nullptr || device.galois_keys_by_q_count.empty() ||
                 !key.rotation_step)
             {
                 throw std::runtime_error("Poseidon GPU Api lacks GaloisKeys");
@@ -584,7 +782,7 @@ void PoseidonGpuApi::preflight(std::string_view plan_source_sha256,
         }
     }
 
-    synchronize_device();
+    synchronize_all_devices();
 }
 
 [[noreturn]] void PoseidonGpuApi::abort_all(int, const std::string &reason)
@@ -639,7 +837,8 @@ void PoseidonGpuApi::validate_value(const Value &value,
     }
     else
     {
-        require_device_place(expected.place, "Poseidon GPU Device value");
+        const int expected_cuda_device =
+            device_state(expected.place, "Poseidon GPU Device value").cuda_device_id;
         if (expected.kind == fhegpu::ValueKind::Plaintext)
         {
             const auto &plain = value.device_plaintext();
@@ -655,7 +854,8 @@ void PoseidonGpuApi::validate_value(const Value &value,
             {
                 throw std::runtime_error("Poseidon GPU plaintext shape does not match context");
             }
-            require_single_full_shard(plain, 1, cuda_device_id_, "Poseidon GPU plaintext");
+            require_single_full_shard(plain, 1, expected_cuda_device,
+                                      "Poseidon GPU plaintext");
             require_full_poly(plain.poly_, 0, plain.meta.degree, plain.meta.q_count, 0,
                               "Poseidon GPU plaintext");
             actual_level = static_cast<int>(context_data->level());
@@ -679,8 +879,8 @@ void PoseidonGpuApi::validate_value(const Value &value,
             {
                 throw std::runtime_error("Poseidon GPU ciphertext shape does not match context");
             }
-            require_single_full_shard(cipher, cipher.meta.component_count, cuda_device_id_,
-                                      "Poseidon GPU ciphertext");
+            require_single_full_shard(cipher, cipher.meta.component_count,
+                                      expected_cuda_device, "Poseidon GPU ciphertext");
             for (std::size_t component = 0; component < cipher.polys_.size(); ++component)
             {
                 require_full_poly(cipher.polys_[component], component, cipher.meta.degree,
@@ -706,16 +906,56 @@ void PoseidonGpuApi::validate_value(const Value &value,
     }
 }
 
-void PoseidonGpuApi::synchronize_device() const
+PoseidonGpuApi::DeviceState &PoseidonGpuApi::device_state(
+    const fhegpu::Place &place, const char *where)
 {
-    gpu::gpu_check_cuda(cudaSetDevice(cuda_device_id_), "cudaSetDevice");
+    require_device_place(place, where);
+    return device_state(place.index);
+}
+
+const PoseidonGpuApi::DeviceState &PoseidonGpuApi::device_state(
+    const fhegpu::Place &place, const char *where) const
+{
+    require_device_place(place, where);
+    return device_state(place.index);
+}
+
+PoseidonGpuApi::DeviceState &PoseidonGpuApi::device_state(int logical_device_index)
+{
+    return const_cast<DeviceState &>(
+        static_cast<const PoseidonGpuApi &>(*this).device_state(logical_device_index));
+}
+
+const PoseidonGpuApi::DeviceState &PoseidonGpuApi::device_state(
+    int logical_device_index) const
+{
+    if (logical_device_index < 0 ||
+        logical_device_index >= static_cast<int>(devices_.size()))
+    {
+        throw std::invalid_argument("Poseidon GPU logical device index is unavailable");
+    }
+    return *devices_[static_cast<std::size_t>(logical_device_index)];
+}
+
+void PoseidonGpuApi::synchronize_device(int cuda_device_id) const
+{
+    gpu::gpu_check_cuda(cudaSetDevice(cuda_device_id), "cudaSetDevice");
     gpu::gpu_check_cuda(cudaDeviceSynchronize(), "cudaDeviceSynchronize");
 }
 
-const gpu::GpuRelinKeysData &PoseidonGpuApi::relin_keys_for(std::size_t q_count)
+void PoseidonGpuApi::synchronize_all_devices() const
 {
-    const auto existing = gpu_relin_keys_by_q_count_.find(q_count);
-    if (existing != gpu_relin_keys_by_q_count_.end())
+    for (const auto &device : devices_)
+    {
+        synchronize_device(device->cuda_device_id);
+    }
+}
+
+const gpu::GpuRelinKeysData &PoseidonGpuApi::relin_keys_for(
+    DeviceState &device, std::size_t q_count)
+{
+    const auto existing = device.relin_keys_by_q_count.find(q_count);
+    if (existing != device.relin_keys_by_q_count.end())
     {
         return *existing->second;
     }
@@ -725,21 +965,22 @@ const gpu::GpuRelinKeysData &PoseidonGpuApi::relin_keys_for(std::size_t q_count)
     }
 
     auto keys = std::make_unique<gpu::GpuRelinKeysData>(
-        gpu::GpuUploader::upload_relin_keys(*relin_keys_, cuda_device_id_, q_count));
+        gpu::GpuUploader::upload_relin_keys(*relin_keys_, device.cuda_device_id, q_count));
     const auto [inserted, ok] =
-        gpu_relin_keys_by_q_count_.emplace(q_count, std::move(keys));
+        device.relin_keys_by_q_count.emplace(q_count, std::move(keys));
     if (!ok)
     {
         throw std::logic_error("Poseidon GPU RelinKeys cache insertion failed");
     }
-    synchronize_device();
+    synchronize_device(device.cuda_device_id);
     return *inserted->second;
 }
 
-const gpu::GpuGaloisKeysData &PoseidonGpuApi::galois_keys_for(std::size_t q_count)
+const gpu::GpuGaloisKeysData &PoseidonGpuApi::galois_keys_for(
+    DeviceState &device, std::size_t q_count)
 {
-    const auto existing = gpu_galois_keys_by_q_count_.find(q_count);
-    if (existing != gpu_galois_keys_by_q_count_.end())
+    const auto existing = device.galois_keys_by_q_count.find(q_count);
+    if (existing != device.galois_keys_by_q_count.end())
     {
         return *existing->second;
     }
@@ -749,14 +990,15 @@ const gpu::GpuGaloisKeysData &PoseidonGpuApi::galois_keys_for(std::size_t q_coun
     }
 
     auto keys = std::make_unique<gpu::GpuGaloisKeysData>(
-        gpu::GpuUploader::upload_galois_keys(*galois_keys_, cuda_device_id_, q_count));
+        gpu::GpuUploader::upload_galois_keys(*galois_keys_, device.cuda_device_id,
+                                             q_count));
     const auto [inserted, ok] =
-        gpu_galois_keys_by_q_count_.emplace(q_count, std::move(keys));
+        device.galois_keys_by_q_count.emplace(q_count, std::move(keys));
     if (!ok)
     {
         throw std::logic_error("Poseidon GPU GaloisKeys cache insertion failed");
     }
-    synchronize_device();
+    synchronize_device(device.cuda_device_id);
     return *inserted->second;
 }
 

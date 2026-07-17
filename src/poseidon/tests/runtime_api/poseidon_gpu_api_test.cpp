@@ -168,12 +168,13 @@ fhegpu::LoadedOperatorSpec make_operator_spec(const poseidon::PoseidonContext &c
     return {std::move(spec), kOperatorSpecSha};
 }
 
-fhegpu::TargetConfig make_target(const fhegpu::LoadedOperatorSpec &loaded_spec)
+fhegpu::TargetConfig make_target(const fhegpu::LoadedOperatorSpec &loaded_spec,
+                                 int local_device_count = 1)
 {
     fhegpu::TargetConfig target;
     target.target_id = "poseidon-ckks-gpu";
     target.world_size = 1;
-    target.device_counts = {1};
+    target.device_counts = {local_device_count};
     target.capability_version = 1;
     target.operator_spec =
         {loaded_spec.spec.id, loaded_spec.spec.version, loaded_spec.source_sha256};
@@ -185,9 +186,9 @@ fhegpu::Place host_place()
     return {fhegpu::PlaceKind::Host, 0, 0};
 }
 
-fhegpu::Place device_place()
+fhegpu::Place device_place(int index = 0)
 {
-    return {fhegpu::PlaceKind::Device, 0, 0};
+    return {fhegpu::PlaceKind::Device, 0, index};
 }
 
 fhegpu::CommAction transfer_action(fhegpu::TransferId id, fhegpu::ValueKind kind,
@@ -202,6 +203,22 @@ fhegpu::CommAction transfer_action(fhegpu::TransferId id, fhegpu::ValueKind kind
     action.sources = {source};
     action.destinations = {destination};
     action.output_types = {kind};
+    return action;
+}
+
+fhegpu::CommAction replicate_action(
+    fhegpu::TransferId id, fhegpu::ValueKind kind, const fhegpu::Place &source,
+    std::vector<fhegpu::Place> destinations, std::vector<fhegpu::ValueId> outputs)
+{
+    fhegpu::CommAction action;
+    action.id = id;
+    action.kind = fhegpu::CommKind::Replicate;
+    action.hint = fhegpu::CommHint::Broadcast;
+    action.inputs = {0};
+    action.outputs = std::move(outputs);
+    action.sources = {source};
+    action.destinations = std::move(destinations);
+    action.output_types.assign(action.outputs.size(), kind);
     return action;
 }
 
@@ -346,13 +363,102 @@ fhegpu::RuntimePlan make_multiply_plain_plan(
     return plan;
 }
 
+fhegpu::RuntimePlan make_two_gpu_plan(const fhegpu::LoadedOperatorSpec &loaded_spec,
+                                      int level)
+{
+    const auto host = host_place();
+    const auto device0 = device_place(0);
+    const auto device1 = device_place(1);
+    fhegpu::RuntimePlan plan;
+    plan.plan_id = 4;
+    plan.target = make_target(loaded_spec, 2);
+    plan.values = {
+        {0, fhegpu::ValueKind::Ciphertext, host, kContextId, level, kDefaultScaleLog2, true, 2},
+        {1, fhegpu::ValueKind::Plaintext, host, kContextId, level, kDefaultScaleLog2, true, 1},
+        {2, fhegpu::ValueKind::Ciphertext, device0, kContextId, level, kDefaultScaleLog2, true, 2},
+        {3, fhegpu::ValueKind::Ciphertext, device1, kContextId, level, kDefaultScaleLog2, true, 2},
+        {4, fhegpu::ValueKind::Plaintext, device0, kContextId, level, kDefaultScaleLog2, true, 1},
+        {5, fhegpu::ValueKind::Plaintext, device1, kContextId, level, kDefaultScaleLog2, true, 1},
+        {6, fhegpu::ValueKind::Ciphertext, device0, kContextId, level, kDefaultScaleLog2, true, 2},
+        {7, fhegpu::ValueKind::Ciphertext, device1, kContextId, level, kDefaultScaleLog2, true, 2},
+        {8, fhegpu::ValueKind::Ciphertext, device0, kContextId, level, kDefaultScaleLog2, true, 2},
+        {9, fhegpu::ValueKind::Ciphertext, device0, kContextId, level, kDefaultScaleLog2, true, 2},
+        {10, fhegpu::ValueKind::Ciphertext, host, kContextId, level, kDefaultScaleLog2, true, 2},
+    };
+    plan.external_inputs = {0};
+
+    auto replicate_cipher = replicate_action(
+        30, fhegpu::ValueKind::Ciphertext, host, {device0, device1}, {2, 3});
+    auto upload_plain =
+        transfer_action(31, fhegpu::ValueKind::Plaintext, host, device0);
+    upload_plain.inputs = {1};
+    upload_plain.outputs = {4};
+    auto copy_plain =
+        transfer_action(32, fhegpu::ValueKind::Plaintext, device0, device1);
+    copy_plain.hint = fhegpu::CommHint::HostStaged;
+    copy_plain.inputs = {4};
+    copy_plain.outputs = {5};
+    auto return_cipher =
+        transfer_action(33, fhegpu::ValueKind::Ciphertext, device1, device0);
+    return_cipher.hint = fhegpu::CommHint::PointToPoint;
+    return_cipher.inputs = {7};
+    return_cipher.outputs = {8};
+    auto download_result =
+        transfer_action(34, fhegpu::ValueKind::Ciphertext, device0, host);
+    download_result.inputs = {9};
+    download_result.outputs = {10};
+
+    plan.initialization = {
+        {0, fhegpu::EncodeOp{fhegpu::InlineEncodePayload{{0.5, -1.0, 2.0, 3.0}}, 1}},
+        {1, std::move(replicate_cipher)},
+        {2, std::move(upload_plain)},
+        {3, std::move(copy_plain)},
+    };
+    plan.execution = {
+        {4, fhegpu::ComputeOp{fhegpu::ComputeKind::AddCP, {2, 4}, 6, device0, {}}},
+        {5, fhegpu::ComputeOp{fhegpu::ComputeKind::AddCP, {3, 5}, 7, device1, {}}},
+        {6, std::move(return_cipher)},
+        {7, fhegpu::ComputeOp{fhegpu::ComputeKind::AddCC, {6, 8}, 9, device0, {}}},
+    };
+    plan.finalization = {
+        {8, std::move(download_result)},
+    };
+    plan.final_outputs = {10};
+    return plan;
+}
+
+void test_device_mapping_rejections(const poseidon::PoseidonContext &context,
+                                    int visible_device_count)
+{
+    require_rejected(
+        [&] {
+            PoseidonGpuApi api(kContextId, context, std::vector<int>{});
+        },
+        "at least one CUDA device");
+    require_rejected(
+        [&] {
+            PoseidonGpuApi api(kContextId, context,
+                               std::vector<int>{kDeviceId, kDeviceId});
+        },
+        "unique");
+    require_rejected(
+        [&] {
+            PoseidonGpuApi api(kContextId, context,
+                               std::vector<int>{visible_device_count});
+        },
+        "unavailable");
+}
+
 void test_preflight_rejections(PoseidonGpuApi &api,
                                const fhegpu::LoadedOperatorSpec &loaded_spec)
 {
     const auto target = make_target(loaded_spec);
     const fhegpu::PlanRequirements valid_requirements{
-        {fhegpu::RequiredCapability::Encode, fhegpu::RequiredCapability::Transfer}, {}};
+        {fhegpu::RequiredCapability::Encode, fhegpu::RequiredCapability::Transfer,
+         fhegpu::RequiredCapability::Replicate}, {}};
     api.preflight(kPlanSha, false, target, loaded_spec.spec, valid_requirements);
+    require_rejected([&] { static_cast<void>(api.cuda_device_id(1)); },
+                     "logical device index");
 
     auto placeholder = loaded_spec.spec;
     placeholder.status = "placeholder";
@@ -364,7 +470,7 @@ void test_preflight_rejections(PoseidonGpuApi &api,
     multi_device.device_counts = {2};
     require_rejected(
         [&] { api.preflight(kPlanSha, false, multi_device, loaded_spec.spec, valid_requirements); },
-        "one logical device");
+        "device count");
 
     auto shallow_rescale = loaded_spec.spec;
     shallow_rescale.operators.at(fhegpu::ComputeKind::Rescale).max_levels_per_op = 2;
@@ -680,6 +786,55 @@ void test_multiply_relinearize_rescale_rotate(
     }
 }
 
+void test_two_gpu_runtime_plan(const poseidon::PoseidonContext &context,
+                               poseidon::KeyGenerator &key_generator,
+                               const fhegpu::LoadedOperatorSpec &loaded_spec)
+{
+    constexpr int second_device_id = 1;
+    RmmPoolScope second_device_pool(second_device_id);
+    PoseidonGpuApi api(kContextId, context,
+                       std::vector<int>{second_device_id, kDeviceId});
+    require(api.local_device_count() == 2, "two-GPU Api device count is incorrect");
+    require(api.cuda_device_id(0) == second_device_id &&
+                api.cuda_device_id(1) == kDeviceId,
+            "logical CUDA device mapping is incorrect");
+
+    poseidon::PublicKey public_key;
+    key_generator.create_public_key(public_key);
+    poseidon::Encryptor encryptor(context, public_key);
+    poseidon::Decryptor decryptor(context, key_generator.secret_key());
+    poseidon::CKKSEncoder encoder(context);
+
+    const std::vector<double> input{1.0, -2.0, 3.0, 4.0};
+    const std::vector<double> addend{0.5, -1.0, 2.0, 3.0};
+    poseidon::Plaintext input_plain;
+    encoder.encode(input, std::ldexp(1.0, kDefaultScaleLog2), input_plain);
+    poseidon::Ciphertext input_cipher;
+    encryptor.encrypt(input_plain, input_cipher);
+
+    const int level = static_cast<int>(context.parameters_literal()->q().size() - 1);
+    const fhegpu::LoadedRuntimePlan loaded_plan{
+        make_two_gpu_plan(loaded_spec, level), kPlanSha};
+    const fhegpu::RuntimeResources resources{loaded_spec, std::nullopt, false};
+    fhegpu::SequentialRuntime<PoseidonGpuApi> runtime(0, 1, 2, api);
+    std::unordered_map<fhegpu::ValueId, PoseidonGpuValue> inputs;
+    inputs.emplace(0, PoseidonGpuValue::from_host_ciphertext(std::move(input_cipher)));
+    const auto artifact = runtime.run(loaded_plan, resources, inputs);
+
+    poseidon::Plaintext result_plain;
+    decryptor.decrypt(artifact.values.at(10).value.host_ciphertext(), result_plain);
+    std::vector<std::complex<double>> result;
+    encoder.decode(result_plain, result);
+    for (std::size_t i = 0; i < input.size(); ++i)
+    {
+        const double expected = 2.0 * (input[i] + addend[i]);
+        require(std::abs(result[i].real() - expected) < 1e-4,
+                "unexpected two-GPU result at slot " + std::to_string(i));
+        require(std::abs(result[i].imag()) < 1e-4,
+                "unexpected two-GPU imaginary part at slot " + std::to_string(i));
+    }
+}
+
 } // namespace
 
 int main()
@@ -705,29 +860,47 @@ int main()
         key_generator.create_galois_keys(std::vector<int>{1}, *galois_keys);
 
         const auto loaded_spec = make_operator_spec(context);
-        PoseidonGpuApi api(kContextId, context, kDeviceId, relin_keys, galois_keys);
+        run_test("device mapping rejects invalid CUDA device lists",
+                 [&] { test_device_mapping_rejections(context, device_count); });
+        {
+            PoseidonGpuApi api(kContextId, context, kDeviceId, relin_keys, galois_keys);
+            require(api.local_device_count() == 1 && api.cuda_device_id(0) == kDeviceId,
+                    "single-GPU constructor mapping is incorrect");
 
-        run_test("preflight rejects unsupported configurations",
-                 [&] { test_preflight_rejections(api, loaded_spec); });
-        run_test("Runtime Encode/Transfer/AddCP/Transfer",
-                 [&] { test_runtime_add_plain(api, context, key_generator, loaded_spec); });
-        run_test("Runtime Transfer/AddCC/Transfer",
-                 [&] {
-                     test_runtime_add_ciphertexts(api, context, key_generator, loaded_spec);
-                 });
-        run_test("Runtime Encode/Transfer/MulCP/Transfer",
-                 [&] {
-                     test_runtime_multiply_plain(api, context, key_generator, loaded_spec);
-                 });
-        run_test("ordinary/lazy Rescale and Value validation",
-                 [&] {
-                     test_rescale_and_value_validation(api, context, key_generator, loaded_spec);
-                 });
-        run_test("MulCC/Relinearize/Rescale/Rotate",
-                 [&] {
-                     test_multiply_relinearize_rescale_rotate(
-                         api, context, key_generator, *relin_keys, *galois_keys, loaded_spec);
-                 });
+            run_test("preflight rejects unsupported configurations",
+                     [&] { test_preflight_rejections(api, loaded_spec); });
+            run_test("Runtime Encode/Transfer/AddCP/Transfer",
+                     [&] { test_runtime_add_plain(api, context, key_generator, loaded_spec); });
+            run_test("Runtime Transfer/AddCC/Transfer",
+                     [&] {
+                         test_runtime_add_ciphertexts(api, context, key_generator, loaded_spec);
+                     });
+            run_test("Runtime Encode/Transfer/MulCP/Transfer",
+                     [&] {
+                         test_runtime_multiply_plain(api, context, key_generator, loaded_spec);
+                     });
+            run_test("ordinary/lazy Rescale and Value validation",
+                     [&] {
+                         test_rescale_and_value_validation(api, context, key_generator,
+                                                           loaded_spec);
+                     });
+            run_test("MulCC/Relinearize/Rescale/Rotate",
+                     [&] {
+                         test_multiply_relinearize_rescale_rotate(
+                             api, context, key_generator, *relin_keys, *galois_keys,
+                             loaded_spec);
+                     });
+        }
+
+        if (device_count >= 2)
+        {
+            run_test("two-GPU RuntimePlan mapping/Replicate/Transfer",
+                     [&] { test_two_gpu_runtime_plan(context, key_generator, loaded_spec); });
+        }
+        else
+        {
+            std::cout << "[SKIP] two-GPU RuntimePlan requires two CUDA devices\n";
+        }
 
         std::cout << tests_run << " Poseidon GPU Runtime Api tests passed\n";
         return 0;
