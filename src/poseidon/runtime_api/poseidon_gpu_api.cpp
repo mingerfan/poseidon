@@ -218,7 +218,7 @@ public:
         (void)cudaEventDestroy(event_);
     }
 
-    void wait() const
+    void wait()
     {
         if (waited_)
         {
@@ -231,6 +231,8 @@ public:
         gpu::gpu_check_cuda(cudaSetDevice(cuda_device_id_), "cudaSetDevice");
         gpu::gpu_check_cuda(cudaEventSynchronize(event_), "cudaEventSynchronize");
         waited_ = true;
+        inputs_.clear();
+        device_state_.reset();
     }
 
 private:
@@ -243,7 +245,7 @@ private:
     int cuda_device_id_ = 0;
     cudaEvent_t event_ = nullptr;
     bool recorded_ = false;
-    mutable bool waited_ = false;
+    bool waited_ = false;
     std::shared_ptr<void> device_state_;
     std::vector<PoseidonGpuValue> inputs_;
 };

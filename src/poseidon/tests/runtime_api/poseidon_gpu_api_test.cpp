@@ -9,6 +9,7 @@
 
 #include <cuda_runtime_api.h>
 #include <rmm/mr/cuda_memory_resource.hpp>
+#include <rmm/mr/device/limiting_resource_adaptor.hpp>
 #include <rmm/mr/per_device_resource.hpp>
 #include <rmm/mr/pool_memory_resource.hpp>
 
@@ -17,6 +18,7 @@
 #include <complex>
 #include <functional>
 #include <iostream>
+#include <limits>
 #include <memory>
 #include <optional>
 #include <stdexcept>
@@ -76,7 +78,8 @@ class RmmPoolScope
 {
 public:
     explicit RmmPoolScope(int device_id)
-        : device_id_(device_id), pool_(&upstream_, 1 << 20, std::nullopt)
+        : device_id_(device_id), pool_(&upstream_, 1 << 20, std::nullopt),
+          accounting_(&pool_, std::numeric_limits<std::size_t>::max())
     {
         const cudaError_t status = cudaSetDevice(device_id_);
         if (status != cudaSuccess)
@@ -85,11 +88,16 @@ public:
                                      cudaGetErrorString(status));
         }
         previous_ = rmm::mr::get_current_device_resource();
-        rmm::mr::set_current_device_resource(&pool_);
+        rmm::mr::set_current_device_resource(&accounting_);
     }
 
     RmmPoolScope(const RmmPoolScope &) = delete;
     RmmPoolScope &operator=(const RmmPoolScope &) = delete;
+
+    std::size_t allocated_bytes() const noexcept
+    {
+        return accounting_.get_allocated_bytes();
+    }
 
     ~RmmPoolScope()
     {
@@ -101,6 +109,7 @@ private:
     int device_id_ = 0;
     rmm::mr::cuda_memory_resource upstream_;
     rmm::mr::pool_memory_resource<rmm::mr::cuda_memory_resource> pool_;
+    rmm::mr::limiting_resource_adaptor<rmm::mr::device_memory_resource> accounting_;
     rmm::mr::device_memory_resource *previous_ = nullptr;
 };
 
@@ -631,7 +640,8 @@ void test_runtime_multiply_plain(PoseidonGpuApi &api,
 void test_rescale_and_value_validation(PoseidonGpuApi &api,
                                        const poseidon::PoseidonContext &context,
                                        poseidon::KeyGenerator &key_generator,
-                                       const fhegpu::LoadedOperatorSpec &loaded_spec)
+                                       const fhegpu::LoadedOperatorSpec &loaded_spec,
+                                       const RmmPoolScope &rmm_pool)
 {
     api.preflight(kPlanSha, false, make_target(loaded_spec), loaded_spec.spec, {});
 
@@ -661,8 +671,14 @@ void test_rescale_and_value_validation(PoseidonGpuApi &api,
     negate.kind = fhegpu::ComputeKind::Negate;
     negate.place = device_place();
     auto double_negated = api.compute(negate, {api.compute(negate, {device_value})});
+    const std::size_t bytes_before_synchronize = rmm_pool.allocated_bytes();
     api.synchronize(double_negated);
+    const std::size_t bytes_after_synchronize = rmm_pool.allocated_bytes();
+    require(bytes_after_synchronize < bytes_before_synchronize,
+            "synchronize did not release completed input storage");
     api.synchronize(double_negated);
+    require(rmm_pool.allocated_bytes() == bytes_after_synchronize,
+            "repeated synchronize changed completed input storage");
     api.validate_value(
         double_negated,
         {15, fhegpu::ValueKind::Ciphertext, device_place(), kContextId, input_level,
@@ -907,7 +923,7 @@ int main()
             run_test("ordinary/lazy Rescale and Value validation",
                      [&] {
                          test_rescale_and_value_validation(api, context, key_generator,
-                                                           loaded_spec);
+                                                           loaded_spec, rmm_pool);
                      });
             run_test("MulCC/Relinearize/Rescale/Rotate",
                      [&] {
