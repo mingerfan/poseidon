@@ -312,6 +312,10 @@ if(POSEIDON_BUILD_CKKS_RUNTIME_API)
         "Build CKKS Runtime GPU Api tests that require a CUDA device" OFF)
     message(STATUS
         "POSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS: ${POSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS}")
+    option(POSEIDON_BUILD_CKKS_RUNTIME_MPI
+        "Enable MPI mode in PoseidonCpuApi" OFF)
+    message(STATUS
+        "POSEIDON_BUILD_CKKS_RUNTIME_MPI: ${POSEIDON_BUILD_CKKS_RUNTIME_MPI}")
     if(POSEIDON_BUILD_CKKS_RUNTIME_TESTS)
         enable_testing()
     endif()

@@ -12,6 +12,10 @@
 #include <variant>
 #include <vector>
 
+#if defined(POSEIDON_RUNTIME_CPU_MPI)
+#include <mpi.h>
+#endif
+
 namespace poseidon
 {
 class CKKSEncoder;
@@ -44,19 +48,28 @@ class PoseidonCpuApi
 {
 public:
     using Value = PoseidonCpuValue;
+    struct CommState;
     struct CommHandle
     {
+        std::shared_ptr<CommState> state;
     };
 
     PoseidonCpuApi(std::string context_id, PoseidonContext context,
                    std::shared_ptr<const RelinKeys> relin_keys = {},
                    std::shared_ptr<const GaloisKeys> galois_keys = {});
+#if defined(POSEIDON_RUNTIME_CPU_MPI)
+    PoseidonCpuApi(std::string context_id, PoseidonContext context, MPI_Comm communicator,
+                   std::shared_ptr<const RelinKeys> relin_keys = {},
+                   std::shared_ptr<const GaloisKeys> galois_keys = {});
+#endif
     ~PoseidonCpuApi();
 
     PoseidonCpuApi(const PoseidonCpuApi &) = delete;
     PoseidonCpuApi &operator=(const PoseidonCpuApi &) = delete;
 
     std::string name() const;
+    int rank() const noexcept;
+    int world_size() const noexcept;
     Value encode_plaintext(const fhegpu::ValueDesc &output_desc, const std::vector<double> &slots);
     Value compute(const fhegpu::ComputeOp &op, const std::vector<Value> &inputs);
     CommHandle communicate_async(const fhegpu::CommAction &action,
@@ -70,12 +83,22 @@ public:
     void validate_value(const Value &value, const fhegpu::ValueDesc &expected) const;
 
 private:
+    struct MpiState;
+
+    void require_local_host_place(const fhegpu::Place &place, const char *where) const;
+#if defined(POSEIDON_RUNTIME_CPU_MPI)
+    int mpi_tag(fhegpu::TransferId id, int part) const;
+#endif
+
     std::string context_id_;
     PoseidonContext context_;
     std::unique_ptr<CKKSEncoder> encoder_;
     std::unique_ptr<EvaluatorCkksBase> evaluator_;
     std::shared_ptr<const RelinKeys> relin_keys_;
     std::shared_ptr<const GaloisKeys> galois_keys_;
+    int rank_ = 0;
+    int world_size_ = 1;
+    std::unique_ptr<MpiState> mpi_;
 };
 
 } // namespace runtime_api

@@ -14,6 +14,13 @@ target_link_libraries(poseidon_runtime_cpu_api
 )
 target_compile_features(poseidon_runtime_cpu_api PUBLIC cxx_std_17)
 
+if(POSEIDON_BUILD_CKKS_RUNTIME_MPI)
+    find_package(MPI REQUIRED COMPONENTS CXX)
+    target_link_libraries(poseidon_runtime_cpu_api PUBLIC MPI::MPI_CXX)
+    target_compile_definitions(poseidon_runtime_cpu_api
+        PUBLIC POSEIDON_RUNTIME_CPU_MPI=1)
+endif()
+
 add_library(poseidon_runtime_gpu_api STATIC
     poseidon_gpu_api.cpp
 )
@@ -43,6 +50,24 @@ if(POSEIDON_BUILD_CKKS_RUNTIME_TESTS)
         NAME poseidon_runtime_cpu_api_tests
         COMMAND poseidon_runtime_cpu_api_tests
     )
+    if(POSEIDON_BUILD_CKKS_RUNTIME_MPI)
+        add_test(
+            NAME poseidon_runtime_cpu_api_mpi_2_tests
+            COMMAND
+                ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 2
+                ${MPIEXEC_PREFLAGS}
+                $<TARGET_FILE:poseidon_runtime_cpu_api_tests> --mpi
+                ${MPIEXEC_POSTFLAGS}
+        )
+        add_test(
+            NAME poseidon_runtime_cpu_api_mpi_4_tests
+            COMMAND
+                ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 4
+                ${MPIEXEC_PREFLAGS}
+                $<TARGET_FILE:poseidon_runtime_cpu_api_tests> --mpi
+                ${MPIEXEC_POSTFLAGS}
+        )
+    endif()
 endif()
 
 if(POSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS)
