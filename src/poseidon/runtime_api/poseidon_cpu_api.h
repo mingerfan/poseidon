@@ -19,9 +19,13 @@
 namespace poseidon
 {
 class CKKSEncoder;
+class Decryptor;
+class Encryptor;
 class EvaluatorCkksBase;
 class GaloisKeys;
+class PublicKey;
 class RelinKeys;
+class SecretKey;
 
 namespace runtime_api
 {
@@ -56,11 +60,15 @@ public:
 
     PoseidonCpuApi(std::string context_id, PoseidonContext context,
                    std::shared_ptr<const RelinKeys> relin_keys = {},
-                   std::shared_ptr<const GaloisKeys> galois_keys = {});
+                   std::shared_ptr<const GaloisKeys> galois_keys = {},
+                   std::shared_ptr<const PublicKey> boot_public_key = {},
+                   std::shared_ptr<const SecretKey> boot_secret_key = {});
 #if defined(POSEIDON_RUNTIME_CPU_MPI)
     PoseidonCpuApi(std::string context_id, PoseidonContext context, MPI_Comm communicator,
                    std::shared_ptr<const RelinKeys> relin_keys = {},
-                   std::shared_ptr<const GaloisKeys> galois_keys = {});
+                   std::shared_ptr<const GaloisKeys> galois_keys = {},
+                   std::shared_ptr<const PublicKey> boot_public_key = {},
+                   std::shared_ptr<const SecretKey> boot_secret_key = {});
 #endif
     ~PoseidonCpuApi();
 
@@ -94,6 +102,8 @@ private:
     PoseidonContext context_;
     std::unique_ptr<CKKSEncoder> encoder_;
     std::unique_ptr<EvaluatorCkksBase> evaluator_;
+    std::unique_ptr<Encryptor> boot_encryptor_;
+    std::unique_ptr<Decryptor> boot_decryptor_;
     std::shared_ptr<const RelinKeys> relin_keys_;
     std::shared_ptr<const GaloisKeys> galois_keys_;
     int rank_ = 0;

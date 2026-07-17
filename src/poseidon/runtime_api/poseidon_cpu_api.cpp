@@ -1,6 +1,8 @@
 #include "poseidon/runtime_api/poseidon_cpu_api.h"
 
 #include "poseidon/ckks_encoder.h"
+#include "poseidon/decryptor.h"
+#include "poseidon/encryptor.h"
 #include "poseidon/evaluator/software/evaluator_ckks_software.h"
 #include "poseidon/key/galoiskeys.h"
 #include "poseidon/key/relinkeys.h"
@@ -9,6 +11,7 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <complex>
 #include <cstdio>
 #include <cstdlib>
 #include <limits>
@@ -264,7 +267,9 @@ const Ciphertext &PoseidonCpuValue::ciphertext() const
 
 PoseidonCpuApi::PoseidonCpuApi(std::string context_id, PoseidonContext context,
                                std::shared_ptr<const RelinKeys> relin_keys,
-                               std::shared_ptr<const GaloisKeys> galois_keys)
+                               std::shared_ptr<const GaloisKeys> galois_keys,
+                               std::shared_ptr<const PublicKey> boot_public_key,
+                               std::shared_ptr<const SecretKey> boot_secret_key)
     : context_id_(std::move(context_id)), context_(std::move(context)),
       encoder_(std::make_unique<CKKSEncoder>(context_)),
       evaluator_(std::make_unique<EvaluatorCkksSoftware>(context_)),
@@ -278,15 +283,28 @@ PoseidonCpuApi::PoseidonCpuApi(std::string context_id, PoseidonContext context,
     {
         throw std::invalid_argument("Poseidon CPU Api requires a CKKS context");
     }
+    if (static_cast<bool>(boot_public_key) != static_cast<bool>(boot_secret_key))
+    {
+        throw std::invalid_argument(
+            "Poseidon CPU decrypt_reencrypt Boot requires public and secret keys");
+    }
+    if (boot_public_key)
+    {
+        boot_encryptor_ = std::make_unique<Encryptor>(context_, *boot_public_key);
+        boot_decryptor_ = std::make_unique<Decryptor>(context_, *boot_secret_key);
+    }
 }
 
 #if defined(POSEIDON_RUNTIME_CPU_MPI)
 PoseidonCpuApi::PoseidonCpuApi(std::string context_id, PoseidonContext context,
                                MPI_Comm communicator,
                                std::shared_ptr<const RelinKeys> relin_keys,
-                               std::shared_ptr<const GaloisKeys> galois_keys)
+                               std::shared_ptr<const GaloisKeys> galois_keys,
+                               std::shared_ptr<const PublicKey> boot_public_key,
+                               std::shared_ptr<const SecretKey> boot_secret_key)
     : PoseidonCpuApi(std::move(context_id), std::move(context), std::move(relin_keys),
-                     std::move(galois_keys))
+                     std::move(galois_keys), std::move(boot_public_key),
+                     std::move(boot_secret_key))
 {
     if (communicator == MPI_COMM_NULL)
     {
@@ -461,7 +479,27 @@ PoseidonCpuApi::Value PoseidonCpuApi::compute(const fhegpu::ComputeOp &op,
         evaluator_->relinearize(require_ciphertext(inputs, 0), output, *relin_keys_);
         break;
     case fhegpu::ComputeKind::Boot:
-        throw std::runtime_error("Poseidon CPU Boot is not implemented");
+    {
+        const auto attrs = std::get<fhegpu::BootAttrs>(op.attrs);
+        if (attrs.implementation != fhegpu::BootImplementation::DecryptReencrypt)
+        {
+            throw std::runtime_error("Poseidon CPU native Boot is not implemented");
+        }
+        if (!boot_encryptor_ || !boot_decryptor_)
+        {
+            throw std::runtime_error("Poseidon CPU decrypt_reencrypt Boot has no keys");
+        }
+        Plaintext decrypted;
+        boot_decryptor_->decrypt(require_ciphertext(inputs, 0), decrypted);
+        std::vector<std::complex<double>> slots;
+        encoder_->decode(decrypted, slots);
+        Plaintext refreshed;
+        const auto parms_id = context_.crt_context()->parms_id_map().at(
+            static_cast<std::uint32_t>(attrs.target_level));
+        encoder_->encode(slots, parms_id, exact_scale(attrs.target_scale_log2), refreshed);
+        boot_encryptor_->encrypt(refreshed, output);
+        break;
+    }
     }
 
     return Value::from_ciphertext(std::move(output));
@@ -708,10 +746,12 @@ void PoseidonCpuApi::preflight(std::string_view plan_source_sha256,
     {
         const bool local = capability == fhegpu::RequiredCapability::Encode ||
                            capability == fhegpu::RequiredCapability::HostCompute;
+        const bool boot = capability == fhegpu::RequiredCapability::BootDecryptReencrypt &&
+                          boot_encryptor_ != nullptr && boot_decryptor_ != nullptr;
         const bool communication = mpi_ != nullptr &&
                                    (capability == fhegpu::RequiredCapability::Transfer ||
                                     capability == fhegpu::RequiredCapability::Replicate);
-        if (!local && !communication)
+        if (!local && !communication && !boot)
         {
             throw std::runtime_error("Poseidon CPU Api lacks required capability: " +
                                      fhegpu::to_string(capability));
@@ -747,6 +787,13 @@ void PoseidonCpuApi::preflight(std::string_view plan_source_sha256,
             if (!galois_keys_->has_key(galois_elt))
             {
                 throw std::runtime_error("Poseidon CPU Api lacks the required rotation key");
+            }
+        }
+        else if (key.kind == fhegpu::KeyKind::Secret)
+        {
+            if (!boot_decryptor_)
+            {
+                throw std::runtime_error("Poseidon CPU Api lacks decrypt_reencrypt Boot keys");
             }
         }
         else

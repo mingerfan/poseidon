@@ -11,6 +11,7 @@
 #include <cstdio>
 #include <functional>
 #include <iostream>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
@@ -153,6 +154,60 @@ void test_single_process_host_add_plain()
                 "unexpected AddCP result at slot " + std::to_string(i));
         require(std::abs(result[i].imag()) < 1e-5,
                 "unexpected imaginary component at slot " + std::to_string(i));
+    }
+}
+
+void test_decrypt_reencrypt_boot()
+{
+    constexpr std::uint32_t degree = 4096;
+    const std::string context_id = "poseidon-cpu-boot-test-context";
+    poseidon::ParametersLiteralDefault parameters(CKKS, degree,
+                                                  poseidon::sec_level_type::tc128);
+    poseidon::PoseidonContext context(parameters);
+    poseidon::KeyGenerator key_generator(context);
+    auto public_key = std::make_shared<poseidon::PublicKey>();
+    auto secret_key = std::make_shared<poseidon::SecretKey>(key_generator.secret_key());
+    key_generator.create_public_key(*public_key);
+
+    const std::vector<double> input{0.25, -0.5, 1.5, 2.0};
+    poseidon::CKKSEncoder encoder(context);
+    poseidon::Plaintext input_plain;
+    encoder.encode(input, context.crt_context()->parms_id_map().at(0),
+                   parameters.scale(), input_plain);
+    poseidon::Encryptor encryptor(context, *public_key);
+    poseidon::Ciphertext input_cipher;
+    encryptor.encrypt(input_plain, input_cipher);
+
+    const int target_level = static_cast<int>(parameters.q().size() - 1);
+    const int scale_log2 = static_cast<int>(parameters.log_scale());
+    PoseidonCpuApi api(context_id, context, {}, {}, public_key, secret_key);
+    fhegpu::ComputeOp op{
+        fhegpu::ComputeKind::Boot,
+        {0},
+        1,
+        {fhegpu::PlaceKind::Host, 0, 0},
+        fhegpu::BootAttrs{target_level, scale_log2, 2, "test-boot",
+                         fhegpu::BootImplementation::DecryptReencrypt},
+    };
+    const auto output = api.compute(
+        op, {PoseidonCpuValue::from_ciphertext(std::move(input_cipher))});
+    api.validate_value(
+        output,
+        {1, fhegpu::ValueKind::Ciphertext,
+         {fhegpu::PlaceKind::Host, 0, 0}, context_id, target_level,
+         scale_log2, true, 2});
+
+    poseidon::Decryptor decryptor(context, *secret_key);
+    poseidon::Plaintext output_plain;
+    decryptor.decrypt(output.ciphertext(), output_plain);
+    std::vector<std::complex<double>> decoded;
+    encoder.decode(output_plain, decoded);
+    for (std::size_t i = 0; i < input.size(); ++i)
+    {
+        require(std::abs(decoded[i].real() - input[i]) < 1e-5,
+                "unexpected decrypt_reencrypt Boot result");
+        require(std::abs(decoded[i].imag()) < 1e-5,
+                "unexpected decrypt_reencrypt Boot imaginary component");
     }
 }
 
@@ -441,6 +496,7 @@ int main(int argc, char **argv)
     try
     {
         run_test("single-process Host AddCP", test_single_process_host_add_plain);
+        run_test("decrypt_reencrypt Boot", test_decrypt_reencrypt_boot);
         run_test("reject multi-process target", test_rejects_multi_process_target);
         std::cout << tests_run << " Poseidon CPU Runtime Api tests passed\n";
         return 0;

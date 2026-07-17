@@ -53,6 +53,14 @@ if(POSEIDON_BUILD_CKKS_RUNTIME_TESTS)
         NAME poseidon_runtime_cpu_api_tests
         COMMAND poseidon_runtime_cpu_api_tests
     )
+    add_executable(poseidon_runtime_cpu_mlp_e2e
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/runtime_api/poseidon_cpu_mlp_e2e_test.cpp
+    )
+    target_link_libraries(poseidon_runtime_cpu_mlp_e2e
+        PRIVATE
+            poseidon_runtime_cpu_api
+            ckks_runtime::plan_json
+    )
     if(POSEIDON_BUILD_CKKS_RUNTIME_MPI)
         add_test(
             NAME poseidon_runtime_cpu_api_mpi_2_tests
