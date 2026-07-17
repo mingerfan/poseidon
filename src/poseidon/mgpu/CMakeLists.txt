@@ -1018,6 +1018,7 @@ endif()
 if(POSEIDON_BUILD_MGPU_GPU_OBJECTS)
     add_library(poseidon_mgpu_gpu_objects STATIC
         comm/gpu_object_materializer.cpp
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/runtime_api/communication/gpu_object_copy.cpp
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/gpu/gpu_ciphertext.cpp
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/gpu/gpu_plaintext.cpp
     )
@@ -1133,6 +1134,8 @@ if(POSEIDON_BUILD_MGPU_CUDA_COMM)
     add_library(poseidon_mgpu_cuda_comm STATIC
         comm/cuda_peer_comm.cpp
         comm/cuda_peer_probe.cpp
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/runtime_api/communication/cuda_local_transfer.cpp
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/runtime_api/communication/cuda_topology.cpp
     )
 
     target_include_directories(poseidon_mgpu_cuda_comm

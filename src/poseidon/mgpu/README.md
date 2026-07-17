@@ -2,6 +2,12 @@
 
 This directory contains the optional multi-GPU static scheduling work.
 
+The reusable CUDA topology, local transfer, and full Poseidon GPU object-copy
+primitives now live in `src/poseidon/runtime_api/communication/`. The `comm/`
+files in this directory adapt those primitives to the existing `GpuComm`
+interfaces while this static-schedule runtime is reviewed. The Runtime API does
+not depend on the mgpu IR, compiler, object store, or executor.
+
 V1 scope:
 
 - ciphertext-level parallelism only;
@@ -15,7 +21,7 @@ Subdirectories:
 - `ir/`: internal schedule representation and debug text support;
 - `compiler/`: placement, copy insertion, verification, generic schedule pipeline;
 - `runtime/`: device contexts, object store, schedule executor;
-- `comm/`: object-level GPU communication backends;
+- `comm/`: legacy schedule-aware communication interfaces and compatibility adapters;
 - `configs/`: static execution config templates.
 
 Dacapo/HEVM/CST import code lives outside this core tree under

@@ -1,4 +1,5 @@
 #include "poseidon/mgpu/comm/cuda_peer_comm.h"
+#include "poseidon/runtime_api/communication/cuda_local_transfer.h"
 
 #include <cuda_runtime_api.h>
 
@@ -84,6 +85,27 @@ void test_same_device_copy()
 
     check_cuda(cudaFree(destination), "cudaFree destination");
     check_cuda(cudaFree(source), "cudaFree source");
+}
+
+void test_route_selection_without_multiple_devices()
+{
+    using poseidon::runtime_api::communication::CudaLocalTransfer;
+    using poseidon::runtime_api::communication::CudaTransferRoute;
+
+    require(CudaLocalTransfer::select_route(0, 0, CudaTransferRoute::Auto) ==
+                CudaTransferRoute::SameDevice,
+            "auto route should select same-device copy");
+
+    bool rejected = false;
+    try
+    {
+        (void)CudaLocalTransfer::select_route(0, 0, CudaTransferRoute::PeerToPeer);
+    }
+    catch (const std::invalid_argument &)
+    {
+        rejected = true;
+    }
+    require(rejected, "peer route should reject identical endpoints");
 }
 
 void test_same_device_object_copy()
@@ -286,6 +308,7 @@ int main()
     try
     {
         const int device_count = visible_device_count_or_skip();
+        test_route_selection_without_multiple_devices();
         test_same_device_copy();
         test_same_device_object_copy();
         test_cross_device_copy_if_available(device_count);

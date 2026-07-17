@@ -1,30 +1,15 @@
 #pragma once
 
+#include "poseidon/runtime_api/communication/cuda_topology.h"
+
 #include <iosfwd>
 #include <string>
-#include <vector>
 
 namespace poseidon::mgpu
 {
 
-struct CudaPeerDeviceInfo
-{
-    int device_id = 0;
-    std::string name;
-    int pci_bus_id = 0;
-    int pci_device_id = 0;
-    int pci_domain_id = 0;
-    int multiprocessor_count = 0;
-    int major = 0;
-    int minor = 0;
-};
-
-struct CudaPeerProbeResult
-{
-    int visible_device_count = 0;
-    std::vector<CudaPeerDeviceInfo> devices;
-    std::vector<std::vector<bool>> peer_access;
-};
+using CudaPeerDeviceInfo = runtime_api::communication::CudaDeviceInfo;
+using CudaPeerProbeResult = runtime_api::communication::CudaTopology;
 
 CudaPeerProbeResult probe_cuda_peer_access();
 

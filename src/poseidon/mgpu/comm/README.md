@@ -1,8 +1,10 @@
 # Multi-GPU Communication Layer Guide
 
-This directory owns all multi-GPU data movement. Compute code should not insert
-ad hoc CUDA copies; scheduled cross-device movement must enter through this
-communication layer.
+This directory owns the legacy mgpu schedule-aware communication interfaces.
+Reusable CUDA topology, local buffer transfer, and full Poseidon GPU object
+copying live in `src/poseidon/runtime_api/communication/`. The adapters here
+preserve the existing `GpuComm` behavior while the old static-schedule runtime
+is reviewed.
 
 ## Current Structure
 
@@ -31,16 +33,15 @@ and emits plan dumps/JSON.
 with the currently declared backend set. It reports missing same-device,
 CUDA-peer, or inter-node support before schedule execution starts.
 
-`cuda_peer_comm.h/.cpp` is the optional CUDA local backend. It implements
-same-device device-to-device copies, CUDA peer copies, and host-staged fallback.
-It is built only when `POSEIDON_BUILD_MGPU_CUDA_COMM=ON`.
-
-`cuda_peer_probe.h/.cpp` is the optional CUDA diagnostic path for visible device
-and peer-access reporting. It is also built only under
+`cuda_peer_comm.h/.cpp` adapts the old `GpuObjectCopyBackend` interface to
+`runtime_api/communication/cuda_local_transfer.*`. It is built only when
 `POSEIDON_BUILD_MGPU_CUDA_COMM=ON`.
 
-`gpu_object_materializer.h/.cpp` is the optional CUDA/RMM-gated bridge for
-Poseidon GPU ciphertext/plaintext objects. It is built only when
+`cuda_peer_probe.h/.cpp` preserves the old probe names while forwarding to
+`runtime_api/communication/cuda_topology.*`.
+
+`gpu_object_materializer.h/.cpp` adapts the old opaque object interface to
+`runtime_api/communication/gpu_object_copy.*`. It is built only when
 `POSEIDON_BUILD_MGPU_GPU_OBJECTS=ON`.
 
 ## Execution Flow

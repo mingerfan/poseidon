@@ -184,6 +184,34 @@ void test_materializer_rejects_multi_shard_ciphertext()
     require(failed, "multi-shard ciphertext copy should fail");
 }
 
+void test_materializer_rejects_invalid_component_offset()
+{
+    constexpr int device_id = 0;
+    auto source = std::make_shared<poseidon::gpu::GpuCiphertextData>(
+        make_single_shard_ciphertext(device_id));
+    source->polys_[1].shards[0].field_offset = 0;
+
+    PoseidonGpuObjectCopyMaterializer materializer;
+    bool failed = false;
+    try
+    {
+        (void)materializer.materialize_copy(GpuCommCopyRequest{
+            1,
+            2,
+            MgpuValueKind::Ciphertext,
+            device_id,
+            device_id,
+            source,
+        });
+    }
+    catch (const std::invalid_argument &ex)
+    {
+        failed = true;
+        require_contains(ex.what(), "field layout");
+    }
+    require(failed, "invalid ciphertext component offset should fail");
+}
+
 }  // namespace
 
 int main()
@@ -199,6 +227,7 @@ int main()
         RmmPoolScope rmm_scope(0);
         test_materializer_accepts_single_full_shard_ciphertext();
         test_materializer_rejects_multi_shard_ciphertext();
+        test_materializer_rejects_invalid_component_offset();
     }
     catch (const std::exception &ex)
     {

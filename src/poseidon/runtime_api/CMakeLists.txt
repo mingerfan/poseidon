@@ -23,6 +23,9 @@ endif()
 
 add_library(poseidon_runtime_gpu_api STATIC
     poseidon_gpu_api.cpp
+    communication/cuda_local_transfer.cpp
+    communication/cuda_topology.cpp
+    communication/gpu_object_copy.cpp
 )
 add_library(poseidon::runtime_gpu_api ALIAS poseidon_runtime_gpu_api)
 
