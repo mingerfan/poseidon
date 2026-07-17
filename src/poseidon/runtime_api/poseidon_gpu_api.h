@@ -34,6 +34,11 @@ namespace runtime_api
 class PoseidonGpuValue
 {
 public:
+    PoseidonGpuValue(const PoseidonGpuValue &) = default;
+    PoseidonGpuValue(PoseidonGpuValue &&) noexcept = default;
+    PoseidonGpuValue &operator=(const PoseidonGpuValue &other);
+    PoseidonGpuValue &operator=(PoseidonGpuValue &&other) noexcept;
+
     static PoseidonGpuValue from_host_plaintext(Plaintext value);
     static PoseidonGpuValue from_host_ciphertext(Ciphertext value);
     static PoseidonGpuValue from_device_plaintext(gpu::GpuPlaintextData value);
@@ -48,6 +53,8 @@ public:
     const gpu::GpuCiphertextData &device_ciphertext() const;
 
 private:
+    class Completion;
+
     using Storage =
         std::variant<std::shared_ptr<Plaintext>, std::shared_ptr<Ciphertext>,
                      std::shared_ptr<gpu::GpuPlaintextData>,
@@ -56,6 +63,9 @@ private:
     explicit PoseidonGpuValue(Storage storage);
 
     Storage storage_;
+    std::shared_ptr<Completion> completion_;
+
+    friend class PoseidonGpuApi;
 };
 
 class PoseidonGpuApi
@@ -116,7 +126,7 @@ private:
     std::string context_id_;
     PoseidonContext context_;
     std::unique_ptr<CKKSEncoder> encoder_;
-    std::vector<std::unique_ptr<DeviceState>> devices_;
+    std::vector<std::shared_ptr<DeviceState>> devices_;
     std::shared_ptr<const RelinKeys> relin_keys_;
     std::shared_ptr<const GaloisKeys> galois_keys_;
     std::optional<int> max_rescale_levels_per_op_;

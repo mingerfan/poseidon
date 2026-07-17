@@ -638,6 +638,7 @@ void test_rescale_and_value_validation(PoseidonGpuApi &api,
     poseidon::PublicKey public_key;
     key_generator.create_public_key(public_key);
     poseidon::Encryptor encryptor(context, public_key);
+    poseidon::Decryptor decryptor(context, key_generator.secret_key());
     poseidon::CKKSEncoder encoder(context);
 
     constexpr int input_scale_log2 = 150;
@@ -655,6 +656,30 @@ void test_rescale_and_value_validation(PoseidonGpuApi &api,
         device_value,
         {10, fhegpu::ValueKind::Ciphertext, device_place(), kContextId, input_level,
          input_scale_log2, true, 2});
+
+    fhegpu::ComputeOp negate;
+    negate.kind = fhegpu::ComputeKind::Negate;
+    negate.place = device_place();
+    auto double_negated = api.compute(negate, {api.compute(negate, {device_value})});
+    api.synchronize(double_negated);
+    api.synchronize(double_negated);
+    api.validate_value(
+        double_negated,
+        {15, fhegpu::ValueKind::Ciphertext, device_place(), kContextId, input_level,
+         input_scale_log2, true, 2});
+    auto double_negated_host =
+        transfer_value(api, 11, double_negated, fhegpu::ValueKind::Ciphertext,
+                       device_place(), host_place());
+    poseidon::Plaintext double_negated_plain;
+    decryptor.decrypt(double_negated_host.host_ciphertext(), double_negated_plain);
+    std::vector<std::complex<double>> double_negated_slots;
+    encoder.decode(double_negated_plain, double_negated_slots);
+    const std::vector<double> original_slots{1.0, -2.0, 3.0, 4.0};
+    for (std::size_t i = 0; i < original_slots.size(); ++i)
+    {
+        require(std::abs(double_negated_slots[i].real() - original_slots[i]) < 1e-4,
+                "asynchronous double Negate result mismatch");
+    }
 
     fhegpu::ComputeOp ordinary;
     ordinary.kind = fhegpu::ComputeKind::Rescale;

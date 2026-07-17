@@ -174,7 +174,101 @@ struct PoseidonGpuApi::DeviceState
         galois_keys_by_q_count;
 };
 
+class PoseidonGpuValue::Completion
+{
+public:
+    static std::shared_ptr<Completion> record(
+        int cuda_device_id, std::shared_ptr<void> device_state,
+        const std::vector<PoseidonGpuValue> &inputs)
+    {
+        auto completion = std::shared_ptr<Completion>(
+            new Completion(cuda_device_id, std::move(device_state), inputs));
+        try
+        {
+            gpu::gpu_check_cuda(cudaSetDevice(cuda_device_id), "cudaSetDevice");
+            gpu::gpu_check_cuda(
+                cudaEventCreateWithFlags(&completion->event_, cudaEventDisableTiming),
+                "cudaEventCreateWithFlags");
+            gpu::gpu_check_cuda(cudaEventRecord(completion->event_), "cudaEventRecord");
+            completion->recorded_ = true;
+        }
+        catch (...)
+        {
+            (void)cudaSetDevice(cuda_device_id);
+            (void)cudaDeviceSynchronize();
+            throw;
+        }
+        return completion;
+    }
+
+    Completion(const Completion &) = delete;
+    Completion &operator=(const Completion &) = delete;
+
+    ~Completion()
+    {
+        if (event_ == nullptr)
+        {
+            return;
+        }
+        (void)cudaSetDevice(cuda_device_id_);
+        if (recorded_ && !waited_)
+        {
+            (void)cudaEventSynchronize(event_);
+        }
+        (void)cudaEventDestroy(event_);
+    }
+
+    void wait() const
+    {
+        if (waited_)
+        {
+            return;
+        }
+        if (!recorded_)
+        {
+            throw std::logic_error("Poseidon GPU completion event was not recorded");
+        }
+        gpu::gpu_check_cuda(cudaSetDevice(cuda_device_id_), "cudaSetDevice");
+        gpu::gpu_check_cuda(cudaEventSynchronize(event_), "cudaEventSynchronize");
+        waited_ = true;
+    }
+
+private:
+    Completion(int cuda_device_id, std::shared_ptr<void> device_state,
+               const std::vector<PoseidonGpuValue> &inputs)
+        : cuda_device_id_(cuda_device_id), device_state_(std::move(device_state)),
+          inputs_(inputs)
+    {}
+
+    int cuda_device_id_ = 0;
+    cudaEvent_t event_ = nullptr;
+    bool recorded_ = false;
+    mutable bool waited_ = false;
+    std::shared_ptr<void> device_state_;
+    std::vector<PoseidonGpuValue> inputs_;
+};
+
 PoseidonGpuValue::PoseidonGpuValue(Storage storage) : storage_(std::move(storage)) {}
+
+PoseidonGpuValue &PoseidonGpuValue::operator=(const PoseidonGpuValue &other)
+{
+    if (this != &other)
+    {
+        completion_ = other.completion_;
+        storage_ = other.storage_;
+    }
+    return *this;
+}
+
+PoseidonGpuValue &PoseidonGpuValue::operator=(PoseidonGpuValue &&other) noexcept
+{
+    if (this != &other)
+    {
+        completion_ = std::move(other.completion_);
+        storage_ = std::move(other.storage_);
+    }
+    return *this;
+}
 
 PoseidonGpuValue PoseidonGpuValue::from_host_plaintext(Plaintext value)
 {
@@ -320,7 +414,7 @@ PoseidonGpuApi::PoseidonGpuApi(std::string context_id, PoseidonContext context,
     for (const int cuda_device_id : cuda_device_ids)
     {
         gpu::gpu_check_cuda(cudaSetDevice(cuda_device_id), "cudaSetDevice");
-        auto device = std::make_unique<DeviceState>();
+        auto device = std::make_shared<DeviceState>();
         device->cuda_device_id = cuda_device_id;
         device->gpu_parameters =
             std::make_unique<gpu::GpuParameterData>(context_, cuda_device_id);
@@ -469,7 +563,10 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
             source = next.get();
             intermediates.push_back(std::move(next));
         }
-        synchronize_device(device.cuda_device_id);
+        if (drop_count > 1)
+        {
+            synchronize_device(device.cuda_device_id);
+        }
         intermediates.back()->meta.scale = exact_scale(attrs.target_scale_log2);
         output = std::move(*intermediates.back());
         break;
@@ -491,8 +588,11 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
         throw std::runtime_error("Poseidon GPU Boot is not implemented");
     }
 
-    synchronize_device(device.cuda_device_id);
-    return Value::from_device_ciphertext(std::move(output));
+    auto result = Value::from_device_ciphertext(std::move(output));
+    result.completion_ = PoseidonGpuValue::Completion::record(
+        device.cuda_device_id, devices_.at(static_cast<std::size_t>(op.place.index)),
+        inputs);
+    return result;
 }
 
 PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_async(
@@ -567,6 +667,11 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_async(
             static_cast<void>(
                 device_state(destination, "Poseidon GPU communication destination"));
         }
+    }
+
+    if (source_place.kind == fhegpu::PlaceKind::Device && input.completion_ != nullptr)
+    {
+        input.completion_->wait();
     }
 
     const auto requested_route = cuda_transfer_route(action.hint);
@@ -650,6 +755,11 @@ void PoseidonGpuApi::synchronize(Value &value)
 {
     if (value.place_kind() == fhegpu::PlaceKind::Device)
     {
+        if (value.completion_ != nullptr)
+        {
+            value.completion_->wait();
+            return;
+        }
         const int value_device = value_cuda_device_id(value, "Poseidon GPU synchronize");
         const auto configured =
             std::find_if(devices_.begin(), devices_.end(), [value_device](const auto &device) {
