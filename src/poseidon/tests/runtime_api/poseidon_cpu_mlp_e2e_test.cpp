@@ -334,6 +334,16 @@ int main(int argc, char **argv)
             std::chrono::duration<double>(key_finish - key_start).count();
         const double run_seconds =
             std::chrono::duration<double>(run_finish - run_start).count();
+        const double compute_including_boot_seconds =
+            static_cast<double>(
+                artifact.timing.compute_including_boot_nanoseconds) *
+            1e-9;
+        const double boot_seconds =
+            static_cast<double>(artifact.timing.boot_nanoseconds) * 1e-9;
+        const double compute_excluding_boot_seconds =
+            static_cast<double>(
+                artifact.timing.compute_excluding_boot_nanoseconds()) *
+            1e-9;
         Json report{
             {"format_version", 1},
             {"passed", passed},
@@ -343,6 +353,14 @@ int main(int argc, char **argv)
             {"rotation_key_count", rotation_steps.size()},
             {"key_generation_seconds", key_seconds},
             {"runtime_seconds", run_seconds},
+            {"runtime_timing",
+             {{"compute_calls", artifact.timing.compute_calls},
+              {"boot_calls", artifact.timing.boot_calls},
+              {"compute_including_boot_seconds",
+               compute_including_boot_seconds},
+              {"boot_seconds", boot_seconds},
+              {"compute_excluding_boot_seconds",
+               compute_excluding_boot_seconds}}},
             {"tolerances",
              {{"absolute", kAbsoluteTolerance},
               {"relative", kRelativeTolerance},
@@ -360,6 +378,11 @@ int main(int argc, char **argv)
                   << " rotations=" << rotation_steps.size()
                   << " key_seconds=" << key_seconds
                   << " runtime_seconds=" << run_seconds
+                  << " compute_including_boot_seconds="
+                  << compute_including_boot_seconds
+                  << " boot_seconds=" << boot_seconds
+                  << " compute_excluding_boot_seconds="
+                  << compute_excluding_boot_seconds
                   << " python_max_abs=" << against_python.max_abs
                   << " mock_max_abs=" << against_mock.max_abs
                   << " max_imaginary=" << max_imaginary << '\n'
