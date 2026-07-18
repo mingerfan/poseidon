@@ -1076,17 +1076,69 @@ void GpuEvaluator::drop_modulus(
     GpuCiphertextData &destination_ciphertext,
     parms_id_type target_parms_id) const
 {
-    // TODO:
-    // 1. Check target parms_id.
-    // 2. Prepare destination metadata and storage.
-    // 3. Query source and destination level info.
-    // 4. Call modswitch_handler_.drop_modulus_ciphertext(...).
+    if (source_ciphertext.empty())
+    {
+        throw std::invalid_argument("GpuEvaluator::drop_modulus: empty ciphertext");
+    }
+    if (source_ciphertext.fields_.empty())
+    {
+        throw std::invalid_argument("GpuEvaluator::drop_modulus: empty ciphertext storage");
+    }
+    if (source_ciphertext.meta.p_count != 0)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::drop_modulus: p limbs are not supported yet");
+    }
+    if (source_ciphertext.meta.component_count != source_ciphertext.size())
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::drop_modulus: component metadata mismatch");
+    }
 
-    (void)source_ciphertext;
-    (void)destination_ciphertext;
-    (void)target_parms_id;
+    const auto &source_level_info =
+        params_.get_level(source_ciphertext.meta.parms_id);
+    const auto &destination_level_info = params_.get_level(target_parms_id);
+    if (source_level_info.q_count != source_ciphertext.meta.q_count ||
+        destination_level_info.q_count >= source_level_info.q_count)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::drop_modulus: target level is not below the source level");
+    }
 
-    throw std::runtime_error("GpuEvaluator::drop_modulus is not implemented yet");
+    const std::size_t destination_q_count = destination_level_info.q_count;
+    const int device_id = source_ciphertext.fields_.front().device_id;
+
+    GpuPolyShard destination_shard;
+    destination_shard.field_index = 0;
+    destination_shard.field_offset = 0;
+    destination_shard.limb_begin = 0;
+    destination_shard.limb_count = destination_q_count;
+    destination_shard.coeff_begin = 0;
+    destination_shard.coeff_count = source_ciphertext.meta.degree;
+
+    GpuCiphertextData result =
+        GpuCiphertextData::allocate_single_device_sharded(
+            source_ciphertext.meta.degree,
+            destination_q_count,
+            source_ciphertext.size(),
+            device_id,
+            std::vector<GpuPolyShard>{destination_shard},
+            0);
+    result.meta = source_ciphertext.meta;
+    result.meta.parms_id = destination_level_info.parms_id;
+    result.meta.q_count = destination_q_count;
+    result.meta.p_count = 0;
+    result.meta.component_count = source_ciphertext.size();
+
+    auto source_view = source_ciphertext.make_const_view();
+    auto destination_view = result.make_view();
+    modswitch_handler_.drop_modulus_ciphertext(
+        destination_view,
+        source_view,
+        source_level_info,
+        destination_level_info);
+
+    destination_ciphertext = std::move(result);
 }
 
 /* GpuEvaluator::multiply(...) -> 输出 3 component: d0, d1, d2 */

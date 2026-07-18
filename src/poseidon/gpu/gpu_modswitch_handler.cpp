@@ -1,5 +1,6 @@
 #include "poseidon/gpu/gpu_modswitch_handler.h"
 
+#include "poseidon/gpu/kernels/gpu_elementwise_kernels.h"
 #include "poseidon/gpu/kernels/gpu_ntt_kernels.h"
 #include "poseidon/gpu/kernels/gpu_rescale_kernels.h"
 
@@ -99,6 +100,56 @@ void validate_rescale_ciphertext_shape(
     }
 }
 
+void validate_drop_modulus_ciphertext_shape(
+    const GpuCiphertextView &destination_view,
+    const GpuConstCiphertextView &source_view,
+    const GpuLevelInfo &source_level_info,
+    const GpuLevelInfo &destination_level_info)
+{
+    if (!(source_view.meta.parms_id == source_level_info.parms_id) ||
+        !(destination_view.meta.parms_id == destination_level_info.parms_id))
+    {
+        throw std::invalid_argument(
+            "GpuModSwitchHandler::drop_modulus_ciphertext: parms_id mismatch");
+    }
+    if (source_view.meta.is_ntt_form != destination_view.meta.is_ntt_form)
+    {
+        throw std::invalid_argument(
+            "GpuModSwitchHandler::drop_modulus_ciphertext: NTT form mismatch");
+    }
+    if (source_view.meta.scale != destination_view.meta.scale)
+    {
+        throw std::invalid_argument(
+            "GpuModSwitchHandler::drop_modulus_ciphertext: scale mismatch");
+    }
+    if (source_view.meta.p_count != 0 || destination_view.meta.p_count != 0)
+    {
+        throw std::invalid_argument(
+            "GpuModSwitchHandler::drop_modulus_ciphertext: p limbs are not supported yet");
+    }
+    if (source_view.meta.degree != destination_view.meta.degree ||
+        source_view.meta.degree != source_level_info.degree ||
+        destination_view.meta.degree != destination_level_info.degree)
+    {
+        throw std::invalid_argument(
+            "GpuModSwitchHandler::drop_modulus_ciphertext: degree mismatch");
+    }
+    if (destination_view.meta.q_count >= source_view.meta.q_count ||
+        source_level_info.q_count != source_view.meta.q_count ||
+        destination_level_info.q_count != destination_view.meta.q_count)
+    {
+        throw std::invalid_argument(
+            "GpuModSwitchHandler::drop_modulus_ciphertext: q_count mismatch");
+    }
+    if (source_view.polys.size() != destination_view.polys.size() ||
+        source_view.polys.size() != source_view.meta.component_count ||
+        destination_view.polys.size() != destination_view.meta.component_count)
+    {
+        throw std::invalid_argument(
+            "GpuModSwitchHandler::drop_modulus_ciphertext: component count mismatch");
+    }
+}
+
 void validate_single_shard_poly(
     const char *name,
     const GpuRNSPolyView &poly,
@@ -152,7 +203,7 @@ GpuConstPolyShardView make_source_limb_range(
             source_shard.limb_begin + source_shard.limb_count)
     {
         throw std::invalid_argument(
-            "GpuModSwitchHandler::rescale_ciphertext: source shard does not cover requested limb range");
+            "GpuModSwitchHandler: source shard does not cover requested limb range");
     }
 
     GpuConstPolyShardView result;
@@ -424,19 +475,41 @@ void GpuModSwitchHandler::drop_modulus_ciphertext(
     const GpuLevelInfo &source_level_info,
     const GpuLevelInfo &destination_level_info) const
 {
-    // TODO:
-    // Launch GPU drop-modulus logic.
-    //
-    // Depending on physical layout, this may be:
-    // - metadata/view update only;
-    // - or actual data compaction/copy.
+    NvtxRange range("modswitch.drop_modulus");
+    validate_drop_modulus_ciphertext_shape(
+        destination_view,
+        source_view,
+        source_level_info,
+        destination_level_info);
 
-    (void)destination_view;
-    (void)source_view;
-    (void)source_level_info;
-    (void)destination_level_info;
+    const std::size_t degree = source_view.meta.degree;
+    const std::size_t source_q_count = source_view.meta.q_count;
+    const std::size_t destination_q_count = destination_view.meta.q_count;
 
-    throw std::runtime_error("GpuModSwitchHandler::drop_modulus_ciphertext is not implemented yet");
+    for (std::size_t i = 0; i < source_view.polys.size(); ++i)
+    {
+        validate_single_shard_poly(
+            "GpuModSwitchHandler::drop_modulus_ciphertext source",
+            source_view.polys[i],
+            source_q_count,
+            degree);
+        validate_single_shard_poly(
+            "GpuModSwitchHandler::drop_modulus_ciphertext destination",
+            destination_view.polys[i],
+            destination_q_count,
+            degree);
+
+        const auto &destination_shard = destination_view.polys[i].shards.front();
+        const auto &source_shard = source_view.polys[i].shards.front();
+        kernel::launch_copy_poly_shard(
+            destination_shard,
+            make_source_limb_range(
+                source_shard,
+                0,
+                destination_q_count,
+                degree),
+            degree);
+    }
 }
 
 }  // namespace gpu

@@ -102,7 +102,7 @@ const gpu::GpuPlaintextData &require_plaintext(const std::vector<PoseidonGpuValu
 
 bool gpu_compute_supported(fhegpu::ComputeKind kind)
 {
-    return kind != fhegpu::ComputeKind::ModSwitch && kind != fhegpu::ComputeKind::Boot;
+    return kind != fhegpu::ComputeKind::Boot;
 }
 
 communication::CudaTransferRoute cuda_transfer_route(fhegpu::CommHint hint)
@@ -585,7 +585,19 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
         break;
     }
     case fhegpu::ComputeKind::ModSwitch:
-        throw std::runtime_error("Poseidon GPU ModSwitch is not implemented");
+    {
+        const auto attrs = std::get<fhegpu::ModSwitchAttrs>(op.attrs);
+        if (attrs.target_level < 0)
+        {
+            throw std::invalid_argument("Poseidon GPU ModSwitch target level is negative");
+        }
+        const auto parms_id =
+            context_.crt_context()->parms_id_map().at(
+                static_cast<std::uint32_t>(attrs.target_level));
+        device.evaluator->drop_modulus(
+            require_ciphertext(inputs, 0), output, parms_id);
+        break;
+    }
     case fhegpu::ComputeKind::Boot:
         throw std::runtime_error("Poseidon GPU Boot is not implemented");
     }

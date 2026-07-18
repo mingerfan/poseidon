@@ -171,7 +171,9 @@ fhegpu::LoadedOperatorSpec make_operator_spec(const poseidon::PoseidonContext &c
 
     fhegpu::OperatorSupport unsupported;
     unsupported.supported = false;
-    spec.operators.emplace(fhegpu::ComputeKind::ModSwitch, unsupported);
+    fhegpu::OperatorSupport mod_switch;
+    mod_switch.supported = true;
+    spec.operators.emplace(fhegpu::ComputeKind::ModSwitch, std::move(mod_switch));
     spec.operators.emplace(fhegpu::ComputeKind::Boot, std::move(unsupported));
 
     return {std::move(spec), kOperatorSpecSha};
@@ -487,11 +489,11 @@ void test_preflight_rejections(PoseidonGpuApi &api,
         [&] { api.preflight(kPlanSha, false, target, shallow_rescale, valid_requirements); },
         "four rescale levels");
 
-    auto unsupported_modswitch = loaded_spec.spec;
-    unsupported_modswitch.operators.at(fhegpu::ComputeKind::ModSwitch).supported = true;
+    auto unsupported_boot = loaded_spec.spec;
+    unsupported_boot.operators.at(fhegpu::ComputeKind::Boot).supported = true;
     require_rejected(
         [&] {
-            api.preflight(kPlanSha, false, target, unsupported_modswitch, valid_requirements);
+            api.preflight(kPlanSha, false, target, unsupported_boot, valid_requirements);
         },
         "unsupported Poseidon GPU op");
 
@@ -638,7 +640,7 @@ void test_runtime_multiply_plain(PoseidonGpuApi &api,
 }
 
 void test_rescale_and_value_validation(PoseidonGpuApi &api,
-                                       const poseidon::PoseidonContext &context,
+                                       poseidon::PoseidonContext &context,
                                        poseidon::KeyGenerator &key_generator,
                                        const fhegpu::LoadedOperatorSpec &loaded_spec,
                                        const RmmPoolScope &rmm_pool)
@@ -650,13 +652,23 @@ void test_rescale_and_value_validation(PoseidonGpuApi &api,
     poseidon::Encryptor encryptor(context, public_key);
     poseidon::Decryptor decryptor(context, key_generator.secret_key());
     poseidon::CKKSEncoder encoder(context);
+    poseidon::EvaluatorCkksSoftware cpu_evaluator(context);
 
-    constexpr int input_scale_log2 = 150;
+    constexpr int input_scale_log2 = 140;
     poseidon::Plaintext plain;
     encoder.encode(std::vector<double>{1.0, -2.0, 3.0, 4.0},
                    std::ldexp(1.0, input_scale_log2), plain);
     poseidon::Ciphertext cipher;
     encryptor.encrypt(plain, cipher);
+
+    poseidon::Ciphertext expected_lazy = cipher;
+    for (int dropped = 0; dropped < 4; ++dropped)
+    {
+        poseidon::Ciphertext next;
+        cpu_evaluator.rescale(expected_lazy, next);
+        expected_lazy = std::move(next);
+    }
+    expected_lazy.scale() = std::ldexp(1.0, input_scale_log2 - 120);
 
     const int input_level = static_cast<int>(cipher.level());
     auto device_value = transfer_value(
@@ -714,6 +726,52 @@ void test_rescale_and_value_validation(PoseidonGpuApi &api,
         lazy_result,
         {12, fhegpu::ValueKind::Ciphertext, device_place(), kContextId, input_level - 4,
          input_scale_log2 - 120, true, 2});
+
+    auto lazy_host =
+        transfer_value(api, 12, lazy_result, fhegpu::ValueKind::Ciphertext,
+                       device_place(), host_place());
+    poseidon::Plaintext lazy_plain;
+    poseidon::Plaintext expected_lazy_plain;
+    decryptor.decrypt(lazy_host.host_ciphertext(), lazy_plain);
+    decryptor.decrypt(expected_lazy, expected_lazy_plain);
+    std::vector<std::complex<double>> lazy_slots;
+    std::vector<std::complex<double>> expected_lazy_slots;
+    encoder.decode(lazy_plain, lazy_slots);
+    encoder.decode(expected_lazy_plain, expected_lazy_slots);
+    for (std::size_t i = 0; i < original_slots.size(); ++i)
+    {
+        require(std::abs(lazy_slots[i].real() - expected_lazy_slots[i].real()) < 1e-4,
+                "GPU/CPU lazy Rescale mismatch at slot " + std::to_string(i) +
+                    ": CPU " + std::to_string(expected_lazy_slots[i].real()) +
+                    ", GPU " + std::to_string(lazy_slots[i].real()));
+        require(std::abs(lazy_slots[i].real() - original_slots[i]) < 5e-3,
+                "lazy Rescale result mismatch at slot " + std::to_string(i) +
+                    ": expected " + std::to_string(original_slots[i]) +
+                    ", got " + std::to_string(lazy_slots[i].real()));
+    }
+
+    fhegpu::ComputeOp mod_switch;
+    mod_switch.kind = fhegpu::ComputeKind::ModSwitch;
+    mod_switch.place = device_place();
+    mod_switch.attrs = fhegpu::ModSwitchAttrs{input_level - 2};
+    auto mod_switched = api.compute(mod_switch, {device_value});
+    api.validate_value(
+        mod_switched,
+        {13, fhegpu::ValueKind::Ciphertext, device_place(), kContextId,
+         input_level - 2, input_scale_log2, true, 2});
+
+    auto mod_switched_host =
+        transfer_value(api, 14, mod_switched, fhegpu::ValueKind::Ciphertext,
+                       device_place(), host_place());
+    poseidon::Plaintext mod_switched_plain;
+    decryptor.decrypt(mod_switched_host.host_ciphertext(), mod_switched_plain);
+    std::vector<std::complex<double>> mod_switched_slots;
+    encoder.decode(mod_switched_plain, mod_switched_slots);
+    for (std::size_t i = 0; i < original_slots.size(); ++i)
+    {
+        require(std::abs(mod_switched_slots[i].real() - original_slots[i]) < 1e-4,
+                "ModSwitch result mismatch at slot " + std::to_string(i));
+    }
 
     auto wrong_scale = poseidon::gpu::GpuUploader::upload_ciphertext(cipher, kDeviceId);
     wrong_scale.meta.scale *= 2.0;
