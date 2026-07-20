@@ -13,7 +13,7 @@
 ## 已完成
 
 - GPU 明密文、参数、密钥上传、Evaluator、handlers 和 CUDA kernels 已收敛到独立的 `poseidon_gpu` target。
-- `PoseidonCpuApi` 和 `PoseidonGpuApi` 都直接实现 Runtime Api，不依赖旧 mgpu IR、调度器、验证器或解释器。
+- `PoseidonCpuApi` 和 `PoseidonGpuApi` 都直接实现 Runtime Api；旧 mgpu IR/调度/执行系统以及 HEVM/CST frontend 已删除。
 - 同进程 CUDA 拷贝、CPU MPI 通信和 Host `decrypt_reencrypt` Boot 已接入 RuntimePlan 执行路径。
 - 拷贝由 RuntimePlan 的 Transfer/Replicate 驱动，算子不会在失败后临时搬运数据或切换后端。
 
