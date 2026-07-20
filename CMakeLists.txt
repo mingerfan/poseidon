@@ -284,19 +284,18 @@ option(POSEIDON_BUILD_CKKS_RUNTIME_API
     "Build the optional CKKS Runtime CPU/GPU Api integration" OFF)
 message(STATUS "POSEIDON_BUILD_CKKS_RUNTIME_API: ${POSEIDON_BUILD_CKKS_RUNTIME_API}")
 
-set(POSEIDON_CKKS_RUNTIME_SOURCE_DIR "" CACHE PATH
+set(POSEIDON_CKKS_RUNTIME_SOURCE_DIR
+    "${CMAKE_CURRENT_SOURCE_DIR}/third_party/ckks-runtime" CACHE PATH
     "Path to the CKKS Runtime source tree")
 
 if(POSEIDON_BUILD_CKKS_RUNTIME_API)
-    if(POSEIDON_CKKS_RUNTIME_SOURCE_DIR STREQUAL "")
-        message(FATAL_ERROR
-            "POSEIDON_BUILD_CKKS_RUNTIME_API requires "
-            "POSEIDON_CKKS_RUNTIME_SOURCE_DIR")
-    endif()
     if(NOT EXISTS "${POSEIDON_CKKS_RUNTIME_SOURCE_DIR}/CMakeLists.txt")
         message(FATAL_ERROR
             "CKKS Runtime CMakeLists.txt was not found at "
-            "${POSEIDON_CKKS_RUNTIME_SOURCE_DIR}")
+            "${POSEIDON_CKKS_RUNTIME_SOURCE_DIR}.\n"
+            "Initialize the bundled Runtime with:\n"
+            "  git submodule update --init third_party/ckks-runtime\n"
+            "or set POSEIDON_CKKS_RUNTIME_SOURCE_DIR to another checkout.")
     endif()
 
     add_subdirectory(

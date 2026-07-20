@@ -23,7 +23,7 @@
 | `src/poseidon/mgpu/configs/` | Bundled CPU-side static schedule config templates for single GPU, single-node 8-GPU, and 4x8 cluster preview diagnostics. |
 | `src/poseidon/frontends/dacapo/` | Dacapo/HEVM/CST import, artifact reports, and HEVM-specific execution wrappers. |
 | `src/poseidon/tools/dacapo/` | Dacapo artifact tools and the isolated Dacapo Nix shell template. |
-| `third_party/dacapo/` | Dacapo git submodule from `git@github.com:corelab-src/dacapo.git`. |
+| `third_party/dacapo/` | Dacapo git submodule from `git@github.com:mingerfan/dacapo-modified.git`. |
 | `src/poseidon/tests/mgpu/` | Format-agnostic multi-GPU runtime tests; cross-device tests must skip on single-GPU machines. |
 | `src/poseidon/tests/frontends/dacapo/` | Dacapo/HEVM/CST frontend tests. |
 | `src/poseidon/tests/tools/dacapo/` | Dacapo tool and ResNet20 artifact path wrapper tests. |

@@ -1,3 +1,6 @@
 [submodule "third_party/dacapo"]
 	path = third_party/dacapo
-	url = git@github.com:corelab-src/dacapo.git
+	url = git@github.com:mingerfan/dacapo-modified.git
+[submodule "third_party/ckks-runtime"]
+	path = third_party/ckks-runtime
+	url = git@github.com:mingerfan/ckks-runtime.git

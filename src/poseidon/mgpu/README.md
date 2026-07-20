@@ -26,8 +26,8 @@ Subdirectories:
 
 Dacapo/HEVM/CST import code lives outside this core tree under
 `src/poseidon/frontends/dacapo/`. The Dacapo submodule is source-only at
-`third_party/dacapo`; Poseidon does not build Dacapo or MLIR as part of
-`poseidon_mgpu`.
+`third_party/dacapo` and points to the `mingerfan/dacapo-modified` fork;
+Poseidon does not build Dacapo or MLIR as part of `poseidon_mgpu`.
 
 ## Dacapo Dependency Isolation
 

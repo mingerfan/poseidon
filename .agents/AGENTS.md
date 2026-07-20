@@ -21,7 +21,7 @@ Mandatory constraints:
   copy insertion pass and the mgpu communication layer. Do not add ad hoc
   copies in GPU evaluators or operator handlers.
 - Dacapo is expected at `third_party/dacapo` from
-  `git@github.com:corelab-src/dacapo.git`.
+  `git@github.com:mingerfan/dacapo-modified.git`.
 - Use Nix for Dacapo dependency isolation when needed. Do not modify the system
   package environment for Dacapo dependencies.
   The local shell template is `src/poseidon/tools/dacapo/dacapo-shell.nix`.
