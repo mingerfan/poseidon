@@ -179,6 +179,26 @@ fhegpu::LoadedOperatorSpec make_operator_spec(const poseidon::PoseidonContext &c
     return {std::move(spec), kOperatorSpecSha};
 }
 
+fhegpu::LoadedOperatorSpec make_boot_operator_spec(
+    const fhegpu::LoadedOperatorSpec &loaded_spec)
+{
+    auto result = loaded_spec;
+    result.spec.operators.at(fhegpu::ComputeKind::Boot).supported = true;
+    fhegpu::BootProfile profile;
+    profile.profile_id = "poseidon-gpu-host-boot-test";
+    profile.implementation = fhegpu::BootImplementation::DecryptReencrypt;
+    profile.input_level_min = result.spec.level_lower_bound;
+    profile.input_level_max = result.spec.level_upper_bound;
+    profile.input_components = 2;
+    profile.output_level = result.spec.level_upper_bound;
+    profile.output_scale_log2 = result.spec.default_scale_log2;
+    profile.output_components = 2;
+    profile.needs_secret_key = true;
+    profile.needs_host_compute = true;
+    result.spec.boot_profiles = {std::move(profile)};
+    return result;
+}
+
 fhegpu::TargetConfig make_target(const fhegpu::LoadedOperatorSpec &loaded_spec,
                                  int local_device_count = 1)
 {
@@ -495,13 +515,80 @@ void test_preflight_rejections(PoseidonGpuApi &api,
         [&] {
             api.preflight(kPlanSha, false, target, unsupported_boot, valid_requirements);
         },
-        "unsupported Poseidon GPU op");
+        "Boot profiles");
 
     const fhegpu::PlanRequirements host_compute{
         {fhegpu::RequiredCapability::HostCompute}, {}};
     require_rejected(
         [&] { api.preflight(kPlanSha, false, target, loaded_spec.spec, host_compute); },
         "host_compute");
+}
+
+void test_host_decrypt_reencrypt_boot(
+    PoseidonGpuApi &api, const poseidon::PoseidonContext &context,
+    const poseidon::PublicKey &public_key, const poseidon::SecretKey &secret_key,
+    const fhegpu::LoadedOperatorSpec &loaded_spec)
+{
+    const auto boot_spec = make_boot_operator_spec(loaded_spec);
+    fhegpu::PlanRequirements requirements;
+    requirements.capabilities = {
+        fhegpu::RequiredCapability::HostCompute,
+        fhegpu::RequiredCapability::BootDecryptReencrypt,
+    };
+    requirements.keys = {
+        {fhegpu::KeyKind::Secret, host_place(), std::nullopt},
+    };
+    api.preflight(kPlanSha, false, make_target(boot_spec), boot_spec.spec, requirements);
+
+    constexpr int input_level = 2;
+    const int output_level = boot_spec.spec.level_upper_bound;
+    const std::vector<double> expected{1.25, -2.5, 3.75, 4.5};
+    poseidon::CKKSEncoder encoder(context);
+    poseidon::Plaintext input_plain;
+    encoder.encode(expected,
+                   context.crt_context()->parms_id_map().at(input_level),
+                   std::ldexp(1.0, kDefaultScaleLog2), input_plain);
+    poseidon::Encryptor encryptor(context, public_key);
+    poseidon::Ciphertext input_cipher;
+    encryptor.encrypt(input_plain, input_cipher);
+
+    fhegpu::ComputeOp boot;
+    boot.kind = fhegpu::ComputeKind::Boot;
+    boot.place = host_place();
+    boot.attrs = fhegpu::BootAttrs{
+        output_level, kDefaultScaleLog2, 2,
+        "poseidon-gpu-host-boot-test",
+        fhegpu::BootImplementation::DecryptReencrypt,
+    };
+    auto refreshed = api.compute(
+        boot, {PoseidonGpuValue::from_host_ciphertext(std::move(input_cipher))});
+    api.validate_value(
+        refreshed,
+        {50, fhegpu::ValueKind::Ciphertext, host_place(), kContextId,
+         output_level, kDefaultScaleLog2, true, 2});
+
+    poseidon::Decryptor decryptor(context, secret_key);
+    poseidon::Plaintext output_plain;
+    decryptor.decrypt(refreshed.host_ciphertext(), output_plain);
+    std::vector<std::complex<double>> actual;
+    encoder.decode(output_plain, actual);
+    for (std::size_t i = 0; i < expected.size(); ++i)
+    {
+        require(std::abs(actual[i].real() - expected[i]) < 1e-4,
+                "Host decrypt_reencrypt Boot result mismatch at slot " +
+                    std::to_string(i));
+        require(std::abs(actual[i].imag()) < 1e-4,
+                "Host decrypt_reencrypt Boot imaginary mismatch at slot " +
+                    std::to_string(i));
+    }
+
+    auto native = boot;
+    native.attrs = fhegpu::BootAttrs{
+        output_level, kDefaultScaleLog2, 2,
+        "poseidon-gpu-host-boot-test", fhegpu::BootImplementation::Native,
+    };
+    require_rejected(
+        [&] { (void)api.compute(native, {refreshed}); }, "native Boot");
 }
 
 void test_runtime_add_plain(PoseidonGpuApi &api, const poseidon::PoseidonContext &context,
@@ -669,7 +756,6 @@ void test_rescale_and_value_validation(PoseidonGpuApi &api,
         expected_lazy = std::move(next);
     }
     expected_lazy.scale() = std::ldexp(1.0, input_scale_log2 - 120);
-
     const int input_level = static_cast<int>(cipher.level());
     auto device_value = transfer_value(
         api, 10, PoseidonGpuValue::from_host_ciphertext(cipher),
@@ -957,6 +1043,10 @@ int main()
         auto galois_keys = std::make_shared<poseidon::GaloisKeys>();
         key_generator.create_relin_keys(*relin_keys);
         key_generator.create_galois_keys(std::vector<int>{1}, *galois_keys);
+        auto boot_public_key = std::make_shared<poseidon::PublicKey>();
+        auto boot_secret_key =
+            std::make_shared<poseidon::SecretKey>(key_generator.secret_key());
+        key_generator.create_public_key(*boot_public_key);
 
         const auto loaded_spec = make_operator_spec(context);
         run_test("device mapping rejects invalid CUDA device lists",
@@ -987,6 +1077,17 @@ int main()
                      [&] {
                          test_multiply_relinearize_rescale_rotate(
                              api, context, key_generator, *relin_keys, *galois_keys,
+                             loaded_spec);
+                     });
+        }
+
+        {
+            PoseidonGpuApi api(kContextId, context, kDeviceId, relin_keys,
+                               galois_keys, boot_public_key, boot_secret_key);
+            run_test("Host decrypt/re-encrypt Boot",
+                     [&] {
+                         test_host_decrypt_reencrypt_boot(
+                             api, context, *boot_public_key, *boot_secret_key,
                              loaded_spec);
                      });
         }

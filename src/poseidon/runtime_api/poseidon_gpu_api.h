@@ -19,8 +19,12 @@
 namespace poseidon
 {
 class CKKSEncoder;
+class Decryptor;
+class Encryptor;
 class GaloisKeys;
+class PublicKey;
 class RelinKeys;
+class SecretKey;
 
 namespace gpu
 {
@@ -81,11 +85,15 @@ public:
 
     PoseidonGpuApi(std::string context_id, PoseidonContext context, int cuda_device_id,
                    std::shared_ptr<const RelinKeys> relin_keys = {},
-                   std::shared_ptr<const GaloisKeys> galois_keys = {});
+                   std::shared_ptr<const GaloisKeys> galois_keys = {},
+                   std::shared_ptr<const PublicKey> boot_public_key = {},
+                   std::shared_ptr<const SecretKey> boot_secret_key = {});
     PoseidonGpuApi(std::string context_id, PoseidonContext context,
                    std::vector<int> cuda_device_ids,
                    std::shared_ptr<const RelinKeys> relin_keys = {},
-                   std::shared_ptr<const GaloisKeys> galois_keys = {});
+                   std::shared_ptr<const GaloisKeys> galois_keys = {},
+                   std::shared_ptr<const PublicKey> boot_public_key = {},
+                   std::shared_ptr<const SecretKey> boot_secret_key = {});
     ~PoseidonGpuApi();
 
     PoseidonGpuApi(const PoseidonGpuApi &) = delete;
@@ -126,6 +134,8 @@ private:
     std::string context_id_;
     PoseidonContext context_;
     std::unique_ptr<CKKSEncoder> encoder_;
+    std::unique_ptr<Encryptor> boot_encryptor_;
+    std::unique_ptr<Decryptor> boot_decryptor_;
     std::vector<std::shared_ptr<DeviceState>> devices_;
     std::shared_ptr<const RelinKeys> relin_keys_;
     std::shared_ptr<const GaloisKeys> galois_keys_;

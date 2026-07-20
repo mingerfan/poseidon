@@ -1,6 +1,8 @@
 #include "poseidon/runtime_api/poseidon_gpu_api.h"
 
 #include "poseidon/ckks_encoder.h"
+#include "poseidon/decryptor.h"
+#include "poseidon/encryptor.h"
 #include "poseidon/gpu/gpu_evaluator.h"
 #include "poseidon/gpu/gpu_memory.h"
 #include "poseidon/gpu/gpu_parameter.h"
@@ -12,6 +14,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <complex>
 #include <cstdint>
 #include <limits>
 #include <stdexcept>
@@ -100,9 +103,14 @@ const gpu::GpuPlaintextData &require_plaintext(const std::vector<PoseidonGpuValu
     return inputs[index].device_plaintext();
 }
 
-bool gpu_compute_supported(fhegpu::ComputeKind kind)
+const Ciphertext &require_host_ciphertext(const std::vector<PoseidonGpuValue> &inputs,
+                                          std::size_t index)
 {
-    return kind != fhegpu::ComputeKind::Boot;
+    if (index >= inputs.size())
+    {
+        throw std::invalid_argument("missing Host ciphertext input");
+    }
+    return inputs[index].host_ciphertext();
 }
 
 communication::CudaTransferRoute cuda_transfer_route(fhegpu::CommHint hint)
@@ -351,16 +359,21 @@ const gpu::GpuCiphertextData &PoseidonGpuValue::device_ciphertext() const
 PoseidonGpuApi::PoseidonGpuApi(std::string context_id, PoseidonContext context,
                                int cuda_device_id,
                                std::shared_ptr<const RelinKeys> relin_keys,
-                               std::shared_ptr<const GaloisKeys> galois_keys)
+                               std::shared_ptr<const GaloisKeys> galois_keys,
+                               std::shared_ptr<const PublicKey> boot_public_key,
+                               std::shared_ptr<const SecretKey> boot_secret_key)
     : PoseidonGpuApi(std::move(context_id), std::move(context),
                      std::vector<int>{cuda_device_id}, std::move(relin_keys),
-                     std::move(galois_keys))
+                     std::move(galois_keys), std::move(boot_public_key),
+                     std::move(boot_secret_key))
 {}
 
 PoseidonGpuApi::PoseidonGpuApi(std::string context_id, PoseidonContext context,
                                std::vector<int> cuda_device_ids,
                                std::shared_ptr<const RelinKeys> relin_keys,
-                               std::shared_ptr<const GaloisKeys> galois_keys)
+                               std::shared_ptr<const GaloisKeys> galois_keys,
+                               std::shared_ptr<const PublicKey> boot_public_key,
+                               std::shared_ptr<const SecretKey> boot_secret_key)
     : context_id_(std::move(context_id)), context_(std::move(context)),
       relin_keys_(std::move(relin_keys)), galois_keys_(std::move(galois_keys))
 {
@@ -371,6 +384,16 @@ PoseidonGpuApi::PoseidonGpuApi(std::string context_id, PoseidonContext context,
     if (context_.parameters_literal()->scheme() != CKKS)
     {
         throw std::invalid_argument("Poseidon GPU Api requires a CKKS context");
+    }
+    if (static_cast<bool>(boot_public_key) != static_cast<bool>(boot_secret_key))
+    {
+        throw std::invalid_argument(
+            "Poseidon GPU decrypt_reencrypt Boot requires public and secret keys");
+    }
+    if (boot_public_key)
+    {
+        boot_encryptor_ = std::make_unique<Encryptor>(context_, *boot_public_key);
+        boot_decryptor_ = std::make_unique<Decryptor>(context_, *boot_secret_key);
     }
 
     if (cuda_device_ids.empty())
@@ -482,6 +505,32 @@ PoseidonGpuApi::Value PoseidonGpuApi::encode_plaintext(
 PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
                                               const std::vector<Value> &inputs)
 {
+    if (op.kind == fhegpu::ComputeKind::Boot)
+    {
+        require_host_place(op.place, "Poseidon GPU decrypt_reencrypt Boot");
+        const auto attrs = std::get<fhegpu::BootAttrs>(op.attrs);
+        if (attrs.implementation != fhegpu::BootImplementation::DecryptReencrypt)
+        {
+            throw std::runtime_error("Poseidon GPU native Boot is not implemented");
+        }
+        if (!boot_encryptor_ || !boot_decryptor_)
+        {
+            throw std::runtime_error("Poseidon GPU decrypt_reencrypt Boot has no keys");
+        }
+
+        Plaintext decrypted;
+        boot_decryptor_->decrypt(require_host_ciphertext(inputs, 0), decrypted);
+        std::vector<std::complex<double>> slots;
+        encoder_->decode(decrypted, slots);
+        Plaintext refreshed;
+        const auto parms_id = context_.crt_context()->parms_id_map().at(
+            static_cast<std::uint32_t>(attrs.target_level));
+        encoder_->encode(slots, parms_id, exact_scale(attrs.target_scale_log2), refreshed);
+        Ciphertext output;
+        boot_encryptor_->encrypt(refreshed, output);
+        return Value::from_host_ciphertext(std::move(output));
+    }
+
     auto &device = device_state(op.place, "Poseidon GPU compute");
     gpu::gpu_check_cuda(cudaSetDevice(device.cuda_device_id), "cudaSetDevice");
     for (const auto &input : inputs)
@@ -599,7 +648,7 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
         break;
     }
     case fhegpu::ComputeKind::Boot:
-        throw std::runtime_error("Poseidon GPU Boot is not implemented");
+        throw std::logic_error("Poseidon GPU Boot reached Device dispatch");
     }
 
     auto result = Value::from_device_ciphertext(std::move(output));
@@ -842,17 +891,21 @@ void PoseidonGpuApi::preflight(std::string_view plan_source_sha256,
         throw std::invalid_argument("OperatorSpec parameters do not match Poseidon GPU context");
     }
 
-    for (const auto &[kind, support] : operator_spec.operators)
+    const auto boot_support = operator_spec.operators.find(fhegpu::ComputeKind::Boot);
+    const bool boot_supported = boot_support != operator_spec.operators.end() &&
+                                boot_support->second.supported;
+    if (boot_supported != !operator_spec.boot_profiles.empty())
     {
-        if (support.supported && !gpu_compute_supported(kind))
-        {
-            throw std::invalid_argument("OperatorSpec enables an unsupported Poseidon GPU op: " +
-                                        fhegpu::to_string(kind));
-        }
+        throw std::invalid_argument(
+            "Poseidon GPU OperatorSpec Boot support does not match Boot profiles");
     }
-    if (!operator_spec.boot_profiles.empty())
+    for (const auto &profile : operator_spec.boot_profiles)
     {
-        throw std::invalid_argument("Poseidon GPU Api does not support Boot profiles");
+        if (profile.implementation != fhegpu::BootImplementation::DecryptReencrypt)
+        {
+            throw std::invalid_argument(
+                "Poseidon GPU Api supports only decrypt_reencrypt Boot profiles");
+        }
     }
 
     const auto rescale = operator_spec.operators.find(fhegpu::ComputeKind::Rescale);
@@ -866,9 +919,14 @@ void PoseidonGpuApi::preflight(std::string_view plan_source_sha256,
 
     for (const auto capability : requirements.capabilities)
     {
-        if (capability != fhegpu::RequiredCapability::Encode &&
-            capability != fhegpu::RequiredCapability::Transfer &&
-            capability != fhegpu::RequiredCapability::Replicate)
+        const bool local = capability == fhegpu::RequiredCapability::Encode ||
+                           capability == fhegpu::RequiredCapability::Transfer ||
+                           capability == fhegpu::RequiredCapability::Replicate;
+        const bool boot = boot_encryptor_ != nullptr && boot_decryptor_ != nullptr &&
+                          (capability == fhegpu::RequiredCapability::HostCompute ||
+                           capability ==
+                               fhegpu::RequiredCapability::BootDecryptReencrypt);
+        if (!local && !boot)
         {
             throw std::runtime_error("Poseidon GPU Api lacks required capability: " +
                                      fhegpu::to_string(capability));
@@ -877,6 +935,16 @@ void PoseidonGpuApi::preflight(std::string_view plan_source_sha256,
 
     for (const auto &key : requirements.keys)
     {
+        if (key.kind == fhegpu::KeyKind::Secret)
+        {
+            require_host_place(key.place, "Poseidon GPU SecretKey");
+            if (!boot_decryptor_)
+            {
+                throw std::runtime_error("Poseidon GPU Api lacks decrypt_reencrypt Boot keys");
+            }
+            continue;
+        }
+
         const auto &device = device_state(key.place, "Poseidon GPU key");
         if (key.kind == fhegpu::KeyKind::Relin)
         {
