@@ -396,12 +396,21 @@ int check_cuda_runtime()
     return EXIT_SUCCESS;
 }
 
+int log2_degree(std::size_t degree);
+
 poseidon::ParametersLiteral make_demo_parameters()
 {
+    const std::size_t degree =
+        env_size_or("POSEIDON_DEMO_DEGREE", 65536);
+    const std::size_t q_count =
+        env_size_or("POSEIDON_DEMO_Q_COUNT", 8);
+    const std::size_t p_count =
+        env_size_or("POSEIDON_DEMO_P_COUNT", 2);
+    const int log_n = log2_degree(degree);
     poseidon::ParametersLiteral parms(
         CKKS,
-        /*log_n=*/16,
-        /*log_slots=*/15,
+        log_n,
+        log_n - 1,
         /*log_scale=*/25,
         /*hamming_weight=*/0,
         /*q0_level=*/0,
@@ -411,8 +420,8 @@ poseidon::ParametersLiteral make_demo_parameters()
         poseidon::sec_level_type::none);
 
     parms.set_log_modulus(
-        std::vector<std::uint32_t>(8, 30),
-        std::vector<std::uint32_t>(2, 30));
+        std::vector<std::uint32_t>(q_count, 30),
+        std::vector<std::uint32_t>(p_count, 30));
     return parms;
 }
 

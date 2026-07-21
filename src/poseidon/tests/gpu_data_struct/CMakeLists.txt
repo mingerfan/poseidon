@@ -138,6 +138,10 @@ if(POSEIDON_GPU_DATA_STRUCT_ENABLE_GPU_TESTS)
             CUDA::cudart
             rmm::rmm
     )
+    target_include_directories(demo_gpu_ciphertext_add_handler
+        PRIVATE
+            "${CMAKE_BINARY_DIR}/poseidon_build"
+    )
     target_compile_options(demo_gpu_ciphertext_add_handler
         PRIVATE
             $<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>
