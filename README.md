@@ -1,16 +1,18 @@
 See [Poseidon Doc](https://poseidon-hpu.readthedocs.io/en/latest/) for details.
 
-## Bundled Dacapo and CKKS Runtime
+## Bundled CKKS Runtime
 
-Poseidon pins the modified Dacapo compiler and CKKS Runtime as submodules. After
-cloning, initialize both source trees with:
+Poseidon pins CKKS Runtime as a submodule. Runtime pins the compatible modified
+Dacapo compiler as its own nested submodule. After cloning, initialize the full
+toolchain with:
 
 ```bash
-git submodule update --init third_party/dacapo third_party/ckks-runtime
+git submodule update --init --recursive third_party/ckks-runtime
 ```
 
-Dacapo remains source-only in the normal Poseidon build. It is built separately
-when compiler artifacts need to be regenerated.
+Dacapo is then available at `third_party/ckks-runtime/third_party/dacapo`. It
+remains source-only in the normal Poseidon build and is built separately when
+compiler artifacts need to be regenerated.
 
 ## Optional CKKS Runtime CPU/GPU Api
 
