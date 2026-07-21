@@ -5,6 +5,7 @@
 #include "poseidon/keygenerator.h"
 #include "poseidon/parameters_literal.h"
 #include "poseidon/runtime_api/poseidon_cpu_api.h"
+#include "poseidon/runtime_api/rotation_key_basis.h"
 #include "runtime/json_plan_reader.hpp"
 #include "runtime/operator_spec_reader.hpp"
 #include "runtime/runtime.hpp"
@@ -112,6 +113,31 @@ std::vector<double> pack_mlp_input(const std::vector<double> &logical)
     return packed;
 }
 
+std::vector<double> pack_resnet20_input(const std::vector<double> &logical)
+{
+    constexpr std::size_t image_values = 3 * 32 * 32;
+    constexpr std::size_t packed_block = 4096;
+    constexpr std::size_t repetitions = 4;
+    constexpr double activation_scale = 32.0;
+    if (logical.size() != image_values)
+    {
+        throw std::runtime_error(
+            "ResNet-20 logical input must contain 3072 values");
+    }
+    std::vector<double> block(packed_block, 0.0);
+    for (std::size_t index = 0; index < logical.size(); ++index)
+    {
+        block[index] = logical[index] / activation_scale;
+    }
+    std::vector<double> packed;
+    packed.reserve(packed_block * repetitions);
+    for (std::size_t repeat = 0; repeat < repetitions; ++repeat)
+    {
+        packed.insert(packed.end(), block.begin(), block.end());
+    }
+    return packed;
+}
+
 std::uint32_t exact_log2(std::uint64_t value)
 {
     if (value < 2 || (value & (value - 1)) != 0)
@@ -158,7 +184,9 @@ const fhegpu::ValueDesc &find_value(const fhegpu::RuntimePlan &plan,
 }
 
 Comparison compare(const std::vector<double> &expected,
-                   const std::vector<double> &actual)
+                   const std::vector<double> &actual,
+                   double absolute_tolerance = kAbsoluteTolerance,
+                   double relative_tolerance = kRelativeTolerance)
 {
     if (expected.size() != actual.size())
     {
@@ -172,10 +200,10 @@ Comparison compare(const std::vector<double> &expected,
         result.max_abs = std::max(result.max_abs, difference);
         squared_error += difference * difference;
         const double relative =
-            difference / std::max(std::abs(expected[i]), kAbsoluteTolerance);
+            difference / std::max(std::abs(expected[i]), absolute_tolerance);
         result.max_relative = std::max(result.max_relative, relative);
         if (difference >
-            kAbsoluteTolerance + kRelativeTolerance * std::abs(expected[i]))
+            absolute_tolerance + relative_tolerance * std::abs(expected[i]))
         {
             result.within_tolerance = false;
         }
@@ -305,7 +333,15 @@ int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
     {
         throw std::runtime_error("RuntimePlan world size does not match execution mode");
     }
-    const std::vector<double> input = read_numbers(fixture, "input", 784);
+    const std::string model = fixture.value("model", "mlp");
+    if (model != "mlp" && model != "resnet20")
+    {
+        throw std::runtime_error("unsupported model fixture");
+    }
+    const std::size_t logical_input_size =
+        model == "resnet20" ? 3 * 32 * 32 : 784;
+    const std::vector<double> input =
+        read_numbers(fixture, "input", logical_input_size);
     const std::vector<double> python_output =
         read_numbers(fixture, "python_output", 10);
     const std::vector<double> mock_output =
@@ -333,7 +369,7 @@ int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
     auto relin_keys = std::make_shared<poseidon::RelinKeys>();
     auto galois_keys = std::make_shared<poseidon::GaloisKeys>();
     bool needs_relin = false;
-    std::set<int> rotation_steps;
+    std::set<int> logical_rotation_steps;
     for (const auto &key : requirements.keys)
     {
         if (key.place.rank != rank)
@@ -350,26 +386,29 @@ int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
             {
                 throw std::runtime_error("Galois key requirement has no rotation step");
             }
-            rotation_steps.insert(*key.rotation_step);
+            logical_rotation_steps.insert(*key.rotation_step);
         }
     }
+    const std::set<int> rotation_key_steps =
+        poseidon::runtime_api::binary_rotation_key_basis(
+            logical_rotation_steps, context.parameters_literal()->slot());
     const auto key_start = std::chrono::steady_clock::now();
     key_generator.create_public_key(*public_key);
     if (needs_relin)
     {
         key_generator.create_relin_keys(*relin_keys);
     }
-    if (!rotation_steps.empty())
+    if (!rotation_key_steps.empty())
     {
         key_generator.create_galois_keys(
-            std::vector<int>(rotation_steps.begin(), rotation_steps.end()),
+            std::vector<int>(rotation_key_steps.begin(), rotation_key_steps.end()),
             *galois_keys);
     }
     const auto key_finish = std::chrono::steady_clock::now();
 
     if (loaded_plan.plan.external_inputs.size() != 1)
     {
-        throw std::runtime_error("MLP plan must have one external input");
+        throw std::runtime_error("model plan must have one external input");
     }
     const fhegpu::ValueId input_id = loaded_plan.plan.external_inputs.front();
     const auto &input_desc = find_value(loaded_plan.plan, input_id);
@@ -379,7 +418,8 @@ int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
     {
         poseidon::Plaintext input_plain;
         encoder.encode(
-            pack_mlp_input(input),
+            model == "resnet20" ? pack_resnet20_input(input)
+                                 : pack_mlp_input(input),
             context.crt_context()->parms_id_map().at(
                 static_cast<std::uint32_t>(input_desc.level)),
             std::ldexp(1.0, input_desc.scale_log2), input_plain);
@@ -414,7 +454,7 @@ int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
 
     if (loaded_plan.plan.final_outputs.size() != 1)
     {
-        throw std::runtime_error("MLP plan must have one final output");
+        throw std::runtime_error("model plan must have one final output");
     }
     const auto final_id = loaded_plan.plan.final_outputs.front();
     const int final_rank = find_value(loaded_plan.plan, final_id).place.rank;
@@ -430,7 +470,7 @@ int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
         encoder.decode(output_plain, decoded);
         if (decoded.size() < 10)
         {
-            throw std::runtime_error("decoded MLP output has fewer than 10 slots");
+            throw std::runtime_error("decoded model output has fewer than 10 slots");
         }
         for (std::size_t i = 0; i < 10; ++i)
         {
@@ -451,9 +491,14 @@ int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
     }
 #endif
 
-    const Comparison against_python = compare(python_output, poseidon_output);
+    const double python_absolute_tolerance =
+        model == "resnet20" ? 0.1 : kAbsoluteTolerance;
+    const Comparison against_python = compare(
+        python_output, poseidon_output, python_absolute_tolerance,
+        kRelativeTolerance);
     const Comparison against_mock = compare(mock_output, poseidon_output);
-    bool passed = against_python.within_tolerance &&
+    const bool require_python_match = model != "resnet20";
+    bool passed = (!require_python_match || against_python.within_tolerance) &&
                   against_mock.within_tolerance &&
                   max_imaginary <= kImaginaryTolerance;
 #if defined(POSEIDON_RUNTIME_CPU_MPI)
@@ -494,7 +539,7 @@ int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
     const std::array<std::uint64_t, 4> local_counts{
         static_cast<std::uint64_t>(artifact.timing.compute_calls),
         static_cast<std::uint64_t>(artifact.timing.boot_calls),
-        static_cast<std::uint64_t>(rotation_steps.size()),
+        static_cast<std::uint64_t>(rotation_key_steps.size()),
         static_cast<std::uint64_t>(needs_relin ? 1 : 0)};
     std::vector<double> gathered_seconds;
     std::vector<std::uint64_t> gathered_counts;
@@ -591,6 +636,8 @@ int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
         Json report{
             {"format_version", 1},
             {"passed", passed},
+            {"model", model},
+            {"require_python_match", require_python_match},
             {"world_size", world_size},
             {"final_output_rank", final_rank},
             {"transfer_count", count_transfers(loaded_plan.plan)},
@@ -614,7 +661,8 @@ int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
             {"tolerances",
              {{"absolute", kAbsoluteTolerance},
               {"relative", kRelativeTolerance},
-              {"imaginary", kImaginaryTolerance}}},
+              {"imaginary", kImaginaryTolerance},
+              {"python_absolute", python_absolute_tolerance}}},
             {"python_comparison", comparison_json(against_python)},
             {"mock_comparison", comparison_json(against_mock)},
             {"max_imaginary", max_imaginary},

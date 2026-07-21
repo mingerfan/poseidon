@@ -892,7 +892,7 @@ void test_multiply_relinearize_rescale_rotate(
     fhegpu::PlanRequirements requirements;
     requirements.keys = {
         {fhegpu::KeyKind::Relin, device, std::nullopt},
-        {fhegpu::KeyKind::Galois, device, 1},
+        {fhegpu::KeyKind::Galois, device, 3},
     };
     api.preflight(kPlanSha, false, make_target(loaded_spec), loaded_spec.spec, requirements);
 
@@ -922,7 +922,9 @@ void test_multiply_relinearize_rescale_rotate(
     cpu_evaluator.relinearize(expected_multiply, expected_relinearize, relin_keys);
     cpu_evaluator.rescale(expected_relinearize, expected_rescale);
     expected_rescale.scale() = std::ldexp(1.0, kDefaultScaleLog2);
-    cpu_evaluator.rotate(expected_rescale, expected_rotate, 1, galois_keys);
+    poseidon::Ciphertext expected_rotate_once;
+    cpu_evaluator.rotate(expected_rescale, expected_rotate_once, 1, galois_keys);
+    cpu_evaluator.rotate(expected_rotate_once, expected_rotate, 2, galois_keys);
 
     auto gpu0 = transfer_value(api, 20, PoseidonGpuValue::from_host_ciphertext(cipher0),
                                fhegpu::ValueKind::Ciphertext, host_place(), device);
@@ -949,7 +951,7 @@ void test_multiply_relinearize_rescale_rotate(
     fhegpu::ComputeOp rotate;
     rotate.kind = fhegpu::ComputeKind::Rotate;
     rotate.place = device;
-    rotate.attrs = fhegpu::RotateAttrs{1};
+    rotate.attrs = fhegpu::RotateAttrs{3};
     auto rotated = api.compute(rotate, {rescaled});
     auto downloaded = transfer_value(api, 22, rotated, fhegpu::ValueKind::Ciphertext,
                                      device, host_place());
@@ -1042,7 +1044,7 @@ int main()
         auto relin_keys = std::make_shared<poseidon::RelinKeys>();
         auto galois_keys = std::make_shared<poseidon::GaloisKeys>();
         key_generator.create_relin_keys(*relin_keys);
-        key_generator.create_galois_keys(std::vector<int>{1}, *galois_keys);
+        key_generator.create_galois_keys(std::vector<int>{1, 2}, *galois_keys);
         auto boot_public_key = std::make_shared<poseidon::PublicKey>();
         auto boot_secret_key =
             std::make_shared<poseidon::SecretKey>(key_generator.secret_key());
@@ -1073,7 +1075,7 @@ int main()
                          test_rescale_and_value_validation(api, context, key_generator,
                                                            loaded_spec, rmm_pool);
                      });
-            run_test("MulCC/Relinearize/Rescale/Rotate",
+            run_test("MulCC/Relinearize/Rescale/composite Rotate",
                      [&] {
                          test_multiply_relinearize_rescale_rotate(
                              api, context, key_generator, *relin_keys, *galois_keys,

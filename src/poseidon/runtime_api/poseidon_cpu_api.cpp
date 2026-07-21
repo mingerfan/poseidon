@@ -6,6 +6,7 @@
 #include "poseidon/evaluator/software/evaluator_ckks_software.h"
 #include "poseidon/key/galoiskeys.h"
 #include "poseidon/key/relinkeys.h"
+#include "poseidon/runtime_api/rotation_key_basis.h"
 #include "runtime/utils/sha256.hpp"
 
 #include <algorithm>
@@ -42,6 +43,33 @@ const Plaintext &require_plaintext(const std::vector<PoseidonCpuValue> &inputs, 
         throw std::invalid_argument("missing plaintext input");
     }
     return inputs[index].plaintext();
+}
+
+std::vector<int> available_rotation_steps(const PoseidonContext &context,
+                                          const GaloisKeys &keys, int requested_step)
+{
+    const std::size_t slot_count = context.parameters_literal()->slot();
+    const int normalized = normalize_rotation_step(requested_step, slot_count);
+    if (normalized == 0)
+    {
+        return {};
+    }
+
+    const auto galois_tool = context.crt_context()->galois_tool();
+    if (keys.has_key(galois_tool->get_elt_from_step(normalized)))
+    {
+        return {normalized};
+    }
+
+    auto steps = decompose_rotation_step(normalized, slot_count);
+    for (int step : steps)
+    {
+        if (!keys.has_key(galois_tool->get_elt_from_step(step)))
+        {
+            throw std::runtime_error("Poseidon CPU Api lacks a binary rotation key");
+        }
+    }
+    return steps;
 }
 
 double exact_scale(int scale_log2)
@@ -502,13 +530,22 @@ PoseidonCpuApi::Value PoseidonCpuApi::compute(const fhegpu::ComputeOp &op,
         }
         break;
     case fhegpu::ComputeKind::Rotate:
+    {
         if (galois_keys_ == nullptr)
         {
             throw std::runtime_error("Poseidon CPU Rotate requires GaloisKeys");
         }
-        evaluator_->rotate(require_ciphertext(inputs, 0), output,
-                           std::get<fhegpu::RotateAttrs>(op.attrs).steps, *galois_keys_);
+        output = require_ciphertext(inputs, 0);
+        const auto steps = available_rotation_steps(
+            context_, *galois_keys_, std::get<fhegpu::RotateAttrs>(op.attrs).steps);
+        for (int step : steps)
+        {
+            Ciphertext next;
+            evaluator_->rotate(output, next, step, *galois_keys_);
+            output = std::move(next);
+        }
         break;
+    }
     case fhegpu::ComputeKind::Rescale:
     {
         const auto attrs = std::get<fhegpu::RescaleAttrs>(op.attrs);
@@ -892,12 +929,7 @@ void PoseidonCpuApi::preflight(std::string_view plan_source_sha256,
             {
                 throw std::runtime_error("Poseidon CPU Api lacks GaloisKeys");
             }
-            const auto galois_elt =
-                context_.crt_context()->galois_tool()->get_elt_from_step(*key.rotation_step);
-            if (!galois_keys_->has_key(galois_elt))
-            {
-                throw std::runtime_error("Poseidon CPU Api lacks the required rotation key");
-            }
+            (void)available_rotation_steps(context_, *galois_keys_, *key.rotation_step);
         }
         else if (key.kind == fhegpu::KeyKind::Secret)
         {

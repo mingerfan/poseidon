@@ -11,6 +11,7 @@
 #include "poseidon/key/relinkeys.h"
 #include "poseidon/runtime_api/communication/cuda_local_transfer.h"
 #include "poseidon/runtime_api/communication/gpu_object_copy.h"
+#include "poseidon/runtime_api/rotation_key_basis.h"
 
 #include <algorithm>
 #include <cmath>
@@ -111,6 +112,33 @@ const Ciphertext &require_host_ciphertext(const std::vector<PoseidonGpuValue> &i
         throw std::invalid_argument("missing Host ciphertext input");
     }
     return inputs[index].host_ciphertext();
+}
+
+std::vector<int> available_rotation_steps(const PoseidonContext &context,
+                                          const GaloisKeys &keys, int requested_step)
+{
+    const std::size_t slot_count = context.parameters_literal()->slot();
+    const int normalized = normalize_rotation_step(requested_step, slot_count);
+    if (normalized == 0)
+    {
+        return {};
+    }
+
+    const auto galois_tool = context.crt_context()->galois_tool();
+    if (keys.has_key(galois_tool->get_elt_from_step(normalized)))
+    {
+        return {normalized};
+    }
+
+    auto steps = decompose_rotation_step(normalized, slot_count);
+    for (int step : steps)
+    {
+        if (!keys.has_key(galois_tool->get_elt_from_step(step)))
+        {
+            throw std::runtime_error("Poseidon GPU Api lacks a binary rotation key");
+        }
+    }
+    return steps;
 }
 
 communication::CudaTransferRoute cuda_transfer_route(fhegpu::CommHint hint)
@@ -580,8 +608,31 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
         {
             throw std::runtime_error("Poseidon GPU Rotate requires GaloisKeys");
         }
-        device.evaluator->rotate(input, std::get<fhegpu::RotateAttrs>(op.attrs).steps,
-                                 galois_keys_for(device, input.meta.q_count), output);
+        const auto steps = available_rotation_steps(
+            context_, *galois_keys_, std::get<fhegpu::RotateAttrs>(op.attrs).steps);
+        if (steps.empty())
+        {
+            device.evaluator->rotate(
+                input, 0, galois_keys_for(device, input.meta.q_count), output);
+            break;
+        }
+
+        std::vector<std::unique_ptr<gpu::GpuCiphertextData>> intermediates;
+        intermediates.reserve(steps.size());
+        const gpu::GpuCiphertextData *source = &input;
+        for (int step : steps)
+        {
+            auto next = std::make_unique<gpu::GpuCiphertextData>();
+            device.evaluator->rotate(
+                *source, step, galois_keys_for(device, input.meta.q_count), *next);
+            source = next.get();
+            intermediates.push_back(std::move(next));
+        }
+        if (steps.size() > 1)
+        {
+            synchronize_device(device.cuda_device_id);
+        }
+        output = std::move(*intermediates.back());
         break;
     }
     case fhegpu::ComputeKind::Rescale:
@@ -961,12 +1012,7 @@ void PoseidonGpuApi::preflight(std::string_view plan_source_sha256,
             {
                 throw std::runtime_error("Poseidon GPU Api lacks GaloisKeys");
             }
-            const auto galois_elt =
-                context_.crt_context()->galois_tool()->get_elt_from_step(*key.rotation_step);
-            if (!galois_keys_->has_key(galois_elt))
-            {
-                throw std::runtime_error("Poseidon GPU Api lacks the required rotation key");
-            }
+            (void)available_rotation_steps(context_, *galois_keys_, *key.rotation_step);
         }
         else
         {

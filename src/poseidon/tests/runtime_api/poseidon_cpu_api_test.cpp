@@ -1,6 +1,8 @@
+#include "poseidon/basics/modulus.h"
 #include "poseidon/ckks_encoder.h"
 #include "poseidon/decryptor.h"
 #include "poseidon/encryptor.h"
+#include "poseidon/evaluator/software/evaluator_ckks_software.h"
 #include "poseidon/keygenerator.h"
 #include "poseidon/runtime_api/poseidon_cpu_api.h"
 #include "runtime/runtime.hpp"
@@ -208,6 +210,68 @@ void test_decrypt_reencrypt_boot()
                 "unexpected decrypt_reencrypt Boot result");
         require(std::abs(decoded[i].imag()) < 1e-5,
                 "unexpected decrypt_reencrypt Boot imaginary component");
+    }
+}
+
+void test_binary_rotation_keys()
+{
+    constexpr std::uint32_t degree = 32768;
+    constexpr std::size_t q_count = 17;
+    const std::string context_id = "poseidon-cpu-rotation-test-context";
+    const auto moduli = poseidon::CoeffModulus::Create(
+        degree, std::vector<int>(q_count * 2, 51));
+    const std::vector<poseidon::Modulus> q(
+        moduli.begin(), moduli.begin() + q_count);
+    const std::vector<poseidon::Modulus> p(
+        moduli.begin() + q_count, moduli.end());
+    poseidon::ParametersLiteral parameters(
+        CKKS, 15, 14, 40, 5, 0, poseidon::Modulus(0), q, p,
+        poseidon::sec_level_type::none);
+    poseidon::PoseidonContext context(parameters);
+    poseidon::KeyGenerator key_generator(context);
+    auto basis_keys = std::make_shared<poseidon::GaloisKeys>();
+    key_generator.create_galois_keys(std::vector<int>{1, 2}, *basis_keys);
+
+    poseidon::PublicKey public_key;
+    key_generator.create_public_key(public_key);
+    poseidon::CKKSEncoder encoder(context);
+    poseidon::Encryptor encryptor(context, public_key);
+    poseidon::Decryptor decryptor(context, key_generator.secret_key());
+    const std::vector<double> input{0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0};
+    poseidon::Plaintext input_plain;
+    encoder.encode(input, parameters.scale(), input_plain);
+    poseidon::Ciphertext input_cipher;
+    encryptor.encrypt(input_plain, input_cipher);
+
+    poseidon::EvaluatorCkksSoftware evaluator(context);
+    poseidon::Ciphertext rotated_once;
+    poseidon::Ciphertext expected;
+    evaluator.rotate(input_cipher, rotated_once, 1, *basis_keys);
+    evaluator.rotate(rotated_once, expected, 2, *basis_keys);
+
+    PoseidonCpuApi api(context_id, context, {}, basis_keys);
+    fhegpu::ComputeOp rotate{
+        fhegpu::ComputeKind::Rotate,
+        {0},
+        1,
+        {fhegpu::PlaceKind::Host, 0, 0},
+        fhegpu::RotateAttrs{3},
+    };
+    const auto actual = api.compute(
+        rotate, {PoseidonCpuValue::from_ciphertext(std::move(input_cipher))});
+
+    poseidon::Plaintext expected_plain;
+    poseidon::Plaintext actual_plain;
+    decryptor.decrypt(expected, expected_plain);
+    decryptor.decrypt(actual.ciphertext(), actual_plain);
+    std::vector<std::complex<double>> expected_slots;
+    std::vector<std::complex<double>> actual_slots;
+    encoder.decode(expected_plain, expected_slots);
+    encoder.decode(actual_plain, actual_slots);
+    for (std::size_t i = 0; i < input.size(); ++i)
+    {
+        require(std::abs(actual_slots[i] - expected_slots[i]) < 1e-5,
+                "binary rotation key result mismatch");
     }
 }
 
@@ -497,6 +561,7 @@ int main(int argc, char **argv)
     {
         run_test("single-process Host AddCP", test_single_process_host_add_plain);
         run_test("decrypt_reencrypt Boot", test_decrypt_reencrypt_boot);
+        run_test("binary rotation keys", test_binary_rotation_keys);
         run_test("reject multi-process target", test_rejects_multi_process_target);
         std::cout << tests_run << " Poseidon CPU Runtime Api tests passed\n";
         return 0;
