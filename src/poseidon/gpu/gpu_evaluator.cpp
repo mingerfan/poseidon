@@ -1133,6 +1133,42 @@ void GpuEvaluator::rescale(
     destination_ciphertext = std::move(result);
 }
 
+void GpuEvaluator::rescale_many(
+    const GpuCiphertextData &source_ciphertext,
+    GpuCiphertextData &destination_ciphertext,
+    std::uint32_t rescale_count) const
+{
+    if (rescale_count == 0)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::rescale_many: rescale_count must be positive");
+    }
+    if (source_ciphertext.meta.q_count <= rescale_count)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::rescale_many: modulus chain is too short");
+    }
+    if (rescale_count == 1)
+    {
+        rescale(source_ciphertext, destination_ciphertext);
+        return;
+    }
+
+    GpuCiphertextData current;
+    rescale(source_ciphertext, current);
+    for (std::uint32_t index = 1; index < rescale_count; ++index)
+    {
+        if (index + 1 == rescale_count)
+        {
+            rescale(current, destination_ciphertext);
+            return;
+        }
+        GpuCiphertextData next;
+        rescale(current, next);
+        current = std::move(next);
+    }
+}
+
 void GpuEvaluator::rescale_dynamic(
     const GpuCiphertextData &source_ciphertext,
     GpuCiphertextData &destination_ciphertext,
@@ -1780,6 +1816,21 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs(
     const GpuGaloisKeysData &galois_keys,
     GpuCiphertextData &destination_ciphertext) const
 {
+    multiply_by_diag_matrix_bsgs(
+        source_ciphertext,
+        matrix,
+        galois_keys,
+        1,
+        destination_ciphertext);
+}
+
+void GpuEvaluator::multiply_by_diag_matrix_bsgs(
+    const GpuCiphertextData &source_ciphertext,
+    const GpuMatrixPlain &matrix,
+    const GpuGaloisKeysData &galois_keys,
+    std::uint32_t rescale_count,
+    GpuCiphertextData &destination_ciphertext) const
+{
     validate_ntt_ciphertext_input(
         "GpuEvaluator::multiply_by_diag_matrix_bsgs",
         source_ciphertext,
@@ -1901,7 +1952,10 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs(
             "GpuEvaluator::multiply_by_diag_matrix_bsgs: no nonzero diagonal contribution");
     }
 
-    rescale(result_accumulator, destination_ciphertext);
+    rescale_many(
+        result_accumulator,
+        destination_ciphertext,
+        rescale_count);
 }
 
 void GpuEvaluator::dft(
@@ -1920,6 +1974,7 @@ void GpuEvaluator::dft(
         source_ciphertext,
         matrix_group.data().front(),
         galois_keys,
+        std::max(matrix_group.step(), std::uint32_t{1}),
         current);
 
     for (std::size_t i = 1; i < matrix_group.data().size(); ++i)
@@ -1929,6 +1984,7 @@ void GpuEvaluator::dft(
             current,
             matrix_group.data()[i],
             galois_keys,
+            std::max(matrix_group.step(), std::uint32_t{1}),
             next);
         current = std::move(next);
     }
@@ -2045,6 +2101,38 @@ void GpuEvaluator::bootstrap(
         workspace.coeff_to_slot_real,
         workspace.coeff_to_slot_imag);
 
+    if (!bootstrap_data.coeff_to_slot_scale_alignment_plaintext.empty())
+    {
+        if (bootstrap_data.coeff_to_slot_scale_alignment_rescale_count == 0 ||
+            !(bootstrap_data.coeff_to_slot_aligned_scale > 0.0) ||
+            !std::isfinite(bootstrap_data.coeff_to_slot_aligned_scale))
+        {
+            throw std::invalid_argument(
+                "GpuEvaluator::bootstrap: invalid CoeffToSlot scale-alignment plan");
+        }
+
+        multiply_plain(
+            workspace.coeff_to_slot_real,
+            bootstrap_data.coeff_to_slot_scale_alignment_plaintext,
+            workspace.scratch0);
+        multiply_plain(
+            workspace.coeff_to_slot_imag,
+            bootstrap_data.coeff_to_slot_scale_alignment_plaintext,
+            workspace.scratch1);
+        rescale_many(
+            workspace.scratch0,
+            workspace.coeff_to_slot_real,
+            bootstrap_data.coeff_to_slot_scale_alignment_rescale_count);
+        rescale_many(
+            workspace.scratch1,
+            workspace.coeff_to_slot_imag,
+            bootstrap_data.coeff_to_slot_scale_alignment_rescale_count);
+        workspace.coeff_to_slot_real.meta.scale =
+            bootstrap_data.coeff_to_slot_aligned_scale;
+        workspace.coeff_to_slot_imag.meta.scale =
+            bootstrap_data.coeff_to_slot_aligned_scale;
+    }
+
     eval_mod_high_precision(
         workspace.coeff_to_slot_real,
         bootstrap_data,
@@ -2073,6 +2161,37 @@ void GpuEvaluator::bootstrap(
         bootstrap_data.plus_i_plaintext,
         galois_keys,
         destination_ciphertext);
+    if (bootstrap_data.slot_to_coeff_output_scale > 0.0)
+    {
+        destination_ciphertext.meta.scale =
+            bootstrap_data.slot_to_coeff_output_scale;
+    }
+
+    if (bootstrap_data.project_real)
+    {
+        conjugate(destination_ciphertext, galois_keys, workspace.scratch0);
+        add(destination_ciphertext, workspace.scratch0, workspace.scratch1);
+        destination_ciphertext = std::move(workspace.scratch1);
+    }
+
+    if (bootstrap_data.output_ratio == 0 ||
+        (bootstrap_data.project_real &&
+         (bootstrap_data.output_ratio & 1U) != 0))
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::bootstrap: invalid output ratio");
+    }
+    const std::uint32_t effective_ratio = bootstrap_data.project_real
+        ? bootstrap_data.output_ratio / 2
+        : bootstrap_data.output_ratio;
+    if (effective_ratio > 1)
+    {
+        multiply_scalar(
+            destination_ciphertext,
+            effective_ratio,
+            workspace.scratch0);
+        destination_ciphertext = std::move(workspace.scratch0);
+    }
 }
 
 void GpuEvaluator::eval_mod_high_precision(
@@ -2128,6 +2247,10 @@ void GpuEvaluator::eval_mod_high_precision(
     }
 
     const double target_scale = configured_target_scale;
+    const std::uint32_t logical_rescale_count =
+        std::max(
+            bootstrap_data.eval_mod.logical_rescale_count,
+            std::uint32_t{1});
 
     if (workspace.capture_eval_mod_trace)
     {
@@ -2204,7 +2327,10 @@ void GpuEvaluator::eval_mod_high_precision(
 
             multiply(accumulator, *x_at_level, workspace.scratch3);
             relinearize(workspace.scratch3, relin_keys, workspace.scratch4);
-            rescale(workspace.scratch4, workspace.scratch5);
+            rescale_many(
+                workspace.scratch4,
+                workspace.scratch5,
+                logical_rescale_count);
             workspace.scratch5.meta.scale = target_scale;
             accumulator = std::move(workspace.scratch5);
 
@@ -2220,7 +2346,10 @@ void GpuEvaluator::eval_mod_high_precision(
         {
             square(accumulator, workspace.scratch3);
             relinearize(workspace.scratch3, relin_keys, workspace.scratch4);
-            rescale(workspace.scratch4, workspace.scratch5);
+            rescale_many(
+                workspace.scratch4,
+                workspace.scratch5,
+                logical_rescale_count);
             workspace.scratch5.meta.scale = target_scale;
             add(workspace.scratch5, workspace.scratch5, workspace.scratch2);
 
@@ -2377,7 +2506,10 @@ void GpuEvaluator::eval_mod_high_precision(
             multiply(*left_at_level, *right_at_level, workspace.scratch5);
             relinearize(workspace.scratch5, relin_keys, workspace.scratch3);
             // rescale_dynamic is deliberately not used in the first GPU path.
-            rescale(workspace.scratch3, output);
+            rescale_many(
+                workspace.scratch3,
+                output,
+                logical_rescale_count);
             if (expected_output_scale > 0.0)
             {
                 output.meta.scale = expected_output_scale;
@@ -2387,9 +2519,39 @@ void GpuEvaluator::eval_mod_high_precision(
     for (const auto &step : basis_steps)
     {
         auto &output = workspace.eval_mod_basis[step.output_degree];
+        const GpuCiphertextData *basis_left =
+            &workspace.eval_mod_basis[step.left_degree];
+        const GpuCiphertextData *basis_right =
+            &workspace.eval_mod_basis[step.right_degree];
+        if (!step.operand_alignment_plaintext.empty())
+        {
+            const GpuCiphertextData &high_operand = step.align_left_operand
+                ? *basis_left
+                : *basis_right;
+            multiply_plain(
+                high_operand,
+                step.operand_alignment_plaintext,
+                workspace.scratch0);
+            workspace.scratch0.meta.scale =
+                step.operand_alignment_pre_rescale_scale;
+            rescale_many(
+                workspace.scratch0,
+                workspace.scratch1,
+                logical_rescale_count);
+            workspace.scratch1.meta.scale =
+                step.operand_alignment_output_scale;
+            if (step.align_left_operand)
+            {
+                basis_left = &workspace.scratch1;
+            }
+            else
+            {
+                basis_right = &workspace.scratch1;
+            }
+        }
         multiply_relinearize_rescale(
-            workspace.eval_mod_basis[step.left_degree],
-            workspace.eval_mod_basis[step.right_degree],
+            *basis_left,
+            *basis_right,
             step.output_scale,
             output);
 
@@ -2418,6 +2580,21 @@ void GpuEvaluator::eval_mod_high_precision(
 
         const GpuCiphertextData *correction =
             &workspace.eval_mod_basis[step.correction_degree];
+        if (!step.correction_alignment_plaintext.empty())
+        {
+            multiply_plain(
+                *correction,
+                step.correction_alignment_plaintext,
+                workspace.scratch0);
+            workspace.scratch0.meta.scale =
+                step.correction_alignment_pre_rescale_scale;
+            rescale_many(
+                workspace.scratch0,
+                workspace.scratch1,
+                logical_rescale_count);
+            workspace.scratch1.meta.scale = step.output_scale;
+            correction = &workspace.scratch1;
+        }
         if (!(output.meta.parms_id == correction->meta.parms_id))
         {
             if (output.meta.q_count > correction->meta.q_count)
@@ -2438,6 +2615,13 @@ void GpuEvaluator::eval_mod_high_precision(
                 throw std::invalid_argument(
                     "GpuEvaluator::eval_mod_high_precision: Chebyshev correction parms_id mismatch");
             }
+        }
+        if (!step.correction_alignment_plaintext.empty())
+        {
+            sub(output, *correction, workspace.scratch5);
+            output = std::move(workspace.scratch5);
+            output.meta.scale = step.output_scale;
+            continue;
         }
         if (step.correction_plaintext.empty() ||
             step.correction_plaintext.meta.parms_id != output.meta.parms_id)
@@ -2541,6 +2725,15 @@ void GpuEvaluator::eval_mod_high_precision(
                     *basis_at_level,
                     term.coefficient_plaintext,
                     workspace.scratch2);
+                if (bootstrap_data.eval_mod.rescale_polynomial_terms_individually)
+                {
+                    rescale_many(
+                        workspace.scratch2,
+                        workspace.scratch4,
+                        rescale_count);
+                    workspace.scratch4.meta.scale = expected_output_scale;
+                    workspace.scratch2 = std::move(workspace.scratch4);
+                }
                 accumulate_term(workspace.scratch2);
             }
 
@@ -2588,10 +2781,13 @@ void GpuEvaluator::eval_mod_high_precision(
                     "GpuEvaluator::eval_mod_high_precision: polynomial block has no evaluable terms");
             }
 
-            for (std::uint32_t i = 0; i < rescale_count; ++i)
+            if (!bootstrap_data.eval_mod.rescale_polynomial_terms_individually)
             {
-                rescale(block_accumulator, workspace.scratch2);
-                block_accumulator = std::move(workspace.scratch2);
+                for (std::uint32_t i = 0; i < rescale_count; ++i)
+                {
+                    rescale(block_accumulator, workspace.scratch2);
+                    block_accumulator = std::move(workspace.scratch2);
+                }
             }
             if (expected_output_scale > 0.0)
             {
@@ -2747,16 +2943,22 @@ void GpuEvaluator::eval_mod_high_precision(
                 throw std::invalid_argument(
                     "GpuEvaluator::eval_mod_high_precision: double-angle plaintext level mismatch");
             }
-            add_plain(
-                workspace.scratch3,
-                double_angle_plaintext,
-                workspace.scratch4);
-            rescale(workspace.scratch4, workspace.scratch5);
-        }
-        else
-        {
-            rescale(workspace.scratch3, workspace.scratch5);
-        }
+                add_plain(
+                    workspace.scratch3,
+                    double_angle_plaintext,
+                    workspace.scratch4);
+                rescale_many(
+                    workspace.scratch4,
+                    workspace.scratch5,
+                    logical_rescale_count);
+            }
+            else
+            {
+                rescale_many(
+                    workspace.scratch3,
+                    workspace.scratch5,
+                    logical_rescale_count);
+            }
         accumulator = std::move(workspace.scratch5);
         if (workspace.capture_eval_mod_trace)
         {
@@ -2793,7 +2995,6 @@ void GpuEvaluator::eval_mod_high_precision(
     }
 
     destination_ciphertext = std::move(accumulator);
-    destination_ciphertext.meta.scale = source_ciphertext.meta.scale;
 }
 
 }  // namespace gpu

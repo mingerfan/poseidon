@@ -1182,11 +1182,23 @@ void EvaluatorCkksBase::bootstrap(const Ciphertext &ciph, Ciphertext &result,
     {
         throw invalid_argument("bootstrap scaling_log must be less than 63");
     }
+    if (config.logical_rescale_count == 0)
+    {
+        throw invalid_argument("bootstrap logical_rescale_count must be positive");
+    }
+    if (config.q0_modulus_count == 0 || config.q0_modulus_count > 2)
+    {
+        throw invalid_argument("bootstrap currently supports one or two q0 moduli");
+    }
     if (config.output_ratio == 0 ||
         (config.project_real && (config.output_ratio & 1U) != 0))
     {
         throw invalid_argument(
             "bootstrap output_ratio must be positive and even for real projection");
+    }
+    if (config.trace)
+    {
+        *config.trace = BootstrapTrace{};
     }
 
     Ciphertext prepared = ciph;
@@ -1197,6 +1209,11 @@ void EvaluatorCkksBase::bootstrap(const Ciphertext &ciph, Ciphertext &result,
     }
 
     const auto q0_level = input_context_data->parms().q0_level();
+    if (config.q0_modulus_count != q0_level + 1)
+    {
+        throw invalid_argument(
+            "bootstrap q0_modulus_count must equal the parameter q0_level plus one");
+    }
     if (prepared.level() < q0_level)
     {
         throw invalid_argument("bootstrap input is below q0 level");
@@ -1209,7 +1226,8 @@ void EvaluatorCkksBase::bootstrap(const Ciphertext &ciph, Ciphertext &result,
 
     const double message_ratio =
         std::ldexp(1.0, static_cast<int>(config.log_message_ratio));
-    double q0_over_message_ratio = context_.crt_context()->q0() / message_ratio;
+    const double effective_q0 = context_.crt_context()->q0();
+    double q0_over_message_ratio = effective_q0 / message_ratio;
     q0_over_message_ratio = std::exp2(std::round(std::log2(q0_over_message_ratio)));
     double remaining_scale = std::round(q0_over_message_ratio / prepared.scale());
     while (remaining_scale > 1.0)
@@ -1223,18 +1241,21 @@ void EvaluatorCkksBase::bootstrap(const Ciphertext &ciph, Ciphertext &result,
 
     drop_modulus(prepared, prepared,
                  context_.crt_context()->parms_id_map().at(q0_level));
+    if (config.trace)
+    {
+        config.trace->prepared_q0 = prepared;
+    }
 
     Bootstrapper bootstrapper(
         context_, *this, encoder, context_.parameters_literal()->log_slots(),
         config.boundary_k, ciph.scale(), context_.parameters_literal()->scale(),
-        config.cosine_heap_path);
+        config.cosine_heap_path, config.logical_rescale_count,
+        config.q0_modulus_count, effective_q0);
     bootstrapper.generate_linear_coefficients();
 
     Ciphertext raised;
     bootstrapper.mod_raise(prepared, raised);
-    const auto first_context_data = context_.crt_context()->first_context_data();
-    raised.scale() =
-        static_cast<double>(first_context_data->coeff_modulus().front().value());
+    raised.scale() = effective_q0;
 
     const double eval_mod_scale =
         std::ldexp(1.0, static_cast<int>(config.scaling_log));
@@ -1249,22 +1270,69 @@ void EvaluatorCkksBase::bootstrap(const Ciphertext &ciph, Ciphertext &result,
     {
         multiply_const(raised, 1.0, raise_factor, raised, encoder);
     }
+    if (config.trace)
+    {
+        config.trace->raised = raised;
+    }
 
     Ciphertext real_slots;
     Ciphertext imag_slots;
     bootstrapper.coeff_to_slot(raised, real_slots, imag_slots, galois_keys);
+    if (config.trace)
+    {
+        config.trace->coeff_to_slot_real_raw = real_slots;
+        config.trace->coeff_to_slot_imag_raw = imag_slots;
+    }
 
     const double real_scale_adjust = eval_mod_scale / real_slots.scale();
     const double imag_scale_adjust = eval_mod_scale / imag_slots.scale();
     if (std::abs(real_scale_adjust - 1.0) > 1e-6 ||
         std::abs(imag_scale_adjust - 1.0) > 1e-6)
     {
-        multiply_const(real_slots, real_scale_adjust, eval_mod_scale, real_slots, encoder);
-        multiply_const(imag_slots, imag_scale_adjust, eval_mod_scale, imag_slots, encoder);
-        rescale(real_slots, real_slots);
-        rescale(imag_slots, imag_slots);
+        auto logical_rescale_modulus = [&](const Ciphertext &cipher) {
+            const auto data =
+                context_.crt_context()->get_context_data(cipher.parms_id());
+            if (!data ||
+                data->coeff_modulus().size() <= config.logical_rescale_count)
+            {
+                throw invalid_argument(
+                    "bootstrap scale alignment has insufficient modulus levels");
+            }
+            long double product = 1.0L;
+            const auto &moduli = data->coeff_modulus();
+            for (uint32_t index = 0; index < config.logical_rescale_count; ++index)
+            {
+                product *= static_cast<long double>(
+                    moduli[moduli.size() - 1 - index].value());
+            }
+            return static_cast<double>(product);
+        };
+
+        // Preserve the encoded value while moving the metadata scale to the
+        // EvalMod target. If Sin is the ciphertext scale and P is the product
+        // removed by the logical rescale, encoding the numerical constant 1
+        // at Splain = Starget*P/Sin gives
+        //     Sin*Splain/P = Starget.
+        const double real_plain_scale =
+            eval_mod_scale * logical_rescale_modulus(real_slots) /
+            real_slots.scale();
+        const double imag_plain_scale =
+            eval_mod_scale * logical_rescale_modulus(imag_slots) /
+            imag_slots.scale();
+        multiply_const(real_slots, 1.0, real_plain_scale, real_slots, encoder);
+        multiply_const(imag_slots, 1.0, imag_plain_scale, imag_slots, encoder);
+        for (uint32_t index = 0; index < config.logical_rescale_count; ++index)
+        {
+            rescale(real_slots, real_slots);
+            rescale(imag_slots, imag_slots);
+        }
         real_slots.scale() = eval_mod_scale;
         imag_slots.scale() = eval_mod_scale;
+    }
+    if (config.trace)
+    {
+        config.trace->coeff_to_slot_real_aligned = real_slots;
+        config.trace->coeff_to_slot_imag_aligned = imag_slots;
     }
 
     const double inverse_coeff = config.inverse_coeff > 0.0
@@ -1273,22 +1341,42 @@ void EvaluatorCkksBase::bootstrap(const Ciphertext &ciph, Ciphertext &result,
     Ciphertext real_mod;
     Ciphertext imag_mod;
     bootstrapper.eval_mod(real_slots, real_mod, relin_keys, config.double_angle,
-                          inverse_coeff, eval_mod_scale);
+                          inverse_coeff, eval_mod_scale,
+                          config.trace ? &config.trace->eval_mod_real : nullptr);
     bootstrapper.eval_mod(imag_slots, imag_mod, relin_keys, config.double_angle,
-                          inverse_coeff, eval_mod_scale);
+                          inverse_coeff, eval_mod_scale,
+                          config.trace ? &config.trace->eval_mod_imag : nullptr);
 
     Ciphertext output;
-    bootstrapper.slot_to_coeff(real_mod, imag_mod, output, galois_keys);
+    // The EvalMod working scale is a rounded power of two, whereas q0 is the
+    // exact product of one or more NTT primes. Fuse their ratio into the last
+    // S2C plaintext matrix so that the output does not retain the global
+    // eval_mod_scale/q0 gain. This costs no extra ciphertext operation.
+    const double slot_to_coeff_normalization = effective_q0 / eval_mod_scale;
+    bootstrapper.slot_to_coeff(real_mod, imag_mod, output, galois_keys,
+                               slot_to_coeff_normalization);
+    if (config.trace)
+    {
+        config.trace->slot_to_coeff = output;
+    }
     if (config.project_real)
     {
         Ciphertext conjugated;
         conjugate(output, galois_keys, conjugated);
         add(output, conjugated, output);
     }
+    if (config.trace)
+    {
+        config.trace->projected = output;
+    }
 
     const uint32_t effective_ratio =
         config.project_real ? config.output_ratio / 2 : config.output_ratio;
     multiply_const_direct(output, static_cast<int>(effective_ratio), output, encoder);
+    if (config.trace)
+    {
+        config.trace->final_output = output;
+    }
     result = std::move(output);
 }
 

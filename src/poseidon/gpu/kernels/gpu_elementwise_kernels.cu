@@ -288,6 +288,55 @@ __global__ void bootstrap_modraise_poly_shard_kernel(
         return;
     }
 
+    /*
+     * Bootstrap ModRaise must extend the centered representative, not the
+     * unsigned representative selected by an ordinary RNS base conversion.
+     * For the supported q0 bases (one or two <=30-bit physical primes), the
+     * reconstructed value fits in 64 bits and can be centered exactly.
+     *
+     * Keeping this work coefficient-parallel is important: every CUDA thread
+     * reconstructs one coefficient and writes one target limb, with no
+     * coefficient-domain staging buffer or host participation.
+     */
+    if (source_q_count <= 2)
+    {
+        const GpuWord q0 = q_primes[0];
+        GpuWide modulus_product = static_cast<GpuWide>(q0);
+        GpuWide reconstructed =
+            static_cast<GpuWide>(source_values[coeff]);
+
+        if (source_q_count == 2)
+        {
+            const GpuWord q1 = q_primes[1];
+            const GpuWord a0_mod_q1 = static_cast<GpuWord>(reconstructed % q1);
+            const GpuWord a1 = source_values[coeff_count + coeff];
+            const GpuWord difference =
+                a1 >= a0_mod_q1 ? a1 - a0_mod_q1 : a1 + (q1 - a0_mod_q1);
+
+            // inv_punctured[1] = q0^(-1) mod q1 for the two-prime base.
+            const GpuWord crt_digit = barrett_reduce_u64_u32(
+                static_cast<GpuWide>(difference) *
+                    static_cast<GpuWide>(inv_punctured[1]),
+                q1,
+                q_modulus_constants[1]);
+            reconstructed +=
+                static_cast<GpuWide>(q0) * static_cast<GpuWide>(crt_digit);
+            modulus_product *= static_cast<GpuWide>(q1);
+        }
+
+        const bool negative = reconstructed > (modulus_product >> 1);
+        const GpuWide magnitude =
+            negative ? modulus_product - reconstructed : reconstructed;
+        const GpuWord target_modulus = q_primes[target_limb];
+        const GpuWord reduced = barrett_reduce_u64_u32(
+            magnitude,
+            target_modulus,
+            q_modulus_constants[target_limb]);
+        destination_values[destination_offset] =
+            negative && reduced != 0 ? target_modulus - reduced : reduced;
+        return;
+    }
+
     const std::size_t row = target_limb - source_q_count;
     const GpuWord target_modulus = q_primes[target_limb];
     const GpuWide target_barrett = q_modulus_constants[target_limb];

@@ -51,6 +51,13 @@ struct GpuEvalModBasisStep
     std::uint32_t correction_degree = 0;
     double output_scale = 0.0;
 
+    bool align_left_operand = false;
+    GpuPlaintextData operand_alignment_plaintext;
+    double operand_alignment_pre_rescale_scale = 0.0;
+    double operand_alignment_output_scale = 0.0;
+    GpuPlaintextData correction_alignment_plaintext;
+    double correction_alignment_pre_rescale_scale = 0.0;
+
     /*
      * Chebyshev only. For correction_degree==0 this is the constant one at
      * output_scale. Otherwise it is a plaintext one whose scale converts the
@@ -109,6 +116,16 @@ struct GpuBootstrapData
     double post_raise_scale_multiplier = 1.0;
     GpuPlaintextData post_raise_plaintext;
 
+    /*
+     * Optional value-preserving C2S scale alignment. CPU setup encodes the
+     * numerical constant 1 at Starget*P/Sin, where P is the product removed
+     * by the fixed logical rescale. Runtime performs one multiply_plain and
+     * the declared number of ordinary rescales on both C2S branches.
+     */
+    GpuPlaintextData coeff_to_slot_scale_alignment_plaintext;
+    std::uint32_t coeff_to_slot_scale_alignment_rescale_count = 0;
+    double coeff_to_slot_aligned_scale = 0.0;
+
     /* Logical CKKS scale restored after EvalMod and before SlotToCoeff. */
     double slot_to_coeff_input_scale = 0.0;
 
@@ -135,11 +152,21 @@ struct GpuBootstrapData
         std::vector<GpuEvalModPolynomialTerm> polynomial_terms;
 
         /*
+         * Number of physical Q primes removed by one logical EvalMod
+         * rescale. A value of two lets 29/30-bit GPU primes implement an
+         * approximately 58/60-bit CKKS working scale without introducing a
+         * fused rescale kernel. Runtime executes this fixed setup-time plan
+         * with consecutive ordinary rescale calls.
+         */
+        std::uint32_t logical_rescale_count = 1;
+
+        /*
          * Fixed number of ordinary rescale operations after the polynomial
          * term sum. CPU setup derives this from the chosen plaintext scales;
          * runtime does not search the modulus chain.
          */
         std::uint32_t polynomial_rescale_count = 1;
+        bool rescale_polynomial_terms_individually = false;
 
         /*
          * Preferred BSGS/recurse-equivalent schedule for the 59-degree path.
@@ -196,6 +223,11 @@ struct GpuBootstrapData
     GpuLinearMatrixGroup slot_to_coeff_matrix;
     GpuPlaintextData minus_i_plaintext;
     GpuPlaintextData plus_i_plaintext;
+
+    /* Final reconstruction used by the production CPU Bootstrapper. */
+    bool project_real = false;
+    std::uint32_t output_ratio = 1;
+    double slot_to_coeff_output_scale = 0.0;
 };
 
 /**
@@ -308,6 +340,18 @@ public:
         const GpuCiphertextData &source_ciphertext,
         GpuCiphertextData &destination_ciphertext) const;
 
+    /**
+     * @brief Execute a fixed number of ordinary CKKS rescale operations.
+     *
+     * This is the correctness-first implementation of one logical
+     * multi-prime rescale. The count is generated during bootstrap setup and
+     * is never selected from ciphertext data at runtime.
+     */
+    void rescale_many(
+        const GpuCiphertextData &source_ciphertext,
+        GpuCiphertextData &destination_ciphertext,
+        std::uint32_t rescale_count) const;
+
     void rescale_dynamic(
         const GpuCiphertextData &source_ciphertext,
         GpuCiphertextData &destination_ciphertext,
@@ -406,6 +450,13 @@ public:
         const GpuCiphertextData &source_ciphertext,
         const GpuMatrixPlain &matrix,
         const GpuGaloisKeysData &galois_keys,
+        GpuCiphertextData &destination_ciphertext) const;
+
+    void multiply_by_diag_matrix_bsgs(
+        const GpuCiphertextData &source_ciphertext,
+        const GpuMatrixPlain &matrix,
+        const GpuGaloisKeysData &galois_keys,
+        std::uint32_t rescale_count,
         GpuCiphertextData &destination_ciphertext) const;
 
     /**

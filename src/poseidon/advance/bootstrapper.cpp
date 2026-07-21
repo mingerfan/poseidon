@@ -1,9 +1,11 @@
 #include "poseidon/advance/bootstrapper.h"
+#include "poseidon/basics/util/uintarithsmallmod.h"
 
 #include <algorithm>
 #include <cmath>
 #include <cstring>
 #include <fstream>
+#include <limits>
 #include <map>
 #include <mutex>
 #include <sstream>
@@ -357,11 +359,39 @@ const std::vector<CosineHeapNode> &cosine_heap(const std::string &path)
 Bootstrapper::Bootstrapper(const PoseidonContext &context,
                            EvaluatorCkksBase &evaluator, const CKKSEncoder &encoder,
                            long log_slots, long boundary_k, double initial_scale,
-                           double final_scale, std::string cosine_heap_path)
+                           double final_scale, std::string cosine_heap_path,
+                           uint32_t logical_rescale_count,
+                           uint32_t q0_modulus_count,
+                           double q0_modulus)
     : context_(context), evaluator_(evaluator), encoder_(encoder), log_slots_(log_slots),
       slots_(1L << log_slots), boundary_k_(boundary_k), initial_scale_(initial_scale),
-      final_scale_(final_scale), cosine_heap_path_(std::move(cosine_heap_path))
+      final_scale_(final_scale), cosine_heap_path_(std::move(cosine_heap_path)),
+      logical_rescale_count_(logical_rescale_count), q0_modulus_count_(q0_modulus_count),
+      q0_modulus_(q0_modulus)
 {
+    if (logical_rescale_count_ == 0)
+    {
+        throw std::invalid_argument("Bootstrapper logical_rescale_count must be positive");
+    }
+    if (q0_modulus_count_ == 0 || q0_modulus_count_ > 2)
+    {
+        throw std::invalid_argument("Bootstrapper currently supports one or two q0 moduli");
+    }
+    if (!(q0_modulus_ > 0.0) || !std::isfinite(q0_modulus_))
+    {
+        const auto first_context_data = context_.crt_context()->first_context_data();
+        const auto &moduli = first_context_data->coeff_modulus();
+        if (q0_modulus_count_ > moduli.size())
+        {
+            throw std::invalid_argument("Bootstrapper q0 base exceeds the modulus chain");
+        }
+        long double product = 1.0L;
+        for (uint32_t index = 0; index < q0_modulus_count_; ++index)
+        {
+            product *= static_cast<long double>(moduli[index].value());
+        }
+        q0_modulus_ = static_cast<double>(product);
+    }
 }
 
 int Bootstrapper::giant_step(int count)
@@ -411,6 +441,184 @@ void Bootstrapper::generate_linear_coefficients()
     generate_coeff_to_slot_coefficients();
 }
 
+LinearMatrixGroup Bootstrapper::create_coeff_to_slot_matrix_group(
+    parms_id_type input_parms_id,
+    double input_scale,
+    uint32_t log_bsgs_ratio) const
+{
+    if (inv_fft_coeffs1_.empty() || inv_fft_coeffs2_.empty() ||
+        inv_fft_coeffs3_.empty())
+    {
+        throw std::logic_error(
+            "generate_linear_coefficients must precede CoeffToSlot matrix export");
+    }
+
+    LinearMatrixGroup group;
+    group.set_step(logical_rescale_count_);
+    group.data().resize(3);
+    auto parms_id = input_parms_id;
+    double scale = input_scale;
+    auto &encoder = const_cast<CKKSEncoder &>(encoder_);
+
+    auto append_stage = [&](std::size_t stage,
+                            const Coeff2D &coefficients,
+                            int total,
+                            int basic_step,
+                            bool nonnegative) {
+        const auto context_data = context_.crt_context()->get_context_data(parms_id);
+        if (!context_data ||
+            context_data->coeff_modulus().size() <= logical_rescale_count_)
+        {
+            throw std::invalid_argument(
+                "CoeffToSlot matrix export has insufficient modulus levels");
+        }
+        std::map<int, std::vector<Complex>> diagonals;
+        const int mask = static_cast<int>(slots_ - 1);
+        const int first = nonnegative ? 0 : -total;
+        const int last = total;
+        for (int position = first; position <= last; ++position)
+        {
+            const std::size_t coefficient_index = nonnegative
+                ? static_cast<std::size_t>(position)
+                : static_cast<std::size_t>(position + total);
+            diagonals[(position * basic_step) & mask] =
+                coefficients.at(coefficient_index);
+        }
+        gen_linear_transform_bsgs(
+            group.data()[stage],
+            group.rot_index(),
+            encoder,
+            diagonals,
+            static_cast<uint32_t>(context_data->level()),
+            scale,
+            log_bsgs_ratio,
+            static_cast<uint32_t>(log_slots_));
+
+        long double modulus_product = 1.0L;
+        const auto &moduli = context_data->coeff_modulus();
+        for (uint32_t index = 0; index < logical_rescale_count_; ++index)
+        {
+            modulus_product *= static_cast<long double>(
+                moduli[moduli.size() - 1 - index].value());
+        }
+        scale = scale * scale / static_cast<double>(modulus_product);
+        const auto next_q_count = moduli.size() - logical_rescale_count_;
+        parms_id = context_.crt_context()->parms_id_map().at(
+            static_cast<uint32_t>(next_q_count - 1));
+    };
+
+    const int div1 = static_cast<int>(std::floor(log_slots_ / 3.0));
+    const int div2 = static_cast<int>(std::floor((log_slots_ - div1) / 2.0));
+    const int div3 = static_cast<int>(log_slots_ - div1 - div2);
+    append_stage(0, inv_fft_coeffs1_, (1 << div1) - 1,
+                 1 << (log_slots_ - div1), true);
+    append_stage(1, inv_fft_coeffs2_, (1 << div2) - 1,
+                 1 << (log_slots_ - div1 - div2), false);
+    append_stage(2, inv_fft_coeffs3_, (1 << div3) - 1, 1, false);
+    return group;
+}
+
+LinearMatrixGroup Bootstrapper::create_slot_to_coeff_matrix_group(
+    parms_id_type input_parms_id,
+    double input_scale,
+    double normalization,
+    uint32_t log_bsgs_ratio) const
+{
+    if (fft_coeffs1_.empty() || fft_coeffs2_.empty() || fft_coeffs3_.empty())
+    {
+        throw std::logic_error(
+            "generate_linear_coefficients must precede SlotToCoeff matrix export");
+    }
+    if (!(normalization > 0.0) || !std::isfinite(normalization))
+    {
+        throw std::invalid_argument("invalid SlotToCoeff normalization");
+    }
+
+    LinearMatrixGroup group;
+    group.set_step(logical_rescale_count_);
+    group.data().resize(3);
+    auto parms_id = input_parms_id;
+    double scale = input_scale;
+    auto &encoder = const_cast<CKKSEncoder &>(encoder_);
+
+    auto append_stage = [&](std::size_t stage,
+                            const Coeff2D &source_coefficients,
+                            int total,
+                            int basic_step,
+                            bool nonnegative,
+                            double coefficient_factor) {
+        const auto context_data = context_.crt_context()->get_context_data(parms_id);
+        if (!context_data ||
+            context_data->coeff_modulus().size() <= logical_rescale_count_)
+        {
+            throw std::invalid_argument(
+                "SlotToCoeff matrix export has insufficient modulus levels");
+        }
+        std::map<int, std::vector<Complex>> diagonals;
+        const int mask = static_cast<int>(slots_ - 1);
+        const int first = nonnegative ? 0 : -total;
+        const int last = total;
+        for (int position = first; position <= last; ++position)
+        {
+            const std::size_t coefficient_index = nonnegative
+                ? static_cast<std::size_t>(position)
+                : static_cast<std::size_t>(position + total);
+            auto values = source_coefficients.at(coefficient_index);
+            if (coefficient_factor != 1.0)
+            {
+                for (auto &value : values)
+                {
+                    value *= coefficient_factor;
+                }
+            }
+            diagonals[(position * basic_step) & mask] = std::move(values);
+        }
+        gen_linear_transform_bsgs(
+            group.data()[stage],
+            group.rot_index(),
+            encoder,
+            diagonals,
+            static_cast<uint32_t>(context_data->level()),
+            scale,
+            log_bsgs_ratio,
+            static_cast<uint32_t>(log_slots_));
+
+        long double modulus_product = 1.0L;
+        const auto &moduli = context_data->coeff_modulus();
+        for (uint32_t index = 0; index < logical_rescale_count_; ++index)
+        {
+            modulus_product *= static_cast<long double>(
+                moduli[moduli.size() - 1 - index].value());
+        }
+        scale = scale * scale / static_cast<double>(modulus_product);
+        const auto next_q_count = moduli.size() - logical_rescale_count_;
+        parms_id = context_.crt_context()->parms_id_map().at(
+            static_cast<uint32_t>(next_q_count - 1));
+    };
+
+    const int div3 = static_cast<int>(std::floor(log_slots_ / 3.0));
+    const int div2 = static_cast<int>(std::floor((log_slots_ - div3) / 2.0));
+    const int div1 = static_cast<int>(log_slots_ - div3 - div2);
+    append_stage(0, fft_coeffs1_, (1 << div1) - 1, 1, false, 1.0);
+    append_stage(1, fft_coeffs2_, (1 << div2) - 1, 1 << div1, false, 1.0);
+
+    const auto context_data = context_.crt_context()->get_context_data(parms_id);
+    long double final_modulus_product = 1.0L;
+    const auto &moduli = context_data->coeff_modulus();
+    for (uint32_t index = 0; index < logical_rescale_count_; ++index)
+    {
+        final_modulus_product *= static_cast<long double>(
+            moduli[moduli.size() - 1 - index].value());
+    }
+    const double factor =
+        normalization * static_cast<double>(final_modulus_product) *
+        q0_modulus_ * final_scale_ /
+        (scale * scale * initial_scale_);
+    append_stage(2, fft_coeffs3_, (1 << div3) - 1,
+                 1 << (div1 + div2), true, factor);
+    return group;
+}
+
 void Bootstrapper::mod_raise(const Ciphertext &cipher, Ciphertext &destination) const
 {
     if (cipher.size() != 2)
@@ -428,10 +636,10 @@ void Bootstrapper::mod_raise(const Ciphertext &cipher, Ciphertext &destination) 
         coeff_cipher = cipher;
     }
 
-    if (coeff_cipher.coeff_modulus_size() != 1)
+    if (coeff_cipher.coeff_modulus_size() != q0_modulus_count_)
     {
         throw std::invalid_argument(
-            "Bootstrapper::mod_raise expects the ciphertext at single-prime q0 level");
+            "Bootstrapper::mod_raise ciphertext q0 base does not match q0_modulus_count");
     }
 
     const auto first_parms_id = context_.crt_context()->first_parms_id();
@@ -443,30 +651,87 @@ void Bootstrapper::mod_raise(const Ciphertext &cipher, Ciphertext &destination) 
     const auto &modulus = first_context_data->coeff_modulus();
     const auto coeff_modulus_size = destination.coeff_modulus_size();
     const auto degree = destination.poly_modulus_degree();
-    const std::uint64_t q0 = modulus[0].value();
-
-    std::vector<std::uint64_t> minus_q0(coeff_modulus_size, 0);
-    for (std::size_t j = 1; j < coeff_modulus_size; ++j)
+    if (q0_modulus_count_ == 1)
     {
-        minus_q0[j] = modulus[j].value() - (q0 % modulus[j].value());
+        const std::uint64_t q0 = modulus[0].value();
+        std::vector<std::uint64_t> minus_q0(coeff_modulus_size, 0);
+        for (std::size_t j = 1; j < coeff_modulus_size; ++j)
+        {
+            minus_q0[j] = modulus[j].value() - (q0 % modulus[j].value());
+        }
+
+        for (std::size_t poly_idx = 0; poly_idx < coeff_cipher.size(); ++poly_idx)
+        {
+            const auto src_zero = coeff_cipher.data(poly_idx);
+            auto dest_poly = destination.data(poly_idx);
+            for (std::size_t j = 0; j < coeff_modulus_size; ++j)
+            {
+                const auto q = modulus[j].value();
+                auto dest = dest_poly + j * degree;
+                for (std::size_t i = 0; i < degree; ++i)
+                {
+                    dest[i] = src_zero[i] % q;
+                    if (src_zero[i] > (q0 >> 1))
+                    {
+                        dest[i] += minus_q0[j];
+                        dest[i] -= (dest[i] >= q) ? q : 0;
+                    }
+                }
+            }
+            destination[poly_idx].coeff_to_dot();
+        }
+        destination.is_ntt_form() = true;
+        return;
+    }
+
+    // Reconstruct every coefficient in Z_(q0*q1), center it in
+    // [-(q0*q1)/2, (q0*q1)/2], and reduce that signed representative into
+    // every modulus of the raised chain. The two-prime product is intended
+    // for the 30-bit bootstrap profile and therefore fits in uint64_t.
+    const std::uint64_t q0 = modulus[0].value();
+    const std::uint64_t q1 = modulus[1].value();
+    const unsigned __int128 q0_product_wide =
+        static_cast<unsigned __int128>(q0) * q1;
+    if (q0_product_wide > std::numeric_limits<std::uint64_t>::max())
+    {
+        throw std::invalid_argument(
+            "Bootstrapper::mod_raise two-prime q0 product exceeds 64 bits");
+    }
+    const std::uint64_t q0_product = static_cast<std::uint64_t>(q0_product_wide);
+    std::uint64_t q0_inverse_mod_q1 = 0;
+    if (!util::try_invert_uint_mod(q0 % q1, modulus[1], q0_inverse_mod_q1))
+    {
+        throw std::invalid_argument(
+            "Bootstrapper::mod_raise q0 base moduli are not coprime");
     }
 
     for (std::size_t poly_idx = 0; poly_idx < coeff_cipher.size(); ++poly_idx)
     {
-        const auto src_zero = coeff_cipher.data(poly_idx);
+        const auto src_poly = coeff_cipher.data(poly_idx);
+        const auto src_zero = src_poly;
+        const auto src_one = src_poly + degree;
         auto dest_poly = destination.data(poly_idx);
-        for (std::size_t j = 0; j < coeff_modulus_size; ++j)
+        for (std::size_t i = 0; i < degree; ++i)
         {
-            const auto q = modulus[j].value();
-            auto dest = dest_poly + j * degree;
-            for (std::size_t i = 0; i < degree; ++i)
+            const std::uint64_t a0 = src_zero[i];
+            const std::uint64_t a1 = src_one[i];
+            const std::uint64_t a0_mod_q1 = a0 % q1;
+            const std::uint64_t difference =
+                a1 >= a0_mod_q1 ? a1 - a0_mod_q1 : a1 + (q1 - a0_mod_q1);
+            const std::uint64_t crt_digit = util::multiply_uint_mod(
+                difference, q0_inverse_mod_q1, modulus[1]);
+            const std::uint64_t reconstructed = static_cast<std::uint64_t>(
+                static_cast<unsigned __int128>(q0) * crt_digit + a0);
+            const bool negative = reconstructed > (q0_product >> 1);
+            const std::uint64_t magnitude =
+                negative ? q0_product - reconstructed : reconstructed;
+
+            for (std::size_t j = 0; j < coeff_modulus_size; ++j)
             {
-                dest[i] = src_zero[i] % q;
-                if (src_zero[i] > (q0 >> 1))
-                {
-                    dest[i] += minus_q0[j];
-                    dest[i] -= (dest[i] >= q) ? q : 0;
-                }
+                const std::uint64_t q = modulus[j].value();
+                const std::uint64_t reduced = magnitude % q;
+                dest_poly[j * degree + i] =
+                    negative && reduced != 0 ? q - reduced : reduced;
             }
         }
         destination[poly_idx].coeff_to_dot();
@@ -812,14 +1077,68 @@ void Bootstrapper::rotate_allow_transparent(const Ciphertext &cipher,
     }
 }
 
+double Bootstrapper::logical_rescale_modulus(const Ciphertext &cipher) const
+{
+    const auto context_data =
+        context_.crt_context()->get_context_data(cipher.parms_id());
+    if (!context_data)
+    {
+        throw std::invalid_argument(
+            "Bootstrapper::logical_rescale_modulus: invalid ciphertext parms_id");
+    }
+    const auto &moduli = context_data->coeff_modulus();
+    if (moduli.size() <= logical_rescale_count_)
+    {
+        throw std::invalid_argument(
+            "Bootstrapper::logical_rescale_modulus: modulus chain is too short");
+    }
+    long double product = 1.0L;
+    for (uint32_t index = 0; index < logical_rescale_count_; ++index)
+    {
+        product *= static_cast<long double>(
+            moduli[moduli.size() - 1 - index].value());
+    }
+    const double result = static_cast<double>(product);
+    if (!(result > 0.0) || !std::isfinite(result))
+    {
+        throw std::invalid_argument(
+            "Bootstrapper::logical_rescale_modulus: invalid modulus product");
+    }
+    return result;
+}
+
+void Bootstrapper::logical_rescale(
+    const Ciphertext &cipher, Ciphertext &destination) const
+{
+    if (cipher.coeff_modulus_size() <= logical_rescale_count_)
+    {
+        throw std::invalid_argument(
+            "Bootstrapper::logical_rescale: modulus chain is too short");
+    }
+    evaluator_.rescale(cipher, destination);
+    for (uint32_t index = 1; index < logical_rescale_count_; ++index)
+    {
+        evaluator_.rescale(destination, destination);
+    }
+}
+
 void Bootstrapper::eval_mod(const Ciphertext &cipher,
                                           Ciphertext &destination,
                                           const RelinKeys &relin_keys,
                                           uint32_t double_angle,
                                           double inverse_coeff,
-                                          double target_scale) const
+                                          double target_scale,
+                                          BootstrapEvalModTrace *trace) const
 {
-    (void)target_scale;
+    if (!(target_scale > 0.0) || !std::isfinite(target_scale))
+    {
+        throw std::invalid_argument("Bootstrapper::eval_mod target_scale must be finite");
+    }
+    if (trace)
+    {
+        *trace = BootstrapEvalModTrace{};
+        trace->input = cipher;
+    }
     const auto &heap = cosine_heap(cosine_heap_path_);
     const int heap_m =
         static_cast<int>(std::llround(std::log2(static_cast<double>(heap.size() + 1)))) - 1;
@@ -838,12 +1157,7 @@ void Bootstrapper::eval_mod(const Ciphertext &cipher,
     auto multiply_const_rescale = [&](const Ciphertext &input, double coeff,
                                       Ciphertext &output) {
         evaluator_.multiply_const(input, coeff, input.scale(), output, encoder_);
-        evaluator_.rescale(output, output);
-    };
-
-    auto last_modulus_value = [&](const Ciphertext &input) {
-        auto data = context_.crt_context()->get_context_data(input.parms_id());
-        return static_cast<double>(data->coeff_modulus().back().value());
+        logical_rescale(output, output);
     };
 
     auto reduced_add = [&](const Ciphertext &lhs, const Ciphertext &rhs,
@@ -859,10 +1173,11 @@ void Bootstrapper::eval_mod(const Ciphertext &cipher,
         {
             Ciphertext rhs_adjusted;
             const double scale_adjust =
-                lhs.scale() * last_modulus_value(rhs) / (rhs.scale() * rhs.scale());
+                lhs.scale() * logical_rescale_modulus(rhs) /
+                (rhs.scale() * rhs.scale());
             evaluator_.multiply_const(rhs, scale_adjust, rhs.scale(), rhs_adjusted, encoder_);
-            rhs_adjusted.scale() = lhs.scale() * last_modulus_value(rhs);
-            evaluator_.rescale(rhs_adjusted, rhs_adjusted);
+            rhs_adjusted.scale() = lhs.scale() * logical_rescale_modulus(rhs);
+            logical_rescale(rhs_adjusted, rhs_adjusted);
             evaluator_.drop_modulus(rhs_adjusted, rhs_adjusted, lhs.parms_id());
             output = lhs;
             output.scale() = rhs_adjusted.scale();
@@ -872,10 +1187,11 @@ void Bootstrapper::eval_mod(const Ciphertext &cipher,
 
         Ciphertext lhs_adjusted;
         const double scale_adjust =
-            rhs.scale() * last_modulus_value(lhs) / (lhs.scale() * lhs.scale());
+            rhs.scale() * logical_rescale_modulus(lhs) /
+            (lhs.scale() * lhs.scale());
         evaluator_.multiply_const(lhs, scale_adjust, lhs.scale(), lhs_adjusted, encoder_);
-        lhs_adjusted.scale() = rhs.scale() * last_modulus_value(lhs);
-        evaluator_.rescale(lhs_adjusted, lhs_adjusted);
+        lhs_adjusted.scale() = rhs.scale() * logical_rescale_modulus(lhs);
+        logical_rescale(lhs_adjusted, lhs_adjusted);
         evaluator_.drop_modulus(lhs_adjusted, lhs_adjusted, rhs.parms_id());
         lhs_adjusted.scale() = rhs.scale();
         evaluator_.add(lhs_adjusted, rhs, output);
@@ -900,10 +1216,11 @@ void Bootstrapper::eval_mod(const Ciphertext &cipher,
         {
             Ciphertext rhs_adjusted;
             const double scale_adjust =
-                lhs.scale() * last_modulus_value(rhs) / (rhs.scale() * rhs.scale());
+                lhs.scale() * logical_rescale_modulus(rhs) /
+                (rhs.scale() * rhs.scale());
             evaluator_.multiply_const(rhs, scale_adjust, rhs.scale(), rhs_adjusted, encoder_);
-            rhs_adjusted.scale() = lhs.scale() * last_modulus_value(rhs);
-            evaluator_.rescale(rhs_adjusted, rhs_adjusted);
+            rhs_adjusted.scale() = lhs.scale() * logical_rescale_modulus(rhs);
+            logical_rescale(rhs_adjusted, rhs_adjusted);
             evaluator_.drop_modulus(rhs_adjusted, rhs_adjusted, lhs.parms_id());
             output = lhs;
             output.scale() = rhs_adjusted.scale();
@@ -913,10 +1230,11 @@ void Bootstrapper::eval_mod(const Ciphertext &cipher,
 
         Ciphertext lhs_adjusted;
         const double scale_adjust =
-            rhs.scale() * last_modulus_value(lhs) / (lhs.scale() * lhs.scale());
+            rhs.scale() * logical_rescale_modulus(lhs) /
+            (lhs.scale() * lhs.scale());
         evaluator_.multiply_const(lhs, scale_adjust, lhs.scale(), lhs_adjusted, encoder_);
-        lhs_adjusted.scale() = rhs.scale() * last_modulus_value(lhs);
-        evaluator_.rescale(lhs_adjusted, lhs_adjusted);
+        lhs_adjusted.scale() = rhs.scale() * logical_rescale_modulus(lhs);
+        logical_rescale(lhs_adjusted, lhs_adjusted);
         evaluator_.drop_modulus(lhs_adjusted, lhs_adjusted, rhs.parms_id());
         lhs_adjusted.scale() = rhs.scale();
         evaluator_.sub(lhs_adjusted, rhs, output);
@@ -935,10 +1253,11 @@ void Bootstrapper::eval_mod(const Ciphertext &cipher,
         {
             Ciphertext rhs_adjusted;
             const double scale_adjust =
-                lhs.scale() * last_modulus_value(rhs) / (rhs.scale() * rhs.scale());
+                lhs.scale() * logical_rescale_modulus(rhs) /
+                (rhs.scale() * rhs.scale());
             evaluator_.multiply_const(rhs, scale_adjust, rhs.scale(), rhs_adjusted, encoder_);
-            rhs_adjusted.scale() = lhs.scale() * last_modulus_value(rhs);
-            evaluator_.rescale(rhs_adjusted, rhs_adjusted);
+            rhs_adjusted.scale() = lhs.scale() * logical_rescale_modulus(rhs);
+            logical_rescale(rhs_adjusted, rhs_adjusted);
             evaluator_.drop_modulus(rhs_adjusted, rhs_adjusted, lhs.parms_id());
             Ciphertext lhs_copy = lhs;
             lhs_copy.scale() = rhs_adjusted.scale();
@@ -948,10 +1267,11 @@ void Bootstrapper::eval_mod(const Ciphertext &cipher,
 
         Ciphertext lhs_adjusted;
         const double scale_adjust =
-            rhs.scale() * last_modulus_value(lhs) / (lhs.scale() * lhs.scale());
+            rhs.scale() * logical_rescale_modulus(lhs) /
+            (lhs.scale() * lhs.scale());
         evaluator_.multiply_const(lhs, scale_adjust, lhs.scale(), lhs_adjusted, encoder_);
-        lhs_adjusted.scale() = rhs.scale() * last_modulus_value(lhs);
-        evaluator_.rescale(lhs_adjusted, lhs_adjusted);
+        lhs_adjusted.scale() = rhs.scale() * logical_rescale_modulus(lhs);
+        logical_rescale(lhs_adjusted, lhs_adjusted);
         evaluator_.drop_modulus(lhs_adjusted, lhs_adjusted, rhs.parms_id());
         lhs_adjusted.scale() = rhs.scale();
         evaluator_.multiply_relin(lhs_adjusted, rhs, output, relin_keys);
@@ -960,7 +1280,7 @@ void Bootstrapper::eval_mod(const Ciphertext &cipher,
     auto multiply_chebyshev = [&](const Ciphertext &lhs, const Ciphertext &rhs,
                                   Ciphertext &output) {
         reduced_multiply(lhs, rhs, output);
-        evaluator_.rescale(output, output);
+        logical_rescale(output, output);
         evaluator_.add(output, output, output);
     };
 
@@ -1095,7 +1415,7 @@ void Bootstrapper::eval_mod(const Ciphertext &cipher,
                 Ciphertext prod;
                 reduced_multiply(cipher_heap[static_cast<std::size_t>(left)],
                                  giant[static_cast<std::size_t>(giant_index)], prod);
-                evaluator_.rescale(prod, prod);
+                logical_rescale(prod, prod);
                 reduced_add(prod, cipher_heap[static_cast<std::size_t>(right)],
                             cipher_heap[static_cast<std::size_t>(i)]);
             }
@@ -1105,6 +1425,10 @@ void Bootstrapper::eval_mod(const Ciphertext &cipher,
     }
 
     destination = cipher_heap[0];
+    if (trace)
+    {
+        trace->polynomial_output = destination;
+    }
     const double inverse_root =
         std::pow(inverse_coeff, 1.0 / static_cast<double>(1ULL << double_angle));
     double curr_scale = inverse_root;
@@ -1112,10 +1436,75 @@ void Bootstrapper::eval_mod(const Ciphertext &cipher,
     {
         curr_scale *= curr_scale;
         reduced_multiply(destination, destination, destination);
-        evaluator_.rescale(destination, destination);
+        logical_rescale(destination, destination);
         evaluator_.add(destination, destination, destination);
         evaluator_.add_const(destination, -curr_scale, destination, encoder_);
+        if (trace)
+        {
+            trace->double_angle_outputs.push_back(destination);
+        }
     }
+}
+
+std::vector<std::complex<double>> Bootstrapper::eval_mod_plain_trace(
+    std::complex<double> input, uint32_t double_angle,
+    double inverse_coeff) const
+{
+    const auto &heap = cosine_heap(cosine_heap_path_);
+    if (heap.empty() || heap[0].degree < 0)
+    {
+        throw std::runtime_error("bootstrap cosine heap has no root polynomial");
+    }
+    const auto &root = heap[0];
+    std::complex<double> value = root.cheb[0];
+    if (root.degree >= 1)
+    {
+        std::complex<double> previous = 1.0;
+        std::complex<double> current = input;
+        value += root.cheb[1] * current;
+        for (int degree = 2; degree <= root.degree; ++degree)
+        {
+            const std::complex<double> next = 2.0 * input * current - previous;
+            value += root.cheb[static_cast<std::size_t>(degree)] * next;
+            previous = current;
+            current = next;
+        }
+    }
+
+    std::vector<std::complex<double>> stages;
+    stages.reserve(static_cast<std::size_t>(double_angle) + 1);
+    stages.push_back(value);
+    const double inverse_root =
+        std::pow(inverse_coeff, 1.0 / static_cast<double>(1ULL << double_angle));
+    double curr_scale = inverse_root;
+    for (uint32_t index = 0; index < double_angle; ++index)
+    {
+        curr_scale *= curr_scale;
+        value = 2.0 * value * value - curr_scale;
+        stages.push_back(value);
+    }
+    return stages;
+}
+
+Polynomial Bootstrapper::eval_mod_polynomial() const
+{
+    const auto &heap = cosine_heap(cosine_heap_path_);
+    if (heap.empty() || heap[0].degree < 0 || heap[0].cheb.empty())
+    {
+        throw std::runtime_error("bootstrap cosine heap has no root polynomial");
+    }
+    std::vector<std::complex<double>> coefficients;
+    coefficients.reserve(heap[0].cheb.size());
+    for (const double coefficient : heap[0].cheb)
+    {
+        coefficients.emplace_back(coefficient, 0.0);
+    }
+    return Polynomial(
+        coefficients,
+        -1.0,
+        1.0,
+        heap[0].degree,
+        Chebyshev);
 }
 
 double Bootstrapper::inverse_coefficient(uint32_t double_angle) const
@@ -1302,8 +1691,14 @@ void Bootstrapper::rotated_bsgs_linear_transform(
 }
 
 void Bootstrapper::slot_to_coeff_transform(Ciphertext &destination, const Ciphertext &cipher,
-                                           const GaloisKeys &galois_keys) const
+                                           const GaloisKeys &galois_keys,
+                                           double normalization) const
 {
+    if (!(normalization > 0.0) || !std::isfinite(normalization))
+    {
+        throw std::invalid_argument(
+            "Bootstrapper::slot_to_coeff normalization must be finite and positive");
+    }
     const int div3 = static_cast<int>(std::floor(log_slots_ / 3.0));
     const int div2 = static_cast<int>(std::floor((log_slots_ - div3) / 2.0));
     const int div1 = static_cast<int>(log_slots_ - div3 - div2);
@@ -1316,19 +1711,15 @@ void Bootstrapper::slot_to_coeff_transform(Ciphertext &destination, const Cipher
 
     Ciphertext tmp1;
     bsgs_linear_transform(tmp1, cipher, total1, step1, log_slots_, fft_coeffs1_, galois_keys);
-    evaluator_.rescale_dynamic(tmp1, tmp1, cipher.scale());
+    logical_rescale(tmp1, tmp1);
 
     Ciphertext tmp2;
     bsgs_linear_transform(tmp2, tmp1, total2, step2, log_slots_, fft_coeffs2_, galois_keys);
-    evaluator_.rescale_dynamic(tmp2, tmp2, cipher.scale());
+    logical_rescale(tmp2, tmp2);
 
-    auto context_data = context_.crt_context()->get_context_data(tmp2.parms_id());
-    const auto &modulus = context_data->coeff_modulus();
-    const double mod_zero =
-        static_cast<double>(context_.crt_context()->first_context_data()->coeff_modulus()[0].value());
-    const double curr_mod = static_cast<double>(modulus[tmp2.level()].value());
+    const double curr_mod = logical_rescale_modulus(tmp2);
     auto scaled_coeffs = fft_coeffs3_;
-    const double factor = curr_mod * mod_zero * final_scale_ /
+    const double factor = normalization * curr_mod * q0_modulus_ * final_scale_ /
                           (tmp2.scale() * tmp2.scale() * initial_scale_);
     for (auto &diag : scaled_coeffs)
     {
@@ -1340,8 +1731,8 @@ void Bootstrapper::slot_to_coeff_transform(Ciphertext &destination, const Cipher
 
     rotated_bsgs_linear_transform(destination, tmp2, total3, step3, log_slots_, scaled_coeffs,
                                   galois_keys);
-    evaluator_.rescale_dynamic(destination, destination, final_scale_);
-    destination.scale() = mod_zero * final_scale_ / initial_scale_;
+    logical_rescale(destination, destination);
+    destination.scale() = q0_modulus_ * final_scale_ / initial_scale_;
 }
 
 void Bootstrapper::coeff_to_slot_transform(Ciphertext &destination, const Ciphertext &cipher,
@@ -1360,15 +1751,15 @@ void Bootstrapper::coeff_to_slot_transform(Ciphertext &destination, const Cipher
     Ciphertext tmp1;
     rotated_bsgs_linear_transform(tmp1, cipher, total1, step1, log_slots_, inv_fft_coeffs1_,
                                   galois_keys);
-    evaluator_.rescale_dynamic(tmp1, tmp1, cipher.scale());
+    logical_rescale(tmp1, tmp1);
 
     Ciphertext tmp2;
     bsgs_linear_transform(tmp2, tmp1, total2, step2, log_slots_, inv_fft_coeffs2_, galois_keys);
-    evaluator_.rescale_dynamic(tmp2, tmp2, cipher.scale());
+    logical_rescale(tmp2, tmp2);
 
     bsgs_linear_transform(destination, tmp2, total3, step3, log_slots_, inv_fft_coeffs3_,
                           galois_keys);
-    evaluator_.rescale_dynamic(destination, destination, cipher.scale());
+    logical_rescale(destination, destination);
 }
 
 void Bootstrapper::coeff_to_slot(const Ciphertext &cipher, Ciphertext &real_part,
@@ -1392,14 +1783,15 @@ void Bootstrapper::coeff_to_slot(const Ciphertext &cipher, Ciphertext &real_part
 
 void Bootstrapper::slot_to_coeff(const Ciphertext &real_part, const Ciphertext &imag_part,
                                  Ciphertext &destination,
-                                 const GaloisKeys &galois_keys) const
+                                 const GaloisKeys &galois_keys,
+                                 double normalization) const
 {
     std::vector<Complex> i_vec(slots_, Complex(0.0, 1.0));
     Ciphertext imag_scaled;
     multiply_vector_unit_scale(imag_part, i_vec, imag_scaled);
     Ciphertext combined;
     add_reduced_error(real_part, imag_scaled, combined);
-    slot_to_coeff_transform(destination, combined, galois_keys);
+    slot_to_coeff_transform(destination, combined, galois_keys, normalization);
 }
 
 }  // namespace poseidon

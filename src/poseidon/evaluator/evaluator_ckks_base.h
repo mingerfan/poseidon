@@ -10,6 +10,28 @@
 
 namespace poseidon
 {
+struct BootstrapEvalModTrace
+{
+    Ciphertext input;
+    Ciphertext polynomial_output;
+    vector<Ciphertext> double_angle_outputs;
+};
+
+struct BootstrapTrace
+{
+    Ciphertext prepared_q0;
+    Ciphertext raised;
+    Ciphertext coeff_to_slot_real_raw;
+    Ciphertext coeff_to_slot_imag_raw;
+    Ciphertext coeff_to_slot_real_aligned;
+    Ciphertext coeff_to_slot_imag_aligned;
+    BootstrapEvalModTrace eval_mod_real;
+    BootstrapEvalModTrace eval_mod_imag;
+    Ciphertext slot_to_coeff;
+    Ciphertext projected;
+    Ciphertext final_output;
+};
+
 struct BootstrapConfig
 {
     uint32_t boundary_k = 25;
@@ -20,6 +42,19 @@ struct BootstrapConfig
     bool project_real = true;
     double inverse_coeff = 0.0;
     std::string cosine_heap_path;
+
+    /*
+     * Number of physical Q primes in one logical bootstrap rescale. The
+     * default preserves the original 51-bit path. A value of two lets a
+     * 30-bit chain maintain an approximately 60-bit bootstrap scale.
+     */
+    uint32_t logical_rescale_count = 1;
+
+    /* Number of leading Q primes forming the centered ModRaise q0 base. */
+    uint32_t q0_modulus_count = 1;
+
+    /* Optional non-owning destination for CPU bootstrap diagnostics. */
+    BootstrapTrace *trace = nullptr;
 };
 
 struct EvalModTrace

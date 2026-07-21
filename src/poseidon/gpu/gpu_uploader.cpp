@@ -753,7 +753,13 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
     parms_id_type input_parms_id,
     int device_id,
     GpuRelinKeysData *relin_keys,
-    parms_id_type expected_output_parms_id)
+    parms_id_type expected_output_parms_id,
+    std::uint32_t logical_rescale_count,
+    const Polynomial *polynomial_override,
+    bool include_input_offset,
+    std::uint32_t double_angle_override,
+    double double_angle_base_override,
+    double polynomial_output_scale_override)
 {
     const auto &context = encoder.context();
     const auto crt_context = context.crt_context();
@@ -772,7 +778,12 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
 
     const std::size_t input_q_count =
         input_context_data->coeff_modulus().size();
-    if (input_q_count < 2)
+    if (logical_rescale_count == 0)
+    {
+        throw std::invalid_argument(
+            "GpuUploader::upload_eval_mod_high_precision: logical_rescale_count must be positive");
+    }
+    if (input_q_count <= logical_rescale_count)
     {
         throw std::invalid_argument(
             "GpuUploader::upload_eval_mod_high_precision: insufficient input modulus chain");
@@ -831,17 +842,35 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
             return upload_plaintext(plaintext, device_id);
         };
 
-    auto q_last_for_q_count =
-        [&](std::size_t q_count) -> double {
+    auto rescale_modulus_product =
+        [&](std::size_t q_count, std::uint32_t rescale_count) -> double {
+            if (rescale_count == 0 || q_count <= rescale_count)
+            {
+                throw std::invalid_argument(
+                    "GpuUploader::upload_eval_mod_high_precision: invalid logical rescale span");
+            }
             const auto level_data = crt_context->get_context_data(
                 parms_id_for_q_count(q_count));
-            if (!level_data || level_data->coeff_modulus().empty())
+            if (!level_data ||
+                level_data->coeff_modulus().size() != q_count)
             {
                 throw std::invalid_argument(
                     "GpuUploader::upload_eval_mod_high_precision: missing rescale modulus");
             }
-            return static_cast<double>(
-                level_data->coeff_modulus().back().value());
+            long double product = 1.0L;
+            const auto &moduli = level_data->coeff_modulus();
+            for (std::uint32_t index = 0; index < rescale_count; ++index)
+            {
+                product *= static_cast<long double>(
+                    moduli[q_count - 1 - index].value());
+            }
+            const double result = static_cast<double>(product);
+            if (!(result > 0.0) || !std::isfinite(result))
+            {
+                throw std::invalid_argument(
+                    "GpuUploader::upload_eval_mod_high_precision: invalid rescale modulus product");
+            }
+            return result;
         };
 
     auto require_valid_scale = [](double scale, const char *what) {
@@ -852,7 +881,9 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
         }
     };
 
-    const auto &sine_polynomial = eval_mod_poly.sine_poly();
+    const auto &sine_polynomial = polynomial_override != nullptr
+        ? *polynomial_override
+        : eval_mod_poly.sine_poly();
     if (sine_polynomial.data().empty())
     {
         throw std::invalid_argument(
@@ -891,6 +922,10 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
 
     GpuBootstrapData::EvalModData result;
     result.target_scale = target_scale;
+    result.logical_rescale_count = logical_rescale_count;
+    result.polynomial_rescale_count = logical_rescale_count;
+    result.rescale_polynomial_terms_individually =
+        polynomial_override != nullptr;
     result.polynomial_basis =
         sine_polynomial.basis_type() == Chebyshev
             ? GpuEvalModPolynomialBasis::Chebyshev
@@ -944,16 +979,54 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
         }
         const std::size_t multiply_q_count =
             std::min(left_iter->second, right_iter->second);
-        if (multiply_q_count < 2)
+        if (multiply_q_count <= logical_rescale_count)
         {
             throw std::invalid_argument(
                 "GpuUploader::upload_eval_mod_high_precision: modulus chain is too short for basis DAG");
         }
         required_relin_q_counts.insert(multiply_q_count);
-        std::size_t output_q_count = multiply_q_count - 1;
+        std::size_t output_q_count =
+            multiply_q_count - logical_rescale_count;
+        double multiply_left_scale = left_scale_iter->second;
+        double multiply_right_scale = right_scale_iter->second;
+        if (left_iter->second != right_iter->second)
+        {
+            const bool align_left = left_iter->second > right_iter->second;
+            const std::size_t high_q_count = align_left
+                ? left_iter->second
+                : right_iter->second;
+            const double high_scale = align_left
+                ? left_scale_iter->second
+                : right_scale_iter->second;
+            const double low_scale = align_left
+                ? right_scale_iter->second
+                : left_scale_iter->second;
+            const double alignment_value =
+                low_scale *
+                rescale_modulus_product(high_q_count, logical_rescale_count) /
+                (high_scale * high_scale);
+            require_valid_scale(alignment_value, "basis operand alignment value");
+            step.align_left_operand = align_left;
+            step.operand_alignment_plaintext = encode_and_upload(
+                {alignment_value, 0.0}, high_q_count, high_scale);
+            step.operand_alignment_pre_rescale_scale =
+                low_scale *
+                rescale_modulus_product(high_q_count, logical_rescale_count);
+            step.operand_alignment_output_scale = low_scale;
+            if (align_left)
+            {
+                multiply_left_scale = low_scale;
+            }
+            else
+            {
+                multiply_right_scale = low_scale;
+            }
+        }
         const double output_scale =
-            left_scale_iter->second * right_scale_iter->second /
-            q_last_for_q_count(multiply_q_count);
+            multiply_left_scale * multiply_right_scale /
+            rescale_modulus_product(
+                multiply_q_count,
+                logical_rescale_count);
         require_valid_scale(output_scale, "basis output scale");
 
         if (result.polynomial_basis ==
@@ -976,8 +1049,6 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
                 throw std::logic_error(
                     "GpuUploader::upload_eval_mod_high_precision: missing correction basis level");
             }
-            output_q_count =
-                std::min(output_q_count, correction_iter->second);
             const auto correction_scale_iter =
                 basis_scales.find(step.correction_degree);
             if (correction_scale_iter == basis_scales.end())
@@ -985,15 +1056,40 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
                 throw std::logic_error(
                     "GpuUploader::upload_eval_mod_high_precision: missing correction basis scale");
             }
-            const double correction_plaintext_scale =
-                output_scale / correction_scale_iter->second;
-            require_valid_scale(
-                correction_plaintext_scale,
-                "Chebyshev correction plaintext scale");
-            step.correction_plaintext = encode_and_upload(
-                {1.0, 0.0},
-                output_q_count,
-                correction_plaintext_scale);
+            if (correction_iter->second > output_q_count)
+            {
+                const double alignment_value =
+                    output_scale *
+                    rescale_modulus_product(
+                        correction_iter->second,
+                        logical_rescale_count) /
+                    (correction_scale_iter->second *
+                     correction_scale_iter->second);
+                require_valid_scale(
+                    alignment_value,
+                    "Chebyshev correction alignment value");
+                step.correction_alignment_plaintext = encode_and_upload(
+                    {alignment_value, 0.0},
+                    correction_iter->second,
+                    correction_scale_iter->second);
+                step.correction_alignment_pre_rescale_scale =
+                    output_scale *
+                    rescale_modulus_product(
+                        correction_iter->second,
+                        logical_rescale_count);
+            }
+            else
+            {
+                const double correction_plaintext_scale =
+                    output_scale / correction_scale_iter->second;
+                require_valid_scale(
+                    correction_plaintext_scale,
+                    "Chebyshev correction plaintext scale");
+                step.correction_plaintext = encode_and_upload(
+                    {1.0, 0.0},
+                    output_q_count,
+                    correction_plaintext_scale);
+            }
         }
         step.output_scale = output_scale;
         basis_q_counts.emplace(step.output_degree, output_q_count);
@@ -1045,13 +1141,14 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
         {
             leaf_constants[leaf_index] = coefficients.front();
         }
-        if (block_q_count < 2)
+        if (block_q_count <= logical_rescale_count)
         {
             throw std::invalid_argument(
                 "GpuUploader::upload_eval_mod_high_precision: modulus chain is too short for leaf rescale");
         }
         leaf_input_q_counts[leaf_index] = block_q_count;
-        node_q_counts[leaf_index] = block_q_count - 1;
+        node_q_counts[leaf_index] =
+            block_q_count - logical_rescale_count;
     }
 
     for (const auto &combine : result.polynomial_combine_steps)
@@ -1070,14 +1167,14 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
         const std::size_t multiply_q_count = std::min(
             node_q_counts[combine.quotient_node],
             basis_iter->second);
-        if (multiply_q_count < 2)
+        if (multiply_q_count <= logical_rescale_count)
         {
             throw std::invalid_argument(
                 "GpuUploader::upload_eval_mod_high_precision: modulus chain is too short for polynomial combine");
         }
         required_relin_q_counts.insert(multiply_q_count);
         node_q_counts[combine.output_node] = std::min(
-            multiply_q_count - 1,
+            multiply_q_count - logical_rescale_count,
             node_q_counts[combine.remainder_node]);
     }
 
@@ -1088,7 +1185,10 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
      * recursive scale choices into a fixed GPU schedule.
      */
     std::vector<double> node_scales(next_node_id, 0.0);
-    node_scales[result.polynomial_result_node] = target_scale;
+    node_scales[result.polynomial_result_node] =
+        std::isfinite(polynomial_output_scale_override)
+            ? polynomial_output_scale_override
+            : target_scale;
     for (auto step_iter = result.polynomial_combine_steps.rbegin();
          step_iter != result.polynomial_combine_steps.rend();
          ++step_iter)
@@ -1108,7 +1208,10 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
             node_q_counts[combine.quotient_node],
             basis_q_iter->second);
         const double quotient_scale =
-            output_scale * q_last_for_q_count(multiply_q_count) /
+            output_scale *
+            rescale_modulus_product(
+                multiply_q_count,
+                logical_rescale_count) /
             basis_scale_iter->second;
         require_valid_scale(quotient_scale, "polynomial quotient scale");
         node_scales[combine.quotient_node] = quotient_scale;
@@ -1122,11 +1225,14 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
         require_valid_scale(leaf_output_scale, "polynomial leaf output scale");
         const std::size_t block_q_count = leaf_input_q_counts[leaf_index];
         const double pre_rescale_scale =
-            leaf_output_scale * q_last_for_q_count(block_q_count);
+            leaf_output_scale *
+            rescale_modulus_product(
+                block_q_count,
+                logical_rescale_count);
         require_valid_scale(pre_rescale_scale, "polynomial leaf accumulator scale");
 
         auto &block = result.polynomial_blocks[leaf_index];
-        block.rescale_count = 1;
+        block.rescale_count = logical_rescale_count;
         block.output_scale = leaf_output_scale;
         for (const auto &term : leaf_term_specs[leaf_index])
         {
@@ -1149,14 +1255,22 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
 
         if (leaf_has_constant[leaf_index] || block.terms.empty())
         {
+            const std::size_t constant_q_count =
+                result.rescale_polynomial_terms_individually
+                    ? node_q_counts[leaf_index]
+                    : block_q_count;
+            const double constant_scale =
+                result.rescale_polynomial_terms_individually
+                    ? leaf_output_scale
+                    : pre_rescale_scale;
             block.terms.push_back(GpuEvalModPolynomialTerm{
                 0,
                 encode_and_upload(
                     leaf_has_constant[leaf_index]
                         ? leaf_constants[leaf_index]
                         : std::complex<double>{0.0, 0.0},
-                    block_q_count,
-                    pre_rescale_scale)});
+                    constant_q_count,
+                    constant_scale)});
         }
     }
 
@@ -1168,8 +1282,9 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
             "GpuUploader::upload_eval_mod_high_precision: polynomial output level is unavailable");
     }
 
-    if (eval_mod_poly.type() == CosDiscrete ||
-        eval_mod_poly.type() == CosContinuous)
+    if (include_input_offset &&
+        (eval_mod_poly.type() == CosDiscrete ||
+         eval_mod_poly.type() == CosContinuous))
     {
         const double interval_width =
             eval_mod_poly.sine_poly_b() - eval_mod_poly.sine_poly_a();
@@ -1185,13 +1300,19 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
             target_scale);
     }
 
-    double sqrt_2pi = eval_mod_poly.sqrt_2pi();
+    const std::uint32_t double_angle_count =
+        double_angle_override == std::numeric_limits<std::uint32_t>::max()
+            ? eval_mod_poly.double_angle()
+            : double_angle_override;
+    double sqrt_2pi = std::isfinite(double_angle_base_override)
+        ? double_angle_base_override
+        : eval_mod_poly.sqrt_2pi();
     double double_angle_input_scale =
         node_scales[result.polynomial_result_node];
-    result.double_angle_constants.reserve(eval_mod_poly.double_angle());
-    for (std::uint32_t i = 0; i < eval_mod_poly.double_angle(); ++i)
+    result.double_angle_constants.reserve(double_angle_count);
+    for (std::uint32_t i = 0; i < double_angle_count; ++i)
     {
-        if (output_q_count < 2)
+        if (output_q_count <= logical_rescale_count)
         {
             throw std::invalid_argument(
                 "GpuUploader::upload_eval_mod_high_precision: modulus chain is too short for double-angle steps");
@@ -1207,9 +1328,12 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
                 output_q_count,
                 pre_rescale_scale));
         double_angle_input_scale =
-            pre_rescale_scale / q_last_for_q_count(output_q_count);
+            pre_rescale_scale /
+            rescale_modulus_product(
+                output_q_count,
+                logical_rescale_count);
         require_valid_scale(double_angle_input_scale, "double-angle output scale");
-        --output_q_count;
+        output_q_count -= logical_rescale_count;
     }
 
     if (expected_output_parms_id != parms_id_zero)

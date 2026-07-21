@@ -7,6 +7,7 @@
 #include "poseidon/gpu/gpu_evaluator.h"
 
 #include <cstddef>
+#include <limits>
 #include <vector>
 
 namespace poseidon
@@ -21,6 +22,7 @@ class MatrixPlain;
 class LinearMatrixGroup;
 class CKKSEncoder;
 class EvalModPoly;
+class Polynomial;
 
 namespace gpu
 {
@@ -125,7 +127,16 @@ public:
         parms_id_type input_parms_id,
         int device_id,
         GpuRelinKeysData *relin_keys = nullptr,
-        parms_id_type expected_output_parms_id = parms_id_zero);
+        parms_id_type expected_output_parms_id = parms_id_zero,
+        std::uint32_t logical_rescale_count = 1,
+        const Polynomial *polynomial_override = nullptr,
+        bool include_input_offset = true,
+        std::uint32_t double_angle_override =
+            std::numeric_limits<std::uint32_t>::max(),
+        double double_angle_base_override =
+            std::numeric_limits<double>::quiet_NaN(),
+        double polynomial_output_scale_override =
+            std::numeric_limits<double>::quiet_NaN());
 
     /**
      * @brief Upload CPU relinearization keys to GPU.

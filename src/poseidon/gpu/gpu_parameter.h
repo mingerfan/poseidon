@@ -109,8 +109,9 @@ struct GpuParameterShard
      *
      * These tables convert the current q-only level Q_l into the missing
      * suffix limbs of the first q-only level Q_L. The input level's existing
-     * q limbs are copied verbatim; these constants are used only for target
-     * limbs [bootstrap_raise_source_q_count, bootstrap_raise_target_q_count).
+     * q limbs are copied verbatim. For the one/two-limb bootstrap q0 base the
+     * kernel uses these constants to reconstruct and extend the centered
+     * representative exactly; larger bases retain the generic RNS conversion.
      *
      * - bootstrap_raise_inv_punctured[j] is the input base weight
      *   prod(Q_l / q_j)^(-1) mod q_j;
