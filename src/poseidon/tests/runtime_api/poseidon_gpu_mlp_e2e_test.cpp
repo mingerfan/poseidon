@@ -17,6 +17,7 @@
 #include <cmath>
 #include <complex>
 #include <cstdint>
+#include <cstdlib>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -38,6 +39,20 @@ constexpr int kCudaDevice = 0;
 constexpr double kAbsoluteTolerance = 0.1;
 constexpr double kRelativeTolerance = 6e-3;
 constexpr double kImaginaryTolerance = 1e-2;
+constexpr const char *kAllowNoBootEnv =
+    "POSEIDON_GPU_MLP_ALLOW_NO_BOOT";
+
+bool env_flag_enabled(const char *name)
+{
+    const char *value = std::getenv(name);
+    if (value == nullptr || value[0] == '\0')
+    {
+        return false;
+    }
+    const std::string text(value);
+    return text != "0" && text != "false" && text != "FALSE" &&
+           text != "off" && text != "OFF";
+}
 
 struct Comparison
 {
@@ -275,9 +290,13 @@ int main(int argc, char **argv)
             throw std::runtime_error("fixture and MockVecApi result do not match");
         }
         const std::size_t plan_boots = count_boots(plan);
-        if (plan_boots == 0)
+        const bool allow_no_boot = env_flag_enabled(kAllowNoBootEnv);
+        if (plan_boots == 0 && !allow_no_boot)
         {
-            throw std::runtime_error("GPU MLP RuntimePlan contains no Host Boot");
+            throw std::runtime_error(
+                "GPU MLP RuntimePlan contains no Host Boot; set " +
+                std::string(kAllowNoBootEnv) +
+                "=1 to run a no-Boot calibration plan");
         }
 
         const auto requirements = fhegpu::PlanVerifier::verify(
@@ -381,6 +400,11 @@ int main(int argc, char **argv)
         const double compute_seconds =
             artifact.timing.compute_including_boot_nanoseconds * 1e-9;
         const double boot_seconds = artifact.timing.boot_nanoseconds * 1e-9;
+        const double setup_seconds = artifact.timing.setup_nanoseconds * 1e-9;
+        const double initialization_seconds =
+            artifact.timing.initialization_nanoseconds * 1e-9;
+        const double online_execution_seconds =
+            artifact.timing.online_execution_nanoseconds * 1e-9;
         const Json report{
             {"format_version", 1},
             {"passed", passed},
@@ -392,11 +416,15 @@ int main(int argc, char **argv)
             {"poly_degree", loaded_spec.spec.poly_degree},
             {"q_modulus_count", loaded_spec.spec.rns_moduli_log2.size()},
             {"rotation_key_count", rotation_steps.size()},
+            {"allow_no_boot", allow_no_boot},
             {"transfer_count", count_transfers(plan)},
             {"key_generation_seconds", key_seconds},
             {"runtime_seconds", runtime_seconds},
             {"runtime_timing",
-             {{"compute_calls", artifact.timing.compute_calls},
+             {{"setup_seconds", setup_seconds},
+              {"initialization_seconds", initialization_seconds},
+              {"online_execution_seconds", online_execution_seconds},
+              {"compute_calls", artifact.timing.compute_calls},
               {"boot_calls", artifact.timing.boot_calls},
               {"compute_including_boot_seconds", compute_seconds},
               {"boot_seconds", boot_seconds},
@@ -423,6 +451,8 @@ int main(int argc, char **argv)
                   << " rotations=" << rotation_steps.size()
                   << " key_seconds=" << key_seconds
                   << " runtime_seconds=" << runtime_seconds
+                  << " initialization_seconds=" << initialization_seconds
+                  << " online_execution_seconds=" << online_execution_seconds
                   << " boot_seconds=" << boot_seconds
                   << " python_max_abs=" << against_python.max_abs
                   << " max_imaginary=" << max_imaginary << '\n'

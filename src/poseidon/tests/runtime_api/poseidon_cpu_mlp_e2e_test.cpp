@@ -481,9 +481,16 @@ int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
         static_cast<double>(
             artifact.timing.compute_excluding_boot_nanoseconds()) *
         1e-9;
-    const std::array<double, 5> local_seconds{
+    const double setup_seconds =
+        static_cast<double>(artifact.timing.setup_nanoseconds) * 1e-9;
+    const double initialization_seconds =
+        static_cast<double>(artifact.timing.initialization_nanoseconds) * 1e-9;
+    const double online_execution_seconds =
+        static_cast<double>(artifact.timing.online_execution_nanoseconds) * 1e-9;
+    const std::array<double, 8> local_seconds{
         key_seconds, run_seconds, compute_including_boot_seconds, boot_seconds,
-        compute_excluding_boot_seconds};
+        compute_excluding_boot_seconds, setup_seconds, initialization_seconds,
+        online_execution_seconds};
     const std::array<std::uint64_t, 4> local_counts{
         static_cast<std::uint64_t>(artifact.timing.compute_calls),
         static_cast<std::uint64_t>(artifact.timing.boot_calls),
@@ -529,6 +536,9 @@ int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
         double critical_compute_seconds = 0.0;
         double critical_boot_seconds = 0.0;
         double critical_non_boot_seconds = 0.0;
+        double critical_setup_seconds = 0.0;
+        double critical_initialization_seconds = 0.0;
+        double critical_online_execution_seconds = 0.0;
         std::uint64_t total_compute_calls = 0;
         std::uint64_t total_boot_calls = 0;
         std::uint64_t total_rotation_keys = 0;
@@ -548,6 +558,14 @@ int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
                 critical_boot_seconds, gathered_seconds[seconds_offset + 3]);
             critical_non_boot_seconds = std::max(
                 critical_non_boot_seconds, gathered_seconds[seconds_offset + 4]);
+            critical_setup_seconds = std::max(
+                critical_setup_seconds, gathered_seconds[seconds_offset + 5]);
+            critical_initialization_seconds = std::max(
+                critical_initialization_seconds,
+                gathered_seconds[seconds_offset + 6]);
+            critical_online_execution_seconds = std::max(
+                critical_online_execution_seconds,
+                gathered_seconds[seconds_offset + 7]);
             total_compute_calls += gathered_counts[counts_offset];
             total_boot_calls += gathered_counts[counts_offset + 1];
             total_rotation_keys += gathered_counts[counts_offset + 2];
@@ -560,6 +578,11 @@ int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
                  {"boot_seconds", gathered_seconds[seconds_offset + 3]},
                  {"compute_excluding_boot_seconds",
                   gathered_seconds[seconds_offset + 4]},
+                 {"setup_seconds", gathered_seconds[seconds_offset + 5]},
+                 {"initialization_seconds",
+                  gathered_seconds[seconds_offset + 6]},
+                 {"online_execution_seconds",
+                  gathered_seconds[seconds_offset + 7]},
                  {"compute_calls", gathered_counts[counts_offset]},
                  {"boot_calls", gathered_counts[counts_offset + 1]},
                  {"rotation_key_count", gathered_counts[counts_offset + 2]},
@@ -579,6 +602,9 @@ int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
             {"runtime_seconds", critical_run_seconds},
             {"runtime_timing",
              {{"seconds_aggregation", "maximum_rank"},
+              {"setup_seconds", critical_setup_seconds},
+              {"initialization_seconds", critical_initialization_seconds},
+              {"online_execution_seconds", critical_online_execution_seconds},
               {"compute_calls", total_compute_calls},
               {"boot_calls", total_boot_calls},
               {"compute_including_boot_seconds", critical_compute_seconds},
@@ -605,6 +631,10 @@ int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
                   << " rotations=" << total_rotation_keys
                   << " key_seconds=" << critical_key_seconds
                   << " runtime_seconds=" << critical_run_seconds
+                  << " initialization_seconds="
+                  << critical_initialization_seconds
+                  << " online_execution_seconds="
+                  << critical_online_execution_seconds
                   << " compute_including_boot_seconds="
                   << critical_compute_seconds
                   << " boot_seconds=" << critical_boot_seconds
