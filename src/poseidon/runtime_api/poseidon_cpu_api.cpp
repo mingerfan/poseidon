@@ -10,12 +10,15 @@
 
 #include <algorithm>
 #include <array>
+#include <chrono>
 #include <cmath>
 #include <complex>
 #include <cstdio>
 #include <cstdlib>
+#include <fstream>
 #include <limits>
 #include <stdexcept>
+#include <string_view>
 #include <utility>
 
 namespace poseidon::runtime_api
@@ -47,6 +50,32 @@ double exact_scale(int scale_log2)
 }
 
 #if defined(POSEIDON_RUNTIME_CPU_MPI)
+using TraceClock = std::chrono::steady_clock;
+
+std::uint64_t elapsed_nanoseconds(TraceClock::time_point start, TraceClock::time_point finish)
+{
+    return static_cast<std::uint64_t>(
+        std::chrono::duration_cast<std::chrono::nanoseconds>(finish - start).count());
+}
+
+std::string trace_path_for_rank(std::string path, int rank)
+{
+    const std::string rank_text = std::to_string(rank);
+    std::size_t offset = 0;
+    bool replaced = false;
+    while ((offset = path.find("%r", offset)) != std::string::npos)
+    {
+        path.replace(offset, 2, rank_text);
+        offset += rank_text.size();
+        replaced = true;
+    }
+    if (!replaced)
+    {
+        path += ".rank" + rank_text + ".csv";
+    }
+    return path;
+}
+
 void check_mpi(int code, const char *operation)
 {
     if (code == MPI_SUCCESS)
@@ -182,6 +211,7 @@ struct PoseidonCpuApi::MpiState
 {
     MPI_Comm communicator = MPI_COMM_NULL;
     int tag_upper_bound = -1;
+    std::shared_ptr<std::ofstream> trace;
 
     ~MpiState()
     {
@@ -213,6 +243,15 @@ struct PoseidonCpuApi::CommState
     std::vector<poseidon_byte> send_bytes;
     std::vector<Send> sends;
     std::vector<Receive> receives;
+    std::shared_ptr<std::ofstream> trace;
+    std::uint64_t serialize_nanoseconds = 0;
+    std::uint64_t post_nanoseconds = 0;
+    std::uint64_t size_wait_nanoseconds = 0;
+    std::uint64_t body_wait_nanoseconds = 0;
+    std::uint64_t deserialize_nanoseconds = 0;
+    std::uint64_t wait_nanoseconds = 0;
+    std::uint64_t request_lifetime_nanoseconds = 0;
+    TraceClock::time_point requests_posted_at{};
     bool waited = false;
 };
 #else
@@ -344,6 +383,24 @@ PoseidonCpuApi::PoseidonCpuApi(std::string context_id, PoseidonContext context,
         throw std::runtime_error("Poseidon CPU MPI communicator has no MPI_TAG_UB");
     }
     state->tag_upper_bound = *tag_limit;
+    if (const char *trace_path = std::getenv("POSEIDON_MPI_TRACE");
+        trace_path != nullptr && trace_path[0] != '\0' && std::string_view(trace_path) != "0")
+    {
+        const std::string base_path = std::string_view(trace_path) == "1"
+                                          ? "/tmp/poseidon-mpi-transfer"
+                                          : std::string(trace_path);
+        state->trace = std::make_shared<std::ofstream>(
+            trace_path_for_rank(base_path, rank_), std::ios::out | std::ios::trunc);
+        if (!*state->trace)
+        {
+            throw std::runtime_error("cannot open Poseidon CPU MPI trace file");
+        }
+        *state->trace
+            << "rank,transfer_id,role,peer_count,payload_bytes,wire_bytes,"
+               "serialize_ns,post_ns,request_lifetime_ns,wait_ns,size_wait_ns,"
+               "body_wait_ns,deserialize_ns\n";
+        state->trace->flush();
+    }
     mpi_ = std::move(state);
 }
 #endif
@@ -544,14 +601,19 @@ PoseidonCpuApi::CommHandle PoseidonCpuApi::communicate_async(
 
         auto state = std::make_shared<CommState>();
         state->id = action.id;
+        state->trace = mpi_->trace;
         state->receives.reserve(action.destinations.size());
         if (source_local)
         {
+            const auto serialize_start = TraceClock::now();
             state->send_bytes = serialize_value(local_inputs.front());
+            state->serialize_nanoseconds =
+                elapsed_nanoseconds(serialize_start, TraceClock::now());
             state->send_size = state->send_bytes.size();
             state->sends.reserve(action.destinations.size());
         }
 
+        const auto post_start = TraceClock::now();
         for (std::size_t slot = 0; slot < action.destinations.size(); ++slot)
         {
             const auto &destination = action.destinations[slot];
@@ -593,6 +655,8 @@ PoseidonCpuApi::CommHandle PoseidonCpuApi::communicate_async(
                           "MPI_Irecv(Poseidon value size)");
             }
         }
+        state->requests_posted_at = TraceClock::now();
+        state->post_nanoseconds = elapsed_nanoseconds(post_start, state->requests_posted_at);
         return CommHandle{std::move(state)};
     }
 #else
@@ -617,19 +681,26 @@ std::vector<PoseidonCpuApi::Value> PoseidonCpuApi::wait(CommHandle &handle)
 #if defined(POSEIDON_RUNTIME_CPU_MPI)
     if (mpi_ != nullptr)
     {
+        const auto wait_start = TraceClock::now();
         for (auto &send : handle.state->sends)
         {
+            const auto body_wait_start = TraceClock::now();
             check_mpi(MPI_Waitall(static_cast<int>(send.requests.size()), send.requests.data(),
                                   MPI_STATUSES_IGNORE),
                       "MPI_Waitall(Poseidon send)");
+            handle.state->body_wait_nanoseconds +=
+                elapsed_nanoseconds(body_wait_start, TraceClock::now());
         }
 
         std::vector<std::pair<std::size_t, Value>> completed;
         completed.reserve(handle.state->receives.size());
         for (auto &receive : handle.state->receives)
         {
+            const auto size_wait_start = TraceClock::now();
             check_mpi(MPI_Wait(&receive.size_request, MPI_STATUS_IGNORE),
                       "MPI_Wait(Poseidon value size)");
+            handle.state->size_wait_nanoseconds +=
+                elapsed_nanoseconds(size_wait_start, TraceClock::now());
             if (receive.size == 0 || receive.size >
                                          static_cast<std::uint64_t>(
                                              std::numeric_limits<int>::max()))
@@ -643,9 +714,15 @@ std::vector<PoseidonCpuApi::Value> PoseidonCpuApi::wait(CommHandle &handle)
                                 receive.source_rank, mpi_tag(handle.state->id, 1),
                                 mpi_->communicator, &request),
                       "MPI_Irecv(Poseidon value)");
+            const auto body_wait_start = TraceClock::now();
             check_mpi(MPI_Wait(&request, MPI_STATUS_IGNORE), "MPI_Wait(Poseidon value)");
-            completed.emplace_back(
-                receive.slot, deserialize_value(context_, receive.kind, bytes));
+            handle.state->body_wait_nanoseconds +=
+                elapsed_nanoseconds(body_wait_start, TraceClock::now());
+            const auto deserialize_start = TraceClock::now();
+            completed.emplace_back(receive.slot,
+                                   deserialize_value(context_, receive.kind, bytes));
+            handle.state->deserialize_nanoseconds +=
+                elapsed_nanoseconds(deserialize_start, TraceClock::now());
         }
         std::sort(completed.begin(), completed.end(),
                   [](const auto &left, const auto &right) { return left.first < right.first; });
@@ -655,6 +732,39 @@ std::vector<PoseidonCpuApi::Value> PoseidonCpuApi::wait(CommHandle &handle)
         for (auto &entry : completed)
         {
             outputs.push_back(std::move(entry.second));
+        }
+        const auto wait_finish = TraceClock::now();
+        handle.state->wait_nanoseconds = elapsed_nanoseconds(wait_start, wait_finish);
+        handle.state->request_lifetime_nanoseconds =
+            elapsed_nanoseconds(handle.state->requests_posted_at, wait_finish);
+        if (handle.state->trace)
+        {
+            const bool sending = !handle.state->sends.empty();
+            const std::size_t peer_count = sending ? handle.state->sends.size()
+                                                   : handle.state->receives.size();
+            std::uint64_t payload_bytes = handle.state->send_size;
+            if (!sending)
+            {
+                for (const auto &receive : handle.state->receives)
+                {
+                    payload_bytes += receive.size;
+                }
+            }
+            const std::uint64_t wire_bytes =
+                sending ? payload_bytes * static_cast<std::uint64_t>(peer_count)
+                        : payload_bytes;
+            *handle.state->trace
+                << rank_ << ',' << handle.state->id << ','
+                << (sending ? "send" : "receive") << ',' << peer_count << ','
+                << payload_bytes << ',' << wire_bytes << ','
+                << handle.state->serialize_nanoseconds << ','
+                << handle.state->post_nanoseconds << ','
+                << handle.state->request_lifetime_nanoseconds << ','
+                << handle.state->wait_nanoseconds << ','
+                << handle.state->size_wait_nanoseconds << ','
+                << handle.state->body_wait_nanoseconds << ','
+                << handle.state->deserialize_nanoseconds << '\n';
+            handle.state->trace->flush();
         }
         return outputs;
     }
