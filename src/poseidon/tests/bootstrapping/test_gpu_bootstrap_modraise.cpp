@@ -1,6 +1,8 @@
 #include "poseidon/advance/homomorphic_dft.h"
+#include "poseidon/advance/homomorphic_mod.h"
 #include "poseidon/ckks_encoder.h"
 #include "poseidon/ciphertext.h"
+#include "poseidon/decryptor.h"
 #include "poseidon/encryptor.h"
 #include "poseidon/evaluator/evaluator_ckks_base.h"
 #include "poseidon/factory/poseidon_factory.h"
@@ -90,6 +92,22 @@ int log2_degree(std::size_t degree)
     while (degree > 1)
     {
         degree >>= 1;
+        ++result;
+    }
+    return result;
+}
+
+std::uint32_t log2_power_of_two(std::uint32_t value, const char *name)
+{
+    if (value == 0 || (value & (value - 1)) != 0)
+    {
+        throw std::invalid_argument(std::string(name) + " must be a power of two");
+    }
+
+    std::uint32_t result = 0;
+    while (value > 1)
+    {
+        value >>= 1;
         ++result;
     }
     return result;
@@ -554,38 +572,6 @@ void cpu_slot_to_coeff_rescale(
         galois_keys);
 }
 
-void cpu_evalmod_identity_horner(
-    const poseidon::Ciphertext &input,
-    poseidon::Ciphertext &output,
-    const poseidon::EvaluatorCkksBase &evaluator,
-    const poseidon::RelinKeys &relin_keys,
-    const poseidon::CKKSEncoder &encoder,
-    double target_scale)
-{
-    poseidon::Ciphertext x;
-    poseidon::Ciphertext accumulator;
-    poseidon::Ciphertext with_one;
-    poseidon::Ciphertext multiplied;
-    poseidon::Ciphertext relined;
-    poseidon::Plaintext one_plain;
-
-    evaluator.multiply_const_direct(input, 1, x, encoder);
-    x.scale() = target_scale;
-    evaluator.multiply_const_direct(x, 0, accumulator, encoder);
-    accumulator.scale() = target_scale;
-    encoder.encode(
-        std::complex<double>(1.0, 0.0),
-        x.parms_id(),
-        target_scale,
-        one_plain);
-    evaluator.add_plain(accumulator, one_plain, with_one);
-    with_one.scale() = target_scale;
-    evaluator.multiply(with_one, x, multiplied);
-    evaluator.relinearize(multiplied, relined, relin_keys);
-    evaluator.rescale(relined, output);
-    output.scale() = target_scale;
-}
-
 struct RawComparison
 {
     bool equal = false;
@@ -594,12 +580,29 @@ struct RawComparison
     std::size_t mismatch_count = 0;
 };
 
+struct ApproxComparison
+{
+    bool equal = false;
+    double max_abs_error = 0.0;
+    double rms_error = 0.0;
+};
+
 struct TimingRow
 {
     std::string operation;
     double cpu_avg_ms = 0.0;
     double gpu_avg_ms = 0.0;
     std::string correctness = "N/A";
+};
+
+struct EvalModTraceRow
+{
+    std::string stage;
+    std::size_t cpu_q_count = 0;
+    std::size_t gpu_q_count = 0;
+    double cpu_log2_scale = 0.0;
+    double gpu_log2_scale = 0.0;
+    ApproxComparison comparison;
 };
 
 RawComparison compare_ciphertexts(
@@ -642,6 +645,161 @@ RawComparison compare_ciphertexts(
         expected.coeff_modulus_size() == actual.coeff_modulus_size() &&
         expected.scale() == actual.scale();
     return result;
+}
+
+std::vector<std::complex<double>> decrypt_decode(
+    const poseidon::Ciphertext &ciphertext,
+    poseidon::Decryptor &decryptor,
+    const poseidon::CKKSEncoder &encoder)
+{
+    poseidon::Plaintext plaintext;
+    std::vector<std::complex<double>> values;
+    decryptor.decrypt(ciphertext, plaintext);
+    encoder.decode(plaintext, values);
+    return values;
+}
+
+ApproxComparison compare_approx(
+    const std::vector<std::complex<double>> &expected,
+    const std::vector<std::complex<double>> &actual,
+    double tolerance)
+{
+    ApproxComparison result;
+    if (expected.size() != actual.size() || expected.empty())
+    {
+        return result;
+    }
+
+    long double squared_error_sum = 0.0L;
+    for (std::size_t i = 0; i < expected.size(); ++i)
+    {
+        const double error = std::abs(expected[i] - actual[i]);
+        if (!std::isfinite(error))
+        {
+            result.max_abs_error = std::numeric_limits<double>::infinity();
+            result.rms_error = std::numeric_limits<double>::infinity();
+            return result;
+        }
+        result.max_abs_error = std::max(result.max_abs_error, error);
+        squared_error_sum += static_cast<long double>(error) * error;
+    }
+    result.rms_error = std::sqrt(
+        static_cast<double>(squared_error_sum / expected.size()));
+    result.equal = result.max_abs_error <= tolerance;
+    return result;
+}
+
+ApproxComparison compare_decrypted_ciphertexts(
+    const poseidon::Ciphertext &expected,
+    const poseidon::Ciphertext &actual,
+    poseidon::Decryptor &decryptor,
+    const poseidon::CKKSEncoder &encoder,
+    double tolerance)
+{
+    return compare_approx(
+        decrypt_decode(expected, decryptor, encoder),
+        decrypt_decode(actual, decryptor, encoder),
+        tolerance);
+}
+
+poseidon::Ciphertext download_gpu_ciphertext(
+    const poseidon::gpu::GpuCiphertextData &source,
+    const poseidon::PoseidonContext &context)
+{
+    poseidon::Ciphertext result;
+    poseidon::gpu::GpuUploader::download_ciphertext(source, result, context);
+    return result;
+}
+
+EvalModTraceRow compare_eval_mod_trace_stage(
+    std::string stage,
+    const poseidon::Ciphertext &cpu,
+    const poseidon::Ciphertext &gpu,
+    poseidon::Decryptor &decryptor,
+    const poseidon::CKKSEncoder &encoder,
+    double tolerance)
+{
+    EvalModTraceRow row;
+    row.stage = std::move(stage);
+    row.cpu_q_count = cpu.coeff_modulus_size();
+    row.gpu_q_count = gpu.coeff_modulus_size();
+    row.cpu_log2_scale = std::log2(cpu.scale());
+    row.gpu_log2_scale = std::log2(gpu.scale());
+    row.comparison = compare_decrypted_ciphertexts(
+        cpu,
+        gpu,
+        decryptor,
+        encoder,
+        tolerance);
+    return row;
+}
+
+void print_eval_mod_trace_table(const std::vector<EvalModTraceRow> &rows)
+{
+    constexpr int stage_width = 28;
+    constexpr int q_width = 7;
+    constexpr int scale_width = 12;
+    constexpr int error_width = 16;
+    constexpr int correct_width = 9;
+
+    auto separator = [&]() {
+        std::cout << "|-" << std::string(stage_width, '-')
+                  << "-|-" << std::string(q_width, '-')
+                  << "-|-" << std::string(q_width, '-')
+                  << "-|-" << std::string(scale_width, '-')
+                  << "-|-" << std::string(scale_width, '-')
+                  << "-|-" << std::string(error_width, '-')
+                  << "-|-" << std::string(correct_width, '-') << "-|\n";
+    };
+    auto print_row = [&](const std::string &stage,
+                         const std::string &cpu_q,
+                         const std::string &gpu_q,
+                         const std::string &cpu_scale,
+                         const std::string &gpu_scale,
+                         const std::string &error,
+                         const std::string &correct) {
+        std::cout << "| " << std::left << std::setw(stage_width) << stage
+                  << " | " << std::right << std::setw(q_width) << cpu_q
+                  << " | " << std::right << std::setw(q_width) << gpu_q
+                  << " | " << std::right << std::setw(scale_width) << cpu_scale
+                  << " | " << std::right << std::setw(scale_width) << gpu_scale
+                  << " | " << std::right << std::setw(error_width) << error
+                  << " | " << std::right << std::setw(correct_width) << correct
+                  << " |\n";
+    };
+
+    std::cout << "\n[EvalMod CPU/GPU stage trace: real branch]\n";
+    separator();
+    print_row(
+        "stage", "CPU q", "GPU q", "CPU log2(s)", "GPU log2(s)",
+        "max abs error", "correct");
+    separator();
+
+    std::string first_divergent_stage = "none";
+    for (const auto &row : rows)
+    {
+        std::ostringstream cpu_scale;
+        std::ostringstream gpu_scale;
+        std::ostringstream error;
+        cpu_scale << std::fixed << std::setprecision(3) << row.cpu_log2_scale;
+        gpu_scale << std::fixed << std::setprecision(3) << row.gpu_log2_scale;
+        error << std::scientific << std::setprecision(6)
+              << row.comparison.max_abs_error;
+        print_row(
+            row.stage,
+            std::to_string(row.cpu_q_count),
+            std::to_string(row.gpu_q_count),
+            cpu_scale.str(),
+            gpu_scale.str(),
+            error.str(),
+            row.comparison.equal ? "YES" : "NO");
+        if (!row.comparison.equal && first_divergent_stage == "none")
+        {
+            first_divergent_stage = row.stage;
+        }
+    }
+    separator();
+    std::cout << "first divergent stage = " << first_divergent_stage << "\n";
 }
 
 template <typename Func>
@@ -749,8 +907,8 @@ void print_bootstrap_timing_table(
     const std::vector<TimingRow> &rows,
     std::size_t iterations,
     std::size_t warmup,
-    std::optional<std::size_t> full_smoke_iterations = std::nullopt,
-    std::optional<std::size_t> full_smoke_warmup = std::nullopt)
+    std::optional<std::size_t> full_iterations = std::nullopt,
+    std::optional<std::size_t> full_warmup = std::nullopt)
 {
     constexpr int op_width = 42;
     constexpr int cpu_width = 14;
@@ -797,19 +955,20 @@ void print_bootstrap_timing_table(
     print_separator();
     std::cout << "iterations=" << iterations
               << ", warmup=" << warmup << "\n";
-    if (full_smoke_iterations.has_value())
+    if (full_iterations.has_value())
     {
-        std::cout << "full/evalmod smoke iterations=" << *full_smoke_iterations;
-        if (full_smoke_warmup.has_value())
+        std::cout << "full/evalmod iterations=" << *full_iterations;
+        if (full_warmup.has_value())
         {
-            std::cout << ", warmup=" << *full_smoke_warmup;
+            std::cout << ", warmup=" << *full_warmup;
         }
         std::cout << "\n";
     }
     std::cout << "excluded from timing: matrix generation/upload, Galois key generation/upload, "
-                 "per-level compact key precompute, constant plaintext encode/upload, "
-                 "ciphertext download/compare\n";
-    std::cout << "note: GPU rotate/key-switch reuses setup-time compacted per-q keys\n";
+                 "CPU EvalMod level probe, zero-copy key-view validation, "
+                 "constant plaintext encode/upload, "
+                 "EvalMod stage-trace snapshots/download, ciphertext download/compare\n";
+    std::cout << "note: GPU rotate/key-switch reads zero-copy Q-prefix/P-tail key views\n";
 }
 
 }  // namespace
@@ -828,11 +987,11 @@ int main()
         RmmPoolScope rmm_scope(device_id);
 
         const std::size_t degree =
-            env_size_or("POSEIDON_BOOTSTRAP_DEGREE", 65536);
+            env_size_or("POSEIDON_BOOTSTRAP_DEGREE", 32768);
         const std::size_t q_count =
-            env_size_or("POSEIDON_BOOTSTRAP_Q_COUNT", 8);
+            env_size_or("POSEIDON_BOOTSTRAP_Q_COUNT", 20);
         const std::size_t p_count =
-            env_size_or("POSEIDON_BOOTSTRAP_P_COUNT", 2);
+            env_size_or("POSEIDON_BOOTSTRAP_P_COUNT", 5);
         const std::uint32_t log_q = static_cast<std::uint32_t>(
             env_size_or("POSEIDON_BOOTSTRAP_LOG_Q", 30));
         const std::uint32_t log_p = static_cast<std::uint32_t>(
@@ -840,33 +999,49 @@ int main()
         const std::uint32_t log_scale = static_cast<std::uint32_t>(
             env_size_or("POSEIDON_BOOTSTRAP_LOG_SCALE", 25));
         const std::uint32_t q0_level = static_cast<std::uint32_t>(
-            env_size_or("POSEIDON_BOOTSTRAP_Q0_LEVEL", 0));
+            env_size_or("POSEIDON_BOOTSTRAP_Q0_LEVEL", 1));
         const std::uint32_t bootstrap_ratio = static_cast<std::uint32_t>(
-            env_size_or("POSEIDON_BOOTSTRAP_MESSAGE_RATIO", 1));
+            env_size_or("POSEIDON_BOOTSTRAP_MESSAGE_RATIO", 512));
         const std::size_t warmup =
-            env_size_or("POSEIDON_BOOTSTRAP_WARMUP", 2);
+            env_size_or("POSEIDON_BOOTSTRAP_WARMUP", 0);
         const std::size_t iterations =
-            env_size_or("POSEIDON_BOOTSTRAP_ITERATIONS", 10);
-        const std::size_t full_smoke_warmup =
+            env_size_or("POSEIDON_BOOTSTRAP_ITERATIONS", 1);
+        const std::size_t full_warmup =
             env_size_or(
                 "POSEIDON_BOOTSTRAP_FULL_WARMUP",
-                std::min<std::size_t>(warmup, 1));
-        const std::size_t full_smoke_iterations =
+                0);
+        const std::size_t full_iterations =
             env_size_or(
                 "POSEIDON_BOOTSTRAP_FULL_ITERATIONS",
-                std::min<std::size_t>(iterations, 3));
-        const double c2s_scaling =
-            env_double_or("POSEIDON_BOOTSTRAP_C2S_SCALING", 1.0);
+                1);
+        double c2s_scaling = env_double_or(
+            "POSEIDON_BOOTSTRAP_C2S_SCALING",
+            std::numeric_limits<double>::quiet_NaN());
         const std::uint32_t c2s_log_bsgs_ratio = static_cast<std::uint32_t>(
             env_size_or("POSEIDON_BOOTSTRAP_C2S_LOG_BSGS_RATIO", 1));
         const std::uint32_t c2s_step = static_cast<std::uint32_t>(
             env_size_or("POSEIDON_BOOTSTRAP_C2S_STEP", 1));
-        const double s2c_scaling =
-            env_double_or("POSEIDON_BOOTSTRAP_S2C_SCALING", 1.0);
+        double s2c_scaling = env_double_or(
+            "POSEIDON_BOOTSTRAP_S2C_SCALING",
+            std::numeric_limits<double>::quiet_NaN());
         const std::uint32_t s2c_log_bsgs_ratio = static_cast<std::uint32_t>(
             env_size_or("POSEIDON_BOOTSTRAP_S2C_LOG_BSGS_RATIO", 1));
         const std::uint32_t s2c_step = static_cast<std::uint32_t>(
             env_size_or("POSEIDON_BOOTSTRAP_S2C_STEP", 1));
+        const std::uint32_t evalmod_log_scale = static_cast<std::uint32_t>(
+            env_size_or("POSEIDON_BOOTSTRAP_EVALMOD_LOG_SCALE", log_q));
+        const std::uint32_t evalmod_double_angle = static_cast<std::uint32_t>(
+            env_size_or("POSEIDON_BOOTSTRAP_EVALMOD_DOUBLE_ANGLE", 3));
+        const std::uint32_t evalmod_k = static_cast<std::uint32_t>(
+            env_size_or("POSEIDON_BOOTSTRAP_EVALMOD_K", 16));
+        const std::uint32_t evalmod_arcsine_degree = static_cast<std::uint32_t>(
+            env_size_or("POSEIDON_BOOTSTRAP_EVALMOD_ARCSINE_DEGREE", 0));
+        const std::uint32_t evalmod_sine_degree = static_cast<std::uint32_t>(
+            env_size_or("POSEIDON_BOOTSTRAP_EVALMOD_SINE_DEGREE", 30));
+        const double correctness_tolerance = env_double_or(
+            "POSEIDON_BOOTSTRAP_CORRECTNESS_TOLERANCE", 1.0e-3);
+        const std::uint32_t evalmod_log_message_ratio =
+            log2_power_of_two(bootstrap_ratio, "POSEIDON_BOOTSTRAP_MESSAGE_RATIO");
 
         if (q_count <= q0_level + 1)
         {
@@ -877,7 +1052,7 @@ int main()
         {
             throw std::invalid_argument("POSEIDON_BOOTSTRAP_ITERATIONS must be nonzero");
         }
-        if (full_smoke_iterations == 0)
+        if (full_iterations == 0)
         {
             throw std::invalid_argument(
                 "POSEIDON_BOOTSTRAP_FULL_ITERATIONS must be nonzero");
@@ -900,12 +1075,38 @@ int main()
             poseidon::PoseidonFactory::get_instance()->create_ckks_evaluator(context);
         poseidon::CKKSEncoder encoder(context);
 
+        const double evalmod_scale =
+            std::exp2(static_cast<double>(evalmod_log_scale));
+        poseidon::EvalModPoly eval_mod_poly(
+            context,
+            poseidon::CosDiscrete,
+            evalmod_scale,
+            /*level_start=*/0,
+            evalmod_log_message_ratio,
+            evalmod_double_angle,
+            evalmod_k,
+            evalmod_arcsine_degree,
+            evalmod_sine_degree);
+        if (!std::isfinite(c2s_scaling))
+        {
+            c2s_scaling =
+                eval_mod_poly.q_div() /
+                (eval_mod_poly.k() * eval_mod_poly.sc_fac() * eval_mod_poly.q_diff());
+        }
+        if (!std::isfinite(s2c_scaling))
+        {
+            s2c_scaling =
+                context.parameters_literal()->scale() /
+                (eval_mod_poly.scaling_factor() / eval_mod_poly.message_ratio());
+        }
+
         poseidon::KeyGenerator keygen(context);
         poseidon::PublicKey public_key;
         keygen.create_public_key(public_key);
         poseidon::RelinKeys relin_keys;
         keygen.create_relin_keys(relin_keys);
         poseidon::Encryptor encryptor(context, public_key, keygen.secret_key());
+        poseidon::Decryptor decryptor(context, keygen.secret_key());
 
         const auto message = make_message(std::size_t{1} << parms.log_slots());
         poseidon::Plaintext plain;
@@ -928,6 +1129,11 @@ int main()
         std::cout << "log_scale       = " << log_scale << "\n";
         std::cout << "q0_level        = " << q0_level << "\n";
         std::cout << "message_ratio   = " << bootstrap_ratio << "\n";
+        std::cout << "evalmod_scale   = 2^" << evalmod_log_scale << "\n";
+        std::cout << "evalmod_degree  = " << evalmod_sine_degree << "\n";
+        std::cout << "double_angle    = " << evalmod_double_angle << "\n";
+        std::cout << "evalmod_k       = " << evalmod_k << "\n";
+        std::cout << "tolerance       = " << correctness_tolerance << "\n";
         std::cout << "c2s_scaling     = " << c2s_scaling << "\n";
         std::cout << "c2s_bsgs_ratio  = " << c2s_log_bsgs_ratio << "\n";
         std::cout << "c2s_step        = " << c2s_step << "\n";
@@ -937,8 +1143,8 @@ int main()
         std::cout << "s2c_step        = " << s2c_step << "\n";
         std::cout << "s2c_rescale     = ordinary\n";
         std::cout << "iterations      = " << iterations << "\n";
-        std::cout << "full_iterations = " << full_smoke_iterations << "\n";
-        std::cout << "full_warmup     = " << full_smoke_warmup << "\n";
+        std::cout << "full_iterations = " << full_iterations << "\n";
+        std::cout << "full_warmup     = " << full_warmup << "\n";
 
         poseidon::gpu::GpuParameterData gpu_params(context, device_id);
         poseidon::gpu::GpuEvaluator gpu_evaluator(gpu_params);
@@ -1032,97 +1238,272 @@ int main()
             gpu_evaluator.raise_modulus(gpu_prepared, gpu_raised);
         });
 
-        std::cout << "\n[CoeffToSlot setup]\n";
-        std::cout << "Generating CPU C2S matrix and rotation keys outside timing...\n";
-        auto c2s_matrix_group =
-            make_coeff_to_slot_matrix_group(
-                context,
+        std::cout << "\n[Unified high-precision bootstrap setup]\n";
+        std::cout << "Generating CPU matrices/plans/keys and uploading one GPU data set "
+                     "outside timing...\n";
+
+        const double raised_scale = static_cast<double>(
+            context.crt_context()->first_context_data()->coeff_modulus()[0].value());
+        const double post_raise_multiplier = std::round(
+            eval_mod_poly.scaling_factor() /
+            raised_scale /
+            eval_mod_poly.message_ratio());
+        if (post_raise_multiplier >
+            static_cast<double>(std::numeric_limits<int>::max()))
+        {
+            throw std::invalid_argument(
+                "post-raise multiplier exceeds CPU/GPU direct integer path");
+        }
+
+        auto c2s_matrix_group = make_coeff_to_slot_matrix_group(
+            context,
+            encoder,
+            c2s_scaling,
+            c2s_log_bsgs_ratio,
+            c2s_step);
+        if (c2s_matrix_group.data().size() >= gpu_raised.meta.q_count)
+        {
+            throw std::invalid_argument(
+                "CoeffToSlot consumes the complete modulus chain");
+        }
+
+        const std::size_t c2s_output_q_count =
+            gpu_raised.meta.q_count - c2s_matrix_group.data().size();
+        const auto c2s_output_parms_id =
+            context.crt_context()->parms_id_map().at(
+                static_cast<std::uint32_t>(c2s_output_q_count - 1));
+        const auto c2s_output_context =
+            context.crt_context()->get_context_data(c2s_output_parms_id);
+        if (!c2s_output_context)
+        {
+            throw std::runtime_error(
+                "CoeffToSlot output parms_id is absent from the context");
+        }
+
+        eval_mod_poly.set_level_start(
+            static_cast<std::uint32_t>(c2s_output_context->level()));
+
+        /*
+         * Probe the CPU high-precision schedule once during untimed setup.
+         * The GPU uploader records this observable output level while still
+         * generating a fixed BSGS/ordinary-rescale GPU execution plan.
+         */
+        poseidon::Plaintext cpu_evalmod_probe_plain;
+        encoder.encode(
+            std::complex<double>(0.125, 0.0),
+            c2s_output_parms_id,
+            evalmod_scale,
+            cpu_evalmod_probe_plain);
+        poseidon::Ciphertext cpu_evalmod_probe_input;
+        encryptor.encrypt(cpu_evalmod_probe_plain, cpu_evalmod_probe_input);
+        cpu_evalmod_probe_input.scale() = evalmod_scale;
+        poseidon::Ciphertext cpu_evalmod_probe_output;
+        cpu_evaluator->eval_mod_high_precision(
+            cpu_evalmod_probe_input,
+            cpu_evalmod_probe_output,
+            eval_mod_poly,
+            relin_keys,
+            encoder);
+        const auto cpu_evalmod_output_parms_id =
+            cpu_evalmod_probe_output.parms_id();
+        const auto cpu_evalmod_output_context =
+            context.crt_context()->get_context_data(
+                cpu_evalmod_output_parms_id);
+        if (!cpu_evalmod_output_context)
+        {
+            throw std::runtime_error(
+                "CPU EvalMod setup probe returned an unknown output parms_id");
+        }
+
+        auto gpu_evalmod_data =
+            poseidon::gpu::GpuUploader::upload_eval_mod_high_precision(
+                eval_mod_poly,
                 encoder,
-                c2s_scaling,
-                c2s_log_bsgs_ratio,
-                c2s_step);
-        auto galois_keys =
-            make_galois_keys_for_matrix_group(
-                context,
-                keygen,
-                c2s_matrix_group);
-        auto gpu_c2s_matrix_group =
-            poseidon::gpu::GpuUploader::upload_linear_matrix_group(
-                c2s_matrix_group,
-                device_id);
-        auto gpu_galois_keys =
+                c2s_output_parms_id,
+                device_id,
+                &gpu_relin_keys,
+                cpu_evalmod_output_parms_id);
+        const auto evalmod_output_q_count =
+            gpu_evalmod_data.output_q_count;
+        const auto evalmod_output_parms_id =
+            gpu_evalmod_data.output_parms_id;
+        const auto evalmod_output_context =
+            context.crt_context()->get_context_data(evalmod_output_parms_id);
+        if (!evalmod_output_context ||
+            evalmod_output_parms_id != cpu_evalmod_output_parms_id)
+        {
+            throw std::runtime_error(
+                "GPU EvalMod setup did not preserve the CPU output parms_id");
+        }
+
+        auto s2c_matrix_group = make_slot_to_coeff_matrix_group(
+            context,
+            encoder,
+            static_cast<std::uint32_t>(evalmod_output_context->level()),
+            s2c_scaling,
+            s2c_log_bsgs_ratio,
+            s2c_step);
+        auto full_galois_keys = make_galois_keys_for_matrix_groups(
+            context,
+            keygen,
+            std::vector<const poseidon::LinearMatrixGroup *>{
+                &c2s_matrix_group,
+                &s2c_matrix_group});
+
+        /*
+         * Keep the library bootstrap as the correctness oracle. The staged
+         * CPU path below intentionally mirrors the GPU ordinary-rescale
+         * scheduler and must independently agree with this result.
+         */
+        auto cpu_library_eval_mod_poly = eval_mod_poly;
+        poseidon::Ciphertext cpu_library_bootstrap_result;
+        cpu_evaluator->bootstrap(
+            source,
+            cpu_library_bootstrap_result,
+            relin_keys,
+            full_galois_keys,
+            encoder,
+            cpu_library_eval_mod_poly);
+
+        poseidon::Plaintext minus_i_plain;
+        encoder.encode(
+            std::complex<double>(0.0, -1.0),
+            c2s_output_parms_id,
+            1.0,
+            minus_i_plain);
+        poseidon::Plaintext plus_i_plain;
+        encoder.encode(
+            std::complex<double>(0.0, 1.0),
+            evalmod_output_parms_id,
+            1.0,
+            plus_i_plain);
+
+        auto gpu_full_galois_keys =
             poseidon::gpu::GpuUploader::upload_galois_keys(
-                galois_keys,
+                full_galois_keys,
                 device_id);
         const auto c2s_key_q_counts = required_dft_key_q_counts(
             gpu_raised.meta.q_count,
             c2s_matrix_group.data().size(),
             true);
-        poseidon::gpu::GpuUploader::precompute_compacted_keys_for_q_counts(
-            gpu_galois_keys,
-            c2s_key_q_counts);
-        std::cout << "c2s matrices    = " << c2s_matrix_group.data().size() << "\n";
-        std::cout << "rotation keys   = " << c2s_matrix_group.rot_index().size() + 1
-                  << "\n";
-        std::cout << "compact key q   = " << join_q_counts(c2s_key_q_counts) << "\n";
-        std::cout << "gpu input q     = " << gpu_raised.meta.q_count
-                  << " parms_level="
-                  << format_context_level(context, gpu_raised.meta.parms_id)
-                  << "\n";
-        print_matrix_group_levels(context, c2s_matrix_group, "c2s");
+        const auto s2c_key_q_counts = required_dft_key_q_counts(
+            evalmod_output_q_count,
+            s2c_matrix_group.data().size(),
+            false);
+        const auto full_key_q_counts =
+            merge_q_counts(c2s_key_q_counts, s2c_key_q_counts);
+        poseidon::gpu::GpuUploader::prepare_key_views_for_q_counts(
+            gpu_full_galois_keys,
+            full_key_q_counts);
 
-        poseidon::Ciphertext cpu_dft_for_plain;
-        cpu_dft_rescale(
-            cpu_reference,
-            c2s_matrix_group,
-            cpu_dft_for_plain,
-            *cpu_evaluator,
-            galois_keys);
-        poseidon::Plaintext minus_i_plain;
-        encoder.encode(
-            std::complex<double>(0.0, -1.0),
-            cpu_dft_for_plain.parms_id(),
-            1.0,
-            minus_i_plain);
-        auto gpu_minus_i_plain =
+        poseidon::gpu::GpuBootstrapData bootstrap_data;
+        bootstrap_data.q0_parms_id = q0_parms_id;
+        bootstrap_data.q0_over_message_ratio = target_q0_scale;
+        bootstrap_data.raised_scale_override = raised_scale;
+        bootstrap_data.slot_to_coeff_input_scale =
+            context.parameters_literal()->scale();
+        if (post_raise_multiplier > 1.0)
+        {
+            bootstrap_data.post_raise_integer_multiplier =
+                static_cast<std::uint64_t>(post_raise_multiplier);
+            bootstrap_data.post_raise_scale_multiplier =
+                post_raise_multiplier;
+        }
+        bootstrap_data.coeff_to_slot_matrix =
+            poseidon::gpu::GpuUploader::upload_linear_matrix_group(
+                c2s_matrix_group,
+                device_id);
+        bootstrap_data.slot_to_coeff_matrix =
+            poseidon::gpu::GpuUploader::upload_linear_matrix_group(
+                s2c_matrix_group,
+                device_id);
+        bootstrap_data.minus_i_plaintext =
             poseidon::gpu::GpuUploader::upload_plaintext(
                 minus_i_plain,
                 device_id);
+        bootstrap_data.plus_i_plaintext =
+            poseidon::gpu::GpuUploader::upload_plaintext(
+                plus_i_plain,
+                device_id);
+        bootstrap_data.eval_mod = std::move(gpu_evalmod_data);
+
+        std::cout << "c2s matrices     = "
+                  << c2s_matrix_group.data().size() << "\n";
+        std::cout << "s2c matrices     = "
+                  << s2c_matrix_group.data().size() << "\n";
+        std::cout << "rotation keys    = "
+                  << full_galois_keys.data().size() << "\n";
+        std::cout << "Galois key views = "
+                  << join_q_counts(full_key_q_counts) << "\n";
+        std::cout << "polynomial degree= "
+                  << eval_mod_poly.sine_poly().degree() << "\n";
+        std::cout << "basis steps       = "
+                  << bootstrap_data.eval_mod.basis_steps.size() << "\n";
+        std::cout << "BSGS leaf blocks  = "
+                  << bootstrap_data.eval_mod.polynomial_blocks.size() << "\n";
+        std::cout << "BSGS combines     = "
+                  << bootstrap_data.eval_mod.polynomial_combine_steps.size() << "\n";
+        std::cout << "double-angle      = "
+                  << bootstrap_data.eval_mod.double_angle_constants.size() << "\n";
+        std::cout << "EvalMod input q   = "
+                  << c2s_output_q_count << "\n";
+        std::cout << "EvalMod output q  = "
+                  << evalmod_output_q_count << "\n";
+        std::cout << "CPU EvalMod out q = "
+                  << cpu_evalmod_probe_output.coeff_modulus_size() << "\n";
+        std::cout << "Relin key views   = "
+                  << join_q_counts(
+                         bootstrap_data.eval_mod.required_relin_q_counts)
+                  << "\n";
+        std::cout << "GPU setup objects = one C2S matrix group, one S2C matrix group, "
+                     "one Galois-key set\n";
+
+        poseidon::Ciphertext cpu_full_raised = cpu_reference;
+        cpu_full_raised.scale() = raised_scale;
+        if (post_raise_multiplier > 1.0)
+        {
+            cpu_evaluator->multiply_const_direct(
+                cpu_full_raised,
+                static_cast<int>(post_raise_multiplier),
+                cpu_full_raised,
+                encoder);
+            cpu_full_raised.scale() *= post_raise_multiplier;
+        }
+
+        poseidon::gpu::GpuCiphertextData gpu_full_raised;
+        gpu_evaluator.multiply_scalar(
+            gpu_raised,
+            post_raise_multiplier > 1.0
+                ? static_cast<std::uint64_t>(post_raise_multiplier)
+                : std::uint64_t{1},
+            gpu_full_raised);
+        gpu_full_raised.meta.scale =
+            raised_scale *
+            (post_raise_multiplier > 1.0
+                 ? post_raise_multiplier
+                 : 1.0);
 
         poseidon::Ciphertext cpu_c2s_real;
         poseidon::Ciphertext cpu_c2s_imag;
         cpu_coeff_to_slot_rescale(
-            cpu_reference,
+            cpu_full_raised,
             c2s_matrix_group,
             cpu_c2s_real,
             cpu_c2s_imag,
             *cpu_evaluator,
-            galois_keys,
+            full_galois_keys,
             encoder);
 
-        poseidon::gpu::GpuCiphertextData gpu_c2s_real;
-        poseidon::gpu::GpuCiphertextData gpu_c2s_imag;
-        try
-        {
-            gpu_evaluator.coeff_to_slot(
-                gpu_raised,
-                gpu_c2s_matrix_group,
-                gpu_minus_i_plain,
-                gpu_galois_keys,
-                gpu_c2s_real,
-                gpu_c2s_imag);
-        }
-        catch (const std::exception &ex)
-        {
-            throw std::runtime_error(
-                std::string("GPU coeff_to_slot correctness failed: input q_count=") +
-                std::to_string(gpu_raised.meta.q_count) +
-                ", input parms_level=" +
-                format_context_level(context, gpu_raised.meta.parms_id) +
-                ", minus_i parms_level=" +
-                format_context_level(context, gpu_minus_i_plain.meta.parms_id) +
-                ": " + ex.what());
-        }
+        poseidon::gpu::GpuBootstrapWorkspace bootstrap_workspace;
+        auto &gpu_c2s_real = bootstrap_workspace.coeff_to_slot_real;
+        auto &gpu_c2s_imag = bootstrap_workspace.coeff_to_slot_imag;
+        gpu_evaluator.coeff_to_slot(
+            gpu_full_raised,
+            bootstrap_data.coeff_to_slot_matrix,
+            bootstrap_data.minus_i_plaintext,
+            gpu_full_galois_keys,
+            gpu_c2s_real,
+            gpu_c2s_imag);
         cudaDeviceSynchronize();
 
         poseidon::Ciphertext gpu_c2s_real_download;
@@ -1135,162 +1516,264 @@ int main()
             gpu_c2s_imag,
             gpu_c2s_imag_download,
             context);
-
         const auto c2s_real_comparison =
             compare_ciphertexts(cpu_c2s_real, gpu_c2s_real_download, 8);
         const auto c2s_imag_comparison =
             compare_ciphertexts(cpu_c2s_imag, gpu_c2s_imag_download, 8);
+        const bool c2s_correct =
+            c2s_real_comparison.equal && c2s_imag_comparison.equal;
 
-        std::cout << "\n[CPU/GPU bootstrap CoeffToSlot comparison]\n";
-        std::cout << "real raw words  = " << c2s_real_comparison.expected_words << "\n";
-        std::cout << "real mismatches = " << c2s_real_comparison.mismatch_count << "\n";
-        std::cout << "real raw_equal  = "
+        std::cout << "\n[CPU/GPU CoeffToSlot correctness]\n";
+        std::cout << "real raw_equal = "
                   << (c2s_real_comparison.equal ? "YES" : "NO") << "\n";
-        std::cout << "imag raw words  = " << c2s_imag_comparison.expected_words << "\n";
-        std::cout << "imag mismatches = " << c2s_imag_comparison.mismatch_count << "\n";
-        std::cout << "imag raw_equal  = "
+        std::cout << "imag raw_equal = "
                   << (c2s_imag_comparison.equal ? "YES" : "NO") << "\n";
-        std::cout << "result q_count  = "
-                  << gpu_c2s_real_download.coeff_modulus_size() << "\n";
-        std::cout << "result NTT form = "
-                  << gpu_c2s_real_download.is_ntt_form() << "\n";
-
-        if (!c2s_real_comparison.equal || !c2s_imag_comparison.equal)
+        if (!c2s_correct)
         {
             return EXIT_FAILURE;
         }
 
-        for (std::size_t i = 0; i < warmup; ++i)
+        poseidon::Ciphertext cpu_eval_real;
+        poseidon::Ciphertext cpu_eval_imag;
+        poseidon::EvalModTrace cpu_eval_real_trace;
+        cpu_evaluator->eval_mod_high_precision(
+            cpu_c2s_real,
+            cpu_eval_real,
+            eval_mod_poly,
+            relin_keys,
+            encoder,
+            &cpu_eval_real_trace);
+        cpu_evaluator->eval_mod_high_precision(
+            cpu_c2s_imag,
+            cpu_eval_imag,
+            eval_mod_poly,
+            relin_keys,
+            encoder);
+        if (cpu_eval_real.parms_id() != cpu_evalmod_output_parms_id ||
+            cpu_eval_imag.parms_id() != cpu_evalmod_output_parms_id)
         {
-            cpu_coeff_to_slot_rescale(
-                cpu_reference,
-                c2s_matrix_group,
-                cpu_c2s_real,
-                cpu_c2s_imag,
-                *cpu_evaluator,
-                galois_keys,
-                encoder);
-            gpu_evaluator.coeff_to_slot(
-                gpu_raised,
-                gpu_c2s_matrix_group,
-                gpu_minus_i_plain,
-                gpu_galois_keys,
-                gpu_c2s_real,
-                gpu_c2s_imag);
+            throw std::runtime_error(
+                "CPU EvalMod output level changed between setup probe and correctness execution");
         }
+
+        auto &gpu_eval_real = bootstrap_workspace.eval_mod_real;
+        auto &gpu_eval_imag = bootstrap_workspace.eval_mod_imag;
+        bootstrap_workspace.capture_eval_mod_trace = true;
+        gpu_evaluator.eval_mod_high_precision(
+            gpu_c2s_real,
+            bootstrap_data,
+            gpu_relin_keys,
+            bootstrap_workspace,
+            gpu_eval_real);
         cudaDeviceSynchronize();
 
-        double cpu_c2s_ms = 0.0;
-        cpu_c2s_ms = time_cpu_ms(iterations, [&]() {
-            poseidon::Ciphertext real;
-            poseidon::Ciphertext imag;
-            cpu_coeff_to_slot_rescale(
-                cpu_reference,
-                c2s_matrix_group,
-                real,
-                imag,
-                *cpu_evaluator,
-                galois_keys,
-                encoder);
-        });
+        const auto gpu_trace_offset_input = download_gpu_ciphertext(
+            bootstrap_workspace.eval_mod_trace_offset_input,
+            context);
+        const auto gpu_trace_polynomial_output = download_gpu_ciphertext(
+            bootstrap_workspace.eval_mod_trace_polynomial_output,
+            context);
+        std::map<std::uint32_t, poseidon::Ciphertext> gpu_trace_basis;
+        for (const auto &[degree_index, cpu_basis_ciphertext] :
+             cpu_eval_real_trace.basis)
+        {
+            (void)cpu_basis_ciphertext;
+            if (degree_index < bootstrap_workspace.eval_mod_basis.size() &&
+                !bootstrap_workspace.eval_mod_basis[degree_index].empty())
+            {
+                gpu_trace_basis.emplace(
+                    degree_index,
+                    download_gpu_ciphertext(
+                        bootstrap_workspace.eval_mod_basis[degree_index],
+                        context));
+            }
+        }
+        std::vector<poseidon::Ciphertext> gpu_trace_polynomial_leaves;
+        gpu_trace_polynomial_leaves.reserve(
+            bootstrap_data.eval_mod.polynomial_blocks.size());
+        for (std::size_t block_index = 0;
+             block_index < bootstrap_data.eval_mod.polynomial_blocks.size();
+             ++block_index)
+        {
+            gpu_trace_polynomial_leaves.push_back(download_gpu_ciphertext(
+                bootstrap_workspace.eval_mod_nodes.at(block_index),
+                context));
+        }
+        std::vector<poseidon::Ciphertext> gpu_trace_polynomial_combines;
+        gpu_trace_polynomial_combines.reserve(
+            bootstrap_data.eval_mod.polynomial_combine_steps.size());
+        for (const auto &combine :
+             bootstrap_data.eval_mod.polynomial_combine_steps)
+        {
+            gpu_trace_polynomial_combines.push_back(download_gpu_ciphertext(
+                bootstrap_workspace.eval_mod_nodes.at(combine.output_node),
+                context));
+        }
+        std::vector<poseidon::Ciphertext> gpu_trace_double_angle_outputs;
+        gpu_trace_double_angle_outputs.reserve(
+            bootstrap_workspace.eval_mod_trace_double_angle_outputs.size());
+        for (const auto &gpu_trace_ciphertext :
+             bootstrap_workspace.eval_mod_trace_double_angle_outputs)
+        {
+            gpu_trace_double_angle_outputs.push_back(download_gpu_ciphertext(
+                gpu_trace_ciphertext,
+                context));
+        }
 
-        double gpu_c2s_ms = 0.0;
-        gpu_c2s_ms = time_gpu_ms(iterations, [&]() {
-            gpu_evaluator.coeff_to_slot(
-                gpu_raised,
-                gpu_c2s_matrix_group,
-                gpu_minus_i_plain,
-                gpu_galois_keys,
-                gpu_c2s_real,
-                gpu_c2s_imag);
-        });
+        bootstrap_workspace.capture_eval_mod_trace = false;
+        gpu_evaluator.eval_mod_high_precision(
+            gpu_c2s_imag,
+            bootstrap_data,
+            gpu_relin_keys,
+            bootstrap_workspace,
+            gpu_eval_imag);
+        cudaDeviceSynchronize();
 
-        std::cout << "\n[SlotToCoeff setup]\n";
-        std::cout << "Generating CPU S2C matrix and rotation keys outside timing...\n";
-        const auto s2c_level_start = static_cast<std::uint32_t>(
-            context.crt_context()->get_context_data(cpu_c2s_real.parms_id())->level());
-        auto s2c_matrix_group =
-            make_slot_to_coeff_matrix_group(
-                context,
+        poseidon::Ciphertext gpu_eval_real_download;
+        poseidon::Ciphertext gpu_eval_imag_download;
+        poseidon::gpu::GpuUploader::download_ciphertext(
+            gpu_eval_real,
+            gpu_eval_real_download,
+            context);
+        poseidon::gpu::GpuUploader::download_ciphertext(
+            gpu_eval_imag,
+            gpu_eval_imag_download,
+            context);
+        if (gpu_eval_real_download.parms_id() != cpu_evalmod_output_parms_id ||
+            gpu_eval_imag_download.parms_id() != cpu_evalmod_output_parms_id)
+        {
+            throw std::runtime_error(
+                "GPU EvalMod output level does not match the CPU high-precision schedule");
+        }
+        const auto eval_real_comparison =
+            compare_decrypted_ciphertexts(
+                cpu_eval_real,
+                gpu_eval_real_download,
+                decryptor,
                 encoder,
-                s2c_level_start,
-                s2c_scaling,
-                s2c_log_bsgs_ratio,
-                s2c_step);
-        auto s2c_galois_keys =
-            make_galois_keys_for_matrix_group(
-                context,
-                keygen,
-                s2c_matrix_group);
-        auto gpu_s2c_matrix_group =
-            poseidon::gpu::GpuUploader::upload_linear_matrix_group(
-                s2c_matrix_group,
-                device_id);
-        auto gpu_s2c_galois_keys =
-            poseidon::gpu::GpuUploader::upload_galois_keys(
-                s2c_galois_keys,
-                device_id);
-        const auto s2c_key_q_counts = required_dft_key_q_counts(
-            gpu_c2s_real.meta.q_count,
-            s2c_matrix_group.data().size(),
-            false);
-        poseidon::gpu::GpuUploader::precompute_compacted_keys_for_q_counts(
-            gpu_s2c_galois_keys,
-            s2c_key_q_counts);
+                correctness_tolerance);
+        const auto eval_imag_comparison =
+            compare_decrypted_ciphertexts(
+                cpu_eval_imag,
+                gpu_eval_imag_download,
+                decryptor,
+                encoder,
+                correctness_tolerance);
+        const bool evalmod_correct =
+            eval_real_comparison.equal && eval_imag_comparison.equal;
 
-        poseidon::Plaintext plus_i_plain;
-        encoder.encode(
-            std::complex<double>(0.0, 1.0),
-            cpu_c2s_imag.parms_id(),
-            1.0,
-            plus_i_plain);
-        auto gpu_plus_i_plain =
-            poseidon::gpu::GpuUploader::upload_plaintext(
-                plus_i_plain,
-                device_id);
+        std::vector<EvalModTraceRow> eval_mod_trace_rows;
+        eval_mod_trace_rows.push_back(compare_eval_mod_trace_stage(
+            "input + offset",
+            cpu_eval_real_trace.offset_input,
+            gpu_trace_offset_input,
+            decryptor,
+            encoder,
+            correctness_tolerance));
+        for (const auto &[degree_index, gpu_basis_ciphertext] : gpu_trace_basis)
+        {
+            const auto cpu_basis_iter =
+                cpu_eval_real_trace.basis.find(degree_index);
+            if (cpu_basis_iter == cpu_eval_real_trace.basis.end())
+            {
+                continue;
+            }
+            eval_mod_trace_rows.push_back(compare_eval_mod_trace_stage(
+                "basis T_" + std::to_string(degree_index),
+                cpu_basis_iter->second,
+                gpu_basis_ciphertext,
+                decryptor,
+                encoder,
+                correctness_tolerance));
+        }
+        const auto compared_leaf_count = std::min(
+            cpu_eval_real_trace.polynomial_leaves.size(),
+            gpu_trace_polynomial_leaves.size());
+        for (std::size_t leaf_index = 0;
+             leaf_index < compared_leaf_count;
+             ++leaf_index)
+        {
+            eval_mod_trace_rows.push_back(compare_eval_mod_trace_stage(
+                "polynomial leaf " + std::to_string(leaf_index),
+                cpu_eval_real_trace.polynomial_leaves[leaf_index],
+                gpu_trace_polynomial_leaves[leaf_index],
+                decryptor,
+                encoder,
+                correctness_tolerance));
+        }
+        const auto compared_combine_count = std::min(
+            cpu_eval_real_trace.polynomial_combines.size(),
+            gpu_trace_polynomial_combines.size());
+        for (std::size_t combine_index = 0;
+             combine_index < compared_combine_count;
+             ++combine_index)
+        {
+            eval_mod_trace_rows.push_back(compare_eval_mod_trace_stage(
+                "polynomial combine " + std::to_string(combine_index),
+                cpu_eval_real_trace.polynomial_combines[combine_index],
+                gpu_trace_polynomial_combines[combine_index],
+                decryptor,
+                encoder,
+                correctness_tolerance));
+        }
+        eval_mod_trace_rows.push_back(compare_eval_mod_trace_stage(
+            "polynomial output",
+            cpu_eval_real_trace.polynomial_output,
+            gpu_trace_polynomial_output,
+            decryptor,
+            encoder,
+            correctness_tolerance));
+        const auto compared_double_angle_count = std::min(
+            cpu_eval_real_trace.double_angle_outputs.size(),
+            gpu_trace_double_angle_outputs.size());
+        for (std::size_t double_angle_index = 0;
+             double_angle_index < compared_double_angle_count;
+             ++double_angle_index)
+        {
+            eval_mod_trace_rows.push_back(compare_eval_mod_trace_stage(
+                "double angle " + std::to_string(double_angle_index),
+                cpu_eval_real_trace.double_angle_outputs[double_angle_index],
+                gpu_trace_double_angle_outputs[double_angle_index],
+                decryptor,
+                encoder,
+                correctness_tolerance));
+        }
+        print_eval_mod_trace_table(eval_mod_trace_rows);
+        std::cout << "trace counts: basis CPU/GPU="
+                  << cpu_eval_real_trace.basis.size() << "/"
+                  << gpu_trace_basis.size()
+                  << ", leaves CPU/GPU="
+                  << cpu_eval_real_trace.polynomial_leaves.size() << "/"
+                  << gpu_trace_polynomial_leaves.size()
+                  << ", combines CPU/GPU="
+                  << cpu_eval_real_trace.polynomial_combines.size() << "/"
+                  << gpu_trace_polynomial_combines.size()
+                  << ", double-angle CPU/GPU="
+                  << cpu_eval_real_trace.double_angle_outputs.size() << "/"
+                  << gpu_trace_double_angle_outputs.size() << "\n";
 
-        std::cout << "s2c matrices    = " << s2c_matrix_group.data().size() << "\n";
-        std::cout << "rotation keys   = " << s2c_matrix_group.rot_index().size() + 1
-                  << "\n";
-        std::cout << "compact key q   = " << join_q_counts(s2c_key_q_counts) << "\n";
-        std::cout << "gpu input q     = " << gpu_c2s_real.meta.q_count
-                  << " parms_level="
-                  << format_context_level(context, gpu_c2s_real.meta.parms_id)
-                  << "\n";
-        print_matrix_group_levels(context, s2c_matrix_group, "s2c");
+        cpu_eval_real.scale() = context.parameters_literal()->scale();
+        cpu_eval_imag.scale() = context.parameters_literal()->scale();
+        gpu_eval_real.meta.scale = context.parameters_literal()->scale();
+        gpu_eval_imag.meta.scale = context.parameters_literal()->scale();
 
         poseidon::Ciphertext cpu_s2c_result;
         cpu_slot_to_coeff_rescale(
-            cpu_c2s_real,
-            cpu_c2s_imag,
+            cpu_eval_real,
+            cpu_eval_imag,
             s2c_matrix_group,
             cpu_s2c_result,
             *cpu_evaluator,
-            s2c_galois_keys,
+            full_galois_keys,
             encoder);
-
         poseidon::gpu::GpuCiphertextData gpu_s2c_result;
-        try
-        {
-            gpu_evaluator.slot_to_coeff(
-                gpu_c2s_real,
-                gpu_c2s_imag,
-                gpu_s2c_matrix_group,
-                gpu_plus_i_plain,
-                gpu_s2c_galois_keys,
-                gpu_s2c_result);
-        }
-        catch (const std::exception &ex)
-        {
-            throw std::runtime_error(
-                std::string("GPU slot_to_coeff correctness failed: real q_count=") +
-                std::to_string(gpu_c2s_real.meta.q_count) +
-                ", real parms_level=" +
-                format_context_level(context, gpu_c2s_real.meta.parms_id) +
-                ", plus_i parms_level=" +
-                format_context_level(context, gpu_plus_i_plain.meta.parms_id) +
-                ": " + ex.what());
-        }
+        gpu_evaluator.slot_to_coeff(
+            gpu_eval_real,
+            gpu_eval_imag,
+            bootstrap_data.slot_to_coeff_matrix,
+            bootstrap_data.plus_i_plaintext,
+            gpu_full_galois_keys,
+            gpu_s2c_result);
         cudaDeviceSynchronize();
 
         poseidon::Ciphertext gpu_s2c_download;
@@ -1298,338 +1781,33 @@ int main()
             gpu_s2c_result,
             gpu_s2c_download,
             context);
-
         const auto s2c_comparison =
-            compare_ciphertexts(cpu_s2c_result, gpu_s2c_download, 8);
+            compare_decrypted_ciphertexts(
+                cpu_s2c_result,
+                gpu_s2c_download,
+                decryptor,
+                encoder,
+                correctness_tolerance);
+        const bool s2c_correct = s2c_comparison.equal;
 
-        std::cout << "\n[CPU/GPU bootstrap SlotToCoeff comparison]\n";
-        std::cout << "cpu raw words   = " << s2c_comparison.expected_words << "\n";
-        std::cout << "gpu raw words   = " << s2c_comparison.actual_words << "\n";
-        std::cout << "mismatches      = " << s2c_comparison.mismatch_count << "\n";
-        std::cout << "raw_equal       = "
-                  << (s2c_comparison.equal ? "YES" : "NO") << "\n";
-        std::cout << "result q_count  = "
-                  << gpu_s2c_download.coeff_modulus_size() << "\n";
-        std::cout << "result NTT form = "
-                  << gpu_s2c_download.is_ntt_form() << "\n";
-
-        if (!s2c_comparison.equal)
-        {
-            return EXIT_FAILURE;
-        }
-
-        double cpu_evalmod_identity_ms = 0.0;
-        double gpu_evalmod_identity_ms = 0.0;
-        double cpu_full_bootstrap_ms = 0.0;
-        double gpu_full_bootstrap_ms = 0.0;
-        bool evalmod_identity_correct = false;
-        bool full_scheduler_correct = false;
-
-        {
-        std::cout << "\n[Full GPU bootstrap scheduler smoke]\n";
-        const auto eval_mod_target_scale = gpu_c2s_real.meta.scale;
-        if (gpu_c2s_real.meta.q_count < 2)
-        {
-            throw std::invalid_argument(
-                "full bootstrap smoke requires at least two q limbs after CoeffToSlot");
-        }
-        const auto eval_mod_output_q_count = gpu_c2s_real.meta.q_count - 1;
-        if (eval_mod_output_q_count < 1)
-        {
-            throw std::invalid_argument(
-                "full bootstrap smoke EvalMod output q_count is invalid");
-        }
-        const auto eval_mod_output_level =
-            static_cast<std::uint32_t>(eval_mod_output_q_count - 1);
-        const auto eval_mod_output_parms_id =
-            context.crt_context()->parms_id_map().at(eval_mod_output_level);
-
-        auto full_s2c_matrix_group =
-            make_slot_to_coeff_matrix_group(
+        auto run_cpu_full_bootstrap = [&]() {
+            auto raised = cpu_bootstrap_prepare_and_raise(
+                source,
+                *cpu_evaluator,
                 context,
                 encoder,
-                eval_mod_output_level,
-                s2c_scaling,
-                s2c_log_bsgs_ratio,
-                s2c_step);
-        auto full_galois_keys =
-            make_galois_keys_for_matrix_groups(
-                context,
-                keygen,
-                std::vector<const poseidon::LinearMatrixGroup *>{
-                    &c2s_matrix_group,
-                    &full_s2c_matrix_group});
-        auto gpu_full_galois_keys =
-            poseidon::gpu::GpuUploader::upload_galois_keys(
-                full_galois_keys,
-                device_id);
+                target_q0_scale);
+            raised.scale() = raised_scale;
+            if (post_raise_multiplier > 1.0)
+            {
+                cpu_evaluator->multiply_const_direct(
+                    raised,
+                    static_cast<int>(post_raise_multiplier),
+                    raised,
+                    encoder);
+                raised.scale() *= post_raise_multiplier;
+            }
 
-        const auto full_c2s_key_q_counts = required_dft_key_q_counts(
-            gpu_raised.meta.q_count,
-            c2s_matrix_group.data().size(),
-            true);
-        const auto full_s2c_key_q_counts = required_dft_key_q_counts(
-            eval_mod_output_q_count,
-            full_s2c_matrix_group.data().size(),
-            false);
-        const auto full_key_q_counts =
-            merge_q_counts(full_c2s_key_q_counts, full_s2c_key_q_counts);
-        poseidon::gpu::GpuUploader::precompute_compacted_keys_for_q_counts(
-            gpu_full_galois_keys,
-            full_key_q_counts);
-        poseidon::gpu::GpuUploader::precompute_compacted_keys_for_q_counts(
-            gpu_relin_keys,
-            std::vector<std::size_t>{gpu_c2s_real.meta.q_count});
-
-        auto gpu_full_s2c_matrix_group =
-            poseidon::gpu::GpuUploader::upload_linear_matrix_group(
-                full_s2c_matrix_group,
-                device_id);
-
-        auto gpu_bootstrap_c2s_matrix_group =
-            poseidon::gpu::GpuUploader::upload_linear_matrix_group(
-                c2s_matrix_group,
-                device_id);
-        auto gpu_bootstrap_minus_i_plain =
-            poseidon::gpu::GpuUploader::upload_plaintext(
-                minus_i_plain,
-                device_id);
-
-        poseidon::Plaintext full_plus_i_plain;
-        encoder.encode(
-            std::complex<double>(0.0, 1.0),
-            eval_mod_output_parms_id,
-            1.0,
-            full_plus_i_plain);
-        auto gpu_bootstrap_full_plus_i_plain =
-            poseidon::gpu::GpuUploader::upload_plaintext(
-                full_plus_i_plain,
-                device_id);
-
-        poseidon::Plaintext evalmod_one_plain;
-        encoder.encode(
-            std::complex<double>(1.0, 0.0),
-            gpu_c2s_real.meta.parms_id,
-            eval_mod_target_scale,
-            evalmod_one_plain);
-        auto gpu_evalmod_one_plain =
-            poseidon::gpu::GpuUploader::upload_plaintext(
-                evalmod_one_plain,
-                device_id);
-
-        poseidon::gpu::GpuBootstrapData bootstrap_data;
-        bootstrap_data.q0_parms_id = q0_parms_id;
-        bootstrap_data.q0_over_message_ratio = target_q0_scale;
-        bootstrap_data.coeff_to_slot_matrix = std::move(gpu_bootstrap_c2s_matrix_group);
-        bootstrap_data.slot_to_coeff_matrix = std::move(gpu_full_s2c_matrix_group);
-        bootstrap_data.minus_i_plaintext = std::move(gpu_bootstrap_minus_i_plain);
-        bootstrap_data.plus_i_plaintext = std::move(gpu_bootstrap_full_plus_i_plain);
-        bootstrap_data.eval_mod.target_scale = eval_mod_target_scale;
-        bootstrap_data.eval_mod.polynomial_coefficients.push_back(
-            std::move(gpu_evalmod_one_plain));
-        bootstrap_data.eval_mod.polynomial_coefficients.emplace_back();
-
-        poseidon::gpu::GpuBootstrapWorkspace bootstrap_workspace;
-        poseidon::gpu::GpuCiphertextData gpu_full_bootstrap_result;
-        gpu_evaluator.bootstrap(
-            gpu_source,
-            bootstrap_data,
-            gpu_relin_keys,
-            gpu_full_galois_keys,
-            bootstrap_workspace,
-            gpu_full_bootstrap_result);
-        cudaDeviceSynchronize();
-
-        auto apply_identity_evalmod =
-            [&](const poseidon::gpu::GpuCiphertextData &input,
-                poseidon::gpu::GpuCiphertextData &output) {
-                poseidon::gpu::GpuCiphertextData x;
-                poseidon::gpu::GpuCiphertextData accumulator;
-                poseidon::gpu::GpuCiphertextData with_one;
-                poseidon::gpu::GpuCiphertextData multiplied;
-                poseidon::gpu::GpuCiphertextData relined;
-                poseidon::gpu::GpuCiphertextData rescaled;
-
-                gpu_evaluator.multiply_scalar(input, 1, x);
-                x.meta.scale = eval_mod_target_scale;
-                gpu_evaluator.multiply_scalar(x, 0, accumulator);
-                accumulator.meta.scale = eval_mod_target_scale;
-                gpu_evaluator.add_plain(
-                    accumulator,
-                    bootstrap_data.eval_mod.polynomial_coefficients.front(),
-                    with_one);
-                with_one.meta.scale = eval_mod_target_scale;
-                gpu_evaluator.multiply(with_one, x, multiplied);
-                gpu_evaluator.relinearize(multiplied, gpu_relin_keys, relined);
-                gpu_evaluator.rescale(relined, rescaled);
-                rescaled.meta.scale = eval_mod_target_scale;
-                output = std::move(rescaled);
-            };
-
-        poseidon::gpu::GpuCiphertextData manual_c2s_real;
-        poseidon::gpu::GpuCiphertextData manual_c2s_imag;
-        poseidon::gpu::GpuCiphertextData manual_eval_real;
-        poseidon::gpu::GpuCiphertextData manual_eval_imag;
-        poseidon::gpu::GpuCiphertextData manual_full_result;
-        gpu_evaluator.coeff_to_slot(
-            gpu_raised,
-            bootstrap_data.coeff_to_slot_matrix,
-            bootstrap_data.minus_i_plaintext,
-            gpu_full_galois_keys,
-            manual_c2s_real,
-            manual_c2s_imag);
-        apply_identity_evalmod(manual_c2s_real, manual_eval_real);
-        apply_identity_evalmod(manual_c2s_imag, manual_eval_imag);
-
-        poseidon::Ciphertext cpu_full_c2s_real;
-        poseidon::Ciphertext cpu_full_c2s_imag;
-        poseidon::Ciphertext cpu_full_eval_real;
-        poseidon::Ciphertext cpu_full_eval_imag;
-        poseidon::Ciphertext cpu_full_result;
-        cpu_coeff_to_slot_rescale(
-            cpu_reference,
-            c2s_matrix_group,
-            cpu_full_c2s_real,
-            cpu_full_c2s_imag,
-            *cpu_evaluator,
-            full_galois_keys,
-            encoder);
-        cpu_evalmod_identity_horner(
-            cpu_full_c2s_real,
-            cpu_full_eval_real,
-            *cpu_evaluator,
-            relin_keys,
-            encoder,
-            eval_mod_target_scale);
-        cpu_evalmod_identity_horner(
-            cpu_full_c2s_imag,
-            cpu_full_eval_imag,
-            *cpu_evaluator,
-            relin_keys,
-            encoder,
-            eval_mod_target_scale);
-
-        poseidon::Ciphertext full_c2s_real_download;
-        poseidon::Ciphertext full_c2s_imag_download;
-        poseidon::Ciphertext full_eval_real_download;
-        poseidon::Ciphertext full_eval_imag_download;
-        poseidon::Ciphertext manual_c2s_real_download;
-        poseidon::Ciphertext manual_c2s_imag_download;
-        poseidon::Ciphertext manual_eval_real_download;
-        poseidon::Ciphertext manual_eval_imag_download;
-        poseidon::gpu::GpuUploader::download_ciphertext(
-            bootstrap_workspace.coeff_to_slot_real,
-            full_c2s_real_download,
-            context);
-        poseidon::gpu::GpuUploader::download_ciphertext(
-            bootstrap_workspace.coeff_to_slot_imag,
-            full_c2s_imag_download,
-            context);
-        poseidon::gpu::GpuUploader::download_ciphertext(
-            bootstrap_workspace.eval_mod_real,
-            full_eval_real_download,
-            context);
-        poseidon::gpu::GpuUploader::download_ciphertext(
-            bootstrap_workspace.eval_mod_imag,
-            full_eval_imag_download,
-            context);
-        poseidon::gpu::GpuUploader::download_ciphertext(
-            manual_c2s_real,
-            manual_c2s_real_download,
-            context);
-        poseidon::gpu::GpuUploader::download_ciphertext(
-            manual_c2s_imag,
-            manual_c2s_imag_download,
-            context);
-        poseidon::gpu::GpuUploader::download_ciphertext(
-            manual_eval_real,
-            manual_eval_real_download,
-            context);
-        poseidon::gpu::GpuUploader::download_ciphertext(
-            manual_eval_imag,
-            manual_eval_imag_download,
-            context);
-        const auto full_c2s_real_comparison =
-            compare_ciphertexts(manual_c2s_real_download, full_c2s_real_download, 0);
-        const auto full_c2s_imag_comparison =
-            compare_ciphertexts(manual_c2s_imag_download, full_c2s_imag_download, 0);
-        const auto full_eval_real_comparison =
-            compare_ciphertexts(manual_eval_real_download, full_eval_real_download, 0);
-        const auto full_eval_imag_comparison =
-            compare_ciphertexts(manual_eval_imag_download, full_eval_imag_download, 0);
-        const auto cpu_gpu_eval_real_comparison =
-            compare_ciphertexts(cpu_full_eval_real, manual_eval_real_download, 0);
-        const auto cpu_gpu_eval_imag_comparison =
-            compare_ciphertexts(cpu_full_eval_imag, manual_eval_imag_download, 0);
-
-        gpu_evaluator.slot_to_coeff(
-            manual_eval_real,
-            manual_eval_imag,
-            bootstrap_data.slot_to_coeff_matrix,
-            bootstrap_data.plus_i_plaintext,
-            gpu_full_galois_keys,
-            manual_full_result);
-        cudaDeviceSynchronize();
-        cpu_slot_to_coeff_rescale(
-            cpu_full_eval_real,
-            cpu_full_eval_imag,
-            full_s2c_matrix_group,
-            cpu_full_result,
-            *cpu_evaluator,
-            full_galois_keys,
-            encoder);
-
-        poseidon::Ciphertext gpu_full_bootstrap_download;
-        poseidon::Ciphertext manual_full_download;
-        poseidon::gpu::GpuUploader::download_ciphertext(
-            gpu_full_bootstrap_result,
-            gpu_full_bootstrap_download,
-            context);
-        poseidon::gpu::GpuUploader::download_ciphertext(
-            manual_full_result,
-            manual_full_download,
-            context);
-        const auto full_bootstrap_comparison =
-            compare_ciphertexts(manual_full_download, gpu_full_bootstrap_download, 8);
-        const auto cpu_gpu_full_bootstrap_comparison =
-            compare_ciphertexts(cpu_full_result, gpu_full_bootstrap_download, 8);
-        evalmod_identity_correct =
-            cpu_gpu_eval_real_comparison.equal &&
-            cpu_gpu_eval_imag_comparison.equal;
-        full_scheduler_correct =
-            full_bootstrap_comparison.equal &&
-            cpu_gpu_full_bootstrap_comparison.equal;
-        std::cout << "evalmod smoke   = f(x)=x\n";
-        std::cout << "compact key q   = " << join_q_counts(full_key_q_counts) << "\n";
-        std::cout << "c2s real equal  = "
-                  << (full_c2s_real_comparison.equal ? "YES" : "NO") << "\n";
-        std::cout << "c2s imag equal  = "
-                  << (full_c2s_imag_comparison.equal ? "YES" : "NO") << "\n";
-        std::cout << "eval real equal = "
-                  << (full_eval_real_comparison.equal ? "YES" : "NO") << "\n";
-        std::cout << "eval imag equal = "
-                  << (full_eval_imag_comparison.equal ? "YES" : "NO") << "\n";
-        std::cout << "eval CPU/GPU    = "
-                  << (evalmod_identity_correct ? "YES" : "NO") << "\n";
-        std::cout << "result q_count  = "
-                  << gpu_full_bootstrap_download.coeff_modulus_size() << "\n";
-        std::cout << "mismatches      = "
-                  << full_bootstrap_comparison.mismatch_count << "\n";
-        std::cout << "raw_equal       = "
-                  << (full_scheduler_correct ? "YES" : "NO") << "\n";
-        if (!full_scheduler_correct)
-        {
-            return EXIT_FAILURE;
-        }
-
-        auto run_cpu_full_bootstrap_smoke = [&]() {
-            poseidon::Ciphertext raised =
-                cpu_bootstrap_prepare_and_raise(
-                    source,
-                    *cpu_evaluator,
-                    context,
-                    encoder,
-                    target_q0_scale);
             poseidon::Ciphertext real;
             poseidon::Ciphertext imag;
             poseidon::Ciphertext eval_real;
@@ -1643,24 +1821,24 @@ int main()
                 *cpu_evaluator,
                 full_galois_keys,
                 encoder);
-            cpu_evalmod_identity_horner(
+            cpu_evaluator->eval_mod_high_precision(
                 real,
                 eval_real,
-                *cpu_evaluator,
+                eval_mod_poly,
                 relin_keys,
-                encoder,
-                eval_mod_target_scale);
-            cpu_evalmod_identity_horner(
+                encoder);
+            cpu_evaluator->eval_mod_high_precision(
                 imag,
                 eval_imag,
-                *cpu_evaluator,
+                eval_mod_poly,
                 relin_keys,
-                encoder,
-                eval_mod_target_scale);
+                encoder);
+            eval_real.scale() = context.parameters_literal()->scale();
+            eval_imag.scale() = context.parameters_literal()->scale();
             cpu_slot_to_coeff_rescale(
                 eval_real,
                 eval_imag,
-                full_s2c_matrix_group,
+                s2c_matrix_group,
                 result,
                 *cpu_evaluator,
                 full_galois_keys,
@@ -1668,126 +1846,250 @@ int main()
             return result;
         };
 
-        for (std::size_t i = 0; i < full_smoke_warmup; ++i)
-        {
-            poseidon::Ciphertext cpu_eval_real_warmup;
-            poseidon::Ciphertext cpu_eval_imag_warmup;
-            cpu_evalmod_identity_horner(
-                cpu_full_c2s_real,
-                cpu_eval_real_warmup,
-                *cpu_evaluator,
-                relin_keys,
-                encoder,
-                eval_mod_target_scale);
-            cpu_evalmod_identity_horner(
-                cpu_full_c2s_imag,
-                cpu_eval_imag_warmup,
-                *cpu_evaluator,
-                relin_keys,
-                encoder,
-                eval_mod_target_scale);
-
-            poseidon::gpu::GpuCiphertextData gpu_eval_real_warmup;
-            poseidon::gpu::GpuCiphertextData gpu_eval_imag_warmup;
-            apply_identity_evalmod(manual_c2s_real, gpu_eval_real_warmup);
-            apply_identity_evalmod(manual_c2s_imag, gpu_eval_imag_warmup);
-
-            (void)run_cpu_full_bootstrap_smoke();
-            gpu_evaluator.bootstrap(
-                gpu_source,
-                bootstrap_data,
-                gpu_relin_keys,
-                gpu_full_galois_keys,
-                bootstrap_workspace,
-                gpu_full_bootstrap_result);
-        }
+        poseidon::Ciphertext cpu_full_result =
+            run_cpu_full_bootstrap();
+        poseidon::gpu::GpuCiphertextData gpu_full_result;
+        gpu_evaluator.bootstrap(
+            gpu_source,
+            bootstrap_data,
+            gpu_relin_keys,
+            gpu_full_galois_keys,
+            bootstrap_workspace,
+            gpu_full_result);
         cudaDeviceSynchronize();
 
-        cpu_evalmod_identity_ms = time_cpu_ms(full_smoke_iterations, [&]() {
-            poseidon::Ciphertext eval_real;
-            poseidon::Ciphertext eval_imag;
-            cpu_evalmod_identity_horner(
-                cpu_full_c2s_real,
-                eval_real,
-                *cpu_evaluator,
-                relin_keys,
+        poseidon::Ciphertext gpu_full_download;
+        poseidon::gpu::GpuUploader::download_ciphertext(
+            gpu_full_result,
+            gpu_full_download,
+            context);
+        const auto full_cpu_gpu_comparison =
+            compare_decrypted_ciphertexts(
+                cpu_full_result,
+                gpu_full_download,
+                decryptor,
                 encoder,
-                eval_mod_target_scale);
-            cpu_evalmod_identity_horner(
-                cpu_full_c2s_imag,
-                eval_imag,
-                *cpu_evaluator,
-                relin_keys,
+                correctness_tolerance);
+        const auto cpu_library_source_comparison =
+            compare_approx(
+                message,
+                decrypt_decode(
+                    cpu_library_bootstrap_result,
+                    decryptor,
+                    encoder),
+                correctness_tolerance);
+        const auto staged_cpu_library_comparison =
+            compare_decrypted_ciphertexts(
+                cpu_library_bootstrap_result,
+                cpu_full_result,
+                decryptor,
                 encoder,
-                eval_mod_target_scale);
-        });
+                correctness_tolerance);
+        const auto gpu_library_comparison =
+            compare_decrypted_ciphertexts(
+                cpu_library_bootstrap_result,
+                gpu_full_download,
+                decryptor,
+                encoder,
+                correctness_tolerance);
+        const auto cpu_source_comparison =
+            compare_approx(
+                message,
+                decrypt_decode(cpu_full_result, decryptor, encoder),
+                correctness_tolerance);
+        const auto gpu_source_comparison =
+            compare_approx(
+                message,
+                decrypt_decode(gpu_full_download, decryptor, encoder),
+                correctness_tolerance);
+        const bool full_correct =
+            cpu_library_source_comparison.equal &&
+            staged_cpu_library_comparison.equal &&
+            gpu_library_comparison.equal &&
+            full_cpu_gpu_comparison.equal &&
+            cpu_source_comparison.equal &&
+            gpu_source_comparison.equal;
 
-        gpu_evalmod_identity_ms = time_gpu_ms(full_smoke_iterations, [&]() {
-            poseidon::gpu::GpuCiphertextData eval_real;
-            poseidon::gpu::GpuCiphertextData eval_imag;
-            apply_identity_evalmod(manual_c2s_real, eval_real);
-            apply_identity_evalmod(manual_c2s_imag, eval_imag);
-        });
-
-        poseidon::Ciphertext cpu_full_timing_sink;
-        cpu_full_bootstrap_ms = time_cpu_ms(full_smoke_iterations, [&]() {
-            cpu_full_timing_sink = run_cpu_full_bootstrap_smoke();
-        });
-
-        gpu_full_bootstrap_ms = time_gpu_ms(full_smoke_iterations, [&]() {
-            gpu_evaluator.bootstrap(
-                gpu_source,
-                bootstrap_data,
-                gpu_relin_keys,
-                gpu_full_galois_keys,
-                bootstrap_workspace,
-                gpu_full_bootstrap_result);
-        });
-        }
+        std::cout << "\n[High-precision correctness]\n";
+        std::cout << "EvalMod real max error = "
+                  << eval_real_comparison.max_abs_error << "\n";
+        std::cout << "EvalMod imag max error = "
+                  << eval_imag_comparison.max_abs_error << "\n";
+        std::cout << "S2C CPU/GPU max error  = "
+                  << s2c_comparison.max_abs_error << "\n";
+        std::cout << "full CPU/GPU max error = "
+                  << full_cpu_gpu_comparison.max_abs_error << "\n";
+        std::cout << "CPU library/source err = "
+                  << cpu_library_source_comparison.max_abs_error << "\n";
+        std::cout << "CPU staged/library err = "
+                  << staged_cpu_library_comparison.max_abs_error << "\n";
+        std::cout << "GPU/CPU library error  = "
+                  << gpu_library_comparison.max_abs_error << "\n";
+        std::cout << "CPU/source max error   = "
+                  << cpu_source_comparison.max_abs_error << "\n";
+        std::cout << "GPU/source max error   = "
+                  << gpu_source_comparison.max_abs_error << "\n";
 
         for (std::size_t i = 0; i < warmup; ++i)
         {
-            cpu_slot_to_coeff_rescale(
-                cpu_c2s_real,
-                cpu_c2s_imag,
-                s2c_matrix_group,
-                cpu_s2c_result,
+            poseidon::Ciphertext cpu_real;
+            poseidon::Ciphertext cpu_imag;
+            cpu_coeff_to_slot_rescale(
+                cpu_full_raised,
+                c2s_matrix_group,
+                cpu_real,
+                cpu_imag,
                 *cpu_evaluator,
-                s2c_galois_keys,
+                full_galois_keys,
                 encoder);
-            gpu_evaluator.slot_to_coeff(
+            gpu_evaluator.coeff_to_slot(
+                gpu_full_raised,
+                bootstrap_data.coeff_to_slot_matrix,
+                bootstrap_data.minus_i_plaintext,
+                gpu_full_galois_keys,
                 gpu_c2s_real,
-                gpu_c2s_imag,
-                gpu_s2c_matrix_group,
-                gpu_plus_i_plain,
-                gpu_s2c_galois_keys,
-                gpu_s2c_result);
+                gpu_c2s_imag);
         }
         cudaDeviceSynchronize();
 
-        double cpu_s2c_ms = 0.0;
-        cpu_s2c_ms = time_cpu_ms(iterations, [&]() {
-            poseidon::Ciphertext result;
-            cpu_slot_to_coeff_rescale(
-                cpu_c2s_real,
-                cpu_c2s_imag,
-                s2c_matrix_group,
-                result,
-                *cpu_evaluator,
-                s2c_galois_keys,
-                encoder);
-        });
+        const double cpu_c2s_ms =
+            time_cpu_ms(iterations, [&]() {
+                poseidon::Ciphertext real;
+                poseidon::Ciphertext imag;
+                cpu_coeff_to_slot_rescale(
+                    cpu_full_raised,
+                    c2s_matrix_group,
+                    real,
+                    imag,
+                    *cpu_evaluator,
+                    full_galois_keys,
+                    encoder);
+            });
+        const double gpu_c2s_ms =
+            time_gpu_ms(iterations, [&]() {
+                gpu_evaluator.coeff_to_slot(
+                    gpu_full_raised,
+                    bootstrap_data.coeff_to_slot_matrix,
+                    bootstrap_data.minus_i_plaintext,
+                    gpu_full_galois_keys,
+                    gpu_c2s_real,
+                    gpu_c2s_imag);
+            });
 
-        double gpu_s2c_ms = 0.0;
-        gpu_s2c_ms = time_gpu_ms(iterations, [&]() {
-            gpu_evaluator.slot_to_coeff(
+        for (std::size_t i = 0; i < full_warmup; ++i)
+        {
+            poseidon::Ciphertext cpu_real;
+            poseidon::Ciphertext cpu_imag;
+            cpu_evaluator->eval_mod_high_precision(
+                cpu_c2s_real,
+                cpu_real,
+                eval_mod_poly,
+                relin_keys,
+                encoder);
+            cpu_evaluator->eval_mod_high_precision(
+                cpu_c2s_imag,
+                cpu_imag,
+                eval_mod_poly,
+                relin_keys,
+                encoder);
+            gpu_evaluator.eval_mod_high_precision(
                 gpu_c2s_real,
+                bootstrap_data,
+                gpu_relin_keys,
+                bootstrap_workspace,
+                gpu_eval_real);
+            gpu_evaluator.eval_mod_high_precision(
                 gpu_c2s_imag,
-                gpu_s2c_matrix_group,
-                gpu_plus_i_plain,
-                gpu_s2c_galois_keys,
-                gpu_s2c_result);
-        });
+                bootstrap_data,
+                gpu_relin_keys,
+                bootstrap_workspace,
+                gpu_eval_imag);
+            (void)run_cpu_full_bootstrap();
+            gpu_evaluator.bootstrap(
+                gpu_source,
+                bootstrap_data,
+                gpu_relin_keys,
+                gpu_full_galois_keys,
+                bootstrap_workspace,
+                gpu_full_result);
+        }
+        cudaDeviceSynchronize();
+
+        const double cpu_evalmod_ms =
+            time_cpu_ms(full_iterations, [&]() {
+                poseidon::Ciphertext real;
+                poseidon::Ciphertext imag;
+                cpu_evaluator->eval_mod_high_precision(
+                    cpu_c2s_real,
+                    real,
+                    eval_mod_poly,
+                    relin_keys,
+                    encoder);
+                cpu_evaluator->eval_mod_high_precision(
+                    cpu_c2s_imag,
+                    imag,
+                    eval_mod_poly,
+                    relin_keys,
+                    encoder);
+            });
+        const double gpu_evalmod_ms =
+            time_gpu_ms(full_iterations, [&]() {
+                gpu_evaluator.eval_mod_high_precision(
+                    gpu_c2s_real,
+                    bootstrap_data,
+                    gpu_relin_keys,
+                    bootstrap_workspace,
+                    gpu_eval_real);
+                gpu_evaluator.eval_mod_high_precision(
+                    gpu_c2s_imag,
+                    bootstrap_data,
+                    gpu_relin_keys,
+                    bootstrap_workspace,
+                    gpu_eval_imag);
+            });
+
+        // EvalMod restores the C2S input scale. CPU bootstrap resets both
+        // branches to the library scale before the inverse DFT.
+        gpu_eval_real.meta.scale = context.parameters_literal()->scale();
+        gpu_eval_imag.meta.scale = context.parameters_literal()->scale();
+
+        const double cpu_s2c_ms =
+            time_cpu_ms(full_iterations, [&]() {
+                poseidon::Ciphertext result;
+                cpu_slot_to_coeff_rescale(
+                    cpu_eval_real,
+                    cpu_eval_imag,
+                    s2c_matrix_group,
+                    result,
+                    *cpu_evaluator,
+                    full_galois_keys,
+                    encoder);
+            });
+        const double gpu_s2c_ms =
+            time_gpu_ms(full_iterations, [&]() {
+                gpu_evaluator.slot_to_coeff(
+                    gpu_eval_real,
+                    gpu_eval_imag,
+                    bootstrap_data.slot_to_coeff_matrix,
+                    bootstrap_data.plus_i_plaintext,
+                    gpu_full_galois_keys,
+                    gpu_s2c_result);
+            });
+
+        const double cpu_full_bootstrap_ms =
+            time_cpu_ms(full_iterations, [&]() {
+                cpu_full_result = run_cpu_full_bootstrap();
+            });
+        const double gpu_full_bootstrap_ms =
+            time_gpu_ms(full_iterations, [&]() {
+                gpu_evaluator.bootstrap(
+                    gpu_source,
+                    bootstrap_data,
+                    gpu_relin_keys,
+                    gpu_full_galois_keys,
+                    bootstrap_workspace,
+                    gpu_full_result);
+            });
 
         print_bootstrap_timing_table(
             std::vector<TimingRow>{
@@ -1800,29 +2102,35 @@ int main()
                     "coeff_to_slot",
                     cpu_c2s_ms,
                     gpu_c2s_ms,
-                    (c2s_real_comparison.equal && c2s_imag_comparison.equal) ? "YES" : "NO"},
+                    c2s_correct ? "YES" : "NO"},
+                TimingRow{
+                    "eval_mod_high_precision (real + imag)",
+                    cpu_evalmod_ms,
+                    gpu_evalmod_ms,
+                    evalmod_correct ? "YES" : "NO"},
                 TimingRow{
                     "slot_to_coeff",
                     cpu_s2c_ms,
                     gpu_s2c_ms,
-                    s2c_comparison.equal ? "YES" : "NO"},
+                    s2c_correct ? "YES" : "NO"},
                 TimingRow{
-                    "eval_mod_identity_smoke",
-                    cpu_evalmod_identity_ms,
-                    gpu_evalmod_identity_ms,
-                    evalmod_identity_correct ? "YES" : "NO"},
-                TimingRow{
-                    "full_bootstrap_scheduler_smoke",
+                    "full_bootstrap_high_precision",
                     cpu_full_bootstrap_ms,
                     gpu_full_bootstrap_ms,
-                    full_scheduler_correct ? "YES" : "NO"}},
+                    full_correct ? "YES" : "NO"}},
             iterations,
             warmup,
-            full_smoke_iterations,
-            full_smoke_warmup);
+            full_iterations,
+            full_warmup);
 
-        std::cout << "\n[OK] GPU bootstrap ModRaise, CoeffToSlot, SlotToCoeff, "
-                     "EvalMod smoke, and full scheduler smoke match CPU reference\n";
+        if (!evalmod_correct || !s2c_correct || !full_correct)
+        {
+            return EXIT_FAILURE;
+        }
+
+        std::cout << "\n[OK] One GPU bootstrap data set passed ModRaise, "
+                     "CoeffToSlot, high-precision EvalMod, SlotToCoeff, "
+                     "and full-bootstrap checks\n";
         return EXIT_SUCCESS;
     }
     catch (const std::exception &ex)

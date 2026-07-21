@@ -5,8 +5,6 @@
 #include "poseidon/gpu/gpu_rns_poly.h"
 
 #include <cstddef>
-#include <map>
-#include <memory>
 #include <vector>
 
 namespace poseidon
@@ -49,7 +47,11 @@ struct GpuEvaluationKeyView
 
 struct GpuConstEvaluationKeyView
 {
+    /** Active Q prefix exposed by this non-owning level view. */
     GpuKeyMeta meta;
+
+    /** Q limb count in the single owning [Q_storage | P] allocation. */
+    std::size_t storage_q_count = 0;
     std::vector<GpuConstRNSPolyView> polys;
 };
 
@@ -89,28 +91,10 @@ public:
      */
     std::vector<GpuEvaluationKeyPolyMeta> poly_metadata_;
 
-    /**
-     * @brief Optional setup-time compacted key copies indexed by active Q limb count.
-     *
-     * HYBRID key-switching needs a physical [Q_current | P] key layout.  CPU
-     * keys are uploaded at the full key level, so bootstrapping rotations at
-     * lower levels should precompute these compact views once during setup
-     * instead of repacking keys inside every timed rotate call.
-     */
-    std::map<std::size_t, std::shared_ptr<GpuEvaluationKeyData>> compacted_by_q_count_;
-
 public:
     GpuEvaluationKeyData() = default;
 
     bool empty() const;
-
-    bool has_compacted_key(std::size_t q_count) const;
-
-    void store_compacted_key(
-        std::size_t q_count,
-        GpuEvaluationKeyData compacted_key);
-
-    const GpuEvaluationKeyData &key_for_q_count(std::size_t q_count) const;
 
     /**
      * @brief Create mutable view of evaluation key data.
@@ -121,6 +105,16 @@ public:
      * @brief Create const view of evaluation key data.
      */
     GpuConstEvaluationKeyView make_const_view() const;
+
+    /**
+     * @brief Create a zero-copy view for a lower Q level.
+     *
+     * The owning key remains one contiguous [Q_storage | P] allocation. The
+     * returned view exposes Q[0, active_q_count) while retaining
+     * storage_q_count so KeySwitch can address P at Q_storage * degree.
+     */
+    GpuConstEvaluationKeyView make_const_view(
+        std::size_t active_q_count) const;
 };
 
 using GpuRelinKeysData = GpuEvaluationKeyData;

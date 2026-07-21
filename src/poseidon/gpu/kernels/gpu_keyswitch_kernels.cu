@@ -1422,8 +1422,10 @@ hybrid_forward_ntt_modup_qp_final_mul_accumulate_kernel(
     const GpuWord *rns_primes,
     const GpuWide *rns_modulus_constants,
     const GpuWord *roots,
-    const GpuWord *key_qp0,
-    const GpuWord *key_qp1,
+    const GpuWord *key_q0,
+    const GpuWord *key_p0,
+    const GpuWord *key_q1,
+    const GpuWord *key_p1,
     std::size_t decomp_limb_begin,
     std::size_t decomp_limb_count,
     std::size_t base_q_size,
@@ -1458,7 +1460,8 @@ hybrid_forward_ntt_modup_qp_final_mul_accumulate_kernel(
     GpuWord *accum1 = accum_q1;
     std::size_t value_limb = active_limb;
     std::size_t table_limb = active_limb;
-    std::size_t key_base = 0;
+    const GpuWord *key0 = key_q0;
+    const GpuWord *key1 = key_q1;
 
     if (active_limb < active_q_count)
     {
@@ -1476,7 +1479,8 @@ hybrid_forward_ntt_modup_qp_final_mul_accumulate_kernel(
         accum1 = accum_p1;
         value_limb = p_limb;
         table_limb = base_q_size + p_limb;
-        key_base = base_q_size * degree;
+        key0 = key_p0;
+        key1 = key_p1;
     }
 
     const std::size_t final_gap = gap >> (FusionStages - 1);
@@ -1533,13 +1537,12 @@ hybrid_forward_ntt_modup_qp_final_mul_accumulate_kernel(
     for (std::size_t i = 0; i < kLocalSize; ++i)
     {
         const std::size_t local_offset = base_index + i * final_gap;
-        const std::size_t key_offset = key_base + local_offset;
         hybrid_accumulate_two_products(
             accum0 + local_offset,
             accum1 + local_offset,
             local[i],
-            key_qp0[key_offset],
-            key_qp1[key_offset],
+            key0[local_offset],
+            key1[local_offset],
             modulus,
             barrett_ratio,
             overwrite_accum);
@@ -1559,8 +1562,10 @@ hybrid_forward_ntt_modup_qp_final_mul_accumulate_fused_decomp_q_kernel(
     const GpuWord *rns_primes,
     const GpuWide *rns_modulus_constants,
     const GpuWord *roots,
-    const GpuWord *key_qp0,
-    const GpuWord *key_qp1,
+    const GpuWord *key_q0,
+    const GpuWord *key_p0,
+    const GpuWord *key_q1,
+    const GpuWord *key_p1,
     std::size_t decomp_limb_begin,
     std::size_t decomp_limb_count,
     std::size_t base_q_size,
@@ -1603,8 +1608,8 @@ hybrid_forward_ntt_modup_qp_final_mul_accumulate_fused_decomp_q_kernel(
             accum_q0 + offset,
             accum_q1 + offset,
             c2_ntt[offset],
-            key_qp0[offset],
-            key_qp1[offset],
+            key_q0[offset],
+            key_q1[offset],
             decomp_modulus,
             decomp_barrett,
             overwrite_accum);
@@ -1620,7 +1625,8 @@ hybrid_forward_ntt_modup_qp_final_mul_accumulate_fused_decomp_q_kernel(
         GpuWord *accum1 = accum_q1;
         std::size_t value_limb = active_limb;
         std::size_t table_limb = active_limb;
-        std::size_t key_base = 0;
+        const GpuWord *key0 = key_q0;
+        const GpuWord *key1 = key_q1;
 
         if (active_limb < active_q_count)
         {
@@ -1638,7 +1644,8 @@ hybrid_forward_ntt_modup_qp_final_mul_accumulate_fused_decomp_q_kernel(
             accum1 = accum_p1;
             value_limb = p_limb;
             table_limb = base_q_size + p_limb;
-            key_base = base_q_size * degree;
+            key0 = key_p0;
+            key1 = key_p1;
         }
 
         const std::size_t final_gap = gap >> (FusionStages - 1);
@@ -1695,13 +1702,12 @@ hybrid_forward_ntt_modup_qp_final_mul_accumulate_fused_decomp_q_kernel(
         for (std::size_t i = 0; i < kLocalSize; ++i)
         {
             const std::size_t local_offset = base_index + i * final_gap;
-            const std::size_t key_offset = key_base + local_offset;
             hybrid_accumulate_two_products(
                 accum0 + local_offset,
                 accum1 + local_offset,
                 local[i],
-                key_qp0[key_offset],
-                key_qp1[key_offset],
+                key0[local_offset],
+                key1[local_offset],
                 modulus,
                 barrett_ratio,
                 overwrite_accum);
@@ -2053,8 +2059,10 @@ __global__ void hybrid_multiply_accumulate_two_components_kernel(
     const GpuWord *modup_q,
     const GpuWord *modup_p,
     const GpuWord *c2_ntt,
-    const GpuWord *key_qp0,
-    const GpuWord *key_qp1,
+    const GpuWord *key_q0,
+    const GpuWord *key_p0,
+    const GpuWord *key_q1,
+    const GpuWord *key_p1,
     const GpuWord *rns_primes,
     const GpuWide *rns_modulus_constants,
     std::size_t base_q_size,
@@ -2079,7 +2087,8 @@ __global__ void hybrid_multiply_accumulate_two_components_kernel(
     const GpuWord *modup = modup_q;
     std::size_t local_offset = tid;
     std::size_t table_limb = tid >> degree_power;
-    std::size_t key_offset = tid;
+    const GpuWord *key0 = key_q0;
+    const GpuWord *key1 = key_q1;
 
     if (tid >= q_word_count)
     {
@@ -2088,7 +2097,8 @@ __global__ void hybrid_multiply_accumulate_two_components_kernel(
         accum1 = accum_p1;
         modup = modup_p;
         table_limb = base_q_size + (local_offset >> degree_power);
-        key_offset = q_word_count + local_offset;
+        key0 = key_p0;
+        key1 = key_p1;
     }
 
     const GpuWord modulus = rns_primes[table_limb];
@@ -2101,12 +2111,12 @@ __global__ void hybrid_multiply_accumulate_two_components_kernel(
         reuse_c2_ntt ? c2_ntt[local_offset] : modup[local_offset];
     const GpuWord product0 = mul_mod(
         value,
-        key_qp0[key_offset],
+        key0[local_offset],
         modulus,
         barrett_ratio);
     const GpuWord product1 = mul_mod(
         value,
-        key_qp1[key_offset],
+        key1[local_offset],
         modulus,
         barrett_ratio);
 
@@ -3438,8 +3448,10 @@ void launch_hybrid_forward_ntt_qp_mul_accumulate_two_components(
     GpuWord *modup_q,
     GpuWord *modup_p,
     const GpuWord *c2_ntt,
-    const GpuWord *key_qp0,
-    const GpuWord *key_qp1,
+    const GpuWord *key_q0,
+    const GpuWord *key_p0,
+    const GpuWord *key_q1,
+    const GpuWord *key_p1,
     std::size_t decomp_limb_begin,
     std::size_t decomp_limb_count,
     const GpuParameterShard &parameter_shard,
@@ -3458,7 +3470,8 @@ void launch_hybrid_forward_ntt_qp_mul_accumulate_two_components(
     if (accum_q0 == nullptr || accum_p0 == nullptr ||
         accum_q1 == nullptr || accum_p1 == nullptr ||
         modup_q == nullptr || modup_p == nullptr ||
-        c2_ntt == nullptr || key_qp0 == nullptr || key_qp1 == nullptr)
+        c2_ntt == nullptr || key_q0 == nullptr || key_p0 == nullptr ||
+        key_q1 == nullptr || key_p1 == nullptr)
     {
         throw std::invalid_argument(
             "launch_hybrid_forward_ntt_qp_mul_accumulate_two_components: null data pointer");
@@ -3550,8 +3563,10 @@ void launch_hybrid_forward_ntt_qp_mul_accumulate_two_components(
                             parameter_shard.rns_primes.data(),
                             parameter_shard.rns_modulus_constants.data(),
                             parameter_shard.ntt_tables.data(),
-                            key_qp0,
-                            key_qp1,
+                            key_q0,
+                            key_p0,
+                            key_q1,
+                            key_p1,
                             decomp_limb_begin,
                             decomp_limb_count,
                             base_q_size,
@@ -3575,8 +3590,10 @@ void launch_hybrid_forward_ntt_qp_mul_accumulate_two_components(
                             parameter_shard.rns_primes.data(),
                             parameter_shard.rns_modulus_constants.data(),
                             parameter_shard.ntt_tables.data(),
-                            key_qp0,
-                            key_qp1,
+                            key_q0,
+                            key_p0,
+                            key_q1,
+                            key_p1,
                             decomp_limb_begin,
                             decomp_limb_count,
                             base_q_size,
@@ -3603,8 +3620,10 @@ void launch_hybrid_forward_ntt_qp_mul_accumulate_two_components(
                             parameter_shard.rns_primes.data(),
                             parameter_shard.rns_modulus_constants.data(),
                             parameter_shard.ntt_tables.data(),
-                            key_qp0,
-                            key_qp1,
+                            key_q0,
+                            key_p0,
+                            key_q1,
+                            key_p1,
                             decomp_limb_begin,
                             decomp_limb_count,
                             base_q_size,
@@ -3628,8 +3647,10 @@ void launch_hybrid_forward_ntt_qp_mul_accumulate_two_components(
                             parameter_shard.rns_primes.data(),
                             parameter_shard.rns_modulus_constants.data(),
                             parameter_shard.ntt_tables.data(),
-                            key_qp0,
-                            key_qp1,
+                            key_q0,
+                            key_p0,
+                            key_q1,
+                            key_p1,
                             decomp_limb_begin,
                             decomp_limb_count,
                             base_q_size,
@@ -3656,8 +3677,10 @@ void launch_hybrid_forward_ntt_qp_mul_accumulate_two_components(
                             parameter_shard.rns_primes.data(),
                             parameter_shard.rns_modulus_constants.data(),
                             parameter_shard.ntt_tables.data(),
-                            key_qp0,
-                            key_qp1,
+                            key_q0,
+                            key_p0,
+                            key_q1,
+                            key_p1,
                             decomp_limb_begin,
                             decomp_limb_count,
                             base_q_size,
@@ -3681,8 +3704,10 @@ void launch_hybrid_forward_ntt_qp_mul_accumulate_two_components(
                             parameter_shard.rns_primes.data(),
                             parameter_shard.rns_modulus_constants.data(),
                             parameter_shard.ntt_tables.data(),
-                            key_qp0,
-                            key_qp1,
+                            key_q0,
+                            key_p0,
+                            key_q1,
+                            key_p1,
                             decomp_limb_begin,
                             decomp_limb_count,
                             base_q_size,
@@ -3763,8 +3788,8 @@ void launch_hybrid_forward_ntt_qp_mul_accumulate_two_components(
                 accum_q0,
                 accum_q1,
                 c2_ntt,
-                key_qp0,
-                key_qp1,
+                key_q0,
+                key_q1,
                 parameter_shard.rns_primes.data(),
                 parameter_shard.rns_modulus_constants.data(),
                 degree,
@@ -4009,8 +4034,10 @@ void launch_hybrid_multiply_accumulate_two_components(
     const GpuWord *modup_q,
     const GpuWord *modup_p,
     const GpuWord *c2_ntt,
-    const GpuWord *key_qp0,
-    const GpuWord *key_qp1,
+    const GpuWord *key_q0,
+    const GpuWord *key_p0,
+    const GpuWord *key_q1,
+    const GpuWord *key_p1,
     const GpuParameterShard &parameter_shard,
     std::size_t degree,
     std::size_t decomp_limb_begin,
@@ -4024,7 +4051,8 @@ void launch_hybrid_multiply_accumulate_two_components(
     if (accum_q0 == nullptr || accum_p0 == nullptr ||
         accum_q1 == nullptr || accum_p1 == nullptr ||
         modup_q == nullptr || modup_p == nullptr || c2_ntt == nullptr ||
-        key_qp0 == nullptr || key_qp1 == nullptr)
+        key_q0 == nullptr || key_p0 == nullptr ||
+        key_q1 == nullptr || key_p1 == nullptr)
     {
         throw std::invalid_argument(
             "launch_hybrid_multiply_accumulate_two_components: null data pointer");
@@ -4058,8 +4086,10 @@ void launch_hybrid_multiply_accumulate_two_components(
         modup_q,
         modup_p,
         c2_ntt,
-        key_qp0,
-        key_qp1,
+        key_q0,
+        key_p0,
+        key_q1,
+        key_p1,
         parameter_shard.rns_primes.data(),
         parameter_shard.rns_modulus_constants.data(),
         base_q_size,

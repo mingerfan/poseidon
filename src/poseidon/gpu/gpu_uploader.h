@@ -113,15 +113,19 @@ public:
      *
      * Polynomial splitting, level simulation, plaintext encoding and all
      * host-to-device transfers are setup work. No ciphertext evaluation is
-     * performed here. When relin_keys is non-null, all per-level compact key
-     * views required by the generated plan are also prepared during setup.
+     * performed here. When relin_keys is non-null, all zero-copy key levels
+     * required by the generated plan are validated during setup. An optional
+     * expected_output_parms_id records the output level observed from the CPU
+     * high-precision evaluator; the GPU finishes with a parallel Q-prefix
+     * drop when its static plan naturally retains more limbs.
      */
     static GpuBootstrapData::EvalModData upload_eval_mod_high_precision(
         const EvalModPoly &eval_mod_poly,
         const CKKSEncoder &encoder,
         parms_id_type input_parms_id,
         int device_id,
-        GpuRelinKeysData *relin_keys = nullptr);
+        GpuRelinKeysData *relin_keys = nullptr,
+        parms_id_type expected_output_parms_id = parms_id_zero);
 
     /**
      * @brief Upload CPU relinearization keys to GPU.
@@ -144,15 +148,14 @@ public:
         int device_id);
 
     /**
-     * @brief Precompute setup-time [Q_current | P] compact key copies.
+     * @brief Validate setup-time zero-copy views over one [Q_storage | P] key.
      *
-     * This is intended for bootstrapping-style rotation workloads where the
-     * same Galois keys are reused at several post-rescale Q levels.  The
-     * compaction cost and device-to-device copies are setup work and should be
-     * excluded from timed evaluator calls.
+     * No device allocation or device-to-device copy is performed. At runtime
+     * KeySwitch reads the active Q prefix and addresses P through its fixed
+     * offset in the original full-level key allocation.
      */
-    static void precompute_compacted_keys_for_q_counts(
-        GpuEvaluationKeyData &keys,
+    static void prepare_key_views_for_q_counts(
+        const GpuEvaluationKeyData &keys,
         const std::vector<std::size_t> &q_counts);
 };
 

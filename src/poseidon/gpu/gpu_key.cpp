@@ -2,7 +2,6 @@
 
 #include <limits>
 #include <stdexcept>
-#include <utility>
 
 namespace poseidon
 {
@@ -73,36 +72,6 @@ bool GpuEvaluationKeyData::empty() const
     return polys_.empty();
 }
 
-bool GpuEvaluationKeyData::has_compacted_key(std::size_t q_count) const
-{
-    return compacted_by_q_count_.find(q_count) != compacted_by_q_count_.end();
-}
-
-void GpuEvaluationKeyData::store_compacted_key(
-    std::size_t q_count,
-    GpuEvaluationKeyData compacted_key)
-{
-    compacted_by_q_count_[q_count] =
-        std::make_shared<GpuEvaluationKeyData>(std::move(compacted_key));
-}
-
-const GpuEvaluationKeyData &GpuEvaluationKeyData::key_for_q_count(
-    std::size_t q_count) const
-{
-    if (q_count == meta.q_count)
-    {
-        return *this;
-    }
-
-    const auto iter = compacted_by_q_count_.find(q_count);
-    if (iter == compacted_by_q_count_.end() || iter->second == nullptr)
-    {
-        throw std::invalid_argument(
-            "GpuEvaluationKeyData::key_for_q_count: compacted key for current q_count was not precomputed");
-    }
-    return *iter->second;
-}
-
 GpuEvaluationKeyView GpuEvaluationKeyData::make_view()
 {
     GpuEvaluationKeyView result;
@@ -140,6 +109,7 @@ GpuConstEvaluationKeyView GpuEvaluationKeyData::make_const_view() const
 {
     GpuConstEvaluationKeyView result;
     result.meta = meta;
+    result.storage_q_count = meta.q_count;
     result.polys.reserve(polys_.size());
 
     for (const auto &poly : polys_)
@@ -166,6 +136,20 @@ GpuConstEvaluationKeyView GpuEvaluationKeyData::make_const_view() const
         result.polys.push_back(std::move(poly_view));
     }
 
+    return result;
+}
+
+GpuConstEvaluationKeyView GpuEvaluationKeyData::make_const_view(
+    std::size_t active_q_count) const
+{
+    if (active_q_count == 0 || active_q_count > meta.q_count)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluationKeyData::make_const_view: active q_count is outside the stored Q prefix");
+    }
+
+    auto result = make_const_view();
+    result.meta.q_count = active_q_count;
     return result;
 }
 

@@ -358,144 +358,6 @@ GpuEvaluationKeyData upload_kswitch_keys(
     return dst;
 }
 
-GpuEvaluationKeyData compact_evaluation_key_to_q_count(
-    const GpuEvaluationKeyData &src,
-    std::size_t q_count)
-{
-    if (src.empty())
-    {
-        throw std::invalid_argument("cannot compact an empty evaluation key");
-    }
-    if (q_count == 0 || q_count > src.meta.q_count)
-    {
-        throw std::invalid_argument("invalid compacted evaluation-key q_count");
-    }
-
-    GpuEvaluationKeyData dst;
-    dst.meta = src.meta;
-    dst.meta.q_count = q_count;
-
-    const std::size_t compact_limb_count = q_count + src.meta.p_count;
-    const std::size_t compact_word_count = checked_mul(
-        compact_limb_count,
-        src.meta.degree,
-        "compacted evaluation-key word count overflow");
-    const std::size_t q_word_count = checked_mul(
-        q_count,
-        src.meta.degree,
-        "compacted evaluation-key Q word count overflow");
-    const std::size_t p_word_count = checked_mul(
-        src.meta.p_count,
-        src.meta.degree,
-        "compacted evaluation-key P word count overflow");
-    const std::size_t source_p_offset = checked_mul(
-        src.meta.q_count,
-        src.meta.degree,
-        "compacted evaluation-key source P offset overflow");
-
-    if (src.poly_metadata_.size() != src.polys_.size())
-    {
-        throw std::invalid_argument(
-            "evaluation-key metadata/poly count mismatch during compaction");
-    }
-
-    dst.fields_.reserve(src.polys_.size());
-    dst.polys_.reserve(src.polys_.size());
-    dst.poly_metadata_.reserve(src.poly_metadata_.size());
-
-    for (std::size_t poly_index = 0; poly_index < src.polys_.size(); ++poly_index)
-    {
-        const auto &source_poly = src.polys_[poly_index];
-        if (source_poly.degree != src.meta.degree ||
-            source_poly.q_count != src.meta.q_count ||
-            source_poly.p_count != src.meta.p_count ||
-            source_poly.shards.size() != 1)
-        {
-            throw std::invalid_argument(
-                "unexpected evaluation-key poly shape during compaction");
-        }
-
-        const auto &source_shard = source_poly.shards.front();
-        if (source_shard.field_index >= src.fields_.size())
-        {
-            throw std::out_of_range(
-                "evaluation-key shard field_index is out of range during compaction");
-        }
-        if (source_shard.limb_begin != 0 ||
-            source_shard.limb_count != src.meta.q_count + src.meta.p_count ||
-            source_shard.coeff_begin != 0 ||
-            source_shard.coeff_count != src.meta.degree)
-        {
-            throw std::invalid_argument(
-                "evaluation-key shard is not a full [Q|P] shard during compaction");
-        }
-
-        const auto &source_field = src.fields_[source_shard.field_index];
-        const auto source_field_end =
-            source_shard.field_offset + checked_mul(
-                source_shard.limb_count,
-                source_shard.coeff_count,
-                "evaluation-key source shard size overflow during compaction");
-        if (source_field_end > source_field.size())
-        {
-            throw std::out_of_range(
-                "evaluation-key source shard exceeds field during compaction");
-        }
-
-        GpuFieldData compact_field(source_field.device_id, compact_word_count);
-        gpu_check_cuda(
-            cudaSetDevice(source_field.device_id),
-            "compact evaluation key cudaSetDevice");
-
-        const auto *source_ptr = source_field.data() + source_shard.field_offset;
-        if (q_word_count != 0)
-        {
-            gpu_check_cuda(
-                cudaMemcpy(
-                    compact_field.data(),
-                    source_ptr,
-                    q_word_count * sizeof(GpuWord),
-                    cudaMemcpyDeviceToDevice),
-                "compact evaluation key copy Q");
-        }
-        if (p_word_count != 0)
-        {
-            gpu_check_cuda(
-                cudaMemcpy(
-                    compact_field.data() + q_word_count,
-                    source_ptr + source_p_offset,
-                    p_word_count * sizeof(GpuWord),
-                    cudaMemcpyDeviceToDevice),
-                "compact evaluation key copy P");
-        }
-
-        const std::size_t compact_field_index = dst.fields_.size();
-        dst.fields_.push_back(std::move(compact_field));
-
-        GpuRNSPoly compact_poly;
-        compact_poly.poly_id = dst.polys_.size();
-        compact_poly.degree = src.meta.degree;
-        compact_poly.q_count = q_count;
-        compact_poly.p_count = src.meta.p_count;
-
-        GpuPolyShard compact_shard;
-        compact_shard.field_index = compact_field_index;
-        compact_shard.field_offset = 0;
-        compact_shard.limb_begin = 0;
-        compact_shard.limb_count = compact_limb_count;
-        compact_shard.coeff_begin = 0;
-        compact_shard.coeff_count = src.meta.degree;
-        compact_poly.shards.push_back(compact_shard);
-
-        auto compact_meta = src.poly_metadata_[poly_index];
-        compact_meta.poly_id = compact_poly.poly_id;
-        dst.poly_metadata_.push_back(compact_meta);
-        dst.polys_.push_back(std::move(compact_poly));
-    }
-
-    return dst;
-}
-
 struct EvalModSplitNode
 {
     Polynomial polynomial;
@@ -890,7 +752,8 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
     const CKKSEncoder &encoder,
     parms_id_type input_parms_id,
     int device_id,
-    GpuRelinKeysData *relin_keys)
+    GpuRelinKeysData *relin_keys,
+    parms_id_type expected_output_parms_id)
 {
     const auto &context = encoder.context();
     const auto crt_context = context.crt_context();
@@ -923,10 +786,8 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
     }
 
     const double target_scale = eval_mod_poly.scaling_factor();
-    const double coefficient_sum_scale = target_scale * target_scale;
     if (!(target_scale > 0.0) ||
-        !std::isfinite(target_scale) ||
-        !std::isfinite(coefficient_sum_scale))
+        !std::isfinite(target_scale))
     {
         throw std::invalid_argument(
             "GpuUploader::upload_eval_mod_high_precision: invalid scaling factor");
@@ -969,6 +830,27 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
                 plaintext);
             return upload_plaintext(plaintext, device_id);
         };
+
+    auto q_last_for_q_count =
+        [&](std::size_t q_count) -> double {
+            const auto level_data = crt_context->get_context_data(
+                parms_id_for_q_count(q_count));
+            if (!level_data || level_data->coeff_modulus().empty())
+            {
+                throw std::invalid_argument(
+                    "GpuUploader::upload_eval_mod_high_precision: missing rescale modulus");
+            }
+            return static_cast<double>(
+                level_data->coeff_modulus().back().value());
+        };
+
+    auto require_valid_scale = [](double scale, const char *what) {
+        if (!(scale > 0.0) || !std::isfinite(scale))
+        {
+            throw std::invalid_argument(
+                std::string("GpuUploader::upload_eval_mod_high_precision: invalid ") + what);
+        }
+    };
 
     const auto &sine_polynomial = eval_mod_poly.sine_poly();
     if (sine_polynomial.data().empty())
@@ -1041,16 +923,21 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
         requested_degrees);
 
     std::map<std::uint32_t, std::size_t> basis_q_counts;
+    std::map<std::uint32_t, double> basis_scales;
     basis_q_counts.emplace(0, input_q_count);
     basis_q_counts.emplace(1, input_q_count);
-    std::set<std::size_t> chebyshev_one_q_counts;
+    basis_scales.emplace(1, target_scale);
     std::set<std::size_t> required_relin_q_counts;
-    for (const auto &step : result.basis_steps)
+    for (auto &step : result.basis_steps)
     {
         const auto left_iter = basis_q_counts.find(step.left_degree);
         const auto right_iter = basis_q_counts.find(step.right_degree);
+        const auto left_scale_iter = basis_scales.find(step.left_degree);
+        const auto right_scale_iter = basis_scales.find(step.right_degree);
         if (left_iter == basis_q_counts.end() ||
-            right_iter == basis_q_counts.end())
+            right_iter == basis_q_counts.end() ||
+            left_scale_iter == basis_scales.end() ||
+            right_scale_iter == basis_scales.end())
         {
             throw std::logic_error(
                 "GpuUploader::upload_eval_mod_high_precision: basis plan is not topological");
@@ -1064,12 +951,19 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
         }
         required_relin_q_counts.insert(multiply_q_count);
         std::size_t output_q_count = multiply_q_count - 1;
+        const double output_scale =
+            left_scale_iter->second * right_scale_iter->second /
+            q_last_for_q_count(multiply_q_count);
+        require_valid_scale(output_scale, "basis output scale");
 
         if (result.polynomial_basis ==
                 GpuEvalModPolynomialBasis::Chebyshev &&
             step.correction_degree == 0)
         {
-            chebyshev_one_q_counts.insert(output_q_count);
+            step.correction_plaintext = encode_and_upload(
+                {1.0, 0.0},
+                output_q_count,
+                output_scale);
         }
         else if (result.polynomial_basis ==
                      GpuEvalModPolynomialBasis::Chebyshev &&
@@ -1084,28 +978,43 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
             }
             output_q_count =
                 std::min(output_q_count, correction_iter->second);
+            const auto correction_scale_iter =
+                basis_scales.find(step.correction_degree);
+            if (correction_scale_iter == basis_scales.end())
+            {
+                throw std::logic_error(
+                    "GpuUploader::upload_eval_mod_high_precision: missing correction basis scale");
+            }
+            const double correction_plaintext_scale =
+                output_scale / correction_scale_iter->second;
+            require_valid_scale(
+                correction_plaintext_scale,
+                "Chebyshev correction plaintext scale");
+            step.correction_plaintext = encode_and_upload(
+                {1.0, 0.0},
+                output_q_count,
+                correction_plaintext_scale);
         }
+        step.output_scale = output_scale;
         basis_q_counts.emplace(step.output_degree, output_q_count);
+        basis_scales.emplace(step.output_degree, output_scale);
     }
 
-    for (const auto q_count : chebyshev_one_q_counts)
+    struct LeafTermSpec
     {
-        result.chebyshev_one_plaintexts.push_back(
-            encode_and_upload({1.0, 0.0}, q_count, target_scale));
-    }
+        std::uint32_t degree = 0;
+        std::complex<double> coefficient{};
+    };
 
-    result.polynomial_blocks.reserve(leaves.size());
+    result.polynomial_blocks.resize(leaves.size());
     std::vector<std::size_t> node_q_counts(next_node_id, 0);
+    std::vector<std::size_t> leaf_input_q_counts(leaves.size(), 0);
+    std::vector<std::vector<LeafTermSpec>> leaf_term_specs(leaves.size());
+    std::vector<std::complex<double>> leaf_constants(leaves.size());
+    std::vector<bool> leaf_has_constant(leaves.size(), false);
     for (std::size_t leaf_index = 0; leaf_index < leaves.size(); ++leaf_index)
     {
         const auto &coefficients = leaves[leaf_index]->polynomial.data();
-        struct TermSpec
-        {
-            std::uint32_t degree = 0;
-            std::complex<double> coefficient{};
-            std::size_t q_count = 0;
-        };
-        std::vector<TermSpec> term_specs;
         std::size_t block_q_count = input_q_count;
         bool has_nonconstant_term = false;
         for (std::size_t degree = 1; degree < coefficients.size(); ++degree)
@@ -1125,56 +1034,24 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
                 ? std::min(block_q_count, basis_iter->second)
                 : basis_iter->second;
             has_nonconstant_term = true;
-            term_specs.push_back(TermSpec{
+            leaf_term_specs[leaf_index].push_back(LeafTermSpec{
                 static_cast<std::uint32_t>(degree),
-                coefficients[degree],
-                basis_iter->second});
+                coefficients[degree]});
         }
-        std::sort(
-            term_specs.begin(),
-            term_specs.end(),
-            [](const TermSpec &left, const TermSpec &right) {
-                if (left.q_count != right.q_count)
-                {
-                    return left.q_count < right.q_count;
-                }
-                return left.degree < right.degree;
-            });
-
-        GpuEvalModPolynomialBlock block;
-        block.rescale_count = 1;
-        for (const auto &term : term_specs)
-        {
-            block.terms.push_back(GpuEvalModPolynomialTerm{
-                term.degree,
-                encode_and_upload(
-                    term.coefficient,
-                    term.q_count,
-                    target_scale)});
-        }
-
-        const bool has_constant =
+        leaf_has_constant[leaf_index] =
             !coefficients.empty() &&
             eval_mod_coefficient_is_nonzero(coefficients.front());
-        if (has_constant || block.terms.empty())
+        if (leaf_has_constant[leaf_index])
         {
-            const std::complex<double> constant = has_constant
-                ? coefficients.front()
-                : std::complex<double>{0.0, 0.0};
-            block.terms.push_back(GpuEvalModPolynomialTerm{
-                0,
-                encode_and_upload(
-                    constant,
-                    block_q_count,
-                    coefficient_sum_scale)});
+            leaf_constants[leaf_index] = coefficients.front();
         }
         if (block_q_count < 2)
         {
             throw std::invalid_argument(
                 "GpuUploader::upload_eval_mod_high_precision: modulus chain is too short for leaf rescale");
         }
+        leaf_input_q_counts[leaf_index] = block_q_count;
         node_q_counts[leaf_index] = block_q_count - 1;
-        result.polynomial_blocks.push_back(std::move(block));
     }
 
     for (const auto &combine : result.polynomial_combine_steps)
@@ -1204,6 +1081,85 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
             node_q_counts[combine.remainder_node]);
     }
 
+    /*
+     * Assign a desired scale to every polynomial-tree node. For
+     * Q*T_k+R, choose Q's scale so that the ordinary-rescaled product and R
+     * both land exactly at the parent's desired scale. This turns the CPU
+     * recursive scale choices into a fixed GPU schedule.
+     */
+    std::vector<double> node_scales(next_node_id, 0.0);
+    node_scales[result.polynomial_result_node] = target_scale;
+    for (auto step_iter = result.polynomial_combine_steps.rbegin();
+         step_iter != result.polynomial_combine_steps.rend();
+         ++step_iter)
+    {
+        auto &combine = *step_iter;
+        const double output_scale = node_scales[combine.output_node];
+        require_valid_scale(output_scale, "polynomial combine output scale");
+        const auto basis_q_iter = basis_q_counts.find(combine.basis_degree);
+        const auto basis_scale_iter = basis_scales.find(combine.basis_degree);
+        if (basis_q_iter == basis_q_counts.end() ||
+            basis_scale_iter == basis_scales.end())
+        {
+            throw std::logic_error(
+                "GpuUploader::upload_eval_mod_high_precision: combine basis schedule is absent");
+        }
+        const std::size_t multiply_q_count = std::min(
+            node_q_counts[combine.quotient_node],
+            basis_q_iter->second);
+        const double quotient_scale =
+            output_scale * q_last_for_q_count(multiply_q_count) /
+            basis_scale_iter->second;
+        require_valid_scale(quotient_scale, "polynomial quotient scale");
+        node_scales[combine.quotient_node] = quotient_scale;
+        node_scales[combine.remainder_node] = output_scale;
+        combine.output_scale = output_scale;
+    }
+
+    for (std::size_t leaf_index = 0; leaf_index < leaves.size(); ++leaf_index)
+    {
+        const double leaf_output_scale = node_scales[leaf_index];
+        require_valid_scale(leaf_output_scale, "polynomial leaf output scale");
+        const std::size_t block_q_count = leaf_input_q_counts[leaf_index];
+        const double pre_rescale_scale =
+            leaf_output_scale * q_last_for_q_count(block_q_count);
+        require_valid_scale(pre_rescale_scale, "polynomial leaf accumulator scale");
+
+        auto &block = result.polynomial_blocks[leaf_index];
+        block.rescale_count = 1;
+        block.output_scale = leaf_output_scale;
+        for (const auto &term : leaf_term_specs[leaf_index])
+        {
+            const auto basis_scale_iter = basis_scales.find(term.degree);
+            if (basis_scale_iter == basis_scales.end())
+            {
+                throw std::logic_error(
+                    "GpuUploader::upload_eval_mod_high_precision: leaf basis scale is absent");
+            }
+            const double plaintext_scale =
+                pre_rescale_scale / basis_scale_iter->second;
+            require_valid_scale(plaintext_scale, "polynomial coefficient scale");
+            block.terms.push_back(GpuEvalModPolynomialTerm{
+                term.degree,
+                encode_and_upload(
+                    term.coefficient,
+                    block_q_count,
+                    plaintext_scale)});
+        }
+
+        if (leaf_has_constant[leaf_index] || block.terms.empty())
+        {
+            block.terms.push_back(GpuEvalModPolynomialTerm{
+                0,
+                encode_and_upload(
+                    leaf_has_constant[leaf_index]
+                        ? leaf_constants[leaf_index]
+                        : std::complex<double>{0.0, 0.0},
+                    block_q_count,
+                    pre_rescale_scale)});
+        }
+    }
+
     std::size_t output_q_count =
         node_q_counts[result.polynomial_result_node];
     if (output_q_count == 0)
@@ -1230,6 +1186,8 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
     }
 
     double sqrt_2pi = eval_mod_poly.sqrt_2pi();
+    double double_angle_input_scale =
+        node_scales[result.polynomial_result_node];
     result.double_angle_constants.reserve(eval_mod_poly.double_angle());
     for (std::uint32_t i = 0; i < eval_mod_poly.double_angle(); ++i)
     {
@@ -1239,24 +1197,51 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
                 "GpuUploader::upload_eval_mod_high_precision: modulus chain is too short for double-angle steps");
         }
         required_relin_q_counts.insert(output_q_count);
-        --output_q_count;
         sqrt_2pi *= sqrt_2pi;
+        const double pre_rescale_scale =
+            double_angle_input_scale * double_angle_input_scale;
+        require_valid_scale(pre_rescale_scale, "double-angle pre-rescale scale");
         result.double_angle_constants.push_back(
             encode_and_upload(
                 {-sqrt_2pi, 0.0},
                 output_q_count,
-                target_scale));
+                pre_rescale_scale));
+        double_angle_input_scale =
+            pre_rescale_scale / q_last_for_q_count(output_q_count);
+        require_valid_scale(double_angle_input_scale, "double-angle output scale");
+        --output_q_count;
+    }
+
+    if (expected_output_parms_id != parms_id_zero)
+    {
+        const auto expected_output_context =
+            crt_context->get_context_data(expected_output_parms_id);
+        if (!expected_output_context)
+        {
+            throw std::invalid_argument(
+                "GpuUploader::upload_eval_mod_high_precision: expected CPU output parms_id is absent from context");
+        }
+        const auto expected_output_q_count =
+            expected_output_context->coeff_modulus().size();
+        if (expected_output_q_count > output_q_count)
+        {
+            throw std::invalid_argument(
+                "GpuUploader::upload_eval_mod_high_precision: static GPU schedule consumes more levels than CPU reference");
+        }
+        output_q_count = expected_output_q_count;
     }
 
     result.output_q_count = output_q_count;
-    result.output_parms_id = parms_id_for_q_count(output_q_count);
+    result.output_parms_id = expected_output_parms_id != parms_id_zero
+        ? expected_output_parms_id
+        : parms_id_for_q_count(output_q_count);
     result.required_relin_q_counts.assign(
         required_relin_q_counts.begin(),
         required_relin_q_counts.end());
 
     if (relin_keys != nullptr)
     {
-        precompute_compacted_keys_for_q_counts(
+        prepare_key_views_for_q_counts(
             *relin_keys,
             result.required_relin_q_counts);
     }
@@ -1277,35 +1262,28 @@ GpuGaloisKeysData GpuUploader::upload_galois_keys(
     return upload_kswitch_keys(src, device_id);
 }
 
-void GpuUploader::precompute_compacted_keys_for_q_counts(
-    GpuEvaluationKeyData &keys,
+void GpuUploader::prepare_key_views_for_q_counts(
+    const GpuEvaluationKeyData &keys,
     const std::vector<std::size_t> &q_counts)
 {
     if (keys.empty())
     {
         throw std::invalid_argument(
-            "GpuUploader::precompute_compacted_keys_for_q_counts: empty keys");
+            "GpuUploader::prepare_key_views_for_q_counts: empty keys");
     }
 
     for (const auto q_count : q_counts)
     {
-        if (q_count == keys.meta.q_count)
-        {
-            continue;
-        }
         if (q_count == 0 || q_count > keys.meta.q_count)
         {
             throw std::invalid_argument(
-                "GpuUploader::precompute_compacted_keys_for_q_counts: invalid q_count");
-        }
-        if (keys.has_compacted_key(q_count))
-        {
-            continue;
+                "GpuUploader::prepare_key_views_for_q_counts: invalid q_count");
         }
 
-        keys.store_compacted_key(
-            q_count,
-            compact_evaluation_key_to_q_count(keys, q_count));
+        /* Construction validates the active prefix. The returned object owns
+           no memory and is intentionally discarded; runtime views are equally
+           cheap and retain no setup-time pointer lifetime beyond keys. */
+        (void)keys.make_const_view(q_count);
     }
 }
 

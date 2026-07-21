@@ -49,6 +49,14 @@ struct GpuEvalModBasisStep
     std::uint32_t left_degree = 0;
     std::uint32_t right_degree = 0;
     std::uint32_t correction_degree = 0;
+    double output_scale = 0.0;
+
+    /*
+     * Chebyshev only. For correction_degree==0 this is the constant one at
+     * output_scale. Otherwise it is a plaintext one whose scale converts the
+     * correction basis to output_scale without changing its decoded value.
+     */
+    GpuPlaintextData correction_plaintext;
 };
 
 /**
@@ -58,6 +66,7 @@ struct GpuEvalModPolynomialBlock
 {
     std::vector<GpuEvalModPolynomialTerm> terms;
     std::uint32_t rescale_count = 1;
+    double output_scale = 0.0;
 };
 
 /**
@@ -69,6 +78,7 @@ struct GpuEvalModPolynomialCombineStep
     std::uint32_t quotient_node = 0;
     std::uint32_t remainder_node = 0;
     std::uint32_t basis_degree = 0;
+    double output_scale = 0.0;
 };
 
 /**
@@ -98,6 +108,9 @@ struct GpuBootstrapData
     std::uint64_t post_raise_integer_multiplier = 1;
     double post_raise_scale_multiplier = 1.0;
     GpuPlaintextData post_raise_plaintext;
+
+    /* Logical CKKS scale restored after EvalMod and before SlotToCoeff. */
+    double slot_to_coeff_input_scale = 0.0;
 
     struct EvalModData
     {
@@ -164,7 +177,7 @@ struct GpuBootstrapData
          */
         std::vector<GpuPlaintextData> double_angle_constants;
 
-        /* Q counts whose compact relinearization keys are needed at runtime. */
+        /* Q prefixes whose zero-copy relinearization-key views are used. */
         std::vector<std::size_t> required_relin_q_counts;
     };
 
@@ -213,6 +226,13 @@ struct GpuBootstrapWorkspace
 
     std::vector<GpuCiphertextData> eval_mod_basis;
     std::vector<GpuCiphertextData> eval_mod_nodes;
+
+    // Optional correctness-only snapshots. They remain disabled in timed and
+    // production bootstrap calls, so the hot path pays no copy or storage cost.
+    bool capture_eval_mod_trace{false};
+    GpuCiphertextData eval_mod_trace_offset_input;
+    GpuCiphertextData eval_mod_trace_polynomial_output;
+    std::vector<GpuCiphertextData> eval_mod_trace_double_angle_outputs;
 };
 
 /**
@@ -432,8 +452,7 @@ public:
      *
      * This stitches together the already implemented GPU stages:
      * prepare/ModRaise -> CoeffToSlot -> EvalMod -> SlotToCoeff.
-     * EvalMod is intentionally isolated behind a private helper so the next
-     * step can implement it without changing the public scheduler interface.
+     * EvalMod uses the setup-time static GPU plan stored in GpuBootstrapData.
      */
     void bootstrap(
         const GpuCiphertextData &source_ciphertext,
@@ -443,7 +462,14 @@ public:
         GpuBootstrapWorkspace &workspace,
         GpuCiphertextData &destination_ciphertext) const;
 
-private:
+    /**
+     * @brief Evaluate the setup-time high-precision EvalMod plan on GPU.
+     *
+     * This is public so callers can benchmark and validate the EvalMod stage
+     * independently while reusing exactly the implementation used by
+     * bootstrap(). Polynomial decomposition and plaintext upload remain
+     * outside this runtime operation.
+     */
     void eval_mod_high_precision(
         const GpuCiphertextData &source_ciphertext,
         const GpuBootstrapData &bootstrap_data,
@@ -451,6 +477,7 @@ private:
         GpuBootstrapWorkspace &workspace,
         GpuCiphertextData &destination_ciphertext) const;
 
+private:
     const GpuParameterData &params_;
 
     GpuElementwiseHandler elementwise_handler_;

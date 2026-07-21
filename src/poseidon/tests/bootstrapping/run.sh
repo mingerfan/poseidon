@@ -79,5 +79,5 @@ if [[ ! -x "${TEST_BIN}" ]]; then
     exit 1
 fi
 
-echo "=== Run GPU bootstrap ModRaise + CoeffToSlot + SlotToCoeff comparison ==="
+echo "=== Run GPU high-precision bootstrap correctness + timing comparison ==="
 "${TEST_BIN}"

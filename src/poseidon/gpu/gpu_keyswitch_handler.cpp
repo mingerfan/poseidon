@@ -276,6 +276,49 @@ const GpuConstRNSPolyView &find_key_poly(
         "GpuKeySwitchHandler: missing key-switch key polynomial");
 }
 
+struct HybridKeyComponentView
+{
+    int device_id = 0;
+    const GpuWord *q_ptr = nullptr;
+    const GpuWord *p_ptr = nullptr;
+};
+
+HybridKeyComponentView make_hybrid_key_component_view(
+    const GpuConstRNSPolyView &poly,
+    const GpuConstEvaluationKeyView &level_view,
+    const GpuEvaluationKeyData &storage)
+{
+    if (poly.shards.size() != 1)
+    {
+        throw std::invalid_argument(
+            "GpuKeySwitchHandler: zero-copy key view requires one full shard");
+    }
+    if (level_view.storage_q_count != storage.meta.q_count ||
+        level_view.meta.q_count == 0 ||
+        level_view.meta.q_count > level_view.storage_q_count)
+    {
+        throw std::invalid_argument(
+            "GpuKeySwitchHandler: invalid zero-copy key Q prefix metadata");
+    }
+
+    const auto &shard = poly.shards.front();
+    if (shard.ptr == nullptr ||
+        shard.limb_begin != 0 ||
+        shard.limb_count != storage.meta.q_count + storage.meta.p_count ||
+        shard.coeff_begin != 0 ||
+        shard.coeff_count != storage.meta.degree)
+    {
+        throw std::invalid_argument(
+            "GpuKeySwitchHandler: key must retain one full [Q_storage | P] allocation");
+    }
+
+    HybridKeyComponentView result;
+    result.device_id = shard.device_id;
+    result.q_ptr = shard.ptr;
+    result.p_ptr = shard.ptr + storage.meta.q_count * storage.meta.degree;
+    return result;
+}
+
 const GpuParameterShard *find_parameter_shard(
     const GpuLevelInfo &level_info,
     const GpuConstPolyShardView &shard)
@@ -507,8 +550,8 @@ void process_hybrid_decomposition_block(
     std::size_t decomp_limb_count,
     HybridScratch &scratch,
     const GpuConstRNSPolyView &switch_poly_ntt,
-    const GpuConstRNSPolyView &key_component0,
-    const GpuConstRNSPolyView &key_component1,
+    const HybridKeyComponentView &key_component0,
+    const HybridKeyComponentView &key_component1,
     const GpuLevelInfo &level_info,
     bool fuse_decomp_q,
     bool fuse_modup_ntt_head,
@@ -518,15 +561,16 @@ void process_hybrid_decomposition_block(
     NvtxRange block_range(
         "keyswitch.dnum[" + std::to_string(decomp_index) + "]");
     const auto &switch_poly_shard = switch_poly_ntt.shards.front();
-    const auto &key0_shard = key_component0.shards.front();
-    const auto &key1_shard = key_component1.shards.front();
-    if (!same_shard_placement(key0_shard, key1_shard))
+    if (key_component0.device_id != key_component1.device_id ||
+        key_component0.device_id != switch_poly_shard.device_id)
     {
         throw std::invalid_argument(
-            "GpuKeySwitchHandler::process_hybrid_decomposition_block: key shard placement mismatch");
+            "GpuKeySwitchHandler::process_hybrid_decomposition_block: key device placement mismatch");
     }
 
-    const auto *parameter_shard = find_parameter_shard(level_info, key0_shard);
+    const auto *parameter_shard = find_parameter_shard(
+        level_info,
+        switch_poly_shard);
     if (parameter_shard == nullptr)
     {
         throw std::invalid_argument(
@@ -570,8 +614,10 @@ void process_hybrid_decomposition_block(
                 scratch.accum_q1.data(),
                 scratch.accum_p1.data(),
                 switch_poly_shard.ptr,
-                key0_shard.ptr,
-                key1_shard.ptr,
+                key_component0.q_ptr,
+                key_component0.p_ptr,
+                key_component1.q_ptr,
+                key_component1.p_ptr,
                 decomp_limb_begin,
                 decomp_limb_count,
                 decomp_index == 0,
@@ -604,8 +650,10 @@ void process_hybrid_decomposition_block(
                     scratch.fourstep_q0.data(),
                     scratch.fourstep_p0.data(),
                     switch_poly_shard.ptr,
-                    key0_shard.ptr,
-                    key1_shard.ptr,
+                    key_component0.q_ptr,
+                    key_component0.p_ptr,
+                    key_component1.q_ptr,
+                    key_component1.p_ptr,
                     *parameter_shard,
                     scratch.degree,
                     decomp_limb_begin,
@@ -692,8 +740,10 @@ void process_hybrid_decomposition_block(
             scratch.modup_q.data(),
             scratch.modup_p.data(),
             switch_poly_shard.ptr,
-            key0_shard.ptr,
-            key1_shard.ptr,
+            key_component0.q_ptr,
+            key_component0.p_ptr,
+            key_component1.q_ptr,
+            key_component1.p_ptr,
             decomp_limb_begin,
             decomp_limb_count,
             *parameter_shard,
@@ -1020,6 +1070,8 @@ void validate_hybrid_relinearize_shape(
             "GpuKeySwitchHandler::relinearize_hybrid_ciphertext: shape mismatch");
     }
     if (!(relin_keys.meta.key_parms_id == relin_key_data.meta.key_parms_id) ||
+        relin_keys.storage_q_count != relin_key_data.meta.q_count ||
+        relin_keys.meta.q_count != source.meta.q_count ||
         relin_keys.meta.key_count == 0 ||
         relin_keys.meta.decomposition_count == 0 ||
         relin_keys.meta.component_count < kSwitchKeyComponentCount)
@@ -1125,6 +1177,8 @@ void validate_hybrid_switch_key_shape(
     }
 
     if (!(switch_keys.meta.key_parms_id == switch_key_data.meta.key_parms_id) ||
+        switch_keys.storage_q_count != switch_key_data.meta.q_count ||
+        switch_keys.meta.q_count != destination.meta.q_count ||
         switch_keys.meta.key_count <= key_index ||
         switch_keys.meta.decomposition_count == 0 ||
         switch_keys.meta.component_count < kSwitchKeyComponentCount)
@@ -1169,7 +1223,13 @@ void GpuKeySwitchHandler::switch_key_hybrid_ciphertext(
     if (switch_keys_view.meta.q_count != base_q_size)
     {
         throw std::invalid_argument(
-            "GpuKeySwitchHandler::switch_key_hybrid_ciphertext: key q_count must match ciphertext q_count; precompute compacted keys during setup");
+            "GpuKeySwitchHandler::switch_key_hybrid_ciphertext: active key Q prefix must match ciphertext q_count");
+    }
+    if (switch_keys_view.storage_q_count != switch_keys_data.meta.q_count ||
+        switch_keys_view.storage_q_count < base_q_size)
+    {
+        throw std::invalid_argument(
+            "GpuKeySwitchHandler::switch_key_hybrid_ciphertext: invalid full-key storage Q count");
     }
     if (base_p_size == 0)
     {
@@ -1448,13 +1508,24 @@ void GpuKeySwitchHandler::switch_key_hybrid_ciphertext(
             validate_single_full_shard(
                 "GpuKeySwitchHandler switch key c0",
                 key_component0,
-                switch_keys_view.meta.degree,
-                switch_keys_view.meta.q_count + switch_keys_view.meta.p_count);
+                switch_keys_data.meta.degree,
+                switch_keys_data.meta.q_count + switch_keys_data.meta.p_count);
             validate_single_full_shard(
                 "GpuKeySwitchHandler switch key c1",
                 key_component1,
-                switch_keys_view.meta.degree,
-                switch_keys_view.meta.q_count + switch_keys_view.meta.p_count);
+                switch_keys_data.meta.degree,
+                switch_keys_data.meta.q_count + switch_keys_data.meta.p_count);
+
+            const auto key_component0_level =
+                make_hybrid_key_component_view(
+                    key_component0,
+                    switch_keys_view,
+                    switch_keys_data);
+            const auto key_component1_level =
+                make_hybrid_key_component_view(
+                    key_component1,
+                    switch_keys_view,
+                    switch_keys_data);
 
             /* 处理每一个 dnum 分块的函数，负责模升+NTT+乘密钥累加*/
             process_hybrid_decomposition_block(
@@ -1463,8 +1534,8 @@ void GpuKeySwitchHandler::switch_key_hybrid_ciphertext(
                 decomp_limb_count,
                 scratch,
                 switch_poly_ntt,
-                key_component0,
-                key_component1,
+                key_component0_level,
+                key_component1_level,
                 level_info,
                 fuse_decomp_q,
                 fuse_modup_ntt_head,

@@ -1962,8 +1962,10 @@ forward_ntt_cheddar_qp_active_phase2_mul_accumulate_65536_kernel(
     GpuWord *accum_q1,
     GpuWord *accum_p1,
     const GpuWord *c2_ntt,
-    const GpuWord *key_qp0,
-    const GpuWord *key_qp1,
+    const GpuWord *key_q0,
+    const GpuWord *key_p0,
+    const GpuWord *key_q1,
+    const GpuWord *key_p1,
     const GpuWord *rns_primes,
     const GpuWide *rns_modulus_constants,
     const GpuWord *roots,
@@ -1984,7 +1986,6 @@ forward_ntt_cheddar_qp_active_phase2_mul_accumulate_65536_kernel(
     const std::size_t packed_limb = blockIdx.y;
     const int batch = threadIdx.x;
     const std::size_t coefficient_block = blockIdx.x << 9;
-    const std::size_t q_word_count = base_q_size * kDegree;
 
     if (packed_limb >= active_limb_count)
     {
@@ -2008,12 +2009,12 @@ forward_ntt_cheddar_qp_active_phase2_mul_accumulate_65536_kernel(
             const GpuWord value = c2_ntt[offset];
             const GpuWord product0 = mul_mod(
                 value,
-                key_qp0[offset],
+                key_q0[offset],
                 modulus,
                 barrett_ratio);
             const GpuWord product1 = mul_mod(
                 value,
-                key_qp1[offset],
+                key_q1[offset],
                 modulus,
                 barrett_ratio);
             if (overwrite_accum)
@@ -2059,9 +2060,9 @@ forward_ntt_cheddar_qp_active_phase2_mul_accumulate_65536_kernel(
         (is_p_limb ? accum_p0 : accum_q0) + local_limb * kDegree;
     GpuWord *accum1 =
         (is_p_limb ? accum_p1 : accum_q1) + local_limb * kDegree;
-    const std::size_t key_limb_offset = is_p_limb
-        ? q_word_count + local_limb * kDegree
-        : local_limb * kDegree;
+    const GpuWord *key0 = is_p_limb ? key_p0 : key_q0;
+    const GpuWord *key1 = is_p_limb ? key_p1 : key_q1;
+    const std::size_t key_limb_offset = local_limb * kDegree;
 
     const int load_base = batch + (blockIdx.x << 9);
     GpuWord local[kRadix];
@@ -2141,12 +2142,12 @@ forward_ntt_cheddar_qp_active_phase2_mul_accumulate_65536_kernel(
         const std::size_t key_offset = key_limb_offset + coefficient;
         const GpuWord product0 = mul_mod(
             value,
-            key_qp0[key_offset],
+            key0[key_offset],
             modulus,
             barrett_ratio);
         const GpuWord product1 = mul_mod(
             value,
-            key_qp1[key_offset],
+            key1[key_offset],
             modulus,
             barrett_ratio);
         if (overwrite_accum)
@@ -5898,8 +5899,10 @@ void launch_forward_ntt_qp_active_fourstep_mul_accumulate_two_components_65536(
     GpuWord *accum_q1,
     GpuWord *accum_p1,
     const GpuWord *c2_ntt,
-    const GpuWord *key_qp0,
-    const GpuWord *key_qp1,
+    const GpuWord *key_q0,
+    const GpuWord *key_p0,
+    const GpuWord *key_q1,
+    const GpuWord *key_p1,
     std::size_t decomp_limb_begin,
     std::size_t decomp_limb_count,
     bool overwrite_accum,
@@ -5915,7 +5918,8 @@ void launch_forward_ntt_qp_active_fourstep_mul_accumulate_two_components_65536(
         source_q == nullptr || source_p == nullptr ||
         accum_q0 == nullptr || accum_p0 == nullptr ||
         accum_q1 == nullptr || accum_p1 == nullptr ||
-        c2_ntt == nullptr || key_qp0 == nullptr || key_qp1 == nullptr)
+        c2_ntt == nullptr || key_q0 == nullptr || key_p0 == nullptr ||
+        key_q1 == nullptr || key_p1 == nullptr)
     {
         throw std::invalid_argument(
             "launch_forward_ntt_qp_active_fourstep_mul_accumulate_two_components_65536: null data pointer");
@@ -5979,8 +5983,10 @@ void launch_forward_ntt_qp_active_fourstep_mul_accumulate_two_components_65536(
             accum_q1,
             accum_p1,
             c2_ntt,
-            key_qp0,
-            key_qp1,
+            key_q0,
+            key_p0,
+            key_q1,
+            key_p1,
             parameter_shard.rns_primes.data(),
             parameter_shard.rns_modulus_constants.data(),
             parameter_shard.ntt_tables.data(),
