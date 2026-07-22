@@ -465,9 +465,7 @@ int main(int argc, char **argv)
         std::unordered_map<fhegpu::ValueId, PoseidonGpuValue> inputs;
         inputs.emplace(input_id,
                        PoseidonGpuValue::from_host_ciphertext(std::move(input_cipher)));
-        const auto run_start = std::chrono::steady_clock::now();
         const auto artifact = runtime.run(loaded_plan, resources, inputs);
-        const auto run_finish = std::chrono::steady_clock::now();
 
         const fhegpu::ValueId output_id = plan.final_outputs.front();
         const auto &output_desc = find_value(plan, output_id);
@@ -502,8 +500,6 @@ int main(int argc, char **argv)
             artifact.timing.boot_calls == plan_boots;
         const double key_seconds =
             std::chrono::duration<double>(key_finish - key_start).count();
-        const double runtime_seconds =
-            std::chrono::duration<double>(run_finish - run_start).count();
         const double compute_seconds =
             artifact.timing.compute_including_boot_nanoseconds * 1e-9;
         const double boot_seconds = artifact.timing.boot_nanoseconds * 1e-9;
@@ -512,6 +508,7 @@ int main(int argc, char **argv)
             artifact.timing.initialization_nanoseconds * 1e-9;
         const double online_execution_seconds =
             artifact.timing.online_execution_nanoseconds * 1e-9;
+        const double runtime_seconds = online_execution_seconds;
         const Json report{
             {"format_version", 1},
             {"passed", passed},
@@ -530,6 +527,7 @@ int main(int argc, char **argv)
             {"transfer_count", count_transfers(plan)},
             {"key_generation_seconds", key_seconds},
             {"runtime_seconds", runtime_seconds},
+            {"runtime_scope", "online_execution_only"},
             {"runtime_timing",
              {{"setup_seconds", setup_seconds},
               {"initialization_seconds", initialization_seconds},

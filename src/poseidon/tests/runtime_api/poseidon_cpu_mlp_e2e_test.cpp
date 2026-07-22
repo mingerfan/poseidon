@@ -448,9 +448,7 @@ int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
     fhegpu::SequentialRuntime<PoseidonCpuApi> runtime(rank, world_size, 0, *api);
     const fhegpu::RuntimeResources resources{
         loaded_spec, std::filesystem::path(paths[2]), false};
-    const auto run_start = std::chrono::steady_clock::now();
     const auto artifact = runtime.run(loaded_plan, resources, inputs);
-    const auto run_finish = std::chrono::steady_clock::now();
 
     if (loaded_plan.plan.final_outputs.size() != 1)
     {
@@ -515,8 +513,6 @@ int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
 
     const double key_seconds =
         std::chrono::duration<double>(key_finish - key_start).count();
-    const double run_seconds =
-        std::chrono::duration<double>(run_finish - run_start).count();
     const double compute_including_boot_seconds =
         static_cast<double>(artifact.timing.compute_including_boot_nanoseconds) *
         1e-9;
@@ -532,6 +528,7 @@ int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
         static_cast<double>(artifact.timing.initialization_nanoseconds) * 1e-9;
     const double online_execution_seconds =
         static_cast<double>(artifact.timing.online_execution_nanoseconds) * 1e-9;
+    const double run_seconds = online_execution_seconds;
     const std::array<double, 8> local_seconds{
         key_seconds, run_seconds, compute_including_boot_seconds, boot_seconds,
         compute_excluding_boot_seconds, setup_seconds, initialization_seconds,
@@ -647,6 +644,7 @@ int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
             {"rotation_key_count", total_rotation_keys},
             {"key_generation_seconds", critical_key_seconds},
             {"runtime_seconds", critical_run_seconds},
+            {"runtime_scope", "online_execution_only"},
             {"runtime_timing",
              {{"seconds_aggregation", "maximum_rank"},
               {"setup_seconds", critical_setup_seconds},
