@@ -14,15 +14,19 @@
 #include <rmm/mr/pool_memory_resource.hpp>
 
 #include <algorithm>
+#include <chrono>
 #include <cmath>
 #include <complex>
+#include <condition_variable>
 #include <functional>
 #include <iostream>
 #include <limits>
 #include <memory>
+#include <mutex>
 #include <optional>
 #include <stdexcept>
 #include <string>
+#include <thread>
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -42,6 +46,80 @@ const std::string kPlanSha =
     "sha256:1111111111111111111111111111111111111111111111111111111111111111";
 
 int tests_run = 0;
+
+struct CudaHostGate
+{
+    ~CudaHostGate()
+    {
+        {
+            std::lock_guard<std::mutex> lock(mutex);
+            release = true;
+            condition.notify_all();
+        }
+        (void)cudaSetDevice(kDeviceId);
+        (void)cudaDeviceSynchronize();
+    }
+
+    std::mutex mutex;
+    std::condition_variable condition;
+    bool entered = false;
+    bool release = false;
+    bool post_finished = false;
+    bool watchdog_released = false;
+};
+
+void CUDART_CB wait_for_cuda_host_gate(void *opaque)
+{
+    auto &gate = *static_cast<CudaHostGate *>(opaque);
+    std::unique_lock<std::mutex> lock(gate.mutex);
+    gate.entered = true;
+    gate.condition.notify_all();
+    gate.condition.wait(lock, [&] { return gate.release; });
+}
+
+class CudaGateWatchdog
+{
+public:
+    explicit CudaGateWatchdog(CudaHostGate &gate)
+        : gate_(gate), thread_([this] {
+              std::unique_lock<std::mutex> lock(gate_.mutex);
+              if (!gate_.condition.wait_for(
+                      lock, std::chrono::seconds(2),
+                      [&] { return gate_.post_finished; }))
+              {
+                  gate_.watchdog_released = true;
+              }
+              gate_.release = true;
+              gate_.condition.notify_all();
+          })
+    {}
+
+    ~CudaGateWatchdog()
+    {
+        {
+            std::lock_guard<std::mutex> lock(gate_.mutex);
+            gate_.release = true;
+            gate_.condition.notify_all();
+        }
+        if (thread_.joinable())
+        {
+            thread_.join();
+        }
+    }
+
+    bool finish_post()
+    {
+        std::lock_guard<std::mutex> lock(gate_.mutex);
+        const bool returned_before_release = !gate_.release;
+        gate_.post_finished = true;
+        gate_.condition.notify_all();
+        return returned_before_release && !gate_.watchdog_released;
+    }
+
+private:
+    CudaHostGate &gate_;
+    std::thread thread_;
+};
 
 void require(bool condition, const std::string &message)
 {
@@ -263,6 +341,67 @@ PoseidonGpuValue transfer_value(PoseidonGpuApi &api, fhegpu::TransferId id,
     require(outputs.size() == 1, "Transfer returned the wrong output count");
     require_rejected([&] { (void)api.wait(handle); }, "already waited");
     return std::move(outputs.front());
+}
+
+void test_transfer_post_does_not_wait_for_producer(
+    PoseidonGpuApi &api, const poseidon::PoseidonContext &context,
+    poseidon::KeyGenerator &key_generator)
+{
+    poseidon::PublicKey public_key;
+    key_generator.create_public_key(public_key);
+    poseidon::Encryptor encryptor(context, public_key);
+    poseidon::Decryptor decryptor(context, key_generator.secret_key());
+    poseidon::CKKSEncoder encoder(context);
+
+    const std::vector<double> expected{1.0, -2.0, 3.0, 4.0};
+    poseidon::Plaintext plain;
+    encoder.encode(expected, std::ldexp(1.0, kDefaultScaleLog2), plain);
+    poseidon::Ciphertext cipher;
+    encryptor.encrypt(plain, cipher);
+    auto device_value = transfer_value(
+        api, 40, PoseidonGpuValue::from_host_ciphertext(std::move(cipher)),
+        fhegpu::ValueKind::Ciphertext, host_place(), device_place());
+
+    fhegpu::ComputeOp negate;
+    negate.kind = fhegpu::ComputeKind::Negate;
+    negate.place = device_place();
+    {
+        auto warmup = api.compute(negate, {device_value});
+        api.synchronize(warmup);
+    }
+
+    CudaHostGate gate;
+    require(cudaSetDevice(kDeviceId) == cudaSuccess,
+            "failed to select CUDA device for asynchronous Transfer test");
+    require(cudaLaunchHostFunc(nullptr, wait_for_cuda_host_gate, &gate) == cudaSuccess,
+            "failed to enqueue CUDA producer gate");
+    {
+        std::unique_lock<std::mutex> lock(gate.mutex);
+        require(gate.condition.wait_for(lock, std::chrono::seconds(5),
+                                        [&] { return gate.entered; }),
+                "CUDA producer gate did not start");
+    }
+
+    CudaGateWatchdog watchdog(gate);
+    auto produced = api.compute(negate, {device_value});
+    auto handle = api.communicate_async(
+        transfer_action(41, fhegpu::ValueKind::Ciphertext, device_place(), host_place()),
+        {produced});
+    require(watchdog.finish_post(),
+            "communicate_async blocked on an unfinished GPU producer");
+
+    auto outputs = api.wait(handle);
+    require(outputs.size() == 1, "asynchronous Transfer returned wrong output count");
+    poseidon::Plaintext actual_plain;
+    decryptor.decrypt(outputs.front().host_ciphertext(), actual_plain);
+    std::vector<std::complex<double>> actual;
+    encoder.decode(actual_plain, actual);
+    for (std::size_t index = 0; index < expected.size(); ++index)
+    {
+        require(std::abs(actual[index].real() + expected[index]) < 1e-4,
+                "asynchronous Transfer result mismatch at slot " +
+                    std::to_string(index));
+    }
 }
 
 fhegpu::RuntimePlan make_add_plain_plan(const fhegpu::LoadedOperatorSpec &loaded_spec,
@@ -1062,6 +1201,11 @@ int main()
                      [&] { test_preflight_rejections(api, loaded_spec); });
             run_test("Runtime Encode/Transfer/AddCP/Transfer",
                      [&] { test_runtime_add_plain(api, context, key_generator, loaded_spec); });
+            run_test("Transfer post does not wait for unfinished producer",
+                     [&] {
+                         test_transfer_post_does_not_wait_for_producer(
+                             api, context, key_generator);
+                     });
             run_test("Runtime Transfer/AddCC/Transfer",
                      [&] {
                          test_runtime_add_ciphertexts(api, context, key_generator, loaded_spec);

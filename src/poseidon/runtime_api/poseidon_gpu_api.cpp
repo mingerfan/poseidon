@@ -18,9 +18,12 @@
 #include <complex>
 #include <cstdint>
 #include <limits>
+#include <optional>
 #include <stdexcept>
+#include <type_traits>
 #include <unordered_map>
 #include <utility>
+#include <variant>
 
 #include <cuda_runtime_api.h>
 
@@ -157,6 +160,211 @@ communication::CudaTransferRoute cuda_transfer_route(fhegpu::CommHint hint)
     throw std::invalid_argument("Poseidon GPU communication hint is unknown");
 }
 
+std::size_t checked_mul_size(std::size_t left, std::size_t right,
+                             const char *what)
+{
+    if (left != 0 && right > std::numeric_limits<std::size_t>::max() / left)
+    {
+        throw std::overflow_error(what);
+    }
+    return left * right;
+}
+
+gpu::GpuWord checked_gpu_word(std::uint64_t value, const char *what)
+{
+    if (value > std::numeric_limits<gpu::GpuWord>::max())
+    {
+        throw std::invalid_argument(what);
+    }
+    return static_cast<gpu::GpuWord>(value);
+}
+
+void ciphertext_limb_shape(const Ciphertext &source, std::size_t &q_count,
+                           std::size_t &p_count)
+{
+    q_count = source.coeff_modulus_size();
+    p_count = 0;
+    if (!source.polys().empty() && source.polys().front().poly_degree() != 0)
+    {
+        q_count = source.polys().front().rns_num_q();
+        p_count = source.polys().front().rns_num_p();
+    }
+}
+
+void plaintext_limb_shape(const Plaintext &source, std::size_t &degree,
+                          std::size_t &q_count, std::size_t &p_count)
+{
+    if (source.is_ntt_form())
+    {
+        degree = source.poly().poly_degree();
+        q_count = source.poly().rns_num_q();
+        p_count = source.poly().rns_num_p();
+        if (degree == 0 || q_count + p_count == 0)
+        {
+            throw std::invalid_argument(
+                "GPU asynchronous plaintext upload has invalid RNS shape");
+        }
+        return;
+    }
+    degree = source.coeff_count();
+    q_count = source.coeff_count() == 0 ? 0 : 1;
+    p_count = 0;
+}
+
+gpu::GpuPlaintextData prepare_plaintext_upload(
+    const Plaintext &source, int destination_device,
+    std::shared_ptr<communication::PinnedHostBuffer> &staging)
+{
+    if (!source.is_valid())
+    {
+        throw std::invalid_argument(
+            "GPU asynchronous plaintext upload requires a valid plaintext");
+    }
+    std::size_t degree = 0;
+    std::size_t q_count = 0;
+    std::size_t p_count = 0;
+    plaintext_limb_shape(source, degree, q_count, p_count);
+    const std::size_t word_count = checked_mul_size(
+        degree, q_count + p_count, "GPU plaintext upload size overflow");
+    if (word_count == 0 || word_count != source.coeff_count())
+    {
+        throw std::invalid_argument(
+            "GPU asynchronous plaintext upload shape mismatch");
+    }
+
+    auto destination = gpu::GpuPlaintextData::allocate_single_device(
+        degree, q_count, destination_device, p_count);
+    destination.meta.parms_id = source.parms_id();
+    destination.meta.scale = source.scale();
+    destination.meta.is_ntt_form = source.is_ntt_form();
+
+    staging = std::make_shared<communication::PinnedHostBuffer>(
+        checked_mul_size(word_count, sizeof(gpu::GpuWord),
+                         "GPU plaintext upload byte size overflow"));
+    auto *packed = static_cast<gpu::GpuWord *>(staging->data());
+    for (std::size_t index = 0; index < word_count; ++index)
+    {
+        packed[index] = checked_gpu_word(
+            source.data()[index],
+            "GPU asynchronous plaintext upload residue does not fit in GpuWord");
+    }
+    return destination;
+}
+
+gpu::GpuCiphertextData prepare_ciphertext_upload(
+    const Ciphertext &source, int destination_device,
+    std::shared_ptr<communication::PinnedHostBuffer> &staging)
+{
+    if (!source.is_valid() || source.size() == 0)
+    {
+        throw std::invalid_argument(
+            "GPU asynchronous ciphertext upload requires a valid ciphertext");
+    }
+    std::size_t q_count = 0;
+    std::size_t p_count = 0;
+    ciphertext_limb_shape(source, q_count, p_count);
+    const std::size_t component_words = checked_mul_size(
+        source.poly_modulus_degree(), q_count + p_count,
+        "GPU ciphertext upload component size overflow");
+    const std::size_t word_count = checked_mul_size(
+        component_words, source.size(), "GPU ciphertext upload size overflow");
+
+    auto destination = gpu::GpuCiphertextData::allocate_single_device(
+        source.poly_modulus_degree(), q_count, source.size(), destination_device,
+        p_count);
+    destination.meta.parms_id = source.parms_id();
+    destination.meta.scale = source.scale();
+    destination.meta.correction_factor = source.correction_factor();
+    destination.meta.is_ntt_form = source.is_ntt_form();
+
+    staging = std::make_shared<communication::PinnedHostBuffer>(
+        checked_mul_size(word_count, sizeof(gpu::GpuWord),
+                         "GPU ciphertext upload byte size overflow"));
+    auto *packed = static_cast<gpu::GpuWord *>(staging->data());
+    for (std::size_t component = 0; component < source.size(); ++component)
+    {
+        const auto *component_data = source.data(component);
+        for (std::size_t index = 0; index < component_words; ++index)
+        {
+            packed[component * component_words + index] = checked_gpu_word(
+                component_data[index],
+                "GPU asynchronous ciphertext upload residue does not fit in GpuWord");
+        }
+    }
+    return destination;
+}
+
+Plaintext finish_plaintext_download(
+    const gpu::GpuPlaintextMeta &metadata,
+    const communication::PinnedHostBuffer &staging,
+    const PoseidonContext &context)
+{
+    const std::size_t word_count = checked_mul_size(
+        metadata.degree, metadata.q_count + metadata.p_count,
+        "GPU plaintext download size overflow");
+    if (staging.size() != checked_mul_size(
+            word_count, sizeof(gpu::GpuWord),
+            "GPU plaintext download byte size overflow"))
+    {
+        throw std::invalid_argument("GPU plaintext download staging size mismatch");
+    }
+
+    Plaintext destination;
+    if (metadata.is_ntt_form || metadata.parms_id != parms_id_zero)
+    {
+        destination.resize(context, metadata.parms_id, word_count);
+    }
+    else
+    {
+        destination.resize(word_count);
+        destination.parms_id() = parms_id_zero;
+    }
+    destination.scale() = metadata.scale;
+    const auto *packed = static_cast<const gpu::GpuWord *>(staging.data());
+    for (std::size_t index = 0; index < word_count; ++index)
+    {
+        destination.data()[index] = static_cast<std::uint64_t>(packed[index]);
+    }
+    return destination;
+}
+
+Ciphertext finish_ciphertext_download(
+    const gpu::GpuCiphertextMeta &metadata,
+    const communication::PinnedHostBuffer &staging,
+    const PoseidonContext &context)
+{
+    const std::size_t component_words = checked_mul_size(
+        metadata.degree, metadata.q_count + metadata.p_count,
+        "GPU ciphertext download component size overflow");
+    const std::size_t word_count = checked_mul_size(
+        component_words, metadata.component_count,
+        "GPU ciphertext download size overflow");
+    if (staging.size() != checked_mul_size(
+            word_count, sizeof(gpu::GpuWord),
+            "GPU ciphertext download byte size overflow"))
+    {
+        throw std::invalid_argument("GPU ciphertext download staging size mismatch");
+    }
+
+    Ciphertext destination;
+    destination.resize(context, metadata.parms_id, metadata.component_count);
+    if (destination.poly_modulus_degree() != metadata.degree ||
+        destination.coeff_modulus_size() != metadata.q_count + metadata.p_count)
+    {
+        throw std::invalid_argument(
+            "GPU ciphertext download shape does not match PoseidonContext");
+    }
+    destination.scale() = metadata.scale;
+    destination.correction_factor() = metadata.correction_factor;
+    destination.is_ntt_form() = metadata.is_ntt_form;
+    const auto *packed = static_cast<const gpu::GpuWord *>(staging.data());
+    for (std::size_t index = 0; index < word_count; ++index)
+    {
+        destination.data()[index] = static_cast<std::uint64_t>(packed[index]);
+    }
+    return destination;
+}
+
 template <class GpuValue>
 void require_single_full_shard(const GpuValue &value, std::size_t component_count,
                                int cuda_device_id, const char *where)
@@ -271,6 +479,15 @@ public:
         device_state_.reset();
     }
 
+    cudaEvent_t event() const
+    {
+        if (!recorded_ || event_ == nullptr)
+        {
+            throw std::logic_error("Poseidon GPU completion event was not recorded");
+        }
+        return event_;
+    }
+
 private:
     Completion(int cuda_device_id, std::shared_ptr<void> device_state,
                const std::vector<PoseidonGpuValue> &inputs)
@@ -285,6 +502,38 @@ private:
     std::shared_ptr<void> device_state_;
     std::vector<PoseidonGpuValue> inputs_;
 };
+
+struct PoseidonGpuApi::CommHandle::State
+{
+    struct DeferredPlaintext
+    {
+        std::size_t output_slot = 0;
+        gpu::GpuPlaintextMeta metadata;
+        std::shared_ptr<communication::PinnedHostBuffer> staging;
+    };
+
+    struct DeferredCiphertext
+    {
+        std::size_t output_slot = 0;
+        gpu::GpuCiphertextMeta metadata;
+        std::shared_ptr<communication::PinnedHostBuffer> staging;
+    };
+
+    using DeferredOutput = std::variant<DeferredPlaintext, DeferredCiphertext>;
+
+    // Requests must be destroyed before the buffers they read or write.
+    std::vector<std::optional<Value>> outputs;
+    std::vector<Value> retained_inputs;
+    std::vector<DeferredOutput> deferred_outputs;
+    std::vector<communication::CudaTransferRequest> requests;
+    bool waited = false;
+};
+
+PoseidonGpuApi::CommHandle::CommHandle() = default;
+PoseidonGpuApi::CommHandle::~CommHandle() = default;
+PoseidonGpuApi::CommHandle::CommHandle(CommHandle &&) noexcept = default;
+PoseidonGpuApi::CommHandle &PoseidonGpuApi::CommHandle::operator=(
+    CommHandle &&) noexcept = default;
 
 PoseidonGpuValue::PoseidonGpuValue(Storage storage) : storage_(std::move(storage)) {}
 
@@ -783,17 +1032,21 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_async(
         }
     }
 
-    if (source_place.kind == fhegpu::PlaceKind::Device && input.completion_ != nullptr)
-    {
-        input.completion_->wait();
-    }
-
     const auto requested_route = cuda_transfer_route(action.hint);
     communication::CudaLocalTransfer cuda_transfer;
     CommHandle handle;
-    handle.outputs.reserve(action.outputs.size());
-    for (const auto &destination : action.destinations)
+    handle.state_ = std::make_unique<CommHandle::State>();
+    auto &state = *handle.state_;
+    state.outputs.resize(action.outputs.size());
+    state.requests.reserve(action.outputs.size());
+    state.deferred_outputs.reserve(action.outputs.size());
+    state.retained_inputs = local_inputs;
+    const cudaEvent_t source_ready =
+        input.completion_ != nullptr ? input.completion_->event() : nullptr;
+
+    for (std::size_t slot = 0; slot < action.destinations.size(); ++slot)
     {
+        const auto &destination = action.destinations[slot];
         if (source_place.kind == fhegpu::PlaceKind::Host)
         {
             const int destination_cuda_device =
@@ -801,15 +1054,25 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_async(
                     .cuda_device_id;
             if (input.kind() == fhegpu::ValueKind::Plaintext)
             {
-                handle.outputs.push_back(Value::from_device_plaintext(
-                    gpu::GpuUploader::upload_plaintext(input.host_plaintext(),
-                                                       destination_cuda_device)));
+                std::shared_ptr<communication::PinnedHostBuffer> staging;
+                auto output = prepare_plaintext_upload(
+                    input.host_plaintext(), destination_cuda_device, staging);
+                state.requests.push_back(cuda_transfer.copy_host_to_device_async(
+                    staging, output.fields_.front().data(), staging->size(),
+                    destination_cuda_device));
+                state.outputs[slot].emplace(
+                    Value::from_device_plaintext(std::move(output)));
             }
             else
             {
-                handle.outputs.push_back(Value::from_device_ciphertext(
-                    gpu::GpuUploader::upload_ciphertext(input.host_ciphertext(),
-                                                        destination_cuda_device)));
+                std::shared_ptr<communication::PinnedHostBuffer> staging;
+                auto output = prepare_ciphertext_upload(
+                    input.host_ciphertext(), destination_cuda_device, staging);
+                state.requests.push_back(cuda_transfer.copy_host_to_device_async(
+                    staging, output.fields_.front().data(), staging->size(),
+                    destination_cuda_device));
+                state.outputs[slot].emplace(
+                    Value::from_device_ciphertext(std::move(output)));
             }
             continue;
         }
@@ -818,16 +1081,33 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_async(
         {
             if (input.kind() == fhegpu::ValueKind::Plaintext)
             {
-                Plaintext output;
-                gpu::GpuUploader::download_plaintext(input.device_plaintext(), output, context_);
-                handle.outputs.push_back(Value::from_host_plaintext(std::move(output)));
+                const auto &source = input.device_plaintext();
+                const std::size_t bytes = checked_mul_size(
+                    source.fields_.front().size(), sizeof(gpu::GpuWord),
+                    "GPU plaintext download byte size overflow");
+                auto staging =
+                    std::make_shared<communication::PinnedHostBuffer>(bytes);
+                state.requests.push_back(cuda_transfer.copy_device_to_host_async(
+                    source.fields_.front().data(),
+                    source.fields_.front().device_id, staging, bytes, source_ready));
+                state.deferred_outputs.emplace_back(
+                    CommHandle::State::DeferredPlaintext{
+                        slot, source.meta, std::move(staging)});
             }
             else
             {
-                Ciphertext output;
-                gpu::GpuUploader::download_ciphertext(input.device_ciphertext(), output,
-                                                       context_);
-                handle.outputs.push_back(Value::from_host_ciphertext(std::move(output)));
+                const auto &source = input.device_ciphertext();
+                const std::size_t bytes = checked_mul_size(
+                    source.fields_.front().size(), sizeof(gpu::GpuWord),
+                    "GPU ciphertext download byte size overflow");
+                auto staging =
+                    std::make_shared<communication::PinnedHostBuffer>(bytes);
+                state.requests.push_back(cuda_transfer.copy_device_to_host_async(
+                    source.fields_.front().data(),
+                    source.fields_.front().device_id, staging, bytes, source_ready));
+                state.deferred_outputs.emplace_back(
+                    CommHandle::State::DeferredCiphertext{
+                        slot, source.meta, std::move(staging)});
             }
             continue;
         }
@@ -840,16 +1120,30 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_async(
             gpu::GpuPlaintextData output;
             const auto copies = communication::prepare_full_object_copy(
                 input.device_plaintext(), output, destination_cuda_device);
-            cuda_transfer.copy_sync(copies, requested_route);
-            handle.outputs.push_back(Value::from_device_plaintext(std::move(output)));
+            if (copies.size() != 1)
+            {
+                throw std::logic_error(
+                    "GPU plaintext Transfer produced multiple buffer copies");
+            }
+            state.requests.push_back(cuda_transfer.copy_async(
+                copies.front(), requested_route, source_ready));
+            state.outputs[slot].emplace(
+                Value::from_device_plaintext(std::move(output)));
         }
         else
         {
             gpu::GpuCiphertextData output;
             const auto copies = communication::prepare_full_object_copy(
                 input.device_ciphertext(), output, destination_cuda_device);
-            cuda_transfer.copy_sync(copies, requested_route);
-            handle.outputs.push_back(Value::from_device_ciphertext(std::move(output)));
+            if (copies.size() != 1)
+            {
+                throw std::logic_error(
+                    "GPU ciphertext Transfer produced multiple buffer copies");
+            }
+            state.requests.push_back(cuda_transfer.copy_async(
+                copies.front(), requested_route, source_ready));
+            state.outputs[slot].emplace(
+                Value::from_device_ciphertext(std::move(output)));
         }
     }
     return handle;
@@ -857,12 +1151,57 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_async(
 
 std::vector<PoseidonGpuApi::Value> PoseidonGpuApi::wait(CommHandle &handle)
 {
-    if (handle.waited)
+    if (!handle.state_)
+    {
+        throw std::runtime_error("Poseidon GPU communication handle is empty");
+    }
+    auto &state = *handle.state_;
+    if (state.waited)
     {
         throw std::runtime_error("Poseidon GPU communication handle was already waited");
     }
-    handle.waited = true;
-    return std::move(handle.outputs);
+    for (auto &request : state.requests)
+    {
+        request.wait();
+    }
+    for (const auto &deferred : state.deferred_outputs)
+    {
+        std::visit(
+            [&](const auto &output) {
+                using Output = std::decay_t<decltype(output)>;
+                if constexpr (std::is_same_v<Output,
+                                             CommHandle::State::DeferredPlaintext>)
+                {
+                    state.outputs[output.output_slot].emplace(
+                        Value::from_host_plaintext(finish_plaintext_download(
+                            output.metadata, *output.staging, context_)));
+                }
+                else
+                {
+                    state.outputs[output.output_slot].emplace(
+                        Value::from_host_ciphertext(finish_ciphertext_download(
+                            output.metadata, *output.staging, context_)));
+                }
+            },
+            deferred);
+    }
+
+    std::vector<Value> outputs;
+    outputs.reserve(state.outputs.size());
+    for (auto &output : state.outputs)
+    {
+        if (!output)
+        {
+            throw std::logic_error("Poseidon GPU communication output is unavailable");
+        }
+        outputs.push_back(std::move(*output));
+        output.reset();
+    }
+    state.waited = true;
+    state.requests.clear();
+    state.deferred_outputs.clear();
+    state.retained_inputs.clear();
+    return outputs;
 }
 
 void PoseidonGpuApi::synchronize(Value &value)

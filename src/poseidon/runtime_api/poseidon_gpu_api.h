@@ -79,8 +79,19 @@ public:
 
     struct CommHandle
     {
-        std::vector<Value> outputs;
-        bool waited = false;
+        CommHandle();
+        ~CommHandle();
+
+        CommHandle(const CommHandle &) = delete;
+        CommHandle &operator=(const CommHandle &) = delete;
+        CommHandle(CommHandle &&) noexcept;
+        CommHandle &operator=(CommHandle &&) noexcept;
+
+    private:
+        struct State;
+        std::unique_ptr<State> state_;
+
+        friend class PoseidonGpuApi;
     };
 
     PoseidonGpuApi(std::string context_id, PoseidonContext context, int cuda_device_id,
