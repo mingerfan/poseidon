@@ -1019,17 +1019,17 @@ int main()
         RmmPoolScope rmm_scope(device_id);
 
         const std::size_t degree =
-            env_size_or("POSEIDON_BOOTSTRAP_DEGREE", 32768);
+            env_size_or("POSEIDON_BOOTSTRAP_DEGREE", 16384);
         const std::size_t q_count =
-            env_size_or("POSEIDON_BOOTSTRAP_Q_COUNT", 20);
+            env_size_or("POSEIDON_BOOTSTRAP_Q_COUNT", 34);
         const std::size_t p_count =
-            env_size_or("POSEIDON_BOOTSTRAP_P_COUNT", 5);
+            env_size_or("POSEIDON_BOOTSTRAP_P_COUNT", 9);
         const std::uint32_t log_q = static_cast<std::uint32_t>(
             env_size_or("POSEIDON_BOOTSTRAP_LOG_Q", 30));
         const std::uint32_t log_p = static_cast<std::uint32_t>(
             env_size_or("POSEIDON_BOOTSTRAP_LOG_P", log_q));
         const std::uint32_t log_scale = static_cast<std::uint32_t>(
-            env_size_or("POSEIDON_BOOTSTRAP_LOG_SCALE", 25));
+            env_size_or("POSEIDON_BOOTSTRAP_LOG_SCALE", 30));
         const std::uint32_t q0_level = static_cast<std::uint32_t>(
             env_size_or("POSEIDON_BOOTSTRAP_Q0_LEVEL", 1));
         const std::uint32_t bootstrap_ratio = static_cast<std::uint32_t>(
