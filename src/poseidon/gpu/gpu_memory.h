@@ -9,7 +9,8 @@
 
 #include <cuda_runtime_api.h>
 #include <rmm/cuda_stream_view.hpp>
-#include <rmm/mr/per_device_resource.hpp>
+#include <rmm/mr/device/device_memory_resource.hpp>
+#include <rmm/mr/device/per_device_resource.hpp>
 
 namespace poseidon
 {
@@ -108,10 +109,9 @@ public:
         }
 
         gpu_check_cuda(cudaSetDevice(device_id_), "cudaSetDevice");
+        resource_ = rmm::mr::get_current_device_resource();
         ptr_ = static_cast<T *>(
-            rmm::mr::get_current_device_resource()->allocate(
-                bytes_,
-                rmm::cuda_stream_default));
+            resource_->allocate(bytes_, rmm::cuda_stream_default));
     }
 
     void copy_from_host(const T *src, std::size_t count)
@@ -172,15 +172,13 @@ public:
         if (ptr_ != nullptr)
         {
             gpu_check_cuda(cudaSetDevice(device_id_), "cudaSetDevice");
-            rmm::mr::get_current_device_resource()->deallocate(
-                ptr_,
-                bytes_,
-                rmm::cuda_stream_default);
+            resource_->deallocate(ptr_, bytes_, rmm::cuda_stream_default);
         }
         ptr_ = nullptr;
         size_ = 0;
         bytes_ = 0;
         device_id_ = 0;
+        resource_ = nullptr;
     }
 
     T *data()
@@ -215,11 +213,13 @@ private:
         size_ = other.size_;
         bytes_ = other.bytes_;
         device_id_ = other.device_id_;
+        resource_ = other.resource_;
 
         other.ptr_ = nullptr;
         other.size_ = 0;
         other.bytes_ = 0;
         other.device_id_ = 0;
+        other.resource_ = nullptr;
     }
 
 private:
@@ -227,6 +227,7 @@ private:
     std::size_t size_ = 0;
     std::size_t bytes_ = 0;
     int device_id_ = 0;
+    rmm::mr::device_memory_resource *resource_ = nullptr;
 };
 
 /**

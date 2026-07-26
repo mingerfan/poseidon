@@ -18,6 +18,7 @@
 #include <complex>
 #include <cstdint>
 #include <limits>
+#include <mutex>
 #include <optional>
 #include <stdexcept>
 #include <type_traits>
@@ -26,11 +27,81 @@
 #include <variant>
 
 #include <cuda_runtime_api.h>
+#include <rmm/mr/device/cuda_memory_resource.hpp>
+#include <rmm/mr/device/per_device_resource.hpp>
+#include <rmm/mr/device/pool_memory_resource.hpp>
 
 namespace poseidon::runtime_api
 {
 namespace
 {
+
+constexpr std::size_t kInitialDevicePoolSize = 256ULL << 20;
+
+class DeviceMemoryPool
+{
+public:
+    explicit DeviceMemoryPool(int cuda_device_id)
+        : cuda_device_id_(cuda_device_id)
+    {
+        gpu::gpu_check_cuda(cudaSetDevice(cuda_device_id_), "cudaSetDevice");
+        previous_resource_ = rmm::mr::get_current_device_resource();
+        upstream_ = std::make_unique<rmm::mr::cuda_memory_resource>();
+        pool_ = std::make_unique<
+            rmm::mr::pool_memory_resource<rmm::mr::cuda_memory_resource>>(
+            upstream_.get(), kInitialDevicePoolSize);
+        rmm::mr::set_per_device_resource(
+            rmm::cuda_device_id{cuda_device_id_}, pool_.get());
+    }
+
+    DeviceMemoryPool(const DeviceMemoryPool &) = delete;
+    DeviceMemoryPool &operator=(const DeviceMemoryPool &) = delete;
+
+    ~DeviceMemoryPool()
+    {
+        (void)cudaSetDevice(cuda_device_id_);
+        if (rmm::mr::get_per_device_resource(
+                rmm::cuda_device_id{cuda_device_id_}) == pool_.get())
+        {
+            rmm::mr::set_per_device_resource(
+                rmm::cuda_device_id{cuda_device_id_}, previous_resource_);
+        }
+    }
+
+private:
+    int cuda_device_id_ = 0;
+    rmm::mr::device_memory_resource *previous_resource_ = nullptr;
+    std::unique_ptr<rmm::mr::cuda_memory_resource> upstream_;
+    std::unique_ptr<
+        rmm::mr::pool_memory_resource<rmm::mr::cuda_memory_resource>> pool_;
+};
+
+std::shared_ptr<DeviceMemoryPool> acquire_device_memory_pool(int cuda_device_id)
+{
+    static std::mutex mutex;
+    static std::unordered_map<int, std::weak_ptr<DeviceMemoryPool>> pools;
+
+    gpu::gpu_check_cuda(cudaSetDevice(cuda_device_id), "cudaSetDevice");
+    std::lock_guard<std::mutex> lock(mutex);
+    const auto existing = pools.find(cuda_device_id);
+    if (existing != pools.end())
+    {
+        if (auto pool = existing->second.lock())
+        {
+            return pool;
+        }
+    }
+
+    auto *current = rmm::mr::get_current_device_resource();
+    if (dynamic_cast<rmm::mr::cuda_memory_resource *>(current) == nullptr)
+    {
+        return {};
+    }
+
+    auto pool = std::make_shared<DeviceMemoryPool>(cuda_device_id);
+    pools[cuda_device_id] = pool;
+    return pool;
+}
 
 double exact_scale(int scale_log2)
 {
@@ -410,6 +481,7 @@ void require_full_poly(const gpu::GpuRNSPoly &poly, std::size_t component,
 struct PoseidonGpuApi::DeviceState
 {
     int cuda_device_id = 0;
+    std::shared_ptr<DeviceMemoryPool> memory_pool;
     std::unique_ptr<gpu::GpuParameterData> gpu_parameters;
     std::unique_ptr<gpu::GpuEvaluator> evaluator;
     std::unordered_map<std::size_t, std::unique_ptr<gpu::GpuRelinKeysData>>
@@ -542,6 +614,7 @@ PoseidonGpuValue &PoseidonGpuValue::operator=(const PoseidonGpuValue &other)
     if (this != &other)
     {
         completion_ = other.completion_;
+        allocation_owner_ = other.allocation_owner_;
         storage_ = other.storage_;
     }
     return *this;
@@ -552,6 +625,7 @@ PoseidonGpuValue &PoseidonGpuValue::operator=(PoseidonGpuValue &&other) noexcept
     if (this != &other)
     {
         completion_ = std::move(other.completion_);
+        allocation_owner_ = std::move(other.allocation_owner_);
         storage_ = std::move(other.storage_);
     }
     return *this;
@@ -718,6 +792,7 @@ PoseidonGpuApi::PoseidonGpuApi(std::string context_id, PoseidonContext context,
         gpu::gpu_check_cuda(cudaSetDevice(cuda_device_id), "cudaSetDevice");
         auto device = std::make_shared<DeviceState>();
         device->cuda_device_id = cuda_device_id;
+        device->memory_pool = acquire_device_memory_pool(cuda_device_id);
         device->gpu_parameters =
             std::make_unique<gpu::GpuParameterData>(context_, cuda_device_id);
         device->evaluator = std::make_unique<gpu::GpuEvaluator>(*device->gpu_parameters);
@@ -952,6 +1027,8 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
     }
 
     auto result = Value::from_device_ciphertext(std::move(output));
+    result.allocation_owner_ =
+        devices_.at(static_cast<std::size_t>(op.place.index));
     result.completion_ = PoseidonGpuValue::Completion::record(
         device.cuda_device_id, devices_.at(static_cast<std::size_t>(op.place.index)),
         inputs);
@@ -1062,6 +1139,8 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_async(
                     destination_cuda_device));
                 state.outputs[slot].emplace(
                     Value::from_device_plaintext(std::move(output)));
+                state.outputs[slot]->allocation_owner_ =
+                    devices_.at(static_cast<std::size_t>(destination.index));
             }
             else
             {
@@ -1073,6 +1152,8 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_async(
                     destination_cuda_device));
                 state.outputs[slot].emplace(
                     Value::from_device_ciphertext(std::move(output)));
+                state.outputs[slot]->allocation_owner_ =
+                    devices_.at(static_cast<std::size_t>(destination.index));
             }
             continue;
         }
@@ -1129,6 +1210,8 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_async(
                 copies.front(), requested_route, source_ready));
             state.outputs[slot].emplace(
                 Value::from_device_plaintext(std::move(output)));
+            state.outputs[slot]->allocation_owner_ =
+                devices_.at(static_cast<std::size_t>(destination.index));
         }
         else
         {
@@ -1144,6 +1227,8 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_async(
                 copies.front(), requested_route, source_ready));
             state.outputs[slot].emplace(
                 Value::from_device_ciphertext(std::move(output)));
+            state.outputs[slot]->allocation_owner_ =
+                devices_.at(static_cast<std::size_t>(destination.index));
         }
     }
     return handle;
