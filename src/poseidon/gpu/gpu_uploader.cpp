@@ -84,16 +84,12 @@ void copy_gpu_words_to_device_field_offset(
 
     gpu_check_cuda(cudaSetDevice(dst.device_id), "cudaSetDevice");
     gpu_check_cuda(
-        cudaMemcpyAsync(
+        cudaMemcpy(
             dst.data() + dst_offset,
             src,
             count * sizeof(GpuWord),
-            cudaMemcpyHostToDevice,
-            gpu_execution_stream()),
-        "cudaMemcpyAsync HostToDevice shard");
-    gpu_check_cuda(
-        cudaStreamSynchronize(gpu_execution_stream()),
-        "cudaStreamSynchronize HostToDevice shard");
+            cudaMemcpyHostToDevice),
+        "cudaMemcpyHostToDevice shard");
 }
 
 void copy_device_field_to_uint64(
@@ -138,16 +134,12 @@ void copy_device_field_offset_to_gpu_words(
 
     gpu_check_cuda(cudaSetDevice(src.device_id), "cudaSetDevice");
     gpu_check_cuda(
-        cudaMemcpyAsync(
+        cudaMemcpy(
             dst,
             src.data() + src_offset,
             count * sizeof(GpuWord),
-            cudaMemcpyDeviceToHost,
-            gpu_execution_stream()),
-        "cudaMemcpyAsync DeviceToHost shard");
-    gpu_check_cuda(
-        cudaStreamSynchronize(gpu_execution_stream()),
-        "cudaStreamSynchronize DeviceToHost shard");
+            cudaMemcpyDeviceToHost),
+        "cudaMemcpyDeviceToHost shard");
 }
 
 void ciphertext_limb_shape(
