@@ -313,11 +313,12 @@ void copy_poly_shard(
         "GpuKeySwitchHandler copy word count overflow");
     gpu_check_cuda(cudaSetDevice(destination.device_id), name);
     gpu_check_cuda(
-        cudaMemcpy(
+        cudaMemcpyAsync(
             destination.ptr,
             source.ptr,
             word_count * sizeof(GpuWord),
-            cudaMemcpyDeviceToDevice),
+            cudaMemcpyDeviceToDevice,
+            gpu_execution_stream()),
         name);
 }
 

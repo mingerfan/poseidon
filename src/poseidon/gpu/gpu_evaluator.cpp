@@ -187,10 +187,11 @@ void zero_poly(
             "GpuEvaluator zero word count overflow");
         gpu_check_cuda(cudaSetDevice(shard.device_id), name);
         gpu_check_cuda(
-            cudaMemset(
+            cudaMemsetAsync(
                 shard.ptr,
                 0,
-                word_count * sizeof(GpuWord)),
+                word_count * sizeof(GpuWord),
+                gpu_execution_stream()),
             name);
     }
 }
@@ -224,11 +225,12 @@ void copy_poly(
             "GpuEvaluator copy word count overflow");
         gpu_check_cuda(cudaSetDevice(dst.device_id), name);
         gpu_check_cuda(
-            cudaMemcpy(
+            cudaMemcpyAsync(
                 dst.ptr,
                 src.ptr,
                 word_count * sizeof(GpuWord),
-                cudaMemcpyDeviceToDevice),
+                cudaMemcpyDeviceToDevice,
+                gpu_execution_stream()),
             name);
     }
 }

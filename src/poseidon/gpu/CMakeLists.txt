@@ -56,5 +56,6 @@ target_link_libraries(poseidon_gpu
 target_compile_features(poseidon_gpu PUBLIC cxx_std_17)
 target_compile_options(poseidon_gpu
     PRIVATE
+        $<$<COMPILE_LANGUAGE:CUDA>:--default-stream=per-thread>
         $<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>
 )

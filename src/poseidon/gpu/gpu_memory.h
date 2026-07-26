@@ -37,6 +37,11 @@ inline void gpu_check_cuda(cudaError_t status, const char *what)
     }
 }
 
+inline cudaStream_t gpu_execution_stream() noexcept
+{
+    return cudaStreamPerThread;
+}
+
 /**
  * @brief Lightweight GPU memory owner.
  *
@@ -111,7 +116,8 @@ public:
         gpu_check_cuda(cudaSetDevice(device_id_), "cudaSetDevice");
         resource_ = rmm::mr::get_current_device_resource();
         ptr_ = static_cast<T *>(
-            resource_->allocate(bytes_, rmm::cuda_stream_default));
+            resource_->allocate(
+                bytes_, rmm::cuda_stream_view{gpu_execution_stream()}));
     }
 
     void copy_from_host(const T *src, std::size_t count)
@@ -131,8 +137,12 @@ public:
 
         gpu_check_cuda(cudaSetDevice(device_id_), "cudaSetDevice");
         gpu_check_cuda(
-            cudaMemcpy(ptr_, src, count * sizeof(T), cudaMemcpyHostToDevice),
-            "cudaMemcpyHostToDevice");
+            cudaMemcpyAsync(ptr_, src, count * sizeof(T), cudaMemcpyHostToDevice,
+                            gpu_execution_stream()),
+            "cudaMemcpyAsync HostToDevice");
+        gpu_check_cuda(
+            cudaStreamSynchronize(gpu_execution_stream()),
+            "cudaStreamSynchronize HostToDevice");
     }
 
     void copy_to_host(T *dst, std::size_t count) const
@@ -152,8 +162,12 @@ public:
 
         gpu_check_cuda(cudaSetDevice(device_id_), "cudaSetDevice");
         gpu_check_cuda(
-            cudaMemcpy(dst, ptr_, count * sizeof(T), cudaMemcpyDeviceToHost),
-            "cudaMemcpyDeviceToHost");
+            cudaMemcpyAsync(dst, ptr_, count * sizeof(T), cudaMemcpyDeviceToHost,
+                            gpu_execution_stream()),
+            "cudaMemcpyAsync DeviceToHost");
+        gpu_check_cuda(
+            cudaStreamSynchronize(gpu_execution_stream()),
+            "cudaStreamSynchronize DeviceToHost");
     }
 
     void fill_zero()
@@ -164,7 +178,9 @@ public:
         }
 
         gpu_check_cuda(cudaSetDevice(device_id_), "cudaSetDevice");
-        gpu_check_cuda(cudaMemset(ptr_, 0, bytes_), "cudaMemset");
+        gpu_check_cuda(
+            cudaMemsetAsync(ptr_, 0, bytes_, gpu_execution_stream()),
+            "cudaMemsetAsync");
     }
 
     void release()
@@ -172,7 +188,8 @@ public:
         if (ptr_ != nullptr)
         {
             gpu_check_cuda(cudaSetDevice(device_id_), "cudaSetDevice");
-            resource_->deallocate(ptr_, bytes_, rmm::cuda_stream_default);
+            resource_->deallocate(
+                ptr_, bytes_, rmm::cuda_stream_view{gpu_execution_stream()});
         }
         ptr_ = nullptr;
         size_ = 0;

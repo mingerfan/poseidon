@@ -505,7 +505,9 @@ public:
             gpu::gpu_check_cuda(
                 cudaEventCreateWithFlags(&completion->event_, cudaEventDisableTiming),
                 "cudaEventCreateWithFlags");
-            gpu::gpu_check_cuda(cudaEventRecord(completion->event_), "cudaEventRecord");
+            gpu::gpu_check_cuda(
+                cudaEventRecord(completion->event_, gpu::gpu_execution_stream()),
+                "cudaEventRecord");
             completion->recorded_ = true;
         }
         catch (...)

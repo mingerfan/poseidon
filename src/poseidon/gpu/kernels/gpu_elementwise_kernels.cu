@@ -716,12 +716,13 @@ void launch_copy_poly_shard(
         destination_shard.limb_count * destination_shard.coeff_count;
 
     gpu_check_cuda(
-        cudaMemcpy(
+        cudaMemcpyAsync(
             destination_shard.ptr,
             source_shard.ptr,
             word_count * sizeof(GpuWord),
-            cudaMemcpyDeviceToDevice),
-        "launch_copy_poly_shard cudaMemcpyDeviceToDevice");
+            cudaMemcpyDeviceToDevice,
+            gpu_execution_stream()),
+        "launch_copy_poly_shard cudaMemcpyAsync DeviceToDevice");
 
     (void)degree;
 }
