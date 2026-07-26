@@ -495,10 +495,12 @@ class PoseidonGpuValue::Completion
 public:
     static std::shared_ptr<Completion> record(
         int cuda_device_id, std::shared_ptr<void> device_state,
-        const std::vector<PoseidonGpuValue> &inputs)
+        const std::vector<PoseidonGpuValue> &inputs,
+        std::vector<std::shared_ptr<void>> temporaries)
     {
         auto completion = std::shared_ptr<Completion>(
-            new Completion(cuda_device_id, std::move(device_state), inputs));
+            new Completion(cuda_device_id, std::move(device_state), inputs,
+                           std::move(temporaries)));
         try
         {
             gpu::gpu_check_cuda(cudaSetDevice(cuda_device_id), "cudaSetDevice");
@@ -549,6 +551,7 @@ public:
         gpu::gpu_check_cuda(cudaSetDevice(cuda_device_id_), "cudaSetDevice");
         gpu::gpu_check_cuda(cudaEventSynchronize(event_), "cudaEventSynchronize");
         waited_ = true;
+        temporaries_.clear();
         inputs_.clear();
         device_state_.reset();
     }
@@ -564,9 +567,10 @@ public:
 
 private:
     Completion(int cuda_device_id, std::shared_ptr<void> device_state,
-               const std::vector<PoseidonGpuValue> &inputs)
+               const std::vector<PoseidonGpuValue> &inputs,
+               std::vector<std::shared_ptr<void>> temporaries)
         : cuda_device_id_(cuda_device_id), device_state_(std::move(device_state)),
-          inputs_(inputs)
+          inputs_(inputs), temporaries_(std::move(temporaries))
     {}
 
     int cuda_device_id_ = 0;
@@ -575,6 +579,7 @@ private:
     bool waited_ = false;
     std::shared_ptr<void> device_state_;
     std::vector<PoseidonGpuValue> inputs_;
+    std::vector<std::shared_ptr<void>> temporaries_;
 };
 
 struct PoseidonGpuApi::CommHandle::State
@@ -897,6 +902,7 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
         }
     }
     gpu::GpuCiphertextData output;
+    std::vector<std::shared_ptr<void>> temporaries;
 
     switch (op.kind)
     {
@@ -943,22 +949,23 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
             break;
         }
 
-        std::vector<std::unique_ptr<gpu::GpuCiphertextData>> intermediates;
+        std::vector<std::shared_ptr<gpu::GpuCiphertextData>> intermediates;
         intermediates.reserve(steps.size());
         const gpu::GpuCiphertextData *source = &input;
         for (int step : steps)
         {
-            auto next = std::make_unique<gpu::GpuCiphertextData>();
+            auto next = std::make_shared<gpu::GpuCiphertextData>();
             device.evaluator->rotate(
                 *source, step, galois_keys_for(device, input.meta.q_count), *next);
             source = next.get();
             intermediates.push_back(std::move(next));
         }
-        if (steps.size() > 1)
-        {
-            synchronize_device(device.cuda_device_id);
-        }
         output = std::move(*intermediates.back());
+        intermediates.pop_back();
+        for (auto &intermediate : intermediates)
+        {
+            temporaries.push_back(std::move(intermediate));
+        }
         break;
     }
     case fhegpu::ComputeKind::Rescale:
@@ -981,22 +988,23 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
             throw std::invalid_argument("Poseidon GPU Rescale target level is unsupported");
         }
 
-        std::vector<std::unique_ptr<gpu::GpuCiphertextData>> intermediates;
+        std::vector<std::shared_ptr<gpu::GpuCiphertextData>> intermediates;
         intermediates.reserve(static_cast<std::size_t>(drop_count));
         const gpu::GpuCiphertextData *source = &input;
         for (int dropped = 0; dropped < drop_count; ++dropped)
         {
-            auto next = std::make_unique<gpu::GpuCiphertextData>();
+            auto next = std::make_shared<gpu::GpuCiphertextData>();
             device.evaluator->rescale(*source, *next);
             source = next.get();
             intermediates.push_back(std::move(next));
         }
-        if (drop_count > 1)
-        {
-            synchronize_device(device.cuda_device_id);
-        }
         intermediates.back()->meta.scale = exact_scale(attrs.target_scale_log2);
         output = std::move(*intermediates.back());
+        intermediates.pop_back();
+        for (auto &intermediate : intermediates)
+        {
+            temporaries.push_back(std::move(intermediate));
+        }
         break;
     }
     case fhegpu::ComputeKind::Relinearize:
@@ -1033,7 +1041,7 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
         devices_.at(static_cast<std::size_t>(op.place.index));
     result.completion_ = PoseidonGpuValue::Completion::record(
         device.cuda_device_id, devices_.at(static_cast<std::size_t>(op.place.index)),
-        inputs);
+        inputs, std::move(temporaries));
     return result;
 }
 
