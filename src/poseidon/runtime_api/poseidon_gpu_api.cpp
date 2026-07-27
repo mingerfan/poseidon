@@ -775,6 +775,20 @@ PoseidonGpuApi::PoseidonGpuApi(std::string context_id, PoseidonContext context,
         }
     }
 
+    for (const int destination_device : cuda_device_ids)
+    {
+        for (const int source_device : cuda_device_ids)
+        {
+            if (destination_device != source_device &&
+                communication::CudaLocalTransfer::can_access_peer(
+                    destination_device, source_device))
+            {
+                communication::CudaLocalTransfer::enable_peer_access(
+                    destination_device, source_device);
+            }
+        }
+    }
+
     const auto parameters = context_.parameters_literal();
     for (const auto &modulus : parameters->q())
     {

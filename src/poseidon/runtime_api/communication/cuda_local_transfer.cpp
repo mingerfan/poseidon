@@ -38,22 +38,6 @@ void validate_request(const DeviceBufferCopy &request)
     }
 }
 
-void enable_peer_access(int destination_device, int source_device)
-{
-    check_cuda(cudaSetDevice(destination_device), "CUDA transfer cudaSetDevice");
-    const cudaError_t status = cudaDeviceEnablePeerAccess(source_device, 0);
-    if (status == cudaSuccess)
-    {
-        return;
-    }
-    if (status == cudaErrorPeerAccessAlreadyEnabled)
-    {
-        (void)cudaGetLastError();
-        return;
-    }
-    check_cuda(status, "CUDA transfer cudaDeviceEnablePeerAccess");
-}
-
 void copy_host_staged(const DeviceBufferCopy &request)
 {
     void *host = nullptr;
@@ -250,6 +234,33 @@ bool CudaLocalTransfer::can_access_peer(int destination_device, int source_devic
     return can_access != 0;
 }
 
+void CudaLocalTransfer::enable_peer_access(int destination_device, int source_device)
+{
+    if (destination_device < 0 || source_device < 0 ||
+        destination_device == source_device)
+    {
+        throw std::invalid_argument("CUDA peer access endpoints are invalid");
+    }
+    if (!can_access_peer(destination_device, source_device))
+    {
+        throw std::runtime_error("CUDA peer access is unavailable");
+    }
+
+    check_cuda(cudaSetDevice(destination_device),
+               "CUDA peer access cudaSetDevice");
+    const cudaError_t status = cudaDeviceEnablePeerAccess(source_device, 0);
+    if (status == cudaSuccess)
+    {
+        return;
+    }
+    if (status == cudaErrorPeerAccessAlreadyEnabled)
+    {
+        (void)cudaGetLastError();
+        return;
+    }
+    check_cuda(status, "CUDA peer access cudaDeviceEnablePeerAccess");
+}
+
 CudaTransferRoute CudaLocalTransfer::select_route(int destination_device, int source_device,
                                                   CudaTransferRoute requested)
 {
@@ -314,7 +325,6 @@ CudaTransferRoute CudaLocalTransfer::copy_sync(const DeviceBufferCopy &request,
                    "CUDA transfer device to device");
         break;
     case CudaTransferRoute::PeerToPeer:
-        enable_peer_access(request.destination_device, request.source_device);
         check_cuda(cudaMemcpyPeer(request.destination, request.destination_device,
                                   request.source, request.source_device, request.bytes),
                    "CUDA transfer cudaMemcpyPeer");
@@ -409,7 +419,6 @@ CudaTransferRequest CudaLocalTransfer::copy_async(
     }
     else if (route == CudaTransferRoute::PeerToPeer)
     {
-        enable_peer_access(request.destination_device, request.source_device);
         check_cuda(cudaSetDevice(request.destination_device),
                    "CUDA transfer cudaSetDevice destination");
         check_cuda(cudaMemcpyPeerAsync(request.destination, request.destination_device,
