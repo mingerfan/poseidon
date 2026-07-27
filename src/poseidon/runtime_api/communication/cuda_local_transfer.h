@@ -62,6 +62,8 @@ class CudaLocalTransfer
 public:
     static int visible_device_count();
     static bool can_access_peer(int destination_device, int source_device);
+    // Required once per directed device pair before submitting a PeerToPeer copy.
+    static void enable_peer_access(int destination_device, int source_device);
     static CudaTransferRoute select_route(int destination_device, int source_device,
                                           CudaTransferRoute requested);
 
