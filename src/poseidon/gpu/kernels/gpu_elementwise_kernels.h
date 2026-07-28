@@ -131,6 +131,52 @@ void launch_multiply_accumulate_poly_shard(
     const GpuParameterShard &parameter_shard,
     std::size_t degree);
 
+/**
+ * @brief Accumulate one plaintext product into both ciphertext components.
+ *
+ * destination[c] += ciphertext[c] * plaintext for c in {0,1}. A 2-D grid
+ * keeps coefficient accesses contiguous while removing one component launch.
+ */
+void launch_multiply_plain_accumulate_two_components(
+    const GpuPolyShardView &destination0,
+    const GpuPolyShardView &destination1,
+    const GpuConstPolyShardView &ciphertext0,
+    const GpuConstPolyShardView &ciphertext1,
+    const GpuConstPolyShardView &plaintext,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+/**
+ * @brief Compute all three output components of a size-2 ciphertext product.
+ *
+ * Two launches preserve low per-thread register pressure: one 2-D grid writes
+ * d0/d2 and one grid writes d1 without an intermediate read-modify-write.
+ */
+void launch_multiply_two_component_ciphertexts(
+    const GpuPolyShardView &destination_shard0,
+    const GpuPolyShardView &destination_shard1,
+    const GpuPolyShardView &destination_shard2,
+    const GpuConstPolyShardView &left_shard0,
+    const GpuConstPolyShardView &left_shard1,
+    const GpuConstPolyShardView &right_shard0,
+    const GpuConstPolyShardView &right_shard1,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+/**
+ * @brief Specialized size-2 ciphertext square.
+ *
+ * Uses symmetry to write d0=a0^2, d1=2*a0*a1, d2=a1^2 in one kernel.
+ */
+void launch_square_two_component_ciphertext(
+    const GpuPolyShardView &destination_shard0,
+    const GpuPolyShardView &destination_shard1,
+    const GpuPolyShardView &destination_shard2,
+    const GpuConstPolyShardView &source_shard0,
+    const GpuConstPolyShardView &source_shard1,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
 }  // namespace kernel
 }  // namespace gpu
 }  // namespace poseidon

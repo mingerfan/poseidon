@@ -2,6 +2,7 @@
 
 #include "poseidon/basics/util/ntt.h"
 #include "poseidon/basics/util/rns.h"
+#include "poseidon/basics/util/uintarithsmallmod.h"
 #include "poseidon/poseidon_context.h"
 #include "poseidon/util/rns_tool_qp.h"
 
@@ -1547,6 +1548,73 @@ std::vector<GpuWord> compute_half_q_last_mod_q(
     return result;
 }
 
+struct RescaleX2Constants
+{
+    GpuWord q_second_last = 0;
+    GpuWide product = 0;
+    GpuWide half_product = 0;
+    GpuWord inv_q_last_mod_q_second_last = 0;
+    std::vector<GpuWord> product_mod_q;
+    std::vector<GpuWord> inv_product_mod_q;
+};
+
+RescaleX2Constants compute_rescale_x2_constants(
+    const std::vector<Modulus> &q)
+{
+    RescaleX2Constants result;
+    if (q.size() < 3)
+    {
+        return result;
+    }
+
+    const std::uint64_t q_second_last = q[q.size() - 2].value();
+    const std::uint64_t q_last = q.back().value();
+    result.q_second_last = checked_gpu_word(
+        q_second_last,
+        "GpuParameterData rescale_x2 q_second_last does not fit GpuWord");
+    result.product =
+        static_cast<GpuWide>(q_second_last) * static_cast<GpuWide>(q_last);
+    result.half_product = result.product >> 1;
+
+    std::uint64_t inverse = 0;
+    if (!util::try_invert_uint_mod(
+            q_last % q_second_last,
+            q[q.size() - 2],
+            inverse))
+    {
+        throw std::invalid_argument(
+            "GpuParameterData cannot invert q_last modulo q_second_last");
+    }
+    result.inv_q_last_mod_q_second_last = checked_gpu_word(
+        inverse,
+        "GpuParameterData rescale_x2 CRT inverse does not fit GpuWord");
+
+    const std::size_t retained_count = q.size() - 2;
+    result.product_mod_q.resize(retained_count);
+    result.inv_product_mod_q.resize(retained_count);
+    for (std::size_t i = 0; i < retained_count; ++i)
+    {
+        const std::uint64_t qi = q[i].value();
+        const std::uint64_t product_mod_q =
+            static_cast<std::uint64_t>(
+                static_cast<unsigned __int128>(result.product) % qi);
+        result.product_mod_q[i] = checked_gpu_word(
+            product_mod_q,
+            "GpuParameterData rescale_x2 product residue does not fit GpuWord");
+
+        inverse = 0;
+        if (!util::try_invert_uint_mod(product_mod_q, q[i], inverse))
+        {
+            throw std::invalid_argument(
+                "GpuParameterData cannot invert rescale_x2 product");
+        }
+        result.inv_product_mod_q[i] = checked_gpu_word(
+            inverse,
+            "GpuParameterData rescale_x2 product inverse does not fit GpuWord");
+    }
+    return result;
+}
+
 std::vector<GpuWord> copy_mod_operand_array(
     const util::MultiplyUIntModOperand *operands,
     std::size_t count,
@@ -2004,6 +2072,17 @@ void GpuParameterData::build_from_poseidon_context(
         auto inv_q_last_mod_q = copy_inv_q_last_mod_q_operands(
             context_data->rns_tool(),
             q.size());
+        auto rescale_x2_constants = compute_rescale_x2_constants(q);
+        shard.q_second_last = rescale_x2_constants.q_second_last;
+        shard.q_last_two_product = rescale_x2_constants.product;
+        shard.half_q_last_two_product = rescale_x2_constants.half_product;
+        shard.inv_q_last_mod_q_second_last =
+            rescale_x2_constants.inv_q_last_mod_q_second_last;
+        if (q.size() >= 3)
+        {
+            shard.q_second_last_modulus_constant =
+                q_barrett_ratios[q.size() - 2];
+        }
 
         shard.q_primes = DeviceVector<GpuWord>(q_words.size(), device_id);
         if (!q_words.empty())
@@ -2068,6 +2147,26 @@ void GpuParameterData::build_from_poseidon_context(
             shard.inv_q_last_mod_q.copy_from_host(
                 inv_q_last_mod_q.data(),
                 inv_q_last_mod_q.size());
+        }
+
+        shard.q_last_two_product_mod_q = DeviceVector<GpuWord>(
+            rescale_x2_constants.product_mod_q.size(),
+            device_id);
+        if (!rescale_x2_constants.product_mod_q.empty())
+        {
+            shard.q_last_two_product_mod_q.copy_from_host(
+                rescale_x2_constants.product_mod_q.data(),
+                rescale_x2_constants.product_mod_q.size());
+        }
+
+        shard.inv_q_last_two_product_mod_q = DeviceVector<GpuWord>(
+            rescale_x2_constants.inv_product_mod_q.size(),
+            device_id);
+        if (!rescale_x2_constants.inv_product_mod_q.empty())
+        {
+            shard.inv_q_last_two_product_mod_q.copy_from_host(
+                rescale_x2_constants.inv_product_mod_q.data(),
+                rescale_x2_constants.inv_product_mod_q.size());
         }
 
         shard.ntt_tables =

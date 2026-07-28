@@ -46,6 +46,48 @@ void launch_apply_q_last_rescale_correction_poly_shard(
     const GpuParameterShard &parameter_shard,
     std::size_t degree);
 
+/**
+ * @brief Reconstruct centered residues modulo q_last_minus_one*q_last.
+ *
+ * dropped_coefficients stores two coefficient-domain limbs per ciphertext
+ * component in [component][second-last,last][coefficient] order. The output
+ * stores the canonical residue in [0,M); values above floor(M/2) represent
+ * negative centered remainders.
+ */
+void launch_reconstruct_q_last_two_centered_remainders(
+    GpuWide *centered_remainders,
+    const GpuWord *dropped_coefficients,
+    std::size_t component_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+/**
+ * @brief Convert centered M-residues to every retained q_i in one batch.
+ *
+ * correction is packed as [component][retained q limb][coefficient].
+ */
+void launch_build_q_last_two_rescale_correction_batch(
+    GpuWord *correction,
+    const GpuWide *centered_remainders,
+    std::size_t component_count,
+    std::size_t destination_q_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+/**
+ * @brief Apply one two-prime rescale to two ciphertext components.
+ *
+ * This batches the final (source-correction)*M^{-1} operation for c0 and c1.
+ */
+void launch_apply_q_last_two_rescale_correction_batch2(
+    const GpuPolyShardView &destination0,
+    const GpuPolyShardView &destination1,
+    const GpuConstPolyShardView &source0,
+    const GpuConstPolyShardView &source1,
+    const GpuWord *correction_ntt,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
 }  // namespace kernel
 }  // namespace gpu
 }  // namespace poseidon

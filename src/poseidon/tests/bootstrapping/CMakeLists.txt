@@ -79,12 +79,14 @@ if(POSEIDON_GPU_BOOTSTRAPPING_ENABLE_GPU_TESTS)
 
     set(POSEIDON_GPU_OPERATOR_SOURCES
         "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_evaluator.cpp"
+        "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_double_hoist.cpp"
         "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_elementwise_handler.cpp"
         "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_keyswitch_handler.cpp"
         "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_modswitch_handler.cpp"
         "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_ntt_handler.cpp"
         "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_tensor_core_gemm.cu"
         "${POSEIDON_ROOT}/src/poseidon/gpu/kernels/gpu_elementwise_kernels.cu"
+        "${POSEIDON_ROOT}/src/poseidon/gpu/kernels/gpu_double_hoist_kernels.cu"
         "${POSEIDON_ROOT}/src/poseidon/gpu/kernels/gpu_keyswitch_kernels.cu"
         "${POSEIDON_ROOT}/src/poseidon/gpu/kernels/gpu_ntt_kernels.cu"
         "${POSEIDON_ROOT}/src/poseidon/gpu/kernels/gpu_rescale_kernels.cu"

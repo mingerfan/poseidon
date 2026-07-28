@@ -1,6 +1,7 @@
 #pragma once
 
 #include "poseidon/gpu/gpu_ciphertext.h"
+#include "poseidon/gpu/gpu_double_hoist.h"
 #include "poseidon/gpu/gpu_plaintext.h"
 #include "poseidon/gpu/gpu_key.h"
 #include "poseidon/gpu/gpu_linear_transform.h"
@@ -108,6 +109,9 @@ std::vector<GpuEvalModBasisStep> make_gpu_eval_mod_basis_plan(
  */
 struct GpuBootstrapData
 {
+    GpuLinearTransformMode linear_transform_mode =
+        GpuLinearTransformMode::ClassicBsgs;
+
     parms_id_type q0_parms_id{};
     double q0_over_message_ratio = 0.0;
 
@@ -154,16 +158,15 @@ struct GpuBootstrapData
         /*
          * Number of physical Q primes removed by one logical EvalMod
          * rescale. A value of two lets 29/30-bit GPU primes implement an
-         * approximately 58/60-bit CKKS working scale without introducing a
-         * fused rescale kernel. Runtime executes this fixed setup-time plan
-         * with consecutive ordinary rescale calls.
+         * approximately 58/60-bit CKKS working scale. Runtime executes this
+         * fixed setup-time plan with the exact two-prime rescale_x2 path.
          */
         std::uint32_t logical_rescale_count = 1;
 
         /*
-         * Fixed number of ordinary rescale operations after the polynomial
-         * term sum. CPU setup derives this from the chosen plaintext scales;
-         * runtime does not search the modulus chain.
+         * Fixed number of physical primes removed after a polynomial leaf
+         * sum. The optimized plan accumulates all leaf terms first and then
+         * performs one logical rescale; the legacy plan rescales every term.
          */
         std::uint32_t polynomial_rescale_count = 1;
         bool rescale_polynomial_terms_individually = false;
@@ -221,6 +224,8 @@ struct GpuBootstrapData
 
     GpuLinearMatrixGroup coeff_to_slot_matrix;
     GpuLinearMatrixGroup slot_to_coeff_matrix;
+    GpuLinearMatrixGroupQP coeff_to_slot_matrix_qp;
+    GpuLinearMatrixGroupQP slot_to_coeff_matrix_qp;
     GpuPlaintextData minus_i_plaintext;
     GpuPlaintextData plus_i_plaintext;
 
@@ -258,6 +263,26 @@ struct GpuBootstrapWorkspace
 
     std::vector<GpuCiphertextData> eval_mod_basis;
     std::vector<GpuCiphertextData> eval_mod_nodes;
+
+    GpuDoubleHoistWorkspace coeff_to_slot_double_hoist;
+    GpuDoubleHoistWorkspace slot_to_coeff_double_hoist;
+
+    struct EvalModStageTiming
+    {
+        double input_preparation_ms{0.0};
+        double basis_generation_ms{0.0};
+        double leaf_evaluation_ms{0.0};
+        double bsgs_combine_ms{0.0};
+        double double_angle_ms{0.0};
+        double output_alignment_ms{0.0};
+        double total_ms{0.0};
+    };
+
+    // CUDA-event profiling is opt-in and is disabled for normal timed calls.
+    // A caller can profile one EvalMod invocation without introducing event
+    // synchronization into the production bootstrap path.
+    bool capture_eval_mod_stage_timing{false};
+    EvalModStageTiming eval_mod_stage_timing;
 
     // Optional correctness-only snapshots. They remain disabled in timed and
     // production bootstrap calls, so the hot path pays no copy or storage cost.
@@ -319,6 +344,11 @@ public:
         const GpuPlaintextData &source_plaintext,
         GpuCiphertextData &destination_ciphertext) const;
 
+    void multiply_plain_accumulate(
+        const GpuCiphertextData &source_ciphertext,
+        const GpuPlaintextData &source_plaintext,
+        GpuCiphertextData &destination_ciphertext) const;
+
     void ntt_fwd(
         const GpuCiphertextData &source_ciphertext,
         GpuCiphertextData &destination_ciphertext) const;
@@ -341,11 +371,21 @@ public:
         GpuCiphertextData &destination_ciphertext) const;
 
     /**
-     * @brief Execute a fixed number of ordinary CKKS rescale operations.
+     * @brief Drop two physical q primes with one centered base conversion.
+     *
+     * The result is exactly equivalent to two consecutive ordinary rescales.
+     * The optimized implementation currently batches c0 and c1.
+     */
+    void rescale_x2(
+        const GpuCiphertextData &source_ciphertext,
+        GpuCiphertextData &destination_ciphertext) const;
+
+    /**
+     * @brief Execute a fixed number of CKKS rescale operations.
      *
      * This is the correctness-first implementation of one logical
-     * multi-prime rescale. The count is generated during bootstrap setup and
-     * is never selected from ciphertext data at runtime.
+     * multi-prime rescale. A count of two uses rescale_x2 when supported;
+     * POSEIDON_RESCALE_X2=0 selects the legacy two-rescale path for A/B.
      */
     void rescale_many(
         const GpuCiphertextData &source_ciphertext,
@@ -439,6 +479,12 @@ public:
         const GpuGaloisKeysData &galois_keys,
         GpuCiphertextData &destination_ciphertext) const;
 
+    void conjugate_pre_rotated(
+        const GpuCiphertextData &source_ciphertext,
+        const GpuGaloisKeysData &galois_keys,
+        GpuDoubleHoistWorkspace &workspace,
+        GpuCiphertextData &destination_ciphertext) const;
+
     /**
      * @brief Multiply by one pre-uploaded diagonal plaintext matrix using BSGS.
      *
@@ -459,6 +505,14 @@ public:
         std::uint32_t rescale_count,
         GpuCiphertextData &destination_ciphertext) const;
 
+    void multiply_by_diag_matrix_bsgs_double_hoist(
+        const GpuCiphertextData &source_ciphertext,
+        const GpuMatrixPlainQP &matrix,
+        const GpuGaloisKeysData &galois_keys,
+        std::uint32_t rescale_count,
+        GpuDoubleHoistWorkspace &workspace,
+        GpuCiphertextData &destination_ciphertext) const;
+
     /**
      * @brief Apply a pre-uploaded DFT linear matrix group.
      */
@@ -466,6 +520,13 @@ public:
         const GpuCiphertextData &source_ciphertext,
         const GpuLinearMatrixGroup &matrix_group,
         const GpuGaloisKeysData &galois_keys,
+        GpuCiphertextData &destination_ciphertext) const;
+
+    void dft_double_hoist(
+        const GpuCiphertextData &source_ciphertext,
+        const GpuLinearMatrixGroupQP &matrix_group,
+        const GpuGaloisKeysData &galois_keys,
+        GpuDoubleHoistWorkspace &workspace,
         GpuCiphertextData &destination_ciphertext) const;
 
     /**
@@ -483,6 +544,15 @@ public:
         GpuCiphertextData &result_real,
         GpuCiphertextData &result_imag) const;
 
+    void coeff_to_slot_double_hoist(
+        const GpuCiphertextData &source_ciphertext,
+        const GpuLinearMatrixGroupQP &matrix_group,
+        const GpuPlaintextData &minus_i_plaintext,
+        const GpuGaloisKeysData &galois_keys,
+        GpuDoubleHoistWorkspace &workspace,
+        GpuCiphertextData &result_real,
+        GpuCiphertextData &result_imag) const;
+
     /**
      * @brief CKKS SlotToCoeff with CPU-precomputed inverse DFT matrices already on GPU.
      *
@@ -496,6 +566,15 @@ public:
         const GpuLinearMatrixGroup &matrix_group,
         const GpuPlaintextData &plus_i_plaintext,
         const GpuGaloisKeysData &galois_keys,
+        GpuCiphertextData &result) const;
+
+    void slot_to_coeff_double_hoist(
+        const GpuCiphertextData &source_real,
+        const GpuCiphertextData &source_imag,
+        const GpuLinearMatrixGroupQP &matrix_group,
+        const GpuPlaintextData &plus_i_plaintext,
+        const GpuGaloisKeysData &galois_keys,
+        GpuDoubleHoistWorkspace &workspace,
         GpuCiphertextData &result) const;
 
     /**

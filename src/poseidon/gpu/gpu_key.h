@@ -5,12 +5,19 @@
 #include "poseidon/gpu/gpu_rns_poly.h"
 
 #include <cstddef>
+#include <cstdint>
 #include <vector>
 
 namespace poseidon
 {
 namespace gpu
 {
+
+enum class GpuGaloisKeyFormat : std::uint8_t
+{
+    Standard = 0,
+    InversePreRotated = 1,
+};
 
 /**
  * @brief Generic metadata for GPU evaluation keys.
@@ -29,6 +36,8 @@ struct GpuKeyMeta
     std::size_t key_count = 0;
     std::size_t decomposition_count = 0;
     std::size_t component_count = 0;
+    GpuGaloisKeyFormat galois_format =
+        GpuGaloisKeyFormat::Standard;
 };
 
 struct GpuEvaluationKeyPolyMeta
@@ -90,6 +99,18 @@ public:
      * keys_[key_index][decomposition_index].data(component_index) layout.
      */
     std::vector<GpuEvaluationKeyPolyMeta> poly_metadata_;
+
+    /** Actual automorphism indexed by CPU Galois-key slot. */
+    std::vector<std::uint32_t> galois_elts_by_key_index;
+
+    /**
+     * Setup-time device pointer tables for inverse-pre-rotated Galois keys.
+     * Flattened index = key_index * decomposition_count + digit.
+     */
+    DeviceVector<const GpuWord *> galois_key_q0_ptrs;
+    DeviceVector<const GpuWord *> galois_key_p0_ptrs;
+    DeviceVector<const GpuWord *> galois_key_q1_ptrs;
+    DeviceVector<const GpuWord *> galois_key_p1_ptrs;
 
 public:
     GpuEvaluationKeyData() = default;

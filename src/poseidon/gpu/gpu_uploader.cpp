@@ -1,4 +1,5 @@
 #include "poseidon/gpu/gpu_uploader.h"
+#include "poseidon/gpu/kernels/gpu_keyswitch_kernels.h"
 
 #include "poseidon/advance/homomorphic_linear_transform.h"
 #include "poseidon/advance/homomorphic_mod.h"
@@ -8,6 +9,11 @@
 #include "poseidon/key/relinkeys.h"
 #include "poseidon/plaintext.h"
 #include "poseidon/poseidon_context.h"
+#include "poseidon/basics/util/ntt.h"
+#include "poseidon/basics/util/uintarith.h"
+#include "poseidon/basics/util/uintarithsmallmod.h"
+#include "poseidon/basics/util/uintcore.h"
+#include "poseidon/util/rns_tool_qp.h"
 
 #include <algorithm>
 #include <cmath>
@@ -747,6 +753,275 @@ GpuLinearMatrixGroup GpuUploader::upload_linear_matrix_group(
     return dst;
 }
 
+namespace
+{
+
+GpuPlaintextData upload_qp_plaintext_exact(
+    const Plaintext &src,
+    const PoseidonContext &context,
+    int device_id)
+{
+    if (!src.is_ntt_form())
+    {
+        throw std::invalid_argument(
+            "upload_qp_plaintext_exact: plaintext must be in NTT form");
+    }
+    const auto context_data =
+        context.crt_context()->get_context_data(src.parms_id());
+    if (!context_data)
+    {
+        throw std::invalid_argument(
+            "upload_qp_plaintext_exact: plaintext parms_id is absent from context");
+    }
+    const auto *rns_qp = context_data->qp_rns_tool();
+    if (rns_qp == nullptr || rns_qp->base_q() == nullptr ||
+        rns_qp->base_p() == nullptr)
+    {
+        throw std::invalid_argument(
+            "upload_qp_plaintext_exact: QP RNS tool is unavailable");
+    }
+
+    const std::size_t degree = context_data->parms().degree();
+    const std::size_t q_count = rns_qp->base_q()->size();
+    const std::size_t p_count = rns_qp->base_p()->size();
+    if (src.coeff_count() != q_count * degree || p_count == 0)
+    {
+        throw std::invalid_argument(
+            "upload_qp_plaintext_exact: plaintext shape mismatch");
+    }
+
+    std::vector<std::uint64_t> qp((q_count + p_count) * degree, 0);
+    std::copy_n(src.data(), q_count * degree, qp.data());
+
+    const auto *ntt_tables = context.crt_context()->small_ntt_tables();
+    if (ntt_tables == nullptr)
+    {
+        throw std::invalid_argument(
+            "upload_qp_plaintext_exact: CPU NTT tables are unavailable");
+    }
+    for (std::size_t limb = 0; limb < q_count; ++limb)
+    {
+        util::inverse_ntt_negacyclic_harvey(
+            qp.data() + limb * degree,
+            ntt_tables[limb]);
+    }
+
+    /*
+     * Matrix coefficients are signed CKKS integers. A generic fast Q->P
+     * converter may select x+kQ and therefore does not preserve the centered
+     * representative needed by delayed ModDown. Compose once during setup,
+     * center in (-Q/2,Q/2], and reduce that exact signed integer into every P
+     * limb.
+     */
+    std::vector<std::uint64_t> composed(
+        qp.begin(),
+        qp.begin() + q_count * degree);
+    rns_qp->base_q()->compose_array(
+        composed.data(),
+        degree,
+        MemoryManager::GetPool());
+    std::vector<std::uint64_t> magnitude(q_count);
+    for (std::size_t coeff = 0; coeff < degree; ++coeff)
+    {
+        const std::uint64_t *value =
+            composed.data() + coeff * q_count;
+        const bool negative = util::is_greater_than_or_equal_uint(
+            value,
+            context_data->upper_half_threshold(),
+            q_count);
+        const std::uint64_t *unsigned_value = value;
+        if (negative)
+        {
+            util::sub_uint(
+                context_data->total_coeff_modulus(),
+                value,
+                q_count,
+                magnitude.data());
+            unsigned_value = magnitude.data();
+        }
+
+        for (std::size_t p_limb = 0; p_limb < p_count; ++p_limb)
+        {
+            const auto &modulus = (*rns_qp->base_p())[p_limb];
+            const std::uint64_t residue = util::modulo_uint(
+                unsigned_value,
+                q_count,
+                modulus);
+            qp[(q_count + p_limb) * degree + coeff] =
+                negative && residue != 0
+                    ? modulus.value() - residue
+                    : residue;
+        }
+    }
+
+    for (std::size_t limb = 0; limb < q_count; ++limb)
+    {
+        util::ntt_negacyclic_harvey(
+            qp.data() + limb * degree,
+            ntt_tables[limb]);
+    }
+    const auto key_context = context.crt_context()->key_context_data();
+    if (!key_context)
+    {
+        throw std::invalid_argument(
+            "upload_qp_plaintext_exact: key context is unavailable");
+    }
+    const std::size_t p_table_offset = key_context->parms().q().size();
+    for (std::size_t limb = 0; limb < p_count; ++limb)
+    {
+        util::ntt_negacyclic_harvey(
+            qp.data() + (q_count + limb) * degree,
+            ntt_tables[p_table_offset + limb]);
+    }
+
+    auto result = GpuPlaintextData::allocate_single_device(
+        degree,
+        q_count,
+        device_id,
+        p_count);
+    result.meta.parms_id = src.parms_id();
+    result.meta.scale = src.scale();
+    result.meta.is_ntt_form = true;
+    copy_uint64_to_device_field(
+        qp.data(),
+        qp.size(),
+        result.fields_.front(),
+        "QP plaintext residue exceeds GpuWord");
+    return result;
+}
+
+GpuDoubleHoistMatrixPlan make_double_hoist_plan(
+    const MatrixPlain &src,
+    const std::map<int, GpuPlaintextData> &plain_vec_qp,
+    int device_id,
+    std::uint32_t rescale_count)
+{
+    GpuDoubleHoistMatrixPlan plan;
+    plan.log_slots = src.log_slots;
+    plan.n1 = src.n1;
+    plan.rescale_count = std::max(rescale_count, std::uint32_t{1});
+
+    const auto [index, unused_giant_steps, baby_steps] =
+        poseidon::bsgs_index(
+            src.plain_vec,
+            1 << src.log_slots,
+            static_cast<int>(src.n1));
+    (void)unused_giant_steps;
+    plan.baby_steps = baby_steps;
+    plan.giant_steps.reserve(index.size());
+    plan.group_term_offsets.reserve(index.size() + 1);
+    plan.group_term_offsets.push_back(0);
+
+    std::map<int, std::uint32_t> baby_ids;
+    for (std::size_t i = 0; i < plan.baby_steps.size(); ++i)
+    {
+        baby_ids.emplace(
+            plan.baby_steps[i],
+            static_cast<std::uint32_t>(i));
+    }
+
+    std::vector<const GpuWord *> q_ptrs;
+    std::vector<const GpuWord *> p_ptrs;
+    std::vector<std::uint32_t> term_baby_indices;
+    for (const auto &group : index)
+    {
+        const auto giant_index =
+            static_cast<std::uint32_t>(plan.giant_steps.size());
+        plan.giant_steps.push_back(group.first);
+        for (const int baby_step : group.second)
+        {
+            const int diagonal = group.first + baby_step;
+            const auto plain_it = plain_vec_qp.find(diagonal);
+            const auto baby_it = baby_ids.find(baby_step);
+            if (plain_it == plain_vec_qp.end() || baby_it == baby_ids.end())
+            {
+                throw std::logic_error(
+                    "make_double_hoist_plan: incomplete BSGS schedule");
+            }
+            const auto view = plain_it->second.make_const_view();
+            if (view.poly.shards.size() != 1 ||
+                view.meta.p_count == 0)
+            {
+                throw std::invalid_argument(
+                    "make_double_hoist_plan: QP diagonal must have one shard");
+            }
+            const auto &shard = view.poly.shards.front();
+            q_ptrs.push_back(shard.ptr);
+            p_ptrs.push_back(
+                shard.ptr + view.meta.q_count * view.meta.degree);
+            term_baby_indices.push_back(baby_it->second);
+            plan.terms.push_back(GpuDoubleHoistTerm{
+                giant_index,
+                baby_it->second,
+                static_cast<std::uint32_t>(plan.terms.size())});
+        }
+        plan.group_term_offsets.push_back(
+            static_cast<std::uint32_t>(plan.terms.size()));
+    }
+    plan.n2 = static_cast<std::uint32_t>(plan.giant_steps.size());
+    if (plan.terms.empty() || plan.n2 == 0)
+    {
+        throw std::invalid_argument(
+            "make_double_hoist_plan: empty diagonal schedule");
+    }
+
+    plan.diagonal_q_ptrs.allocate(q_ptrs.size(), device_id);
+    plan.diagonal_p_ptrs.allocate(p_ptrs.size(), device_id);
+    plan.term_baby_indices.allocate(term_baby_indices.size(), device_id);
+    plan.group_term_offsets_device.allocate(
+        plan.group_term_offsets.size(),
+        device_id);
+    plan.diagonal_q_ptrs.copy_from_host(q_ptrs.data(), q_ptrs.size());
+    plan.diagonal_p_ptrs.copy_from_host(p_ptrs.data(), p_ptrs.size());
+    plan.term_baby_indices.copy_from_host(
+        term_baby_indices.data(),
+        term_baby_indices.size());
+    plan.group_term_offsets_device.copy_from_host(
+        plan.group_term_offsets.data(),
+        plan.group_term_offsets.size());
+    return plan;
+}
+
+}  // namespace
+
+GpuLinearMatrixGroupQP GpuUploader::upload_linear_matrix_group_qp(
+    const LinearMatrixGroup &src,
+    const PoseidonContext &context,
+    int device_id,
+    std::uint32_t rescale_count)
+{
+    GpuLinearMatrixGroupQP result;
+    result.rot_index() = src.rot_index();
+    result.set_step(src.step());
+    result.data().reserve(src.data().size());
+
+    for (const auto &matrix : src.data())
+    {
+        GpuMatrixPlainQP uploaded;
+        uploaded.log_slots = matrix.log_slots;
+        uploaded.n1 = matrix.n1;
+        uploaded.level = matrix.level;
+        uploaded.scale = matrix.scale;
+        uploaded.rot_index = matrix.rot_index;
+        for (const auto &entry : matrix.plain_vec)
+        {
+            uploaded.plain_vec_qp.emplace(
+                entry.first,
+                upload_qp_plaintext_exact(
+                    entry.second,
+                    context,
+                    device_id));
+        }
+        uploaded.plan = make_double_hoist_plan(
+            matrix,
+            uploaded.plain_vec_qp,
+            device_id,
+            rescale_count);
+        result.data().push_back(std::move(uploaded));
+    }
+    return result;
+}
+
 GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
     const EvalModPoly &eval_mod_poly,
     const CKKSEncoder &encoder,
@@ -759,7 +1034,8 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
     bool include_input_offset,
     std::uint32_t double_angle_override,
     double double_angle_base_override,
-    double polynomial_output_scale_override)
+    double polynomial_output_scale_override,
+    bool fuse_leaf_terms_before_rescale)
 {
     const auto &context = encoder.context();
     const auto crt_context = context.crt_context();
@@ -925,7 +1201,8 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
     result.logical_rescale_count = logical_rescale_count;
     result.polynomial_rescale_count = logical_rescale_count;
     result.rescale_polynomial_terms_individually =
-        polynomial_override != nullptr;
+        polynomial_override != nullptr &&
+        !fuse_leaf_terms_before_rescale;
     result.polynomial_basis =
         sine_polynomial.basis_type() == Chebyshev
             ? GpuEvalModPolynomialBasis::Chebyshev
@@ -1384,6 +1661,120 @@ GpuGaloisKeysData GpuUploader::upload_galois_keys(
     int device_id)
 {
     return upload_kswitch_keys(src, device_id);
+}
+
+GpuGaloisKeysData GpuUploader::upload_double_hoist_galois_keys(
+    const GaloisKeys &src,
+    int device_id)
+{
+    auto result = upload_kswitch_keys(src, device_id);
+    result.meta.galois_format =
+        GpuGaloisKeyFormat::InversePreRotated;
+    result.galois_elts_by_key_index.assign(
+        result.meta.key_count,
+        0);
+
+    const std::uint64_t modulus =
+        static_cast<std::uint64_t>(result.meta.degree) << 1;
+    auto inverse_odd_mod_power_of_two =
+        [modulus](std::uint32_t value)
+    {
+        std::uint64_t inverse = 1;
+        /*
+         * Newton iteration doubles the number of correct low bits each step.
+         * Masking is valid because 2N is a power of two.
+         */
+        for (int iteration = 0; iteration < 6; ++iteration)
+        {
+            inverse *= 2 - static_cast<std::uint64_t>(value) * inverse;
+            inverse &= modulus - 1;
+        }
+        if (((static_cast<std::uint64_t>(value) * inverse) &
+             (modulus - 1)) != 1)
+        {
+            throw std::logic_error(
+                "upload_double_hoist_galois_keys: inverse automorphism failed");
+        }
+        return static_cast<std::uint32_t>(inverse);
+    };
+
+    const std::size_t poly_words =
+        (result.meta.q_count + result.meta.p_count) *
+        result.meta.degree;
+    DeviceVector<GpuWord> temporary(poly_words, device_id);
+    auto mutable_view = result.make_view();
+    const auto const_view = result.make_const_view();
+    for (std::size_t poly = 0; poly < result.poly_metadata_.size(); ++poly)
+    {
+        const auto &metadata = result.poly_metadata_[poly];
+        const std::uint32_t galois_elt = static_cast<std::uint32_t>(
+            2 * metadata.key_index + 1);
+        result.galois_elts_by_key_index[metadata.key_index] =
+            galois_elt;
+        const std::uint32_t inverse_elt =
+            inverse_odd_mod_power_of_two(galois_elt);
+
+        const auto &source = const_view.polys[metadata.poly_id].shards.front();
+        auto &destination =
+            mutable_view.polys[metadata.poly_id].shards.front();
+        GpuPolyShardView temporary_view{
+            device_id,
+            temporary.data(),
+            0,
+            result.meta.q_count + result.meta.p_count,
+            0,
+            result.meta.degree};
+        kernel::launch_apply_galois_ntt_poly_shard(
+            temporary_view,
+            source,
+            inverse_elt,
+            result.meta.degree);
+        gpu_check_cuda(
+            cudaMemcpy(
+                destination.ptr,
+                temporary.data(),
+                poly_words * sizeof(GpuWord),
+                cudaMemcpyDeviceToDevice),
+            "upload_double_hoist_galois_keys copy pre-rotated key");
+    }
+
+    const std::size_t pointer_count =
+        result.meta.key_count * result.meta.decomposition_count;
+    std::vector<const GpuWord *> q0_ptrs(pointer_count, nullptr);
+    std::vector<const GpuWord *> p0_ptrs(pointer_count, nullptr);
+    std::vector<const GpuWord *> q1_ptrs(pointer_count, nullptr);
+    std::vector<const GpuWord *> p1_ptrs(pointer_count, nullptr);
+    const auto transformed_view = result.make_const_view();
+    for (const auto &metadata : result.poly_metadata_)
+    {
+        const std::size_t flat =
+            metadata.key_index * result.meta.decomposition_count +
+            metadata.decomposition_index;
+        const auto &shard =
+            transformed_view.polys[metadata.poly_id].shards.front();
+        const GpuWord *q_ptr = shard.ptr;
+        const GpuWord *p_ptr =
+            shard.ptr + result.meta.q_count * result.meta.degree;
+        if (metadata.component_index == 0)
+        {
+            q0_ptrs[flat] = q_ptr;
+            p0_ptrs[flat] = p_ptr;
+        }
+        else if (metadata.component_index == 1)
+        {
+            q1_ptrs[flat] = q_ptr;
+            p1_ptrs[flat] = p_ptr;
+        }
+    }
+    result.galois_key_q0_ptrs.allocate(pointer_count, device_id);
+    result.galois_key_p0_ptrs.allocate(pointer_count, device_id);
+    result.galois_key_q1_ptrs.allocate(pointer_count, device_id);
+    result.galois_key_p1_ptrs.allocate(pointer_count, device_id);
+    result.galois_key_q0_ptrs.copy_from_host(q0_ptrs.data(), pointer_count);
+    result.galois_key_p0_ptrs.copy_from_host(p0_ptrs.data(), pointer_count);
+    result.galois_key_q1_ptrs.copy_from_host(q1_ptrs.data(), pointer_count);
+    result.galois_key_p1_ptrs.copy_from_host(p1_ptrs.data(), pointer_count);
+    return result;
 }
 
 void GpuUploader::prepare_key_views_for_q_counts(

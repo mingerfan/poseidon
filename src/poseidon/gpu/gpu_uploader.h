@@ -111,6 +111,16 @@ public:
         int device_id);
 
     /**
+     * Upload a linear matrix group with exact Q->P extended diagonals and a
+     * compact immutable BSGS plan for double hoisting.
+     */
+    static GpuLinearMatrixGroupQP upload_linear_matrix_group_qp(
+        const LinearMatrixGroup &src,
+        const PoseidonContext &context,
+        int device_id,
+        std::uint32_t rescale_count = 1);
+
+    /**
      * @brief Generate and upload the fixed high-precision EvalMod BSGS plan.
      *
      * Polynomial splitting, level simulation, plaintext encoding and all
@@ -136,7 +146,8 @@ public:
         double double_angle_base_override =
             std::numeric_limits<double>::quiet_NaN(),
         double polynomial_output_scale_override =
-            std::numeric_limits<double>::quiet_NaN());
+            std::numeric_limits<double>::quiet_NaN(),
+        bool fuse_leaf_terms_before_rescale = true);
 
     /**
      * @brief Upload CPU relinearization keys to GPU.
@@ -155,6 +166,14 @@ public:
      * - support multi-GPU shard placement.
      */
     static GpuGaloisKeysData upload_galois_keys(
+        const GaloisKeys &src,
+        int device_id);
+
+    /**
+     * Upload and inverse-pre-rotate every non-empty Galois key. Runtime
+     * double-hoist KeyMult can then permute two outputs instead of all digits.
+     */
+    static GpuGaloisKeysData upload_double_hoist_galois_keys(
         const GaloisKeys &src,
         int device_id);
 

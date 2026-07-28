@@ -69,6 +69,25 @@ struct GpuParameterShard
     DeviceVector<GpuWord> inv_q_last_mod_q;
 
     /**
+     * @brief Constants for dropping the last two q moduli in one rescale.
+     *
+     * For M = q[q_count-2] * q[q_count-1]:
+     * - q_last_two_product and half_q_last_two_product describe M;
+     * - inv_q_last_mod_q_second_last reconstructs a coefficient from the two
+     *   dropped residues;
+     * - q_last_two_product_mod_q[i] and
+     *   inv_q_last_two_product_mod_q[i] are M and M^{-1} modulo each retained
+     *   q_i, i = 0..q_count-3.
+     */
+    GpuWord q_second_last = 0;
+    GpuWide q_last_two_product = 0;
+    GpuWide half_q_last_two_product = 0;
+    GpuWord inv_q_last_mod_q_second_last = 0;
+    GpuWide q_second_last_modulus_constant = 0;
+    DeviceVector<GpuWord> q_last_two_product_mod_q;
+    DeviceVector<GpuWord> inv_q_last_two_product_mod_q;
+
+    /**
      * @brief HYBRID key-switch base-conversion constants.
      *
      * For each decomposition block d:

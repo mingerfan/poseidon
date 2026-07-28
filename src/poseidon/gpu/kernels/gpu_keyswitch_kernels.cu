@@ -2578,9 +2578,127 @@ __global__ void hybrid_apply_moddown_ntt_two_components_kernel(
     accum_q1[tid] = mul_mod(difference1, inv_p, modulus, barrett);
 }
 
+__global__ void hybrid_apply_moddown_ntt_out_of_place_two_components_kernel(
+    GpuWord *destination_q0,
+    GpuWord *destination_q1,
+    const GpuWord *source_q0,
+    const GpuWord *source_q1,
+    const GpuWord *converted_q0,
+    const GpuWord *converted_q1,
+    const GpuWord *rns_primes,
+    const GpuWide *rns_modulus_constants,
+    const GpuWord *inv_p_mod_q,
+    std::size_t base_q_size,
+    std::size_t degree,
+    unsigned int degree_power)
+{
+    const std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    const std::size_t total = base_q_size * degree;
+    if (tid >= total)
+    {
+        return;
+    }
+
+    const std::size_t q_limb = tid >> degree_power;
+    const GpuWord modulus = rns_primes[q_limb];
+    const GpuWide barrett = rns_modulus_constants[q_limb];
+    const GpuWord inv_p = inv_p_mod_q[q_limb];
+
+    destination_q0[tid] = mul_mod(
+        sub_mod(source_q0[tid], converted_q0[tid], modulus),
+        inv_p,
+        modulus,
+        barrett);
+    destination_q1[tid] = mul_mod(
+        sub_mod(source_q1[tid], converted_q1[tid], modulus),
+        inv_p,
+        modulus,
+        barrett);
+}
+
+__global__ void hybrid_apply_moddown_ntt_out_of_place_batch_kernel(
+    GpuWord *destination_q,
+    const GpuWord *source_q,
+    const GpuWord *converted_q,
+    const GpuWord *rns_primes,
+    const GpuWide *rns_modulus_constants,
+    const GpuWord *inv_p_mod_q,
+    std::size_t batch_count,
+    std::size_t base_q_size,
+    std::size_t degree,
+    unsigned int degree_power)
+{
+    const std::size_t words_per_component = base_q_size * degree;
+    const std::size_t total = batch_count * 2 * words_per_component;
+    const std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    if (tid >= total)
+    {
+        return;
+    }
+    const std::size_t local = tid % words_per_component;
+    const std::size_t q_limb = local >> degree_power;
+    const GpuWord modulus = rns_primes[q_limb];
+    destination_q[tid] = mul_mod(
+        sub_mod(source_q[tid], converted_q[tid], modulus),
+        inv_p_mod_q[q_limb],
+        modulus,
+        rns_modulus_constants[q_limb]);
+}
+
+__global__ void hybrid_apply_moddown_ntt_from_q_groups_kernel(
+    GpuWord *destination_q0,
+    GpuWord *destination_q1,
+    const GpuWord *group_q,
+    const GpuWord *converted_q0,
+    const GpuWord *converted_q1,
+    const GpuWord *rns_primes,
+    const GpuWide *rns_modulus_constants,
+    const GpuWord *inv_p_mod_q,
+    std::size_t group_count,
+    std::size_t base_q_size,
+    std::size_t degree,
+    unsigned int degree_power)
+{
+    const std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    const std::size_t component_words = base_q_size * degree;
+    if (tid >= component_words)
+    {
+        return;
+    }
+    const std::size_t q_limb = tid >> degree_power;
+    const GpuWord modulus = rns_primes[q_limb];
+    GpuWord sum0 = 0;
+    GpuWord sum1 = 0;
+    for (std::size_t group = 0; group < group_count; ++group)
+    {
+        sum0 = add_mod(
+            sum0,
+            group_q[(group * 2) * component_words + tid],
+            modulus);
+        sum1 = add_mod(
+            sum1,
+            group_q[(group * 2 + 1) * component_words + tid],
+            modulus);
+    }
+    const GpuWide barrett = rns_modulus_constants[q_limb];
+    const GpuWord inv_p = inv_p_mod_q[q_limb];
+    destination_q0[tid] = mul_mod(
+        sub_mod(sum0, converted_q0[tid], modulus),
+        inv_p,
+        modulus,
+        barrett);
+    destination_q1[tid] = mul_mod(
+        sub_mod(sum1, converted_q1[tid], modulus),
+        inv_p,
+        modulus,
+        barrett);
+}
+
 __global__ void hybrid_apply_moddown_ntt_add_back_two_components_kernel(
     GpuWord *destination0,
     GpuWord *destination1,
+    const GpuWord *add_source0,
+    const GpuWord *add_source1,
     const GpuWord *accum_q0,
     const GpuWord *accum_q1,
     const GpuWord *converted_q0,
@@ -2612,6 +2730,8 @@ __global__ void hybrid_apply_moddown_ntt_add_back_two_components_kernel(
     const GpuWord inv_p = inv_p_mod_q[table_limb];
 
     GpuWord *destination = second_component ? destination1 : destination0;
+    const GpuWord *add_source =
+        second_component ? add_source1 : add_source0;
     const GpuWord *accum_q = second_component ? accum_q1 : accum_q0;
     const GpuWord *converted_q = second_component ? converted_q1 : converted_q0;
 
@@ -2620,7 +2740,7 @@ __global__ void hybrid_apply_moddown_ntt_add_back_two_components_kernel(
     const GpuWord moddown =
         mul_mod(difference, inv_p, modulus, barrett);
     destination[local_index] =
-        add_mod(destination[local_index], moddown, modulus);
+        add_mod(add_source[local_index], moddown, modulus);
 }
 
 void validate_hybrid_tables(
@@ -3977,6 +4097,128 @@ void launch_hybrid_final_ntt_paccum_all_dnum_two_components(
 }
 #endif
 
+void launch_hybrid_forward_ntt_qp_active(
+    GpuWord *modup_q,
+    GpuWord *modup_p,
+    std::size_t decomp_limb_begin,
+    std::size_t decomp_limb_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    validate_hybrid_tables(
+        "launch_hybrid_forward_ntt_qp_active",
+        parameter_shard,
+        degree);
+    const std::size_t base_q_size =
+        parameter_shard.hybrid_base_q_count;
+    const std::size_t base_p_size =
+        parameter_shard.hybrid_base_p_count;
+    if (modup_q == nullptr || modup_p == nullptr)
+    {
+        throw std::invalid_argument(
+            "launch_hybrid_forward_ntt_qp_active: null data pointer");
+    }
+    if (decomp_limb_count == 0 ||
+        decomp_limb_count > base_p_size ||
+        decomp_limb_begin + decomp_limb_count > base_q_size)
+    {
+        throw std::invalid_argument(
+            "launch_hybrid_forward_ntt_qp_active: invalid decomposition range");
+    }
+    if (parameter_shard.ntt_tables.size() <
+        (base_q_size + base_p_size) * degree)
+    {
+        throw std::invalid_argument(
+            "launch_hybrid_forward_ntt_qp_active: incomplete NTT tables");
+    }
+
+    gpu_check_cuda(
+        cudaSetDevice(parameter_shard.device_id),
+        "launch_hybrid_forward_ntt_qp_active cudaSetDevice");
+    const std::size_t active_limb_count =
+        base_q_size - decomp_limb_count + base_p_size;
+    constexpr int kFusionStages = 3;
+    constexpr int block_size = 256;
+    std::size_t remaining_stages = checked_log2_degree(
+        degree,
+        "launch_hybrid_forward_ntt_qp_active");
+
+    for (std::size_t m = 1, gap = degree >> 1;
+         remaining_stages > 0;)
+    {
+        std::size_t stage_count =
+            remaining_stages % kFusionStages;
+        if (stage_count == 0)
+        {
+            stage_count = kFusionStages;
+        }
+        const std::size_t tiles_per_limb =
+            degree >> stage_count;
+        const std::size_t total_tiles =
+            active_limb_count * tiles_per_limb;
+        const int grid_size = static_cast<int>(
+            (total_tiles + block_size - 1) / block_size);
+
+        if (stage_count == 1)
+        {
+            hybrid_forward_ntt_modup_qp_stage_kernel
+                <<<grid_size, block_size>>>(
+                    modup_q,
+                    modup_p,
+                    parameter_shard.rns_primes.data(),
+                    parameter_shard.rns_modulus_constants.data(),
+                    parameter_shard.ntt_tables.data(),
+                    decomp_limb_begin,
+                    decomp_limb_count,
+                    base_q_size,
+                    base_p_size,
+                    degree,
+                    m,
+                    gap);
+        }
+        else if (stage_count == 2)
+        {
+            hybrid_forward_ntt_modup_qp_fused_stage_kernel<2>
+                <<<grid_size, block_size>>>(
+                    modup_q,
+                    modup_p,
+                    parameter_shard.rns_primes.data(),
+                    parameter_shard.rns_modulus_constants.data(),
+                    parameter_shard.ntt_tables.data(),
+                    decomp_limb_begin,
+                    decomp_limb_count,
+                    base_q_size,
+                    base_p_size,
+                    degree,
+                    m,
+                    gap);
+        }
+        else
+        {
+            hybrid_forward_ntt_modup_qp_fused_stage_kernel<3>
+                <<<grid_size, block_size>>>(
+                    modup_q,
+                    modup_p,
+                    parameter_shard.rns_primes.data(),
+                    parameter_shard.rns_modulus_constants.data(),
+                    parameter_shard.ntt_tables.data(),
+                    decomp_limb_begin,
+                    decomp_limb_count,
+                    base_q_size,
+                    base_p_size,
+                    degree,
+                    m,
+                    gap);
+        }
+        gpu_check_cuda(
+            cudaGetLastError(),
+            "launch_hybrid_forward_ntt_qp_active kernel launch");
+        m <<= stage_count;
+        gap >>= stage_count;
+        remaining_stages -= stage_count;
+    }
+}
+
 void launch_hybrid_multiply_accumulate(
     GpuWord *accum_q,
     GpuWord *accum_p,
@@ -4442,6 +4684,159 @@ void launch_hybrid_apply_moddown_ntt(
         "launch_hybrid_apply_moddown_ntt kernel launch");
 }
 
+void launch_hybrid_apply_moddown_ntt_out_of_place(
+    GpuWord *destination_q0,
+    GpuWord *destination_q1,
+    const GpuWord *source_q0,
+    const GpuWord *source_q1,
+    const GpuWord *converted_q0,
+    const GpuWord *converted_q1,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    validate_hybrid_tables(
+        "launch_hybrid_apply_moddown_ntt_out_of_place",
+        parameter_shard,
+        degree);
+    if (destination_q0 == nullptr || destination_q1 == nullptr ||
+        source_q0 == nullptr || source_q1 == nullptr ||
+        converted_q0 == nullptr || converted_q1 == nullptr)
+    {
+        throw std::invalid_argument(
+            "launch_hybrid_apply_moddown_ntt_out_of_place: null data pointer");
+    }
+
+    gpu_check_cuda(
+        cudaSetDevice(parameter_shard.device_id),
+        "launch_hybrid_apply_moddown_ntt_out_of_place cudaSetDevice");
+
+    const std::size_t base_q_size = parameter_shard.hybrid_base_q_count;
+    const std::size_t total = base_q_size * degree;
+    constexpr int block_size = 256;
+    const int grid_size =
+        static_cast<int>((total + block_size - 1) / block_size);
+    const unsigned int degree_power = checked_log2_degree(
+        degree,
+        "launch_hybrid_apply_moddown_ntt_out_of_place");
+
+    hybrid_apply_moddown_ntt_out_of_place_two_components_kernel
+        <<<grid_size, block_size>>>(
+            destination_q0,
+            destination_q1,
+            source_q0,
+            source_q1,
+            converted_q0,
+            converted_q1,
+            parameter_shard.rns_primes.data(),
+            parameter_shard.rns_modulus_constants.data(),
+            parameter_shard.hybrid_inv_p_mod_q.data(),
+            base_q_size,
+            degree,
+            degree_power);
+    gpu_check_cuda(
+        cudaGetLastError(),
+        "launch_hybrid_apply_moddown_ntt_out_of_place kernel launch");
+}
+
+void launch_hybrid_apply_moddown_ntt_out_of_place_batch(
+    GpuWord *destination_q,
+    const GpuWord *source_q,
+    const GpuWord *converted_q,
+    std::size_t batch_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    validate_hybrid_tables(
+        "launch_hybrid_apply_moddown_ntt_out_of_place_batch",
+        parameter_shard,
+        degree);
+    if (destination_q == nullptr || source_q == nullptr ||
+        converted_q == nullptr || batch_count == 0)
+    {
+        throw std::invalid_argument(
+            "launch_hybrid_apply_moddown_ntt_out_of_place_batch: invalid argument");
+    }
+    gpu_check_cuda(
+        cudaSetDevice(parameter_shard.device_id),
+        "launch_hybrid_apply_moddown_ntt_out_of_place_batch cudaSetDevice");
+
+    const std::size_t base_q_size =
+        parameter_shard.hybrid_base_q_count;
+    const std::size_t total =
+        batch_count * 2 * base_q_size * degree;
+    constexpr int block_size = 256;
+    const int grid_size =
+        static_cast<int>((total + block_size - 1) / block_size);
+    hybrid_apply_moddown_ntt_out_of_place_batch_kernel
+        <<<grid_size, block_size>>>(
+            destination_q,
+            source_q,
+            converted_q,
+            parameter_shard.rns_primes.data(),
+            parameter_shard.rns_modulus_constants.data(),
+            parameter_shard.hybrid_inv_p_mod_q.data(),
+            batch_count,
+            base_q_size,
+            degree,
+            checked_log2_degree(
+                degree,
+                "launch_hybrid_apply_moddown_ntt_out_of_place_batch"));
+    gpu_check_cuda(
+        cudaGetLastError(),
+        "launch_hybrid_apply_moddown_ntt_out_of_place_batch kernel launch");
+}
+
+void launch_hybrid_apply_moddown_ntt_from_q_groups(
+    GpuWord *destination_q0,
+    GpuWord *destination_q1,
+    const GpuWord *group_q,
+    const GpuWord *converted_q0,
+    const GpuWord *converted_q1,
+    std::size_t group_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    validate_hybrid_tables(
+        "launch_hybrid_apply_moddown_ntt_from_q_groups",
+        parameter_shard,
+        degree);
+    if (destination_q0 == nullptr || destination_q1 == nullptr ||
+        group_q == nullptr || converted_q0 == nullptr ||
+        converted_q1 == nullptr || group_count == 0)
+    {
+        throw std::invalid_argument(
+            "launch_hybrid_apply_moddown_ntt_from_q_groups: "
+            "invalid argument");
+    }
+    gpu_check_cuda(
+        cudaSetDevice(parameter_shard.device_id),
+        "launch_hybrid_apply_moddown_ntt_from_q_groups cudaSetDevice");
+    constexpr int block_size = 256;
+    const std::size_t total =
+        parameter_shard.hybrid_base_q_count * degree;
+    const int grid_size =
+        static_cast<int>((total + block_size - 1) / block_size);
+    hybrid_apply_moddown_ntt_from_q_groups_kernel
+        <<<grid_size, block_size>>>(
+            destination_q0,
+            destination_q1,
+            group_q,
+            converted_q0,
+            converted_q1,
+            parameter_shard.rns_primes.data(),
+            parameter_shard.rns_modulus_constants.data(),
+            parameter_shard.hybrid_inv_p_mod_q.data(),
+            group_count,
+            parameter_shard.hybrid_base_q_count,
+            degree,
+            checked_log2_degree(
+                degree,
+                "launch_hybrid_apply_moddown_ntt_from_q_groups"));
+    gpu_check_cuda(
+        cudaGetLastError(),
+        "launch_hybrid_apply_moddown_ntt_from_q_groups kernel launch");
+}
+
 void launch_hybrid_apply_moddown_ntt_add_back(
     const GpuPolyShardView &destination_shard0,
     const GpuPolyShardView &destination_shard1,
@@ -4450,7 +4845,9 @@ void launch_hybrid_apply_moddown_ntt_add_back(
     const GpuWord *converted_q0,
     const GpuWord *converted_q1,
     const GpuParameterShard &parameter_shard,
-    std::size_t degree)
+    std::size_t degree,
+    const GpuConstPolyShardView *add_source_shard0,
+    const GpuConstPolyShardView *add_source_shard1)
 {
     validate_hybrid_tables(
         "launch_hybrid_apply_moddown_ntt_add_back",
@@ -4484,6 +4881,34 @@ void launch_hybrid_apply_moddown_ntt_add_back(
     {
         throw std::invalid_argument(
             "launch_hybrid_apply_moddown_ntt_add_back: shard shape mismatch");
+    }
+    if ((add_source_shard0 == nullptr) != (add_source_shard1 == nullptr))
+    {
+        throw std::invalid_argument(
+            "launch_hybrid_apply_moddown_ntt_add_back: both add-source shards are required");
+    }
+    if (add_source_shard0 != nullptr)
+    {
+        if (add_source_shard0->ptr == nullptr ||
+            add_source_shard1->ptr == nullptr)
+        {
+            throw std::invalid_argument(
+                "launch_hybrid_apply_moddown_ntt_add_back: null add-source pointer");
+        }
+        if (add_source_shard0->device_id != destination_shard0.device_id ||
+            add_source_shard1->device_id != destination_shard1.device_id ||
+            add_source_shard0->limb_begin != destination_shard0.limb_begin ||
+            add_source_shard1->limb_begin != destination_shard1.limb_begin ||
+            add_source_shard0->limb_count != destination_shard0.limb_count ||
+            add_source_shard1->limb_count != destination_shard1.limb_count ||
+            add_source_shard0->coeff_begin != destination_shard0.coeff_begin ||
+            add_source_shard1->coeff_begin != destination_shard1.coeff_begin ||
+            add_source_shard0->coeff_count != destination_shard0.coeff_count ||
+            add_source_shard1->coeff_count != destination_shard1.coeff_count)
+        {
+            throw std::invalid_argument(
+                "launch_hybrid_apply_moddown_ntt_add_back: add-source shard placement mismatch");
+        }
     }
     if (destination_shard0.coeff_begin != 0)
     {
@@ -4526,6 +4951,12 @@ void launch_hybrid_apply_moddown_ntt_add_back(
         <<<grid_size, block_size>>>(
             destination_shard0.ptr,
             destination_shard1.ptr,
+            add_source_shard0 == nullptr
+                ? destination_shard0.ptr
+                : add_source_shard0->ptr,
+            add_source_shard1 == nullptr
+                ? destination_shard1.ptr
+                : add_source_shard1->ptr,
             accum_q0,
             accum_q1,
             converted_q0,

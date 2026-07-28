@@ -122,6 +122,15 @@ public:
         const GpuLevelInfo &level_info) const;
 
     /**
+     * @brief destination += ciphertext * plaintext for a size-2 ciphertext.
+     */
+    void multiply_plain_accumulate_with_ciphertext(
+        GpuCiphertextView &destination_view,
+        const GpuConstCiphertextView &ciphertext_view,
+        const GpuConstPlaintextView &plaintext_view,
+        const GpuLevelInfo &level_info) const;
+
+    /**
      * @brief destination_ciphertext = left_ciphertext * right_ciphertext.
      *
      * This corresponds to Cheddar-style Tensor operation, but adapted to

@@ -65,6 +65,18 @@ void launch_hybrid_modup_decomposition_row_tiled8(
     const GpuParameterShard &parameter_shard,
     std::size_t degree);
 
+/**
+ * Forward NTT only the Q limbs outside the decomposition block and all P
+ * limbs. Q limbs inside the block are already copied from the NTT source.
+ */
+void launch_hybrid_forward_ntt_qp_active(
+    GpuWord *modup_q,
+    GpuWord *modup_p,
+    std::size_t decomp_limb_begin,
+    std::size_t decomp_limb_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
 void launch_hybrid_forward_ntt_qp_mul_accumulate_two_components(
     GpuWord *accum_q0,
     GpuWord *accum_p0,
@@ -156,6 +168,34 @@ void launch_hybrid_apply_moddown_ntt(
     const GpuParameterShard &parameter_shard,
     std::size_t degree);
 
+void launch_hybrid_apply_moddown_ntt_out_of_place(
+    GpuWord *destination_q0,
+    GpuWord *destination_q1,
+    const GpuWord *source_q0,
+    const GpuWord *source_q1,
+    const GpuWord *converted_q0,
+    const GpuWord *converted_q1,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+void launch_hybrid_apply_moddown_ntt_out_of_place_batch(
+    GpuWord *destination_q,
+    const GpuWord *source_q,
+    const GpuWord *converted_q,
+    std::size_t batch_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+void launch_hybrid_apply_moddown_ntt_from_q_groups(
+    GpuWord *destination_q0,
+    GpuWord *destination_q1,
+    const GpuWord *group_q,
+    const GpuWord *converted_q0,
+    const GpuWord *converted_q1,
+    std::size_t group_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
 void launch_hybrid_apply_moddown_ntt_add_back(
     const GpuPolyShardView &destination_shard0,
     const GpuPolyShardView &destination_shard1,
@@ -164,7 +204,9 @@ void launch_hybrid_apply_moddown_ntt_add_back(
     const GpuWord *converted_q0,
     const GpuWord *converted_q1,
     const GpuParameterShard &parameter_shard,
-    std::size_t degree);
+    std::size_t degree,
+    const GpuConstPolyShardView *add_source_shard0 = nullptr,
+    const GpuConstPolyShardView *add_source_shard1 = nullptr);
 
 void launch_apply_galois_ntt_poly_shard(
     const GpuPolyShardView &destination_shard,
