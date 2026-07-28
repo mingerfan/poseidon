@@ -56,6 +56,24 @@ bool env_flag_enabled(const char *name)
            text != "off" && text != "OFF";
 }
 
+std::size_t env_positive_size(const char *name)
+{
+    const char *value = std::getenv(name);
+    if (value == nullptr || value[0] == '\0')
+    {
+        return 0;
+    }
+    const std::string text(value);
+    std::size_t consumed = 0;
+    const unsigned long parsed = std::stoul(text, &consumed);
+    if (consumed != text.size() || parsed == 0)
+    {
+        throw std::runtime_error(
+            std::string(name) + " must be a positive integer");
+    }
+    return static_cast<std::size_t>(parsed);
+}
+
 struct Comparison
 {
     double max_abs = 0.0;
@@ -468,11 +486,14 @@ int main(int argc, char **argv)
 
         PoseidonGpuApi api(loaded_spec.spec.context_id, context, cuda_device_ids,
                            relin_keys, galois_keys, public_key, secret_key);
-        const bool device_workers = env_flag_enabled(kDeviceWorkersEnv);
+        const std::size_t device_worker_count =
+            env_positive_size(kDeviceWorkersEnv);
+        const bool device_workers = device_worker_count != 0;
         fhegpu::SequentialRuntime<PoseidonGpuApi> runtime(
             0, 1, local_device_count, api,
             device_workers ? fhegpu::DeviceExecutionMode::PerDeviceWorkers
-                           : fhegpu::DeviceExecutionMode::Sequential);
+                           : fhegpu::DeviceExecutionMode::Sequential,
+            device_worker_count);
         const fhegpu::RuntimeResources resources{
             loaded_spec, std::filesystem::path(argv[3]), false};
         std::unordered_map<fhegpu::ValueId, PoseidonGpuValue> inputs;
@@ -529,6 +550,7 @@ int main(int argc, char **argv)
             {"require_python_match", require_python_match},
             {"cuda_devices", cuda_device_ids},
             {"device_workers", device_workers},
+            {"device_worker_count", device_worker_count},
             {"seed", fixture.at("seed")},
             {"model_sha256", fixture.at("model_sha256")},
             {"plan_sha256", loaded_plan.source_sha256},
