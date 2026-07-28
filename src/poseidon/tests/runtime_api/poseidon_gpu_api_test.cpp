@@ -8,10 +8,10 @@
 #include "runtime/runtime.hpp"
 
 #include <cuda_runtime_api.h>
-#include <rmm/mr/cuda_memory_resource.hpp>
+#include <rmm/mr/device/cuda_memory_resource.hpp>
 #include <rmm/mr/device/limiting_resource_adaptor.hpp>
-#include <rmm/mr/per_device_resource.hpp>
-#include <rmm/mr/pool_memory_resource.hpp>
+#include <rmm/mr/device/per_device_resource.hpp>
+#include <rmm/mr/device/pool_memory_resource.hpp>
 
 #include <algorithm>
 #include <chrono>
