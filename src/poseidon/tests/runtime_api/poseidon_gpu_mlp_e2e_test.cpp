@@ -41,6 +41,8 @@ constexpr double kRelativeTolerance = 6e-3;
 constexpr double kImaginaryTolerance = 1e-2;
 constexpr const char *kAllowNoBootEnv =
     "POSEIDON_GPU_MLP_ALLOW_NO_BOOT";
+constexpr const char *kDeviceWorkersEnv =
+    "POSEIDON_RUNTIME_DEVICE_WORKERS";
 
 bool env_flag_enabled(const char *name)
 {
@@ -466,8 +468,11 @@ int main(int argc, char **argv)
 
         PoseidonGpuApi api(loaded_spec.spec.context_id, context, cuda_device_ids,
                            relin_keys, galois_keys, public_key, secret_key);
+        const bool device_workers = env_flag_enabled(kDeviceWorkersEnv);
         fhegpu::SequentialRuntime<PoseidonGpuApi> runtime(
-            0, 1, local_device_count, api);
+            0, 1, local_device_count, api,
+            device_workers ? fhegpu::DeviceExecutionMode::PerDeviceWorkers
+                           : fhegpu::DeviceExecutionMode::Sequential);
         const fhegpu::RuntimeResources resources{
             loaded_spec, std::filesystem::path(argv[3]), false};
         std::unordered_map<fhegpu::ValueId, PoseidonGpuValue> inputs;
@@ -523,6 +528,7 @@ int main(int argc, char **argv)
             {"model", model},
             {"require_python_match", require_python_match},
             {"cuda_devices", cuda_device_ids},
+            {"device_workers", device_workers},
             {"seed", fixture.at("seed")},
             {"model_sha256", fixture.at("model_sha256")},
             {"plan_sha256", loaded_plan.source_sha256},
