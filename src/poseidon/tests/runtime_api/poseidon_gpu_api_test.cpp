@@ -661,6 +661,17 @@ void test_preflight_rejections(PoseidonGpuApi &api,
     require_rejected(
         [&] { api.preflight(kPlanSha, false, target, loaded_spec.spec, host_compute); },
         "host_compute");
+
+    fhegpu::PlanRequirements missing_key_level;
+    missing_key_level.keys = {
+        {fhegpu::KeyKind::Galois, device_place(), 1, std::nullopt},
+    };
+    require_rejected(
+        [&] {
+            api.preflight(kPlanSha, false, target, loaded_spec.spec,
+                          missing_key_level);
+        },
+        "has no level");
 }
 
 void test_host_decrypt_reencrypt_boot(
@@ -1025,15 +1036,27 @@ void test_multiply_relinearize_rescale_rotate(
     PoseidonGpuApi &api, poseidon::PoseidonContext &context,
     poseidon::KeyGenerator &key_generator, const poseidon::RelinKeys &relin_keys,
     const poseidon::GaloisKeys &galois_keys,
-    const fhegpu::LoadedOperatorSpec &loaded_spec)
+    const fhegpu::LoadedOperatorSpec &loaded_spec,
+    const RmmPoolScope &rmm_pool)
 {
     const auto device = device_place();
+    const int full_level =
+        static_cast<int>(context.parameters_literal()->q().size() - 1);
     fhegpu::PlanRequirements requirements;
     requirements.keys = {
-        {fhegpu::KeyKind::Relin, device, std::nullopt},
-        {fhegpu::KeyKind::Galois, device, 3},
+        {fhegpu::KeyKind::Relin, device, std::nullopt, full_level},
+        {fhegpu::KeyKind::Galois, device, 3, full_level - 1},
     };
-    api.preflight(kPlanSha, false, make_target(loaded_spec), loaded_spec.spec, requirements);
+    const std::size_t before_preflight = rmm_pool.allocated_bytes();
+    api.preflight(kPlanSha, false, make_target(loaded_spec), loaded_spec.spec,
+                  requirements);
+    const std::size_t after_preflight = rmm_pool.allocated_bytes();
+    require(after_preflight > before_preflight,
+            "GPU preflight did not materialize level-specific evaluation keys");
+    api.preflight(kPlanSha, false, make_target(loaded_spec), loaded_spec.spec,
+                  requirements);
+    require(rmm_pool.allocated_bytes() == after_preflight,
+            "GPU preflight materialized duplicate evaluation-key caches");
 
     poseidon::PublicKey public_key;
     key_generator.create_public_key(public_key);
@@ -1223,7 +1246,7 @@ int main()
                      [&] {
                          test_multiply_relinearize_rescale_rotate(
                              api, context, key_generator, *relin_keys, *galois_keys,
-                             loaded_spec);
+                             loaded_spec, rmm_pool);
                      });
         }
 

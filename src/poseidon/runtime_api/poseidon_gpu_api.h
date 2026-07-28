@@ -138,6 +138,9 @@ private:
     const DeviceState &device_state(int logical_device_index) const;
     void synchronize_device(int cuda_device_id) const;
     void synchronize_all_devices() const;
+    std::size_t q_count_for_level(int level) const;
+    void materialize_relin_keys(DeviceState &device, std::size_t q_count);
+    void materialize_galois_keys(DeviceState &device, std::size_t q_count);
     const gpu::GpuRelinKeysData &relin_keys_for(DeviceState &device,
                                                 std::size_t q_count);
     const gpu::GpuGaloisKeysData &galois_keys_for(DeviceState &device,

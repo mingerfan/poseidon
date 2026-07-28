@@ -806,7 +806,6 @@ PoseidonGpuApi::PoseidonGpuApi(std::string context_id, PoseidonContext context,
     }
 
     encoder_ = std::make_unique<CKKSEncoder>(context_);
-    const std::size_t full_q_count = parameters->q().size();
     devices_.reserve(cuda_device_ids.size());
     for (const int cuda_device_id : cuda_device_ids)
     {
@@ -817,22 +816,6 @@ PoseidonGpuApi::PoseidonGpuApi(std::string context_id, PoseidonContext context,
         device->gpu_parameters =
             std::make_unique<gpu::GpuParameterData>(context_, cuda_device_id);
         device->evaluator = std::make_unique<gpu::GpuEvaluator>(*device->gpu_parameters);
-        if (relin_keys_ != nullptr)
-        {
-            device->relin_keys_by_q_count.emplace(
-                full_q_count,
-                std::make_unique<gpu::GpuRelinKeysData>(
-                    gpu::GpuUploader::upload_relin_keys(
-                        *relin_keys_, cuda_device_id, full_q_count)));
-        }
-        if (galois_keys_ != nullptr)
-        {
-            device->galois_keys_by_q_count.emplace(
-                full_q_count,
-                std::make_unique<gpu::GpuGaloisKeysData>(
-                    gpu::GpuUploader::upload_galois_keys(
-                        *galois_keys_, cuda_device_id, full_q_count)));
-        }
         devices_.push_back(std::move(device));
     }
     synchronize_all_devices();
@@ -1444,23 +1427,28 @@ void PoseidonGpuApi::preflight(std::string_view plan_source_sha256,
             continue;
         }
 
-        const auto &device = device_state(key.place, "Poseidon GPU key");
+        auto &device = device_state(key.place, "Poseidon GPU key");
+        if (!key.level)
+        {
+            throw std::runtime_error("Poseidon GPU evaluation-key requirement has no level");
+        }
+        const std::size_t q_count = q_count_for_level(*key.level);
         if (key.kind == fhegpu::KeyKind::Relin)
         {
-            if (relin_keys_ == nullptr || device.relin_keys_by_q_count.empty() ||
-                !relin_keys_->has_key(2))
+            if (relin_keys_ == nullptr || !relin_keys_->has_key(2))
             {
                 throw std::runtime_error("Poseidon GPU Api lacks RelinKeys");
             }
+            materialize_relin_keys(device, q_count);
         }
         else if (key.kind == fhegpu::KeyKind::Galois)
         {
-            if (galois_keys_ == nullptr || device.galois_keys_by_q_count.empty() ||
-                !key.rotation_step)
+            if (galois_keys_ == nullptr || !key.rotation_step)
             {
                 throw std::runtime_error("Poseidon GPU Api lacks GaloisKeys");
             }
             (void)available_rotation_steps(context_, *galois_keys_, *key.rotation_step);
+            materialize_galois_keys(device, q_count);
         }
         else
         {
@@ -1637,13 +1625,28 @@ void PoseidonGpuApi::synchronize_all_devices() const
     }
 }
 
-const gpu::GpuRelinKeysData &PoseidonGpuApi::relin_keys_for(
-    DeviceState &device, std::size_t q_count)
+std::size_t PoseidonGpuApi::q_count_for_level(int level) const
 {
-    const auto existing = device.relin_keys_by_q_count.find(q_count);
-    if (existing != device.relin_keys_by_q_count.end())
+    if (level < 0)
     {
-        return *existing->second;
+        throw std::invalid_argument("Poseidon GPU key level is negative");
+    }
+    const auto parms_id = context_.crt_context()->parms_id_map().at(
+        static_cast<std::uint32_t>(level));
+    const auto context_data = context_.crt_context()->get_context_data(parms_id);
+    if (context_data == nullptr)
+    {
+        throw std::invalid_argument("Poseidon GPU key level is unknown");
+    }
+    return context_data->parms().q().size();
+}
+
+void PoseidonGpuApi::materialize_relin_keys(DeviceState &device,
+                                            std::size_t q_count)
+{
+    if (device.relin_keys_by_q_count.count(q_count) != 0)
+    {
+        return;
     }
     if (relin_keys_ == nullptr)
     {
@@ -1658,17 +1661,14 @@ const gpu::GpuRelinKeysData &PoseidonGpuApi::relin_keys_for(
     {
         throw std::logic_error("Poseidon GPU RelinKeys cache insertion failed");
     }
-    synchronize_device(device.cuda_device_id);
-    return *inserted->second;
 }
 
-const gpu::GpuGaloisKeysData &PoseidonGpuApi::galois_keys_for(
-    DeviceState &device, std::size_t q_count)
+void PoseidonGpuApi::materialize_galois_keys(DeviceState &device,
+                                             std::size_t q_count)
 {
-    const auto existing = device.galois_keys_by_q_count.find(q_count);
-    if (existing != device.galois_keys_by_q_count.end())
+    if (device.galois_keys_by_q_count.count(q_count) != 0)
     {
-        return *existing->second;
+        return;
     }
     if (galois_keys_ == nullptr)
     {
@@ -1684,8 +1684,30 @@ const gpu::GpuGaloisKeysData &PoseidonGpuApi::galois_keys_for(
     {
         throw std::logic_error("Poseidon GPU GaloisKeys cache insertion failed");
     }
-    synchronize_device(device.cuda_device_id);
-    return *inserted->second;
+}
+
+const gpu::GpuRelinKeysData &PoseidonGpuApi::relin_keys_for(
+    DeviceState &device, std::size_t q_count)
+{
+    const auto existing = device.relin_keys_by_q_count.find(q_count);
+    if (existing == device.relin_keys_by_q_count.end())
+    {
+        throw std::runtime_error(
+            "Poseidon GPU RelinKeys were not preloaded for the input level");
+    }
+    return *existing->second;
+}
+
+const gpu::GpuGaloisKeysData &PoseidonGpuApi::galois_keys_for(
+    DeviceState &device, std::size_t q_count)
+{
+    const auto existing = device.galois_keys_by_q_count.find(q_count);
+    if (existing == device.galois_keys_by_q_count.end())
+    {
+        throw std::runtime_error(
+            "Poseidon GPU GaloisKeys were not preloaded for the input level");
+    }
+    return *existing->second;
 }
 
 } // namespace poseidon::runtime_api
