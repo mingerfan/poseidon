@@ -43,6 +43,8 @@ constexpr const char *kAllowNoBootEnv =
     "POSEIDON_GPU_MLP_ALLOW_NO_BOOT";
 constexpr const char *kDeviceWorkersEnv =
     "POSEIDON_RUNTIME_DEVICE_WORKERS";
+constexpr const char *kDeviceBackfillEnv =
+    "POSEIDON_RUNTIME_DEVICE_BACKFILL";
 
 bool env_flag_enabled(const char *name)
 {
@@ -489,10 +491,20 @@ int main(int argc, char **argv)
         const std::size_t device_worker_count =
             env_positive_size(kDeviceWorkersEnv);
         const bool device_workers = device_worker_count != 0;
+        const bool device_backfill = env_flag_enabled(kDeviceBackfillEnv);
+        if (device_backfill && !device_workers)
+        {
+            throw std::runtime_error(
+                std::string(kDeviceBackfillEnv) + " requires " +
+                kDeviceWorkersEnv);
+        }
         fhegpu::SequentialRuntime<PoseidonGpuApi> runtime(
             0, 1, local_device_count, api,
-            device_workers ? fhegpu::DeviceExecutionMode::PerDeviceWorkers
-                           : fhegpu::DeviceExecutionMode::Sequential,
+            device_backfill
+                ? fhegpu::DeviceExecutionMode::PerDeviceReadyWorkers
+                : device_workers
+                      ? fhegpu::DeviceExecutionMode::PerDeviceWorkers
+                      : fhegpu::DeviceExecutionMode::Sequential,
             device_worker_count);
         const fhegpu::RuntimeResources resources{
             loaded_spec, std::filesystem::path(argv[3]), false};
@@ -551,6 +563,7 @@ int main(int argc, char **argv)
             {"cuda_devices", cuda_device_ids},
             {"device_workers", device_workers},
             {"device_worker_count", device_worker_count},
+            {"device_backfill", device_backfill},
             {"seed", fixture.at("seed")},
             {"model_sha256", fixture.at("model_sha256")},
             {"plan_sha256", loaded_plan.source_sha256},
@@ -570,6 +583,11 @@ int main(int argc, char **argv)
               {"online_execution_seconds", online_execution_seconds},
               {"compute_calls", artifact.timing.compute_calls},
               {"boot_calls", artifact.timing.boot_calls},
+              {"device_backfill_tasks", artifact.timing.device_backfill_tasks},
+              {"device_ready_wait_calls",
+               artifact.timing.device_ready_wait_calls},
+              {"device_ready_wait_seconds",
+               artifact.timing.device_ready_wait_nanoseconds * 1e-9},
               {"compute_including_boot_seconds", compute_seconds},
               {"boot_seconds", boot_seconds},
               {"compute_excluding_boot_seconds", compute_seconds - boot_seconds}}},
