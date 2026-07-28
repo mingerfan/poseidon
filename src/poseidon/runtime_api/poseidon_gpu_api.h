@@ -66,7 +66,6 @@ private:
 
     explicit PoseidonGpuValue(Storage storage);
 
-    std::shared_ptr<void> allocation_owner_;
     Storage storage_;
     std::shared_ptr<Completion> completion_;
 

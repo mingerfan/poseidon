@@ -27,6 +27,7 @@ endif()
 add_library(poseidon_gpu STATIC
     gpu_ciphertext.cpp
     gpu_key.cpp
+    gpu_memory.cpp
     gpu_parameter.cpp
     gpu_plaintext.cpp
     gpu_uploader.cpp

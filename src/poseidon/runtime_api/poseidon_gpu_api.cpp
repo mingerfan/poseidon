@@ -59,6 +59,7 @@ public:
 
     ~DeviceMemoryPool()
     {
+        gpu::unregister_device_memory_resource_owner(pool_.get(), this);
         (void)cudaSetDevice(cuda_device_id_);
         if (rmm::mr::get_per_device_resource(
                 rmm::cuda_device_id{cuda_device_id_}) == pool_.get())
@@ -66,6 +67,11 @@ public:
             rmm::mr::set_per_device_resource(
                 rmm::cuda_device_id{cuda_device_id_}, previous_resource_);
         }
+    }
+
+    rmm::mr::device_memory_resource *resource() const noexcept
+    {
+        return pool_.get();
     }
 
 private:
@@ -99,6 +105,7 @@ std::shared_ptr<DeviceMemoryPool> acquire_device_memory_pool(int cuda_device_id)
     }
 
     auto pool = std::make_shared<DeviceMemoryPool>(cuda_device_id);
+    gpu::register_device_memory_resource_owner(pool->resource(), pool);
     pools[cuda_device_id] = pool;
     return pool;
 }
@@ -621,7 +628,6 @@ PoseidonGpuValue &PoseidonGpuValue::operator=(const PoseidonGpuValue &other)
     if (this != &other)
     {
         completion_ = other.completion_;
-        allocation_owner_ = other.allocation_owner_;
         storage_ = other.storage_;
     }
     return *this;
@@ -632,7 +638,6 @@ PoseidonGpuValue &PoseidonGpuValue::operator=(PoseidonGpuValue &&other) noexcept
     if (this != &other)
     {
         completion_ = std::move(other.completion_);
-        allocation_owner_ = std::move(other.allocation_owner_);
         storage_ = std::move(other.storage_);
     }
     return *this;
@@ -1034,8 +1039,6 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
     }
 
     auto result = Value::from_device_ciphertext(std::move(output));
-    result.allocation_owner_ =
-        devices_.at(static_cast<std::size_t>(op.place.index));
     result.completion_ = PoseidonGpuValue::Completion::record(
         device.cuda_device_id, devices_.at(static_cast<std::size_t>(op.place.index)),
         inputs, std::move(temporaries));
@@ -1146,8 +1149,6 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_async(
                     destination_cuda_device));
                 state.outputs[slot].emplace(
                     Value::from_device_plaintext(std::move(output)));
-                state.outputs[slot]->allocation_owner_ =
-                    devices_.at(static_cast<std::size_t>(destination.index));
             }
             else
             {
@@ -1159,8 +1160,6 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_async(
                     destination_cuda_device));
                 state.outputs[slot].emplace(
                     Value::from_device_ciphertext(std::move(output)));
-                state.outputs[slot]->allocation_owner_ =
-                    devices_.at(static_cast<std::size_t>(destination.index));
             }
             continue;
         }
@@ -1217,8 +1216,6 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_async(
                 copies.front(), requested_route, source_ready));
             state.outputs[slot].emplace(
                 Value::from_device_plaintext(std::move(output)));
-            state.outputs[slot]->allocation_owner_ =
-                devices_.at(static_cast<std::size_t>(destination.index));
         }
         else
         {
@@ -1234,8 +1231,6 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_async(
                 copies.front(), requested_route, source_ready));
             state.outputs[slot].emplace(
                 Value::from_device_ciphertext(std::move(output)));
-            state.outputs[slot]->allocation_owner_ =
-                devices_.at(static_cast<std::size_t>(destination.index));
         }
     }
     return handle;

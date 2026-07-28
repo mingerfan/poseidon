@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <limits>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -41,6 +42,14 @@ inline cudaStream_t gpu_execution_stream() noexcept
 {
     return cudaStreamPerThread;
 }
+
+std::shared_ptr<void> device_memory_resource_owner(
+    rmm::mr::device_memory_resource *resource);
+void register_device_memory_resource_owner(
+    rmm::mr::device_memory_resource *resource,
+    const std::shared_ptr<void> &owner);
+void unregister_device_memory_resource_owner(
+    rmm::mr::device_memory_resource *resource, const void *owner) noexcept;
 
 /**
  * @brief Lightweight GPU memory owner.
@@ -115,6 +124,7 @@ public:
 
         gpu_check_cuda(cudaSetDevice(device_id_), "cudaSetDevice");
         resource_ = rmm::mr::get_current_device_resource();
+        resource_owner_ = device_memory_resource_owner(resource_);
         ptr_ = static_cast<T *>(
             resource_->allocate(
                 bytes_, rmm::cuda_stream_view{gpu_execution_stream()}));
@@ -196,6 +206,7 @@ public:
         bytes_ = 0;
         device_id_ = 0;
         resource_ = nullptr;
+        resource_owner_.reset();
     }
 
     T *data()
@@ -231,6 +242,7 @@ private:
         bytes_ = other.bytes_;
         device_id_ = other.device_id_;
         resource_ = other.resource_;
+        resource_owner_ = std::move(other.resource_owner_);
 
         other.ptr_ = nullptr;
         other.size_ = 0;
@@ -245,6 +257,7 @@ private:
     std::size_t bytes_ = 0;
     int device_id_ = 0;
     rmm::mr::device_memory_resource *resource_ = nullptr;
+    std::shared_ptr<void> resource_owner_;
 };
 
 /**

@@ -209,6 +209,36 @@ poseidon::ParametersLiteral make_parameters()
     return parameters;
 }
 
+void test_internal_memory_pool_lifetime(
+    const poseidon::PoseidonContext &context)
+{
+    require(cudaSetDevice(kDeviceId) == cudaSuccess,
+            "failed to select CUDA device for memory-pool lifetime test");
+    auto *previous_resource = rmm::mr::get_current_device_resource();
+    rmm::mr::device_memory_resource *pool_resource = nullptr;
+    std::optional<PoseidonGpuValue> escaped_value;
+
+    {
+        PoseidonGpuApi api(kContextId, context, kDeviceId);
+        pool_resource = rmm::mr::get_current_device_resource();
+        require(pool_resource != previous_resource,
+                "Poseidon GPU Api did not install its internal RMM pool");
+
+        auto device_plaintext =
+            poseidon::gpu::GpuPlaintextData::allocate_single_device(
+                16, 1, kDeviceId);
+        escaped_value.emplace(PoseidonGpuValue::from_device_plaintext(
+            std::move(device_plaintext)));
+    }
+
+    require(rmm::mr::get_current_device_resource() == pool_resource,
+            "internal RMM pool did not outlive an allocated GPU value");
+    *escaped_value =
+        PoseidonGpuValue::from_host_plaintext(poseidon::Plaintext{});
+    require(rmm::mr::get_current_device_resource() == previous_resource,
+            "internal RMM pool did not restore the previous resource");
+}
+
 fhegpu::LoadedOperatorSpec make_operator_spec(const poseidon::PoseidonContext &context)
 {
     fhegpu::OperatorSpec spec;
@@ -1199,9 +1229,12 @@ int main()
 
     try
     {
-        RmmPoolScope rmm_pool(kDeviceId);
         const auto parameters = make_parameters();
         poseidon::PoseidonContext context(parameters);
+        run_test("internal RMM pool lifetime",
+                 [&] { test_internal_memory_pool_lifetime(context); });
+
+        RmmPoolScope rmm_pool(kDeviceId);
         poseidon::KeyGenerator key_generator(context);
         auto relin_keys = std::make_shared<poseidon::RelinKeys>();
         auto galois_keys = std::make_shared<poseidon::GaloisKeys>();
