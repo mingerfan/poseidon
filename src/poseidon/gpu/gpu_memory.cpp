@@ -20,6 +20,18 @@ DeviceMemoryResourceOwners &device_memory_resource_owners()
     return result;
 }
 
+struct ThreadResourceOwnerCache
+{
+    rmm::mr::device_memory_resource *resource = nullptr;
+    std::weak_ptr<void> owner;
+};
+
+ThreadResourceOwnerCache &thread_resource_owner_cache()
+{
+    thread_local ThreadResourceOwnerCache result;
+    return result;
+}
+
 } // namespace
 
 std::shared_ptr<void> device_memory_resource_owner(
@@ -28,6 +40,15 @@ std::shared_ptr<void> device_memory_resource_owner(
     if (resource == nullptr)
     {
         return {};
+    }
+
+    auto &cache = thread_resource_owner_cache();
+    if (cache.resource == resource)
+    {
+        if (auto owner = cache.owner.lock())
+        {
+            return owner;
+        }
     }
 
     auto &registry = device_memory_resource_owners();
@@ -43,6 +64,8 @@ std::shared_ptr<void> device_memory_resource_owner(
     {
         registry.owners.erase(found);
     }
+    cache.resource = resource;
+    cache.owner = owner;
     return owner;
 }
 
