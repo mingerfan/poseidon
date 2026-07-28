@@ -36,7 +36,6 @@ using Json = nlohmann::json;
 using poseidon::runtime_api::PoseidonGpuApi;
 using poseidon::runtime_api::PoseidonGpuValue;
 
-constexpr int kCudaDevice = 0;
 constexpr double kAbsoluteTolerance = 0.1;
 constexpr double kRelativeTolerance = 6e-3;
 constexpr double kImaginaryTolerance = 1e-2;
@@ -361,11 +360,19 @@ int main(int argc, char **argv)
         const Json fixture = read_json(argv[4]);
         const Json mock_result = read_json(argv[5]);
         const auto &plan = loaded_plan.plan;
-        if (plan.target.world_size != 1 || plan.target.device_counts != std::vector<int>{1} ||
+        if (plan.target.world_size != 1 || plan.target.device_counts.size() != 1 ||
+            plan.target.device_counts.front() <= 0 ||
             plan.external_inputs.size() != 1 || plan.final_outputs.size() != 1)
         {
             throw std::runtime_error(
-                "GPU MLP test requires one rank, one device, one input, and one output");
+                "GPU MLP test requires one rank, at least one device, one input, and one output");
+        }
+        const int local_device_count = plan.target.device_counts.front();
+        std::vector<int> cuda_device_ids;
+        cuda_device_ids.reserve(static_cast<std::size_t>(local_device_count));
+        for (int device = 0; device < local_device_count; ++device)
+        {
+            cuda_device_ids.push_back(device);
         }
         if (fixture.at("format_version") != 1 ||
             mock_result.at("format_version") != 1 ||
@@ -457,9 +464,10 @@ int main(int argc, char **argv)
         poseidon::Ciphertext input_cipher;
         encryptor.encrypt(input_plain, input_cipher);
 
-        PoseidonGpuApi api(loaded_spec.spec.context_id, context, kCudaDevice,
+        PoseidonGpuApi api(loaded_spec.spec.context_id, context, cuda_device_ids,
                            relin_keys, galois_keys, public_key, secret_key);
-        fhegpu::SequentialRuntime<PoseidonGpuApi> runtime(0, 1, 1, api);
+        fhegpu::SequentialRuntime<PoseidonGpuApi> runtime(
+            0, 1, local_device_count, api);
         const fhegpu::RuntimeResources resources{
             loaded_spec, std::filesystem::path(argv[3]), false};
         std::unordered_map<fhegpu::ValueId, PoseidonGpuValue> inputs;
@@ -514,7 +522,7 @@ int main(int argc, char **argv)
             {"passed", passed},
             {"model", model},
             {"require_python_match", require_python_match},
-            {"cuda_device", kCudaDevice},
+            {"cuda_devices", cuda_device_ids},
             {"seed", fixture.at("seed")},
             {"model_sha256", fixture.at("model_sha256")},
             {"plan_sha256", loaded_plan.source_sha256},
