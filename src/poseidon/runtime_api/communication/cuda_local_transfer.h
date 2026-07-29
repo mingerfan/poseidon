@@ -48,6 +48,8 @@ public:
     CudaTransferRequest(CudaTransferRequest &&) noexcept;
     CudaTransferRequest &operator=(CudaTransferRequest &&) noexcept;
 
+    cudaEvent_t completion_event() const;
+    int completion_device() const;
     void wait();
 
 private:

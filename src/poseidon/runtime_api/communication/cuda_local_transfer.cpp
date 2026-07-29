@@ -192,6 +192,24 @@ CudaTransferRequest::~CudaTransferRequest() = default;
 CudaTransferRequest::CudaTransferRequest(CudaTransferRequest &&) noexcept = default;
 CudaTransferRequest &CudaTransferRequest::operator=(CudaTransferRequest &&) noexcept = default;
 
+cudaEvent_t CudaTransferRequest::completion_event() const
+{
+    if (!state_ || state_->completion.value == nullptr)
+    {
+        throw std::logic_error("CUDA transfer request has no completion event");
+    }
+    return state_->completion.value;
+}
+
+int CudaTransferRequest::completion_device() const
+{
+    if (!state_ || state_->completion.value == nullptr)
+    {
+        throw std::logic_error("CUDA transfer request has no completion event");
+    }
+    return state_->completion.device;
+}
+
 void CudaTransferRequest::wait()
 {
     if (!state_ || state_->completion.value == nullptr)

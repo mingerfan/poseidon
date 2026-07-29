@@ -373,7 +373,7 @@ PoseidonGpuValue transfer_value(PoseidonGpuApi &api, fhegpu::TransferId id,
     return std::move(outputs.front());
 }
 
-void test_transfer_post_does_not_wait_for_producer(
+void test_transfer_uses_event_dependencies(
     PoseidonGpuApi &api, const poseidon::PoseidonContext &context,
     poseidon::KeyGenerator &key_generator)
 {
@@ -389,7 +389,7 @@ void test_transfer_post_does_not_wait_for_producer(
     poseidon::Ciphertext cipher;
     encryptor.encrypt(plain, cipher);
     auto device_value = transfer_value(
-        api, 40, PoseidonGpuValue::from_host_ciphertext(std::move(cipher)),
+        api, 40, PoseidonGpuValue::from_host_ciphertext(cipher),
         fhegpu::ValueKind::Ciphertext, host_place(), device_place());
 
     fhegpu::ComputeOp negate;
@@ -398,6 +398,35 @@ void test_transfer_post_does_not_wait_for_producer(
     {
         auto warmup = api.compute(negate, {device_value});
         api.synchronize(warmup);
+    }
+
+    {
+        CudaHostGate gate;
+        require(cudaSetDevice(kDeviceId) == cudaSuccess,
+                "failed to select CUDA device for asynchronous upload test");
+        require(cudaLaunchHostFunc(
+                    cudaStreamPerThread, wait_for_cuda_host_gate, &gate) ==
+                    cudaSuccess,
+                "failed to enqueue CUDA upload gate");
+        {
+            std::unique_lock<std::mutex> lock(gate.mutex);
+            require(gate.condition.wait_for(lock, std::chrono::seconds(5),
+                                            [&] { return gate.entered; }),
+                    "CUDA upload gate did not start");
+        }
+
+        CudaGateWatchdog watchdog(gate);
+        auto handle = api.communicate_async(
+            transfer_action(41, fhegpu::ValueKind::Ciphertext, host_place(),
+                            device_place()),
+            {PoseidonGpuValue::from_host_ciphertext(std::move(cipher))});
+        auto outputs = api.wait(handle);
+        require(outputs.size() == 1,
+                "asynchronous upload returned wrong output count");
+        auto consumed = api.compute(negate, {outputs.front()});
+        require(watchdog.finish_post(),
+                "device Transfer wait or consumer compute blocked on CUDA work");
+        api.synchronize(consumed);
     }
 
     CudaHostGate gate;
@@ -415,7 +444,7 @@ void test_transfer_post_does_not_wait_for_producer(
     CudaGateWatchdog watchdog(gate);
     auto produced = api.compute(negate, {device_value});
     auto handle = api.communicate_async(
-        transfer_action(41, fhegpu::ValueKind::Ciphertext, device_place(), host_place()),
+        transfer_action(42, fhegpu::ValueKind::Ciphertext, device_place(), host_place()),
         {produced});
     require(watchdog.finish_post(),
             "communicate_async blocked on an unfinished GPU producer");
@@ -1257,9 +1286,9 @@ int main()
                      [&] { test_preflight_rejections(api, loaded_spec); });
             run_test("Runtime Encode/Transfer/AddCP/Transfer",
                      [&] { test_runtime_add_plain(api, context, key_generator, loaded_spec); });
-            run_test("Transfer post does not wait for unfinished producer",
+            run_test("Transfer submission and Device consumption use CUDA events",
                      [&] {
-                         test_transfer_post_does_not_wait_for_producer(
+                         test_transfer_uses_event_dependencies(
                              api, context, key_generator);
                      });
             run_test("Runtime Transfer/AddCC/Transfer",
