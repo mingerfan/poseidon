@@ -45,6 +45,8 @@ constexpr const char *kDeviceWorkersEnv =
     "POSEIDON_RUNTIME_DEVICE_WORKERS";
 constexpr const char *kDeviceBackfillEnv =
     "POSEIDON_RUNTIME_DEVICE_BACKFILL";
+constexpr const char *kDeviceDependenciesEnv =
+    "POSEIDON_RUNTIME_DEVICE_DEPENDENCIES";
 
 bool env_flag_enabled(const char *name)
 {
@@ -492,15 +494,25 @@ int main(int argc, char **argv)
             env_positive_size(kDeviceWorkersEnv);
         const bool device_workers = device_worker_count != 0;
         const bool device_backfill = env_flag_enabled(kDeviceBackfillEnv);
-        if (device_backfill && !device_workers)
+        const bool device_dependencies =
+            env_flag_enabled(kDeviceDependenciesEnv);
+        if ((device_backfill || device_dependencies) && !device_workers)
         {
             throw std::runtime_error(
-                std::string(kDeviceBackfillEnv) + " requires " +
+                std::string("device backfill/dependencies require ") +
                 kDeviceWorkersEnv);
+        }
+        if (device_backfill && device_dependencies)
+        {
+            throw std::runtime_error(
+                std::string(kDeviceBackfillEnv) + " and " +
+                kDeviceDependenciesEnv + " are mutually exclusive");
         }
         fhegpu::SequentialRuntime<PoseidonGpuApi> runtime(
             0, 1, local_device_count, api,
-            device_backfill
+            device_dependencies
+                ? fhegpu::DeviceExecutionMode::PerDeviceDependencyWorkers
+                : device_backfill
                 ? fhegpu::DeviceExecutionMode::PerDeviceReadyWorkers
                 : device_workers
                       ? fhegpu::DeviceExecutionMode::PerDeviceWorkers
@@ -564,6 +576,7 @@ int main(int argc, char **argv)
             {"device_workers", device_workers},
             {"device_worker_count", device_worker_count},
             {"device_backfill", device_backfill},
+            {"device_dependencies", device_dependencies},
             {"seed", fixture.at("seed")},
             {"model_sha256", fixture.at("model_sha256")},
             {"plan_sha256", loaded_plan.source_sha256},
