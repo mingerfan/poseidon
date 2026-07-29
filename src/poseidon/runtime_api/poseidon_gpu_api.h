@@ -103,13 +103,15 @@ public:
                    std::shared_ptr<const RelinKeys> relin_keys = {},
                    std::shared_ptr<const GaloisKeys> galois_keys = {},
                    std::shared_ptr<const PublicKey> boot_public_key = {},
-                   std::shared_ptr<const SecretKey> boot_secret_key = {});
+                   std::shared_ptr<const SecretKey> boot_secret_key = {},
+                   bool asynchronous_device_transfers = false);
     PoseidonGpuApi(std::string context_id, PoseidonContext context,
                    std::vector<int> cuda_device_ids,
                    std::shared_ptr<const RelinKeys> relin_keys = {},
                    std::shared_ptr<const GaloisKeys> galois_keys = {},
                    std::shared_ptr<const PublicKey> boot_public_key = {},
-                   std::shared_ptr<const SecretKey> boot_secret_key = {});
+                   std::shared_ptr<const SecretKey> boot_secret_key = {},
+                   bool asynchronous_device_transfers = false);
     ~PoseidonGpuApi();
 
     PoseidonGpuApi(const PoseidonGpuApi &) = delete;
@@ -160,6 +162,7 @@ private:
     std::shared_ptr<const RelinKeys> relin_keys_;
     std::shared_ptr<const GaloisKeys> galois_keys_;
     std::optional<int> max_rescale_levels_per_op_;
+    bool asynchronous_device_transfers_ = false;
 };
 
 } // namespace runtime_api

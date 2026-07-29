@@ -47,6 +47,8 @@ constexpr const char *kDeviceBackfillEnv =
     "POSEIDON_RUNTIME_DEVICE_BACKFILL";
 constexpr const char *kDeviceDependenciesEnv =
     "POSEIDON_RUNTIME_DEVICE_DEPENDENCIES";
+constexpr const char *kTransferEventsEnv =
+    "POSEIDON_RUNTIME_TRANSFER_EVENTS";
 
 bool env_flag_enabled(const char *name)
 {
@@ -488,14 +490,13 @@ int main(int argc, char **argv)
         poseidon::Ciphertext input_cipher;
         encryptor.encrypt(input_plain, input_cipher);
 
-        PoseidonGpuApi api(loaded_spec.spec.context_id, context, cuda_device_ids,
-                           relin_keys, galois_keys, public_key, secret_key);
         const std::size_t device_worker_count =
             env_positive_size(kDeviceWorkersEnv);
         const bool device_workers = device_worker_count != 0;
         const bool device_backfill = env_flag_enabled(kDeviceBackfillEnv);
         const bool device_dependencies =
             env_flag_enabled(kDeviceDependenciesEnv);
+        const bool transfer_events = env_flag_enabled(kTransferEventsEnv);
         if ((device_backfill || device_dependencies) && !device_workers)
         {
             throw std::runtime_error(
@@ -508,6 +509,15 @@ int main(int argc, char **argv)
                 std::string(kDeviceBackfillEnv) + " and " +
                 kDeviceDependenciesEnv + " are mutually exclusive");
         }
+        if (transfer_events && !device_dependencies)
+        {
+            throw std::runtime_error(
+                std::string(kTransferEventsEnv) + " requires " +
+                kDeviceDependenciesEnv);
+        }
+        PoseidonGpuApi api(loaded_spec.spec.context_id, context, cuda_device_ids,
+                           relin_keys, galois_keys, public_key, secret_key,
+                           transfer_events);
         fhegpu::SequentialRuntime<PoseidonGpuApi> runtime(
             0, 1, local_device_count, api,
             device_dependencies
@@ -577,6 +587,7 @@ int main(int argc, char **argv)
             {"device_worker_count", device_worker_count},
             {"device_backfill", device_backfill},
             {"device_dependencies", device_dependencies},
+            {"transfer_events", transfer_events},
             {"seed", fixture.at("seed")},
             {"model_sha256", fixture.at("model_sha256")},
             {"plan_sha256", loaded_plan.source_sha256},

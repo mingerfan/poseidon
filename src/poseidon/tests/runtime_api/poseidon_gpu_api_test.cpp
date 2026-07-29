@@ -374,9 +374,10 @@ PoseidonGpuValue transfer_value(PoseidonGpuApi &api, fhegpu::TransferId id,
 }
 
 void test_transfer_uses_event_dependencies(
-    PoseidonGpuApi &api, const poseidon::PoseidonContext &context,
+    const poseidon::PoseidonContext &context,
     poseidon::KeyGenerator &key_generator)
 {
+    PoseidonGpuApi api(kContextId, context, kDeviceId, {}, {}, {}, {}, true);
     poseidon::PublicKey public_key;
     key_generator.create_public_key(public_key);
     poseidon::Encryptor encryptor(context, public_key);
@@ -1289,7 +1290,7 @@ int main()
             run_test("Transfer submission and Device consumption use CUDA events",
                      [&] {
                          test_transfer_uses_event_dependencies(
-                             api, context, key_generator);
+                             context, key_generator);
                      });
             run_test("Runtime Transfer/AddCC/Transfer",
                      [&] {
