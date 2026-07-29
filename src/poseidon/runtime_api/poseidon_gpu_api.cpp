@@ -21,6 +21,7 @@
 #include <mutex>
 #include <optional>
 #include <stdexcept>
+#include <thread>
 #include <type_traits>
 #include <unordered_map>
 #include <utility>
@@ -601,12 +602,25 @@ public:
         return event_;
     }
 
+    void wait_on_execution_stream(int cuda_device_id) const
+    {
+        if (!transfer_request_ && cuda_device_id_ == cuda_device_id &&
+            producer_thread_ == std::this_thread::get_id())
+        {
+            return;
+        }
+        gpu::gpu_check_cuda(
+            cudaStreamWaitEvent(gpu::gpu_execution_stream(), event(), 0),
+            "cudaStreamWaitEvent compute input");
+    }
+
 private:
     Completion(int cuda_device_id, std::shared_ptr<void> device_state,
                const std::vector<PoseidonGpuValue> &inputs,
                std::vector<std::shared_ptr<void>> temporaries)
         : cuda_device_id_(cuda_device_id), device_state_(std::move(device_state)),
-          inputs_(inputs), temporaries_(std::move(temporaries))
+          inputs_(inputs), temporaries_(std::move(temporaries)),
+          producer_thread_(std::this_thread::get_id())
     {}
 
     int cuda_device_id_ = 0;
@@ -617,6 +631,7 @@ private:
     std::shared_ptr<void> device_state_;
     std::vector<PoseidonGpuValue> inputs_;
     std::vector<std::shared_ptr<void>> temporaries_;
+    std::thread::id producer_thread_;
 };
 
 struct PoseidonGpuApi::CommHandle::State
@@ -939,10 +954,7 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
     {
         if (input.completion_ != nullptr)
         {
-            gpu::gpu_check_cuda(
-                cudaStreamWaitEvent(
-                    gpu::gpu_execution_stream(), input.completion_->event(), 0),
-                "cudaStreamWaitEvent compute input");
+            input.completion_->wait_on_execution_stream(device.cuda_device_id);
         }
     }
     gpu::GpuCiphertextData output;
