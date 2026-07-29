@@ -35,6 +35,11 @@ class GpuParameterData;
 namespace runtime_api
 {
 
+namespace communication
+{
+class CudaLocalTransfer;
+} // namespace communication
+
 class PoseidonGpuValue
 {
 public:
@@ -151,6 +156,7 @@ private:
     std::unique_ptr<Encryptor> boot_encryptor_;
     std::unique_ptr<Decryptor> boot_decryptor_;
     std::vector<std::shared_ptr<DeviceState>> devices_;
+    std::unique_ptr<communication::CudaLocalTransfer> cuda_transfer_;
     std::shared_ptr<const RelinKeys> relin_keys_;
     std::shared_ptr<const GaloisKeys> galois_keys_;
     std::optional<int> max_rescale_levels_per_op_;

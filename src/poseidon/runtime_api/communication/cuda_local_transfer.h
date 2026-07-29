@@ -62,6 +62,12 @@ private:
 class CudaLocalTransfer
 {
 public:
+    explicit CudaLocalTransfer(std::vector<int> cuda_device_ids);
+    ~CudaLocalTransfer();
+
+    CudaLocalTransfer(const CudaLocalTransfer &) = delete;
+    CudaLocalTransfer &operator=(const CudaLocalTransfer &) = delete;
+
     static int visible_device_count();
     static bool can_access_peer(int destination_device, int source_device);
     // Required once per directed device pair before submitting a PeerToPeer copy.
@@ -87,6 +93,10 @@ public:
         const void *source, int source_device,
         const std::shared_ptr<PinnedHostBuffer> &destination,
         std::size_t bytes, cudaEvent_t source_ready = nullptr) const;
+
+private:
+    struct State;
+    std::shared_ptr<State> state_;
 };
 
 } // namespace poseidon::runtime_api::communication

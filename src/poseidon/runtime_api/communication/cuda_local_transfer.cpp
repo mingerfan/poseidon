@@ -4,6 +4,7 @@
 
 #include <cuda_runtime_api.h>
 
+#include <algorithm>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -146,15 +147,17 @@ struct CudaTransferRequest::State
 
     ~State()
     {
-        if (!waited)
+        if (!waited && completion_recorded)
         {
-            for (auto &stream : streams)
+            (void)cudaSetDevice(completion.device);
+            (void)cudaEventSynchronize(completion.value);
+        }
+        else if (!waited)
+        {
+            for (const auto &stream : submitted_streams)
             {
-                if (stream.value != nullptr)
-                {
-                    (void)cudaSetDevice(stream.device);
-                    (void)cudaStreamSynchronize(stream.value);
-                }
+                (void)cudaSetDevice(stream.device);
+                (void)cudaStreamSynchronize(stream.value);
             }
         }
         for (auto &event : events)
@@ -170,22 +173,117 @@ struct CudaTransferRequest::State
             (void)cudaSetDevice(completion.device);
             (void)cudaEventDestroy(completion.value);
         }
+    }
+
+    void retain_stream(int device, cudaStream_t stream)
+    {
+        const auto found = std::find_if(
+            submitted_streams.begin(), submitted_streams.end(),
+            [device](const Stream &submitted) {
+                return submitted.device == device;
+            });
+        if (found == submitted_streams.end())
+        {
+            submitted_streams.push_back({device, stream});
+        }
+    }
+
+    std::shared_ptr<void> stream_owner;
+    std::vector<Stream> submitted_streams;
+    std::vector<Event> events;
+    Event completion;
+    std::shared_ptr<PinnedHostBuffer> staging;
+    bool completion_recorded = false;
+    bool waited = false;
+};
+
+struct CudaLocalTransfer::State
+{
+    struct Stream
+    {
+        int device = 0;
+        cudaStream_t value = nullptr;
+    };
+
+    explicit State(const std::vector<int> &cuda_device_ids)
+    {
+        if (cuda_device_ids.empty())
+        {
+            throw std::invalid_argument(
+                "CUDA transfer requires at least one device");
+        }
+        streams.reserve(cuda_device_ids.size());
+        try
+        {
+            for (std::size_t index = 0; index < cuda_device_ids.size(); ++index)
+            {
+                const int device = cuda_device_ids[index];
+                if (device < 0 ||
+                    std::find(cuda_device_ids.begin(),
+                              cuda_device_ids.begin() + index,
+                              device) != cuda_device_ids.begin() + index)
+                {
+                    throw std::invalid_argument(
+                        "CUDA transfer device ids must be nonnegative and unique");
+                }
+                streams.push_back({device, create_stream(device)});
+            }
+        }
+        catch (...)
+        {
+            destroy_streams();
+            throw;
+        }
+    }
+
+    ~State()
+    {
+        for (const auto &stream : streams)
+        {
+            if (stream.value != nullptr)
+            {
+                (void)cudaSetDevice(stream.device);
+                (void)cudaStreamSynchronize(stream.value);
+            }
+        }
+        destroy_streams();
+    }
+
+    cudaStream_t stream(int device) const
+    {
+        const auto found = std::find_if(
+            streams.begin(), streams.end(),
+            [device](const Stream &stream) { return stream.device == device; });
+        if (found == streams.end())
+        {
+            throw std::invalid_argument(
+                "CUDA transfer device is not configured");
+        }
+        return found->value;
+    }
+
+private:
+    void destroy_streams() noexcept
+    {
         for (auto &stream : streams)
         {
             if (stream.value != nullptr)
             {
                 (void)cudaSetDevice(stream.device);
                 (void)cudaStreamDestroy(stream.value);
+                stream.value = nullptr;
             }
         }
     }
 
     std::vector<Stream> streams;
-    std::vector<Event> events;
-    Event completion;
-    std::shared_ptr<PinnedHostBuffer> staging;
-    bool waited = false;
 };
+
+CudaLocalTransfer::CudaLocalTransfer(std::vector<int> cuda_device_ids)
+    : state_(std::make_shared<State>(cuda_device_ids))
+{}
+
+CudaLocalTransfer::~CudaLocalTransfer() = default;
 
 CudaTransferRequest::CudaTransferRequest() = default;
 CudaTransferRequest::~CudaTransferRequest() = default;
@@ -194,7 +292,8 @@ CudaTransferRequest &CudaTransferRequest::operator=(CudaTransferRequest &&) noex
 
 cudaEvent_t CudaTransferRequest::completion_event() const
 {
-    if (!state_ || state_->completion.value == nullptr)
+    if (!state_ || !state_->completion_recorded ||
+        state_->completion.value == nullptr)
     {
         throw std::logic_error("CUDA transfer request has no completion event");
     }
@@ -203,7 +302,8 @@ cudaEvent_t CudaTransferRequest::completion_event() const
 
 int CudaTransferRequest::completion_device() const
 {
-    if (!state_ || state_->completion.value == nullptr)
+    if (!state_ || !state_->completion_recorded ||
+        state_->completion.value == nullptr)
     {
         throw std::logic_error("CUDA transfer request has no completion event");
     }
@@ -212,7 +312,8 @@ int CudaTransferRequest::completion_device() const
 
 void CudaTransferRequest::wait()
 {
-    if (!state_ || state_->completion.value == nullptr)
+    if (!state_ || !state_->completion_recorded ||
+        state_->completion.value == nullptr)
     {
         throw std::logic_error("CUDA transfer request has no completion event");
     }
@@ -376,12 +477,13 @@ CudaTransferRequest CudaLocalTransfer::copy_async(
     CudaTransferRequest result;
     result.state_ = std::make_unique<CudaTransferRequest::State>();
     auto &state = *result.state_;
+    state.stream_owner = state_;
 
     if (route == CudaTransferRoute::HostStaged)
     {
         state.staging = std::make_shared<PinnedHostBuffer>(request.bytes);
-        const cudaStream_t source_stream = create_stream(request.source_device);
-        state.streams.push_back({request.source_device, source_stream});
+        const cudaStream_t source_stream = state_->stream(request.source_device);
+        state.retain_stream(request.source_device, source_stream);
         if (source_ready != nullptr)
         {
             check_cuda(cudaStreamWaitEvent(source_stream, source_ready, 0),
@@ -395,8 +497,9 @@ CudaTransferRequest CudaLocalTransfer::copy_async(
         check_cuda(cudaEventRecord(staged, source_stream),
                    "CUDA transfer cudaEventRecord Host staging");
 
-        const cudaStream_t destination_stream = create_stream(request.destination_device);
-        state.streams.push_back({request.destination_device, destination_stream});
+        const cudaStream_t destination_stream =
+            state_->stream(request.destination_device);
+        state.retain_stream(request.destination_device, destination_stream);
         const cudaEvent_t destination_ready =
             record_execution_ready(request.destination_device);
         state.events.push_back({request.destination_device, destination_ready});
@@ -414,11 +517,12 @@ CudaTransferRequest CudaLocalTransfer::copy_async(
             request.destination_device, create_event(request.destination_device)};
         check_cuda(cudaEventRecord(state.completion.value, destination_stream),
                    "CUDA transfer cudaEventRecord destination");
+        state.completion_recorded = true;
         return result;
     }
 
-    const cudaStream_t stream = create_stream(request.destination_device);
-    state.streams.push_back({request.destination_device, stream});
+    const cudaStream_t stream = state_->stream(request.destination_device);
+    state.retain_stream(request.destination_device, stream);
     const cudaEvent_t destination_ready =
         record_execution_ready(request.destination_device);
     state.events.push_back({request.destination_device, destination_ready});
@@ -452,6 +556,7 @@ CudaTransferRequest CudaLocalTransfer::copy_async(
         request.destination_device, create_event(request.destination_device)};
     check_cuda(cudaEventRecord(state.completion.value, stream),
                "CUDA transfer cudaEventRecord");
+    state.completion_recorded = true;
     return result;
 }
 
@@ -467,9 +572,10 @@ CudaTransferRequest CudaLocalTransfer::copy_host_to_device_async(
     CudaTransferRequest result;
     result.state_ = std::make_unique<CudaTransferRequest::State>();
     auto &state = *result.state_;
+    state.stream_owner = state_;
     state.staging = source;
-    const cudaStream_t stream = create_stream(destination_device);
-    state.streams.push_back({destination_device, stream});
+    const cudaStream_t stream = state_->stream(destination_device);
+    state.retain_stream(destination_device, stream);
     const cudaEvent_t destination_ready = record_execution_ready(destination_device);
     state.events.push_back({destination_device, destination_ready});
     check_cuda(cudaStreamWaitEvent(stream, destination_ready, 0),
@@ -480,6 +586,7 @@ CudaTransferRequest CudaLocalTransfer::copy_host_to_device_async(
     state.completion = {destination_device, create_event(destination_device)};
     check_cuda(cudaEventRecord(state.completion.value, stream),
                "CUDA transfer cudaEventRecord Host to device");
+    state.completion_recorded = true;
     return result;
 }
 
@@ -496,9 +603,10 @@ CudaTransferRequest CudaLocalTransfer::copy_device_to_host_async(
     CudaTransferRequest result;
     result.state_ = std::make_unique<CudaTransferRequest::State>();
     auto &state = *result.state_;
+    state.stream_owner = state_;
     state.staging = destination;
-    const cudaStream_t stream = create_stream(source_device);
-    state.streams.push_back({source_device, stream});
+    const cudaStream_t stream = state_->stream(source_device);
+    state.retain_stream(source_device, stream);
     if (source_ready != nullptr)
     {
         check_cuda(cudaStreamWaitEvent(stream, source_ready, 0),
@@ -510,6 +618,7 @@ CudaTransferRequest CudaLocalTransfer::copy_device_to_host_async(
     state.completion = {source_device, create_event(source_device)};
     check_cuda(cudaEventRecord(state.completion.value, stream),
                "CUDA transfer cudaEventRecord device to Host");
+    state.completion_recorded = true;
     return result;
 }
 

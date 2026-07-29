@@ -854,6 +854,8 @@ PoseidonGpuApi::PoseidonGpuApi(std::string context_id, PoseidonContext context,
         devices_.push_back(std::move(device));
     }
     synchronize_all_devices();
+    cuda_transfer_ =
+        std::make_unique<communication::CudaLocalTransfer>(cuda_device_ids);
 }
 
 PoseidonGpuApi::~PoseidonGpuApi() = default;
@@ -1160,7 +1162,7 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_async(
     }
 
     const auto requested_route = cuda_transfer_route(action.hint);
-    communication::CudaLocalTransfer cuda_transfer;
+    auto &cuda_transfer = *cuda_transfer_;
     CommHandle handle;
     handle.state_ = std::make_unique<CommHandle::State>();
     auto &state = *handle.state_;
