@@ -87,6 +87,7 @@ if(POSEIDON_GPU_DATA_STRUCT_ENABLE_GPU_TESTS)
     set(POSEIDON_GPU_DATA_STRUCT_SOURCES
         "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_ciphertext.cpp"
         "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_key.cpp"
+        "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_memory.cpp"
         "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_parameter.cpp"
         "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_plaintext.cpp"
         "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_uploader.cpp"
