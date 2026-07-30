@@ -4,6 +4,9 @@
 #include "poseidon/gpu/gpu_plaintext.h"
 #include "poseidon/gpu/gpu_key.h"
 
+#include <cstdint>
+#include <vector>
+
 namespace poseidon
 {
 
@@ -111,6 +114,12 @@ public:
         const GaloisKeys &src,
         int device_id,
         std::size_t q_count);
+
+    static GpuGaloisKeysData upload_galois_keys(
+        const GaloisKeys &src,
+        int device_id,
+        std::size_t q_count,
+        const std::vector<std::uint32_t> &galois_elts);
 };
 
 }  // namespace gpu

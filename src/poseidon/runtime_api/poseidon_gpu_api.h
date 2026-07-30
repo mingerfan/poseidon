@@ -9,8 +9,10 @@
 #include "runtime/operator_spec.hpp"
 #include "runtime/plan.hpp"
 
+#include <cstdint>
 #include <memory>
 #include <optional>
+#include <set>
 #include <string>
 #include <string_view>
 #include <variant>
@@ -146,7 +148,9 @@ private:
     void synchronize_all_devices() const;
     std::size_t q_count_for_level(int level) const;
     void materialize_relin_keys(DeviceState &device, std::size_t q_count);
-    void materialize_galois_keys(DeviceState &device, std::size_t q_count);
+    void materialize_galois_keys(
+        DeviceState &device, std::size_t q_count,
+        const std::set<std::uint32_t> &galois_elts);
     const gpu::GpuRelinKeysData &relin_keys_for(DeviceState &device,
                                                 std::size_t q_count);
     const gpu::GpuGaloisKeysData &galois_keys_for(DeviceState &device,

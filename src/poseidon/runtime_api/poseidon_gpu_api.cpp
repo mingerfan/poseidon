@@ -18,8 +18,10 @@
 #include <complex>
 #include <cstdint>
 #include <limits>
+#include <map>
 #include <mutex>
 #include <optional>
+#include <set>
 #include <stdexcept>
 #include <thread>
 #include <type_traits>
@@ -496,6 +498,8 @@ struct PoseidonGpuApi::DeviceState
         relin_keys_by_q_count;
     std::unordered_map<std::size_t, std::unique_ptr<gpu::GpuGaloisKeysData>>
         galois_keys_by_q_count;
+    std::unordered_map<std::size_t, std::set<std::uint32_t>>
+        galois_elements_by_q_count;
 };
 
 class PoseidonGpuValue::Completion
@@ -1534,6 +1538,10 @@ void PoseidonGpuApi::preflight(std::string_view plan_source_sha256,
         }
     }
 
+    std::map<std::pair<fhegpu::Place, std::size_t>, std::set<std::uint32_t>>
+        required_galois_elements;
+    const auto galois_tool = context_.crt_context()->galois_tool();
+
     for (const auto &key : requirements.keys)
     {
         if (key.kind == fhegpu::KeyKind::Secret)
@@ -1566,13 +1574,26 @@ void PoseidonGpuApi::preflight(std::string_view plan_source_sha256,
             {
                 throw std::runtime_error("Poseidon GPU Api lacks GaloisKeys");
             }
-            (void)available_rotation_steps(context_, *galois_keys_, *key.rotation_step);
-            materialize_galois_keys(device, q_count);
+            const auto steps = available_rotation_steps(
+                context_, *galois_keys_, *key.rotation_step);
+            auto &galois_elts = required_galois_elements[{key.place, q_count}];
+            for (int step : steps)
+            {
+                galois_elts.insert(galois_tool->get_elt_from_step(step));
+            }
         }
         else
         {
             throw std::runtime_error("Poseidon GPU Api does not support secret-key operations");
         }
+    }
+
+    for (const auto &[place_and_q_count, galois_elts] : required_galois_elements)
+    {
+        auto &device = device_state(
+            place_and_q_count.first, "Poseidon GPU GaloisKeys");
+        materialize_galois_keys(
+            device, place_and_q_count.second, galois_elts);
     }
 
     synchronize_all_devices();
@@ -1782,10 +1803,11 @@ void PoseidonGpuApi::materialize_relin_keys(DeviceState &device,
     }
 }
 
-void PoseidonGpuApi::materialize_galois_keys(DeviceState &device,
-                                             std::size_t q_count)
+void PoseidonGpuApi::materialize_galois_keys(
+    DeviceState &device, std::size_t q_count,
+    const std::set<std::uint32_t> &galois_elts)
 {
-    if (device.galois_keys_by_q_count.count(q_count) != 0)
+    if (galois_elts.empty())
     {
         return;
     }
@@ -1794,15 +1816,26 @@ void PoseidonGpuApi::materialize_galois_keys(DeviceState &device,
         throw std::runtime_error("Poseidon GPU Rotate requires GaloisKeys");
     }
 
+    auto combined_galois_elts = galois_elts;
+    const auto existing_elements = device.galois_elements_by_q_count.find(q_count);
+    if (existing_elements != device.galois_elements_by_q_count.end())
+    {
+        combined_galois_elts.insert(
+            existing_elements->second.begin(), existing_elements->second.end());
+        if (combined_galois_elts == existing_elements->second)
+        {
+            return;
+        }
+    }
+
+    const std::vector<std::uint32_t> selected_galois_elts(
+        combined_galois_elts.begin(), combined_galois_elts.end());
     auto keys = std::make_unique<gpu::GpuGaloisKeysData>(
         gpu::GpuUploader::upload_galois_keys(*galois_keys_, device.cuda_device_id,
-                                             q_count));
-    const auto [inserted, ok] =
-        device.galois_keys_by_q_count.emplace(q_count, std::move(keys));
-    if (!ok)
-    {
-        throw std::logic_error("Poseidon GPU GaloisKeys cache insertion failed");
-    }
+                                             q_count, selected_galois_elts));
+    device.galois_keys_by_q_count.insert_or_assign(q_count, std::move(keys));
+    device.galois_elements_by_q_count.insert_or_assign(
+        q_count, std::move(combined_galois_elts));
 }
 
 const gpu::GpuRelinKeysData &PoseidonGpuApi::relin_keys_for(

@@ -734,6 +734,32 @@ void test_preflight_rejections(PoseidonGpuApi &api,
         "has no level");
 }
 
+void test_selected_galois_key_upload(
+    const poseidon::PoseidonContext &context,
+    const poseidon::GaloisKeys &galois_keys)
+{
+    const std::size_t q_count = context.parameters_literal()->q().size();
+    const std::uint32_t selected_galois_elt =
+        context.crt_context()->galois_tool()->get_elt_from_step(2);
+    const std::size_t selected_key_index =
+        poseidon::GaloisKeys::get_index(selected_galois_elt);
+
+    auto all_keys = poseidon::gpu::GpuUploader::upload_galois_keys(
+        galois_keys, kDeviceId, q_count);
+    auto selected_keys = poseidon::gpu::GpuUploader::upload_galois_keys(
+        galois_keys, kDeviceId, q_count, {selected_galois_elt});
+
+    require(selected_keys.polys_.size() < all_keys.polys_.size(),
+            "selected Galois-key upload did not reduce GPU key data");
+    require(!selected_keys.poly_metadata_.empty(),
+            "selected Galois-key upload produced no GPU key data");
+    for (const auto &mapping : selected_keys.poly_metadata_)
+    {
+        require(mapping.key_index == selected_key_index,
+                "selected Galois-key upload included an unrequested key");
+    }
+}
+
 void test_host_decrypt_reencrypt_boot(
     PoseidonGpuApi &api, const poseidon::PoseidonContext &context,
     const poseidon::PublicKey &public_key, const poseidon::SecretKey &secret_key,
@@ -1276,6 +1302,8 @@ int main()
         key_generator.create_public_key(*boot_public_key);
 
         const auto loaded_spec = make_operator_spec(context);
+        run_test("selected Galois-key upload",
+                 [&] { test_selected_galois_key_upload(context, *galois_keys); });
         run_test("device mapping rejects invalid CUDA device lists",
                  [&] { test_device_mapping_rejections(context, device_count); });
         {

@@ -376,14 +376,19 @@ template <typename KSwitchKeyType>
 GpuEvaluationKeyData upload_kswitch_keys(
     const KSwitchKeyType &src,
     int device_id,
-    std::size_t target_q_count)
+    std::size_t target_q_count,
+    const std::vector<std::size_t> *selected_key_indices = nullptr)
 {
     GpuEvaluationKeyData dst;
     dst.meta.key_parms_id = src.parms_id();
     dst.meta.key_count = src.data().size();
 
-    for (std::size_t key_index = 0; key_index < src.data().size(); ++key_index)
+    const auto upload_key = [&](std::size_t key_index)
     {
+        if (key_index >= src.data().size() || src.data()[key_index].empty())
+        {
+            throw std::invalid_argument("selected evaluation key does not exist");
+        }
         const auto &decompositions = src.data()[key_index];
         dst.meta.decomposition_count =
             std::max(dst.meta.decomposition_count, decompositions.size());
@@ -399,6 +404,24 @@ GpuEvaluationKeyData upload_kswitch_keys(
                 key_index,
                 decomp_index,
                 dst);
+        }
+    };
+
+    if (selected_key_indices == nullptr)
+    {
+        for (std::size_t key_index = 0; key_index < src.data().size(); ++key_index)
+        {
+            if (!src.data()[key_index].empty())
+            {
+                upload_key(key_index);
+            }
+        }
+    }
+    else
+    {
+        for (std::size_t key_index : *selected_key_indices)
+        {
+            upload_key(key_index);
         }
     }
 
@@ -658,6 +681,25 @@ GpuGaloisKeysData GpuUploader::upload_galois_keys(
     std::size_t q_count)
 {
     return upload_kswitch_keys(src, device_id, q_count);
+}
+
+GpuGaloisKeysData GpuUploader::upload_galois_keys(
+    const GaloisKeys &src,
+    int device_id,
+    std::size_t q_count,
+    const std::vector<std::uint32_t> &galois_elts)
+{
+    std::vector<std::size_t> key_indices;
+    key_indices.reserve(galois_elts.size());
+    for (std::uint32_t galois_elt : galois_elts)
+    {
+        if (!src.has_key(galois_elt))
+        {
+            throw std::invalid_argument("selected Galois key does not exist");
+        }
+        key_indices.push_back(GaloisKeys::get_index(galois_elt));
+    }
+    return upload_kswitch_keys(src, device_id, q_count, &key_indices);
 }
 
 }  // namespace gpu

@@ -49,6 +49,8 @@ constexpr const char *kDeviceDependenciesEnv =
     "POSEIDON_RUNTIME_DEVICE_DEPENDENCIES";
 constexpr const char *kTransferEventsEnv =
     "POSEIDON_RUNTIME_TRANSFER_EVENTS";
+constexpr const char *kRotationKeyPolicyEnv =
+    "POSEIDON_RUNTIME_ROTATION_KEY_POLICY";
 
 bool env_flag_enabled(const char *name)
 {
@@ -449,9 +451,37 @@ int main(int argc, char **argv)
                 logical_rotation_steps.insert(*key.rotation_step);
             }
         }
-        const std::set<int> rotation_key_steps =
-            poseidon::runtime_api::binary_rotation_key_basis(
+        const char *rotation_key_policy_value =
+            std::getenv(kRotationKeyPolicyEnv);
+        const std::string rotation_key_policy =
+            rotation_key_policy_value == nullptr || rotation_key_policy_value[0] == '\0'
+                ? "binary"
+                : rotation_key_policy_value;
+        if (rotation_key_policy != "binary" && rotation_key_policy != "direct")
+        {
+            throw std::runtime_error(
+                std::string(kRotationKeyPolicyEnv) + " must be binary or direct");
+        }
+
+        std::set<int> rotation_key_steps;
+        if (rotation_key_policy == "direct")
+        {
+            const std::size_t slot_count = context.parameters_literal()->slot();
+            for (int step : logical_rotation_steps)
+            {
+                const int normalized =
+                    poseidon::runtime_api::normalize_rotation_step(step, slot_count);
+                if (normalized != 0)
+                {
+                    rotation_key_steps.insert(normalized);
+                }
+            }
+        }
+        else
+        {
+            rotation_key_steps = poseidon::runtime_api::binary_rotation_key_basis(
                 logical_rotation_steps, context.parameters_literal()->slot());
+        }
 
         require_device_memory_lower_bound(
             plan, loaded_spec.spec, rotation_key_steps.size(), needs_relin);
@@ -594,6 +624,7 @@ int main(int argc, char **argv)
             {"operator_spec_sha256", loaded_spec.source_sha256},
             {"poly_degree", loaded_spec.spec.poly_degree},
             {"q_modulus_count", loaded_spec.spec.rns_moduli_log2.size()},
+            {"rotation_key_policy", rotation_key_policy},
             {"rotation_key_count", rotation_key_steps.size()},
             {"logical_rotation_count", logical_rotation_steps.size()},
             {"allow_no_boot", allow_no_boot},
@@ -635,6 +666,7 @@ int main(int argc, char **argv)
         std::cout << (passed ? "PASS" : "FAIL")
                   << " boots=" << artifact.timing.boot_calls
                   << " transfers=" << count_transfers(plan)
+                  << " rotation_key_policy=" << rotation_key_policy
                   << " rotations=" << rotation_key_steps.size()
                   << " key_seconds=" << key_seconds
                   << " runtime_seconds=" << runtime_seconds
