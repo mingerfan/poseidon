@@ -1,0 +1,72 @@
+name: Deploy CCCL pages
+
+on:
+  # Runs on pushes targeting the default branch
+  push:
+    branches: ["main"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # Build job
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+
+      # Build helper image for Thrust/CUB
+      - name: Build helper image
+        run: bash ./docs/make_env.bash "cccl:docs"
+
+      # Build all docs
+      - name: Build all docs
+        run: ./docs/gen_docs.bash
+
+      # Copy all docs to the right folder
+      - name: Move docs to right folder
+
+        run: |
+          mkdir _site
+          cp -rf ./docs/_build/docs/cccl/latest/* _site
+          mkdir _site/cub
+          cp -rf ./docs/_build/docs/cub/latest/* _site/cub
+          mkdir _site/libcudacxx
+          cp -rf ./docs/_build/docs/libcudacxx/latest/* _site/libcudacxx
+          mkdir _site/thrust
+          cp -rf ./docs/_build/docs/thrust/latest/* _site/thrust
+          ./docs/scrape_docs.bash ./_site
+          cp ./docs/404.html _site/404.html
+
+      # Upload build artifacts
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+
+  # Deployment job
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2

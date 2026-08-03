@@ -1,6 +1,10 @@
-build*
+# Build output directories. The trailing slash is intentional: source files
+# such as build_type.cmake and build_package.cmake.in must remain trackable.
+build*/
 .vscode/
-thirdparty
+# Only ignore a generated top-level dependency directory. Vendored projects
+# contain required source directories such as rmm/cmake/thirdparty/.
+/thirdparty/
 .clangd
 .claude/
 compile_commands.json
