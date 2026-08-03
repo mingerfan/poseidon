@@ -120,16 +120,6 @@ struct GpuBootstrapData
     double post_raise_scale_multiplier = 1.0;
     GpuPlaintextData post_raise_plaintext;
 
-    /*
-     * Optional value-preserving C2S scale alignment. CPU setup encodes the
-     * numerical constant 1 at Starget*P/Sin, where P is the product removed
-     * by the fixed logical rescale. Runtime performs one multiply_plain and
-     * the declared number of ordinary rescales on both C2S branches.
-     */
-    GpuPlaintextData coeff_to_slot_scale_alignment_plaintext;
-    std::uint32_t coeff_to_slot_scale_alignment_rescale_count = 0;
-    double coeff_to_slot_aligned_scale = 0.0;
-
     /* Logical CKKS scale restored after EvalMod and before SlotToCoeff. */
     double slot_to_coeff_input_scale = 0.0;
 

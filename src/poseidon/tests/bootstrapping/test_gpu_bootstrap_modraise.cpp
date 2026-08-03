@@ -1741,7 +1741,8 @@ int main()
             cpu_bootstrapper.create_coeff_to_slot_matrix_group(
                 context.crt_context()->first_parms_id(),
                 c2s_input_scale,
-                c2s_log_bsgs_ratio);
+                c2s_log_bsgs_ratio,
+                evalmod_scale);
         const std::size_t c2s_rescale_count =
             std::max(c2s_matrix_group.step(), std::uint32_t{1});
         const std::size_t c2s_consumed_q =
@@ -1757,14 +1758,6 @@ int main()
         const auto c2s_output_parms_id =
             context.crt_context()->parms_id_map().at(
                 static_cast<std::uint32_t>(c2s_output_q_count - 1));
-        const auto c2s_output_context =
-            context.crt_context()->get_context_data(c2s_output_parms_id);
-        if (!c2s_output_context)
-        {
-            throw std::runtime_error(
-                "CoeffToSlot output parms_id is absent from the context");
-        }
-
         auto c2s_setup_galois_keys = make_galois_keys_for_matrix_group(
             context,
             keygen,
@@ -1796,51 +1789,17 @@ int main()
         if (cpu_c2s_real_raw.parms_id() != cpu_c2s_imag_raw.parms_id() ||
             std::abs(
                 std::log2(cpu_c2s_real_raw.scale()) -
-                std::log2(cpu_c2s_imag_raw.scale())) > 1.0e-9)
+                std::log2(cpu_c2s_imag_raw.scale())) > 1.0e-9 ||
+            std::abs(
+                std::log2(cpu_c2s_real_raw.scale()) -
+                std::log2(evalmod_scale)) > 1.0e-9)
         {
             throw std::runtime_error(
-                "CoeffToSlot real/imag branches cannot share one scale-alignment plan");
+                "fused CoeffToSlot did not produce the EvalMod target scale");
         }
-        if (c2s_output_context->coeff_modulus().size() <= evalmod_rescale_count)
-        {
-            throw std::runtime_error(
-                "CoeffToSlot output has insufficient levels for scale alignment");
-        }
-        long double c2s_alignment_modulus_product = 1.0L;
-        const auto &c2s_output_moduli = c2s_output_context->coeff_modulus();
-        for (std::uint32_t index = 0; index < evalmod_rescale_count; ++index)
-        {
-            c2s_alignment_modulus_product *= static_cast<long double>(
-                c2s_output_moduli[c2s_output_moduli.size() - 1 - index].value());
-        }
-        const double c2s_alignment_plain_scale =
-            evalmod_scale *
-            static_cast<double>(c2s_alignment_modulus_product) /
-            cpu_c2s_real_raw.scale();
-        poseidon::Plaintext c2s_alignment_plain;
-        encoder.encode(
-            std::complex<double>(1.0, 0.0),
-            c2s_output_parms_id,
-            c2s_alignment_plain_scale,
-            c2s_alignment_plain);
 
-        poseidon::Ciphertext cpu_c2s_real;
-        poseidon::Ciphertext cpu_c2s_imag;
-        cpu_evaluator->multiply_plain(
-            cpu_c2s_real_raw,
-            c2s_alignment_plain,
-            cpu_c2s_real);
-        cpu_evaluator->multiply_plain(
-            cpu_c2s_imag_raw,
-            c2s_alignment_plain,
-            cpu_c2s_imag);
-        for (std::uint32_t index = 0; index < evalmod_rescale_count; ++index)
-        {
-            cpu_evaluator->rescale(cpu_c2s_real, cpu_c2s_real);
-            cpu_evaluator->rescale(cpu_c2s_imag, cpu_c2s_imag);
-        }
-        cpu_c2s_real.scale() = evalmod_scale;
-        cpu_c2s_imag.scale() = evalmod_scale;
+        poseidon::Ciphertext cpu_c2s_real = cpu_c2s_real_raw;
+        poseidon::Ciphertext cpu_c2s_imag = cpu_c2s_imag_raw;
 
         const auto evalmod_input_parms_id = cpu_c2s_real.parms_id();
         const auto evalmod_input_context =
@@ -1848,7 +1807,7 @@ int main()
         if (!evalmod_input_context)
         {
             throw std::runtime_error(
-                "aligned CoeffToSlot output parms_id is absent from the context");
+                "fused CoeffToSlot output parms_id is absent from the context");
         }
         eval_mod_poly.set_level_start(
             static_cast<std::uint32_t>(evalmod_input_context->level()));
@@ -2038,13 +1997,6 @@ int main()
         // The cosine-heap EvalMod keeps its actual post-rescale scale. Do not
         // reinterpret the residues by overwriting metadata before S2C.
         bootstrap_data.slot_to_coeff_input_scale = 0.0;
-        bootstrap_data.coeff_to_slot_scale_alignment_plaintext =
-            poseidon::gpu::GpuUploader::upload_plaintext(
-                c2s_alignment_plain,
-                device_id);
-        bootstrap_data.coeff_to_slot_scale_alignment_rescale_count =
-            evalmod_rescale_count;
-        bootstrap_data.coeff_to_slot_aligned_scale = evalmod_scale;
         bootstrap_data.project_real = false;
         bootstrap_data.output_ratio = bootstrap_ratio;
         const double s2c_output_scale =
@@ -2135,6 +2087,7 @@ int main()
                   << bootstrap_data.eval_mod.double_angle_constants.size() << "\n";
         std::cout << "C2S rescale width = "
                   << c2s_matrix_group.step() << " prime(s)\n";
+        std::cout << "C2S scale align   = fused into final matrix (0 extra prime(s))\n";
         std::cout << "EvalMod rescale   = "
                   << evalmod_rescale_count << " prime(s)\n";
         std::cout << "S2C rescale width = "
@@ -2164,21 +2117,8 @@ int main()
             *cpu_evaluator,
             full_galois_keys,
             encoder);
-        cpu_evaluator->multiply_plain(
-            cpu_c2s_real_raw,
-            c2s_alignment_plain,
-            cpu_c2s_real);
-        cpu_evaluator->multiply_plain(
-            cpu_c2s_imag_raw,
-            c2s_alignment_plain,
-            cpu_c2s_imag);
-        for (std::uint32_t index = 0; index < evalmod_rescale_count; ++index)
-        {
-            cpu_evaluator->rescale(cpu_c2s_real, cpu_c2s_real);
-            cpu_evaluator->rescale(cpu_c2s_imag, cpu_c2s_imag);
-        }
-        cpu_c2s_real.scale() = evalmod_scale;
-        cpu_c2s_imag.scale() = evalmod_scale;
+        cpu_c2s_real = cpu_c2s_real_raw;
+        cpu_c2s_imag = cpu_c2s_imag_raw;
 
         poseidon::gpu::GpuCiphertextData gpu_full_raised;
         gpu_evaluator.multiply_scalar(
@@ -2659,93 +2599,6 @@ int main()
                 bootstrap_workspace.coeff_to_slot_double_hoist);
         }
 
-        gpu_evaluator.multiply_plain(
-            gpu_c2s_real,
-            bootstrap_data.coeff_to_slot_scale_alignment_plaintext,
-            bootstrap_workspace.scratch0);
-        gpu_evaluator.multiply_plain(
-            gpu_c2s_imag,
-            bootstrap_data.coeff_to_slot_scale_alignment_plaintext,
-            bootstrap_workspace.scratch1);
-        if (env_flag_enabled("POSEIDON_BOOTSTRAP_RESCALE_X2_AB"))
-        {
-            const char *original_raw = std::getenv("POSEIDON_RESCALE_X2");
-            const bool had_original = original_raw != nullptr;
-            const std::string original_value =
-                had_original ? std::string(original_raw) : std::string();
-            const auto set_rescale_x2_mode = [](bool enabled) {
-                if (setenv(
-                        "POSEIDON_RESCALE_X2",
-                        enabled ? "1" : "0",
-                        1) != 0)
-                {
-                    throw std::runtime_error(
-                        "failed to set rescale_x2 mode");
-                }
-            };
-
-            poseidon::gpu::GpuCiphertextData legacy_rescaled;
-            poseidon::gpu::GpuCiphertextData x2_rescaled;
-            set_rescale_x2_mode(false);
-            gpu_evaluator.rescale_many(
-                bootstrap_workspace.scratch0,
-                legacy_rescaled,
-                2);
-            set_rescale_x2_mode(true);
-            gpu_evaluator.rescale_many(
-                bootstrap_workspace.scratch0,
-                x2_rescaled,
-                2);
-            cudaDeviceSynchronize();
-
-            const auto legacy_download = download_gpu_ciphertext(
-                legacy_rescaled,
-                context);
-            const auto x2_download = download_gpu_ciphertext(
-                x2_rescaled,
-                context);
-            const auto comparison = compare_ciphertexts(
-                legacy_download,
-                x2_download,
-                8);
-            const bool metadata_equal =
-                legacy_rescaled.meta.parms_id == x2_rescaled.meta.parms_id &&
-                legacy_rescaled.meta.q_count == x2_rescaled.meta.q_count &&
-                legacy_rescaled.meta.scale == x2_rescaled.meta.scale;
-            std::cout << "\n[rescale_x2 exact equivalence]\n";
-            std::cout << "raw_equal      = "
-                      << (comparison.equal ? "YES" : "NO") << "\n";
-            std::cout << "metadata_equal = "
-                      << (metadata_equal ? "YES" : "NO") << "\n";
-            if (!comparison.equal || !metadata_equal)
-            {
-                throw std::runtime_error(
-                    "rescale_x2 is not exactly equivalent to two ordinary rescales");
-            }
-
-            if (had_original)
-            {
-                (void)setenv(
-                    "POSEIDON_RESCALE_X2",
-                    original_value.c_str(),
-                    1);
-            }
-            else
-            {
-                (void)unsetenv("POSEIDON_RESCALE_X2");
-            }
-        }
-        gpu_evaluator.rescale_many(
-            bootstrap_workspace.scratch0,
-            gpu_c2s_real,
-            evalmod_rescale_count);
-        gpu_evaluator.rescale_many(
-            bootstrap_workspace.scratch1,
-            gpu_c2s_imag,
-            evalmod_rescale_count);
-        gpu_c2s_real.meta.scale = evalmod_scale;
-        gpu_c2s_imag.meta.scale = evalmod_scale;
-
         poseidon::Ciphertext cpu_eval_real;
         poseidon::Ciphertext cpu_eval_imag;
         poseidon::BootstrapEvalModTrace cpu_eval_real_trace;
@@ -3012,17 +2865,6 @@ int main()
                 *cpu_evaluator,
                 full_galois_keys,
                 encoder);
-            cpu_evaluator->multiply_plain(real, c2s_alignment_plain, real);
-            cpu_evaluator->multiply_plain(imag, c2s_alignment_plain, imag);
-            for (std::uint32_t index = 0;
-                 index < evalmod_rescale_count;
-                 ++index)
-            {
-                cpu_evaluator->rescale(real, real);
-                cpu_evaluator->rescale(imag, imag);
-            }
-            real.scale() = evalmod_scale;
-            imag.scale() = evalmod_scale;
             cpu_bootstrapper.eval_mod(
                 real,
                 eval_real,
@@ -3219,28 +3061,6 @@ int main()
                     gpu_c2s_real,
                     gpu_c2s_imag);
             });
-
-        // coeff_to_slot timing leaves the persistent GPU branches at the raw
-        // DFT level. Restore the setup-time value-preserving alignment before
-        // the independent EvalMod/S2C timing measurements.
-        gpu_evaluator.multiply_plain(
-            gpu_c2s_real,
-            bootstrap_data.coeff_to_slot_scale_alignment_plaintext,
-            bootstrap_workspace.scratch0);
-        gpu_evaluator.multiply_plain(
-            gpu_c2s_imag,
-            bootstrap_data.coeff_to_slot_scale_alignment_plaintext,
-            bootstrap_workspace.scratch1);
-        gpu_evaluator.rescale_many(
-            bootstrap_workspace.scratch0,
-            gpu_c2s_real,
-            evalmod_rescale_count);
-        gpu_evaluator.rescale_many(
-            bootstrap_workspace.scratch1,
-            gpu_c2s_imag,
-            evalmod_rescale_count);
-        gpu_c2s_real.meta.scale = evalmod_scale;
-        gpu_c2s_imag.meta.scale = evalmod_scale;
 
         for (std::size_t i = 0; i < full_warmup; ++i)
         {

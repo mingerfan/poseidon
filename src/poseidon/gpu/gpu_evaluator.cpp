@@ -3148,38 +3148,6 @@ void GpuEvaluator::bootstrap(
             workspace.coeff_to_slot_imag);
     }
 
-    if (!bootstrap_data.coeff_to_slot_scale_alignment_plaintext.empty())
-    {
-        if (bootstrap_data.coeff_to_slot_scale_alignment_rescale_count == 0 ||
-            !(bootstrap_data.coeff_to_slot_aligned_scale > 0.0) ||
-            !std::isfinite(bootstrap_data.coeff_to_slot_aligned_scale))
-        {
-            throw std::invalid_argument(
-                "GpuEvaluator::bootstrap: invalid CoeffToSlot scale-alignment plan");
-        }
-
-        multiply_plain(
-            workspace.coeff_to_slot_real,
-            bootstrap_data.coeff_to_slot_scale_alignment_plaintext,
-            workspace.scratch0);
-        multiply_plain(
-            workspace.coeff_to_slot_imag,
-            bootstrap_data.coeff_to_slot_scale_alignment_plaintext,
-            workspace.scratch1);
-        rescale_many(
-            workspace.scratch0,
-            workspace.coeff_to_slot_real,
-            bootstrap_data.coeff_to_slot_scale_alignment_rescale_count);
-        rescale_many(
-            workspace.scratch1,
-            workspace.coeff_to_slot_imag,
-            bootstrap_data.coeff_to_slot_scale_alignment_rescale_count);
-        workspace.coeff_to_slot_real.meta.scale =
-            bootstrap_data.coeff_to_slot_aligned_scale;
-        workspace.coeff_to_slot_imag.meta.scale =
-            bootstrap_data.coeff_to_slot_aligned_scale;
-    }
-
     eval_mod_high_precision(
         workspace.coeff_to_slot_real,
         bootstrap_data,

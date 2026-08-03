@@ -444,13 +444,19 @@ void Bootstrapper::generate_linear_coefficients()
 LinearMatrixGroup Bootstrapper::create_coeff_to_slot_matrix_group(
     parms_id_type input_parms_id,
     double input_scale,
-    uint32_t log_bsgs_ratio) const
+    uint32_t log_bsgs_ratio,
+    double output_scale) const
 {
     if (inv_fft_coeffs1_.empty() || inv_fft_coeffs2_.empty() ||
         inv_fft_coeffs3_.empty())
     {
         throw std::logic_error(
             "generate_linear_coefficients must precede CoeffToSlot matrix export");
+    }
+    if (output_scale != 0.0 &&
+        (!(output_scale > 0.0) || !std::isfinite(output_scale)))
+    {
+        throw std::invalid_argument("invalid CoeffToSlot output scale");
     }
 
     LinearMatrixGroup group;
@@ -484,16 +490,6 @@ LinearMatrixGroup Bootstrapper::create_coeff_to_slot_matrix_group(
             diagonals[(position * basic_step) & mask] =
                 coefficients.at(coefficient_index);
         }
-        gen_linear_transform_bsgs(
-            group.data()[stage],
-            group.rot_index(),
-            encoder,
-            diagonals,
-            static_cast<uint32_t>(context_data->level()),
-            scale,
-            log_bsgs_ratio,
-            static_cast<uint32_t>(log_slots_));
-
         long double modulus_product = 1.0L;
         const auto &moduli = context_data->coeff_modulus();
         for (uint32_t index = 0; index < logical_rescale_count_; ++index)
@@ -501,7 +497,33 @@ LinearMatrixGroup Bootstrapper::create_coeff_to_slot_matrix_group(
             modulus_product *= static_cast<long double>(
                 moduli[moduli.size() - 1 - index].value());
         }
-        scale = scale * scale / static_cast<double>(modulus_product);
+        const double modulus_product_double =
+            static_cast<double>(modulus_product);
+        double plaintext_scale = scale;
+        if (stage + 1 == group.data().size() && output_scale > 0.0)
+        {
+            // Fold the value-preserving C2S scale alignment into the final
+            // plaintext matrix. The existing logical rescale then produces
+            // output_scale without consuming an additional modulus level:
+            //   scale * plaintext_scale / P = output_scale.
+            plaintext_scale = output_scale * modulus_product_double / scale;
+        }
+        if (!(plaintext_scale > 0.0) || !std::isfinite(plaintext_scale))
+        {
+            throw std::invalid_argument("invalid CoeffToSlot plaintext scale");
+        }
+
+        gen_linear_transform_bsgs(
+            group.data()[stage],
+            group.rot_index(),
+            encoder,
+            diagonals,
+            static_cast<uint32_t>(context_data->level()),
+            plaintext_scale,
+            log_bsgs_ratio,
+            static_cast<uint32_t>(log_slots_));
+
+        scale = scale * plaintext_scale / modulus_product_double;
         const auto next_q_count = moduli.size() - logical_rescale_count_;
         parms_id = context_.crt_context()->parms_id_map().at(
             static_cast<uint32_t>(next_q_count - 1));
@@ -1031,10 +1053,20 @@ void Bootstrapper::generate_coeff_to_slot_coefficients()
 }
 
 void Bootstrapper::multiply_vector_reduced_error(
-    const Ciphertext &cipher, const std::vector<Complex> &values, Ciphertext &destination) const
+    const Ciphertext &cipher, const std::vector<Complex> &values,
+    Ciphertext &destination, double plaintext_scale) const
 {
+    if (plaintext_scale == 0.0)
+    {
+        plaintext_scale = cipher.scale();
+    }
+    if (!(plaintext_scale > 0.0) || !std::isfinite(plaintext_scale))
+    {
+        throw std::invalid_argument(
+            "Bootstrapper::multiply_vector_reduced_error: invalid plaintext scale");
+    }
     Plaintext plain;
-    encoder_.encode(values, cipher.parms_id(), cipher.scale(), plain);
+    encoder_.encode(values, cipher.parms_id(), plaintext_scale, plain);
     evaluator_.multiply_plain(cipher, plain, destination);
 }
 
@@ -1533,7 +1565,7 @@ double Bootstrapper::inverse_coefficient(uint32_t double_angle) const
 void Bootstrapper::bsgs_linear_transform(
     Ciphertext &destination, const Ciphertext &cipher, int total_len, int basic_step,
     int coeff_log_slots, const std::vector<std::vector<Complex>> &coeffs,
-    const GaloisKeys &galois_keys) const
+    const GaloisKeys &galois_keys, double plaintext_scale) const
 {
     const int gs = giant_step(2 * total_len + 1);
     const int basic_start = -total_len + gs * std::floor((total_len + 0.0) / gs);
@@ -1571,7 +1603,8 @@ void Bootstrapper::bsgs_linear_transform(
                 continue;
             }
             Ciphertext term;
-            multiply_vector_reduced_error(baby[j - basic_start], rotated_coeff, term);
+            multiply_vector_reduced_error(
+                baby[j - basic_start], rotated_coeff, term, plaintext_scale);
             if (!has_giant)
             {
                 giant = term;
@@ -1614,7 +1647,7 @@ void Bootstrapper::bsgs_linear_transform(
 void Bootstrapper::rotated_bsgs_linear_transform(
     Ciphertext &destination, const Ciphertext &cipher, int total_len, int basic_step,
     int coeff_log_slots, const std::vector<std::vector<Complex>> &coeffs,
-    const GaloisKeys &galois_keys) const
+    const GaloisKeys &galois_keys, double plaintext_scale) const
 {
     const int gs = giant_step(total_len + 1);
     const int giant_last = std::floor((total_len + 0.0) / gs);
@@ -1650,7 +1683,8 @@ void Bootstrapper::rotated_bsgs_linear_transform(
                 continue;
             }
             Ciphertext term;
-            multiply_vector_reduced_error(baby[j], rotated_coeff, term);
+            multiply_vector_reduced_error(
+                baby[j], rotated_coeff, term, plaintext_scale);
             if (!has_giant)
             {
                 giant = term;
@@ -1736,8 +1770,15 @@ void Bootstrapper::slot_to_coeff_transform(Ciphertext &destination, const Cipher
 }
 
 void Bootstrapper::coeff_to_slot_transform(Ciphertext &destination, const Ciphertext &cipher,
-                                           const GaloisKeys &galois_keys) const
+                                           const GaloisKeys &galois_keys,
+                                           double output_scale) const
 {
+    if (output_scale != 0.0 &&
+        (!(output_scale > 0.0) || !std::isfinite(output_scale)))
+    {
+        throw std::invalid_argument(
+            "Bootstrapper::coeff_to_slot_transform: invalid output scale");
+    }
     const int div1 = static_cast<int>(std::floor(log_slots_ / 3.0));
     const int div2 = static_cast<int>(std::floor((log_slots_ - div1) / 2.0));
     const int div3 = static_cast<int>(log_slots_ - div1 - div2);
@@ -1757,17 +1798,28 @@ void Bootstrapper::coeff_to_slot_transform(Ciphertext &destination, const Cipher
     bsgs_linear_transform(tmp2, tmp1, total2, step2, log_slots_, inv_fft_coeffs2_, galois_keys);
     logical_rescale(tmp2, tmp2);
 
+    double final_plaintext_scale = 0.0;
+    if (output_scale > 0.0)
+    {
+        final_plaintext_scale =
+            output_scale * logical_rescale_modulus(tmp2) / tmp2.scale();
+    }
     bsgs_linear_transform(destination, tmp2, total3, step3, log_slots_, inv_fft_coeffs3_,
-                          galois_keys);
+                          galois_keys, final_plaintext_scale);
     logical_rescale(destination, destination);
+    if (output_scale > 0.0)
+    {
+        destination.scale() = output_scale;
+    }
 }
 
 void Bootstrapper::coeff_to_slot(const Ciphertext &cipher, Ciphertext &real_part,
                                  Ciphertext &imag_part,
-                                 const GaloisKeys &galois_keys) const
+                                 const GaloisKeys &galois_keys,
+                                 double output_scale) const
 {
     Ciphertext tmp;
-    coeff_to_slot_transform(tmp, cipher, galois_keys);
+    coeff_to_slot_transform(tmp, cipher, galois_keys, output_scale);
 
     std::vector<Complex> minus_i(slots_, Complex(0.0, -1.0));
     Ciphertext tmp_imag;

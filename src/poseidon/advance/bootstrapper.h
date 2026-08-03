@@ -30,7 +30,8 @@ public:
     LinearMatrixGroup create_coeff_to_slot_matrix_group(
         parms_id_type input_parms_id,
         double input_scale,
-        uint32_t log_bsgs_ratio = 1) const;
+        uint32_t log_bsgs_ratio = 1,
+        double output_scale = 0.0) const;
     LinearMatrixGroup create_slot_to_coeff_matrix_group(
         parms_id_type input_parms_id,
         double input_scale,
@@ -39,7 +40,8 @@ public:
 
     void mod_raise(const Ciphertext &cipher, Ciphertext &destination) const;
     void coeff_to_slot(const Ciphertext &cipher, Ciphertext &real_part,
-                       Ciphertext &imag_part, const GaloisKeys &galois_keys) const;
+                       Ciphertext &imag_part, const GaloisKeys &galois_keys,
+                       double output_scale = 0.0) const;
     void slot_to_coeff(const Ciphertext &real_part, const Ciphertext &imag_part,
                        Ciphertext &destination, const GaloisKeys &galois_keys,
                        double normalization = 1.0) const;
@@ -70,7 +72,8 @@ private:
 
     void multiply_vector_reduced_error(const Ciphertext &cipher,
                                        const std::vector<Complex> &values,
-                                       Ciphertext &destination) const;
+                                       Ciphertext &destination,
+                                       double plaintext_scale = 0.0) const;
     void multiply_vector_unit_scale(const Ciphertext &cipher,
                                     const std::vector<Complex> &values,
                                     Ciphertext &destination) const;
@@ -86,17 +89,20 @@ private:
     void bsgs_linear_transform(Ciphertext &destination, const Ciphertext &cipher,
                                int total_len, int basic_step, int coeff_log_slots,
                                const std::vector<std::vector<Complex>> &coeffs,
-                               const GaloisKeys &galois_keys) const;
+                               const GaloisKeys &galois_keys,
+                               double plaintext_scale = 0.0) const;
     void rotated_bsgs_linear_transform(Ciphertext &destination, const Ciphertext &cipher,
                                        int total_len, int basic_step, int coeff_log_slots,
                                        const std::vector<std::vector<Complex>> &coeffs,
-                                       const GaloisKeys &galois_keys) const;
+                                       const GaloisKeys &galois_keys,
+                                       double plaintext_scale = 0.0) const;
 
     void slot_to_coeff_transform(Ciphertext &destination, const Ciphertext &cipher,
                                  const GaloisKeys &galois_keys,
                                  double normalization) const;
     void coeff_to_slot_transform(Ciphertext &destination, const Ciphertext &cipher,
-                                 const GaloisKeys &galois_keys) const;
+                                 const GaloisKeys &galois_keys,
+                                 double output_scale = 0.0) const;
 
     const PoseidonContext &context_;
     EvaluatorCkksBase &evaluator_;

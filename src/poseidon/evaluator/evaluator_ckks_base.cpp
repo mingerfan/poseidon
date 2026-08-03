@@ -1277,58 +1277,17 @@ void EvaluatorCkksBase::bootstrap(const Ciphertext &ciph, Ciphertext &result,
 
     Ciphertext real_slots;
     Ciphertext imag_slots;
-    bootstrapper.coeff_to_slot(raised, real_slots, imag_slots, galois_keys);
+    // Encode the final C2S matrix at a scale that makes its existing logical
+    // rescale land directly on the EvalMod target. This avoids a separate
+    // multiply-by-one plus logical-rescale alignment step.
+    bootstrapper.coeff_to_slot(
+        raised, real_slots, imag_slots, galois_keys, eval_mod_scale);
     if (config.trace)
     {
         config.trace->coeff_to_slot_real_raw = real_slots;
         config.trace->coeff_to_slot_imag_raw = imag_slots;
     }
 
-    const double real_scale_adjust = eval_mod_scale / real_slots.scale();
-    const double imag_scale_adjust = eval_mod_scale / imag_slots.scale();
-    if (std::abs(real_scale_adjust - 1.0) > 1e-6 ||
-        std::abs(imag_scale_adjust - 1.0) > 1e-6)
-    {
-        auto logical_rescale_modulus = [&](const Ciphertext &cipher) {
-            const auto data =
-                context_.crt_context()->get_context_data(cipher.parms_id());
-            if (!data ||
-                data->coeff_modulus().size() <= config.logical_rescale_count)
-            {
-                throw invalid_argument(
-                    "bootstrap scale alignment has insufficient modulus levels");
-            }
-            long double product = 1.0L;
-            const auto &moduli = data->coeff_modulus();
-            for (uint32_t index = 0; index < config.logical_rescale_count; ++index)
-            {
-                product *= static_cast<long double>(
-                    moduli[moduli.size() - 1 - index].value());
-            }
-            return static_cast<double>(product);
-        };
-
-        // Preserve the encoded value while moving the metadata scale to the
-        // EvalMod target. If Sin is the ciphertext scale and P is the product
-        // removed by the logical rescale, encoding the numerical constant 1
-        // at Splain = Starget*P/Sin gives
-        //     Sin*Splain/P = Starget.
-        const double real_plain_scale =
-            eval_mod_scale * logical_rescale_modulus(real_slots) /
-            real_slots.scale();
-        const double imag_plain_scale =
-            eval_mod_scale * logical_rescale_modulus(imag_slots) /
-            imag_slots.scale();
-        multiply_const(real_slots, 1.0, real_plain_scale, real_slots, encoder);
-        multiply_const(imag_slots, 1.0, imag_plain_scale, imag_slots, encoder);
-        for (uint32_t index = 0; index < config.logical_rescale_count; ++index)
-        {
-            rescale(real_slots, real_slots);
-            rescale(imag_slots, imag_slots);
-        }
-        real_slots.scale() = eval_mod_scale;
-        imag_slots.scale() = eval_mod_scale;
-    }
     if (config.trace)
     {
         config.trace->coeff_to_slot_real_aligned = real_slots;
