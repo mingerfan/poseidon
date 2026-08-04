@@ -2,6 +2,7 @@
 #include "poseidon/gpu/kernels/gpu_double_hoist_kernels.h"
 #include "poseidon/gpu/kernels/gpu_keyswitch_kernels.h"
 #include "poseidon/gpu/kernels/gpu_ntt_kernels.h"
+#include "poseidon/gpu/kernels/gpu_rescale_kernels.h"
 
 #include <nvtx3/nvToolsExt.h>
 
@@ -416,6 +417,10 @@ struct HybridScratch
     DeviceVector<GpuWord> fourstep_q1;
     DeviceVector<GpuWord> fourstep_p0;
     DeviceVector<GpuWord> fourstep_p1;
+    DeviceVector<GpuWord> relin_rescale_dropped_ntt;
+    DeviceVector<GpuWord> relin_rescale_dropped_coeff;
+    DeviceVector<GpuWord> relin_rescale_correction;
+    DeviceVector<GpuWord> relin_rescale_correction_ntt;
 
     GpuPolyShardView c2_intt_view()
     {
@@ -571,6 +576,32 @@ void ensure_hybrid_scratch(
     scratch.base_p_size = base_p_size;
     scratch.q_word_count = q_word_count;
     scratch.p_word_count = p_word_count;
+}
+
+void ensure_hybrid_relin_rescale_x2_scratch(
+    HybridScratch &scratch)
+{
+    if (scratch.degree == 0 || scratch.base_q_size < 3)
+    {
+        throw std::invalid_argument(
+            "GpuKeySwitchHandler relin-rescale_x2 scratch requires q_count >= 3");
+    }
+    const auto ensure_capacity =
+        [&scratch](DeviceVector<GpuWord> &buffer, std::size_t word_count)
+        {
+            if (buffer.size() < word_count ||
+                (!buffer.empty() && buffer.device_id() != scratch.device_id))
+            {
+                buffer.allocate(word_count, scratch.device_id);
+            }
+        };
+    const std::size_t dropped_words = 2 * 2 * scratch.degree;
+    const std::size_t correction_words =
+        2 * (scratch.base_q_size - 2) * scratch.degree;
+    ensure_capacity(scratch.relin_rescale_dropped_ntt, dropped_words);
+    ensure_capacity(scratch.relin_rescale_dropped_coeff, dropped_words);
+    ensure_capacity(scratch.relin_rescale_correction, correction_words);
+    ensure_capacity(scratch.relin_rescale_correction_ntt, correction_words);
 }
 
 void inverse_ntt_switch_poly(
@@ -1063,6 +1094,343 @@ void finalize_hybrid_relinearize(
             scratch.degree,
             add_source_shard0,
             add_source_shard1);
+    }
+}
+
+void finalize_hybrid_relinearize_rescale_x2(
+    GpuCiphertextView &destination,
+    HybridScratch &scratch,
+    const GpuLevelInfo &source_level_info,
+    const GpuLevelInfo &destination_level_info,
+    const GpuConstRNSPolyView *add_source0,
+    const GpuConstRNSPolyView *add_source1)
+{
+    NvtxRange finalize_range("keyswitch.finalize_rescale_x2");
+    if (add_source0 == nullptr || add_source1 == nullptr)
+    {
+        throw std::invalid_argument(
+            "GpuKeySwitchHandler::finalize_hybrid_relinearize_rescale_x2: add-source components are required");
+    }
+    if (scratch.base_q_size < 3 ||
+        destination_level_info.q_count + 2 != scratch.base_q_size ||
+        destination.meta.q_count != destination_level_info.q_count)
+    {
+        throw std::invalid_argument(
+            "GpuKeySwitchHandler::finalize_hybrid_relinearize_rescale_x2: level mismatch");
+    }
+
+    const auto &destination_shard0 = destination.polys[0].shards.front();
+    const auto &destination_shard1 = destination.polys[1].shards.front();
+    const auto &add_source_full0 = add_source0->shards.front();
+    const auto &add_source_full1 = add_source1->shards.front();
+    const auto *parameter_shard = find_parameter_shard(
+        source_level_info,
+        add_source_full0);
+    if (parameter_shard == nullptr)
+    {
+        throw std::invalid_argument(
+            "GpuKeySwitchHandler::finalize_hybrid_relinearize_rescale_x2: no matching parameter shard");
+    }
+    validate_hybrid_parameter_shape(
+        "GpuKeySwitchHandler::finalize_hybrid_relinearize_rescale_x2",
+        scratch,
+        *parameter_shard);
+    if (parameter_shard->q_last_two_product == 0 ||
+        parameter_shard->inv_q_last_two_product_mod_q.size() <
+            destination_level_info.q_count)
+    {
+        throw std::invalid_argument(
+            "GpuKeySwitchHandler::finalize_hybrid_relinearize_rescale_x2: missing rescale_x2 constants");
+    }
+
+    ensure_hybrid_relin_rescale_x2_scratch(scratch);
+
+    auto accum_p0_view = make_scratch_p_view(scratch.accum_p0.data(), scratch);
+    auto accum_p1_view = make_scratch_p_view(scratch.accum_p1.data(), scratch);
+
+    const GpuWord *converted_q0 = nullptr;
+    const GpuWord *converted_q1 = nullptr;
+    if (use_fourstep_all_ntt(
+            scratch.degree,
+            scratch.base_q_size,
+            scratch.base_p_size))
+    {
+        auto p_coeff0_view = make_scratch_p_view(
+            scratch.fourstep_p0.data(),
+            scratch);
+        auto p_coeff1_view = make_scratch_p_view(
+            scratch.fourstep_p1.data(),
+            scratch);
+        {
+            NvtxRange range("keyswitch.finalize_rescale_x2.fourstep_intt_p0");
+            kernel::launch_inverse_ntt_poly_shard_fourstep_65536(
+                p_coeff0_view,
+                as_const_shard(accum_p0_view),
+                *parameter_shard,
+                scratch.degree);
+        }
+        {
+            NvtxRange range("keyswitch.finalize_rescale_x2.fourstep_intt_p1");
+            kernel::launch_inverse_ntt_poly_shard_fourstep_65536(
+                p_coeff1_view,
+                as_const_shard(accum_p1_view),
+                *parameter_shard,
+                scratch.degree);
+        }
+        if (use_fourstep_finalize_fused())
+        {
+            NvtxRange range(
+                "keyswitch.finalize_rescale_x2.convert_p_to_q_fourstep_q01");
+            kernel::launch_hybrid_convert_p_to_q_forward_ntt_two_components_fourstep_65536(
+                scratch.fourstep_q0.data(),
+                scratch.fourstep_q1.data(),
+                scratch.fourstep_p0.data(),
+                scratch.fourstep_p1.data(),
+                *parameter_shard,
+                scratch.degree);
+        }
+        else
+        {
+            {
+                NvtxRange range(
+                    "keyswitch.finalize_rescale_x2.convert_p_to_q.coeff");
+                kernel::launch_hybrid_convert_p_to_q(
+                    scratch.c2_intt.data(),
+                    scratch.modup_q.data(),
+                    scratch.fourstep_p0.data(),
+                    scratch.fourstep_p1.data(),
+                    *parameter_shard,
+                    scratch.degree);
+            }
+            auto q_coeff0_view = make_scratch_q_view(
+                scratch.c2_intt.data(),
+                scratch);
+            auto q_coeff1_view = make_scratch_q_view(
+                scratch.modup_q.data(),
+                scratch);
+            auto q_ntt0_view = make_scratch_q_view(
+                scratch.fourstep_q0.data(),
+                scratch);
+            auto q_ntt1_view = make_scratch_q_view(
+                scratch.fourstep_q1.data(),
+                scratch);
+            {
+                NvtxRange range(
+                    "keyswitch.finalize_rescale_x2.fourstep_forward_ntt_q0");
+                kernel::launch_forward_ntt_poly_shard_fourstep_65536(
+                    q_ntt0_view,
+                    as_const_shard(q_coeff0_view),
+                    *parameter_shard,
+                    scratch.degree);
+            }
+            {
+                NvtxRange range(
+                    "keyswitch.finalize_rescale_x2.fourstep_forward_ntt_q1");
+                kernel::launch_forward_ntt_poly_shard_fourstep_65536(
+                    q_ntt1_view,
+                    as_const_shard(q_coeff1_view),
+                    *parameter_shard,
+                    scratch.degree);
+            }
+        }
+        converted_q0 = scratch.fourstep_q0.data();
+        converted_q1 = scratch.fourstep_q1.data();
+    }
+    else
+    {
+        {
+            NvtxRange range("keyswitch.finalize_rescale_x2.intt_p0");
+            kernel::launch_inverse_ntt_poly_shard(
+                accum_p0_view,
+                as_const_shard(accum_p0_view),
+                *parameter_shard,
+                scratch.degree);
+        }
+        {
+            NvtxRange range("keyswitch.finalize_rescale_x2.intt_p1");
+            kernel::launch_inverse_ntt_poly_shard(
+                accum_p1_view,
+                as_const_shard(accum_p1_view),
+                *parameter_shard,
+                scratch.degree);
+        }
+        if (use_p_to_q_row_tiled8())
+        {
+            NvtxRange range(
+                "keyswitch.finalize_rescale_x2.convert_p_to_q_forward_ntt.row_tiled8");
+            kernel::launch_hybrid_convert_p_to_q_forward_ntt_row_tiled8(
+                scratch.c2_intt.data(),
+                scratch.modup_q.data(),
+                scratch.accum_p0.data(),
+                scratch.accum_p1.data(),
+                *parameter_shard,
+                scratch.degree);
+        }
+        else
+        {
+            NvtxRange range(
+                "keyswitch.finalize_rescale_x2.convert_p_to_q_forward_ntt");
+            kernel::launch_hybrid_convert_p_to_q_forward_ntt(
+                scratch.c2_intt.data(),
+                scratch.modup_q.data(),
+                scratch.accum_p0.data(),
+                scratch.accum_p1.data(),
+                *parameter_shard,
+                scratch.degree);
+        }
+        converted_q0 = scratch.c2_intt.data();
+        converted_q1 = scratch.modup_q.data();
+    }
+
+    GpuPolyShardView dropped_ntt0{
+        scratch.device_id,
+        scratch.relin_rescale_dropped_ntt.data(),
+        scratch.base_q_size - 2,
+        2,
+        0,
+        scratch.degree};
+    GpuPolyShardView dropped_ntt1{
+        scratch.device_id,
+        scratch.relin_rescale_dropped_ntt.data() + 2 * scratch.degree,
+        scratch.base_q_size - 2,
+        2,
+        0,
+        scratch.degree};
+    GpuConstPolyShardView add_tail0{
+        add_source_full0.device_id,
+        add_source_full0.ptr + (scratch.base_q_size - 2) * scratch.degree,
+        scratch.base_q_size - 2,
+        2,
+        0,
+        scratch.degree};
+    GpuConstPolyShardView add_tail1{
+        add_source_full1.device_id,
+        add_source_full1.ptr + (scratch.base_q_size - 2) * scratch.degree,
+        scratch.base_q_size - 2,
+        2,
+        0,
+        scratch.degree};
+
+    {
+        NvtxRange range("keyswitch.finalize_rescale_x2.build_dropped_ntt");
+        kernel::launch_hybrid_apply_moddown_ntt_add_back(
+            dropped_ntt0,
+            dropped_ntt1,
+            scratch.accum_q0.data(),
+            scratch.accum_q1.data(),
+            converted_q0,
+            converted_q1,
+            *parameter_shard,
+            scratch.degree,
+            &add_tail0,
+            &add_tail1);
+    }
+
+    GpuPolyShardView dropped_coeff0{
+        scratch.device_id,
+        scratch.relin_rescale_dropped_coeff.data(),
+        scratch.base_q_size - 2,
+        2,
+        0,
+        scratch.degree};
+    GpuPolyShardView dropped_coeff1{
+        scratch.device_id,
+        scratch.relin_rescale_dropped_coeff.data() + 2 * scratch.degree,
+        scratch.base_q_size - 2,
+        2,
+        0,
+        scratch.degree};
+    {
+        NvtxRange range("keyswitch.finalize_rescale_x2.intt_dropped0");
+        kernel::launch_inverse_ntt_poly_shard(
+            dropped_coeff0,
+            as_const_shard(dropped_ntt0),
+            *parameter_shard,
+            scratch.degree);
+    }
+    {
+        NvtxRange range("keyswitch.finalize_rescale_x2.intt_dropped1");
+        kernel::launch_inverse_ntt_poly_shard(
+            dropped_coeff1,
+            as_const_shard(dropped_ntt1),
+            *parameter_shard,
+            scratch.degree);
+    }
+
+    const std::size_t destination_q_count = destination_level_info.q_count;
+    {
+        NvtxRange range("keyswitch.finalize_rescale_x2.build_correction");
+        kernel::launch_build_q_last_two_rescale_correction_batch_fused(
+            scratch.relin_rescale_correction.data(),
+            scratch.relin_rescale_dropped_coeff.data(),
+            2,
+            destination_q_count,
+            *parameter_shard,
+            scratch.degree);
+    }
+
+    GpuPolyShardView correction_ntt0{
+        scratch.device_id,
+        scratch.relin_rescale_correction_ntt.data(),
+        0,
+        destination_q_count,
+        0,
+        scratch.degree};
+    GpuPolyShardView correction_ntt1{
+        scratch.device_id,
+        scratch.relin_rescale_correction_ntt.data() +
+            destination_q_count * scratch.degree,
+        0,
+        destination_q_count,
+        0,
+        scratch.degree};
+    GpuConstPolyShardView correction0{
+        scratch.device_id,
+        scratch.relin_rescale_correction.data(),
+        0,
+        destination_q_count,
+        0,
+        scratch.degree};
+    GpuConstPolyShardView correction1{
+        scratch.device_id,
+        scratch.relin_rescale_correction.data() +
+            destination_q_count * scratch.degree,
+        0,
+        destination_q_count,
+        0,
+        scratch.degree};
+    {
+        NvtxRange range("keyswitch.finalize_rescale_x2.ntt_correction0");
+        kernel::launch_forward_ntt_poly_shard(
+            correction_ntt0,
+            correction0,
+            *parameter_shard,
+            scratch.degree);
+    }
+    {
+        NvtxRange range("keyswitch.finalize_rescale_x2.ntt_correction1");
+        kernel::launch_forward_ntt_poly_shard(
+            correction_ntt1,
+            correction1,
+            *parameter_shard,
+            scratch.degree);
+    }
+
+    {
+        NvtxRange range("keyswitch.finalize_rescale_x2.apply_retained");
+        kernel::launch_hybrid_apply_moddown_ntt_add_back_rescale_x2(
+            destination_shard0,
+            destination_shard1,
+            as_const_shard(correction_ntt0),
+            as_const_shard(correction_ntt1),
+            scratch.accum_q0.data(),
+            scratch.accum_q1.data(),
+            converted_q0,
+            converted_q1,
+            *parameter_shard,
+            scratch.degree,
+            &add_source_full0,
+            &add_source_full1);
     }
 }
 
@@ -2051,19 +2419,66 @@ void GpuKeySwitchHandler::switch_key_hybrid_ciphertext_impl(
     std::size_t key_index,
     const GpuLevelInfo &level_info,
     const GpuConstRNSPolyView *add_source0,
-    const GpuConstRNSPolyView *add_source1) const
+    const GpuConstRNSPolyView *add_source1,
+    const GpuLevelInfo *rescale_x2_destination_level) const
 {
     NvtxRange range("keyswitch.hybrid");
     (void)params_;
-    validate_hybrid_switch_key_shape(
-        destination_view,
-        switch_poly_ntt,
-        switch_keys_view,
-        switch_keys_data,
-        key_index,
-        level_info);
+    if (rescale_x2_destination_level == nullptr)
+    {
+        validate_hybrid_switch_key_shape(
+            destination_view,
+            switch_poly_ntt,
+            switch_keys_view,
+            switch_keys_data,
+            key_index,
+            level_info);
+    }
+    else
+    {
+        if (!(switch_poly_ntt.shards.size() == 1) ||
+            !(destination_view.meta.parms_id ==
+              rescale_x2_destination_level->parms_id) ||
+            destination_view.meta.degree != level_info.degree ||
+            destination_view.meta.q_count + 2 != level_info.q_count ||
+            destination_view.meta.q_count !=
+                rescale_x2_destination_level->q_count ||
+            destination_view.meta.p_count != 0 ||
+            destination_view.polys.size() != 2 ||
+            destination_view.meta.component_count != 2 ||
+            switch_keys_view.meta.q_count != level_info.q_count ||
+            switch_keys_view.storage_q_count != switch_keys_data.meta.q_count ||
+            switch_keys_view.meta.key_count <= key_index ||
+            switch_keys_view.meta.decomposition_count == 0 ||
+            switch_keys_view.meta.component_count < kSwitchKeyComponentCount ||
+            !(switch_keys_view.meta.key_parms_id ==
+              switch_keys_data.meta.key_parms_id) ||
+            switch_keys_data.poly_metadata_.empty())
+        {
+            throw std::invalid_argument(
+                "GpuKeySwitchHandler::switch_key_hybrid_ciphertext_rescale_x2: shape mismatch");
+        }
+        validate_single_full_shard(
+            "GpuKeySwitchHandler switch poly rescale_x2",
+            switch_poly_ntt,
+            level_info.degree,
+            level_info.q_count);
+        for (const auto &poly : destination_view.polys)
+        {
+            validate_single_full_shard(
+                "GpuKeySwitchHandler destination rescale_x2",
+                poly,
+                destination_view.meta.degree,
+                destination_view.meta.q_count);
+        }
+        if (switch_keys_data.polys_.size() != switch_keys_view.polys.size())
+        {
+            throw std::invalid_argument(
+                "GpuKeySwitchHandler::switch_key_hybrid_ciphertext_rescale_x2: invalid key layout");
+        }
+    }
 
-    const std::size_t base_q_size = destination_view.meta.q_count;
+    const std::size_t base_q_size = level_info.q_count;
     const std::size_t base_p_size = switch_keys_view.meta.p_count;
     if (switch_keys_view.meta.q_count != base_q_size)
     {
@@ -2415,13 +2830,26 @@ void GpuKeySwitchHandler::switch_key_hybrid_ciphertext_impl(
         }
     }
 
-    /* INTT 模降 NTT 和原密文分量求和*/
-    finalize_hybrid_relinearize(
-        destination_view,
-        scratch,
-        level_info,
-        add_source0,
-        add_source1);
+    /* INTT 模降 NTT 和原密文分量求和 */
+    if (rescale_x2_destination_level == nullptr)
+    {
+        finalize_hybrid_relinearize(
+            destination_view,
+            scratch,
+            level_info,
+            add_source0,
+            add_source1);
+    }
+    else
+    {
+        finalize_hybrid_relinearize_rescale_x2(
+            destination_view,
+            scratch,
+            level_info,
+            *rescale_x2_destination_level,
+            add_source0,
+            add_source1);
+    }
 }
 
 void GpuKeySwitchHandler::relinearize_hybrid_ciphertext(
@@ -2469,6 +2897,85 @@ void GpuKeySwitchHandler::relinearize_hybrid_ciphertext(
         level_info,
         &source_view.polys[0],
         &source_view.polys[1]);
+}
+
+void GpuKeySwitchHandler::relinearize_hybrid_ciphertext_rescale_x2(
+    GpuCiphertextView &destination_view,
+    const GpuConstCiphertextView &source_view,
+    const GpuConstEvaluationKeyView &relin_keys_view,
+    const GpuEvaluationKeyData &relin_keys_data,
+    const GpuLevelInfo &source_level_info,
+    const GpuLevelInfo &destination_level_info) const
+{
+    if (!(source_view.meta.parms_id == source_level_info.parms_id) ||
+        !(destination_view.meta.parms_id ==
+          destination_level_info.parms_id) ||
+        !source_view.meta.is_ntt_form ||
+        !destination_view.meta.is_ntt_form ||
+        source_view.polys.size() != 3 ||
+        source_view.meta.component_count != 3 ||
+        destination_view.polys.size() != 2 ||
+        destination_view.meta.component_count != 2 ||
+        source_view.meta.degree != destination_view.meta.degree ||
+        source_view.meta.degree != source_level_info.degree ||
+        source_view.meta.degree != destination_level_info.degree ||
+        source_view.meta.q_count != source_level_info.q_count ||
+        destination_view.meta.q_count != destination_level_info.q_count ||
+        destination_view.meta.q_count + 2 != source_view.meta.q_count ||
+        source_view.meta.p_count != 0 ||
+        destination_view.meta.p_count != 0)
+    {
+        throw std::invalid_argument(
+            "GpuKeySwitchHandler::relinearize_hybrid_ciphertext_rescale_x2: shape mismatch");
+    }
+    if (!(relin_keys_view.meta.key_parms_id ==
+          relin_keys_data.meta.key_parms_id) ||
+        relin_keys_view.storage_q_count != relin_keys_data.meta.q_count ||
+        relin_keys_view.meta.q_count != source_view.meta.q_count ||
+        relin_keys_view.meta.key_count == 0 ||
+        relin_keys_view.meta.decomposition_count == 0 ||
+        relin_keys_view.meta.component_count < kSwitchKeyComponentCount ||
+        relin_keys_data.poly_metadata_.empty() ||
+        relin_keys_data.polys_.size() != relin_keys_view.polys.size())
+    {
+        throw std::invalid_argument(
+            "GpuKeySwitchHandler::relinearize_hybrid_ciphertext_rescale_x2: invalid relin key metadata");
+    }
+    for (std::size_t component = 0; component < source_view.polys.size();
+         ++component)
+    {
+        validate_single_full_shard(
+            "GpuKeySwitchHandler relin-rescale source",
+            source_view.polys[component],
+            source_view.meta.degree,
+            source_view.meta.q_count);
+        if (!same_shard_placement(
+                source_view.polys[0].shards.front(),
+                source_view.polys[component].shards.front()))
+        {
+            throw std::invalid_argument(
+                "GpuKeySwitchHandler::relinearize_hybrid_ciphertext_rescale_x2: source shard placement mismatch");
+        }
+    }
+    for (const auto &poly : destination_view.polys)
+    {
+        validate_single_full_shard(
+            "GpuKeySwitchHandler relin-rescale destination",
+            poly,
+            destination_view.meta.degree,
+            destination_view.meta.q_count);
+    }
+
+    switch_key_hybrid_ciphertext_impl(
+        destination_view,
+        source_view.polys[2],
+        relin_keys_view,
+        relin_keys_data,
+        kRelinKeyPower2Index,
+        source_level_info,
+        &source_view.polys[0],
+        &source_view.polys[1],
+        &destination_level_info);
 }
 
 }  // namespace gpu

@@ -46,6 +46,21 @@ bool use_rescale_x2()
            value != "FALSE";
 }
 
+bool use_relinearize_rescale_x2()
+{
+    const char *raw = std::getenv("POSEIDON_RELIN_RESCALE_X2");
+    if (raw == nullptr || *raw == '\0')
+    {
+        return true;
+    }
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
 class EvalModStageEventRecorder
 {
 public:
@@ -2047,6 +2062,124 @@ void GpuEvaluator::relinearize(
     }
 }
 
+void GpuEvaluator::relinearize_rescale_x2_hybrid(
+    const GpuCiphertextData &source_ciphertext,
+    const GpuRelinKeysData &relin_keys,
+    GpuCiphertextData &destination_ciphertext) const
+{
+    if (source_ciphertext.empty() ||
+        source_ciphertext.fields_.empty() ||
+        relin_keys.empty() ||
+        !source_ciphertext.meta.is_ntt_form ||
+        source_ciphertext.meta.p_count != 0 ||
+        source_ciphertext.meta.component_count != 3 ||
+        source_ciphertext.size() != 3 ||
+        source_ciphertext.meta.q_count < 3)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::relinearize_rescale_x2_hybrid: unsupported ciphertext shape");
+    }
+
+    const int device_id = source_ciphertext.fields_.at(0).device_id;
+    const auto &source_layout = source_ciphertext.polys_.at(0);
+    if (!all_components_use_layout(source_ciphertext, source_layout))
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::relinearize_rescale_x2_hybrid: shard layout mismatch");
+    }
+
+    const auto &source_level_info =
+        params_.get_level(source_ciphertext.meta.parms_id);
+    const auto &intermediate_level_info =
+        params_.get_next_level(source_ciphertext.meta.parms_id);
+    const auto &destination_level_info =
+        params_.get_next_level(intermediate_level_info.parms_id);
+    if (source_level_info.q_count != source_ciphertext.meta.q_count ||
+        destination_level_info.q_count + 2 != source_level_info.q_count ||
+        source_level_info.shards.empty() ||
+        source_level_info.shards.front().q_last_two_product == 0)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::relinearize_rescale_x2_hybrid: level/constants mismatch");
+    }
+
+    const std::size_t destination_q_count =
+        source_ciphertext.meta.q_count - 2;
+    GpuPolyShard destination_shard;
+    destination_shard.field_index = 0;
+    destination_shard.field_offset = 0;
+    destination_shard.limb_begin = 0;
+    destination_shard.limb_count = destination_q_count;
+    destination_shard.coeff_begin = 0;
+    destination_shard.coeff_count = source_ciphertext.meta.degree;
+
+    GpuCiphertextMeta result_meta = source_ciphertext.meta;
+    result_meta.parms_id = destination_level_info.parms_id;
+    result_meta.q_count = destination_q_count;
+    result_meta.p_count = 0;
+    result_meta.component_count = 2;
+    result_meta.is_ntt_form = true;
+    result_meta.scale =
+        source_ciphertext.meta.scale /
+        static_cast<double>(
+            source_level_info.shards.front().q_last_two_product);
+    if (!(result_meta.scale > 0.0) || !std::isfinite(result_meta.scale))
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::relinearize_rescale_x2_hybrid: invalid result scale");
+    }
+
+    GpuRNSPoly reference_layout;
+    reference_layout.degree = source_ciphertext.meta.degree;
+    reference_layout.q_count = destination_q_count;
+    reference_layout.p_count = 0;
+    reference_layout.shards.push_back(destination_shard);
+
+    const bool aliases_input = &destination_ciphertext == &source_ciphertext;
+    GpuCiphertextData local_result;
+    GpuCiphertextData *result = &destination_ciphertext;
+    if (aliases_input)
+    {
+        local_result = GpuCiphertextData::allocate_single_device_sharded(
+            source_ciphertext.meta.degree,
+            destination_q_count,
+            2,
+            device_id,
+            std::vector<GpuPolyShard>{destination_shard},
+            0);
+        local_result.meta = result_meta;
+        result = &local_result;
+    }
+    else
+    {
+        prepare_ciphertext_destination(
+            destination_ciphertext,
+            nullptr,
+            nullptr,
+            result_meta,
+            2,
+            device_id,
+            reference_layout);
+    }
+
+    auto source_view = source_ciphertext.make_const_view();
+    auto destination_view = result->make_view();
+    auto relin_keys_view =
+        relin_keys.make_const_view(source_ciphertext.meta.q_count);
+    keyswitch_handler_.relinearize_hybrid_ciphertext_rescale_x2(
+        destination_view,
+        source_view,
+        relin_keys_view,
+        relin_keys,
+        source_level_info,
+        destination_level_info);
+
+    if (aliases_input)
+    {
+        destination_ciphertext = std::move(local_result);
+    }
+}
+
 /*顶层旋转操作入口*/
 void GpuEvaluator::rotate(
     const GpuCiphertextData &source_ciphertext,
@@ -3672,12 +3805,24 @@ void GpuEvaluator::eval_mod_high_precision(
             {
                 multiply(*left_at_level, *right_at_level, workspace.scratch5);
             }
-            relinearize(workspace.scratch5, relin_keys, workspace.scratch3);
-            // rescale_dynamic is deliberately not used in the first GPU path.
-            rescale_many(
-                workspace.scratch3,
-                output,
-                logical_rescale_count);
+            if (logical_rescale_count == 2 &&
+                use_rescale_x2() &&
+                use_relinearize_rescale_x2())
+            {
+                relinearize_rescale_x2_hybrid(
+                    workspace.scratch5,
+                    relin_keys,
+                    output);
+            }
+            else
+            {
+                relinearize(workspace.scratch5, relin_keys, workspace.scratch3);
+                // rescale_dynamic is deliberately not used in the first GPU path.
+                rescale_many(
+                    workspace.scratch3,
+                    output,
+                    logical_rescale_count);
+            }
             if (expected_output_scale > 0.0)
             {
                 output.meta.scale = expected_output_scale;
@@ -4120,17 +4265,49 @@ void GpuEvaluator::eval_mod_high_precision(
     for (const auto &double_angle_plaintext : configured_double_angle_constants)
     {
         square(accumulator, workspace.scratch5);
-        relinearize(workspace.scratch5, relin_keys, workspace.scratch2);
-        add(workspace.scratch2, workspace.scratch2, workspace.scratch3);
-
-        if (!double_angle_plaintext.empty())
+        if (logical_rescale_count == 2 &&
+            use_rescale_x2() &&
+            use_relinearize_rescale_x2())
         {
-            if (!(workspace.scratch3.meta.parms_id ==
-                  double_angle_plaintext.meta.parms_id))
+            add(workspace.scratch5, workspace.scratch5, workspace.scratch3);
+            if (!double_angle_plaintext.empty())
             {
-                throw std::invalid_argument(
-                    "GpuEvaluator::eval_mod_high_precision: double-angle plaintext level mismatch");
+                if (!(workspace.scratch3.meta.parms_id ==
+                      double_angle_plaintext.meta.parms_id))
+                {
+                    throw std::invalid_argument(
+                        "GpuEvaluator::eval_mod_high_precision: double-angle plaintext level mismatch");
+                }
+                add_plain(
+                    workspace.scratch3,
+                    double_angle_plaintext,
+                    workspace.scratch4);
+                relinearize_rescale_x2_hybrid(
+                    workspace.scratch4,
+                    relin_keys,
+                    workspace.scratch5);
             }
+            else
+            {
+                relinearize_rescale_x2_hybrid(
+                    workspace.scratch3,
+                    relin_keys,
+                    workspace.scratch5);
+            }
+        }
+        else
+        {
+            relinearize(workspace.scratch5, relin_keys, workspace.scratch2);
+            add(workspace.scratch2, workspace.scratch2, workspace.scratch3);
+
+            if (!double_angle_plaintext.empty())
+            {
+                if (!(workspace.scratch3.meta.parms_id ==
+                      double_angle_plaintext.meta.parms_id))
+                {
+                    throw std::invalid_argument(
+                        "GpuEvaluator::eval_mod_high_precision: double-angle plaintext level mismatch");
+                }
                 add_plain(
                     workspace.scratch3,
                     double_angle_plaintext,
@@ -4147,6 +4324,7 @@ void GpuEvaluator::eval_mod_high_precision(
                     workspace.scratch5,
                     logical_rescale_count);
             }
+        }
         accumulator = std::move(workspace.scratch5);
         if (workspace.capture_eval_mod_trace)
         {

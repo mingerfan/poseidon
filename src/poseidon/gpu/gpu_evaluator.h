@@ -444,6 +444,17 @@ public:
         GpuCiphertextData &destination_ciphertext) const;
 
     /**
+     * @brief Relinearize and drop two q primes in one HYBRID finalize path.
+     *
+     * This is equivalent to relinearize(source) followed by rescale_x2, but
+     * avoids materializing the full same-level size-2 ciphertext.
+     */
+    void relinearize_rescale_x2_hybrid(
+        const GpuCiphertextData &source_ciphertext,
+        const GpuRelinKeysData &relin_keys,
+        GpuCiphertextData &destination_ciphertext) const;
+
+    /**
      * @brief Rotate ciphertext.
      *
      * First CKKS implementation:

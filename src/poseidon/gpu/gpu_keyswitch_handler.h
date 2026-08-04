@@ -40,6 +40,14 @@ public:
         const GpuEvaluationKeyData &relin_keys_data,
         const GpuLevelInfo &level_info) const;
 
+    void relinearize_hybrid_ciphertext_rescale_x2(
+        GpuCiphertextView &destination_view,
+        const GpuConstCiphertextView &source_view,
+        const GpuConstEvaluationKeyView &relin_keys_view,
+        const GpuEvaluationKeyData &relin_keys_data,
+        const GpuLevelInfo &source_level_info,
+        const GpuLevelInfo &destination_level_info) const;
+
     void switch_key_hybrid_ciphertext(
         GpuCiphertextView &destination_view,
         const GpuConstRNSPolyView &switch_poly_ntt,
@@ -122,7 +130,8 @@ private:
         std::size_t key_index,
         const GpuLevelInfo &level_info,
         const GpuConstRNSPolyView *add_source0,
-        const GpuConstRNSPolyView *add_source1) const;
+        const GpuConstRNSPolyView *add_source1,
+        const GpuLevelInfo *rescale_x2_destination_level = nullptr) const;
 
     struct PersistentWorkspace;
 

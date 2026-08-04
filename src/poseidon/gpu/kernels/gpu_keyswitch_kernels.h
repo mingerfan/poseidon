@@ -208,6 +208,20 @@ void launch_hybrid_apply_moddown_ntt_add_back(
     const GpuConstPolyShardView *add_source_shard0 = nullptr,
     const GpuConstPolyShardView *add_source_shard1 = nullptr);
 
+void launch_hybrid_apply_moddown_ntt_add_back_rescale_x2(
+    const GpuPolyShardView &destination_shard0,
+    const GpuPolyShardView &destination_shard1,
+    const GpuConstPolyShardView &correction_ntt_shard0,
+    const GpuConstPolyShardView &correction_ntt_shard1,
+    const GpuWord *accum_q0,
+    const GpuWord *accum_q1,
+    const GpuWord *converted_q0,
+    const GpuWord *converted_q1,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree,
+    const GpuConstPolyShardView *add_source_shard0 = nullptr,
+    const GpuConstPolyShardView *add_source_shard1 = nullptr);
+
 void launch_apply_galois_ntt_poly_shard(
     const GpuPolyShardView &destination_shard,
     const GpuConstPolyShardView &source_shard,

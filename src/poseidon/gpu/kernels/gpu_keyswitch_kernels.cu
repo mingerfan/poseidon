@@ -2743,6 +2743,63 @@ __global__ void hybrid_apply_moddown_ntt_add_back_two_components_kernel(
         add_mod(add_source[local_index], moddown, modulus);
 }
 
+__global__ void hybrid_apply_moddown_ntt_add_back_rescale_x2_two_components_kernel(
+    GpuWord *destination0,
+    GpuWord *destination1,
+    const GpuWord *add_source0,
+    const GpuWord *add_source1,
+    const GpuWord *correction_ntt0,
+    const GpuWord *correction_ntt1,
+    const GpuWord *accum_q0,
+    const GpuWord *accum_q1,
+    const GpuWord *converted_q0,
+    const GpuWord *converted_q1,
+    const GpuWord *rns_primes,
+    const GpuWide *rns_modulus_constants,
+    const GpuWord *inv_p_mod_q,
+    const GpuWord *inv_q_last_two_product_mod_q,
+    std::size_t limb_count,
+    std::size_t coeff_count,
+    unsigned int degree_power)
+{
+    const std::size_t values_per_component = limb_count * coeff_count;
+    const std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    if (tid >= values_per_component * 2)
+    {
+        return;
+    }
+
+    const bool second_component = tid >= values_per_component;
+    const std::size_t local_index =
+        second_component ? tid - values_per_component : tid;
+    const std::size_t q_limb = local_index >> degree_power;
+    const GpuWord modulus = rns_primes[q_limb];
+    const GpuWide barrett = rns_modulus_constants[q_limb];
+
+    GpuWord *destination = second_component ? destination1 : destination0;
+    const GpuWord *add_source =
+        second_component ? add_source1 : add_source0;
+    const GpuWord *correction_ntt =
+        second_component ? correction_ntt1 : correction_ntt0;
+    const GpuWord *accum_q = second_component ? accum_q1 : accum_q0;
+    const GpuWord *converted_q = second_component ? converted_q1 : converted_q0;
+
+    const GpuWord switched = mul_mod(
+        sub_mod(accum_q[local_index], converted_q[local_index], modulus),
+        inv_p_mod_q[q_limb],
+        modulus,
+        barrett);
+    const GpuWord relin_value =
+        add_mod(add_source[local_index], switched, modulus);
+    const GpuWord corrected =
+        sub_mod(relin_value, correction_ntt[local_index], modulus);
+    destination[local_index] = mul_mod(
+        corrected,
+        inv_q_last_two_product_mod_q[q_limb],
+        modulus,
+        barrett);
+}
+
 void validate_hybrid_tables(
     const char *name,
     const GpuParameterShard &parameter_shard,
@@ -4971,6 +5028,128 @@ void launch_hybrid_apply_moddown_ntt_add_back(
     gpu_check_cuda(
         cudaGetLastError(),
         "launch_hybrid_apply_moddown_ntt_add_back kernel launch");
+}
+
+void launch_hybrid_apply_moddown_ntt_add_back_rescale_x2(
+    const GpuPolyShardView &destination_shard0,
+    const GpuPolyShardView &destination_shard1,
+    const GpuConstPolyShardView &correction_ntt_shard0,
+    const GpuConstPolyShardView &correction_ntt_shard1,
+    const GpuWord *accum_q0,
+    const GpuWord *accum_q1,
+    const GpuWord *converted_q0,
+    const GpuWord *converted_q1,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree,
+    const GpuConstPolyShardView *add_source_shard0,
+    const GpuConstPolyShardView *add_source_shard1)
+{
+    constexpr const char *name =
+        "launch_hybrid_apply_moddown_ntt_add_back_rescale_x2";
+    validate_hybrid_tables(name, parameter_shard, degree);
+    if (destination_shard0.ptr == nullptr ||
+        destination_shard1.ptr == nullptr ||
+        correction_ntt_shard0.ptr == nullptr ||
+        correction_ntt_shard1.ptr == nullptr ||
+        accum_q0 == nullptr || accum_q1 == nullptr ||
+        converted_q0 == nullptr || converted_q1 == nullptr)
+    {
+        throw std::invalid_argument(std::string(name) + ": null data pointer");
+    }
+    if (destination_shard0.device_id != destination_shard1.device_id ||
+        destination_shard0.device_id != correction_ntt_shard0.device_id ||
+        destination_shard0.device_id != correction_ntt_shard1.device_id ||
+        destination_shard0.device_id != parameter_shard.device_id)
+    {
+        throw std::invalid_argument(std::string(name) + ": device mismatch");
+    }
+    if (degree == 0 ||
+        destination_shard0.limb_begin != 0 ||
+        destination_shard1.limb_begin != 0 ||
+        correction_ntt_shard0.limb_begin != 0 ||
+        correction_ntt_shard1.limb_begin != 0 ||
+        destination_shard0.coeff_begin != 0 ||
+        destination_shard1.coeff_begin != 0 ||
+        correction_ntt_shard0.coeff_begin != 0 ||
+        correction_ntt_shard1.coeff_begin != 0 ||
+        destination_shard0.coeff_count != degree ||
+        destination_shard1.coeff_count != degree ||
+        correction_ntt_shard0.coeff_count != degree ||
+        correction_ntt_shard1.coeff_count != degree ||
+        destination_shard0.limb_count == 0 ||
+        destination_shard0.limb_count != destination_shard1.limb_count ||
+        destination_shard0.limb_count != correction_ntt_shard0.limb_count ||
+        destination_shard0.limb_count != correction_ntt_shard1.limb_count)
+    {
+        throw std::invalid_argument(std::string(name) + ": invalid shard shape");
+    }
+    if (add_source_shard0 == nullptr || add_source_shard1 == nullptr ||
+        add_source_shard0->ptr == nullptr || add_source_shard1->ptr == nullptr)
+    {
+        throw std::invalid_argument(
+            std::string(name) + ": add-source shards are required");
+    }
+    if (add_source_shard0->device_id != destination_shard0.device_id ||
+        add_source_shard1->device_id != destination_shard1.device_id ||
+        add_source_shard0->limb_begin != 0 ||
+        add_source_shard1->limb_begin != 0 ||
+        add_source_shard0->limb_count < destination_shard0.limb_count ||
+        add_source_shard1->limb_count < destination_shard1.limb_count ||
+        add_source_shard0->coeff_begin != 0 ||
+        add_source_shard1->coeff_begin != 0 ||
+        add_source_shard0->coeff_count != degree ||
+        add_source_shard1->coeff_count != degree)
+    {
+        throw std::invalid_argument(
+            std::string(name) + ": add-source shard placement mismatch");
+    }
+    const std::size_t destination_q_count = destination_shard0.limb_count;
+    if (parameter_shard.limb_begin != 0 ||
+        destination_q_count + 2 != parameter_shard.hybrid_base_q_count ||
+        parameter_shard.inv_q_last_two_product_mod_q.size() <
+            destination_q_count)
+    {
+        throw std::invalid_argument(
+            std::string(name) + ": rescale_x2 constants mismatch");
+    }
+
+    const std::size_t values_per_component =
+        destination_q_count * degree;
+    const std::size_t total = values_per_component * 2;
+    if (total == 0)
+    {
+        return;
+    }
+
+    gpu_check_cuda(
+        cudaSetDevice(destination_shard0.device_id),
+        "launch_hybrid_apply_moddown_ntt_add_back_rescale_x2 cudaSetDevice");
+
+    constexpr int block_size = 256;
+    const int grid_size = static_cast<int>(
+        (total + block_size - 1) / block_size);
+    hybrid_apply_moddown_ntt_add_back_rescale_x2_two_components_kernel
+        <<<grid_size, block_size>>>(
+            destination_shard0.ptr,
+            destination_shard1.ptr,
+            add_source_shard0->ptr,
+            add_source_shard1->ptr,
+            correction_ntt_shard0.ptr,
+            correction_ntt_shard1.ptr,
+            accum_q0,
+            accum_q1,
+            converted_q0,
+            converted_q1,
+            parameter_shard.rns_primes.data(),
+            parameter_shard.rns_modulus_constants.data(),
+            parameter_shard.hybrid_inv_p_mod_q.data(),
+            parameter_shard.inv_q_last_two_product_mod_q.data(),
+            destination_q_count,
+            degree,
+            checked_log2_degree(degree, name));
+    gpu_check_cuda(
+        cudaGetLastError(),
+        "launch_hybrid_apply_moddown_ntt_add_back_rescale_x2 kernel launch");
 }
 
 void launch_apply_galois_ntt_poly_shard(
