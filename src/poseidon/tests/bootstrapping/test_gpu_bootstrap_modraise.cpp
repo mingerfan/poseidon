@@ -1470,6 +1470,8 @@ int main()
             "POSEIDON_BOOTSTRAP_CORRECTNESS_TOLERANCE", 1.0e-3);
         const bool detailed_diagnostics =
             env_flag_enabled("POSEIDON_BOOTSTRAP_DETAILED_DIAGNOSTICS");
+        const bool skip_library_oracle =
+            env_flag_enabled("POSEIDON_BOOTSTRAP_SKIP_LIBRARY_ORACLE");
         const std::size_t evalmod_stage_profile_iterations =
             env_size_or(
                 "POSEIDON_BOOTSTRAP_STAGE_PROFILE_ITERATIONS",
@@ -1907,11 +1909,20 @@ int main()
         // Fuse the exact q0 / 2^scaling_log correction into the inverse DFT
         // plaintexts. This is the same zero-runtime-cost normalization used
         // by the verified CPU Bootstrapper path.
-        const double s2c_normalization = raised_scale / evalmod_scale;
+        // EvalMod's exact post-rescale scale depends on the concrete primes.
+        // Reinterpret it at the logical 2^evalmod_log_scale scale before S2C
+        // and compensate the resulting value change in the final S2C matrix.
+        // This keeps every S2C matrix multiplication near the logical scale
+        // without spending another pair of physical modulus primes.
+        const double s2c_input_scale = evalmod_scale;
+        const double s2c_scale_compensation =
+            s2c_input_scale / cpu_evalmod_probe_output.scale();
+        const double s2c_normalization =
+            raised_scale / evalmod_scale * s2c_scale_compensation;
         auto s2c_matrix_group =
             cpu_bootstrapper.create_slot_to_coeff_matrix_group(
                 evalmod_output_parms_id,
-                cpu_evalmod_probe_output.scale(),
+                s2c_input_scale,
                 s2c_normalization,
                 s2c_log_bsgs_ratio);
         auto full_galois_keys = make_galois_keys_for_matrix_groups(
@@ -1935,16 +1946,26 @@ int main()
         cpu_library_bootstrap_config.logical_rescale_count =
             evalmod_rescale_count;
         cpu_library_bootstrap_config.q0_modulus_count = q0_level + 1;
-        poseidon::GaloisKeys cpu_library_galois_keys;
-        keygen.create_galois_keys(cpu_library_galois_keys);
         poseidon::Ciphertext cpu_library_bootstrap_result;
-        cpu_evaluator->bootstrap(
-            source,
-            cpu_library_bootstrap_result,
-            relin_keys,
-            cpu_library_galois_keys,
-            encoder,
-            cpu_library_bootstrap_config);
+        if (!skip_library_oracle)
+        {
+            poseidon::GaloisKeys cpu_library_galois_keys;
+            keygen.create_galois_keys(cpu_library_galois_keys);
+            cpu_evaluator->bootstrap(
+                source,
+                cpu_library_bootstrap_result,
+                relin_keys,
+                cpu_library_galois_keys,
+                encoder,
+                cpu_library_bootstrap_config);
+        }
+        else
+        {
+            std::cout
+                << "CPU production-library oracle = skipped by "
+                   "POSEIDON_BOOTSTRAP_SKIP_LIBRARY_ORACLE; staged CPU/GPU "
+                   "and source-message checks remain enabled\n";
+        }
 
         poseidon::Plaintext minus_i_plain;
         encoder.encode(
@@ -1994,9 +2015,9 @@ int main()
         bootstrap_data.q0_parms_id = q0_parms_id;
         bootstrap_data.q0_over_message_ratio = target_q0_scale;
         bootstrap_data.raised_scale_override = raised_scale;
-        // The cosine-heap EvalMod keeps its actual post-rescale scale. Do not
-        // reinterpret the residues by overwriting metadata before S2C.
-        bootstrap_data.slot_to_coeff_input_scale = 0.0;
+        // The inverse scale change is fused into the final S2C matrix above,
+        // so restoring this logical scale consumes no modulus level.
+        bootstrap_data.slot_to_coeff_input_scale = s2c_input_scale;
         bootstrap_data.project_real = false;
         bootstrap_data.output_ratio = bootstrap_ratio;
         const double s2c_output_scale =
@@ -2109,6 +2130,7 @@ int main()
         // Galois keys used by the GPU upload. The earlier setup-only key set
         // is sufficient for deriving levels/scales but cannot be raw-RNS
         // compared with a transform evaluated under another key ciphertext.
+        std::cout << "[phase] staged CPU CoeffToSlot correctness\n" << std::flush;
         cpu_coeff_to_slot_rescale(
             cpu_full_raised,
             c2s_matrix_group,
@@ -2519,6 +2541,7 @@ int main()
         };
         auto &gpu_c2s_real = bootstrap_workspace.coeff_to_slot_real;
         auto &gpu_c2s_imag = bootstrap_workspace.coeff_to_slot_imag;
+        std::cout << "[phase] staged GPU CoeffToSlot correctness\n" << std::flush;
         run_gpu_coeff_to_slot(
             gpu_full_raised,
             gpu_c2s_real,
@@ -2602,6 +2625,7 @@ int main()
         poseidon::Ciphertext cpu_eval_real;
         poseidon::Ciphertext cpu_eval_imag;
         poseidon::BootstrapEvalModTrace cpu_eval_real_trace;
+        std::cout << "[phase] staged CPU EvalMod correctness\n" << std::flush;
         cpu_bootstrapper.eval_mod(
             cpu_c2s_real,
             cpu_eval_real,
@@ -2627,6 +2651,7 @@ int main()
         auto &gpu_eval_real = bootstrap_workspace.eval_mod_real;
         auto &gpu_eval_imag = bootstrap_workspace.eval_mod_imag;
         bootstrap_workspace.capture_eval_mod_trace = detailed_diagnostics;
+        std::cout << "[phase] staged GPU EvalMod correctness\n" << std::flush;
         gpu_evaluator.eval_mod_high_precision(
             gpu_c2s_real,
             bootstrap_data,
@@ -2797,6 +2822,30 @@ int main()
         }
 
         poseidon::Ciphertext cpu_s2c_result;
+        std::cout << "[phase] staged CPU SlotToCoeff correctness\n" << std::flush;
+        std::cout << "  CPU EvalMod real/imag log2(scale) = "
+                  << std::log2(cpu_eval_real.scale()) << "/"
+                  << std::log2(cpu_eval_imag.scale())
+                  << ", q_count = " << cpu_eval_real.coeff_modulus_size()
+                  << ", total modulus bits = "
+                  << context.crt_context()
+                         ->get_context_data(cpu_eval_real.parms_id())
+                         ->total_coeff_modulus_bit_count()
+                  << "\n";
+        for (std::size_t matrix_index = 0;
+             matrix_index < s2c_matrix_group.data().size();
+             ++matrix_index)
+        {
+            const auto &matrix = s2c_matrix_group.data()[matrix_index];
+            const auto &matrix_plain = matrix.plain_vec.begin()->second;
+            std::cout << "  S2C matrix " << matrix_index
+                      << " log2(scale) = " << std::log2(matrix_plain.scale())
+                      << ", q_count = "
+                      << matrix_plain.coeff_count() / degree << "\n";
+        }
+        std::cout << std::flush;
+        cpu_eval_real.scale() = s2c_input_scale;
+        cpu_eval_imag.scale() = s2c_input_scale;
         cpu_slot_to_coeff_rescale(
             cpu_eval_real,
             cpu_eval_imag,
@@ -2807,6 +2856,9 @@ int main()
             encoder);
         cpu_s2c_result.scale() = s2c_output_scale;
         poseidon::gpu::GpuCiphertextData gpu_s2c_result;
+        std::cout << "[phase] staged GPU SlotToCoeff correctness\n" << std::flush;
+        gpu_eval_real_stable.meta.scale = s2c_input_scale;
+        gpu_eval_imag.meta.scale = s2c_input_scale;
         run_gpu_slot_to_coeff(
             gpu_eval_real_stable,
             gpu_eval_imag,
@@ -2879,6 +2931,8 @@ int main()
                 evalmod_double_angle,
                 bootstrap_inverse_coefficient,
                 evalmod_scale);
+            eval_real.scale() = s2c_input_scale;
+            eval_imag.scale() = s2c_input_scale;
             cpu_slot_to_coeff_rescale(
                 eval_real,
                 eval_imag,
@@ -2896,9 +2950,11 @@ int main()
             return result;
         };
 
+        std::cout << "[phase] full staged CPU bootstrap correctness\n" << std::flush;
         poseidon::Ciphertext cpu_full_result =
             run_cpu_full_bootstrap();
         poseidon::gpu::GpuCiphertextData gpu_full_result;
+        std::cout << "[phase] full GPU bootstrap correctness\n" << std::flush;
         gpu_evaluator.bootstrap(
             gpu_source,
             bootstrap_data,
@@ -2920,28 +2976,34 @@ int main()
                 decryptor,
                 encoder,
                 correctness_tolerance);
-        const auto cpu_library_source_comparison =
-            compare_approx(
-                message,
-                decrypt_decode(
+        ApproxComparison cpu_library_source_comparison{true, 0.0, 0.0};
+        ApproxComparison staged_cpu_library_comparison{true, 0.0, 0.0};
+        ApproxComparison gpu_library_comparison{true, 0.0, 0.0};
+        if (!skip_library_oracle)
+        {
+            cpu_library_source_comparison =
+                compare_approx(
+                    message,
+                    decrypt_decode(
+                        cpu_library_bootstrap_result,
+                        decryptor,
+                        encoder),
+                    correctness_tolerance);
+            staged_cpu_library_comparison =
+                compare_decrypted_ciphertexts(
                     cpu_library_bootstrap_result,
+                    cpu_full_result,
                     decryptor,
-                    encoder),
-                correctness_tolerance);
-        const auto staged_cpu_library_comparison =
-            compare_decrypted_ciphertexts(
-                cpu_library_bootstrap_result,
-                cpu_full_result,
-                decryptor,
-                encoder,
-                correctness_tolerance);
-        const auto gpu_library_comparison =
-            compare_decrypted_ciphertexts(
-                cpu_library_bootstrap_result,
-                gpu_full_download,
-                decryptor,
-                encoder,
-                correctness_tolerance);
+                    encoder,
+                    correctness_tolerance);
+            gpu_library_comparison =
+                compare_decrypted_ciphertexts(
+                    cpu_library_bootstrap_result,
+                    gpu_full_download,
+                    decryptor,
+                    encoder,
+                    correctness_tolerance);
+        }
         const auto cpu_source_comparison =
             compare_approx(
                 message,

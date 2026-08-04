@@ -9,3 +9,12 @@ build*/
 .claude/
 compile_commands.json
 stubs/
+
+# Generated bootstrap benchmark and Nsight Systems results.
+bootstrap*.log
+nsys*.log
+nsys_reports/
+*.nsys-rep
+*.qdrep
+*.qdstrm
+*workspace

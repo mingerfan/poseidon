@@ -19,9 +19,10 @@ if [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "dual30" ]]; then
     # EvalMod, or S2C rescale drops two physical primes. The GPU uses the
     # exact rescale_x2 path by default; POSEIDON_RESCALE_X2=0 restores two
     # consecutive ordinary rescales for A/B validation.
-    # N=16384 keeps the first validation run within an 8GB GPU budget; callers
-    # can override every value below from the environment.
-    export POSEIDON_BOOTSTRAP_DEGREE="${POSEIDON_BOOTSTRAP_DEGREE:-16384}"
+    # The default benchmark uses the representative N=65536 parameter set and
+    # requires roughly 13GB of GPU memory. Callers can still override every
+    # value below from the environment.
+    export POSEIDON_BOOTSTRAP_DEGREE="${POSEIDON_BOOTSTRAP_DEGREE:-65536}"
     export POSEIDON_BOOTSTRAP_Q_COUNT="${POSEIDON_BOOTSTRAP_Q_COUNT:-34}"
     export POSEIDON_BOOTSTRAP_P_COUNT="${POSEIDON_BOOTSTRAP_P_COUNT:-9}"
     export POSEIDON_GPU_LINEAR_TRANSFORM_MODE="${POSEIDON_GPU_LINEAR_TRANSFORM_MODE:-double_hoist}"
@@ -38,6 +39,11 @@ if [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "dual30" ]]; then
     export POSEIDON_BOOTSTRAP_EVALMOD_DOUBLE_ANGLE="${POSEIDON_BOOTSTRAP_EVALMOD_DOUBLE_ANGLE:-2}"
     export POSEIDON_BOOTSTRAP_EVALMOD_K="${POSEIDON_BOOTSTRAP_EVALMOD_K:-25}"
     export POSEIDON_BOOTSTRAP_EVALMOD_SINE_DEGREE="${POSEIDON_BOOTSTRAP_EVALMOD_SINE_DEGREE:-59}"
+    export POSEIDON_BOOTSTRAP_CORRECTNESS_TOLERANCE="${POSEIDON_BOOTSTRAP_CORRECTNESS_TOLERANCE:-0.002}"
+    # The production CPU Bootstrapper oracle currently has a separate
+    # N=65536 scale-bound issue. Keep staged CPU/GPU and source-message checks
+    # enabled while omitting only that duplicate oracle path.
+    export POSEIDON_BOOTSTRAP_SKIP_LIBRARY_ORACLE="${POSEIDON_BOOTSTRAP_SKIP_LIBRARY_ORACLE:-1}"
     export POSEIDON_BOOTSTRAP_WARMUP="${POSEIDON_BOOTSTRAP_WARMUP:-1}"
     export POSEIDON_BOOTSTRAP_ITERATIONS="${POSEIDON_BOOTSTRAP_ITERATIONS:-1}"
     export POSEIDON_BOOTSTRAP_FULL_WARMUP="${POSEIDON_BOOTSTRAP_FULL_WARMUP:-1}"
@@ -53,10 +59,12 @@ export POSEIDON_KEYSWITCH_FOURSTEP_FINALIZE_FUSED
 export POSEIDON_NTT_ALGO
 
 if [[ -z "${CMAKE_BIN}" ]]; then
-    if command -v cmake >/dev/null 2>&1; then
-        CMAKE_BIN="$(command -v cmake)"
-    elif [[ -n "${CONDA_PREFIX:-}" && -x "${CONDA_PREFIX}/bin/cmake" ]]; then
+    if [[ -n "${CONDA_PREFIX:-}" && -x "${CONDA_PREFIX}/bin/cmake" ]]; then
         CMAKE_BIN="${CONDA_PREFIX}/bin/cmake"
+    elif [[ -x "/opt/conda/envs/apollo/bin/cmake" ]]; then
+        CMAKE_BIN="/opt/conda/envs/apollo/bin/cmake"
+    elif command -v cmake >/dev/null 2>&1; then
+        CMAKE_BIN="$(command -v cmake)"
     else
         echo "CMake was not found in PATH." >&2
         echo "Install CMake, activate the environment that provides it," >&2

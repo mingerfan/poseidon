@@ -109,7 +109,7 @@ if(POSEIDON_GPU_BOOTSTRAPPING_ENABLE_GPU_TESTS)
             $<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>
     )
     set_target_properties(test_gpu_bootstrap_modraise PROPERTIES
-        CUDA_ARCHITECTURES 75)
+        CUDA_ARCHITECTURES 70)
 
     add_test(
         NAME test_gpu_bootstrap_modraise

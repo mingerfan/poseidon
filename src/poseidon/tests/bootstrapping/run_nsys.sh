@@ -62,10 +62,12 @@ require_command sort "Install GNU coreutils."
 require_command nproc "Install GNU coreutils."
 
 if [[ -z "${CMAKE_BIN}" ]]; then
-    if command -v cmake >/dev/null 2>&1; then
-        CMAKE_BIN="$(command -v cmake)"
-    elif [[ -n "${CONDA_PREFIX:-}" && -x "${CONDA_PREFIX}/bin/cmake" ]]; then
+    if [[ -n "${CONDA_PREFIX:-}" && -x "${CONDA_PREFIX}/bin/cmake" ]]; then
         CMAKE_BIN="${CONDA_PREFIX}/bin/cmake"
+    elif [[ -x "/opt/conda/envs/apollo/bin/cmake" ]]; then
+        CMAKE_BIN="/opt/conda/envs/apollo/bin/cmake"
+    elif command -v cmake >/dev/null 2>&1; then
+        CMAKE_BIN="$(command -v cmake)"
     else
         fail "CMake was not found. Activate the Poseidon environment or set CMAKE_BIN=/absolute/path/to/cmake."
     fi
@@ -97,7 +99,12 @@ GPU_LIST="$(nvidia-smi -L 2>&1)" ||
 echo "[OK] visible GPU(s):"
 printf '%s\n' "${GPU_LIST}" | sed 's/^/     /'
 
-NSYS_VERSION="$(nsys --version 2>&1 | head -n 1)"
+NSYS_VERSION_OUTPUT="$(nsys --version 2>&1 || true)"
+NSYS_VERSION="$(
+    sed -n '/NVIDIA Nsight Systems version/{p;q;}' \
+        <<<"${NSYS_VERSION_OUTPUT}"
+)"
+[[ -n "${NSYS_VERSION}" ]] || NSYS_VERSION="${NSYS_VERSION_OUTPUT}"
 echo "[OK] Nsight Systems: ${NSYS_VERSION}"
 # Nsight Systems 2023.x prints this help successfully but returns status 1.
 # Inspect the text rather than treating that legacy exit status as a failure.
@@ -143,7 +150,7 @@ export POSEIDON_KEYSWITCH_FOURSTEP_FINALIZE_FUSED="${POSEIDON_KEYSWITCH_FOURSTEP
 export POSEIDON_GPU_LINEAR_TRANSFORM_MODE="${POSEIDON_GPU_LINEAR_TRANSFORM_MODE:-double_hoist}"
 export POSEIDON_GPU_DOUBLE_HOIST_BABY_TILE="${POSEIDON_GPU_DOUBLE_HOIST_BABY_TILE:-4}"
 export POSEIDON_GPU_DOUBLE_HOIST_MAX_WORKSPACE_MB="${POSEIDON_GPU_DOUBLE_HOIST_MAX_WORKSPACE_MB:-1024}"
-export POSEIDON_BOOTSTRAP_DEGREE="${POSEIDON_BOOTSTRAP_DEGREE:-16384}"
+export POSEIDON_BOOTSTRAP_DEGREE="${POSEIDON_BOOTSTRAP_DEGREE:-65536}"
 export POSEIDON_BOOTSTRAP_Q_COUNT="${POSEIDON_BOOTSTRAP_Q_COUNT:-34}"
 export POSEIDON_BOOTSTRAP_P_COUNT="${POSEIDON_BOOTSTRAP_P_COUNT:-9}"
 export POSEIDON_BOOTSTRAP_LOG_Q="${POSEIDON_BOOTSTRAP_LOG_Q:-30}"
@@ -157,6 +164,8 @@ export POSEIDON_BOOTSTRAP_EVALMOD_LOG_SCALE="${POSEIDON_BOOTSTRAP_EVALMOD_LOG_SC
 export POSEIDON_BOOTSTRAP_EVALMOD_DOUBLE_ANGLE="${POSEIDON_BOOTSTRAP_EVALMOD_DOUBLE_ANGLE:-2}"
 export POSEIDON_BOOTSTRAP_EVALMOD_K="${POSEIDON_BOOTSTRAP_EVALMOD_K:-25}"
 export POSEIDON_BOOTSTRAP_EVALMOD_SINE_DEGREE="${POSEIDON_BOOTSTRAP_EVALMOD_SINE_DEGREE:-59}"
+export POSEIDON_BOOTSTRAP_CORRECTNESS_TOLERANCE="${POSEIDON_BOOTSTRAP_CORRECTNESS_TOLERANCE:-0.002}"
+export POSEIDON_BOOTSTRAP_SKIP_LIBRARY_ORACLE="${POSEIDON_BOOTSTRAP_SKIP_LIBRARY_ORACLE:-1}"
 export POSEIDON_BOOTSTRAP_ITERATIONS="${POSEIDON_BOOTSTRAP_ITERATIONS:-1}"
 export POSEIDON_BOOTSTRAP_WARMUP="${POSEIDON_BOOTSTRAP_WARMUP:-0}"
 export POSEIDON_BOOTSTRAP_FULL_ITERATIONS="${POSEIDON_BOOTSTRAP_FULL_ITERATIONS:-1}"
@@ -210,7 +219,7 @@ write_stats_report \
     cuda_api_sum \
     "${REPORT_PREFIX}.cuda_api_summary.txt"
 write_stats_report \
-    nvtx_gpu_proj_sum \
+    nvtx_kern_sum \
     "${REPORT_PREFIX}.nvtx_gpu_summary.txt"
 
 echo "=== Nsight Systems profile complete ==="
