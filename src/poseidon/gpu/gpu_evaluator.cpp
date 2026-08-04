@@ -1176,29 +1176,49 @@ void GpuEvaluator::multiply(
     const std::size_t result_components =
         left_ciphertext.size() + right_ciphertext.size() - 1;
 
-    GpuCiphertextData result =
-        GpuCiphertextData::allocate_single_device_sharded(
+    GpuCiphertextMeta result_meta = left_ciphertext.meta;
+    result_meta.component_count = result_components;
+    result_meta.is_ntt_form = true;
+    result_meta.scale =
+        left_ciphertext.meta.scale * right_ciphertext.meta.scale;
+
+    if (!(result_meta.scale > 0.0) || !std::isfinite(result_meta.scale))
+    {
+        throw std::invalid_argument("GpuEvaluator::multiply: invalid result scale");
+    }
+
+    const bool aliases_input =
+        &destination_ciphertext == &left_ciphertext ||
+        &destination_ciphertext == &right_ciphertext;
+    GpuCiphertextData local_result;
+    GpuCiphertextData *result = &destination_ciphertext;
+    if (aliases_input)
+    {
+        local_result = GpuCiphertextData::allocate_single_device_sharded(
             left_ciphertext.meta.degree,
             left_ciphertext.meta.q_count,
             result_components,
             device_id,
             reference_layout.shards,
             left_ciphertext.meta.p_count);
-
-    result.meta = left_ciphertext.meta;
-    result.meta.component_count = result_components;
-    result.meta.is_ntt_form = true;
-    result.meta.scale =
-        left_ciphertext.meta.scale * right_ciphertext.meta.scale;
-
-    if (!(result.meta.scale > 0.0) || !std::isfinite(result.meta.scale))
+        local_result.meta = result_meta;
+        result = &local_result;
+    }
+    else
     {
-        throw std::invalid_argument("GpuEvaluator::multiply: invalid result scale");
+        prepare_ciphertext_destination(
+            destination_ciphertext,
+            nullptr,
+            nullptr,
+            result_meta,
+            result_components,
+            device_id,
+            reference_layout);
     }
 
     auto left_view = left_ciphertext.make_const_view();
     auto right_view = right_ciphertext.make_const_view();
-    auto destination_view = result.make_view();
+    auto destination_view = result->make_view();
 
     const auto &level_info = params_.get_level(left_ciphertext.meta.parms_id);
 
@@ -1208,7 +1228,10 @@ void GpuEvaluator::multiply(
         right_view,
         level_info);
 
-    destination_ciphertext = std::move(result);
+    if (aliases_input)
+    {
+        destination_ciphertext = std::move(local_result);
+    }
 }
 
 void GpuEvaluator::square(
@@ -1250,35 +1273,56 @@ void GpuEvaluator::square(
 
     const std::size_t result_components =
         source_ciphertext.size() * 2 - 1;
-    GpuCiphertextData result =
-        GpuCiphertextData::allocate_single_device_sharded(
+    GpuCiphertextMeta result_meta = source_ciphertext.meta;
+    result_meta.component_count = result_components;
+    result_meta.is_ntt_form = true;
+    result_meta.scale =
+        source_ciphertext.meta.scale * source_ciphertext.meta.scale;
+    if (!(result_meta.scale > 0.0) || !std::isfinite(result_meta.scale))
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::square: invalid result scale");
+    }
+
+    const bool aliases_input = &destination_ciphertext == &source_ciphertext;
+    GpuCiphertextData local_result;
+    GpuCiphertextData *result = &destination_ciphertext;
+    if (aliases_input)
+    {
+        local_result = GpuCiphertextData::allocate_single_device_sharded(
             source_ciphertext.meta.degree,
             source_ciphertext.meta.q_count,
             result_components,
             device_id,
             reference_layout.shards,
             source_ciphertext.meta.p_count);
-
-    result.meta = source_ciphertext.meta;
-    result.meta.component_count = result_components;
-    result.meta.is_ntt_form = true;
-    result.meta.scale =
-        source_ciphertext.meta.scale * source_ciphertext.meta.scale;
-    if (!(result.meta.scale > 0.0) || !std::isfinite(result.meta.scale))
+        local_result.meta = result_meta;
+        result = &local_result;
+    }
+    else
     {
-        throw std::invalid_argument(
-            "GpuEvaluator::square: invalid result scale");
+        prepare_ciphertext_destination(
+            destination_ciphertext,
+            nullptr,
+            nullptr,
+            result_meta,
+            result_components,
+            device_id,
+            reference_layout);
     }
 
     auto source_view = source_ciphertext.make_const_view();
-    auto destination_view = result.make_view();
+    auto destination_view = result->make_view();
     const auto &level_info =
         params_.get_level(source_ciphertext.meta.parms_id);
     elementwise_handler_.square_ciphertext(
         destination_view,
         source_view,
         level_info);
-    destination_ciphertext = std::move(result);
+    if (aliases_input)
+    {
+        destination_ciphertext = std::move(local_result);
+    }
 }
 
 void GpuEvaluator::rescale(
@@ -1338,32 +1382,56 @@ void GpuEvaluator::rescale(
     destination_shard.coeff_begin = 0;
     destination_shard.coeff_count = source_ciphertext.meta.degree;
 
-    GpuCiphertextData result =
-        GpuCiphertextData::allocate_single_device_sharded(
+    GpuCiphertextMeta result_meta = source_ciphertext.meta;
+    result_meta.parms_id = destination_level_info.parms_id;
+    result_meta.q_count = destination_q_count;
+    result_meta.p_count = 0;
+    result_meta.component_count = source_ciphertext.size();
+    result_meta.is_ntt_form = true;
+    result_meta.scale =
+        source_ciphertext.meta.scale /
+        static_cast<double>(source_level_info.shards.front().q_last);
+
+    if (!(result_meta.scale > 0.0) || !std::isfinite(result_meta.scale))
+    {
+        throw std::invalid_argument("GpuEvaluator::rescale: invalid result scale");
+    }
+
+    GpuRNSPoly reference_layout;
+    reference_layout.degree = source_ciphertext.meta.degree;
+    reference_layout.q_count = destination_q_count;
+    reference_layout.p_count = 0;
+    reference_layout.shards.push_back(destination_shard);
+
+    const bool aliases_input = &destination_ciphertext == &source_ciphertext;
+    GpuCiphertextData local_result;
+    GpuCiphertextData *result = &destination_ciphertext;
+    if (aliases_input)
+    {
+        local_result = GpuCiphertextData::allocate_single_device_sharded(
             source_ciphertext.meta.degree,
             destination_q_count,
             source_ciphertext.size(),
             device_id,
             std::vector<GpuPolyShard>{destination_shard},
             0);
-
-    result.meta = source_ciphertext.meta;
-    result.meta.parms_id = destination_level_info.parms_id;
-    result.meta.q_count = destination_q_count;
-    result.meta.p_count = 0;
-    result.meta.component_count = source_ciphertext.size();
-    result.meta.is_ntt_form = true;
-    result.meta.scale =
-        source_ciphertext.meta.scale /
-        static_cast<double>(source_level_info.shards.front().q_last);
-
-    if (!(result.meta.scale > 0.0) || !std::isfinite(result.meta.scale))
+        local_result.meta = result_meta;
+        result = &local_result;
+    }
+    else
     {
-        throw std::invalid_argument("GpuEvaluator::rescale: invalid result scale");
+        prepare_ciphertext_destination(
+            destination_ciphertext,
+            nullptr,
+            nullptr,
+            result_meta,
+            source_ciphertext.size(),
+            device_id,
+            reference_layout);
     }
 
     auto source_view = source_ciphertext.make_const_view();
-    auto destination_view = result.make_view();
+    auto destination_view = result->make_view();
 
     modswitch_handler_.rescale_ciphertext(
         destination_view,
@@ -1371,7 +1439,10 @@ void GpuEvaluator::rescale(
         source_level_info,
         destination_level_info);
 
-    destination_ciphertext = std::move(result);
+    if (aliases_input)
+    {
+        destination_ciphertext = std::move(local_result);
+    }
 }
 
 void GpuEvaluator::rescale_x2(
@@ -1416,38 +1487,66 @@ void GpuEvaluator::rescale_x2(
     destination_shard.coeff_begin = 0;
     destination_shard.coeff_count = source_ciphertext.meta.degree;
 
-    GpuCiphertextData result =
-        GpuCiphertextData::allocate_single_device_sharded(
+    GpuCiphertextMeta result_meta = source_ciphertext.meta;
+    result_meta.parms_id = destination_level_info.parms_id;
+    result_meta.q_count = destination_q_count;
+    result_meta.p_count = 0;
+    result_meta.component_count = 2;
+    result_meta.is_ntt_form = true;
+    result_meta.scale =
+        source_ciphertext.meta.scale /
+        static_cast<double>(
+            source_level_info.shards.front().q_last_two_product);
+    if (!(result_meta.scale > 0.0) || !std::isfinite(result_meta.scale))
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::rescale_x2: invalid result scale");
+    }
+
+    GpuRNSPoly reference_layout;
+    reference_layout.degree = source_ciphertext.meta.degree;
+    reference_layout.q_count = destination_q_count;
+    reference_layout.p_count = 0;
+    reference_layout.shards.push_back(destination_shard);
+
+    const bool aliases_input = &destination_ciphertext == &source_ciphertext;
+    GpuCiphertextData local_result;
+    GpuCiphertextData *result = &destination_ciphertext;
+    if (aliases_input)
+    {
+        local_result = GpuCiphertextData::allocate_single_device_sharded(
             source_ciphertext.meta.degree,
             destination_q_count,
             2,
             device_id,
             std::vector<GpuPolyShard>{destination_shard},
             0);
-    result.meta = source_ciphertext.meta;
-    result.meta.parms_id = destination_level_info.parms_id;
-    result.meta.q_count = destination_q_count;
-    result.meta.p_count = 0;
-    result.meta.component_count = 2;
-    result.meta.is_ntt_form = true;
-    result.meta.scale =
-        source_ciphertext.meta.scale /
-        static_cast<double>(
-            source_level_info.shards.front().q_last_two_product);
-    if (!(result.meta.scale > 0.0) || !std::isfinite(result.meta.scale))
+        local_result.meta = result_meta;
+        result = &local_result;
+    }
+    else
     {
-        throw std::invalid_argument(
-            "GpuEvaluator::rescale_x2: invalid result scale");
+        prepare_ciphertext_destination(
+            destination_ciphertext,
+            nullptr,
+            nullptr,
+            result_meta,
+            2,
+            device_id,
+            reference_layout);
     }
 
     auto source_view = source_ciphertext.make_const_view();
-    auto destination_view = result.make_view();
+    auto destination_view = result->make_view();
     modswitch_handler_.rescale_ciphertext_x2(
         destination_view,
         source_view,
         source_level_info,
         destination_level_info);
-    destination_ciphertext = std::move(result);
+    if (aliases_input)
+    {
+        destination_ciphertext = std::move(local_result);
+    }
 }
 
 void GpuEvaluator::rescale_many(
@@ -1896,23 +1995,40 @@ void GpuEvaluator::relinearize(
         throw std::invalid_argument("GpuEvaluator::relinearize: shard layout mismatch");
     }
 
-    /* 分配临时结果缓存，只允许2个分量存在 */
-    GpuCiphertextData result =
-        GpuCiphertextData::allocate_single_device_sharded(
+    /* 输出仍在同一层级，但重线性化后只保留2个密文分量 */
+    GpuCiphertextMeta result_meta = source_ciphertext.meta;
+    result_meta.component_count = 2;
+    result_meta.is_ntt_form = true;
+
+    const bool aliases_input = &destination_ciphertext == &source_ciphertext;
+    GpuCiphertextData local_result;
+    GpuCiphertextData *result = &destination_ciphertext;
+    if (aliases_input)
+    {
+        local_result = GpuCiphertextData::allocate_single_device_sharded(
             source_ciphertext.meta.degree,
             source_ciphertext.meta.q_count,
             2,
             device_id,
             reference_layout.shards,
             source_ciphertext.meta.p_count);
-
-    /* 输出仍在同一层级，但重线性化后只保留2个密文分量 */
-    result.meta = source_ciphertext.meta;
-    result.meta.component_count = 2;
-    result.meta.is_ntt_form = true;
+        local_result.meta = result_meta;
+        result = &local_result;
+    }
+    else
+    {
+        prepare_ciphertext_destination(
+            destination_ciphertext,
+            nullptr,
+            nullptr,
+            result_meta,
+            2,
+            device_id,
+            reference_layout);
+    }
 
     auto source_view = source_ciphertext.make_const_view();
-    auto destination_view = result.make_view();
+    auto destination_view = result->make_view();
     auto relin_keys_view =
         relin_keys.make_const_view(source_ciphertext.meta.q_count);
     const auto &level_info = params_.get_level(source_ciphertext.meta.parms_id);
@@ -1925,7 +2041,10 @@ void GpuEvaluator::relinearize(
         relin_keys,
         level_info);
 
-    destination_ciphertext = std::move(result);
+    if (aliases_input)
+    {
+        destination_ciphertext = std::move(local_result);
+    }
 }
 
 /*顶层旋转操作入口*/

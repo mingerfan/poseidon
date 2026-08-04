@@ -422,6 +422,73 @@ __global__ void build_q_last_two_rescale_correction_batch_kernel(
             : remainder_mod_qi;
 }
 
+__global__ void build_q_last_two_rescale_correction_batch_fused_kernel(
+    GpuWord *correction,
+    const GpuWord *dropped_coefficients,
+    const GpuWord *rns_primes,
+    const GpuWide *rns_modulus_constants,
+    const GpuWord *q_last_two_product_mod_q,
+    GpuWord q_second_last,
+    GpuWord q_last,
+    GpuWord inv_q_last_mod_q_second_last,
+    GpuWide q_second_last_barrett,
+    GpuWide half_q_last_two_product,
+    std::size_t parameter_limb_begin,
+    std::size_t component_count,
+    std::size_t destination_q_count,
+    std::size_t degree)
+{
+    const std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    const std::size_t values_per_component = destination_q_count * degree;
+    const std::size_t total = component_count * values_per_component;
+    if (tid >= total)
+    {
+        return;
+    }
+
+    const std::size_t component = tid / values_per_component;
+    const std::size_t local = tid % values_per_component;
+    const std::size_t q_limb = local / degree;
+    const std::size_t coeff = local % degree;
+    const std::size_t dropped_offset = component * 2 * degree;
+    const GpuWord residue_second_last =
+        dropped_coefficients[dropped_offset + coeff];
+    const GpuWord residue_last =
+        dropped_coefficients[dropped_offset + degree + coeff];
+
+    const GpuWord residue_last_mod_second_last =
+        barrett_reduce_u64_u32(
+            static_cast<GpuWide>(residue_last),
+            q_second_last,
+            q_second_last_barrett);
+    const GpuWord delta = sub_mod(
+        residue_second_last,
+        residue_last_mod_second_last,
+        q_second_last);
+    const GpuWord multiplier = mul_mod(
+        delta,
+        inv_q_last_mod_q_second_last,
+        q_second_last,
+        q_second_last_barrett);
+    const GpuWide remainder =
+        static_cast<GpuWide>(residue_last) +
+        static_cast<GpuWide>(q_last) * multiplier;
+
+    const std::size_t table_limb = q_limb - parameter_limb_begin;
+    const GpuWord qi = rns_primes[table_limb];
+    const GpuWide barrett_ratio = rns_modulus_constants[table_limb];
+    const GpuWord remainder_mod_qi =
+        barrett_reduce_u64_u32(remainder, qi, barrett_ratio);
+
+    correction[tid] =
+        remainder > half_q_last_two_product
+            ? sub_mod(
+                  remainder_mod_qi,
+                  q_last_two_product_mod_q[q_limb],
+                  qi)
+            : remainder_mod_qi;
+}
+
 __global__ void apply_q_last_two_rescale_correction_batch2_kernel(
     GpuWord *destination0,
     GpuWord *destination1,
@@ -643,6 +710,67 @@ void launch_build_q_last_two_rescale_correction_batch(
     gpu_check_cuda(
         cudaGetLastError(),
         "launch_build_q_last_two_rescale_correction_batch kernel launch");
+}
+
+void launch_build_q_last_two_rescale_correction_batch_fused(
+    GpuWord *correction,
+    const GpuWord *dropped_coefficients,
+    std::size_t component_count,
+    std::size_t destination_q_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    constexpr const char *name =
+        "launch_build_q_last_two_rescale_correction_batch_fused";
+    if (correction == nullptr || dropped_coefficients == nullptr ||
+        component_count == 0 || destination_q_count == 0 || degree == 0)
+    {
+        throw std::invalid_argument(std::string(name) + ": invalid shape");
+    }
+    if (parameter_shard.limb_begin != 0 ||
+        parameter_shard.q_second_last == 0 ||
+        parameter_shard.q_last == 0 ||
+        parameter_shard.q_last_two_product == 0 ||
+        parameter_shard.inv_q_last_mod_q_second_last == 0 ||
+        parameter_shard.q_second_last_modulus_constant == 0 ||
+        parameter_shard.q_last_two_product_mod_q.size() <
+            destination_q_count ||
+        parameter_shard.rns_primes.size() < destination_q_count ||
+        parameter_shard.rns_modulus_constants.size() <
+            destination_q_count)
+    {
+        throw std::invalid_argument(
+            std::string(name) + ": parameter tables do not cover output");
+    }
+
+    gpu_check_cuda(
+        cudaSetDevice(parameter_shard.device_id),
+        "launch_build_q_last_two_rescale_correction_batch_fused cudaSetDevice");
+    constexpr int block_size = 256;
+    const std::size_t total =
+        component_count * destination_q_count * degree;
+    const int grid_size = static_cast<int>(
+        (total + block_size - 1) / block_size);
+    build_q_last_two_rescale_correction_batch_fused_kernel<<<
+        grid_size,
+        block_size>>>(
+        correction,
+        dropped_coefficients,
+        parameter_shard.rns_primes.data(),
+        parameter_shard.rns_modulus_constants.data(),
+        parameter_shard.q_last_two_product_mod_q.data(),
+        parameter_shard.q_second_last,
+        parameter_shard.q_last,
+        parameter_shard.inv_q_last_mod_q_second_last,
+        parameter_shard.q_second_last_modulus_constant,
+        parameter_shard.half_q_last_two_product,
+        parameter_shard.limb_begin,
+        component_count,
+        destination_q_count,
+        degree);
+    gpu_check_cuda(
+        cudaGetLastError(),
+        "launch_build_q_last_two_rescale_correction_batch_fused kernel launch");
 }
 
 void launch_apply_q_last_two_rescale_correction_batch2(

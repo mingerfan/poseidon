@@ -75,6 +75,21 @@ void launch_build_q_last_two_rescale_correction_batch(
     std::size_t degree);
 
 /**
+ * @brief Reconstruct two dropped limbs and build retained-q corrections.
+ *
+ * This is equivalent to launch_reconstruct_q_last_two_centered_remainders
+ * followed by launch_build_q_last_two_rescale_correction_batch, but avoids
+ * the intermediate centered-remainder global buffer and one kernel launch.
+ */
+void launch_build_q_last_two_rescale_correction_batch_fused(
+    GpuWord *correction,
+    const GpuWord *dropped_coefficients,
+    std::size_t component_count,
+    std::size_t destination_q_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+/**
  * @brief Apply one two-prime rescale to two ciphertext components.
  *
  * This batches the final (source-correction)*M^{-1} operation for c0 and c1.

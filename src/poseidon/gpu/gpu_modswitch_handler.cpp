@@ -429,13 +429,11 @@ void GpuModSwitchHandler::ensure_rescale_x2_scratch(
     }
 
     const std::size_t dropped_two_size = component_count * 2 * degree;
-    const std::size_t centered_size = component_count * degree;
     const std::size_t correction_size =
         component_count * destination_q_count * degree;
     const bool need_reallocate =
         rescale_scratch_.device_id != device_id ||
         rescale_scratch_.dropped_two_capacity < dropped_two_size ||
-        rescale_scratch_.centered_remainder_capacity < centered_size ||
         rescale_scratch_.correction_capacity < correction_size;
     if (!need_reallocate)
     {
@@ -453,11 +451,11 @@ void GpuModSwitchHandler::ensure_rescale_x2_scratch(
     }
 
     rescale_scratch_.dropped_two.allocate(dropped_two_size, device_id);
-    rescale_scratch_.centered_remainder.allocate(centered_size, device_id);
     rescale_scratch_.correction.allocate(correction_size, device_id);
     rescale_scratch_.correction_ntt.allocate(correction_size, device_id);
     rescale_scratch_.dropped_two_capacity = dropped_two_size;
-    rescale_scratch_.centered_remainder_capacity = centered_size;
+    rescale_scratch_.centered_remainder = DeviceVector<GpuWide>{};
+    rescale_scratch_.centered_remainder_capacity = 0;
     rescale_scratch_.correction_capacity = correction_size;
     rescale_scratch_.device_id = device_id;
 }
@@ -663,15 +661,9 @@ void GpuModSwitchHandler::rescale_ciphertext_x2(
             "GpuModSwitchHandler::rescale_ciphertext_x2: no parameter shard");
     }
 
-    kernel::launch_reconstruct_q_last_two_centered_remainders(
-        rescale_scratch_.centered_remainder.data(),
-        rescale_scratch_.dropped_two.data(),
-        component_count,
-        *parameter_shard,
-        degree);
-    kernel::launch_build_q_last_two_rescale_correction_batch(
+    kernel::launch_build_q_last_two_rescale_correction_batch_fused(
         rescale_scratch_.correction.data(),
-        rescale_scratch_.centered_remainder.data(),
+        rescale_scratch_.dropped_two.data(),
         component_count,
         destination_q_count,
         *parameter_shard,
