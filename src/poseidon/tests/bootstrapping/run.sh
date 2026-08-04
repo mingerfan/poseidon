@@ -114,6 +114,12 @@ if [[ ! -x "${TEST_BIN}" ]]; then
     exit 1
 fi
 
+if [[ "${POSEIDON_BOOTSTRAP_BUILD_ONLY:-0}" == "1" ]]; then
+    echo "=== Build-only mode complete ==="
+    echo "Test binary: ${TEST_BIN}"
+    exit 0
+fi
+
 echo "=== Run GPU high-precision bootstrap correctness + timing comparison ==="
 echo "Bootstrap profile: ${POSEIDON_BOOTSTRAP_PROFILE}"
 "${TEST_BIN}"
