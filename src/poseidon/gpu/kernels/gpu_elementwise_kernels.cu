@@ -453,6 +453,89 @@ __global__ void multiply_plain_accumulate_two_components_kernel(
         sum >= modulus ? sum - modulus : sum);
 }
 
+__device__ __forceinline__ void add_plain_product_if_present(
+    GpuWord &accumulator,
+    const GpuWord *ciphertext,
+    const GpuWord *plaintext,
+    std::size_t index,
+    GpuWord modulus,
+    GpuWide barrett_ratio)
+{
+    if (ciphertext == nullptr || plaintext == nullptr)
+    {
+        return;
+    }
+    const GpuWord product = barrett_reduce_u64_u32(
+        static_cast<GpuWide>(ciphertext[index]) *
+            static_cast<GpuWide>(plaintext[index]),
+        modulus,
+        barrett_ratio);
+    GpuWide sum =
+        static_cast<GpuWide>(accumulator) + static_cast<GpuWide>(product);
+    if (sum >= modulus)
+    {
+        sum -= modulus;
+    }
+    accumulator = static_cast<GpuWord>(sum);
+}
+
+__global__ void multiply_plain_caccumulate_two_components_4_kernel(
+    GpuWord *destination0,
+    GpuWord *destination1,
+    const GpuWord *ciphertext00,
+    const GpuWord *ciphertext01,
+    const GpuWord *ciphertext02,
+    const GpuWord *ciphertext03,
+    const GpuWord *ciphertext10,
+    const GpuWord *ciphertext11,
+    const GpuWord *ciphertext12,
+    const GpuWord *ciphertext13,
+    const GpuWord *plaintext0,
+    const GpuWord *plaintext1,
+    const GpuWord *plaintext2,
+    const GpuWord *plaintext3,
+    const GpuWord *q_primes,
+    const GpuWide *q_modulus_constants,
+    std::size_t limb_count,
+    std::size_t coeff_count,
+    bool accumulate)
+{
+    const std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    const std::size_t total = limb_count * coeff_count;
+    if (tid >= total)
+    {
+        return;
+    }
+
+    const bool second_component = blockIdx.y != 0;
+    GpuWord *destination =
+        second_component ? destination1 : destination0;
+    const GpuWord *source0 =
+        second_component ? ciphertext10 : ciphertext00;
+    const GpuWord *source1 =
+        second_component ? ciphertext11 : ciphertext01;
+    const GpuWord *source2 =
+        second_component ? ciphertext12 : ciphertext02;
+    const GpuWord *source3 =
+        second_component ? ciphertext13 : ciphertext03;
+
+    const std::size_t local_limb = tid / coeff_count;
+    const GpuWord modulus = q_primes[local_limb];
+    const GpuWide barrett_ratio = q_modulus_constants[local_limb];
+    GpuWord value = accumulate ? destination[tid] : 0;
+
+    add_plain_product_if_present(
+        value, source0, plaintext0, tid, modulus, barrett_ratio);
+    add_plain_product_if_present(
+        value, source1, plaintext1, tid, modulus, barrett_ratio);
+    add_plain_product_if_present(
+        value, source2, plaintext2, tid, modulus, barrett_ratio);
+    add_plain_product_if_present(
+        value, source3, plaintext3, tid, modulus, barrett_ratio);
+
+    destination[tid] = value;
+}
+
 __global__ void multiply_outer_components_kernel(
     GpuWord *destination0,
     GpuWord *destination2,
@@ -1507,6 +1590,120 @@ void launch_multiply_plain_accumulate_two_components(
     gpu_check_cuda(
         cudaGetLastError(),
         "launch_multiply_plain_accumulate_two_components kernel launch");
+    (void)degree;
+}
+
+void launch_multiply_plain_caccumulate_two_components_4(
+    const GpuPolyShardView &destination0,
+    const GpuPolyShardView &destination1,
+    const GpuConstPolyShardView *ciphertexts0,
+    const GpuConstPolyShardView *ciphertexts1,
+    const GpuConstPolyShardView *plaintexts,
+    std::size_t term_count,
+    bool accumulate,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    constexpr const char *name =
+        "launch_multiply_plain_caccumulate_two_components_4";
+    if (term_count == 0 || term_count > 4 ||
+        ciphertexts0 == nullptr || ciphertexts1 == nullptr ||
+        plaintexts == nullptr)
+    {
+        throw std::invalid_argument(
+            std::string(name) + ": invalid term list");
+    }
+
+    const auto same_destination_shape =
+        destination0.device_id == destination1.device_id &&
+        destination0.device_id == parameter_shard.device_id &&
+        destination0.limb_begin == destination1.limb_begin &&
+        destination0.limb_count == destination1.limb_count &&
+        destination0.coeff_begin == destination1.coeff_begin &&
+        destination0.coeff_count == destination1.coeff_count;
+    if (!same_destination_shape || destination0.ptr == nullptr ||
+        destination1.ptr == nullptr)
+    {
+        throw std::invalid_argument(
+            std::string(name) + ": destination shape mismatch");
+    }
+
+    const auto validate_source = [&](const GpuConstPolyShardView &source,
+                                     const char *label) {
+        const bool same_shape =
+            source.device_id == destination0.device_id &&
+            source.limb_begin == destination0.limb_begin &&
+            source.limb_count == destination0.limb_count &&
+            source.coeff_begin == destination0.coeff_begin &&
+            source.coeff_count == destination0.coeff_count &&
+            source.ptr != nullptr;
+        if (!same_shape)
+        {
+            throw std::invalid_argument(
+                std::string(name) + ": " + label + " shape mismatch");
+        }
+    };
+    for (std::size_t i = 0; i < term_count; ++i)
+    {
+        validate_source(ciphertexts0[i], "ciphertext0");
+        validate_source(ciphertexts1[i], "ciphertext1");
+        validate_source(plaintexts[i], "plaintext");
+    }
+
+    if (destination0.limb_begin < parameter_shard.limb_begin)
+    {
+        throw std::invalid_argument(
+            std::string(name) + ": parameter limb range mismatch");
+    }
+    const std::size_t modulus_offset =
+        destination0.limb_begin - parameter_shard.limb_begin;
+    if (modulus_offset + destination0.limb_count >
+            parameter_shard.q_primes.size() ||
+        modulus_offset + destination0.limb_count >
+            parameter_shard.q_modulus_constants.size())
+    {
+        throw std::invalid_argument(
+            std::string(name) + ": modulus table range mismatch");
+    }
+
+    const auto ptr_or_null =
+        [term_count](const GpuConstPolyShardView *views, std::size_t index) {
+            return index < term_count ? views[index].ptr : nullptr;
+        };
+
+    gpu_check_cuda(
+        cudaSetDevice(destination0.device_id),
+        "launch_multiply_plain_caccumulate_two_components_4 cudaSetDevice");
+    constexpr int block_size = 256;
+    const std::size_t total =
+        destination0.limb_count * destination0.coeff_count;
+    const int grid_size = static_cast<int>(
+        (total + block_size - 1) / block_size);
+    multiply_plain_caccumulate_two_components_4_kernel<<<
+        dim3(grid_size, 2),
+        block_size>>>(
+        destination0.ptr,
+        destination1.ptr,
+        ptr_or_null(ciphertexts0, 0),
+        ptr_or_null(ciphertexts0, 1),
+        ptr_or_null(ciphertexts0, 2),
+        ptr_or_null(ciphertexts0, 3),
+        ptr_or_null(ciphertexts1, 0),
+        ptr_or_null(ciphertexts1, 1),
+        ptr_or_null(ciphertexts1, 2),
+        ptr_or_null(ciphertexts1, 3),
+        ptr_or_null(plaintexts, 0),
+        ptr_or_null(plaintexts, 1),
+        ptr_or_null(plaintexts, 2),
+        ptr_or_null(plaintexts, 3),
+        parameter_shard.q_primes.data() + modulus_offset,
+        parameter_shard.q_modulus_constants.data() + modulus_offset,
+        destination0.limb_count,
+        destination0.coeff_count,
+        accumulate);
+    gpu_check_cuda(
+        cudaGetLastError(),
+        "launch_multiply_plain_caccumulate_two_components_4 kernel launch");
     (void)degree;
 }
 

@@ -122,7 +122,12 @@ public:
         const GpuLevelInfo &level_info) const;
 
     /**
-     * @brief destination += ciphertext * plaintext for a size-2 ciphertext.
+     * @brief destination[0..1] += ciphertext[0..1] * plaintext.
+     *
+     * The source ciphertext must have two components. The destination may have
+     * two or more components; only c0/c1 are updated. This lets EvalMod add a
+     * linear leaf into a size-3 multiplication accumulator before
+     * relinearize-rescale, without touching c2.
      */
     void multiply_plain_accumulate_with_ciphertext(
         GpuCiphertextView &destination_view,

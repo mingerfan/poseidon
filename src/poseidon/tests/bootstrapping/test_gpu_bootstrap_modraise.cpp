@@ -1119,6 +1119,10 @@ double time_gpu_ms(std::size_t iterations, Func &&func)
 
 std::string format_ms(double value)
 {
+    if (!std::isfinite(value))
+    {
+        return "SKIP";
+    }
     std::ostringstream stream;
     stream << std::fixed << std::setprecision(3) << value;
     return stream.str();
@@ -1126,7 +1130,8 @@ std::string format_ms(double value)
 
 std::string format_speedup(double cpu_ms, double gpu_ms)
 {
-    if (!(gpu_ms > 0.0))
+    if (!std::isfinite(cpu_ms) || !std::isfinite(gpu_ms) ||
+        !(gpu_ms > 0.0))
     {
         return "n/a";
     }
@@ -1277,6 +1282,8 @@ void print_bootstrap_timing_table(
                  "EvalMod stage-trace snapshots/download, ciphertext download/compare\n";
     std::cout << "timing order: CPU warmup -> CPU timing; "
                  "GPU warmup -> GPU timing, independently for every operation\n";
+    std::cout << "GPU-only timing mode: set POSEIDON_BOOTSTRAP_GPU_ONLY_TIMING=1 "
+                 "to skip CPU timed benchmarks while keeping CPU setup/probes\n";
     std::cout << "note: GPU rotate/key-switch reads zero-copy Q-prefix/P-tail key views\n";
 }
 
@@ -1472,6 +1479,8 @@ int main()
             env_flag_enabled("POSEIDON_BOOTSTRAP_DETAILED_DIAGNOSTICS");
         const bool skip_library_oracle =
             env_flag_enabled("POSEIDON_BOOTSTRAP_SKIP_LIBRARY_ORACLE");
+        const bool gpu_only_timing =
+            env_flag_enabled("POSEIDON_BOOTSTRAP_GPU_ONLY_TIMING");
         const std::size_t evalmod_stage_profile_iterations =
             env_size_or(
                 "POSEIDON_BOOTSTRAP_STAGE_PROFILE_ITERATIONS",
@@ -1602,6 +1611,8 @@ int main()
         std::cout << "full_warmup     = " << full_warmup << "\n";
         std::cout << "stage_profile   = "
                   << evalmod_stage_profile_iterations << " iteration(s)\n";
+        std::cout << "timing_mode     = "
+                  << (gpu_only_timing ? "GPU-only" : "CPU/GPU") << "\n";
         std::cout << "diagnostics     = "
                   << (detailed_diagnostics ? "detailed" : "summary") << "\n";
 
@@ -1663,27 +1674,33 @@ int main()
             return EXIT_FAILURE;
         }
 
-        for (std::size_t i = 0; i < warmup; ++i)
+        if (!gpu_only_timing)
         {
-            (void)cpu_bootstrap_prepare_and_raise(
-                source,
-                *cpu_evaluator,
-                context,
-                encoder,
-                target_q0_scale);
-        }
-
-        double cpu_ms = 0.0;
-        poseidon::Ciphertext cpu_timing_sink;
-        cpu_ms = time_cpu_ms(iterations, [&]() {
-            cpu_timing_sink =
-                cpu_bootstrap_prepare_and_raise(
+            for (std::size_t i = 0; i < warmup; ++i)
+            {
+                (void)cpu_bootstrap_prepare_and_raise(
                     source,
                     *cpu_evaluator,
                     context,
                     encoder,
                     target_q0_scale);
-        });
+            }
+        }
+
+        double cpu_ms = std::numeric_limits<double>::quiet_NaN();
+        poseidon::Ciphertext cpu_timing_sink;
+        if (!gpu_only_timing)
+        {
+            cpu_ms = time_cpu_ms(iterations, [&]() {
+                cpu_timing_sink =
+                    cpu_bootstrap_prepare_and_raise(
+                        source,
+                        *cpu_evaluator,
+                        context,
+                        encoder,
+                        target_q0_scale);
+            });
+        }
 
         for (std::size_t i = 0; i < warmup; ++i)
         {
@@ -3079,22 +3096,27 @@ int main()
                     gpu_source_comparison.max_abs_error,
                     "GPU/source decoded"}});
 
-        for (std::size_t i = 0; i < warmup; ++i)
+        if (!gpu_only_timing)
         {
-            poseidon::Ciphertext cpu_real;
-            poseidon::Ciphertext cpu_imag;
-            cpu_coeff_to_slot_rescale(
-                cpu_full_raised,
-                c2s_matrix_group,
-                cpu_real,
-                cpu_imag,
-                *cpu_evaluator,
-                full_galois_keys,
-                encoder);
+            for (std::size_t i = 0; i < warmup; ++i)
+            {
+                poseidon::Ciphertext cpu_real;
+                poseidon::Ciphertext cpu_imag;
+                cpu_coeff_to_slot_rescale(
+                    cpu_full_raised,
+                    c2s_matrix_group,
+                    cpu_real,
+                    cpu_imag,
+                    *cpu_evaluator,
+                    full_galois_keys,
+                    encoder);
+            }
         }
 
-        const double cpu_c2s_ms =
-            time_cpu_ms(iterations, [&]() {
+        double cpu_c2s_ms = std::numeric_limits<double>::quiet_NaN();
+        if (!gpu_only_timing)
+        {
+            cpu_c2s_ms = time_cpu_ms(iterations, [&]() {
                 poseidon::Ciphertext real;
                 poseidon::Ciphertext imag;
                 cpu_coeff_to_slot_rescale(
@@ -3106,6 +3128,7 @@ int main()
                     full_galois_keys,
                     encoder);
             });
+        }
 
         for (std::size_t i = 0; i < warmup; ++i)
         {
@@ -3124,28 +3147,33 @@ int main()
                     gpu_c2s_imag);
             });
 
-        for (std::size_t i = 0; i < full_warmup; ++i)
+        if (!gpu_only_timing)
         {
-            poseidon::Ciphertext cpu_real;
-            poseidon::Ciphertext cpu_imag;
-            cpu_bootstrapper.eval_mod(
-                cpu_c2s_real,
-                cpu_real,
-                relin_keys,
-                evalmod_double_angle,
-                bootstrap_inverse_coefficient,
-                evalmod_scale);
-            cpu_bootstrapper.eval_mod(
-                cpu_c2s_imag,
-                cpu_imag,
-                relin_keys,
-                evalmod_double_angle,
-                bootstrap_inverse_coefficient,
-                evalmod_scale);
+            for (std::size_t i = 0; i < full_warmup; ++i)
+            {
+                poseidon::Ciphertext cpu_real;
+                poseidon::Ciphertext cpu_imag;
+                cpu_bootstrapper.eval_mod(
+                    cpu_c2s_real,
+                    cpu_real,
+                    relin_keys,
+                    evalmod_double_angle,
+                    bootstrap_inverse_coefficient,
+                    evalmod_scale);
+                cpu_bootstrapper.eval_mod(
+                    cpu_c2s_imag,
+                    cpu_imag,
+                    relin_keys,
+                    evalmod_double_angle,
+                    bootstrap_inverse_coefficient,
+                    evalmod_scale);
+            }
         }
 
-        const double cpu_evalmod_ms =
-            time_cpu_ms(full_iterations, [&]() {
+        double cpu_evalmod_ms = std::numeric_limits<double>::quiet_NaN();
+        if (!gpu_only_timing)
+        {
+            cpu_evalmod_ms = time_cpu_ms(full_iterations, [&]() {
                 poseidon::Ciphertext real;
                 poseidon::Ciphertext imag;
                 cpu_bootstrapper.eval_mod(
@@ -3163,6 +3191,7 @@ int main()
                     bootstrap_inverse_coefficient,
                     evalmod_scale);
             });
+        }
 
         for (std::size_t i = 0; i < full_warmup; ++i)
         {
@@ -3492,20 +3521,25 @@ int main()
             }
         }
 
-        for (std::size_t i = 0; i < full_warmup; ++i)
+        if (!gpu_only_timing)
         {
-            poseidon::Ciphertext result;
-            cpu_slot_to_coeff_rescale(
-                cpu_eval_real,
-                cpu_eval_imag,
-                s2c_matrix_group,
-                result,
-                *cpu_evaluator,
-                full_galois_keys,
-                encoder);
+            for (std::size_t i = 0; i < full_warmup; ++i)
+            {
+                poseidon::Ciphertext result;
+                cpu_slot_to_coeff_rescale(
+                    cpu_eval_real,
+                    cpu_eval_imag,
+                    s2c_matrix_group,
+                    result,
+                    *cpu_evaluator,
+                    full_galois_keys,
+                    encoder);
+            }
         }
-        const double cpu_s2c_ms =
-            time_cpu_ms(full_iterations, [&]() {
+        double cpu_s2c_ms = std::numeric_limits<double>::quiet_NaN();
+        if (!gpu_only_timing)
+        {
+            cpu_s2c_ms = time_cpu_ms(full_iterations, [&]() {
                 poseidon::Ciphertext result;
                 cpu_slot_to_coeff_rescale(
                     cpu_eval_real,
@@ -3516,6 +3550,7 @@ int main()
                     full_galois_keys,
                     encoder);
             });
+        }
 
         for (std::size_t i = 0; i < full_warmup; ++i)
         {
@@ -3534,14 +3569,21 @@ int main()
                     gpu_s2c_result);
             });
 
-        for (std::size_t i = 0; i < full_warmup; ++i)
+        if (!gpu_only_timing)
         {
-            cpu_full_result = run_cpu_full_bootstrap();
+            for (std::size_t i = 0; i < full_warmup; ++i)
+            {
+                cpu_full_result = run_cpu_full_bootstrap();
+            }
         }
-        const double cpu_full_bootstrap_ms =
-            time_cpu_ms(full_iterations, [&]() {
+        double cpu_full_bootstrap_ms =
+            std::numeric_limits<double>::quiet_NaN();
+        if (!gpu_only_timing)
+        {
+            cpu_full_bootstrap_ms = time_cpu_ms(full_iterations, [&]() {
                 cpu_full_result = run_cpu_full_bootstrap();
             });
+        }
 
         for (std::size_t i = 0; i < full_warmup; ++i)
         {

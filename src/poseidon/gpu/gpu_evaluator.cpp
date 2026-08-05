@@ -1,5 +1,6 @@
 #include "poseidon/gpu/gpu_evaluator.h"
 #include "poseidon/gpu/kernels/gpu_double_hoist_kernels.h"
+#include "poseidon/gpu/kernels/gpu_elementwise_kernels.h"
 #include "poseidon/gpu/kernels/gpu_keyswitch_kernels.h"
 
 #include "poseidon/advance/homomorphic_linear_transform.h"
@@ -49,6 +50,36 @@ bool use_rescale_x2()
 bool use_relinearize_rescale_x2()
 {
     const char *raw = std::getenv("POSEIDON_RELIN_RESCALE_X2");
+    if (raw == nullptr || *raw == '\0')
+    {
+        return true;
+    }
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
+bool use_evalmod_inline_leaf()
+{
+    const char *raw = std::getenv("POSEIDON_EVALMOD_INLINE_LEAF");
+    if (raw == nullptr || *raw == '\0')
+    {
+        return true;
+    }
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
+bool use_evalmod_caccum_leaf()
+{
+    const char *raw = std::getenv("POSEIDON_EVALMOD_CACCUM_LEAF");
     if (raw == nullptr || *raw == '\0')
     {
         return true;
@@ -3829,6 +3860,65 @@ void GpuEvaluator::eval_mod_high_precision(
             }
         };
 
+    auto multiply_plain_accumulate_first_two =
+        [&](const GpuCiphertextData &source_ciphertext,
+            const GpuPlaintextData &source_plaintext,
+            GpuCiphertextData &destination_ciphertext) {
+            if (source_ciphertext.empty() || source_plaintext.empty() ||
+                destination_ciphertext.empty())
+            {
+                throw std::invalid_argument(
+                    "GpuEvaluator::eval_mod_high_precision: empty inline leaf accumulate input");
+            }
+            if (!(source_ciphertext.meta.parms_id ==
+                  source_plaintext.meta.parms_id) ||
+                !(source_ciphertext.meta.parms_id ==
+                  destination_ciphertext.meta.parms_id) ||
+                !source_ciphertext.meta.is_ntt_form ||
+                !source_plaintext.meta.is_ntt_form ||
+                !destination_ciphertext.meta.is_ntt_form ||
+                source_ciphertext.size() != 2 ||
+                destination_ciphertext.size() < 2)
+            {
+                throw std::invalid_argument(
+                    "GpuEvaluator::eval_mod_high_precision: incompatible inline leaf accumulate input");
+            }
+            const double product_scale =
+                source_ciphertext.meta.scale * source_plaintext.meta.scale;
+            if (!same_scale(product_scale, destination_ciphertext.meta.scale))
+            {
+                throw std::invalid_argument(
+                    "GpuEvaluator::eval_mod_high_precision: inline leaf accumulate scale mismatch");
+            }
+            if (!same_logical_shard_layout(
+                    source_ciphertext.polys_.front(),
+                    source_plaintext.poly_) ||
+                !same_logical_shard_layout(
+                    source_ciphertext.polys_.front(),
+                    destination_ciphertext.polys_.front()) ||
+                !all_components_use_layout(
+                    source_ciphertext,
+                    source_ciphertext.polys_.front()) ||
+                !all_components_use_layout(
+                    destination_ciphertext,
+                    destination_ciphertext.polys_.front()))
+            {
+                throw std::invalid_argument(
+                    "GpuEvaluator::eval_mod_high_precision: inline leaf accumulate shard mismatch");
+            }
+
+            auto destination_view = destination_ciphertext.make_view();
+            auto ciphertext_view = source_ciphertext.make_const_view();
+            auto plaintext_view = source_plaintext.make_const_view();
+            const auto &level_info =
+                params_.get_level(source_ciphertext.meta.parms_id);
+            elementwise_handler_.multiply_plain_accumulate_with_ciphertext(
+                destination_view,
+                ciphertext_view,
+                plaintext_view,
+                level_info);
+        };
+
     for (const auto &step : basis_steps)
     {
         auto &output = workspace.eval_mod_basis[step.output_degree];
@@ -3953,11 +4043,27 @@ void GpuEvaluator::eval_mod_high_precision(
     }
     stage_recorder.record(2);
 
+    std::function<bool(
+        const std::vector<GpuEvalModPolynomialTerm> &,
+        std::uint32_t,
+        double,
+        GpuCiphertextData &)> evaluate_term_block_caccum;
+
     auto evaluate_term_block =
         [&](const std::vector<GpuEvalModPolynomialTerm> &terms,
             std::uint32_t rescale_count,
             double expected_output_scale,
             GpuCiphertextData &block_output) {
+            if (evaluate_term_block_caccum &&
+                evaluate_term_block_caccum(
+                    terms,
+                    rescale_count,
+                    expected_output_scale,
+                    block_output))
+            {
+                return;
+            }
+
             GpuCiphertextData block_accumulator;
             double block_scale = 0.0;
 
@@ -4159,6 +4265,444 @@ void GpuEvaluator::eval_mod_high_precision(
             output = std::move(workspace.scratch5);
         };
 
+    evaluate_term_block_caccum =
+        [&](const std::vector<GpuEvalModPolynomialTerm> &terms,
+            std::uint32_t rescale_count,
+            double expected_output_scale,
+            GpuCiphertextData &block_output) {
+            if (!use_evalmod_caccum_leaf() ||
+                bootstrap_data.eval_mod.rescale_polynomial_terms_individually ||
+                rescale_count != logical_rescale_count ||
+                terms.empty())
+            {
+                return false;
+            }
+
+            const GpuEvalModPolynomialTerm *first_nonconstant = nullptr;
+            for (const auto &term : terms)
+            {
+                if (term.degree != 0)
+                {
+                    first_nonconstant = &term;
+                    break;
+                }
+            }
+            if (first_nonconstant == nullptr ||
+                first_nonconstant->coefficient_plaintext.empty())
+            {
+                return false;
+            }
+
+            const auto &target_plaintext =
+                first_nonconstant->coefficient_plaintext;
+            if (!target_plaintext.meta.is_ntt_form ||
+                target_plaintext.meta.p_count != 0 ||
+                target_plaintext.poly_.shards.size() != 1 ||
+                target_plaintext.fields_.empty())
+            {
+                return false;
+            }
+            const auto target_parms_id = target_plaintext.meta.parms_id;
+            const std::size_t target_q_count =
+                target_plaintext.meta.q_count;
+            if (first_nonconstant->degree >= workspace.eval_mod_basis.size() ||
+                workspace.eval_mod_basis[first_nonconstant->degree].empty())
+            {
+                return false;
+            }
+            const double pre_rescale_scale =
+                workspace.eval_mod_basis[first_nonconstant->degree].meta.scale *
+                target_plaintext.meta.scale;
+            if (!(pre_rescale_scale > 0.0) ||
+                !std::isfinite(pre_rescale_scale))
+            {
+                return false;
+            }
+
+            for (const auto &term : terms)
+            {
+                if (term.coefficient_plaintext.empty() ||
+                    !(term.coefficient_plaintext.meta.parms_id ==
+                      target_parms_id) ||
+                    term.coefficient_plaintext.meta.q_count !=
+                        target_q_count ||
+                    term.coefficient_plaintext.meta.degree !=
+                        source_ciphertext.meta.degree ||
+                    term.coefficient_plaintext.meta.p_count != 0 ||
+                    !term.coefficient_plaintext.meta.is_ntt_form ||
+                    term.coefficient_plaintext.poly_.shards.size() != 1)
+                {
+                    return false;
+                }
+                if (term.degree == 0)
+                {
+                    if (!same_scale(
+                            term.coefficient_plaintext.meta.scale,
+                            pre_rescale_scale))
+                    {
+                        return false;
+                    }
+                    continue;
+                }
+                if (term.degree >= workspace.eval_mod_basis.size())
+                {
+                    return false;
+                }
+                const auto &basis = workspace.eval_mod_basis[term.degree];
+                if (basis.empty() ||
+                    basis.size() != 2 ||
+                    !basis.meta.is_ntt_form ||
+                    basis.meta.p_count != 0 ||
+                    basis.meta.degree != source_ciphertext.meta.degree ||
+                    basis.meta.q_count < target_q_count ||
+                    basis.polys_[0].shards.size() != 1 ||
+                    basis.polys_[1].shards.size() != 1)
+                {
+                    return false;
+                }
+                const double term_scale =
+                    basis.meta.scale *
+                    term.coefficient_plaintext.meta.scale;
+                if (!same_scale(term_scale, pre_rescale_scale))
+                {
+                    return false;
+                }
+            }
+
+            const int device_id = target_plaintext.fields_.front().device_id;
+            auto accumulator =
+                GpuCiphertextData::allocate_single_device_sharded(
+                    source_ciphertext.meta.degree,
+                    target_q_count,
+                    2,
+                    device_id,
+                    target_plaintext.poly_.shards,
+                    0);
+            accumulator.meta = source_ciphertext.meta;
+            accumulator.meta.parms_id = target_parms_id;
+            accumulator.meta.scale = pre_rescale_scale;
+            accumulator.meta.q_count = target_q_count;
+            accumulator.meta.p_count = 0;
+            accumulator.meta.component_count = 2;
+            accumulator.meta.is_ntt_form = true;
+
+            auto accumulator_view = accumulator.make_view();
+            if (accumulator_view.polys.size() != 2 ||
+                accumulator_view.polys[0].shards.size() != 1 ||
+                accumulator_view.polys[1].shards.size() != 1)
+            {
+                return false;
+            }
+            const auto &destination0 =
+                accumulator_view.polys[0].shards.front();
+            const auto &destination1 =
+                accumulator_view.polys[1].shards.front();
+
+            const auto &target_level = params_.get_level(target_parms_id);
+            const GpuParameterShard *parameter_shard = nullptr;
+            for (const auto &candidate : target_level.shards)
+            {
+                if (candidate.device_id == destination0.device_id &&
+                    destination0.limb_begin >= candidate.limb_begin &&
+                    destination0.limb_begin + destination0.limb_count <=
+                        candidate.limb_begin + candidate.limb_count)
+                {
+                    parameter_shard = &candidate;
+                    break;
+                }
+            }
+            if (parameter_shard == nullptr)
+            {
+                return false;
+            }
+
+            constexpr std::size_t terms_per_launch = 4;
+            std::array<GpuConstPolyShardView, terms_per_launch> c0_terms{};
+            std::array<GpuConstPolyShardView, terms_per_launch> c1_terms{};
+            std::array<GpuConstPolyShardView, terms_per_launch> plain_terms{};
+            std::size_t batch_count = 0;
+            bool wrote_accumulator = false;
+
+            const auto flush_batch = [&]() {
+                if (batch_count == 0)
+                {
+                    return;
+                }
+                kernel::launch_multiply_plain_caccumulate_two_components_4(
+                    destination0,
+                    destination1,
+                    c0_terms.data(),
+                    c1_terms.data(),
+                    plain_terms.data(),
+                    batch_count,
+                    wrote_accumulator,
+                    *parameter_shard,
+                    target_level.degree);
+                wrote_accumulator = true;
+                batch_count = 0;
+            };
+
+            for (const auto &term : terms)
+            {
+                if (term.degree == 0)
+                {
+                    continue;
+                }
+                const auto &basis = workspace.eval_mod_basis[term.degree];
+                const auto basis_view = basis.make_const_view();
+                const auto plaintext_view =
+                    term.coefficient_plaintext.make_const_view();
+                auto c0_view = basis_view.polys[0].shards.front();
+                auto c1_view = basis_view.polys[1].shards.front();
+                auto plain_view = plaintext_view.poly.shards.front();
+                if (c0_view.device_id != destination0.device_id ||
+                    c1_view.device_id != destination0.device_id ||
+                    plain_view.device_id != destination0.device_id ||
+                    c0_view.limb_begin != destination0.limb_begin ||
+                    c1_view.limb_begin != destination0.limb_begin ||
+                    plain_view.limb_begin != destination0.limb_begin ||
+                    c0_view.coeff_begin != destination0.coeff_begin ||
+                    c1_view.coeff_begin != destination0.coeff_begin ||
+                    plain_view.coeff_begin != destination0.coeff_begin ||
+                    c0_view.coeff_count != destination0.coeff_count ||
+                    c1_view.coeff_count != destination0.coeff_count ||
+                    plain_view.coeff_count != destination0.coeff_count ||
+                    c0_view.limb_count < destination0.limb_count ||
+                    c1_view.limb_count < destination0.limb_count ||
+                    plain_view.limb_count != destination0.limb_count)
+                {
+                    return false;
+                }
+                c0_view.limb_count = destination0.limb_count;
+                c1_view.limb_count = destination0.limb_count;
+                c0_terms[batch_count] = c0_view;
+                c1_terms[batch_count] = c1_view;
+                plain_terms[batch_count] = plain_view;
+                ++batch_count;
+                if (batch_count == terms_per_launch)
+                {
+                    flush_batch();
+                }
+            }
+            flush_batch();
+
+            if (!wrote_accumulator)
+            {
+                return false;
+            }
+
+            for (const auto &term : terms)
+            {
+                if (term.degree != 0)
+                {
+                    continue;
+                }
+                add_plain(
+                    accumulator,
+                    term.coefficient_plaintext,
+                    workspace.scratch4);
+                accumulator = std::move(workspace.scratch4);
+                accumulator.meta.scale = pre_rescale_scale;
+            }
+
+            rescale_many(
+                accumulator,
+                workspace.scratch2,
+                rescale_count);
+            workspace.scratch2.meta.scale = expected_output_scale;
+            block_output = std::move(workspace.scratch2);
+            return true;
+        };
+
+    auto accumulate_leaf_pre_rescale =
+        [&](const GpuEvalModPolynomialBlock &block,
+            GpuCiphertextData &accumulator_pre_rescale) {
+            if (bootstrap_data.eval_mod.rescale_polynomial_terms_individually ||
+                block.rescale_count != logical_rescale_count)
+            {
+                return false;
+            }
+            if (accumulator_pre_rescale.empty() ||
+                accumulator_pre_rescale.size() < 3 ||
+                !accumulator_pre_rescale.meta.is_ntt_form)
+            {
+                return false;
+            }
+
+            const double accumulator_scale =
+                accumulator_pre_rescale.meta.scale;
+
+            for (const auto &term : block.terms)
+            {
+                if (term.degree == 0)
+                {
+                    continue;
+                }
+                if (term.coefficient_plaintext.empty() ||
+                    !(term.coefficient_plaintext.meta.parms_id ==
+                      accumulator_pre_rescale.meta.parms_id))
+                {
+                    return false;
+                }
+                if (term.degree >= workspace.eval_mod_basis.size())
+                {
+                    return false;
+                }
+
+                const auto &basis = workspace.eval_mod_basis[term.degree];
+                if (basis.empty())
+                {
+                    return false;
+                }
+                if (!(basis.meta.parms_id ==
+                      term.coefficient_plaintext.meta.parms_id))
+                {
+                    if (basis.meta.q_count <=
+                        term.coefficient_plaintext.meta.q_count)
+                    {
+                        return false;
+                    }
+                }
+                const double term_scale =
+                    basis.meta.scale *
+                    term.coefficient_plaintext.meta.scale;
+                if (!same_scale(term_scale, accumulator_scale))
+                {
+                    return false;
+                }
+            }
+
+            for (const auto &term : block.terms)
+            {
+                if (term.degree != 0)
+                {
+                    continue;
+                }
+                if (term.coefficient_plaintext.empty() ||
+                    !(term.coefficient_plaintext.meta.parms_id ==
+                      accumulator_pre_rescale.meta.parms_id) ||
+                    !same_scale(
+                        term.coefficient_plaintext.meta.scale,
+                        accumulator_scale))
+                {
+                    return false;
+                }
+            }
+
+            bool accumulated_any = false;
+            for (const auto &term : block.terms)
+            {
+                if (term.degree == 0)
+                {
+                    continue;
+                }
+                const auto &basis = workspace.eval_mod_basis[term.degree];
+                const GpuCiphertextData *basis_at_level = &basis;
+                if (!(basis.meta.parms_id ==
+                      term.coefficient_plaintext.meta.parms_id))
+                {
+                    drop_modulus(
+                        basis,
+                        workspace.scratch3,
+                        term.coefficient_plaintext.meta.parms_id);
+                    basis_at_level = &workspace.scratch3;
+                }
+                multiply_plain_accumulate_first_two(
+                    *basis_at_level,
+                    term.coefficient_plaintext,
+                    accumulator_pre_rescale);
+                accumulated_any = true;
+            }
+
+            for (const auto &term : block.terms)
+            {
+                if (term.degree != 0)
+                {
+                    continue;
+                }
+                add_plain(
+                    accumulator_pre_rescale,
+                    term.coefficient_plaintext,
+                    workspace.scratch4);
+                accumulator_pre_rescale = std::move(workspace.scratch4);
+                accumulator_pre_rescale.meta.scale = accumulator_scale;
+                accumulated_any = true;
+            }
+
+            return accumulated_any;
+        };
+
+    auto multiply_inline_leaf_relinearize_rescale =
+        [&](const GpuCiphertextData &left,
+            const GpuCiphertextData &right,
+            const GpuEvalModPolynomialBlock &leaf_block,
+            double expected_output_scale,
+            GpuCiphertextData &output) {
+            if (!use_evalmod_inline_leaf())
+            {
+                return false;
+            }
+
+            const GpuCiphertextData *left_at_level = &left;
+            const GpuCiphertextData *right_at_level = &right;
+            if (!(left.meta.parms_id == right.meta.parms_id))
+            {
+                if (left.meta.q_count == right.meta.q_count)
+                {
+                    return false;
+                }
+                if (left.meta.q_count > right.meta.q_count)
+                {
+                    drop_modulus(left, workspace.scratch3, right.meta.parms_id);
+                    left_at_level = &workspace.scratch3;
+                }
+                else
+                {
+                    drop_modulus(right, workspace.scratch4, left.meta.parms_id);
+                    right_at_level = &workspace.scratch4;
+                }
+            }
+
+            if (left_at_level == right_at_level)
+            {
+                square(*left_at_level, workspace.scratch5);
+            }
+            else
+            {
+                multiply(*left_at_level, *right_at_level, workspace.scratch5);
+            }
+
+            if (!accumulate_leaf_pre_rescale(
+                    leaf_block,
+                    workspace.scratch5))
+            {
+                return false;
+            }
+
+            if (logical_rescale_count == 2 &&
+                use_rescale_x2() &&
+                use_relinearize_rescale_x2())
+            {
+                relinearize_rescale_x2_hybrid(
+                    workspace.scratch5,
+                    relin_keys,
+                    output);
+            }
+            else
+            {
+                relinearize(workspace.scratch5, relin_keys, workspace.scratch3);
+                rescale_many(
+                    workspace.scratch3,
+                    output,
+                    logical_rescale_count);
+            }
+            if (expected_output_scale > 0.0)
+            {
+                output.meta.scale = expected_output_scale;
+            }
+            return true;
+        };
+
     GpuCiphertextData accumulator;
     if (polynomial_blocks.empty())
     {
@@ -4188,6 +4732,35 @@ void GpuEvaluator::eval_mod_high_precision(
                 static_cast<std::size_t>(maximum_node) + 1);
         }
 
+        std::vector<std::size_t> node_use_counts(
+            static_cast<std::size_t>(maximum_node) + 1,
+            0);
+        for (const auto &combine : polynomial_combine_steps)
+        {
+            if (combine.quotient_node < node_use_counts.size())
+            {
+                ++node_use_counts[combine.quotient_node];
+            }
+            if (combine.remainder_node < node_use_counts.size())
+            {
+                ++node_use_counts[combine.remainder_node];
+            }
+        }
+
+        std::vector<bool> inline_leaf_candidate(polynomial_blocks.size(), false);
+        if (use_evalmod_inline_leaf())
+        {
+            for (const auto &combine : polynomial_combine_steps)
+            {
+                if (combine.remainder_node < polynomial_blocks.size() &&
+                    combine.remainder_node < node_use_counts.size() &&
+                    node_use_counts[combine.remainder_node] == 1)
+                {
+                    inline_leaf_candidate[combine.remainder_node] = true;
+                }
+            }
+        }
+
         std::vector<bool> node_available(
             static_cast<std::size_t>(maximum_node) + 1,
             false);
@@ -4197,6 +4770,10 @@ void GpuEvaluator::eval_mod_high_precision(
             {
                 throw std::invalid_argument(
                     "GpuEvaluator::eval_mod_high_precision: block node id exceeds schedule");
+            }
+            if (inline_leaf_candidate[i])
+            {
+                continue;
             }
             evaluate_term_block(
                 polynomial_blocks[i].terms,
@@ -4209,12 +4786,37 @@ void GpuEvaluator::eval_mod_high_precision(
 
         for (const auto &combine : polynomial_combine_steps)
         {
+            const bool remainder_is_inline_leaf =
+                combine.remainder_node < inline_leaf_candidate.size() &&
+                inline_leaf_candidate[combine.remainder_node];
             if (!node_available[combine.quotient_node] ||
-                !node_available[combine.remainder_node] ||
+                (!node_available[combine.remainder_node] &&
+                 !remainder_is_inline_leaf) ||
                 node_available[combine.output_node])
             {
                 throw std::invalid_argument(
                     "GpuEvaluator::eval_mod_high_precision: polynomial combine plan is not topologically valid");
+            }
+            if (remainder_is_inline_leaf &&
+                !node_available[combine.remainder_node] &&
+                multiply_inline_leaf_relinearize_rescale(
+                    workspace.eval_mod_nodes[combine.quotient_node],
+                    workspace.eval_mod_basis[combine.basis_degree],
+                    polynomial_blocks[combine.remainder_node],
+                    combine.output_scale,
+                    workspace.eval_mod_nodes[combine.output_node]))
+            {
+                node_available[combine.output_node] = true;
+                continue;
+            }
+            if (!node_available[combine.remainder_node])
+            {
+                evaluate_term_block(
+                    polynomial_blocks[combine.remainder_node].terms,
+                    polynomial_blocks[combine.remainder_node].rescale_count,
+                    polynomial_blocks[combine.remainder_node].output_scale,
+                    workspace.eval_mod_nodes[combine.remainder_node]);
+                node_available[combine.remainder_node] = true;
             }
             multiply_relinearize_rescale(
                 workspace.eval_mod_nodes[combine.quotient_node],

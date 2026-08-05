@@ -147,6 +147,25 @@ void launch_multiply_plain_accumulate_two_components(
     std::size_t degree);
 
 /**
+ * @brief Fused CAccum-style leaf kernel for up to four plaintext products.
+ *
+ * destination[c] = sum_j ciphertext_j[c] * plaintext_j when accumulate=false;
+ * destination[c] += sum_j ciphertext_j[c] * plaintext_j when accumulate=true.
+ * Only c0/c1 are processed. Higher ciphertext components, if any, are left
+ * untouched by the caller.
+ */
+void launch_multiply_plain_caccumulate_two_components_4(
+    const GpuPolyShardView &destination0,
+    const GpuPolyShardView &destination1,
+    const GpuConstPolyShardView *ciphertexts0,
+    const GpuConstPolyShardView *ciphertexts1,
+    const GpuConstPolyShardView *plaintexts,
+    std::size_t term_count,
+    bool accumulate,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+/**
  * @brief Compute all three output components of a size-2 ciphertext product.
  *
  * Two launches preserve low per-thread register pressure: one 2-D grid writes

@@ -544,7 +544,7 @@ void GpuElementwiseHandler::multiply_plain_accumulate_with_ciphertext(
         !destination_view.meta.is_ntt_form ||
         !ciphertext_view.meta.is_ntt_form ||
         !plaintext_view.meta.is_ntt_form ||
-        destination_view.polys.size() != 2 ||
+        destination_view.polys.size() < 2 ||
         ciphertext_view.polys.size() != 2)
     {
         throw std::invalid_argument(
