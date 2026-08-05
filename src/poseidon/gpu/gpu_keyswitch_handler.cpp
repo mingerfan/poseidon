@@ -49,6 +49,14 @@ public:
         nvtxRangePushA(name_.c_str());
     }
 
+    /** @brief Include FHE level (q_count) in the NVTX range name for per-level
+     *         analysis in NSight Systems. */
+    NvtxRange(std::string name, const GpuLevelInfo &level_info)
+        : name_(std::move(name) + " L" + std::to_string(level_info.q_count))
+    {
+        nvtxRangePushA(name_.c_str());
+    }
+
     NvtxRange(const NvtxRange &) = delete;
     NvtxRange &operator=(const NvtxRange &) = delete;
 
@@ -472,8 +480,9 @@ void inverse_ntt_switch_poly(
         scratch.base_q_size,
         scratch.base_p_size);
     NvtxRange range(fourstep
-        ? "keyswitch.intt_switch_poly.fourstep"
-        : "keyswitch.intt_switch_poly.fused3");
+                       ? "keyswitch.intt_switch_poly.fourstep"
+                       : "keyswitch.intt_switch_poly.fused3",
+                   level_info);
     const auto &source_shard = switch_poly_ntt.shards.front();
     auto destination_shard = scratch.c2_intt_view();
     const auto *parameter_shard = find_parameter_shard(level_info, source_shard);
@@ -517,7 +526,7 @@ void process_hybrid_decomposition_block(
     bool bconv_row_tiled8)
 {
     NvtxRange block_range(
-        "keyswitch.dnum[" + std::to_string(decomp_index) + "]");
+        "keyswitch.dnum[" + std::to_string(decomp_index) + "]", level_info);
     const auto &switch_poly_shard = switch_poly_ntt.shards.front();
     const auto &key0_shard = key_component0.shards.front();
     const auto &key1_shard = key_component1.shards.front();
@@ -710,7 +719,7 @@ void finalize_hybrid_relinearize(
     HybridScratch &scratch,
     const GpuLevelInfo &level_info)
 {
-    NvtxRange finalize_range("keyswitch.finalize");
+    NvtxRange finalize_range("keyswitch.finalize", level_info);
     const auto &destination_shard0 = destination.polys[0].shards.front();
     const auto &destination_shard1 = destination.polys[1].shards.front();
     /* 查找参数表，为后续计算做准备 */
@@ -1155,7 +1164,7 @@ void GpuKeySwitchHandler::switch_key_hybrid_ciphertext(
     std::size_t key_index,/*可以自由选择密钥切换的密钥类型*/
     const GpuLevelInfo &level_info) const
 {
-    NvtxRange range("keyswitch.hybrid");
+    NvtxRange range("keyswitch.hybrid", level_info);
     (void)params_;
     validate_hybrid_switch_key_shape(
         destination_view,

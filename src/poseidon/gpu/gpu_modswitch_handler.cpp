@@ -27,6 +27,14 @@ public:
         nvtxRangePushA(name_.c_str());
     }
 
+    /** @brief Include FHE level (q_count) in the NVTX range name for per-level
+     *         analysis in NSight Systems. */
+    NvtxRange(std::string name, const GpuLevelInfo &level_info)
+        : name_(std::move(name) + " L" + std::to_string(level_info.q_count))
+    {
+        nvtxRangePushA(name_.c_str());
+    }
+
     NvtxRange(const NvtxRange &) = delete;
     NvtxRange &operator=(const NvtxRange &) = delete;
 
@@ -387,7 +395,7 @@ void GpuModSwitchHandler::rescale_ciphertext(
     const GpuLevelInfo &source_level_info,
     const GpuLevelInfo &destination_level_info) const
 {
-    NvtxRange range("modswitch.rescale");
+    NvtxRange range("modswitch.rescale", source_level_info);
     validate_rescale_ciphertext_shape(
         destination_view,
         source_view,
@@ -436,7 +444,8 @@ void GpuModSwitchHandler::rescale_ciphertext(
 
         {
             NvtxRange component_range(
-                "rescale.component[" + std::to_string(i) + "]");
+                "rescale.component[" + std::to_string(i) + "]",
+                source_level_info);
             rescale_poly(
                 destination_shard,
                 source_shard,
@@ -475,7 +484,7 @@ void GpuModSwitchHandler::drop_modulus_ciphertext(
     const GpuLevelInfo &source_level_info,
     const GpuLevelInfo &destination_level_info) const
 {
-    NvtxRange range("modswitch.drop_modulus");
+    NvtxRange range("modswitch.drop_modulus", source_level_info);
     validate_drop_modulus_ciphertext_shape(
         destination_view,
         source_view,
