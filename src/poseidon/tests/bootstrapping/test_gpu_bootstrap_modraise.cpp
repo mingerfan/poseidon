@@ -21,6 +21,8 @@
 #include "poseidon/poseidon_context.h"
 
 #include <cuda_runtime_api.h>
+#include <cuda_profiler_api.h>
+#include <nvtx3/nvToolsExt.h>
 #include <rmm/mr/cuda_memory_resource.hpp>
 #include <rmm/mr/per_device_resource.hpp>
 #include <rmm/mr/pool_memory_resource.hpp>
@@ -1786,6 +1788,10 @@ int main()
             env_flag_enabled("POSEIDON_BOOTSTRAP_SKIP_LIBRARY_ORACLE");
         const bool gpu_only_timing =
             env_flag_enabled("POSEIDON_BOOTSTRAP_GPU_ONLY_TIMING");
+        const bool nsys_capture_full =
+            env_flag_enabled("POSEIDON_BOOTSTRAP_NSYS_CAPTURE_FULL");
+        const bool ignore_correctness_failure =
+            env_flag_enabled("POSEIDON_BOOTSTRAP_IGNORE_CORRECTNESS_FAILURE");
         const bool evalmod_dynamic_rescale =
             env_flag_enabled("POSEIDON_BOOTSTRAP_EVALMOD_DYNAMIC_RESCALE");
         const bool setup_only =
@@ -1960,6 +1966,11 @@ int main()
                   << (gpu_only_timing ? "GPU-only" : "CPU/GPU") << "\n";
         std::cout << "diagnostics     = "
                   << (detailed_diagnostics ? "detailed" : "summary") << "\n";
+        std::cout << "nsys_capture    = "
+                  << (nsys_capture_full ? "full bootstrap only" : "OFF")
+                  << "\n";
+        std::cout << "ignore_failure  = "
+                  << (ignore_correctness_failure ? "YES" : "NO") << "\n";
         std::cout << "setup_only      = "
                   << (setup_only ? "YES" : "NO") << "\n";
         std::cout << "scale_plan_only = "
@@ -4941,16 +4952,55 @@ int main()
         }
         cudaDeviceSynchronize();
 
-        const double gpu_full_bootstrap_ms =
-            time_gpu_ms(full_iterations, [&]() {
+        double gpu_full_bootstrap_ms = std::numeric_limits<double>::quiet_NaN();
+        if (nsys_capture_full)
+        {
+            std::cout << "[phase] nsys capture: one profiled full GPU bootstrap after warmup\n"
+                      << std::flush;
+            const auto capture_start_status = cudaProfilerStart();
+            if (capture_start_status != cudaSuccess)
+            {
+                throw std::runtime_error(
+                    std::string("cudaProfilerStart failed: ") +
+                    cudaGetErrorString(capture_start_status));
+            }
+            nvtxRangePushA("profiled_full_bootstrap_once");
+            const auto start = std::chrono::steady_clock::now();
+            gpu_evaluator.bootstrap(
+                gpu_source,
+                bootstrap_data,
+                gpu_relin_keys,
+                gpu_full_galois_keys,
+                bootstrap_workspace,
+                gpu_full_result);
+            cudaDeviceSynchronize();
+            const auto stop = std::chrono::steady_clock::now();
+            nvtxRangePop();
+            const auto capture_stop_status = cudaProfilerStop();
+            if (capture_stop_status != cudaSuccess)
+            {
+                throw std::runtime_error(
+                    std::string("cudaProfilerStop failed: ") +
+                    cudaGetErrorString(capture_stop_status));
+            }
+            const auto elapsed_us =
+                std::chrono::duration_cast<std::chrono::microseconds>(
+                    stop - start).count();
+            gpu_full_bootstrap_ms =
+                static_cast<double>(elapsed_us) / 1000.0;
+        }
+        else
+        {
+            gpu_full_bootstrap_ms = time_gpu_ms(full_iterations, [&]() {
                 gpu_evaluator.bootstrap(
                     gpu_source,
                     bootstrap_data,
                     gpu_relin_keys,
                     gpu_full_galois_keys,
                     bootstrap_workspace,
-                gpu_full_result);
+                    gpu_full_result);
             });
+        }
 
         if (fused_multiply_ab_ran)
         {
@@ -5053,12 +5103,20 @@ int main()
 
         if (!evalmod_correct || !s2c_correct || !full_correct)
         {
-            return EXIT_FAILURE;
+            if (!ignore_correctness_failure)
+            {
+                return EXIT_FAILURE;
+            }
+            std::cout << "\n[WARN] Correctness failure ignored because "
+                         "POSEIDON_BOOTSTRAP_IGNORE_CORRECTNESS_FAILURE=1\n";
         }
 
-        std::cout << "\n[OK] One GPU bootstrap data set passed ModRaise, "
-                     "CoeffToSlot, high-precision EvalMod, SlotToCoeff, "
-                     "and full-bootstrap checks\n";
+        if (evalmod_correct && s2c_correct && full_correct)
+        {
+            std::cout << "\n[OK] One GPU bootstrap data set passed ModRaise, "
+                         "CoeffToSlot, high-precision EvalMod, SlotToCoeff, "
+                         "and full-bootstrap checks\n";
+        }
         return EXIT_SUCCESS;
     }
     catch (const std::exception &ex)
