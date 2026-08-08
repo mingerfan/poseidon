@@ -50,14 +50,18 @@ struct GpuEvalModBasisStep
     std::uint32_t left_degree = 0;
     std::uint32_t right_degree = 0;
     std::uint32_t correction_degree = 0;
+    double pre_rescale_scale = 0.0;
     double output_scale = 0.0;
+    std::uint32_t rescale_count = 1;
 
     bool align_left_operand = false;
     GpuPlaintextData operand_alignment_plaintext;
     double operand_alignment_pre_rescale_scale = 0.0;
     double operand_alignment_output_scale = 0.0;
+    std::uint32_t operand_alignment_rescale_count = 1;
     GpuPlaintextData correction_alignment_plaintext;
     double correction_alignment_pre_rescale_scale = 0.0;
+    std::uint32_t correction_alignment_rescale_count = 1;
 
     /*
      * Chebyshev only. For correction_degree==0 this is the constant one at
@@ -75,6 +79,7 @@ struct GpuEvalModPolynomialBlock
     std::vector<GpuEvalModPolynomialTerm> terms;
     std::uint32_t rescale_count = 1;
     double output_scale = 0.0;
+    std::size_t output_q_count = 0;
 };
 
 /**
@@ -87,6 +92,16 @@ struct GpuEvalModPolynomialCombineStep
     std::uint32_t remainder_node = 0;
     std::uint32_t basis_degree = 0;
     double output_scale = 0.0;
+    std::size_t output_q_count = 0;
+    std::uint32_t quotient_rescale_count = 0;
+    double quotient_output_scale = 0.0;
+    std::uint32_t remainder_rescale_count = 0;
+    double product_scale = 0.0;
+    std::size_t product_q_count = 0;
+    GpuPlaintextData product_scale_plaintext;
+    double product_aligned_scale = 0.0;
+    GpuPlaintextData remainder_scale_plaintext;
+    double remainder_aligned_scale = 0.0;
 };
 
 /**
@@ -125,7 +140,10 @@ struct GpuBootstrapData
 
     struct EvalModData
     {
+        /* Physical scale supplied by dynamic C2S; target_scale remains min_scale. */
+        double input_scale = 0.0;
         double target_scale = 0.0;
+        double output_scale = 0.0;
         parms_id_type output_parms_id{};
         std::size_t output_q_count = 0;
         GpuPlaintextData input_offset_plaintext;
@@ -152,6 +170,8 @@ struct GpuBootstrapData
          * fixed setup-time plan with the exact two-prime rescale_x2 path.
          */
         std::uint32_t logical_rescale_count = 1;
+        bool dynamic_rescale = false;
+        double dynamic_min_scale = 0.0;
 
         /*
          * Fixed number of physical primes removed after a polynomial leaf
@@ -159,6 +179,7 @@ struct GpuBootstrapData
          * performs one logical rescale; the legacy plan rescales every term.
          */
         std::uint32_t polynomial_rescale_count = 1;
+        double polynomial_output_scale = 0.0;
         bool rescale_polynomial_terms_individually = false;
 
         /*
@@ -196,6 +217,7 @@ struct GpuBootstrapData
          * and uploaded to GPU memory.
          */
         std::vector<GpuPlaintextData> double_angle_constants;
+        std::vector<std::uint32_t> double_angle_rescale_counts;
 
         /* Q prefixes whose zero-copy relinearization-key views are used. */
         std::vector<std::size_t> required_relin_q_counts;
@@ -279,6 +301,11 @@ struct GpuBootstrapWorkspace
     bool capture_eval_mod_trace{false};
     GpuCiphertextData eval_mod_trace_offset_input;
     GpuCiphertextData eval_mod_trace_polynomial_output;
+    std::vector<GpuCiphertextData> eval_mod_trace_double_angle_square_outputs;
+    std::vector<GpuCiphertextData> eval_mod_trace_double_angle_relin_outputs;
+    std::vector<GpuCiphertextData> eval_mod_trace_double_angle_rescaled_square_outputs;
+    std::vector<GpuCiphertextData> eval_mod_trace_polynomial_leaf_outputs;
+    std::vector<GpuCiphertextData> eval_mod_trace_polynomial_combine_outputs;
     std::vector<GpuCiphertextData> eval_mod_trace_double_angle_outputs;
 };
 
@@ -373,9 +400,8 @@ public:
     /**
      * @brief Execute a fixed number of CKKS rescale operations.
      *
-     * This is the correctness-first implementation of one logical
-     * multi-prime rescale. A count of two uses rescale_x2 when supported;
-     * POSEIDON_RESCALE_X2=0 selects the legacy two-rescale path for A/B.
+     * The entire dropped q suffix is processed by one exact centered BConv.
+     * Counts one and two retain their specialized fast paths when available.
      */
     void rescale_many(
         const GpuCiphertextData &source_ciphertext,

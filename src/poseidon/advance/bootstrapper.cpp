@@ -2,9 +2,11 @@
 #include "poseidon/basics/util/uintarithsmallmod.h"
 
 #include <algorithm>
+#include <cstdlib>
 #include <cmath>
 #include <cstring>
 #include <fstream>
+#include <iostream>
 #include <limits>
 #include <map>
 #include <mutex>
@@ -575,6 +577,16 @@ LinearMatrixGroup Bootstrapper::create_slot_to_coeff_matrix_group(
         {
             throw std::invalid_argument(
                 "SlotToCoeff matrix export has insufficient modulus levels");
+        }
+        if (std::getenv("POSEIDON_BOOTSTRAP_MATRIX_DEBUG") != nullptr)
+        {
+            std::cout << "[matrix debug] S2C stage=" << stage
+                      << " q=" << context_data->coeff_modulus().size()
+                      << " total_bits="
+                      << context_data->total_coeff_modulus_bit_count()
+                      << " log2(scale)=" << std::log2(scale)
+                      << " coeff_factor=" << coefficient_factor << "\n"
+                      << std::flush;
         }
         std::map<int, std::vector<Complex>> diagonals;
         const int mask = static_cast<int>(slots_ - 1);

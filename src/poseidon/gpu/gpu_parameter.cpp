@@ -1615,6 +1615,35 @@ RescaleX2Constants compute_rescale_x2_constants(
     return result;
 }
 
+std::vector<GpuWord> compute_rescale_q_inv_mod_q(
+    const std::vector<Modulus> &q)
+{
+    std::vector<GpuWord> result(q.size() * q.size(), 0);
+    for (std::size_t i = 0; i < q.size(); ++i)
+    {
+        for (std::size_t j = 0; j < q.size(); ++j)
+        {
+            if (i == j)
+            {
+                continue;
+            }
+            std::uint64_t inverse = 0;
+            if (!util::try_invert_uint_mod(
+                    q[i].value() % q[j].value(),
+                    q[j],
+                    inverse))
+            {
+                throw std::invalid_argument(
+                    "GpuParameterData cannot invert one q prime modulo another");
+            }
+            result[i * q.size() + j] = checked_gpu_word(
+                inverse,
+                "GpuParameterData pairwise q inverse does not fit GpuWord");
+        }
+    }
+    return result;
+}
+
 std::vector<GpuWord> copy_mod_operand_array(
     const util::MultiplyUIntModOperand *operands,
     std::size_t count,
@@ -2073,6 +2102,7 @@ void GpuParameterData::build_from_poseidon_context(
             context_data->rns_tool(),
             q.size());
         auto rescale_x2_constants = compute_rescale_x2_constants(q);
+        auto rescale_q_inv_mod_q = compute_rescale_q_inv_mod_q(q);
         shard.q_second_last = rescale_x2_constants.q_second_last;
         shard.q_last_two_product = rescale_x2_constants.product;
         shard.half_q_last_two_product = rescale_x2_constants.half_product;
@@ -2167,6 +2197,16 @@ void GpuParameterData::build_from_poseidon_context(
             shard.inv_q_last_two_product_mod_q.copy_from_host(
                 rescale_x2_constants.inv_product_mod_q.data(),
                 rescale_x2_constants.inv_product_mod_q.size());
+        }
+
+        shard.rescale_q_inv_mod_q = DeviceVector<GpuWord>(
+            rescale_q_inv_mod_q.size(),
+            device_id);
+        if (!rescale_q_inv_mod_q.empty())
+        {
+            shard.rescale_q_inv_mod_q.copy_from_host(
+                rescale_q_inv_mod_q.data(),
+                rescale_q_inv_mod_q.size());
         }
 
         shard.ntt_tables =

@@ -147,7 +147,8 @@ public:
             std::numeric_limits<double>::quiet_NaN(),
         double polynomial_output_scale_override =
             std::numeric_limits<double>::quiet_NaN(),
-        bool fuse_leaf_terms_before_rescale = true);
+        bool fuse_leaf_terms_before_rescale = true,
+        double input_scale = 0.0);
 
     /**
      * @brief Upload CPU relinearization keys to GPU.

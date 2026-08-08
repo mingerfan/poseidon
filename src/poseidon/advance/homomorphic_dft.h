@@ -66,6 +66,18 @@ public:
     std::vector<std::map<int, std::vector<std::complex<double>>>> gen_matrices();
     void create(LinearMatrixGroup &mat_group, CKKSEncoder &encoder, uint32_t step);
 
+    /**
+     * @brief Encode every DFT matrix at one logical CKKS scale and plan each
+     * physical suffix drop with the GS min_scale/2 rule.
+     */
+    void create_dynamic(
+        LinearMatrixGroup &mat_group,
+        CKKSEncoder &encoder,
+        double input_scale,
+        double plaintext_scale,
+        double min_scale,
+        double value_normalization = 1.0);
+
 private:
     LinearType type_;
     uint32_t log_n_;

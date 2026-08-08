@@ -78,10 +78,21 @@ public:
     std::uint32_t step() const noexcept { return scalar_step_; }
     void set_step(std::uint32_t step) noexcept { scalar_step_ = step; }
 
+    double rescale_min_scale() const noexcept { return rescale_min_scale_; }
+    void set_rescale_min_scale(double scale) noexcept { rescale_min_scale_ = scale; }
+
+    std::vector<std::uint32_t> &rescale_counts() noexcept { return rescale_counts_; }
+    const std::vector<std::uint32_t> &rescale_counts() const noexcept
+    {
+        return rescale_counts_;
+    }
+
 private:
     std::vector<GpuMatrixPlainQP> matrices_;
     std::vector<int> rotate_index_;
     std::uint32_t scalar_step_ = 0;
+    double rescale_min_scale_ = 0.0;
+    std::vector<std::uint32_t> rescale_counts_;
 };
 
 /**
@@ -199,6 +210,17 @@ struct GpuDoubleHoistOperationCounts
 
 struct GpuDoubleHoistWorkspace
 {
+    struct MatrixRescaleTrace
+    {
+        std::size_t input_q_count = 0;
+        std::size_t output_q_count = 0;
+        double input_scale = 0.0;
+        double plaintext_scale = 0.0;
+        double product_scale = 0.0;
+        double output_scale = 0.0;
+        std::uint32_t rescale_count = 0;
+    };
+
     GpuHoistedDecomposition source_hoist;
     GpuHoistedDecomposition outer_hoist;
     GpuHybridKeySwitchWorkspace keyswitch;
@@ -220,6 +242,7 @@ struct GpuDoubleHoistWorkspace
     std::size_t max_workspace_bytes = 0;
     GpuDoubleHoistOperationCounts last_counts;
     std::vector<GpuDoubleHoistOperationCounts> matrix_counts;
+    std::vector<MatrixRescaleTrace> matrix_rescale_trace;
 };
 
 GpuLinearTransformMode gpu_linear_transform_mode_from_environment(

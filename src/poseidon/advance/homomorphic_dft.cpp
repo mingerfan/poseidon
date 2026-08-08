@@ -64,6 +64,128 @@ void HomomorphicDFTMatrixLiteral::create(LinearMatrixGroup &mat_group, CKKSEncod
     }
 }
 
+void HomomorphicDFTMatrixLiteral::create_dynamic(
+    LinearMatrixGroup &mat_group,
+    CKKSEncoder &encoder,
+    double input_scale,
+    double plaintext_scale,
+    double min_scale,
+    double value_normalization)
+{
+    if (!(input_scale > 0.0) || !std::isfinite(input_scale) ||
+        !(plaintext_scale > 0.0) || !std::isfinite(plaintext_scale) ||
+        !(min_scale > 0.0) || !std::isfinite(min_scale))
+    {
+        POSEIDON_THROW(invalid_argument_error, "invalid dynamic DFT scale");
+    }
+
+    auto context_data = encoder.context().crt_context()->first_context_data();
+    if (!context_data)
+    {
+        POSEIDON_THROW(invalid_argument_error, "dynamic DFT context is empty");
+    }
+    const auto &modulus = context_data->parms().q();
+    auto matrices = gen_matrices();
+
+    std::size_t q_count = static_cast<std::size_t>(level_start_) + 1;
+    if (q_count == 0 || q_count > modulus.size())
+    {
+        POSEIDON_THROW(invalid_argument_error, "dynamic DFT start level is invalid");
+    }
+    double current_scale = input_scale;
+    const double threshold = (min_scale + 1.0) / 2.0;
+    std::vector<uint32_t> rescale_counts;
+    rescale_counts.reserve(matrices.size());
+    for (std::size_t stage = 0; stage < matrices.size(); ++stage)
+    {
+        double output_scale = current_scale * plaintext_scale;
+        uint32_t drop_count = 0;
+        while (q_count > 1)
+        {
+            const double candidate =
+                output_scale /
+                static_cast<double>(modulus[q_count - 1].value());
+            if (candidate < threshold)
+            {
+                break;
+            }
+            output_scale = candidate;
+            --q_count;
+            ++drop_count;
+        }
+        if (drop_count == 0)
+        {
+            POSEIDON_THROW(
+                invalid_argument_error,
+                "dynamic DFT multiplication cannot rescale at min_scale/2");
+        }
+        rescale_counts.push_back(drop_count);
+        current_scale = output_scale;
+    }
+
+    /*
+     * In the GS path a DFT stage is encoded at the exact modulus product that
+     * it subsequently removes, so C2S keeps its input scale. With several
+     * narrow GPU primes, min-scale planning intentionally leaves a different
+     * physical output scale. The dynamic EvalMod path preserves that physical
+     * scale, while this coefficient-only factor maps the C2S values into the
+     * normalized EvalMod approximation domain.
+     *
+     * Fold a caller-provided value normalization into the DFT coefficients.
+     * The factor is spread over all matrices, just like
+     * HomomorphicDFTMatrixLiteral::scaling_. This changes no plaintext encoding
+     * scale and consumes no additional Q prime.
+     */
+    if (value_normalization != 1.0)
+    {
+        if (!(value_normalization > 0.0) ||
+            !std::isfinite(value_normalization))
+        {
+            POSEIDON_THROW(
+                invalid_argument_error,
+                "invalid dynamic DFT value normalization");
+        }
+        const double stage_normalization =
+            std::pow(value_normalization, 1.0 / static_cast<double>(matrices.size()));
+        if (!(stage_normalization > 0.0) || !std::isfinite(stage_normalization))
+        {
+            POSEIDON_THROW(
+                invalid_argument_error,
+                "dynamic DFT value normalization is not representable");
+        }
+        for (auto &matrix : matrices)
+        {
+            for (auto &diagonal : matrix)
+            {
+                for (auto &coefficient : diagonal.second)
+                {
+                    coefficient *= stage_normalization;
+                }
+            }
+        }
+    }
+
+    mat_group.data().resize(matrices.size());
+    mat_group.set_step(0);
+    mat_group.set_rescale_min_scale(min_scale);
+    mat_group.rescale_counts() = rescale_counts;
+
+    q_count = static_cast<std::size_t>(level_start_) + 1;
+    for (std::size_t stage = 0; stage < matrices.size(); ++stage)
+    {
+        gen_linear_transform_bsgs(
+            mat_group.data()[stage],
+            mat_group.rot_index(),
+            encoder,
+            matrices[stage],
+            static_cast<uint32_t>(q_count - 1),
+            plaintext_scale,
+            log_bsgs_ratio_,
+            log_slots_);
+        q_count -= rescale_counts[stage];
+    }
+}
+
 vector<map<int, vector<complex<double>>>> HomomorphicDFTMatrixLiteral::gen_matrices()
 {
     auto log_slots = log_slots_;

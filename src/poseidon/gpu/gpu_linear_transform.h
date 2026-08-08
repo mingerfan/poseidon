@@ -45,10 +45,21 @@ public:
     std::uint32_t step() const noexcept { return scalar_step_; }
     void set_step(std::uint32_t step) noexcept { scalar_step_ = step; }
 
+    double rescale_min_scale() const noexcept { return rescale_min_scale_; }
+    void set_rescale_min_scale(double scale) noexcept { rescale_min_scale_ = scale; }
+
+    std::vector<std::uint32_t> &rescale_counts() noexcept { return rescale_counts_; }
+    const std::vector<std::uint32_t> &rescale_counts() const noexcept
+    {
+        return rescale_counts_;
+    }
+
 private:
     std::vector<GpuMatrixPlain> matrices_;
     std::vector<int> rotate_index_;
     std::uint32_t scalar_step_ = 0;
+    double rescale_min_scale_ = 0.0;
+    std::vector<std::uint32_t> rescale_counts_;
 };
 
 }  // namespace gpu

@@ -1048,7 +1048,8 @@ void EvaluatorCkksBase::eval_mod_high_precision(const Ciphertext &ciph, Cipherte
                                                 const EvalModPoly &eva_poly,
                                                 const RelinKeys &relin_keys,
                                                 const CKKSEncoder &encoder,
-                                                EvalModTrace *trace)
+                                                EvalModTrace *trace,
+                                                bool preserve_input_scale)
 {
     auto *previous_trace = active_eval_mod_trace_;
     active_eval_mod_trace_ = trace;
@@ -1080,7 +1081,10 @@ void EvaluatorCkksBase::eval_mod_high_precision(const Ciphertext &ciph, Cipherte
     auto slot_num = poly_modulus_degree >> 1;
 
     double prev_scale_ct = result.scale();
-    result.scale() = eva_poly.scaling_factor();
+    if (!preserve_input_scale)
+    {
+        result.scale() = eva_poly.scaling_factor();
+    }
 
     double pre_min_scale = min_scale_;
     set_min_scale(eva_poly.scaling_factor());
@@ -1129,7 +1133,10 @@ void EvaluatorCkksBase::eval_mod_high_precision(const Ciphertext &ciph, Cipherte
         }
     }
 
-    result.scale() = prev_scale_ct;
+    if (!preserve_input_scale)
+    {
+        result.scale() = prev_scale_ct;
+    }
     set_min_scale(pre_min_scale);
 }
 

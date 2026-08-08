@@ -48,6 +48,16 @@ public:
         const GpuLevelInfo &destination_level_info) const;
 
     /**
+     * @brief Drop an arbitrary q-modulus suffix in one exact centered BConv.
+     */
+    void rescale_ciphertext_many(
+        GpuCiphertextView &destination_view,
+        const GpuConstCiphertextView &source_view,
+        const GpuLevelInfo &source_level_info,
+        const GpuLevelInfo &destination_level_info,
+        std::size_t rescale_count) const;
+
+    /**
      * @brief GPU dynamic rescale.
      *
      * This should support the small-prime physical chain and logical multi-prime
@@ -88,10 +98,12 @@ private:
         DeviceVector<GpuWord> correction;
         DeviceVector<GpuWord> correction_ntt;
         DeviceVector<GpuWord> dropped_two;
+        DeviceVector<GpuWord> dropped_many;
         DeviceVector<GpuWide> centered_remainder;
         std::size_t q_last_capacity = 0;
         std::size_t correction_capacity = 0;
         std::size_t dropped_two_capacity = 0;
+        std::size_t dropped_many_capacity = 0;
         std::size_t centered_remainder_capacity = 0;
         int device_id = -1;
     };
@@ -105,6 +117,13 @@ private:
         std::size_t degree,
         std::size_t destination_q_count,
         std::size_t component_count,
+        int device_id) const;
+
+    void ensure_rescale_many_scratch(
+        std::size_t degree,
+        std::size_t destination_q_count,
+        std::size_t component_count,
+        std::size_t rescale_count,
         int device_id) const;
 
     const GpuParameterData &params_;

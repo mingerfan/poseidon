@@ -398,11 +398,33 @@ int check_cuda_runtime()
 
 poseidon::ParametersLiteral make_demo_parameters()
 {
+    const std::size_t degree =
+        env_size_or("POSEIDON_DEMO_DEGREE", 65536);
+    const std::size_t q_count =
+        env_size_or("POSEIDON_DEMO_Q_COUNT", 8);
+    const std::size_t p_count =
+        env_size_or("POSEIDON_DEMO_P_COUNT", 2);
+    const std::uint32_t log_q = static_cast<std::uint32_t>(
+        env_size_or("POSEIDON_DEMO_LOG_Q", 30));
+    const std::uint32_t log_p = static_cast<std::uint32_t>(
+        env_size_or("POSEIDON_DEMO_LOG_P", log_q));
+    const std::uint32_t log_scale = static_cast<std::uint32_t>(
+        env_size_or("POSEIDON_DEMO_LOG_SCALE", 25));
+    if (degree < 2 || (degree & (degree - 1)) != 0)
+    {
+        throw std::invalid_argument("POSEIDON_DEMO_DEGREE must be a power of two");
+    }
+    int log_n = 0;
+    for (std::size_t degree_tmp = degree; degree_tmp > 1; degree_tmp >>= 1)
+    {
+        ++log_n;
+    }
+
     poseidon::ParametersLiteral parms(
         CKKS,
-        /*log_n=*/16,
-        /*log_slots=*/15,
-        /*log_scale=*/25,
+        log_n,
+        log_n - 1,
+        log_scale,
         /*hamming_weight=*/0,
         /*q0_level=*/0,
         poseidon::Modulus(0),
@@ -411,8 +433,8 @@ poseidon::ParametersLiteral make_demo_parameters()
         poseidon::sec_level_type::none);
 
     parms.set_log_modulus(
-        std::vector<std::uint32_t>(8, 30),
-        std::vector<std::uint32_t>(2, 30));
+        std::vector<std::uint32_t>(q_count, log_q),
+        std::vector<std::uint32_t>(p_count, log_p));
     return parms;
 }
 

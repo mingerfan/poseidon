@@ -148,7 +148,8 @@ public:
     void eval_mod_high_precision(const Ciphertext &ciph, Ciphertext &result,
                                  const EvalModPoly &eva_poly, const RelinKeys &relin_keys,
                                  const CKKSEncoder &encoder,
-                                 EvalModTrace *trace = nullptr);
+                                 EvalModTrace *trace = nullptr,
+                                 bool preserve_input_scale = false);
 
     void bootstrap(const Ciphertext &ciph, Ciphertext &result, const RelinKeys &relin_keys,
                    const GaloisKeys &galois_keys, const CKKSEncoder &encoder,

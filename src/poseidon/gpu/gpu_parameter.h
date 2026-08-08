@@ -88,6 +88,17 @@ struct GpuParameterShard
     DeviceVector<GpuWord> inv_q_last_two_product_mod_q;
 
     /**
+     * @brief Pairwise q-prime inverses for an arbitrary multi-prime rescale.
+     *
+     * The flattened q_count-by-q_count matrix stores
+     * q_i^{-1} mod q_j at [i * q_count + j] for i != j. Diagonal entries
+     * are zero. It is used both by exact mixed-radix reconstruction of the
+     * dropped suffix and by the final multiplication with
+     * prod(Q_drop)^{-1} in every retained q limb.
+     */
+    DeviceVector<GpuWord> rescale_q_inv_mod_q;
+
+    /**
      * @brief HYBRID key-switch base-conversion constants.
      *
      * For each decomposition block d:

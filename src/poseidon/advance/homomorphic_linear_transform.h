@@ -82,10 +82,32 @@ public:
 
     inline void set_step(uint32_t step) noexcept { scalar_step_ = step; }
 
+    POSEIDON_NODISCARD inline double rescale_min_scale() const noexcept
+    {
+        return rescale_min_scale_;
+    }
+
+    inline void set_rescale_min_scale(double scale) noexcept
+    {
+        rescale_min_scale_ = scale;
+    }
+
+    POSEIDON_NODISCARD inline std::vector<uint32_t> &rescale_counts() noexcept
+    {
+        return rescale_counts_;
+    }
+
+    POSEIDON_NODISCARD inline const std::vector<uint32_t> &rescale_counts() const noexcept
+    {
+        return rescale_counts_;
+    }
+
 private:
     std::vector<MatrixPlain> matrices_{};
     std::vector<int> rotate_index_{};
     uint32_t scalar_step_ = 0;
+    double rescale_min_scale_ = 0.0;
+    std::vector<uint32_t> rescale_counts_{};
 };
 
 template <typename T>

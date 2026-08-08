@@ -103,6 +103,45 @@ void launch_apply_q_last_two_rescale_correction_batch2(
     const GpuParameterShard &parameter_shard,
     std::size_t degree);
 
+/**
+ * @brief Convert an arbitrary dropped q suffix to exact mixed-radix digits.
+ *
+ * dropped_coefficients is both input and output and is packed as
+ * [component][dropped limb][coefficient]. The conversion is exact and avoids
+ * reconstructing the (potentially wider than 64-bit) dropped-base integer.
+ */
+void launch_convert_rescale_dropped_to_mixed_radix(
+    GpuWord *dropped_coefficients,
+    std::size_t component_count,
+    std::size_t source_q_count,
+    std::size_t rescale_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+/**
+ * @brief BConv exact centered mixed-radix remainders to retained q limbs.
+ */
+void launch_build_rescale_many_correction_batch(
+    GpuWord *correction,
+    const GpuWord *mixed_radix_digits,
+    std::size_t component_count,
+    std::size_t source_q_count,
+    std::size_t rescale_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+/**
+ * @brief Apply (source-correction)*prod(Q_drop)^{-1} to retained limbs.
+ */
+void launch_apply_rescale_many_correction_poly_shard(
+    const GpuPolyShardView &destination_shard,
+    const GpuConstPolyShardView &source_shard,
+    const GpuConstPolyShardView &correction_ntt_shard,
+    std::size_t source_q_count,
+    std::size_t rescale_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
 }  // namespace kernel
 }  // namespace gpu
 }  // namespace poseidon
