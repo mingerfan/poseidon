@@ -1,10 +1,13 @@
 #include "poseidon/gpu/gpu_evaluator.h"
 #include "poseidon/gpu/kernels/gpu_keyswitch_kernels.h"
 
+#include <nvtx3/nvToolsExt.h>
+
 #include <stdexcept>
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
+#include <cstdlib>
 #include <limits>
 #include <string>
 #include <utility>
@@ -17,11 +20,51 @@ namespace gpu
 namespace
 {
 
+class NvtxRange
+{
+public:
+    explicit NvtxRange(std::string name)
+        : name_(std::move(name))
+    {
+        nvtxRangePushA(name_.c_str());
+    }
+
+    NvtxRange(const NvtxRange &) = delete;
+    NvtxRange &operator=(const NvtxRange &) = delete;
+
+    ~NvtxRange()
+    {
+        nvtxRangePop();
+    }
+
+private:
+    std::string name_;
+};
+
 bool same_scale(double a, double b)
 {
     const double tolerance =
         1e-6 * std::max({1.0, std::abs(a), std::abs(b)});
     return std::abs(a - b) <= tolerance;
+}
+
+bool use_rotate_cuda_graph()
+{
+    const char *raw = std::getenv("POSEIDON_ROTATE_CUDA_GRAPH");
+    if (raw == nullptr || *raw == '\0' || std::string(raw) == "0" ||
+        std::string(raw) == "OFF" || std::string(raw) == "off" ||
+        std::string(raw) == "false" || std::string(raw) == "FALSE")
+    {
+        return false;
+    }
+    const std::string value(raw);
+    if (value == "1" || value == "ON" || value == "on" ||
+        value == "true" || value == "TRUE")
+    {
+        return true;
+    }
+    throw std::invalid_argument(
+        "POSEIDON_ROTATE_CUDA_GRAPH must be 0/1, OFF/ON, or false/true");
 }
 
 bool same_logical_shard_layout(
@@ -172,27 +215,6 @@ void validate_ntt_ciphertext_input(
     if (!all_components_use_layout(source_ciphertext, reference_layout))
     {
         throw std::invalid_argument(std::string(name) + ": shard layout mismatch");
-    }
-}
-
-void zero_poly(
-    GpuRNSPolyView &poly,
-    const char *name)
-{
-    for (const auto &shard : poly.shards)
-    {
-        const std::size_t word_count = checked_mul(
-            shard.limb_count,
-            shard.coeff_count,
-            "GpuEvaluator zero word count overflow");
-        gpu_check_cuda(cudaSetDevice(shard.device_id), name);
-        gpu_check_cuda(
-            cudaMemsetAsync(
-                shard.ptr,
-                0,
-                word_count * sizeof(GpuWord),
-                gpu_execution_stream()),
-            name);
     }
 }
 
@@ -1228,6 +1250,8 @@ void GpuEvaluator::rotate(
     const GpuGaloisKeysData &galois_keys,
     GpuCiphertextData &destination_ciphertext) const
 {
+    NvtxRange rotate_total_range(
+        "rotate.total step=" + std::to_string(step));
     validate_ntt_ciphertext_input(
         "GpuEvaluator::rotate",
         source_ciphertext,
@@ -1292,6 +1316,24 @@ void GpuEvaluator::rotate(
     const std::uint32_t galois_elt = galois_elt_from_rotation_step(source_ciphertext.meta.degree, step);
     /*选择密钥，因为不同的step对应不同的旋转密钥，所以galois_key_index选择对应的高斯密钥*/
     const std::size_t key_index = galois_key_index(galois_elt);
+    auto galois_keys_view = galois_keys.make_const_view();
+
+    if (use_rotate_cuda_graph())
+    {
+        keyswitch_handler_.rotate_hybrid_ciphertext_graph(
+            destination_view,
+            source_view,
+            galois_keys_view,
+            galois_keys,
+            key_index,
+            galois_elt,
+            level_info);
+        destination_ciphertext = std::move(result);
+        return;
+    }
+
+    NvtxRange rotate_direct_range(
+        "rotate.direct L" + std::to_string(level_info.q_count));
 
     GpuCiphertextData rotated_c1 =
         GpuCiphertextData::allocate_single_device_sharded(
@@ -1318,18 +1360,15 @@ void GpuEvaluator::rotate(
         galois_elt,
         source_ciphertext.meta.degree);
 
-    /* c1 先清零，后续 switch-key 会把 rotated_c1 * galois_key 累加进去。 */
-    zero_poly(destination_view.polys[1], "GpuEvaluator::rotate zero c1");
-
     auto rotated_c1_const_view = rotated_c1.make_const_view();
-    auto galois_keys_view = galois_keys.make_const_view();
     keyswitch_handler_.switch_key_hybrid_ciphertext(
         destination_view,
         rotated_c1_const_view.polys[0],
         galois_keys_view,
         galois_keys,
         key_index,
-        level_info);
+        level_info,
+        true);
 
     destination_ciphertext = std::move(result);
 }
@@ -1411,8 +1450,6 @@ void GpuEvaluator::conjugate(
         galois_elt,
         source_ciphertext.meta.degree);
 
-    zero_poly(destination_view.polys[1], "GpuEvaluator::conjugate zero c1");
-
     auto conjugated_c1_const_view = conjugated_c1.make_const_view();
     auto galois_keys_view = galois_keys.make_const_view();
     keyswitch_handler_.switch_key_hybrid_ciphertext(
@@ -1421,7 +1458,8 @@ void GpuEvaluator::conjugate(
         galois_keys_view,
         galois_keys,
         key_index,
-        level_info);
+        level_info,
+        true);
 
     destination_ciphertext = std::move(result);
 }

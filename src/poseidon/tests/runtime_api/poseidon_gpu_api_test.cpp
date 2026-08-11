@@ -1201,23 +1201,36 @@ void test_multiply_relinearize_rescale_rotate(
     rotate.place = device;
     rotate.attrs = fhegpu::RotateAttrs{3};
     auto rotated = api.compute(rotate, {rescaled});
+    auto rotated_replay = api.compute(rotate, {rescaled});
     auto downloaded = transfer_value(api, 22, rotated, fhegpu::ValueKind::Ciphertext,
                                      device, host_place());
+    auto downloaded_replay = transfer_value(
+        api, 23, rotated_replay, fhegpu::ValueKind::Ciphertext,
+        device, host_place());
 
     poseidon::Plaintext expected_plain;
     poseidon::Plaintext actual_plain;
+    poseidon::Plaintext replay_plain;
     decryptor.decrypt(expected_rotate, expected_plain);
     decryptor.decrypt(downloaded.host_ciphertext(), actual_plain);
+    decryptor.decrypt(downloaded_replay.host_ciphertext(), replay_plain);
     std::vector<std::complex<double>> expected;
     std::vector<std::complex<double>> actual;
+    std::vector<std::complex<double>> replay;
     encoder.decode(expected_plain, expected);
     encoder.decode(actual_plain, actual);
+    encoder.decode(replay_plain, replay);
     for (std::size_t i = 0; i < 4; ++i)
     {
         require(std::abs(actual[i].real() - expected[i].real()) < 1e-4,
                 "GPU chain result mismatch at slot " + std::to_string(i));
         require(std::abs(actual[i].imag() - expected[i].imag()) < 1e-4,
                 "GPU chain imaginary mismatch at slot " + std::to_string(i));
+        require(std::abs(replay[i].real() - expected[i].real()) < 1e-4,
+                "GPU chain replay mismatch at slot " + std::to_string(i));
+        require(std::abs(replay[i].imag() - expected[i].imag()) < 1e-4,
+                "GPU chain replay imaginary mismatch at slot " +
+                    std::to_string(i));
     }
 }
 

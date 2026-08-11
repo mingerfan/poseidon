@@ -14,6 +14,23 @@ namespace gpu
 namespace kernel
 {
 
+/** Fixed device-side indirection used by cached rotation CUDA Graphs. */
+struct GpuRotationPointerBindings
+{
+    GpuWord *destination0 = nullptr;
+    GpuWord *destination1 = nullptr;
+    const GpuWord *source0 = nullptr;
+    const GpuWord *source1 = nullptr;
+};
+
+void launch_update_rotation_pointer_bindings(
+    GpuRotationPointerBindings *bindings,
+    GpuWord *destination0,
+    GpuWord *destination1,
+    const GpuWord *source0,
+    const GpuWord *source1,
+    int device_id);
+
 void launch_hybrid_modup_decomposition(
     GpuWord *modup_q,
     GpuWord *modup_p,
@@ -160,9 +177,31 @@ void launch_hybrid_apply_moddown_ntt_add_back(
     const GpuWord *converted_q0,
     const GpuWord *converted_q1,
     const GpuParameterShard &parameter_shard,
-    std::size_t degree);
+    std::size_t degree,
+    bool overwrite_destination1);
+
+void launch_hybrid_apply_moddown_ntt_add_back_bound(
+    const GpuRotationPointerBindings *bindings,
+    const GpuPolyShardView &destination_shard0,
+    const GpuPolyShardView &destination_shard1,
+    const GpuWord *accum_q0,
+    const GpuWord *accum_q1,
+    const GpuWord *converted_q0,
+    const GpuWord *converted_q1,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree,
+    bool overwrite_destination1);
 
 void launch_apply_galois_ntt_poly_shard(
+    const GpuPolyShardView &destination_shard,
+    const GpuConstPolyShardView &source_shard,
+    std::uint32_t galois_elt,
+    std::size_t degree);
+
+void launch_apply_galois_ntt_poly_shard_bound(
+    const GpuRotationPointerBindings *bindings,
+    bool second_component,
+    bool bind_destination,
     const GpuPolyShardView &destination_shard,
     const GpuConstPolyShardView &source_shard,
     std::uint32_t galois_elt,

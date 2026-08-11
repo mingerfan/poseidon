@@ -2,13 +2,18 @@
 #include "poseidon/gpu/kernels/gpu_keyswitch_kernels.h"
 #include "poseidon/gpu/kernels/gpu_ntt_kernels.h"
 
+#include <cuda_runtime_api.h>
 #include <nvtx3/nvToolsExt.h>
 
 #include <algorithm>
 #include <cstdlib>
 #include <limits>
+#include <map>
+#include <memory>
+#include <mutex>
 #include <stdexcept>
 #include <string>
+#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -717,7 +722,9 @@ void process_hybrid_decomposition_block(
 void finalize_hybrid_relinearize(
     GpuCiphertextView &destination,
     HybridScratch &scratch,
-    const GpuLevelInfo &level_info)
+    const GpuLevelInfo &level_info,
+    bool overwrite_destination1,
+    const kernel::GpuRotationPointerBindings *rotation_bindings = nullptr)
 {
     NvtxRange finalize_range("keyswitch.finalize", level_info);
     const auto &destination_shard0 = destination.polys[0].shards.front();
@@ -824,15 +831,33 @@ void finalize_hybrid_relinearize(
 
         {
             NvtxRange range("keyswitch.finalize.fourstep_apply_moddown_add_back");
-            kernel::launch_hybrid_apply_moddown_ntt_add_back(
-                destination_shard0,
-                destination_shard1,
-                scratch.accum_q0.data(),
-                scratch.accum_q1.data(),
-                scratch.fourstep_q0.data(),
-                scratch.fourstep_q1.data(),
-                *parameter_shard,
-                scratch.degree);
+            if (rotation_bindings != nullptr)
+            {
+                kernel::launch_hybrid_apply_moddown_ntt_add_back_bound(
+                    rotation_bindings,
+                    destination_shard0,
+                    destination_shard1,
+                    scratch.accum_q0.data(),
+                    scratch.accum_q1.data(),
+                    scratch.fourstep_q0.data(),
+                    scratch.fourstep_q1.data(),
+                    *parameter_shard,
+                    scratch.degree,
+                    overwrite_destination1);
+            }
+            else
+            {
+                kernel::launch_hybrid_apply_moddown_ntt_add_back(
+                    destination_shard0,
+                    destination_shard1,
+                    scratch.accum_q0.data(),
+                    scratch.accum_q1.data(),
+                    scratch.fourstep_q0.data(),
+                    scratch.fourstep_q1.data(),
+                    *parameter_shard,
+                    scratch.degree,
+                    overwrite_destination1);
+            }
         }
         return;
     }
@@ -935,15 +960,33 @@ void finalize_hybrid_relinearize(
     /* 在NTT域完成模降，并直接和d0/d1累加，避免额外读写accum_q0/accum_q1 */
     {
         NvtxRange range("keyswitch.finalize.apply_moddown_ntt_add_back");
-        kernel::launch_hybrid_apply_moddown_ntt_add_back(
-            destination_shard0,
-            destination_shard1,
-            scratch.accum_q0.data(),
-            scratch.accum_q1.data(),
-            scratch.c2_intt.data(),
-            scratch.modup_q.data(),
-            *parameter_shard,
-            scratch.degree);
+        if (rotation_bindings != nullptr)
+        {
+            kernel::launch_hybrid_apply_moddown_ntt_add_back_bound(
+                rotation_bindings,
+                destination_shard0,
+                destination_shard1,
+                scratch.accum_q0.data(),
+                scratch.accum_q1.data(),
+                scratch.c2_intt.data(),
+                scratch.modup_q.data(),
+                *parameter_shard,
+                scratch.degree,
+                overwrite_destination1);
+        }
+        else
+        {
+            kernel::launch_hybrid_apply_moddown_ntt_add_back(
+                destination_shard0,
+                destination_shard1,
+                scratch.accum_q0.data(),
+                scratch.accum_q1.data(),
+                scratch.c2_intt.data(),
+                scratch.modup_q.data(),
+                *parameter_shard,
+                scratch.degree,
+                overwrite_destination1);
+        }
     }
 }
 
@@ -1152,20 +1195,18 @@ void validate_hybrid_switch_key_shape(
 
 }  // namespace
 
-GpuKeySwitchHandler::GpuKeySwitchHandler(const GpuParameterData &params)
-    : params_(params)
-{}
-
-void GpuKeySwitchHandler::switch_key_hybrid_ciphertext(
+void switch_key_hybrid_ciphertext_with_scratch(
     GpuCiphertextView &destination_view,
     const GpuConstRNSPolyView &switch_poly_ntt,/*可以自由选择需要密钥切换的密文分量位置*/
     const GpuConstEvaluationKeyView &switch_keys_view,
     const GpuEvaluationKeyData &switch_keys_data,
     std::size_t key_index,/*可以自由选择密钥切换的密钥类型*/
-    const GpuLevelInfo &level_info) const
+    const GpuLevelInfo &level_info,
+    HybridScratch &scratch,
+    const kernel::GpuRotationPointerBindings *rotation_bindings,
+    bool overwrite_destination1)
 {
     NvtxRange range("keyswitch.hybrid", level_info);
-    (void)params_;
     validate_hybrid_switch_key_shape(
         destination_view,
         switch_poly_ntt,
@@ -1196,12 +1237,14 @@ void GpuKeySwitchHandler::switch_key_hybrid_ciphertext(
     }
 
     const int device_id = destination_view.polys[0].shards.front().device_id;
-    /* HYBRID key-switch过程里的临时显存缓存，存放中间变量 */
-    auto scratch = allocate_hybrid_scratch(
-        device_id,
-        destination_view.meta.degree,
-        base_q_size,
-        base_p_size);
+    if (scratch.device_id != device_id ||
+        scratch.degree != destination_view.meta.degree ||
+        scratch.base_q_size != base_q_size ||
+        scratch.base_p_size != base_p_size)
+    {
+        throw std::invalid_argument(
+            "GpuKeySwitchHandler::switch_key_hybrid_ciphertext: scratch shape mismatch");
+    }
     /* 将待切换分量通过 INTT 从点值域转换到系数域 */
     inverse_ntt_switch_poly(
         scratch,
@@ -1487,7 +1530,528 @@ void GpuKeySwitchHandler::switch_key_hybrid_ciphertext(
     finalize_hybrid_relinearize(
         destination_view,
         scratch,
+        level_info,
+        overwrite_destination1,
+        rotation_bindings);
+}
+
+void GpuKeySwitchHandler::switch_key_hybrid_ciphertext(
+    GpuCiphertextView &destination_view,
+    const GpuConstRNSPolyView &switch_poly_ntt,
+    const GpuConstEvaluationKeyView &switch_keys_view,
+    const GpuEvaluationKeyData &switch_keys_data,
+    std::size_t key_index,
+    const GpuLevelInfo &level_info,
+    bool overwrite_destination1) const
+{
+    (void)params_;
+    const int device_id = destination_view.polys.at(0).shards.at(0).device_id;
+    auto scratch = allocate_hybrid_scratch(
+        device_id,
+        destination_view.meta.degree,
+        destination_view.meta.q_count,
+        switch_keys_view.meta.p_count);
+    switch_key_hybrid_ciphertext_with_scratch(
+        destination_view,
+        switch_poly_ntt,
+        switch_keys_view,
+        switch_keys_data,
+        key_index,
+        level_info,
+        scratch,
+        nullptr,
+        overwrite_destination1);
+}
+
+namespace
+{
+
+std::string environment_value(const char *name)
+{
+    const char *value = std::getenv(name);
+    return value == nullptr ? std::string{} : std::string(value);
+}
+
+std::string rotation_graph_topology_signature(
+    std::size_t degree,
+    std::size_t q_count,
+    std::size_t p_count)
+{
+    const std::string ntt_algorithm = environment_value("POSEIDON_NTT_ALGO");
+    if (ntt_algorithm == "tensor" || ntt_algorithm == "tensor_fp64")
+    {
+        throw std::runtime_error(
+            "rotation CUDA Graph does not support tensor NTT scratch allocation");
+    }
+
+    std::string result;
+    result.reserve(128);
+    const auto append_flag = [&](bool value)
+    {
+        result.push_back(value ? '1' : '0');
+    };
+    append_flag(use_fused_decomp_q());
+    append_flag(use_fused_modup_ntt_head());
+    append_flag(use_bconv_row_tiled());
+    append_flag(use_bconv_row_tiled8());
+    append_flag(use_p_to_q_row_tiled8());
+    append_flag(use_fourstep_c2_intt());
+    append_flag(use_fourstep_all_ntt(degree, q_count, p_count));
+    append_flag(use_fourstep_phase2_mac());
+    append_flag(use_fourstep_finalize_fused());
+    result.append(";ntt=").append(ntt_algorithm);
+    result.append(";fusion=").append(
+        environment_value("POSEIDON_NTT_FUSION_STAGES"));
+    return result;
+}
+
+struct RotateWorkspaceKey
+{
+    int device_id = 0;
+    std::size_t degree = 0;
+    std::size_t q_count = 0;
+    std::size_t p_count = 0;
+    bool fourstep_buffers = false;
+
+    bool operator<(const RotateWorkspaceKey &other) const
+    {
+        return std::tie(device_id, degree, q_count, p_count, fourstep_buffers) <
+               std::tie(other.device_id, other.degree, other.q_count,
+                        other.p_count, other.fourstep_buffers);
+    }
+};
+
+struct RotateGraphKey
+{
+    RotateWorkspaceKey workspace;
+    std::uint32_t galois_elt = 0;
+    std::size_t key_index = 0;
+    std::vector<std::uintptr_t> key_storage_identity;
+    std::string topology;
+
+    bool operator<(const RotateGraphKey &other) const
+    {
+        return std::tie(
+                   workspace,
+                   galois_elt,
+                   key_index,
+                   key_storage_identity,
+                   topology) <
+               std::tie(other.workspace, other.galois_elt, other.key_index,
+                        other.key_storage_identity, other.topology);
+    }
+};
+
+std::vector<std::uintptr_t> rotation_key_storage_identity(
+    const GpuConstEvaluationKeyView &key_view,
+    const GpuEvaluationKeyData &key_data,
+    std::size_t key_index)
+{
+    std::vector<std::uintptr_t> result;
+    for (const auto &metadata : key_data.poly_metadata_)
+    {
+        if (metadata.key_index != key_index)
+        {
+            continue;
+        }
+        if (metadata.poly_id >= key_view.polys.size())
+        {
+            throw std::out_of_range(
+                "rotation CUDA Graph key metadata poly_id is out of range");
+        }
+
+        const auto &poly = key_view.polys[metadata.poly_id];
+        result.push_back(metadata.decomposition_index);
+        result.push_back(metadata.component_index);
+        result.push_back(poly.poly_id);
+        result.push_back(poly.shards.size());
+        for (const auto &shard : poly.shards)
+        {
+            result.push_back(reinterpret_cast<std::uintptr_t>(shard.ptr));
+            result.push_back(static_cast<std::uintptr_t>(shard.device_id));
+            result.push_back(shard.limb_begin);
+            result.push_back(shard.limb_count);
+            result.push_back(shard.coeff_begin);
+            result.push_back(shard.coeff_count);
+        }
+    }
+    if (result.empty())
+    {
+        throw std::invalid_argument(
+            "rotation CUDA Graph key index has no device storage");
+    }
+    return result;
+}
+
+class RotateWorkspace
+{
+public:
+    RotateWorkspace(
+        const RotateWorkspaceKey &key,
+        const GpuConstCiphertextView &source_view)
+        : device_id_(key.device_id),
+          scratch_(allocate_hybrid_scratch(
+              key.device_id,
+              key.degree,
+              key.q_count,
+              key.p_count)),
+          bindings_(1, key.device_id),
+          rotated_c1_(GpuCiphertextData::allocate_single_device(
+              key.degree,
+              key.q_count,
+              1,
+              key.device_id))
+    {
+        rotated_c1_.meta = source_view.meta;
+        rotated_c1_.meta.component_count = 1;
+        rotated_c1_.meta.is_ntt_form = true;
+        gpu_check_cuda(cudaSetDevice(device_id_), "rotation graph cudaSetDevice");
+        gpu_check_cuda(
+            cudaEventCreateWithFlags(&completion_, cudaEventDisableTiming),
+            "rotation graph cudaEventCreateWithFlags");
+    }
+
+    RotateWorkspace(const RotateWorkspace &) = delete;
+    RotateWorkspace &operator=(const RotateWorkspace &) = delete;
+
+    ~RotateWorkspace()
+    {
+        (void)cudaSetDevice(device_id_);
+        if (launched_ && completion_ != nullptr)
+        {
+            (void)cudaEventSynchronize(completion_);
+        }
+        if (completion_ != nullptr)
+        {
+            (void)cudaEventDestroy(completion_);
+        }
+    }
+
+    void synchronize_before_capture()
+    {
+        if (!launched_)
+        {
+            return;
+        }
+        gpu_check_cuda(cudaSetDevice(device_id_), "rotation graph cudaSetDevice");
+        gpu_check_cuda(
+            cudaEventSynchronize(completion_),
+            "rotation graph synchronize before capture");
+    }
+
+    void wait_on(cudaStream_t stream)
+    {
+        if (!launched_)
+        {
+            return;
+        }
+        gpu_check_cuda(
+            cudaStreamWaitEvent(stream, completion_, 0),
+            "rotation graph cudaStreamWaitEvent");
+    }
+
+    void record_completion(cudaStream_t stream)
+    {
+        gpu_check_cuda(
+            cudaEventRecord(completion_, stream),
+            "rotation graph cudaEventRecord");
+        launched_ = true;
+    }
+
+    HybridScratch &scratch() noexcept
+    {
+        return scratch_;
+    }
+
+    kernel::GpuRotationPointerBindings *bindings() noexcept
+    {
+        return bindings_.data();
+    }
+
+    GpuCiphertextData &rotated_c1() noexcept
+    {
+        return rotated_c1_;
+    }
+
+private:
+    int device_id_ = 0;
+    HybridScratch scratch_;
+    DeviceVector<kernel::GpuRotationPointerBindings> bindings_;
+    GpuCiphertextData rotated_c1_;
+    cudaEvent_t completion_ = nullptr;
+    bool launched_ = false;
+};
+
+class RotateGraphExecutable
+{
+public:
+    RotateGraphExecutable(
+        int device_id,
+        cudaGraph_t graph,
+        cudaGraphExec_t executable,
+        std::shared_ptr<RotateWorkspace> workspace)
+        : device_id_(device_id), graph_(graph), executable_(executable),
+          workspace_(std::move(workspace))
+    {}
+
+    RotateGraphExecutable(const RotateGraphExecutable &) = delete;
+    RotateGraphExecutable &operator=(const RotateGraphExecutable &) = delete;
+
+    ~RotateGraphExecutable()
+    {
+        (void)cudaSetDevice(device_id_);
+        if (executable_ != nullptr)
+        {
+            (void)cudaGraphExecDestroy(executable_);
+        }
+        if (graph_ != nullptr)
+        {
+            (void)cudaGraphDestroy(graph_);
+        }
+    }
+
+    void launch(
+        const GpuConstCiphertextView &source_view,
+        GpuCiphertextView &destination_view)
+    {
+        const auto &source0 = source_view.polys.at(0).shards.at(0);
+        const auto &source1 = source_view.polys.at(1).shards.at(0);
+        const auto &destination0 = destination_view.polys.at(0).shards.at(0);
+        const auto &destination1 = destination_view.polys.at(1).shards.at(0);
+        const cudaStream_t stream = gpu_execution_stream();
+        workspace_->wait_on(stream);
+        kernel::launch_update_rotation_pointer_bindings(
+            workspace_->bindings(),
+            destination0.ptr,
+            destination1.ptr,
+            source0.ptr,
+            source1.ptr,
+            destination0.device_id);
+        gpu_check_cuda(
+            cudaGraphLaunch(executable_, stream),
+            "rotation graph cudaGraphLaunch");
+        workspace_->record_completion(stream);
+    }
+
+private:
+    int device_id_ = 0;
+    cudaGraph_t graph_ = nullptr;
+    cudaGraphExec_t executable_ = nullptr;
+    std::shared_ptr<RotateWorkspace> workspace_;
+};
+
+std::unique_ptr<RotateGraphExecutable> capture_rotate_graph(
+    const RotateGraphKey &key,
+    const std::shared_ptr<RotateWorkspace> &workspace,
+    GpuCiphertextView &destination_view,
+    const GpuConstCiphertextView &source_view,
+    const GpuConstEvaluationKeyView &galois_keys_view,
+    const GpuEvaluationKeyData &galois_keys_data,
+    const GpuLevelInfo &level_info)
+{
+    workspace->synchronize_before_capture();
+    gpu_check_cuda(cudaSetDevice(key.workspace.device_id),
+                   "rotation graph cudaSetDevice");
+    const cudaStream_t stream = gpu_execution_stream();
+    cudaGraph_t graph = nullptr;
+    gpu_check_cuda(
+        cudaStreamBeginCapture(stream, cudaStreamCaptureModeThreadLocal),
+        "rotation graph cudaStreamBeginCapture");
+    bool capture_active = true;
+    try
+    {
+        auto rotated_c1_view = workspace->rotated_c1().make_view();
+        auto rotated_c1_const_view = workspace->rotated_c1().make_const_view();
+        const auto &destination0 = destination_view.polys.at(0).shards.at(0);
+        const auto &source0 = source_view.polys.at(0).shards.at(0);
+        const auto &source1 = source_view.polys.at(1).shards.at(0);
+
+        kernel::launch_apply_galois_ntt_poly_shard_bound(
+            workspace->bindings(),
+            false,
+            true,
+            destination0,
+            source0,
+            key.galois_elt,
+            key.workspace.degree);
+        kernel::launch_apply_galois_ntt_poly_shard_bound(
+            workspace->bindings(),
+            true,
+            false,
+            rotated_c1_view.polys.at(0).shards.at(0),
+            source1,
+            key.galois_elt,
+            key.workspace.degree);
+        switch_key_hybrid_ciphertext_with_scratch(
+            destination_view,
+            rotated_c1_const_view.polys.at(0),
+            galois_keys_view,
+            galois_keys_data,
+            key.key_index,
+            level_info,
+            workspace->scratch(),
+            workspace->bindings(),
+            true);
+
+        gpu_check_cuda(
+            cudaStreamEndCapture(stream, &graph),
+            "rotation graph cudaStreamEndCapture");
+        capture_active = false;
+    }
+    catch (...)
+    {
+        if (capture_active)
+        {
+            cudaGraph_t abandoned = nullptr;
+            (void)cudaStreamEndCapture(stream, &abandoned);
+            if (abandoned != nullptr)
+            {
+                (void)cudaGraphDestroy(abandoned);
+            }
+        }
+        throw;
+    }
+
+    cudaGraphExec_t executable = nullptr;
+    const cudaError_t instantiate_status = cudaGraphInstantiate(
+        &executable,
+        graph,
+        nullptr,
+        nullptr,
+        0);
+    if (instantiate_status != cudaSuccess)
+    {
+        (void)cudaGraphDestroy(graph);
+        gpu_check_cuda(instantiate_status, "rotation graph cudaGraphInstantiate");
+    }
+    return std::make_unique<RotateGraphExecutable>(
+        key.workspace.device_id,
+        graph,
+        executable,
+        workspace);
+}
+
+} // namespace
+
+struct GpuKeySwitchHandler::GraphState
+{
+    std::mutex mutex;
+    std::map<RotateWorkspaceKey, std::shared_ptr<RotateWorkspace>> workspaces;
+    std::map<RotateGraphKey, std::unique_ptr<RotateGraphExecutable>> graphs;
+};
+
+GpuKeySwitchHandler::GpuKeySwitchHandler(const GpuParameterData &params)
+    : params_(params), graph_state_(std::make_unique<GraphState>())
+{}
+
+GpuKeySwitchHandler::~GpuKeySwitchHandler() = default;
+
+void GpuKeySwitchHandler::rotate_hybrid_ciphertext_graph(
+    GpuCiphertextView &destination_view,
+    const GpuConstCiphertextView &source_view,
+    const GpuConstEvaluationKeyView &galois_keys_view,
+    const GpuEvaluationKeyData &galois_keys_data,
+    std::size_t key_index,
+    std::uint32_t galois_elt,
+    const GpuLevelInfo &level_info) const
+{
+    if (source_view.polys.size() != 2 || destination_view.polys.size() != 2)
+    {
+        throw std::invalid_argument(
+            "GpuKeySwitchHandler rotation graph requires two components");
+    }
+    if (!(source_view.meta.parms_id == destination_view.meta.parms_id) ||
+        source_view.meta.degree != destination_view.meta.degree ||
+        source_view.meta.q_count != destination_view.meta.q_count ||
+        source_view.meta.p_count != destination_view.meta.p_count ||
+        source_view.meta.component_count != 2 ||
+        source_view.meta.is_ntt_form != destination_view.meta.is_ntt_form)
+    {
+        throw std::invalid_argument(
+            "GpuKeySwitchHandler rotation graph source/destination metadata mismatch");
+    }
+    validate_hybrid_switch_key_shape(
+        destination_view,
+        source_view.polys.at(1),
+        galois_keys_view,
+        galois_keys_data,
+        key_index,
         level_info);
+    validate_single_full_shard(
+        "GpuKeySwitchHandler rotation graph source c0",
+        source_view.polys.at(0),
+        source_view.meta.degree,
+        source_view.meta.q_count);
+    if (!same_shard_placement(
+            destination_view.polys.at(0).shards.front(),
+            source_view.polys.at(0).shards.front()))
+    {
+        throw std::invalid_argument(
+            "GpuKeySwitchHandler rotation graph source/destination placement mismatch");
+    }
+    const auto &source0 = source_view.polys.at(0).shards.at(0);
+    const auto &destination0 = destination_view.polys.at(0).shards.at(0);
+    const std::size_t p_count = galois_keys_view.meta.p_count;
+    RotateWorkspaceKey workspace_key{
+        destination0.device_id,
+        destination_view.meta.degree,
+        destination_view.meta.q_count,
+        p_count,
+        use_fourstep_all_ntt(
+            destination_view.meta.degree,
+            destination_view.meta.q_count,
+            p_count)};
+    RotateGraphKey graph_key{
+        workspace_key,
+        galois_elt,
+        key_index,
+        rotation_key_storage_identity(
+            galois_keys_view,
+            galois_keys_data,
+            key_index),
+        rotation_graph_topology_signature(
+            workspace_key.degree,
+            workspace_key.q_count,
+            workspace_key.p_count)};
+
+    if (source0.device_id != workspace_key.device_id)
+    {
+        throw std::invalid_argument(
+            "GpuKeySwitchHandler rotation graph device mismatch");
+    }
+    std::lock_guard<std::mutex> lock(graph_state_->mutex);
+    auto workspace_it = graph_state_->workspaces.find(workspace_key);
+    if (workspace_it == graph_state_->workspaces.end())
+    {
+        auto workspace = std::make_shared<RotateWorkspace>(
+            workspace_key,
+            source_view);
+        workspace_it = graph_state_->workspaces.emplace(
+            workspace_key,
+            std::move(workspace)).first;
+    }
+
+    auto graph_it = graph_state_->graphs.find(graph_key);
+    if (graph_it == graph_state_->graphs.end())
+    {
+        NvtxRange rotate_range("rotate.graph.capture", level_info);
+        auto executable = capture_rotate_graph(
+            graph_key,
+            workspace_it->second,
+            destination_view,
+            source_view,
+            galois_keys_view,
+            galois_keys_data,
+            level_info);
+        graph_it = graph_state_->graphs.emplace(
+            graph_key,
+            std::move(executable)).first;
+        graph_it->second->launch(source_view, destination_view);
+        return;
+    }
+
+    NvtxRange rotate_range("rotate.graph.replay", level_info);
+    graph_it->second->launch(source_view, destination_view);
 }
 
 void GpuKeySwitchHandler::relinearize_hybrid_ciphertext(
@@ -1513,7 +2077,8 @@ void GpuKeySwitchHandler::relinearize_hybrid_ciphertext(
         relin_keys_view,
         relin_keys_data,
         kRelinKeyPower2Index,/*数值为0，表示该密钥为重线性化密钥*/
-        level_info);
+        level_info,
+        false);
 }
 
 }  // namespace gpu

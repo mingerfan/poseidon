@@ -3135,7 +3135,7 @@ void launch_forward_fused_stage(
     const int grid_size = static_cast<int>(
         (total_tiles + block_size - 1) / block_size);
 
-    forward_ntt_fused_stage_kernel<FusionStages><<<grid_size, block_size>>>(
+    forward_ntt_fused_stage_kernel<FusionStages><<<grid_size, block_size, 0, gpu_execution_stream()>>>(
         shard.ptr,
         parameter_shard.rns_primes.data(),
         parameter_shard.rns_modulus_constants.data(),
@@ -3168,7 +3168,7 @@ void launch_forward_stage_group(
         const int grid_size = static_cast<int>(
             (total_butterflies + block_size - 1) / block_size);
 
-        forward_ntt_stage_kernel<<<grid_size, block_size>>>(
+        forward_ntt_stage_kernel<<<grid_size, block_size, 0, gpu_execution_stream()>>>(
             shard.ptr,
             parameter_shard.rns_primes.data(),
             parameter_shard.rns_modulus_constants.data(),
@@ -3227,7 +3227,7 @@ void launch_inverse_fused_stage(
     if (scale_by_inv_degree)
     {
         inverse_ntt_fused_stage_kernel<FusionStages, true>
-            <<<grid_size, block_size>>>(
+            <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
                 shard.ptr,
                 parameter_shard.rns_primes.data(),
                 parameter_shard.rns_modulus_constants.data(),
@@ -3242,7 +3242,7 @@ void launch_inverse_fused_stage(
     else
     {
         inverse_ntt_fused_stage_kernel<FusionStages, false>
-            <<<grid_size, block_size>>>(
+            <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
                 shard.ptr,
                 parameter_shard.rns_primes.data(),
                 parameter_shard.rns_modulus_constants.data(),
@@ -3283,7 +3283,7 @@ void launch_inverse_stage_group(
 
         if (scale_by_inv_degree)
         {
-            inverse_ntt_stage_kernel<true><<<grid_size, block_size>>>(
+            inverse_ntt_stage_kernel<true><<<grid_size, block_size, 0, gpu_execution_stream()>>>(
                 shard.ptr,
                 parameter_shard.rns_primes.data(),
                 parameter_shard.rns_modulus_constants.data(),
@@ -3297,7 +3297,7 @@ void launch_inverse_stage_group(
         }
         else
         {
-            inverse_ntt_stage_kernel<false><<<grid_size, block_size>>>(
+            inverse_ntt_stage_kernel<false><<<grid_size, block_size, 0, gpu_execution_stream()>>>(
                 shard.ptr,
                 parameter_shard.rns_primes.data(),
                 parameter_shard.rns_modulus_constants.data(),
@@ -3409,7 +3409,7 @@ void launch_forward_montgomery_fused_stage(
         (total_tiles + block_size - 1) / block_size);
 
     forward_ntt_montgomery_fused_stage_kernel<FusionStages>
-        <<<grid_size, block_size>>>(
+        <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
             shard.ptr,
             parameter_shard.rns_primes.data(),
             parameter_shard.montgomery_neg_inv_modulo.data(),
@@ -3476,7 +3476,7 @@ void launch_inverse_montgomery_fused_stage(
     if (scale_by_inv_degree)
     {
         inverse_ntt_montgomery_fused_stage_kernel<FusionStages, true>
-            <<<grid_size, block_size>>>(
+            <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
                 shard.ptr,
                 parameter_shard.rns_primes.data(),
                 parameter_shard.montgomery_neg_inv_modulo.data(),
@@ -3491,7 +3491,7 @@ void launch_inverse_montgomery_fused_stage(
     else
     {
         inverse_ntt_montgomery_fused_stage_kernel<FusionStages, false>
-            <<<grid_size, block_size>>>(
+            <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
                 shard.ptr,
                 parameter_shard.rns_primes.data(),
                 parameter_shard.montgomery_neg_inv_modulo.data(),
@@ -4087,7 +4087,7 @@ void launch_forward_tensor_tam_stage(
         const GpuWord *matrices =
             parameter_shard.ntt_fused_matrices.data() + limb_matrix_offset;
         prepare_forward_tam_batched_gemm_segments_kernel<<<
-            prepare_grid_size, block_size>>>(
+            prepare_grid_size, block_size, 0, gpu_execution_stream()>>>(
             shard.ptr,
             matrices,
             scratch.workspace.a_segments,
@@ -4115,7 +4115,7 @@ void launch_forward_tensor_tam_stage(
             gpu_execution_stream());
 
         unpack_forward_tam_batched_gemm_output_kernel<<<
-            unpack_grid_size, block_size>>>(
+            unpack_grid_size, block_size, 0, gpu_execution_stream()>>>(
             scratch.c.data(),
             shard.ptr,
             local_limb,
@@ -4206,7 +4206,7 @@ void launch_inverse_tensor_tam_stage(
         const GpuWord *matrices =
             parameter_shard.intt_fused_matrices.data() + limb_matrix_offset;
         prepare_inverse_tam_batched_gemm_segments_kernel<<<
-            prepare_grid_size, block_size>>>(
+            prepare_grid_size, block_size, 0, gpu_execution_stream()>>>(
             shard.ptr,
             matrices,
             scratch.workspace.a_segments,
@@ -4234,7 +4234,7 @@ void launch_inverse_tensor_tam_stage(
             gpu_execution_stream());
 
         unpack_inverse_tam_batched_gemm_output_kernel<<<
-            unpack_grid_size, block_size>>>(
+            unpack_grid_size, block_size, 0, gpu_execution_stream()>>>(
             scratch.c.data(),
             shard.ptr,
             local_limb,
@@ -4330,7 +4330,7 @@ void launch_forward_tensor_fp64_tam_stage(
             parameter_shard.ntt_fused_matrices_fp64_hi.data() +
             limb_matrix_offset;
         prepare_forward_tam_batched_gemm_fp64_a_kernel<<<
-            prepare_grid_size, block_size>>>(
+            prepare_grid_size, block_size, 0, gpu_execution_stream()>>>(
             shard.ptr,
             modulus,
             scratch.a.data(),
@@ -4358,7 +4358,7 @@ void launch_forward_tensor_fp64_tam_stage(
             gpu_execution_stream());
 
         unpack_forward_tam_batched_gemm_output_kernel<<<
-            unpack_grid_size, block_size>>>(
+            unpack_grid_size, block_size, 0, gpu_execution_stream()>>>(
             scratch.c.data(),
             shard.ptr,
             local_limb,
@@ -4453,7 +4453,7 @@ void launch_inverse_tensor_fp64_tam_stage(
             parameter_shard.intt_fused_matrices_fp64_hi.data() +
             limb_matrix_offset;
         prepare_inverse_tam_batched_gemm_fp64_a_kernel<<<
-            prepare_grid_size, block_size>>>(
+            prepare_grid_size, block_size, 0, gpu_execution_stream()>>>(
             shard.ptr,
             modulus,
             scratch.a.data(),
@@ -4481,7 +4481,7 @@ void launch_inverse_tensor_fp64_tam_stage(
             gpu_execution_stream());
 
         unpack_inverse_tam_batched_gemm_output_kernel<<<
-            unpack_grid_size, block_size>>>(
+            unpack_grid_size, block_size, 0, gpu_execution_stream()>>>(
             scratch.c.data(),
             shard.ptr,
             local_limb,
@@ -4542,7 +4542,7 @@ void launch_forward_fourstep_phase(
         sizeof(GpuWord);
 
     forward_ntt_fourstep_phase_kernel<StageCount>
-        <<<grid_size, block_size, shared_bytes>>>(
+        <<<grid_size, block_size, shared_bytes, gpu_execution_stream()>>>(
             shard.ptr,
             parameter_shard.rns_primes.data(),
             parameter_shard.rns_modulus_constants.data(),
@@ -4590,7 +4590,7 @@ void launch_inverse_fourstep_phase(
     if (scale_by_inv_degree)
     {
         inverse_ntt_fourstep_phase_kernel<StageCount, true>
-            <<<grid_size, block_size, shared_bytes>>>(
+            <<<grid_size, block_size, shared_bytes, gpu_execution_stream()>>>(
                 shard.ptr,
                 parameter_shard.rns_primes.data(),
                 parameter_shard.rns_modulus_constants.data(),
@@ -4607,7 +4607,7 @@ void launch_inverse_fourstep_phase(
     else
     {
         inverse_ntt_fourstep_phase_kernel<StageCount, false>
-            <<<grid_size, block_size, shared_bytes>>>(
+            <<<grid_size, block_size, shared_bytes, gpu_execution_stream()>>>(
                 shard.ptr,
                 parameter_shard.rns_primes.data(),
                 parameter_shard.rns_modulus_constants.data(),
@@ -5422,7 +5422,8 @@ void launch_forward_cheddar_fourstep_65536(
     forward_ntt_cheddar_phase1_65536_kernel<<<
         dim3(32, static_cast<unsigned int>(destination_shard.limb_count)),
         128,
-        128 * 16 * sizeof(GpuWord)>>>(
+        128 * 16 * sizeof(GpuWord),
+        gpu_execution_stream()>>>(
             destination_shard.ptr,
             source_shard.ptr,
             parameter_shard.rns_primes.data(),
@@ -5437,7 +5438,8 @@ void launch_forward_cheddar_fourstep_65536(
     forward_ntt_cheddar_phase2_65536_kernel<<<
         dim3(128, static_cast<unsigned int>(destination_shard.limb_count)),
         64,
-        64 * 8 * sizeof(GpuWord)>>>(
+        64 * 8 * sizeof(GpuWord),
+        gpu_execution_stream()>>>(
             destination_shard.ptr,
             parameter_shard.rns_primes.data(),
             parameter_shard.rns_modulus_constants.data(),
@@ -5460,7 +5462,8 @@ void launch_inverse_cheddar_fourstep_65536(
     inverse_ntt_cheddar_phase1_65536_kernel<<<
         dim3(128, static_cast<unsigned int>(destination_shard.limb_count)),
         64,
-        64 * 8 * sizeof(GpuWord)>>>(
+        64 * 8 * sizeof(GpuWord),
+        gpu_execution_stream()>>>(
             destination_shard.ptr,
             source_shard.ptr,
             parameter_shard.rns_primes.data(),
@@ -5475,7 +5478,8 @@ void launch_inverse_cheddar_fourstep_65536(
     inverse_ntt_cheddar_phase2_65536_kernel<<<
         dim3(32, static_cast<unsigned int>(destination_shard.limb_count)),
         128,
-        128 * 16 * sizeof(GpuWord)>>>(
+        128 * 16 * sizeof(GpuWord),
+        gpu_execution_stream()>>>(
             destination_shard.ptr,
             parameter_shard.rns_primes.data(),
             parameter_shard.rns_modulus_constants.data(),
@@ -5624,7 +5628,7 @@ void launch_inverse_stages(
     constexpr int block_size = 256;
     const int grid_size = static_cast<int>(
         (total_values + block_size - 1) / block_size);
-    multiply_inv_degree_kernel<<<grid_size, block_size>>>(
+    multiply_inv_degree_kernel<<<grid_size, block_size, 0, gpu_execution_stream()>>>(
         shard.ptr,
         parameter_shard.rns_primes.data(),
         parameter_shard.rns_modulus_constants.data(),
@@ -5860,7 +5864,8 @@ void launch_forward_ntt_qp_active_fourstep_65536(
     forward_ntt_cheddar_qp_active_phase1_65536_kernel<<<
         dim3(32, static_cast<unsigned int>(active_limb_count)),
         128,
-        128 * 16 * sizeof(GpuWord)>>>(
+        128 * 16 * sizeof(GpuWord),
+        gpu_execution_stream()>>>(
             destination_q,
             destination_p,
             source_q,
@@ -5879,7 +5884,8 @@ void launch_forward_ntt_qp_active_fourstep_65536(
     forward_ntt_cheddar_qp_active_phase2_65536_kernel<<<
         dim3(128, static_cast<unsigned int>(active_limb_count)),
         64,
-        64 * 8 * sizeof(GpuWord)>>>(
+        64 * 8 * sizeof(GpuWord),
+        gpu_execution_stream()>>>(
             destination_q,
             destination_p,
             parameter_shard.rns_primes.data(),
@@ -5956,7 +5962,8 @@ void launch_forward_ntt_qp_active_fourstep_mul_accumulate_two_components_65536(
     forward_ntt_cheddar_qp_active_phase1_65536_kernel<<<
         dim3(32, static_cast<unsigned int>(active_limb_count)),
         128,
-        128 * 16 * sizeof(GpuWord)>>>(
+        128 * 16 * sizeof(GpuWord),
+        gpu_execution_stream()>>>(
             partial_q,
             partial_p,
             source_q,
@@ -5977,7 +5984,8 @@ void launch_forward_ntt_qp_active_fourstep_mul_accumulate_two_components_65536(
     forward_ntt_cheddar_qp_active_phase2_mul_accumulate_65536_kernel<<<
         dim3(128, static_cast<unsigned int>(packed_limb_count)),
         64,
-        64 * 9 * sizeof(GpuWord)>>>(
+        64 * 9 * sizeof(GpuWord),
+        gpu_execution_stream()>>>(
             partial_q,
             partial_p,
             accum_q0,
@@ -6051,7 +6059,8 @@ void launch_hybrid_convert_p_to_q_forward_ntt_two_components_fourstep_65536(
     hybrid_convert_p_to_q_forward_ntt_cheddar_phase1_65536_kernel<<<
         dim3(32, packed_limb_count),
         128,
-        128 * 16 * sizeof(GpuWord)>>>(
+        128 * 16 * sizeof(GpuWord),
+        gpu_execution_stream()>>>(
             destination_q0,
             destination_q1,
             source_p0,
@@ -6069,7 +6078,8 @@ void launch_hybrid_convert_p_to_q_forward_ntt_two_components_fourstep_65536(
     forward_ntt_cheddar_two_components_phase2_65536_kernel<<<
         dim3(128, packed_limb_count),
         64,
-        64 * 8 * sizeof(GpuWord)>>>(
+        64 * 8 * sizeof(GpuWord),
+        gpu_execution_stream()>>>(
             destination_q0,
             destination_q1,
             parameter_shard.rns_primes.data(),
@@ -6205,7 +6215,7 @@ void launch_inverse_ntt_components_shard_tensor(
     {
         GpuWord *component_ptr =
             first_destination_shard.ptr + component * component_stride;
-        multiply_inv_degree_kernel<<<grid_size, block_size>>>(
+        multiply_inv_degree_kernel<<<grid_size, block_size, 0, gpu_execution_stream()>>>(
             component_ptr,
             parameter_shard.rns_primes.data(),
             parameter_shard.rns_modulus_constants.data(),
