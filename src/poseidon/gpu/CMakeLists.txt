@@ -6,6 +6,18 @@ if(NOT EXISTS "${POSEIDON_BUNDLED_RMM_DIR}/CMakeLists.txt")
     message(FATAL_ERROR "Bundled RMM was not found at ${POSEIDON_BUNDLED_RMM_DIR}")
 endif()
 
+foreach(_rmm_thirdparty_file IN ITEMS get_spdlog.cmake get_cccl.cmake get_nvtx.cmake)
+    set(_rmm_thirdparty_path
+        "${POSEIDON_BUNDLED_RMM_DIR}/cmake/thirdparty/${_rmm_thirdparty_file}")
+    if(NOT EXISTS "${_rmm_thirdparty_path}")
+        message(FATAL_ERROR
+            "Bundled RMM is incomplete: ${_rmm_thirdparty_path} is missing. "
+            "Recreate the offline bundle with scripts/package_offline_gpu_runtime.sh.")
+    endif()
+endforeach()
+unset(_rmm_thirdparty_file)
+unset(_rmm_thirdparty_path)
+
 if(NOT TARGET rmm::rmm)
     set(CPM_SOURCE_CACHE "${POSEIDON_INCLUDES_DIR}/third_party/cpm" CACHE PATH
         "Bundled CPM cache for offline RAPIDS/RMM configuration" FORCE)

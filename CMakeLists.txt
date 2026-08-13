@@ -17,11 +17,15 @@ message(STATUS "CROSS_COMPILE_ARRCH64: ${CROSS_COMPILE_ARRCH64}")
 if(CROSS_COMPILE_ARRCH64)
     SET(CMAKE_C_COMPILER /data/gcc-arm-11.2/bin/aarch64-none-linux-gnu-gcc)
     SET(CMAKE_CXX_COMPILER /data/gcc-arm-11.2/bin/aarch64-none-linux-gnu-g++)
-    include_directories(/data/gmp-arm/gmp-6.3.0-install/include)
-    link_directories(/data/gmp-arm/gmp-6.3.0-install/lib)
+    if(NOT GMP_ROOT)
+        set(GMP_ROOT "/data/gmp-arm/gmp-6.3.0-install" CACHE PATH
+            "GMP installation prefix")
+    endif()
 endif ()
 
 project(Poseidon VERSION 1.0.0 LANGUAGES CXX C)
+
+find_package(GMP REQUIRED MODULE)
 
 # 根据ASAN的值来设置编译器标志  
 option(ASAN "Enable AddressSanitizer" OFF)  
@@ -52,7 +56,7 @@ message(STATUS "POSEIDON_USE_CXX17: ${POSEIDON_USE_CXX17}")
 
 SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -DNDEBUG -fPIC -pthread ")
 SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -DNDEBUG -fPIC -pthread ")
-SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lgmp  -fopenmp")
+SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
 
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 set(THREADS_PREFER_PTHREAD_FLAG TRUE)
@@ -222,7 +226,7 @@ endif()
 
 add_library(poseidon_shared SHARED ${POSEIDON_SOURCE_FILES})    
 target_include_directories(poseidon_shared PUBLIC ${POSEIDON_INCLUDES_DIR}/src)
-target_link_libraries(poseidon_shared PRIVATE gmp)
+target_link_libraries(poseidon_shared PUBLIC GMP::gmpxx)
 if(POSEIDON_USE_HARDWARE)    
     target_link_libraries(poseidon_shared PUBLIC poseidon_hardware)
 endif()
