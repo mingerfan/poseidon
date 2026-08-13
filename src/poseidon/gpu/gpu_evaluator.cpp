@@ -212,6 +212,151 @@ private:
     std::size_t created_count_{0};
 };
 
+class EvalModMultiplyEventRecorder
+{
+public:
+    explicit EvalModMultiplyEventRecorder(bool enabled)
+        : enabled_(enabled)
+    {}
+
+    EvalModMultiplyEventRecorder(const EvalModMultiplyEventRecorder &) = delete;
+    EvalModMultiplyEventRecorder &operator=(
+        const EvalModMultiplyEventRecorder &) = delete;
+
+    ~EvalModMultiplyEventRecorder()
+    {
+        for (auto &entry : entries_)
+        {
+            if (entry.begin != nullptr)
+            {
+                (void)cudaEventDestroy(entry.begin);
+            }
+            if (entry.end != nullptr)
+            {
+                (void)cudaEventDestroy(entry.end);
+            }
+        }
+    }
+
+    void begin(
+        std::string label,
+        std::size_t q_count,
+        std::size_t p_count,
+        bool is_square)
+    {
+        if (!enabled_)
+        {
+            return;
+        }
+        if (active_)
+        {
+            throw std::logic_error(
+                "EvalMod multiply timing ranges cannot overlap");
+        }
+        Entry entry;
+        entry.timing.label = std::move(label);
+        entry.timing.q_count = q_count;
+        entry.timing.decomposition_count = p_count == 0
+            ? 0
+            : (q_count + p_count - 1) / p_count;
+        entry.timing.is_square = is_square;
+        gpu_check_cuda(
+            cudaEventCreate(&entry.begin),
+            "EvalMod multiply begin cudaEventCreate");
+        try
+        {
+            gpu_check_cuda(
+                cudaEventCreate(&entry.end),
+                "EvalMod multiply end cudaEventCreate");
+            gpu_check_cuda(
+                cudaEventRecord(entry.begin),
+                "EvalMod multiply begin cudaEventRecord");
+            nvtxRangePushA(entry.timing.label.c_str());
+            entries_.push_back(std::move(entry));
+            entry.begin = nullptr;
+            entry.end = nullptr;
+            active_ = true;
+        }
+        catch (...)
+        {
+            if (entry.begin != nullptr)
+            {
+                (void)cudaEventDestroy(entry.begin);
+            }
+            if (entry.end != nullptr)
+            {
+                (void)cudaEventDestroy(entry.end);
+            }
+            throw;
+        }
+    }
+
+    void end()
+    {
+        if (!enabled_)
+        {
+            return;
+        }
+        if (!active_ || entries_.empty())
+        {
+            throw std::logic_error(
+                "EvalMod multiply timing range is not active");
+        }
+        gpu_check_cuda(
+            cudaEventRecord(entries_.back().end),
+            "EvalMod multiply end cudaEventRecord");
+        nvtxRangePop();
+        active_ = false;
+    }
+
+    void finish(
+        std::vector<GpuBootstrapWorkspace::EvalModMultiplyTiming> &timings)
+    {
+        if (!enabled_)
+        {
+            return;
+        }
+        if (active_)
+        {
+            throw std::logic_error(
+                "EvalMod multiply timing range was not closed");
+        }
+        timings.clear();
+        timings.reserve(entries_.size());
+        if (!entries_.empty())
+        {
+            gpu_check_cuda(
+                cudaEventSynchronize(entries_.back().end),
+                "EvalMod multiply cudaEventSynchronize");
+        }
+        for (const auto &entry : entries_)
+        {
+            float milliseconds = 0.0F;
+            gpu_check_cuda(
+                cudaEventElapsedTime(
+                    &milliseconds,
+                    entry.begin,
+                    entry.end),
+                "EvalMod multiply cudaEventElapsedTime");
+            auto timing = entry.timing;
+            timing.gpu_ms = static_cast<double>(milliseconds);
+            timings.push_back(std::move(timing));
+        }
+    }
+
+private:
+    struct Entry
+    {
+        GpuBootstrapWorkspace::EvalModMultiplyTiming timing;
+        cudaEvent_t begin{nullptr};
+        cudaEvent_t end{nullptr};
+    };
+
+    bool enabled_{false};
+    bool active_{false};
+    std::vector<Entry> entries_;
+};
+
 bool same_logical_shard_layout(
     const GpuRNSPoly &reference,
     const GpuRNSPoly &candidate)
@@ -3907,8 +4052,11 @@ void GpuEvaluator::eval_mod_high_precision(
     {
         workspace.eval_mod_stage_timing =
             GpuBootstrapWorkspace::EvalModStageTiming{};
+        workspace.eval_mod_multiply_timings.clear();
     }
     EvalModStageEventRecorder stage_recorder(
+        workspace.capture_eval_mod_stage_timing);
+    EvalModMultiplyEventRecorder multiply_recorder(
         workspace.capture_eval_mod_stage_timing);
 
     /*
@@ -4324,7 +4472,20 @@ void GpuEvaluator::eval_mod_high_precision(
                     }
                 }
 
-                if (basis_left == basis_right)
+                const bool is_square = basis_left == basis_right;
+                if (workspace.capture_eval_mod_stage_timing)
+                {
+                    multiply_recorder.begin(
+                        "EvalMod.mul.basis.T" +
+                            std::to_string(step.output_degree) +
+                            "=" + std::to_string(step.left_degree) +
+                            "x" + std::to_string(step.right_degree) +
+                            ".q" + std::to_string(basis_left->meta.q_count),
+                        basis_left->meta.q_count,
+                        relin_keys.meta.p_count,
+                        is_square);
+                }
+                if (is_square)
                 {
                     square(*basis_left, workspace.scratch5);
                 }
@@ -4333,6 +4494,7 @@ void GpuEvaluator::eval_mod_high_precision(
                     multiply(*basis_left, *basis_right, workspace.scratch5);
                 }
                 relinearize(workspace.scratch5, relin_keys, workspace.scratch3);
+                multiply_recorder.end();
                 output = std::move(workspace.scratch3);
                 output.meta.scale = step.pre_rescale_scale;
 
@@ -4405,12 +4567,25 @@ void GpuEvaluator::eval_mod_high_precision(
                 continue;
             }
 
+            if (workspace.capture_eval_mod_stage_timing)
+            {
+                multiply_recorder.begin(
+                    "EvalMod.mul.basis.T" +
+                        std::to_string(step.output_degree) +
+                        "=" + std::to_string(step.left_degree) +
+                        "x" + std::to_string(step.right_degree) +
+                        ".q" + std::to_string(basis_left->meta.q_count),
+                    basis_left->meta.q_count,
+                    relin_keys.meta.p_count,
+                    basis_left == basis_right);
+            }
             multiply_relinearize_rescale(
                 *basis_left,
                 *basis_right,
                 step.output_scale,
                 step.rescale_count,
                 output);
+            multiply_recorder.end();
 
             if (bootstrap_data.eval_mod.polynomial_basis !=
                 GpuEvalModPolynomialBasis::Chebyshev)
@@ -5277,8 +5452,11 @@ void GpuEvaluator::eval_mod_high_precision(
 
         {
             NvtxRange range("EvalMod BSGS tree combine");
-            for (const auto &combine : polynomial_combine_steps)
+            for (std::size_t combine_index = 0;
+                 combine_index < polynomial_combine_steps.size();
+                 ++combine_index)
             {
+                const auto &combine = polynomial_combine_steps[combine_index];
                 const bool remainder_is_inline_leaf =
                     combine.remainder_node < inline_leaf_candidate.size() &&
                     inline_leaf_candidate[combine.remainder_node];
@@ -5368,7 +5546,19 @@ void GpuEvaluator::eval_mod_high_precision(
                         }
                     }
 
-                    if (quotient == basis)
+                    const bool is_square = quotient == basis;
+                    if (workspace.capture_eval_mod_stage_timing)
+                    {
+                        multiply_recorder.begin(
+                            "EvalMod.mul.combine." +
+                                std::to_string(combine_index) +
+                                ".T" + std::to_string(combine.basis_degree) +
+                                ".q" + std::to_string(quotient->meta.q_count),
+                            quotient->meta.q_count,
+                            relin_keys.meta.p_count,
+                            is_square);
+                    }
+                    if (is_square)
                     {
                         square(*quotient, workspace.scratch5);
                     }
@@ -5377,6 +5567,7 @@ void GpuEvaluator::eval_mod_high_precision(
                         multiply(*quotient, *basis, workspace.scratch5);
                     }
                     relinearize(workspace.scratch5, relin_keys, workspace.scratch1);
+                    multiply_recorder.end();
                     workspace.scratch1.meta.scale = combine.product_scale;
 
                     GpuCiphertextData product_scaled;
@@ -5499,12 +5690,33 @@ void GpuEvaluator::eval_mod_high_precision(
                 }
                 else
                 {
+                    if (workspace.capture_eval_mod_stage_timing)
+                    {
+                        const auto &quotient =
+                            workspace.eval_mod_nodes[combine.quotient_node];
+                        const auto &basis =
+                            workspace.eval_mod_basis[combine.basis_degree];
+                        multiply_recorder.begin(
+                            "EvalMod.mul.combine." +
+                                std::to_string(combine_index) +
+                                ".T" + std::to_string(combine.basis_degree) +
+                                ".q" + std::to_string(
+                                    std::min(
+                                        quotient.meta.q_count,
+                                        basis.meta.q_count)),
+                            std::min(
+                                quotient.meta.q_count,
+                                basis.meta.q_count),
+                            relin_keys.meta.p_count,
+                            &quotient == &basis);
+                    }
                     multiply_relinearize_rescale(
                         workspace.eval_mod_nodes[combine.quotient_node],
                         workspace.eval_mod_basis[combine.basis_degree],
                         combine.output_scale,
                         logical_rescale_count,
                         workspace.scratch2);
+                    multiply_recorder.end();
                     add_aligned(
                         workspace.scratch2,
                         workspace.eval_mod_nodes[combine.remainder_node],
@@ -5582,6 +5794,16 @@ void GpuEvaluator::eval_mod_high_precision(
                           configured_double_angle_rescale_counts[double_angle_index],
                           std::uint32_t{1})
                     : logical_rescale_count;
+            if (workspace.capture_eval_mod_stage_timing)
+            {
+                multiply_recorder.begin(
+                    "EvalMod.mul.double_angle." +
+                        std::to_string(double_angle_index) +
+                        ".q" + std::to_string(accumulator.meta.q_count),
+                    accumulator.meta.q_count,
+                    relin_keys.meta.p_count,
+                    true);
+            }
             square(accumulator, workspace.scratch5);
             if (workspace.capture_eval_mod_trace)
             {
@@ -5596,6 +5818,7 @@ void GpuEvaluator::eval_mod_high_precision(
             if (bootstrap_data.eval_mod.dynamic_rescale)
             {
                 relinearize(workspace.scratch5, relin_keys, workspace.scratch2);
+                multiply_recorder.end();
                 if (workspace.capture_eval_mod_trace)
                 {
                     workspace.eval_mod_trace_double_angle_relin_outputs.emplace_back();
@@ -5678,10 +5901,12 @@ void GpuEvaluator::eval_mod_high_precision(
                         relin_keys,
                         workspace.scratch5);
                 }
+                multiply_recorder.end();
             }
             else
             {
                 relinearize(workspace.scratch5, relin_keys, workspace.scratch2);
+                multiply_recorder.end();
                 add(workspace.scratch2, workspace.scratch2, workspace.scratch3);
 
                 if (!double_angle_plaintext.empty())
@@ -5758,6 +5983,7 @@ void GpuEvaluator::eval_mod_high_precision(
         destination_ciphertext = std::move(accumulator);
     }
     stage_recorder.finish(workspace.eval_mod_stage_timing);
+    multiply_recorder.finish(workspace.eval_mod_multiply_timings);
 }
 
 }  // namespace gpu

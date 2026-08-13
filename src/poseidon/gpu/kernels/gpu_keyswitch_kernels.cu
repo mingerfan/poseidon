@@ -156,6 +156,7 @@ __device__ __forceinline__ void hybrid_convert_p_to_q_contribution(
         q_modulus);
 }
 
+template <bool SourcePreweighted>
 __device__ __forceinline__ void hybrid_convert_p_to_q_pair_contribution(
     GpuWord &left0,
     GpuWord &right0,
@@ -179,50 +180,53 @@ __device__ __forceinline__ void hybrid_convert_p_to_q_pair_contribution(
 {
     const std::size_t p_table_limb = base_q_size + p_limb;
     const std::size_t p_base = p_limb * degree;
-    const GpuWord p_modulus = rns_primes[p_table_limb];
-    const GpuWide p_barrett = rns_modulus_constants[p_table_limb];
     const GpuWord matrix_value =
         moddown_p_to_q_matrix[q_limb * base_p_size + p_limb];
-    const GpuWord inv_punctured = p_inv_punctured[p_limb];
 
     const GpuWord p0_left = accum_p0[p_base + left_coeff];
-    const GpuWord p0_left_weighted = inv_punctured == 1
-        ? p0_left
-        : mul_mod(p0_left, inv_punctured, p_modulus, p_barrett);
+    GpuWord p0_left_weighted = p0_left;
+    GpuWord p0_right_weighted = accum_p0[p_base + right_coeff];
+    GpuWord p1_left_weighted = accum_p1[p_base + left_coeff];
+    GpuWord p1_right_weighted = accum_p1[p_base + right_coeff];
+    if constexpr (!SourcePreweighted)
+    {
+        const GpuWord p_modulus = rns_primes[p_table_limb];
+        const GpuWide p_barrett = rns_modulus_constants[p_table_limb];
+        const GpuWord inv_punctured = p_inv_punctured[p_limb];
+        if (inv_punctured != 1)
+        {
+            p0_left_weighted = mul_mod(
+                p0_left_weighted, inv_punctured, p_modulus, p_barrett);
+            p0_right_weighted = mul_mod(
+                p0_right_weighted, inv_punctured, p_modulus, p_barrett);
+            p1_left_weighted = mul_mod(
+                p1_left_weighted, inv_punctured, p_modulus, p_barrett);
+            p1_right_weighted = mul_mod(
+                p1_right_weighted, inv_punctured, p_modulus, p_barrett);
+        }
+    }
     left0 = add_mod(
         left0,
         mul_mod(p0_left_weighted, matrix_value, q_modulus, q_barrett),
         q_modulus);
 
-    const GpuWord p0_right = accum_p0[p_base + right_coeff];
-    const GpuWord p0_right_weighted = inv_punctured == 1
-        ? p0_right
-        : mul_mod(p0_right, inv_punctured, p_modulus, p_barrett);
     right0 = add_mod(
         right0,
         mul_mod(p0_right_weighted, matrix_value, q_modulus, q_barrett),
         q_modulus);
 
-    const GpuWord p1_left = accum_p1[p_base + left_coeff];
-    const GpuWord p1_left_weighted = inv_punctured == 1
-        ? p1_left
-        : mul_mod(p1_left, inv_punctured, p_modulus, p_barrett);
     left1 = add_mod(
         left1,
         mul_mod(p1_left_weighted, matrix_value, q_modulus, q_barrett),
         q_modulus);
 
-    const GpuWord p1_right = accum_p1[p_base + right_coeff];
-    const GpuWord p1_right_weighted = inv_punctured == 1
-        ? p1_right
-        : mul_mod(p1_right, inv_punctured, p_modulus, p_barrett);
     right1 = add_mod(
         right1,
         mul_mod(p1_right_weighted, matrix_value, q_modulus, q_barrett),
         q_modulus);
 }
 
-template <int FixedPCount>
+template <int FixedPCount, bool SourcePreweighted>
 __device__ __forceinline__ void hybrid_convert_p_to_q_pair(
     GpuWord &left0,
     GpuWord &right0,
@@ -253,7 +257,7 @@ __device__ __forceinline__ void hybrid_convert_p_to_q_pair(
 #pragma unroll
         for (std::size_t p_limb = 0; p_limb < FixedPCount; ++p_limb)
         {
-            hybrid_convert_p_to_q_pair_contribution(
+            hybrid_convert_p_to_q_pair_contribution<SourcePreweighted>(
                 left0,
                 right0,
                 left1,
@@ -279,7 +283,7 @@ __device__ __forceinline__ void hybrid_convert_p_to_q_pair(
     {
         for (std::size_t p_limb = 0; p_limb < base_p_size; ++p_limb)
         {
-            hybrid_convert_p_to_q_pair_contribution(
+            hybrid_convert_p_to_q_pair_contribution<SourcePreweighted>(
                 left0,
                 right0,
                 left1,
@@ -647,10 +651,12 @@ __device__ __forceinline__ void hybrid_modup_pair(
 
     left = 0;
     right = 0;
-    if constexpr (FixedDecompLimbCount == 2)
+    if constexpr (FixedDecompLimbCount > 0)
     {
 #pragma unroll
-        for (std::size_t col = 0; col < 2; ++col)
+        for (std::size_t col = 0;
+             col < FixedDecompLimbCount;
+             ++col)
         {
             hybrid_modup_pair_contribution(
                 left,
@@ -1202,6 +1208,172 @@ __global__ void hybrid_modup_qp_row_tiled8_kernel(
             modulus,
             barrett),
         modulus);
+
+    const std::size_t value_base = value_limb * degree;
+    values[value_base + coefficient_pair] = left;
+    values[value_base + coefficient_pair + coefficients_per_half] = right;
+}
+
+template <int FixedSourceLimbCount>
+__global__ void hybrid_modup_qp_p9_row_tiled8_kernel(
+    GpuWord *modup_q,
+    GpuWord *modup_p,
+    const GpuWord *c2_coeff,
+    const GpuWord *rns_primes,
+    const GpuWide *rns_modulus_constants,
+    const GpuWord *q_matrix_offsets,
+    const GpuWord *q_matrices,
+    const GpuWord *p_matrix_offsets,
+    const GpuWord *p_matrices,
+    const GpuWord *qi_inv_punctured,
+    std::size_t decomp_index,
+    std::size_t decomp_limb_begin,
+    std::size_t base_q_size,
+    std::size_t base_p_size,
+    std::size_t degree)
+{
+    static_assert(
+        FixedSourceLimbCount >= 1 && FixedSourceLimbCount <= 9,
+        "P=9 row-tiled ModUp supports one through nine source limbs");
+    constexpr std::size_t kCoefficientTile = 32;
+    constexpr std::size_t kSourcePlanes = FixedSourceLimbCount * 2;
+    constexpr std::size_t kTargetRows = 8;
+    constexpr std::size_t kBlockThreads =
+        kCoefficientTile * kTargetRows;
+    __shared__ GpuWord weighted_source[kSourcePlanes][kCoefficientTile];
+
+    const std::size_t lane = threadIdx.x;
+    const std::size_t row = threadIdx.y;
+    const std::size_t linear_thread =
+        row * kCoefficientTile + lane;
+    const std::size_t coefficients_per_half = degree >> 1;
+
+    for (std::size_t source_index = linear_thread;
+         source_index < kSourcePlanes * kCoefficientTile;
+         source_index += kBlockThreads)
+    {
+        const std::size_t source_plane =
+            source_index / kCoefficientTile;
+        const std::size_t source_lane =
+            source_index % kCoefficientTile;
+        const std::size_t source_col = source_plane >> 1;
+        const std::size_t coefficient_side = source_plane & 1;
+        const std::size_t coefficient_pair =
+            blockIdx.x * kCoefficientTile + source_lane;
+        GpuWord weighted = 0;
+        if (coefficient_pair < coefficients_per_half)
+        {
+            const std::size_t source_q_limb =
+                decomp_limb_begin + source_col;
+            const std::size_t source_coeff = coefficient_pair +
+                coefficient_side * coefficients_per_half;
+            const GpuWord source_modulus = rns_primes[source_q_limb];
+            const GpuWide source_barrett =
+                rns_modulus_constants[source_q_limb];
+            const GpuWord inv_punctured = qi_inv_punctured[
+                decomp_index * base_p_size + source_col];
+            weighted = c2_coeff[
+                source_q_limb * degree + source_coeff];
+            if constexpr (FixedSourceLimbCount > 1)
+            {
+                if (inv_punctured != 1)
+                {
+                    weighted = mul_mod(
+                        weighted,
+                        inv_punctured,
+                        source_modulus,
+                        source_barrett);
+                }
+            }
+        }
+        weighted_source[source_plane][source_lane] = weighted;
+    }
+    __syncthreads();
+
+    const std::size_t coefficient_pair =
+        blockIdx.x * kCoefficientTile + lane;
+    const std::size_t active_q_count =
+        base_q_size - FixedSourceLimbCount;
+    const std::size_t active_limb_count =
+        active_q_count + base_p_size;
+    const std::size_t active_limb =
+        blockIdx.y * kTargetRows + row;
+    if (coefficient_pair >= coefficients_per_half ||
+        active_limb >= active_limb_count)
+    {
+        return;
+    }
+
+    GpuWord *values = modup_q;
+    const GpuWord *conversion_matrix = q_matrices;
+    std::size_t value_limb = active_limb;
+    std::size_t table_limb = active_limb;
+    std::size_t matrix_row_limb = active_limb;
+    std::size_t matrix_offset = q_matrix_offsets[decomp_index];
+    if (active_limb < active_q_count)
+    {
+        if (active_limb >= decomp_limb_begin)
+        {
+            value_limb = active_limb + FixedSourceLimbCount;
+            table_limb = value_limb;
+            matrix_row_limb = value_limb;
+        }
+    }
+    else
+    {
+        const std::size_t p_limb = active_limb - active_q_count;
+        values = modup_p;
+        conversion_matrix = p_matrices;
+        value_limb = p_limb;
+        table_limb = base_q_size + p_limb;
+        matrix_row_limb = p_limb;
+        matrix_offset = p_matrix_offsets[decomp_index];
+    }
+
+    const GpuWord modulus = rns_primes[table_limb];
+    const GpuWide barrett = rns_modulus_constants[table_limb];
+    const std::size_t matrix_row_offset =
+        matrix_offset + matrix_row_limb * base_p_size;
+    GpuWord left = 0;
+    GpuWord right = 0;
+    if constexpr (FixedSourceLimbCount == 1)
+    {
+        left = reduce_to_modulus(
+            weighted_source[0][lane],
+            modulus,
+            barrett);
+        right = reduce_to_modulus(
+            weighted_source[1][lane],
+            modulus,
+            barrett);
+    }
+    else
+    {
+#pragma unroll
+        for (std::size_t source_col = 0;
+             source_col < FixedSourceLimbCount;
+             ++source_col)
+        {
+            const GpuWord matrix_value =
+                conversion_matrix[matrix_row_offset + source_col];
+            left = add_mod(
+                left,
+                mul_mod(
+                    weighted_source[source_col * 2][lane],
+                    matrix_value,
+                    modulus,
+                    barrett),
+                modulus);
+            right = add_mod(
+                right,
+                mul_mod(
+                    weighted_source[source_col * 2 + 1][lane],
+                    matrix_value,
+                    modulus,
+                    barrett),
+                modulus);
+        }
+    }
 
     const std::size_t value_base = value_limb * degree;
     values[value_base + coefficient_pair] = left;
@@ -2281,7 +2453,7 @@ __global__ void hybrid_convert_p_to_q_two_components_kernel(
     converted_q1[tid] = sum1;
 }
 
-template <int FixedPCount>
+template <int FixedPCount, bool SourcePreweighted>
 __global__ void hybrid_convert_p_to_q_forward_ntt_first_stage_kernel(
     GpuWord *converted_q0,
     GpuWord *converted_q1,
@@ -2315,7 +2487,7 @@ __global__ void hybrid_convert_p_to_q_forward_ntt_first_stage_kernel(
     GpuWord right0;
     GpuWord left1;
     GpuWord right1;
-    hybrid_convert_p_to_q_pair<FixedPCount>(
+    hybrid_convert_p_to_q_pair<FixedPCount, SourcePreweighted>(
         left0,
         right0,
         left1,
@@ -2351,6 +2523,40 @@ __global__ void hybrid_convert_p_to_q_forward_ntt_first_stage_kernel(
         add_mod(left1, twisted_right1, q_modulus);
     converted_q1[q_base + right_coeff] =
         sub_mod(left1, twisted_right1, q_modulus);
+}
+
+__global__ void hybrid_preweight_p_two_components_kernel(
+    GpuWord *accum_p0,
+    GpuWord *accum_p1,
+    const GpuWord *rns_primes,
+    const GpuWide *rns_modulus_constants,
+    const GpuWord *p_inv_punctured,
+    std::size_t base_q_size,
+    std::size_t base_p_size,
+    std::size_t degree,
+    unsigned int degree_power)
+{
+    const std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    const std::size_t total = base_p_size * degree;
+    if (tid >= total)
+    {
+        return;
+    }
+
+    const std::size_t p_limb = tid >> degree_power;
+    const GpuWord inv_punctured = p_inv_punctured[p_limb];
+    if (inv_punctured == 1)
+    {
+        return;
+    }
+
+    const std::size_t table_limb = base_q_size + p_limb;
+    const GpuWord modulus = rns_primes[table_limb];
+    const GpuWide barrett = rns_modulus_constants[table_limb];
+    accum_p0[tid] = mul_mod(
+        accum_p0[tid], inv_punctured, modulus, barrett);
+    accum_p1[tid] = mul_mod(
+        accum_p1[tid], inv_punctured, modulus, barrett);
 }
 
 __global__ void
@@ -2441,6 +2647,159 @@ hybrid_convert_p_to_q_forward_ntt_first_stage_row_tiled8_kernel(
     const std::size_t right_coefficient =
         coefficient_pair + butterflies_per_limb;
 
+    const GpuWord twisted_right0 =
+        mul_mod(right0, root, q_modulus, q_barrett);
+    converted_q0[q_base + coefficient_pair] =
+        add_mod(left0, twisted_right0, q_modulus);
+    converted_q0[q_base + right_coefficient] =
+        sub_mod(left0, twisted_right0, q_modulus);
+
+    const GpuWord twisted_right1 =
+        mul_mod(right1, root, q_modulus, q_barrett);
+    converted_q1[q_base + coefficient_pair] =
+        add_mod(left1, twisted_right1, q_modulus);
+    converted_q1[q_base + right_coefficient] =
+        sub_mod(left1, twisted_right1, q_modulus);
+}
+
+template <bool SourcePreweighted>
+__global__ void
+hybrid_convert_p9_to_q_forward_ntt_first_stage_row_tiled8_kernel(
+    GpuWord *converted_q0,
+    GpuWord *converted_q1,
+    const GpuWord *accum_p0,
+    const GpuWord *accum_p1,
+    const GpuWord *rns_primes,
+    const GpuWide *rns_modulus_constants,
+    const GpuWord *roots,
+    const GpuWord *moddown_p_to_q_matrix,
+    const GpuWord *p_inv_punctured,
+    std::size_t base_q_size,
+    std::size_t degree)
+{
+    constexpr std::size_t kPCount = 9;
+    constexpr std::size_t kCoefficientTile = 32;
+    constexpr std::size_t kTargetRows = 8;
+    constexpr std::size_t kPlanesPerComponent = kPCount * 2;
+    constexpr std::size_t kSourcePlanes = 2 * kPlanesPerComponent;
+    constexpr std::size_t kBlockThreads =
+        kCoefficientTile * kTargetRows;
+    __shared__ GpuWord weighted_p[kSourcePlanes][kCoefficientTile];
+
+    const std::size_t lane = threadIdx.x;
+    const std::size_t row = threadIdx.y;
+    const std::size_t linear_thread =
+        row * kCoefficientTile + lane;
+    const std::size_t butterflies_per_limb = degree >> 1;
+
+    for (std::size_t source_index = linear_thread;
+         source_index < kSourcePlanes * kCoefficientTile;
+         source_index += kBlockThreads)
+    {
+        const std::size_t source_plane =
+            source_index / kCoefficientTile;
+        const std::size_t source_lane =
+            source_index % kCoefficientTile;
+        const std::size_t component =
+            source_plane / kPlanesPerComponent;
+        const std::size_t component_plane =
+            source_plane % kPlanesPerComponent;
+        const std::size_t p_limb = component_plane >> 1;
+        const std::size_t coefficient_side = component_plane & 1;
+        const std::size_t coefficient_pair =
+            blockIdx.x * kCoefficientTile + source_lane;
+
+        GpuWord weighted = 0;
+        if (coefficient_pair < butterflies_per_limb)
+        {
+            const std::size_t coefficient = coefficient_pair +
+                coefficient_side * butterflies_per_limb;
+            const GpuWord *component_values =
+                component == 0 ? accum_p0 : accum_p1;
+            weighted = component_values[p_limb * degree + coefficient];
+            if constexpr (!SourcePreweighted)
+            {
+                const std::size_t table_limb = base_q_size + p_limb;
+                const GpuWord modulus = rns_primes[table_limb];
+                const GpuWide barrett =
+                    rns_modulus_constants[table_limb];
+                const GpuWord inv_punctured = p_inv_punctured[p_limb];
+                if (inv_punctured != 1)
+                {
+                    weighted = mul_mod(
+                        weighted,
+                        inv_punctured,
+                        modulus,
+                        barrett);
+                }
+            }
+        }
+        weighted_p[source_plane][source_lane] = weighted;
+    }
+    __syncthreads();
+
+    const std::size_t coefficient_pair =
+        blockIdx.x * kCoefficientTile + lane;
+    const std::size_t q_limb = blockIdx.y * kTargetRows + row;
+    if (coefficient_pair >= butterflies_per_limb ||
+        q_limb >= base_q_size)
+    {
+        return;
+    }
+
+    const GpuWord q_modulus = rns_primes[q_limb];
+    const GpuWide q_barrett = rns_modulus_constants[q_limb];
+    const std::size_t matrix_base = q_limb * kPCount;
+    GpuWord left0 = 0;
+    GpuWord right0 = 0;
+    GpuWord left1 = 0;
+    GpuWord right1 = 0;
+#pragma unroll
+    for (std::size_t p_limb = 0; p_limb < kPCount; ++p_limb)
+    {
+        const GpuWord matrix_value =
+            moddown_p_to_q_matrix[matrix_base + p_limb];
+        const std::size_t component0_plane = p_limb * 2;
+        const std::size_t component1_plane =
+            kPlanesPerComponent + component0_plane;
+        left0 = add_mod(
+            left0,
+            mul_mod(
+                weighted_p[component0_plane][lane],
+                matrix_value,
+                q_modulus,
+                q_barrett),
+            q_modulus);
+        right0 = add_mod(
+            right0,
+            mul_mod(
+                weighted_p[component0_plane + 1][lane],
+                matrix_value,
+                q_modulus,
+                q_barrett),
+            q_modulus);
+        left1 = add_mod(
+            left1,
+            mul_mod(
+                weighted_p[component1_plane][lane],
+                matrix_value,
+                q_modulus,
+                q_barrett),
+            q_modulus);
+        right1 = add_mod(
+            right1,
+            mul_mod(
+                weighted_p[component1_plane + 1][lane],
+                matrix_value,
+                q_modulus,
+                q_barrett),
+            q_modulus);
+    }
+
+    const GpuWord root = roots[q_limb * degree + 1];
+    const std::size_t q_base = q_limb * degree;
+    const std::size_t right_coefficient =
+        coefficient_pair + butterflies_per_limb;
     const GpuWord twisted_right0 =
         mul_mod(right0, root, q_modulus, q_barrett);
     converted_q0[q_base + coefficient_pair] =
@@ -3094,6 +3453,14 @@ void launch_hybrid_modup_decomposition_forward_ntt_first_stage(
     {
         POSEIDON_LAUNCH_MODUP_NTT_HEAD(2);
     }
+    else if (decomp_limb_count == 3)
+    {
+        POSEIDON_LAUNCH_MODUP_NTT_HEAD(3);
+    }
+    else if (decomp_limb_count == 9)
+    {
+        POSEIDON_LAUNCH_MODUP_NTT_HEAD(9);
+    }
     else
     {
         POSEIDON_LAUNCH_MODUP_NTT_HEAD(0);
@@ -3293,10 +3660,10 @@ void launch_hybrid_modup_decomposition_row_tiled8(
     const GpuParameterShard &parameter_shard,
     std::size_t degree)
 {
-    if (decomp_limb_count != 2)
+    if (decomp_limb_count == 0 || decomp_limb_count > 9)
     {
         throw std::invalid_argument(
-            "launch_hybrid_modup_decomposition_row_tiled8: two decomposition limbs are required");
+            "launch_hybrid_modup_decomposition_row_tiled8: one through nine decomposition limbs are required");
     }
     validate_hybrid_tables(
         "launch_hybrid_modup_decomposition_row_tiled8",
@@ -3331,23 +3698,79 @@ void launch_hybrid_modup_decomposition_row_tiled8(
         static_cast<unsigned int>(
             (active_limb_count + kTargetRows - 1) / kTargetRows));
 
-    hybrid_modup_qp_row_tiled8_kernel
-        <<<grid_size, block_size>>>(
-            modup_q,
-            modup_p,
-            c2_coeff,
-            parameter_shard.rns_primes.data(),
-            parameter_shard.rns_modulus_constants.data(),
-            parameter_shard.hybrid_q_conv_matrix_offsets.data(),
-            parameter_shard.hybrid_q_conv_matrices.data(),
-            parameter_shard.hybrid_p_conv_matrix_offsets.data(),
-            parameter_shard.hybrid_p_conv_matrices.data(),
-            parameter_shard.hybrid_qi_inv_punctured.data(),
-            decomp_index,
-            decomp_limb_begin,
-            base_q_size,
-            base_p_size,
-            degree);
+    if (decomp_limb_count == 2)
+    {
+        hybrid_modup_qp_row_tiled8_kernel
+            <<<grid_size, block_size>>>(
+                modup_q,
+                modup_p,
+                c2_coeff,
+                parameter_shard.rns_primes.data(),
+                parameter_shard.rns_modulus_constants.data(),
+                parameter_shard.hybrid_q_conv_matrix_offsets.data(),
+                parameter_shard.hybrid_q_conv_matrices.data(),
+                parameter_shard.hybrid_p_conv_matrix_offsets.data(),
+                parameter_shard.hybrid_p_conv_matrices.data(),
+                parameter_shard.hybrid_qi_inv_punctured.data(),
+                decomp_index,
+                decomp_limb_begin,
+                base_q_size,
+                base_p_size,
+                degree);
+    }
+    else
+    {
+#define POSEIDON_LAUNCH_P9_MODUP_ROW_TILED8(FIXED_COUNT)                   \
+        hybrid_modup_qp_p9_row_tiled8_kernel<FIXED_COUNT>                 \
+            <<<grid_size, block_size>>>(                                  \
+                modup_q,                                                  \
+                modup_p,                                                  \
+                c2_coeff,                                                 \
+                parameter_shard.rns_primes.data(),                        \
+                parameter_shard.rns_modulus_constants.data(),             \
+                parameter_shard.hybrid_q_conv_matrix_offsets.data(),      \
+                parameter_shard.hybrid_q_conv_matrices.data(),            \
+                parameter_shard.hybrid_p_conv_matrix_offsets.data(),      \
+                parameter_shard.hybrid_p_conv_matrices.data(),            \
+                parameter_shard.hybrid_qi_inv_punctured.data(),           \
+                decomp_index,                                             \
+                decomp_limb_begin,                                        \
+                base_q_size,                                              \
+                base_p_size,                                              \
+                degree)
+
+        switch (decomp_limb_count)
+        {
+        case 1:
+            POSEIDON_LAUNCH_P9_MODUP_ROW_TILED8(1);
+            break;
+        case 3:
+            POSEIDON_LAUNCH_P9_MODUP_ROW_TILED8(3);
+            break;
+        case 4:
+            POSEIDON_LAUNCH_P9_MODUP_ROW_TILED8(4);
+            break;
+        case 5:
+            POSEIDON_LAUNCH_P9_MODUP_ROW_TILED8(5);
+            break;
+        case 6:
+            POSEIDON_LAUNCH_P9_MODUP_ROW_TILED8(6);
+            break;
+        case 7:
+            POSEIDON_LAUNCH_P9_MODUP_ROW_TILED8(7);
+            break;
+        case 8:
+            POSEIDON_LAUNCH_P9_MODUP_ROW_TILED8(8);
+            break;
+        case 9:
+            POSEIDON_LAUNCH_P9_MODUP_ROW_TILED8(9);
+            break;
+        default:
+            throw std::logic_error(
+                "launch_hybrid_modup_decomposition_row_tiled8: unreachable decomposition width");
+        }
+#undef POSEIDON_LAUNCH_P9_MODUP_ROW_TILED8
+    }
     gpu_check_cuda(
         cudaGetLastError(),
         "launch_hybrid_modup_decomposition_row_tiled8 kernel launch");
@@ -4503,7 +4926,8 @@ void launch_hybrid_convert_p_to_q_forward_ntt(
     const GpuWord *accum_p0,
     const GpuWord *accum_p1,
     const GpuParameterShard &parameter_shard,
-    std::size_t degree)
+    std::size_t degree,
+    bool source_preweighted)
 {
     validate_hybrid_tables(
         "launch_hybrid_convert_p_to_q_forward_ntt",
@@ -4536,9 +4960,81 @@ void launch_hybrid_convert_p_to_q_forward_ntt(
     const int first_stage_grid = static_cast<int>(
         (first_stage_total + block_size - 1) / block_size);
 
-    if (base_p_size == 2)
+    if (base_p_size == 2 && source_preweighted)
     {
-        hybrid_convert_p_to_q_forward_ntt_first_stage_kernel<2>
+        hybrid_convert_p_to_q_forward_ntt_first_stage_kernel<2, true>
+            <<<first_stage_grid, block_size>>>(
+                converted_q0,
+                converted_q1,
+                accum_p0,
+                accum_p1,
+                parameter_shard.rns_primes.data(),
+                parameter_shard.rns_modulus_constants.data(),
+                parameter_shard.ntt_tables.data(),
+                parameter_shard.hybrid_moddown_p_to_q_matrix.data(),
+                parameter_shard.hybrid_p_inv_punctured.data(),
+                base_q_size,
+                base_p_size,
+                degree,
+                degree_power);
+    }
+    else if (base_p_size == 2)
+    {
+        hybrid_convert_p_to_q_forward_ntt_first_stage_kernel<2, false>
+            <<<first_stage_grid, block_size>>>(
+                converted_q0,
+                converted_q1,
+                accum_p0,
+                accum_p1,
+                parameter_shard.rns_primes.data(),
+                parameter_shard.rns_modulus_constants.data(),
+                parameter_shard.ntt_tables.data(),
+                parameter_shard.hybrid_moddown_p_to_q_matrix.data(),
+                parameter_shard.hybrid_p_inv_punctured.data(),
+                base_q_size,
+                base_p_size,
+                degree,
+                degree_power);
+    }
+    else if (base_p_size == 9 && source_preweighted)
+    {
+        hybrid_convert_p_to_q_forward_ntt_first_stage_kernel<9, true>
+            <<<first_stage_grid, block_size>>>(
+                converted_q0,
+                converted_q1,
+                accum_p0,
+                accum_p1,
+                parameter_shard.rns_primes.data(),
+                parameter_shard.rns_modulus_constants.data(),
+                parameter_shard.ntt_tables.data(),
+                parameter_shard.hybrid_moddown_p_to_q_matrix.data(),
+                parameter_shard.hybrid_p_inv_punctured.data(),
+                base_q_size,
+                base_p_size,
+                degree,
+                degree_power);
+    }
+    else if (base_p_size == 9)
+    {
+        hybrid_convert_p_to_q_forward_ntt_first_stage_kernel<9, false>
+            <<<first_stage_grid, block_size>>>(
+                converted_q0,
+                converted_q1,
+                accum_p0,
+                accum_p1,
+                parameter_shard.rns_primes.data(),
+                parameter_shard.rns_modulus_constants.data(),
+                parameter_shard.ntt_tables.data(),
+                parameter_shard.hybrid_moddown_p_to_q_matrix.data(),
+                parameter_shard.hybrid_p_inv_punctured.data(),
+                base_q_size,
+                base_p_size,
+                degree,
+                degree_power);
+    }
+    else if (source_preweighted)
+    {
+        hybrid_convert_p_to_q_forward_ntt_first_stage_kernel<0, true>
             <<<first_stage_grid, block_size>>>(
                 converted_q0,
                 converted_q1,
@@ -4556,7 +5052,7 @@ void launch_hybrid_convert_p_to_q_forward_ntt(
     }
     else
     {
-        hybrid_convert_p_to_q_forward_ntt_first_stage_kernel<0>
+        hybrid_convert_p_to_q_forward_ntt_first_stage_kernel<0, false>
             <<<first_stage_grid, block_size>>>(
                 converted_q0,
                 converted_q1,
@@ -4586,13 +5082,59 @@ void launch_hybrid_convert_p_to_q_forward_ntt(
         "launch_hybrid_convert_p_to_q_forward_ntt remaining-stage kernel launch");
 }
 
+void launch_hybrid_preweight_p_two_components(
+    GpuWord *accum_p0,
+    GpuWord *accum_p1,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    validate_hybrid_tables(
+        "launch_hybrid_preweight_p_two_components",
+        parameter_shard,
+        degree);
+    if (accum_p0 == nullptr || accum_p1 == nullptr)
+    {
+        throw std::invalid_argument(
+            "launch_hybrid_preweight_p_two_components: null data pointer");
+    }
+
+    gpu_check_cuda(
+        cudaSetDevice(parameter_shard.device_id),
+        "launch_hybrid_preweight_p_two_components cudaSetDevice");
+
+    const std::size_t base_q_size = parameter_shard.hybrid_base_q_count;
+    const std::size_t base_p_size = parameter_shard.hybrid_base_p_count;
+    const std::size_t total = base_p_size * degree;
+    constexpr int block_size = 256;
+    const int grid_size = static_cast<int>(
+        (total + block_size - 1) / block_size);
+    const unsigned int degree_power = checked_log2_degree(
+        degree,
+        "launch_hybrid_preweight_p_two_components");
+
+    hybrid_preweight_p_two_components_kernel<<<grid_size, block_size>>>(
+        accum_p0,
+        accum_p1,
+        parameter_shard.rns_primes.data(),
+        parameter_shard.rns_modulus_constants.data(),
+        parameter_shard.hybrid_p_inv_punctured.data(),
+        base_q_size,
+        base_p_size,
+        degree,
+        degree_power);
+    gpu_check_cuda(
+        cudaGetLastError(),
+        "launch_hybrid_preweight_p_two_components kernel launch");
+}
+
 void launch_hybrid_convert_p_to_q_forward_ntt_row_tiled8(
     GpuWord *converted_q0,
     GpuWord *converted_q1,
     const GpuWord *accum_p0,
     const GpuWord *accum_p1,
     const GpuParameterShard &parameter_shard,
-    std::size_t degree)
+    std::size_t degree,
+    bool source_preweighted)
 {
     validate_hybrid_tables(
         "launch_hybrid_convert_p_to_q_forward_ntt_row_tiled8",
@@ -4605,10 +5147,12 @@ void launch_hybrid_convert_p_to_q_forward_ntt_row_tiled8(
         throw std::invalid_argument(
             "launch_hybrid_convert_p_to_q_forward_ntt_row_tiled8: null data pointer");
     }
-    if (parameter_shard.hybrid_base_p_count != 2)
+    const std::size_t base_p_size =
+        parameter_shard.hybrid_base_p_count;
+    if (base_p_size != 2 && base_p_size != 9)
     {
         throw std::invalid_argument(
-            "launch_hybrid_convert_p_to_q_forward_ntt_row_tiled8: requires two P limbs");
+            "launch_hybrid_convert_p_to_q_forward_ntt_row_tiled8: requires two or nine P limbs");
     }
     if (degree < 2)
     {
@@ -4635,19 +5179,59 @@ void launch_hybrid_convert_p_to_q_forward_ntt_row_tiled8(
         static_cast<unsigned int>(
             (base_q_size + kTargetRows - 1) / kTargetRows));
 
-    hybrid_convert_p_to_q_forward_ntt_first_stage_row_tiled8_kernel
-        <<<grid_dim, block_dim>>>(
-            converted_q0,
-            converted_q1,
-            accum_p0,
-            accum_p1,
-            parameter_shard.rns_primes.data(),
-            parameter_shard.rns_modulus_constants.data(),
-            parameter_shard.ntt_tables.data(),
-            parameter_shard.hybrid_moddown_p_to_q_matrix.data(),
-            parameter_shard.hybrid_p_inv_punctured.data(),
-            base_q_size,
-            degree);
+    if (base_p_size == 2)
+    {
+        if (source_preweighted)
+        {
+            throw std::invalid_argument(
+                "launch_hybrid_convert_p_to_q_forward_ntt_row_tiled8: preweighted P=2 source is unsupported");
+        }
+        hybrid_convert_p_to_q_forward_ntt_first_stage_row_tiled8_kernel
+            <<<grid_dim, block_dim>>>(
+                converted_q0,
+                converted_q1,
+                accum_p0,
+                accum_p1,
+                parameter_shard.rns_primes.data(),
+                parameter_shard.rns_modulus_constants.data(),
+                parameter_shard.ntt_tables.data(),
+                parameter_shard.hybrid_moddown_p_to_q_matrix.data(),
+                parameter_shard.hybrid_p_inv_punctured.data(),
+                base_q_size,
+                degree);
+    }
+    else if (source_preweighted)
+    {
+        hybrid_convert_p9_to_q_forward_ntt_first_stage_row_tiled8_kernel<true>
+            <<<grid_dim, block_dim>>>(
+                converted_q0,
+                converted_q1,
+                accum_p0,
+                accum_p1,
+                parameter_shard.rns_primes.data(),
+                parameter_shard.rns_modulus_constants.data(),
+                parameter_shard.ntt_tables.data(),
+                parameter_shard.hybrid_moddown_p_to_q_matrix.data(),
+                parameter_shard.hybrid_p_inv_punctured.data(),
+                base_q_size,
+                degree);
+    }
+    else
+    {
+        hybrid_convert_p9_to_q_forward_ntt_first_stage_row_tiled8_kernel<false>
+            <<<grid_dim, block_dim>>>(
+                converted_q0,
+                converted_q1,
+                accum_p0,
+                accum_p1,
+                parameter_shard.rns_primes.data(),
+                parameter_shard.rns_modulus_constants.data(),
+                parameter_shard.ntt_tables.data(),
+                parameter_shard.hybrid_moddown_p_to_q_matrix.data(),
+                parameter_shard.hybrid_p_inv_punctured.data(),
+                base_q_size,
+                degree);
+    }
     gpu_check_cuda(
         cudaGetLastError(),
         "launch_hybrid_convert_p_to_q_forward_ntt_row_tiled8 first-stage kernel launch");

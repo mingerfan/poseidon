@@ -396,10 +396,26 @@ std::uint32_t floor_log2_nonzero(std::size_t value)
     return result;
 }
 
+bool use_evalmod_lead_leaf_resplit()
+{
+    const char *raw = std::getenv("POSEIDON_EVALMOD_LEAD_LEAF_RESPLIT");
+    if (raw == nullptr || *raw == '\0')
+    {
+        return false;
+    }
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
 std::unique_ptr<EvalModSplitNode> build_eval_mod_split_tree(
     Polynomial polynomial,
     std::uint32_t log_split,
-    std::uint32_t log_degree)
+    std::uint32_t log_degree,
+    bool resplit_lead_leaf)
 {
     if (polynomial.data().empty())
     {
@@ -417,7 +433,7 @@ std::unique_ptr<EvalModSplitNode> build_eval_mod_split_tree(
     const std::uint32_t leaf_degree = 1U << log_split;
     if (degree < leaf_degree)
     {
-        if (node->polynomial.lead() && log_split > 1)
+        if (resplit_lead_leaf && node->polynomial.lead() && log_split > 1)
         {
             const std::uint32_t split_period = 1U << (log_split + 1U);
             const std::uint32_t lead_threshold = 1U << (log_split - 1U);
@@ -433,7 +449,8 @@ std::unique_ptr<EvalModSplitNode> build_eval_mod_split_tree(
                     return build_eval_mod_split_tree(
                         std::move(node->polynomial),
                         adjusted_log_split,
-                        adjusted_log_degree);
+                        adjusted_log_degree,
+                        resplit_lead_leaf);
                 }
             }
         }
@@ -456,11 +473,13 @@ std::unique_ptr<EvalModSplitNode> build_eval_mod_split_tree(
     node->quotient = build_eval_mod_split_tree(
         std::move(std::get<0>(split)),
         log_split,
-        log_degree);
+        log_degree,
+        resplit_lead_leaf);
     node->remainder = build_eval_mod_split_tree(
         std::move(std::get<1>(split)),
         log_split,
-        log_degree);
+        log_degree,
+        resplit_lead_leaf);
     return node;
 }
 
@@ -1258,7 +1277,8 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
     auto split_tree = build_eval_mod_split_tree(
         sine_polynomial,
         log_split,
-        log_degree);
+        log_degree,
+        !dynamic_rescale || use_evalmod_lead_leaf_resplit());
     std::vector<EvalModSplitNode *> leaves;
     collect_eval_mod_leaves(*split_tree, leaves);
     if (leaves.empty() ||
@@ -2243,6 +2263,70 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
     result.output_parms_id = expected_output_parms_id != parms_id_zero
         ? expected_output_parms_id
         : parms_id_for_q_count(output_q_count);
+
+    /*
+     * Dynamic planning may request an extra power-of-two Chebyshev basis only
+     * as a level/scale anchor (for degree 59 this is T64).  It is useful while
+     * constructing node_q_counts, but the runtime evaluator must not spend a
+     * ciphertext square/relinearize/rescale on a basis that no polynomial
+     * term, combine node, or Chebyshev correction consumes.  Compute liveness
+     * from the final uploaded DAG and discard planning-only basis steps.
+     */
+    if (dynamic_rescale && !result.basis_steps.empty())
+    {
+        std::map<std::uint32_t, const GpuEvalModBasisStep *> step_by_degree;
+        for (const auto &step : result.basis_steps)
+        {
+            step_by_degree.emplace(step.output_degree, &step);
+        }
+
+        std::set<std::uint32_t> live_basis_degrees;
+        std::function<void(std::uint32_t)> mark_live_basis =
+            [&](std::uint32_t degree) {
+                if (degree <= 1 || !live_basis_degrees.insert(degree).second)
+                {
+                    return;
+                }
+                const auto step_iter = step_by_degree.find(degree);
+                if (step_iter == step_by_degree.end())
+                {
+                    throw std::logic_error(
+                        "GpuUploader::upload_eval_mod_high_precision: live basis step is absent");
+                }
+                const auto &step = *step_iter->second;
+                mark_live_basis(step.left_degree);
+                mark_live_basis(step.right_degree);
+                if (step.correction_degree != 0)
+                {
+                    mark_live_basis(step.correction_degree);
+                }
+            };
+
+        for (const auto &block : result.polynomial_blocks)
+        {
+            for (const auto &term : block.terms)
+            {
+                if (term.degree != 0)
+                {
+                    mark_live_basis(term.degree);
+                }
+            }
+        }
+        for (const auto &combine : result.polynomial_combine_steps)
+        {
+            mark_live_basis(combine.basis_degree);
+        }
+
+        result.basis_steps.erase(
+            std::remove_if(
+                result.basis_steps.begin(),
+                result.basis_steps.end(),
+                [&](const GpuEvalModBasisStep &step) {
+                    return live_basis_degrees.count(step.output_degree) == 0;
+                }),
+            result.basis_steps.end());
+    }
+
     result.required_relin_q_counts.assign(
         required_relin_q_counts.begin(),
         required_relin_q_counts.end());

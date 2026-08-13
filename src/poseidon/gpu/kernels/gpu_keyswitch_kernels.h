@@ -144,6 +144,13 @@ void launch_hybrid_convert_p_to_q_forward_ntt(
     const GpuWord *accum_p0,
     const GpuWord *accum_p1,
     const GpuParameterShard &parameter_shard,
+    std::size_t degree,
+    bool source_preweighted = false);
+
+void launch_hybrid_preweight_p_two_components(
+    GpuWord *accum_p0,
+    GpuWord *accum_p1,
+    const GpuParameterShard &parameter_shard,
     std::size_t degree);
 
 void launch_hybrid_convert_p_to_q_forward_ntt_row_tiled8(
@@ -152,7 +159,8 @@ void launch_hybrid_convert_p_to_q_forward_ntt_row_tiled8(
     const GpuWord *accum_p0,
     const GpuWord *accum_p1,
     const GpuParameterShard &parameter_shard,
-    std::size_t degree);
+    std::size_t degree,
+    bool source_preweighted = false);
 
 void launch_hybrid_forward_ntt_q_two_components(
     GpuWord *values0,

@@ -33,6 +33,28 @@ constexpr const char *kBconvRowTiled8Env =
     "POSEIDON_KEYSWITCH_BCONV_ROW_TILED_8";
 constexpr const char *kPToQRowTiled8Env =
     "POSEIDON_KEYSWITCH_P_TO_Q_ROW_TILED_8";
+constexpr const char *kP9PreweightPEnv =
+    "POSEIDON_KEYSWITCH_P9_PREWEIGHT_P";
+constexpr const char *kP9PToQRowTiled8Env =
+    "POSEIDON_KEYSWITCH_P9_P_TO_Q_ROW_TILED_8";
+constexpr const char *kP9FourstepPInttEnv =
+    "POSEIDON_KEYSWITCH_P9_FOURSTEP_P_INTT";
+constexpr const char *kP9FourstepQpEnv =
+    "POSEIDON_KEYSWITCH_P9_FOURSTEP_QP";
+constexpr const char *kP9PToQFourstepEnv =
+    "POSEIDON_KEYSWITCH_P9_P_TO_Q_FOURSTEP";
+constexpr const char *kDoubleHoistP9ModupRowTiled8Env =
+    "POSEIDON_DOUBLE_HOIST_P9_MODUP_ROW_TILED_8";
+constexpr const char *kDoubleHoistP9PreweightPEnv =
+    "POSEIDON_DOUBLE_HOIST_P9_PREWEIGHT_P";
+constexpr const char *kDoubleHoistP9PToQRowTiled8Env =
+    "POSEIDON_DOUBLE_HOIST_P9_P_TO_Q_ROW_TILED_8";
+constexpr const char *kDoubleHoistP9QpFourstepEnv =
+    "POSEIDON_DOUBLE_HOIST_P9_QP_FOURSTEP";
+constexpr const char *kDoubleHoistP9PToQFourstepEnv =
+    "POSEIDON_DOUBLE_HOIST_P9_P_TO_Q_FOURSTEP";
+constexpr const char *kP9ModupFourstepPhase1FusedEnv =
+    "POSEIDON_P9_MODUP_FOURSTEP_PHASE1_FUSED";
 constexpr const char *kFourstepC2InttEnv =
     "POSEIDON_KEYSWITCH_FOURSTEP_C2_INTT";
 constexpr const char *kFourstepAllNttEnv =
@@ -168,6 +190,323 @@ bool use_p_to_q_row_tiled8()
            value != "off" &&
            value != "false" &&
            value != "FALSE";
+}
+
+bool use_p9_preweight_p(
+    std::size_t degree,
+    std::size_t base_p_size)
+{
+    if (degree != 65536 || base_p_size != 9)
+    {
+        return false;
+    }
+
+    const char *raw = std::getenv(kP9PreweightPEnv);
+    if (raw == nullptr || *raw == '\0')
+    {
+        return true;
+    }
+
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
+bool use_p9_p_to_q_row_tiled8(
+    std::size_t degree,
+    std::size_t base_p_size)
+{
+    if (degree != 65536 || base_p_size != 9)
+    {
+        return false;
+    }
+
+    const char *raw = std::getenv(kP9PToQRowTiled8Env);
+    if (raw == nullptr || *raw == '\0')
+    {
+        return true;
+    }
+
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
+bool use_p9_fourstep_p_intt(
+    std::size_t degree,
+    std::size_t base_p_size)
+{
+    if (degree != 65536 || base_p_size != 9)
+    {
+        return false;
+    }
+
+    const char *raw = std::getenv(kP9FourstepPInttEnv);
+    if (raw == nullptr || *raw == '\0')
+    {
+        return true;
+    }
+
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
+bool use_p9_fourstep_qp(
+    std::size_t degree,
+    std::size_t base_p_size)
+{
+    if (degree != 65536 || base_p_size != 9)
+    {
+        return false;
+    }
+
+    const char *raw = std::getenv(kP9FourstepQpEnv);
+    if (raw == nullptr || *raw == '\0')
+    {
+        return true;
+    }
+
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
+bool use_p9_p_to_q_fourstep(
+    std::size_t degree,
+    std::size_t base_p_size)
+{
+    if (degree != 65536 || base_p_size != 9)
+    {
+        return false;
+    }
+
+    const char *raw = std::getenv(kP9PToQFourstepEnv);
+    if (raw == nullptr || *raw == '\0')
+    {
+        return true;
+    }
+
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
+bool use_double_hoist_p9_modup_row_tiled8(
+    std::size_t degree,
+    std::size_t base_p_size)
+{
+    if (degree != 65536 || base_p_size != 9)
+    {
+        return false;
+    }
+
+    const char *raw = std::getenv(kDoubleHoistP9ModupRowTiled8Env);
+    if (raw == nullptr || *raw == '\0')
+    {
+        return true;
+    }
+
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
+bool use_double_hoist_p9_preweight_p(
+    std::size_t degree,
+    std::size_t base_p_size)
+{
+    if (degree != 65536 || base_p_size != 9)
+    {
+        return false;
+    }
+
+    const char *raw = std::getenv(kDoubleHoistP9PreweightPEnv);
+    if (raw == nullptr || *raw == '\0')
+    {
+        return true;
+    }
+
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
+bool use_double_hoist_p9_p_to_q_row_tiled8(
+    std::size_t degree,
+    std::size_t base_p_size)
+{
+    if (degree != 65536 || base_p_size != 9)
+    {
+        return false;
+    }
+
+    const char *raw = std::getenv(kDoubleHoistP9PToQRowTiled8Env);
+    if (raw == nullptr || *raw == '\0')
+    {
+        return true;
+    }
+
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
+bool use_double_hoist_p9_qp_fourstep(
+    std::size_t degree,
+    std::size_t base_p_size)
+{
+    if (degree != 65536 || base_p_size != 9)
+    {
+        return false;
+    }
+
+    const char *raw = std::getenv(kDoubleHoistP9QpFourstepEnv);
+    if (raw == nullptr || *raw == '\0')
+    {
+        return true;
+    }
+
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
+bool use_double_hoist_p9_p_to_q_fourstep(
+    std::size_t degree,
+    std::size_t base_p_size)
+{
+    if (degree != 65536 || base_p_size != 9)
+    {
+        return false;
+    }
+
+    const char *raw = std::getenv(kDoubleHoistP9PToQFourstepEnv);
+    if (raw == nullptr || *raw == '\0')
+    {
+        return true;
+    }
+
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
+bool use_p9_modup_fourstep_phase1_fused(
+    std::size_t degree,
+    std::size_t base_p_size)
+{
+    if (degree != 65536 || base_p_size != 9)
+    {
+        return false;
+    }
+
+    const char *raw = std::getenv(kP9ModupFourstepPhase1FusedEnv);
+    if (raw == nullptr || *raw == '\0')
+    {
+        return false;
+    }
+
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
+void launch_double_hoist_p_to_q_forward_ntt(
+    GpuWord *converted_q0,
+    GpuWord *converted_q1,
+    GpuWord *p_coeff0,
+    GpuWord *p_coeff1,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    const std::size_t p_count = parameter_shard.hybrid_base_p_count;
+    const bool preweight =
+        use_double_hoist_p9_preweight_p(degree, p_count);
+    const bool row_tiled8 =
+        use_double_hoist_p9_p_to_q_row_tiled8(degree, p_count);
+    const bool fourstep =
+        use_double_hoist_p9_p_to_q_fourstep(degree, p_count);
+
+    if (preweight)
+    {
+        NvtxRange range("double_hoist.moddown.preweight_p9");
+        kernel::launch_hybrid_preweight_p_two_components(
+            p_coeff0,
+            p_coeff1,
+            parameter_shard,
+            degree);
+    }
+
+    if (fourstep)
+    {
+        NvtxRange range("double_hoist.moddown.p_to_q.fourstep_p9");
+        kernel::launch_hybrid_convert_p9_to_q_forward_ntt_two_components_fourstep_65536(
+            converted_q0,
+            converted_q1,
+            p_coeff0,
+            p_coeff1,
+            parameter_shard,
+            degree,
+            preweight);
+    }
+    else if (row_tiled8)
+    {
+        NvtxRange range("double_hoist.moddown.p_to_q.row_tiled8");
+        kernel::launch_hybrid_convert_p_to_q_forward_ntt_row_tiled8(
+            converted_q0,
+            converted_q1,
+            p_coeff0,
+            p_coeff1,
+            parameter_shard,
+            degree,
+            preweight);
+    }
+    else
+    {
+        NvtxRange range("double_hoist.moddown.p_to_q.generic");
+        kernel::launch_hybrid_convert_p_to_q_forward_ntt(
+            converted_q0,
+            converted_q1,
+            p_coeff0,
+            p_coeff1,
+            parameter_shard,
+            degree,
+            preweight);
+    }
 }
 
 bool use_fourstep_c2_intt()
@@ -524,7 +863,19 @@ HybridScratch allocate_hybrid_scratch(
         scratch.fourstep_p0.allocate(scratch.p_word_count, device_id);
         scratch.fourstep_p1.allocate(scratch.p_word_count, device_id);
     }
-
+    else if (use_p9_fourstep_p_intt(degree, base_p_size) ||
+             use_p9_p_to_q_fourstep(
+                 degree,
+                 base_p_size) ||
+             use_p9_fourstep_qp(degree, base_p_size))
+    {
+        if (use_p9_fourstep_qp(degree, base_p_size))
+        {
+            scratch.fourstep_q0.allocate(scratch.q_word_count, device_id);
+        }
+        scratch.fourstep_p0.allocate(scratch.p_word_count, device_id);
+        scratch.fourstep_p1.allocate(scratch.p_word_count, device_id);
+    }
     return scratch;
 }
 
@@ -569,7 +920,19 @@ void ensure_hybrid_scratch(
         ensure_capacity(scratch.fourstep_p0, p_word_count);
         ensure_capacity(scratch.fourstep_p1, p_word_count);
     }
-
+    else if (use_p9_fourstep_p_intt(degree, base_p_size) ||
+             use_p9_p_to_q_fourstep(
+                 degree,
+                 base_p_size) ||
+             use_p9_fourstep_qp(degree, base_p_size))
+    {
+        if (use_p9_fourstep_qp(degree, base_p_size))
+        {
+            ensure_capacity(scratch.fourstep_q0, q_word_count);
+        }
+        ensure_capacity(scratch.fourstep_p0, p_word_count);
+        ensure_capacity(scratch.fourstep_p1, p_word_count);
+    }
     scratch.device_id = device_id;
     scratch.degree = degree;
     scratch.base_q_size = base_q_size;
@@ -681,14 +1044,50 @@ void process_hybrid_decomposition_block(
         scratch,
         *parameter_shard);
 
-    if (use_fourstep_all_ntt(
-            scratch.degree,
-            scratch.base_q_size,
-            scratch.base_p_size))
+    const bool fourstep_all_ntt = use_fourstep_all_ntt(
+        scratch.degree,
+        scratch.base_q_size,
+        scratch.base_p_size);
+    const bool p9_fourstep_qp = use_p9_fourstep_qp(
+        scratch.degree,
+        scratch.base_p_size);
+    if (fourstep_all_ntt || p9_fourstep_qp)
     {
         const bool fuse_phase2_mac = use_fourstep_phase2_mac();
+        const bool fuse_modup_phase1 =
+            use_p9_modup_fourstep_phase1_fused(
+                scratch.degree,
+                scratch.base_p_size);
+        if (fuse_modup_phase1)
+        {
+            NvtxRange range(
+                "keyswitch.dnum.modup_fourstep_phase1.fused_p9");
+            kernel::launch_hybrid_modup_p9_forward_ntt_qp_active_phase1_fourstep_65536(
+                scratch.fourstep_q0.data(),
+                scratch.fourstep_p0.data(),
+                scratch.c2_intt.data(),
+                decomp_index,
+                decomp_limb_begin,
+                decomp_limb_count,
+                *parameter_shard,
+                scratch.degree);
+        }
+        else if (fourstep_all_ntt)
         {
             NvtxRange range("keyswitch.dnum.modup.row_tiled8.coeff");
+            kernel::launch_hybrid_modup_decomposition_row_tiled8(
+                scratch.modup_q.data(),
+                scratch.modup_p.data(),
+                scratch.c2_intt.data(),
+                decomp_index,
+                decomp_limb_begin,
+                decomp_limb_count,
+                *parameter_shard,
+                scratch.degree);
+        }
+        else
+        {
+            NvtxRange range("keyswitch.dnum.modup.p9.row_tiled8.coeff");
             kernel::launch_hybrid_modup_decomposition_row_tiled8(
                 scratch.modup_q.data(),
                 scratch.modup_p.data(),
@@ -707,8 +1106,12 @@ void process_hybrid_decomposition_block(
             kernel::launch_forward_ntt_qp_active_fourstep_mul_accumulate_two_components_65536(
                 scratch.fourstep_q0.data(),
                 scratch.fourstep_p0.data(),
-                scratch.modup_q.data(),
-                scratch.modup_p.data(),
+                fuse_modup_phase1
+                    ? scratch.fourstep_q0.data()
+                    : scratch.modup_q.data(),
+                fuse_modup_phase1
+                    ? scratch.fourstep_p0.data()
+                    : scratch.modup_p.data(),
                 scratch.accum_q0.data(),
                 scratch.accum_p0.data(),
                 scratch.accum_q1.data(),
@@ -722,7 +1125,8 @@ void process_hybrid_decomposition_block(
                 decomp_limb_count,
                 decomp_index == 0,
                 *parameter_shard,
-                scratch.degree);
+                scratch.degree,
+                fuse_modup_phase1);
         }
         else
         {
@@ -732,12 +1136,17 @@ void process_hybrid_decomposition_block(
                 kernel::launch_forward_ntt_qp_active_fourstep_65536(
                     scratch.fourstep_q0.data(),
                     scratch.fourstep_p0.data(),
-                    scratch.modup_q.data(),
-                    scratch.modup_p.data(),
+                    fuse_modup_phase1
+                        ? scratch.fourstep_q0.data()
+                        : scratch.modup_q.data(),
+                    fuse_modup_phase1
+                        ? scratch.fourstep_p0.data()
+                        : scratch.modup_p.data(),
                     decomp_limb_begin,
                     decomp_limb_count,
                     *parameter_shard,
-                    scratch.degree);
+                    scratch.degree,
+                    fuse_modup_phase1);
             }
             {
                 NvtxRange range(
@@ -986,34 +1395,99 @@ void finalize_hybrid_relinearize(
     }
 
     /* 只把P部分转回系数域，Q部分保持在NTT域 */
+    const bool p9_fourstep_intt = use_p9_fourstep_p_intt(
+        scratch.degree,
+        scratch.base_p_size);
+    const bool p_source_preweighted =
+        use_p9_preweight_p(scratch.degree, scratch.base_p_size);
+    GpuWord *p_coeff0 = scratch.accum_p0.data();
+    GpuWord *p_coeff1 = scratch.accum_p1.data();
+    if (p9_fourstep_intt)
     {
-        NvtxRange range("keyswitch.finalize.intt_p0");
-        kernel::launch_inverse_ntt_poly_shard(
-            accum_p0_view,
-            as_const_shard(accum_p0_view),
-            *parameter_shard,
-            scratch.degree);
+        p_coeff0 = scratch.fourstep_p0.data();
+        p_coeff1 = scratch.fourstep_p1.data();
+        auto p_coeff0_view = make_scratch_p_view(p_coeff0, scratch);
+        auto p_coeff1_view = make_scratch_p_view(p_coeff1, scratch);
+        {
+            NvtxRange range("keyswitch.finalize.intt_p0.fourstep_p9");
+            kernel::launch_inverse_ntt_poly_shard_fourstep_65536(
+                p_coeff0_view,
+                as_const_shard(accum_p0_view),
+                *parameter_shard,
+                scratch.degree);
+        }
+        {
+            NvtxRange range("keyswitch.finalize.intt_p1.fourstep_p9");
+            kernel::launch_inverse_ntt_poly_shard_fourstep_65536(
+                p_coeff1_view,
+                as_const_shard(accum_p1_view),
+                *parameter_shard,
+                scratch.degree);
+        }
     }
+    else
     {
-        NvtxRange range("keyswitch.finalize.intt_p1");
-        kernel::launch_inverse_ntt_poly_shard(
-            accum_p1_view,
-            as_const_shard(accum_p1_view),
+        {
+            NvtxRange range("keyswitch.finalize.intt_p0");
+            kernel::launch_inverse_ntt_poly_shard(
+                accum_p0_view,
+                as_const_shard(accum_p0_view),
+                *parameter_shard,
+                scratch.degree);
+        }
+        {
+            NvtxRange range("keyswitch.finalize.intt_p1");
+            kernel::launch_inverse_ntt_poly_shard(
+                accum_p1_view,
+                as_const_shard(accum_p1_view),
+                *parameter_shard,
+                scratch.degree);
+        }
+    }
+
+    const bool p_to_q_row_tiled8 =
+        use_p_to_q_row_tiled8() ||
+        use_p9_p_to_q_row_tiled8(
+            scratch.degree,
+            scratch.base_p_size);
+    const bool p_to_q_fourstep = use_p9_p_to_q_fourstep(
+        scratch.degree,
+        scratch.base_p_size);
+    if (p_source_preweighted)
+    {
+        NvtxRange range("keyswitch.finalize.preweight_p9");
+        kernel::launch_hybrid_preweight_p_two_components(
+            p_coeff0,
+            p_coeff1,
             *parameter_shard,
             scratch.degree);
     }
 
-    if (use_p_to_q_row_tiled8())
+    if (p_to_q_fourstep)
+    {
+        NvtxRange range(
+            "keyswitch.finalize.convert_p_to_q_forward_ntt.fourstep_p9");
+        kernel::launch_hybrid_convert_p9_to_q_forward_ntt_two_components_fourstep_65536(
+            scratch.c2_intt.data(),
+            scratch.modup_q.data(),
+            p_coeff0,
+            p_coeff1,
+            *parameter_shard,
+            scratch.degree,
+            p_source_preweighted);
+    }
+    else if (p_to_q_row_tiled8)
     {
         NvtxRange range(
             "keyswitch.finalize.convert_p_to_q_forward_ntt.row_tiled8");
         kernel::launch_hybrid_convert_p_to_q_forward_ntt_row_tiled8(
             scratch.c2_intt.data(),
             scratch.modup_q.data(),
-            scratch.accum_p0.data(),
-            scratch.accum_p1.data(),
+            p_coeff0,
+            p_coeff1,
             *parameter_shard,
-            scratch.degree);
+            scratch.degree,
+            p_source_preweighted);
     }
     else
     {
@@ -1021,10 +1495,11 @@ void finalize_hybrid_relinearize(
         kernel::launch_hybrid_convert_p_to_q_forward_ntt(
             scratch.c2_intt.data(),
             scratch.modup_q.data(),
-            scratch.accum_p0.data(),
-            scratch.accum_p1.data(),
+            p_coeff0,
+            p_coeff1,
             *parameter_shard,
-            scratch.degree);
+            scratch.degree,
+            p_source_preweighted);
     }
 
 #if 0
@@ -1748,17 +2223,65 @@ void GpuKeySwitchHandler::hoist_decompose_modup_ntt(
             destination.digits_q_ntt.data() + digit * q_words;
         GpuWord *digit_p =
             destination.digits_p_ntt.data() + digit * p_words;
+        const bool qp_fourstep = use_double_hoist_p9_qp_fourstep(
+            level_info.degree,
+            p_count);
+        const bool fuse_modup_phase1 = qp_fourstep &&
+            use_p9_modup_fourstep_phase1_fused(
+                level_info.degree,
+                p_count);
+        GpuWord *modup_q = qp_fourstep && !fuse_modup_phase1
+            ? workspace.permuted_digit_q.data()
+            : digit_q;
+        GpuWord *modup_p = qp_fourstep && !fuse_modup_phase1
+            ? workspace.permuted_digit_p.data()
+            : digit_p;
 
-        kernel::launch_hybrid_modup_decomposition(
-            digit_q,
-            digit_p,
-            destination.source_intt_q.data(),
-            source_shard.ptr,
-            digit,
-            limb_begin,
-            limb_count,
-            *parameter_shard,
-            level_info.degree);
+        if (fuse_modup_phase1)
+        {
+            NvtxRange modup_range(
+                "double_hoist.decompose.modup_fourstep_phase1.fused_p9");
+            kernel::launch_hybrid_modup_p9_forward_ntt_qp_active_phase1_fourstep_65536(
+                digit_q,
+                digit_p,
+                destination.source_intt_q.data(),
+                digit,
+                limb_begin,
+                limb_count,
+                *parameter_shard,
+                level_info.degree);
+        }
+        else if (use_double_hoist_p9_modup_row_tiled8(
+                level_info.degree,
+                p_count))
+        {
+            NvtxRange modup_range(
+                "double_hoist.decompose.modup.p9.row_tiled8");
+            kernel::launch_hybrid_modup_decomposition_row_tiled8(
+                modup_q,
+                modup_p,
+                destination.source_intt_q.data(),
+                digit,
+                limb_begin,
+                limb_count,
+                *parameter_shard,
+                level_info.degree);
+        }
+        else
+        {
+            NvtxRange modup_range(
+                "double_hoist.decompose.modup.generic");
+            kernel::launch_hybrid_modup_decomposition(
+                modup_q,
+                modup_p,
+                destination.source_intt_q.data(),
+                source_shard.ptr,
+                digit,
+                limb_begin,
+                limb_count,
+                *parameter_shard,
+                level_info.degree);
+        }
 
         /*
          * launch_hybrid_modup_decomposition deliberately skips the Q limbs
@@ -1781,13 +2304,33 @@ void GpuKeySwitchHandler::hoist_decompose_modup_ntt(
                 cudaMemcpyDeviceToDevice,
                 nullptr),
             "double-hoist copy decomposition Q limbs");
-        kernel::launch_hybrid_forward_ntt_qp_active(
-            digit_q,
-            digit_p,
-            limb_begin,
-            limb_count,
-            *parameter_shard,
-            level_info.degree);
+        if (qp_fourstep)
+        {
+            NvtxRange ntt_range(
+                "double_hoist.decompose.qp_forward_ntt.fourstep_p9");
+            kernel::launch_forward_ntt_qp_active_fourstep_65536(
+                digit_q,
+                digit_p,
+                modup_q,
+                modup_p,
+                limb_begin,
+                limb_count,
+                *parameter_shard,
+                level_info.degree,
+                fuse_modup_phase1);
+        }
+        else
+        {
+            NvtxRange ntt_range(
+                "double_hoist.decompose.qp_forward_ntt.generic");
+            kernel::launch_hybrid_forward_ntt_qp_active(
+                digit_q,
+                digit_p,
+                limb_begin,
+                limb_count,
+                *parameter_shard,
+                level_info.degree);
+        }
     }
 }
 
@@ -2113,7 +2656,7 @@ void GpuKeySwitchHandler::moddown_qp_ciphertext_to_q(
         p_ntt1,
         *parameter_shard,
         source.degree);
-    kernel::launch_hybrid_convert_p_to_q_forward_ntt(
+    launch_double_hoist_p_to_q_forward_ntt(
         workspace.converted_q0.data(),
         workspace.converted_q1.data(),
         workspace.p_coeff0.data(),
@@ -2230,7 +2773,7 @@ void GpuKeySwitchHandler::moddown_qp_ciphertext_batch_to_q(
      */
     for (std::size_t batch = 0; batch < batch_count; ++batch)
     {
-        kernel::launch_hybrid_convert_p_to_q_forward_ntt(
+        launch_double_hoist_p_to_q_forward_ntt(
             converted_q.data() +
                 (batch * 2) * q_component_words,
             converted_q.data() +
@@ -2349,7 +2892,7 @@ void GpuKeySwitchHandler::moddown_qp_groups_to_q(
         p_ntt1,
         *parameter_shard,
         source_groups.degree);
-    kernel::launch_hybrid_convert_p_to_q_forward_ntt(
+    launch_double_hoist_p_to_q_forward_ntt(
         workspace.converted_q0.data(),
         workspace.converted_q1.data(),
         workspace.p_coeff0.data(),
@@ -2422,7 +2965,6 @@ void GpuKeySwitchHandler::switch_key_hybrid_ciphertext_impl(
     const GpuConstRNSPolyView *add_source1,
     const GpuLevelInfo *rescale_x2_destination_level) const
 {
-    NvtxRange range("keyswitch.hybrid");
     (void)params_;
     if (rescale_x2_destination_level == nullptr)
     {
@@ -2496,6 +3038,11 @@ void GpuKeySwitchHandler::switch_key_hybrid_ciphertext_impl(
         throw std::invalid_argument(
             "GpuKeySwitchHandler::switch_key_hybrid_ciphertext: HYBRID requires key p limbs");
     }
+    NvtxRange range(
+        "keyswitch.hybrid.q" + std::to_string(base_q_size) +
+        ".p" + std::to_string(base_p_size) +
+        ".d" + std::to_string(
+            (base_q_size + base_p_size - 1) / base_p_size));
     /* 计算dnum的分块数，向上取整，按base_p_size分块 */
     const std::size_t expected_decomposition_count =
         (base_q_size + base_p_size - 1) / base_p_size;

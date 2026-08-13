@@ -14,6 +14,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <string>
 #include <vector>
 
 namespace poseidon
@@ -290,11 +291,21 @@ struct GpuBootstrapWorkspace
         double total_ms{0.0};
     };
 
+    struct EvalModMultiplyTiming
+    {
+        std::string label;
+        std::size_t q_count{0};
+        std::size_t decomposition_count{0};
+        bool is_square{false};
+        double gpu_ms{0.0};
+    };
+
     // CUDA-event profiling is opt-in and is disabled for normal timed calls.
     // A caller can profile one EvalMod invocation without introducing event
     // synchronization into the production bootstrap path.
     bool capture_eval_mod_stage_timing{false};
     EvalModStageTiming eval_mod_stage_timing;
+    std::vector<EvalModMultiplyTiming> eval_mod_multiply_timings;
 
     // Optional correctness-only snapshots. They remain disabled in timed and
     // production bootstrap calls, so the hot path pays no copy or storage cost.

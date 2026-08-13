@@ -103,6 +103,21 @@ bool env_flag_enabled(const char *name)
            text != "FALSE";
 }
 
+bool env_flag_enabled_or(const char *name, bool fallback)
+{
+    const char *value = std::getenv(name);
+    if (value == nullptr || value[0] == '\0')
+    {
+        return fallback;
+    }
+    const std::string text(value);
+    return text != "0" &&
+           text != "OFF" &&
+           text != "off" &&
+           text != "false" &&
+           text != "FALSE";
+}
+
 int log2_degree(std::size_t degree)
 {
     if (degree < 2 || (degree & (degree - 1)) != 0)
@@ -1668,6 +1683,112 @@ void print_eval_mod_stage_timing_table(
     separator();
     std::cout << "profile iterations=" << iterations
               << "; real + imag; setup/download excluded\n";
+}
+
+struct EvalModMultiplyTimingAggregate
+{
+    poseidon::gpu::GpuBootstrapWorkspace::EvalModMultiplyTiming metadata;
+    double total_gpu_ms{0.0};
+    std::size_t samples{0};
+};
+
+using EvalModMultiplyTimingMap =
+    std::map<std::string, EvalModMultiplyTimingAggregate>;
+
+void accumulate_eval_mod_multiply_timings(
+    EvalModMultiplyTimingMap &aggregates,
+    const std::vector<
+        poseidon::gpu::GpuBootstrapWorkspace::EvalModMultiplyTiming> &samples)
+{
+    for (const auto &sample : samples)
+    {
+        auto &aggregate = aggregates[sample.label];
+        if (aggregate.samples == 0)
+        {
+            aggregate.metadata = sample;
+        }
+        else if (aggregate.metadata.q_count != sample.q_count ||
+                 aggregate.metadata.decomposition_count !=
+                     sample.decomposition_count ||
+                 aggregate.metadata.is_square != sample.is_square)
+        {
+            throw std::runtime_error(
+                "EvalMod multiply timing metadata changed between samples");
+        }
+        aggregate.total_gpu_ms += sample.gpu_ms;
+        ++aggregate.samples;
+    }
+}
+
+void print_eval_mod_multiply_timing_table(
+    const EvalModMultiplyTimingMap &aggregates,
+    std::size_t profile_iterations)
+{
+    std::vector<EvalModMultiplyTimingAggregate> sorted;
+    sorted.reserve(aggregates.size());
+    for (const auto &entry : aggregates)
+    {
+        sorted.push_back(entry.second);
+    }
+    std::sort(
+        sorted.begin(),
+        sorted.end(),
+        [](const auto &left, const auto &right) {
+            return left.total_gpu_ms > right.total_gpu_ms;
+        });
+
+    constexpr int label_width = 37;
+    constexpr int type_width = 8;
+    constexpr int count_width = 6;
+    constexpr int time_width = 14;
+    const auto separator = [&]() {
+        std::cout << "|-" << std::string(label_width, '-')
+                  << "-|-" << std::string(type_width, '-')
+                  << "-|-" << std::string(count_width, '-')
+                  << "-|-" << std::string(count_width, '-')
+                  << "-|-" << std::string(time_width, '-')
+                  << "-|-" << std::string(time_width, '-')
+                  << "-|\n";
+    };
+
+    std::cout << "\n[GPU EvalMod ciphertext multiply + relinearize timing]\n";
+    separator();
+    std::cout << "| " << std::left << std::setw(label_width) << "node"
+              << " | " << std::setw(type_width) << "type"
+              << " | " << std::right << std::setw(count_width) << "Q"
+              << " | " << std::setw(count_width) << "dnum"
+              << " | " << std::setw(time_width) << "avg ms/call"
+              << " | " << std::setw(time_width) << "real+imag ms"
+              << " |\n";
+    separator();
+    double pair_total_ms = 0.0;
+    for (const auto &aggregate : sorted)
+    {
+        const double average = aggregate.samples == 0
+            ? 0.0
+            : aggregate.total_gpu_ms /
+                  static_cast<double>(aggregate.samples);
+        const double pair_time = profile_iterations == 0
+            ? 0.0
+            : aggregate.total_gpu_ms /
+                  static_cast<double>(profile_iterations);
+        pair_total_ms += pair_time;
+        std::cout << "| " << std::left << std::setw(label_width)
+                  << aggregate.metadata.label
+                  << " | " << std::setw(type_width)
+                  << (aggregate.metadata.is_square ? "square" : "multiply")
+                  << " | " << std::right << std::setw(count_width)
+                  << aggregate.metadata.q_count
+                  << " | " << std::setw(count_width)
+                  << aggregate.metadata.decomposition_count
+                  << " | " << std::setw(time_width) << format_ms(average)
+                  << " | " << std::setw(time_width) << format_ms(pair_time)
+                  << " |\n";
+    }
+    separator();
+    std::cout << "Multiply+Relin real+imag total = "
+              << format_ms(pair_total_ms)
+              << "; sorted by GPU contribution; CUDA events exclude host launch gaps\n";
 }
 
 void print_correctness_summary(const std::vector<CorrectnessRow> &rows)
@@ -4581,6 +4702,7 @@ int main()
 
         poseidon::gpu::GpuBootstrapWorkspace::EvalModStageTiming
             evalmod_stage_timing_sum;
+        EvalModMultiplyTimingMap evalmod_multiply_timing_sum;
         double evalmod_stage_profile_wall_ms_sum = 0.0;
         bootstrap_workspace.capture_eval_mod_stage_timing = true;
         for (std::size_t iteration = 0;
@@ -4597,6 +4719,9 @@ int main()
             accumulate_eval_mod_stage_timing(
                 evalmod_stage_timing_sum,
                 bootstrap_workspace.eval_mod_stage_timing);
+            accumulate_eval_mod_multiply_timings(
+                evalmod_multiply_timing_sum,
+                bootstrap_workspace.eval_mod_multiply_timings);
             gpu_evaluator.eval_mod_high_precision(
                 gpu_c2s_imag,
                 bootstrap_data,
@@ -4606,6 +4731,9 @@ int main()
             accumulate_eval_mod_stage_timing(
                 evalmod_stage_timing_sum,
                 bootstrap_workspace.eval_mod_stage_timing);
+            accumulate_eval_mod_multiply_timings(
+                evalmod_multiply_timing_sum,
+                bootstrap_workspace.eval_mod_multiply_timings);
             const auto profile_stop = std::chrono::steady_clock::now();
             evalmod_stage_profile_wall_ms_sum +=
                 static_cast<double>(
@@ -4965,6 +5093,10 @@ int main()
                     cudaGetErrorString(capture_start_status));
             }
             nvtxRangePushA("profiled_full_bootstrap_once");
+            const bool capture_keyswitch_detail = env_flag_enabled(
+                "POSEIDON_BOOTSTRAP_NSYS_KEYSWITCH_DETAIL");
+            bootstrap_workspace.capture_eval_mod_stage_timing =
+                capture_keyswitch_detail;
             const auto start = std::chrono::steady_clock::now();
             gpu_evaluator.bootstrap(
                 gpu_source,
@@ -4975,6 +5107,7 @@ int main()
                 gpu_full_result);
             cudaDeviceSynchronize();
             const auto stop = std::chrono::steady_clock::now();
+            bootstrap_workspace.capture_eval_mod_stage_timing = false;
             nvtxRangePop();
             const auto capture_stop_status = cudaProfilerStop();
             if (capture_stop_status != cudaSuccess)
@@ -5052,6 +5185,9 @@ int main()
             evalmod_stage_timing_sum,
             evalmod_stage_profile_wall_ms_sum,
             evalmod_stage_profile_iterations);
+        print_eval_mod_multiply_timing_table(
+            evalmod_multiply_timing_sum,
+            evalmod_stage_profile_iterations);
 
         print_bootstrap_timing_table(
             std::vector<TimingRow>{
@@ -5100,6 +5236,71 @@ int main()
             warmup,
             full_iterations,
             full_warmup);
+
+        if (use_double_hoist)
+        {
+            const bool specialized_shape = degree == 65536 && p_count == 9;
+            const bool modup_row_tiled8 =
+                specialized_shape && env_flag_enabled_or(
+                    "POSEIDON_DOUBLE_HOIST_P9_MODUP_ROW_TILED_8",
+                    true);
+            const bool moddown_preweight =
+                specialized_shape && env_flag_enabled_or(
+                    "POSEIDON_DOUBLE_HOIST_P9_PREWEIGHT_P",
+                    true);
+            const bool moddown_p_to_q_row_tiled8 =
+                specialized_shape && env_flag_enabled_or(
+                    "POSEIDON_DOUBLE_HOIST_P9_P_TO_Q_ROW_TILED_8",
+                    true);
+            const bool qp_fourstep =
+                specialized_shape && env_flag_enabled_or(
+                    "POSEIDON_DOUBLE_HOIST_P9_QP_FOURSTEP",
+                    true);
+            const bool p_to_q_fourstep =
+                specialized_shape && env_flag_enabled_or(
+                    "POSEIDON_DOUBLE_HOIST_P9_P_TO_Q_FOURSTEP",
+                    true);
+            const bool keyswitch_p_to_q_fourstep =
+                specialized_shape && env_flag_enabled_or(
+                    "POSEIDON_KEYSWITCH_P9_P_TO_Q_FOURSTEP",
+                    true);
+            const bool qp_mac_group_tiled8 = env_flag_enabled_or(
+                "POSEIDON_DOUBLE_HOIST_QP_MAC_GROUP_TILED_8",
+                true);
+            const bool qp_mac_component_fused = env_flag_enabled_or(
+                "POSEIDON_DOUBLE_HOIST_QP_MAC_COMPONENT_FUSED",
+                true);
+            const auto state = [](bool enabled) {
+                return enabled ? "ON" : "OFF";
+            };
+            const char *p_to_q_row8_state =
+                p_to_q_fourstep && moddown_p_to_q_row_tiled8
+                    ? "FALLBACK"
+                    : state(moddown_p_to_q_row_tiled8);
+            std::cout
+                << "\n[WARN] Double-Hoist optimized paths (validated for "
+                   "N=65536, P=9): ModUp-row8="
+                << state(modup_row_tiled8)
+                << ", ModDown-P-preweight="
+                << state(moddown_preweight)
+                << ", ModDown-P-to-Q-row8="
+                << p_to_q_row8_state
+                << ", QP-Four-step="
+                << state(qp_fourstep)
+                << ", P-to-Q-Four-step="
+                << state(p_to_q_fourstep)
+                << ", KeySwitch-P-to-Q-Four-step="
+                << state(keyswitch_p_to_q_fourstep)
+                << ", QP-MAC-group-tiled4/8="
+                << state(qp_mac_group_tiled8)
+                << ", QP-MAC-component-fused="
+                << state(qp_mac_component_fused)
+                << ", QP-phase2-MAC-alias/occupancy=ON"
+                << ". Set the corresponding POSEIDON_DOUBLE_HOIST_* "
+                   "or POSEIDON_KEYSWITCH_P9_* variable to 0 for runtime "
+                   "path rollback; phase2-MAC alias/occupancy tuning is a "
+                   "compile-time N=65536 default.\n";
+        }
 
         if (!evalmod_correct || !s2c_correct || !full_correct)
         {

@@ -2,6 +2,7 @@
 
 #include <cuda_runtime_api.h>
 
+#include <cstdlib>
 #include <limits>
 #include <stdexcept>
 #include <string>
@@ -486,6 +487,227 @@ __global__ void qp_plain_mul_accumulate_kernel(
     group_values[tid] = accumulator;
 }
 
+template <int GroupTile>
+__global__ void qp_plain_mul_accumulate_group_tiled_kernel(
+    GpuWord *group_values,
+    const GpuWord *baby_values,
+    const GpuWord *const *diagonal_ptrs,
+    const std::uint32_t *term_baby_indices,
+    const std::uint32_t *group_term_offsets,
+    const GpuWord *moduli,
+    const GpuWide *barrett,
+    std::size_t group_count,
+    std::size_t term_count,
+    std::size_t limb_count,
+    std::size_t degree,
+    std::size_t tile_begin,
+    std::size_t tile_count)
+{
+    constexpr std::size_t kCoefficientTile = 32;
+    constexpr std::size_t kMaxBabyTile = 8;
+    static_assert(GroupTile == 4 || GroupTile == 8);
+    __shared__ GpuWord shared_baby[kMaxBabyTile][kCoefficientTile];
+
+    const std::size_t lane = threadIdx.x;
+    const std::size_t group_row = threadIdx.y;
+    const std::size_t coefficient =
+        blockIdx.x * kCoefficientTile + lane;
+    const std::size_t packed_component_limb = blockIdx.y;
+    const std::size_t component =
+        packed_component_limb / limb_count;
+    const std::size_t limb =
+        packed_component_limb - component * limb_count;
+    const std::size_t group =
+        blockIdx.z * GroupTile + group_row;
+
+    const std::size_t linear_thread =
+        group_row * kCoefficientTile + lane;
+    const std::size_t shared_word_count =
+        tile_count * kCoefficientTile;
+    for (std::size_t shared_index = linear_thread;
+         shared_index < shared_word_count;
+         shared_index += kCoefficientTile * GroupTile)
+    {
+        const std::size_t local_baby =
+            shared_index / kCoefficientTile;
+        const std::size_t source_lane =
+            shared_index - local_baby * kCoefficientTile;
+        const std::size_t source_coefficient =
+            blockIdx.x * kCoefficientTile + source_lane;
+        GpuWord value = 0;
+        if (source_coefficient < degree)
+        {
+            const std::size_t baby_offset =
+                ((local_baby * 2 + component) * limb_count + limb) *
+                    degree +
+                source_coefficient;
+            value = baby_values[baby_offset];
+        }
+        shared_baby[local_baby][source_lane] = value;
+    }
+    __syncthreads();
+
+    if (group >= group_count || coefficient >= degree)
+    {
+        return;
+    }
+
+    const std::size_t words_per_group = 2 * limb_count * degree;
+    const std::size_t group_offset =
+        group * words_per_group +
+        (component * limb_count + limb) * degree +
+        coefficient;
+    const GpuWord modulus = moduli[limb];
+    const GpuWide ratio = barrett[limb];
+    GpuWord accumulator = group_values[group_offset];
+    const std::uint32_t begin = group_term_offsets[group];
+    const std::uint32_t end = group_term_offsets[group + 1];
+    if (end > term_count || begin > end)
+    {
+        return;
+    }
+
+    for (std::uint32_t term = begin; term < end; ++term)
+    {
+        const std::size_t baby_index = term_baby_indices[term];
+        if (baby_index < tile_begin ||
+            baby_index >= tile_begin + tile_count)
+        {
+            continue;
+        }
+
+        const std::size_t local_baby = baby_index - tile_begin;
+        const GpuWord diagonal =
+            diagonal_ptrs[term][limb * degree + coefficient];
+        accumulator = add_mod(
+            accumulator,
+            multiply_mod(
+                shared_baby[local_baby][lane],
+                diagonal,
+                modulus,
+                ratio),
+            modulus);
+    }
+
+    group_values[group_offset] = accumulator;
+}
+
+template <int GroupTile>
+__global__ void qp_plain_mul_accumulate_group_component_fused_kernel(
+    GpuWord *__restrict__ group_values,
+    const GpuWord *__restrict__ baby_values,
+    const GpuWord *const *__restrict__ diagonal_ptrs,
+    const std::uint32_t *__restrict__ term_baby_indices,
+    const std::uint32_t *__restrict__ group_term_offsets,
+    const GpuWord *__restrict__ moduli,
+    const GpuWide *__restrict__ barrett,
+    std::size_t group_count,
+    std::size_t term_count,
+    std::size_t limb_count,
+    std::size_t degree,
+    std::size_t tile_begin,
+    std::size_t tile_count)
+{
+    constexpr std::size_t kCoefficientTile = 32;
+    constexpr std::size_t kMaxBabyTile = 8;
+    static_assert(GroupTile == 4 || GroupTile == 8);
+    __shared__ GpuWord
+        shared_baby[2][kMaxBabyTile][kCoefficientTile];
+
+    const std::size_t lane = threadIdx.x;
+    const std::size_t group_row = threadIdx.y;
+    const std::size_t coefficient =
+        blockIdx.x * kCoefficientTile + lane;
+    const std::size_t limb = blockIdx.y;
+    const std::size_t group =
+        blockIdx.z * GroupTile + group_row;
+
+    const std::size_t linear_thread =
+        group_row * kCoefficientTile + lane;
+    const std::size_t words_per_component =
+        tile_count * kCoefficientTile;
+    const std::size_t shared_word_count = 2 * words_per_component;
+    for (std::size_t shared_index = linear_thread;
+         shared_index < shared_word_count;
+         shared_index += kCoefficientTile * GroupTile)
+    {
+        const std::size_t component =
+            shared_index / words_per_component;
+        const std::size_t in_component =
+            shared_index - component * words_per_component;
+        const std::size_t local_baby =
+            in_component / kCoefficientTile;
+        const std::size_t source_lane =
+            in_component - local_baby * kCoefficientTile;
+        const std::size_t source_coefficient =
+            blockIdx.x * kCoefficientTile + source_lane;
+        GpuWord value = 0;
+        if (source_coefficient < degree)
+        {
+            const std::size_t baby_offset =
+                ((local_baby * 2 + component) * limb_count + limb) *
+                    degree +
+                source_coefficient;
+            value = baby_values[baby_offset];
+        }
+        shared_baby[component][local_baby][source_lane] = value;
+    }
+    __syncthreads();
+
+    if (group >= group_count || coefficient >= degree)
+    {
+        return;
+    }
+
+    const std::size_t component_stride = limb_count * degree;
+    const std::size_t group_offset =
+        group * 2 * component_stride + limb * degree + coefficient;
+    const GpuWord modulus = moduli[limb];
+    const GpuWide ratio = barrett[limb];
+    GpuWord accumulator0 = group_values[group_offset];
+    GpuWord accumulator1 =
+        group_values[group_offset + component_stride];
+    const std::uint32_t begin = group_term_offsets[group];
+    const std::uint32_t end = group_term_offsets[group + 1];
+    if (end > term_count || begin > end)
+    {
+        return;
+    }
+
+    for (std::uint32_t term = begin; term < end; ++term)
+    {
+        const std::size_t baby_index = term_baby_indices[term];
+        if (baby_index < tile_begin ||
+            baby_index >= tile_begin + tile_count)
+        {
+            continue;
+        }
+
+        const std::size_t local_baby = baby_index - tile_begin;
+        const GpuWord diagonal =
+            diagonal_ptrs[term][limb * degree + coefficient];
+        accumulator0 = add_mod(
+            accumulator0,
+            multiply_mod(
+                shared_baby[0][local_baby][lane],
+                diagonal,
+                modulus,
+                ratio),
+            modulus);
+        accumulator1 = add_mod(
+            accumulator1,
+            multiply_mod(
+                shared_baby[1][local_baby][lane],
+                diagonal,
+                modulus,
+                ratio),
+            modulus);
+    }
+
+    group_values[group_offset] = accumulator0;
+    group_values[group_offset + component_stride] = accumulator1;
+}
+
 unsigned int log2_degree(std::size_t degree, const char *name)
 {
     if (degree == 0 || (degree & (degree - 1)) != 0 ||
@@ -922,45 +1144,254 @@ void launch_double_hoist_qp_plain_mul_accumulate_groups(
     const unsigned int degree_power = log2_degree(degree, name);
     const std::size_t q_count = parameter_shard.hybrid_base_q_count;
     const std::size_t p_count = parameter_shard.hybrid_base_p_count;
+    bool use_group_tiled8 = true;
+    if (const char *raw = std::getenv(
+            "POSEIDON_DOUBLE_HOIST_QP_MAC_GROUP_TILED_8"))
+    {
+        const std::string value(raw);
+        use_group_tiled8 = value != "0" &&
+            value != "OFF" && value != "off" &&
+            value != "false" && value != "FALSE";
+    }
+    use_group_tiled8 = use_group_tiled8 &&
+        group_count > 1 && tile_count <= 8;
+    bool use_component_fused = true;
+    if (const char *raw = std::getenv(
+            "POSEIDON_DOUBLE_HOIST_QP_MAC_COMPONENT_FUSED"))
+    {
+        const std::string value(raw);
+        use_component_fused = value != "0" &&
+            value != "OFF" && value != "off" &&
+            value != "false" && value != "FALSE";
+    }
+    use_component_fused = use_component_fused && use_group_tiled8;
 
-    const std::size_t q_total = group_count * 2 * q_count * degree;
-    const int q_grid = static_cast<int>(
-        (q_total + block_size - 1) / block_size);
-    qp_plain_mul_accumulate_kernel<<<q_grid, block_size>>>(
-        group_q,
-        baby_q,
-        diagonal_q_ptrs,
-        term_baby_indices,
-        group_term_offsets,
-        parameter_shard.rns_primes.data(),
-        parameter_shard.rns_modulus_constants.data(),
-        group_count,
-        term_count,
-        q_count,
-        degree,
-        degree_power,
-        tile_begin,
-        tile_count);
+    if (use_group_tiled8)
+    {
+        constexpr unsigned int kCoefficientTile = 32;
+        const unsigned int group_tile = group_count <= 4 ? 4 : 8;
+        const dim3 block(kCoefficientTile, group_tile);
+        const dim3 q_grid(
+            static_cast<unsigned int>(
+                (degree + kCoefficientTile - 1) / kCoefficientTile),
+            static_cast<unsigned int>(
+                (use_component_fused ? 1 : 2) * q_count),
+            static_cast<unsigned int>(
+                (group_count + group_tile - 1) / group_tile));
+        if (group_tile == 4)
+        {
+            if (use_component_fused)
+            {
+                qp_plain_mul_accumulate_group_component_fused_kernel<4>
+                    <<<q_grid, block>>>(
+                        group_q,
+                        baby_q,
+                        diagonal_q_ptrs,
+                        term_baby_indices,
+                        group_term_offsets,
+                        parameter_shard.rns_primes.data(),
+                        parameter_shard.rns_modulus_constants.data(),
+                        group_count,
+                        term_count,
+                        q_count,
+                        degree,
+                        tile_begin,
+                        tile_count);
+            }
+            else
+            {
+                qp_plain_mul_accumulate_group_tiled_kernel<4>
+                    <<<q_grid, block>>>(
+                    group_q,
+                    baby_q,
+                    diagonal_q_ptrs,
+                    term_baby_indices,
+                    group_term_offsets,
+                    parameter_shard.rns_primes.data(),
+                    parameter_shard.rns_modulus_constants.data(),
+                    group_count,
+                    term_count,
+                    q_count,
+                    degree,
+                    tile_begin,
+                    tile_count);
+            }
+        }
+        else
+        {
+            if (use_component_fused)
+            {
+                qp_plain_mul_accumulate_group_component_fused_kernel<8>
+                    <<<q_grid, block>>>(
+                        group_q,
+                        baby_q,
+                        diagonal_q_ptrs,
+                        term_baby_indices,
+                        group_term_offsets,
+                        parameter_shard.rns_primes.data(),
+                        parameter_shard.rns_modulus_constants.data(),
+                        group_count,
+                        term_count,
+                        q_count,
+                        degree,
+                        tile_begin,
+                        tile_count);
+            }
+            else
+            {
+                qp_plain_mul_accumulate_group_tiled_kernel<8>
+                    <<<q_grid, block>>>(
+                    group_q,
+                    baby_q,
+                    diagonal_q_ptrs,
+                    term_baby_indices,
+                    group_term_offsets,
+                    parameter_shard.rns_primes.data(),
+                    parameter_shard.rns_modulus_constants.data(),
+                    group_count,
+                    term_count,
+                    q_count,
+                    degree,
+                    tile_begin,
+                    tile_count);
+            }
+        }
+    }
+    else
+    {
+        const std::size_t q_total = group_count * 2 * q_count * degree;
+        const int q_grid = static_cast<int>(
+            (q_total + block_size - 1) / block_size);
+        qp_plain_mul_accumulate_kernel<<<q_grid, block_size>>>(
+            group_q,
+            baby_q,
+            diagonal_q_ptrs,
+            term_baby_indices,
+            group_term_offsets,
+            parameter_shard.rns_primes.data(),
+            parameter_shard.rns_modulus_constants.data(),
+            group_count,
+            term_count,
+            q_count,
+            degree,
+            degree_power,
+            tile_begin,
+            tile_count);
+    }
     gpu_check_cuda(cudaGetLastError(), name);
 
-    const std::size_t p_total = group_count * 2 * p_count * degree;
-    const int p_grid = static_cast<int>(
-        (p_total + block_size - 1) / block_size);
-    qp_plain_mul_accumulate_kernel<<<p_grid, block_size>>>(
-        group_p,
-        baby_p,
-        diagonal_p_ptrs,
-        term_baby_indices,
-        group_term_offsets,
-        parameter_shard.rns_primes.data() + q_count,
-        parameter_shard.rns_modulus_constants.data() + q_count,
-        group_count,
-        term_count,
-        p_count,
-        degree,
-        degree_power,
-        tile_begin,
-        tile_count);
+    if (use_group_tiled8)
+    {
+        constexpr unsigned int kCoefficientTile = 32;
+        const unsigned int group_tile = group_count <= 4 ? 4 : 8;
+        const dim3 block(kCoefficientTile, group_tile);
+        const dim3 p_grid(
+            static_cast<unsigned int>(
+                (degree + kCoefficientTile - 1) / kCoefficientTile),
+            static_cast<unsigned int>(
+                (use_component_fused ? 1 : 2) * p_count),
+            static_cast<unsigned int>(
+                (group_count + group_tile - 1) / group_tile));
+        if (group_tile == 4)
+        {
+            if (use_component_fused)
+            {
+                qp_plain_mul_accumulate_group_component_fused_kernel<4>
+                    <<<p_grid, block>>>(
+                        group_p,
+                        baby_p,
+                        diagonal_p_ptrs,
+                        term_baby_indices,
+                        group_term_offsets,
+                        parameter_shard.rns_primes.data() + q_count,
+                        parameter_shard.rns_modulus_constants.data() + q_count,
+                        group_count,
+                        term_count,
+                        p_count,
+                        degree,
+                        tile_begin,
+                        tile_count);
+            }
+            else
+            {
+                qp_plain_mul_accumulate_group_tiled_kernel<4>
+                    <<<p_grid, block>>>(
+                    group_p,
+                    baby_p,
+                    diagonal_p_ptrs,
+                    term_baby_indices,
+                    group_term_offsets,
+                    parameter_shard.rns_primes.data() + q_count,
+                    parameter_shard.rns_modulus_constants.data() + q_count,
+                    group_count,
+                    term_count,
+                    p_count,
+                    degree,
+                    tile_begin,
+                    tile_count);
+            }
+        }
+        else
+        {
+            if (use_component_fused)
+            {
+                qp_plain_mul_accumulate_group_component_fused_kernel<8>
+                    <<<p_grid, block>>>(
+                        group_p,
+                        baby_p,
+                        diagonal_p_ptrs,
+                        term_baby_indices,
+                        group_term_offsets,
+                        parameter_shard.rns_primes.data() + q_count,
+                        parameter_shard.rns_modulus_constants.data() + q_count,
+                        group_count,
+                        term_count,
+                        p_count,
+                        degree,
+                        tile_begin,
+                        tile_count);
+            }
+            else
+            {
+                qp_plain_mul_accumulate_group_tiled_kernel<8>
+                    <<<p_grid, block>>>(
+                    group_p,
+                    baby_p,
+                    diagonal_p_ptrs,
+                    term_baby_indices,
+                    group_term_offsets,
+                    parameter_shard.rns_primes.data() + q_count,
+                    parameter_shard.rns_modulus_constants.data() + q_count,
+                    group_count,
+                    term_count,
+                    p_count,
+                    degree,
+                    tile_begin,
+                    tile_count);
+            }
+        }
+    }
+    else
+    {
+        const std::size_t p_total = group_count * 2 * p_count * degree;
+        const int p_grid = static_cast<int>(
+            (p_total + block_size - 1) / block_size);
+        qp_plain_mul_accumulate_kernel<<<p_grid, block_size>>>(
+            group_p,
+            baby_p,
+            diagonal_p_ptrs,
+            term_baby_indices,
+            group_term_offsets,
+            parameter_shard.rns_primes.data() + q_count,
+            parameter_shard.rns_modulus_constants.data() + q_count,
+            group_count,
+            term_count,
+            p_count,
+            degree,
+            degree_power,
+            tile_begin,
+            tile_count);
+    }
     gpu_check_cuda(cudaGetLastError(), name);
 }
 

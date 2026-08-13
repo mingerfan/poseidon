@@ -56,7 +56,7 @@ if(POSEIDON_GPU_DATA_STRUCT_ENABLE_GPU_TESTS)
     set(CMAKE_CUDA_STANDARD 17)
     set(CMAKE_CUDA_STANDARD_REQUIRED ON)
     if(NOT CMAKE_CUDA_ARCHITECTURES)
-        set(CMAKE_CUDA_ARCHITECTURES 75 CACHE STRING
+        set(CMAKE_CUDA_ARCHITECTURES 70 CACHE STRING
             "CUDA architectures for GPU data-structure tests" FORCE)
     endif()
 
@@ -152,5 +152,5 @@ if(POSEIDON_GPU_DATA_STRUCT_ENABLE_GPU_TESTS)
             $<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>
     )
     set_target_properties(demo_gpu_ciphertext_add_handler PROPERTIES
-        CUDA_ARCHITECTURES 75)
+        CUDA_ARCHITECTURES 70)
 endif()
