@@ -39,7 +39,7 @@ namespace poseidon::runtime_api
 namespace
 {
 
-constexpr std::size_t kInitialDevicePoolSize = 256ULL << 20;
+constexpr std::size_t kInitialDevicePoolSize = 24ULL << 30;
 
 class DeviceMemoryPool
 {
