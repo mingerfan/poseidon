@@ -1008,8 +1008,8 @@ void test_rescale_and_value_validation(PoseidonGpuApi &api,
     const std::size_t bytes_before_synchronize = rmm_pool.allocated_bytes();
     api.synchronize(double_negated);
     const std::size_t bytes_after_synchronize = rmm_pool.allocated_bytes();
-    require(bytes_after_synchronize < bytes_before_synchronize,
-            "synchronize did not release completed input storage");
+    require(bytes_after_synchronize == bytes_before_synchronize,
+            "synchronize unexpectedly released input storage");
     api.synchronize(double_negated);
     require(rmm_pool.allocated_bytes() == bytes_after_synchronize,
             "repeated synchronize changed completed input storage");

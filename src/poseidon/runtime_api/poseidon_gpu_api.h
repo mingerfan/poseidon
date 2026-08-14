@@ -11,6 +11,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <mutex>
 #include <optional>
 #include <set>
 #include <string>
@@ -40,6 +41,7 @@ namespace runtime_api
 namespace communication
 {
 class CudaLocalTransfer;
+class CudaTransferRequest;
 } // namespace communication
 
 class PoseidonGpuValue
@@ -64,7 +66,7 @@ public:
     const gpu::GpuCiphertextData &device_ciphertext() const;
 
 private:
-    class Completion;
+    class ReadyEvent;
 
     using Storage =
         std::variant<std::shared_ptr<Plaintext>, std::shared_ptr<Ciphertext>,
@@ -74,7 +76,7 @@ private:
     explicit PoseidonGpuValue(Storage storage);
 
     Storage storage_;
-    std::shared_ptr<Completion> completion_;
+    std::shared_ptr<ReadyEvent> ready_;
 
     friend class PoseidonGpuApi;
 };
@@ -144,6 +146,8 @@ private:
                                     const char *where) const;
     DeviceState &device_state(int logical_device_index);
     const DeviceState &device_state(int logical_device_index) const;
+    void retain_in_flight(const std::vector<Value> &values,
+                          std::vector<std::shared_ptr<void>> resources = {});
     void synchronize_device(int cuda_device_id) const;
     void synchronize_all_devices() const;
     std::size_t q_count_for_level(int level) const;
@@ -166,6 +170,10 @@ private:
     std::shared_ptr<const RelinKeys> relin_keys_;
     std::shared_ptr<const GaloisKeys> galois_keys_;
     std::optional<int> max_rescale_levels_per_op_;
+    std::vector<std::shared_ptr<void>> in_flight_resources_;
+    std::vector<std::shared_ptr<communication::CudaTransferRequest>>
+        in_flight_transfers_;
+    std::mutex in_flight_mutex_;
     bool asynchronous_device_transfers_ = false;
 };
 
