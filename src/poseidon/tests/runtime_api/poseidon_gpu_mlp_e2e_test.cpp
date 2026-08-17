@@ -43,12 +43,6 @@ constexpr const char *kAllowNoBootEnv =
     "POSEIDON_GPU_MLP_ALLOW_NO_BOOT";
 constexpr const char *kDeviceWorkersEnv =
     "POSEIDON_RUNTIME_DEVICE_WORKERS";
-constexpr const char *kDeviceBackfillEnv =
-    "POSEIDON_RUNTIME_DEVICE_BACKFILL";
-constexpr const char *kDeviceDependenciesEnv =
-    "POSEIDON_RUNTIME_DEVICE_DEPENDENCIES";
-constexpr const char *kTransferEventsEnv =
-    "POSEIDON_RUNTIME_TRANSFER_EVENTS";
 constexpr const char *kRotationKeyPolicyEnv =
     "POSEIDON_RUNTIME_ROTATION_KEY_POLICY";
 
@@ -523,40 +517,12 @@ int main(int argc, char **argv)
         const std::size_t device_worker_count =
             env_positive_size(kDeviceWorkersEnv);
         const bool device_workers = device_worker_count != 0;
-        const bool device_backfill = env_flag_enabled(kDeviceBackfillEnv);
-        const bool device_dependencies =
-            env_flag_enabled(kDeviceDependenciesEnv);
-        const bool transfer_events = env_flag_enabled(kTransferEventsEnv);
-        if ((device_backfill || device_dependencies) && !device_workers)
-        {
-            throw std::runtime_error(
-                std::string("device backfill/dependencies require ") +
-                kDeviceWorkersEnv);
-        }
-        if (device_backfill && device_dependencies)
-        {
-            throw std::runtime_error(
-                std::string(kDeviceBackfillEnv) + " and " +
-                kDeviceDependenciesEnv + " are mutually exclusive");
-        }
-        if (transfer_events && !device_dependencies)
-        {
-            throw std::runtime_error(
-                std::string(kTransferEventsEnv) + " requires " +
-                kDeviceDependenciesEnv);
-        }
         PoseidonGpuApi api(loaded_spec.spec.context_id, context, cuda_device_ids,
-                           relin_keys, galois_keys, public_key, secret_key,
-                           transfer_events);
+                           relin_keys, galois_keys, public_key, secret_key);
         fhegpu::SequentialRuntime<PoseidonGpuApi> runtime(
             0, 1, local_device_count, api,
-            device_dependencies
-                ? fhegpu::DeviceExecutionMode::PerDeviceDependencyWorkers
-                : device_backfill
-                ? fhegpu::DeviceExecutionMode::PerDeviceReadyWorkers
-                : device_workers
-                      ? fhegpu::DeviceExecutionMode::PerDeviceWorkers
-                      : fhegpu::DeviceExecutionMode::Sequential,
+            device_workers ? fhegpu::DeviceExecutionMode::PerDeviceWorkers
+                           : fhegpu::DeviceExecutionMode::Sequential,
             device_worker_count);
         const fhegpu::RuntimeResources resources{
             loaded_spec, std::filesystem::path(argv[3]), false};
@@ -615,9 +581,6 @@ int main(int argc, char **argv)
             {"cuda_devices", cuda_device_ids},
             {"device_workers", device_workers},
             {"device_worker_count", device_worker_count},
-            {"device_backfill", device_backfill},
-            {"device_dependencies", device_dependencies},
-            {"transfer_events", transfer_events},
             {"seed", fixture.at("seed")},
             {"model_sha256", fixture.at("model_sha256")},
             {"plan_sha256", loaded_plan.source_sha256},
@@ -638,11 +601,6 @@ int main(int argc, char **argv)
               {"online_execution_seconds", online_execution_seconds},
               {"compute_calls", artifact.timing.compute_calls},
               {"boot_calls", artifact.timing.boot_calls},
-              {"device_backfill_tasks", artifact.timing.device_backfill_tasks},
-              {"device_ready_wait_calls",
-               artifact.timing.device_ready_wait_calls},
-              {"device_ready_wait_seconds",
-               artifact.timing.device_ready_wait_nanoseconds * 1e-9},
               {"compute_including_boot_seconds", compute_seconds},
               {"boot_seconds", boot_seconds},
               {"compute_excluding_boot_seconds", compute_seconds - boot_seconds}}},

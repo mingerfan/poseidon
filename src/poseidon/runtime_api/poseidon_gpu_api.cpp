@@ -528,20 +528,6 @@ public:
         return ready;
     }
 
-    static std::shared_ptr<ReadyEvent> transfer(
-        int cuda_device_id,
-        std::shared_ptr<communication::CudaTransferRequest> request)
-    {
-        if (request->completion_device() != cuda_device_id)
-        {
-            throw std::logic_error(
-                "Poseidon GPU transfer completion device mismatch");
-        }
-        auto ready = std::shared_ptr<ReadyEvent>(new ReadyEvent(cuda_device_id));
-        ready->transfer_request_ = std::move(request);
-        return ready;
-    }
-
     ReadyEvent(const ReadyEvent &) = delete;
     ReadyEvent &operator=(const ReadyEvent &) = delete;
 
@@ -560,11 +546,7 @@ public:
         {
             return;
         }
-        if (transfer_request_ != nullptr)
-        {
-            transfer_request_->wait();
-        }
-        else if (!recorded_)
+        if (!recorded_)
         {
             throw std::logic_error("Poseidon GPU ready event was not recorded");
         }
@@ -578,10 +560,6 @@ public:
 
     cudaEvent_t event() const
     {
-        if (transfer_request_ != nullptr)
-        {
-            return transfer_request_->completion_event();
-        }
         if (!recorded_ || event_ == nullptr)
         {
             throw std::logic_error("Poseidon GPU ready event was not recorded");
@@ -591,7 +569,7 @@ public:
 
     void wait_on_execution_stream(int cuda_device_id) const
     {
-        if (transfer_request_ == nullptr && cuda_device_id_ == cuda_device_id &&
+        if (cuda_device_id_ == cuda_device_id &&
             producer_thread_ == std::this_thread::get_id())
         {
             return;
@@ -611,7 +589,6 @@ private:
     cudaEvent_t event_ = nullptr;
     bool recorded_ = false;
     bool waited_ = false;
-    std::shared_ptr<communication::CudaTransferRequest> transfer_request_;
     std::thread::id producer_thread_;
 };
 
@@ -749,12 +726,11 @@ PoseidonGpuApi::PoseidonGpuApi(std::string context_id, PoseidonContext context,
                                std::shared_ptr<const RelinKeys> relin_keys,
                                std::shared_ptr<const GaloisKeys> galois_keys,
                                std::shared_ptr<const PublicKey> boot_public_key,
-                               std::shared_ptr<const SecretKey> boot_secret_key,
-                               bool asynchronous_device_transfers)
+                               std::shared_ptr<const SecretKey> boot_secret_key)
     : PoseidonGpuApi(std::move(context_id), std::move(context),
                      std::vector<int>{cuda_device_id}, std::move(relin_keys),
                      std::move(galois_keys), std::move(boot_public_key),
-                     std::move(boot_secret_key), asynchronous_device_transfers)
+                     std::move(boot_secret_key))
 {}
 
 PoseidonGpuApi::PoseidonGpuApi(std::string context_id, PoseidonContext context,
@@ -762,11 +738,9 @@ PoseidonGpuApi::PoseidonGpuApi(std::string context_id, PoseidonContext context,
                                std::shared_ptr<const RelinKeys> relin_keys,
                                std::shared_ptr<const GaloisKeys> galois_keys,
                                std::shared_ptr<const PublicKey> boot_public_key,
-                               std::shared_ptr<const SecretKey> boot_secret_key,
-                               bool asynchronous_device_transfers)
+                               std::shared_ptr<const SecretKey> boot_secret_key)
     : context_id_(std::move(context_id)), context_(std::move(context)),
-      relin_keys_(std::move(relin_keys)), galois_keys_(std::move(galois_keys)),
-      asynchronous_device_transfers_(asynchronous_device_transfers)
+      relin_keys_(std::move(relin_keys)), galois_keys_(std::move(galois_keys))
 {
     if (context_id_.empty())
     {
@@ -1297,54 +1271,14 @@ std::vector<PoseidonGpuApi::Value> PoseidonGpuApi::wait(CommHandle &handle)
     {
         throw std::runtime_error("Poseidon GPU communication handle was already waited");
     }
-    if (!asynchronous_device_transfers_)
+    for (auto &request : state.requests)
     {
-        for (auto &request : state.requests)
-        {
-            if (!request)
-            {
-                throw std::logic_error(
-                    "Poseidon GPU communication has no transfer request");
-            }
-            request->wait();
-        }
-    }
-    for (std::size_t slot = 0;
-         asynchronous_device_transfers_ && slot < state.outputs.size(); ++slot)
-    {
-        auto &output = state.outputs[slot];
-        if (!output)
-        {
-            continue;
-        }
-        auto &request = state.requests.at(slot);
         if (!request)
         {
             throw std::logic_error(
-                "Poseidon GPU communication output has no transfer request");
+                "Poseidon GPU communication has no transfer request");
         }
-        const int output_device = value_cuda_device_id(
-            *output, "Poseidon GPU communication output");
-        const auto configured = std::find_if(
-            devices_.begin(), devices_.end(),
-            [output_device](const auto &device) {
-                return device->cuda_device_id == output_device;
-            });
-        if (configured == devices_.end())
-        {
-            throw std::logic_error(
-                "Poseidon GPU communication output device is not configured");
-        }
-        auto retained_request =
-            std::make_shared<communication::CudaTransferRequest>(
-                std::move(*request));
-        output->ready_ = PoseidonGpuValue::ReadyEvent::transfer(
-            output_device, retained_request);
-        {
-            std::lock_guard<std::mutex> lock(in_flight_mutex_);
-            in_flight_transfers_.push_back(std::move(retained_request));
-        }
-        request.reset();
+        request->wait();
     }
     for (const auto &deferred : state.deferred_outputs)
     {
@@ -1356,7 +1290,6 @@ std::vector<PoseidonGpuApi::Value> PoseidonGpuApi::wait(CommHandle &handle)
                     throw std::logic_error(
                         "Poseidon GPU deferred output has no transfer request");
                 }
-                request->wait();
                 request.reset();
                 using Output = std::decay_t<decltype(output)>;
                 if constexpr (std::is_same_v<Output,
@@ -1388,19 +1321,9 @@ std::vector<PoseidonGpuApi::Value> PoseidonGpuApi::wait(CommHandle &handle)
         output.reset();
     }
     retain_in_flight(outputs);
-    if (!asynchronous_device_transfers_)
+    for (auto &request : state.requests)
     {
-        for (auto &request : state.requests)
-        {
-            request.reset();
-        }
-    }
-    if (std::any_of(
-            state.requests.begin(), state.requests.end(),
-            [](const auto &request) { return request.has_value(); }))
-    {
-        throw std::logic_error(
-            "Poseidon GPU communication request has no local output");
+        request.reset();
     }
     state.waited = true;
     state.requests.clear();
