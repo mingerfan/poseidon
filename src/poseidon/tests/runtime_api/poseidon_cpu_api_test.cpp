@@ -275,6 +275,49 @@ void test_binary_rotation_keys()
     }
 }
 
+void test_multi_level_rescale()
+{
+    constexpr std::uint32_t degree = 4096;
+    constexpr std::size_t q_count = 5;
+    const std::string context_id = "poseidon-cpu-rescale-test-context";
+    const auto moduli = poseidon::CoeffModulus::Create(
+        degree, std::vector<int>(q_count + 2, 40));
+    const std::vector<poseidon::Modulus> q(
+        moduli.begin(), moduli.begin() + q_count);
+    const std::vector<poseidon::Modulus> p(
+        moduli.begin() + q_count, moduli.end());
+    poseidon::ParametersLiteral parameters(
+        CKKS, 12, 11, 20, 0, 0, poseidon::Modulus(0), q, p,
+        poseidon::sec_level_type::none);
+    poseidon::PoseidonContext context(parameters);
+    poseidon::KeyGenerator key_generator(context);
+    poseidon::PublicKey public_key;
+    key_generator.create_public_key(public_key);
+    poseidon::CKKSEncoder encoder(context);
+    poseidon::Encryptor encryptor(context, public_key);
+
+    poseidon::Plaintext plaintext;
+    encoder.encode({1.0, 2.0}, parameters.scale(), plaintext);
+    poseidon::Ciphertext input;
+    encryptor.encrypt(plaintext, input);
+    const int target_level = static_cast<int>(input.level()) - 2;
+
+    PoseidonCpuApi api(context_id, context);
+    const fhegpu::ComputeOp rescale{
+        fhegpu::ComputeKind::Rescale,
+        {0},
+        1,
+        {fhegpu::PlaceKind::Host, 0, 0},
+        fhegpu::RescaleAttrs{target_level, 20},
+    };
+    const auto output = api.compute(
+        rescale, {PoseidonCpuValue::from_ciphertext(std::move(input))});
+    require(output.ciphertext().level() == static_cast<std::size_t>(target_level),
+            "multi-level Rescale produced the wrong level");
+    require(output.ciphertext().scale() == std::ldexp(1.0, 20),
+            "multi-level Rescale produced the wrong scale");
+}
+
 void test_rejects_multi_process_target()
 {
     poseidon::ParametersLiteralDefault parameters(CKKS, 4096, poseidon::sec_level_type::tc128);
@@ -562,6 +605,7 @@ int main(int argc, char **argv)
         run_test("single-process Host AddCP", test_single_process_host_add_plain);
         run_test("decrypt_reencrypt Boot", test_decrypt_reencrypt_boot);
         run_test("binary rotation keys", test_binary_rotation_keys);
+        run_test("multi-level Rescale", test_multi_level_rescale);
         run_test("reject multi-process target", test_rejects_multi_process_target);
         std::cout << tests_run << " Poseidon CPU Runtime Api tests passed\n";
         return 0;

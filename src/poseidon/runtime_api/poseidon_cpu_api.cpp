@@ -550,11 +550,18 @@ PoseidonCpuApi::Value PoseidonCpuApi::compute(const fhegpu::ComputeOp &op,
     {
         const auto attrs = std::get<fhegpu::RescaleAttrs>(op.attrs);
         const auto &input = require_ciphertext(inputs, 0);
-        if (input.level() != static_cast<std::size_t>(attrs.target_level + 1))
+        if (attrs.target_level < 0 ||
+            input.level() <= static_cast<std::size_t>(attrs.target_level))
         {
-            throw std::invalid_argument("Poseidon CPU Rescale supports one level per operation");
+            throw std::invalid_argument("Poseidon CPU Rescale target level is invalid");
         }
-        evaluator_->rescale(input, output);
+        output = input;
+        while (output.level() > static_cast<std::size_t>(attrs.target_level))
+        {
+            Ciphertext next;
+            evaluator_->rescale(output, next);
+            output = std::move(next);
+        }
         output.scale() = exact_scale(attrs.target_scale_log2);
         break;
     }
@@ -852,7 +859,6 @@ void PoseidonCpuApi::preflight(std::string_view plan_source_sha256,
         operator_spec.max_modulus_log2 !=
             *std::max_element(modulus_bits.begin(), modulus_bits.end()) ||
         operator_spec.default_scale_log2 != static_cast<int>(parameters->log_scale()) ||
-        operator_spec.rescale_mode != fhegpu::RescaleMode::Eager ||
         operator_spec.level_lower_bound < 0 ||
         operator_spec.level_upper_bound >= static_cast<int>(modulus_bits.size()) ||
         operator_spec.level_lower_bound > operator_spec.level_upper_bound)

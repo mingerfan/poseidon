@@ -23,6 +23,7 @@
 #include <cmath>
 #include <complex>
 #include <cstdint>
+#include <cstdlib>
 #include <cstdio>
 #include <filesystem>
 #include <fstream>
@@ -45,6 +46,20 @@ using poseidon::runtime_api::PoseidonCpuValue;
 constexpr double kAbsoluteTolerance = 1e-4;
 constexpr double kRelativeTolerance = 1e-6;
 constexpr double kImaginaryTolerance = 1e-5;
+constexpr const char *kGpuEquivalentContextEnv =
+    "POSEIDON_RUNTIME_CPU_GPU_EQUIVALENT_CONTEXT";
+
+bool env_flag_enabled(const char *name)
+{
+    const char *value = std::getenv(name);
+    if (value == nullptr || value[0] == '\0')
+    {
+        return false;
+    }
+    const std::string text(value);
+    return text != "0" && text != "false" && text != "FALSE" &&
+           text != "off" && text != "OFF";
+}
 
 struct Comparison
 {
@@ -153,11 +168,19 @@ std::uint32_t exact_log2(std::uint64_t value)
     return result;
 }
 
-poseidon::PoseidonContext make_context(const fhegpu::OperatorSpec &spec)
+poseidon::PoseidonContext make_context(const fhegpu::OperatorSpec &spec,
+                                       bool gpu_equivalent_context)
 {
     std::vector<int> modulus_bits = spec.rns_moduli_log2;
-    modulus_bits.insert(modulus_bits.end(), spec.rns_moduli_log2.begin(),
-                        spec.rns_moduli_log2.end());
+    if (gpu_equivalent_context)
+    {
+        modulus_bits.insert(modulus_bits.end(), 2, spec.max_modulus_log2);
+    }
+    else
+    {
+        modulus_bits.insert(modulus_bits.end(), spec.rns_moduli_log2.begin(),
+                            spec.rns_moduli_log2.end());
+    }
     const auto moduli = poseidon::CoeffModulus::Create(spec.poly_degree, modulus_bits);
     const std::size_t q_count = spec.rns_moduli_log2.size();
     std::vector<poseidon::Modulus> q(moduli.begin(), moduli.begin() + q_count);
@@ -165,7 +188,8 @@ poseidon::PoseidonContext make_context(const fhegpu::OperatorSpec &spec)
     const std::uint32_t log_n = exact_log2(spec.poly_degree);
     poseidon::ParametersLiteral parameters(
         CKKS, log_n, log_n - 1,
-        static_cast<std::uint32_t>(spec.default_scale_log2), 5, 0,
+        static_cast<std::uint32_t>(spec.default_scale_log2),
+        gpu_equivalent_context ? 0U : 5U, 0,
         poseidon::Modulus(0), q, p, poseidon::sec_level_type::none);
     return poseidon::PoseidonContext(parameters);
 }
@@ -349,7 +373,10 @@ int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
 
     const auto requirements = fhegpu::PlanVerifier::verify(
         loaded_plan.plan, loaded_spec, false);
-    poseidon::PoseidonContext context = make_context(loaded_spec.spec);
+    const bool gpu_equivalent_context =
+        env_flag_enabled(kGpuEquivalentContextEnv);
+    poseidon::PoseidonContext context =
+        make_context(loaded_spec.spec, gpu_equivalent_context);
     auto secret_key = std::make_shared<poseidon::SecretKey>();
     if (rank == 0)
     {
@@ -636,6 +663,11 @@ int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
             {"model", model},
             {"require_python_match", require_python_match},
             {"world_size", world_size},
+            {"context_mode", gpu_equivalent_context
+                                 ? "gpu_equivalent_hybrid_2p"
+                                 : "cpu_default_ghs"},
+            {"p_modulus_count",
+             context.parameters_literal()->p().size()},
             {"final_output_rank", final_rank},
             {"transfer_count", count_transfers(loaded_plan.plan)},
             {"seed", fixture.at("seed")},
