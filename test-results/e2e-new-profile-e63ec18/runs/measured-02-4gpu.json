@@ -1,0 +1,102 @@
+{
+  "allow_no_boot": true,
+  "cuda_devices": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "device_backfill": false,
+  "device_dependencies": true,
+  "device_worker_count": 4,
+  "device_workers": true,
+  "format_version": 1,
+  "input_level": 16,
+  "input_scale_log2": 40,
+  "key_generation_seconds": 1.874607602,
+  "logical_rotation_count": 111,
+  "max_imaginary": 4.663049461605055e-07,
+  "mock_comparison": {
+    "max_abs": 0.5247933154942075,
+    "max_relative": 0.012352504472756803,
+    "rms": 0.23571242748466964,
+    "within_tolerance": true
+  },
+  "mock_output": [
+    26.50720364428741,
+    71.27703900936244,
+    -5.018099794983987,
+    18.86925463333062,
+    92.18425497178299,
+    19.321834645114627,
+    -30.237559456043098,
+    -1.6612091043653043,
+    -31.89641055719177,
+    19.189542574867446
+  ],
+  "model": "mlp",
+  "model_sha256": "sha256:581ec4e02ac454e49f0ec0fa29ee2b2f8e1ddf43f797e9c96a363d23bfa41de3",
+  "operator_spec_sha256": "sha256:b37c827c139a227d95cc76b7e7c43677281a0e18752f540db8b714e37b79806b",
+  "output_level": 4,
+  "output_scale_log2": 80,
+  "passed": true,
+  "plan_sha256": "sha256:cd98d0e9eec6c3b30e5fa6c8d6054c6cdf0e392aabb23f209019907a2191f9c4",
+  "poly_degree": 8192,
+  "poseidon_output": [
+    26.659307406669186,
+    71.67650596399181,
+    -5.05360687169554,
+    18.97413991559994,
+    92.7090482872772,
+    19.433537735743926,
+    -30.4033631308675,
+    -1.681729197257161,
+    -32.078374996525056,
+    19.297819132714928
+  ],
+  "python_comparison": {
+    "max_abs": 0.5247933154942075,
+    "max_relative": 0.012352504472723786,
+    "rms": 0.23571242748465132,
+    "within_tolerance": true
+  },
+  "python_output": [
+    26.507203644287394,
+    71.2770390093625,
+    -5.018099794983979,
+    18.86925463333058,
+    92.18425497178299,
+    19.321834645114635,
+    -30.237559456043147,
+    -1.6612091043653585,
+    -31.896410557191793,
+    19.18954257486757
+  ],
+  "q_modulus_count": 17,
+  "require_python_match": true,
+  "rotation_key_count": 14,
+  "runtime_scope": "online_execution_only",
+  "runtime_seconds": 0.075152354,
+  "runtime_timing": {
+    "boot_calls": 0,
+    "boot_seconds": 0.0,
+    "compute_calls": 375,
+    "compute_excluding_boot_seconds": 0.208807551,
+    "compute_including_boot_seconds": 0.208807551,
+    "device_backfill_tasks": 210,
+    "device_ready_wait_calls": 53,
+    "device_ready_wait_seconds": 0.080209532,
+    "initialization_seconds": 0.33890863200000004,
+    "online_execution_seconds": 0.075152354,
+    "setup_seconds": 0.366986723
+  },
+  "seed": 20260717,
+  "tolerances": {
+    "absolute": 0.1,
+    "imaginary": 0.01,
+    "python_absolute": 0.1,
+    "relative": 0.006
+  },
+  "transfer_count": 340,
+  "transfer_events": false
+}

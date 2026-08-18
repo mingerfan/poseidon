@@ -1,0 +1,80 @@
+{
+  "online_windows": {
+    "1GPU": {
+      "start_s": 23.553067959,
+      "end_s": 23.627879758,
+      "duration_ms": 74.811799
+    },
+    "4GPU": {
+      "start_s": 24.579446692,
+      "end_s": 24.644462381,
+      "duration_ms": 65.015689
+    }
+  },
+  "kernel_count": {
+    "1GPU": 5099,
+    "4GPU": 5099
+  },
+  "kernel_sum_ms": {
+    "1GPU": 26.697389,
+    "4GPU": 30.009622
+  },
+  "kernel_extra_decomposition": {
+    "method": "Each 4GPU kernel uses the 1GPU mean of the same kernel name/grid/block/shared-memory signature as baseline.",
+    "p2p_overlap_kernel_count": 840,
+    "no_p2p_overlap_kernel_count": 4259,
+    "p2p_overlap_extra_ms": 2.808904238878448,
+    "no_p2p_overlap_extra_ms": 0.5033287611215453,
+    "total_extra_ms": 3.3122329999999938,
+    "p2p_overlap_extra_share_pct": 84.80394461616842
+  },
+  "kernel_by_device_4gpu": {
+    "0": {
+      "count": 1151,
+      "sum_ms": 6.695444
+    },
+    "1": {
+      "count": 1141,
+      "sum_ms": 6.682567
+    },
+    "2": {
+      "count": 1511,
+      "sum_ms": 8.895742
+    },
+    "3": {
+      "count": 1296,
+      "sum_ms": 7.735869
+    }
+  },
+  "mapped_level_kernels": {
+    "1GPU": 4432,
+    "4GPU": 4432
+  },
+  "p2p": {
+    "count": 218,
+    "bytes": 120193024,
+    "service_sum_ms": 15.002046
+  },
+  "launch": {
+    "1GPU": {
+      "count": 5099,
+      "total_thread_ms": 29.992307,
+      "mean_us": 5.881997842714258,
+      "p50_us": 4.369,
+      "p95_us": 7.658199999999999,
+      "p99_us": 10.872039999999975,
+      "max_us": 3351.591
+    },
+    "4GPU": {
+      "count": 5099,
+      "total_thread_ms": 95.249672,
+      "mean_us": 18.680069033143752,
+      "p50_us": 8.735,
+      "p95_us": 22.384499999999992,
+      "p99_us": 48.95415999999955,
+      "max_us": 8060.84
+    }
+  },
+  "all_op_level_counts_consistent": true,
+  "all_kernel_signatures_consistent": true
+}

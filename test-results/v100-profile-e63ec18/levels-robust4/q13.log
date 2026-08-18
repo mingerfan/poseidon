@@ -1,0 +1,37 @@
+===== GPU Ciphertext Elementwise Evaluator Demo =====
+scheme        = CKKS
+degree        = 8192
+slots         = 4096
+q_count       = 13
+p_count       = 2
+scale         = 3.35544e+07
+device_id     = 0
+[NTT setup] building regular GPU parameters without TAM matrices
+
+[operation timing summary]
++---------------------------------+----------------+---------------------+----------------------+----------------+-----------------+---------+
+| operation                       |   CPU avg (ms) |   GPU wall avg (ms) |   GPU event avg (ms) |   wall speedup |   event speedup | correct |
++---------------------------------+----------------+---------------------+----------------------+----------------+-----------------+---------+
+| multiply_relinearize_rescale    |      65.295813 |            0.683955 |             0.682906 |         95.47x |          95.61x |      OK |
+| relinearize                     |      50.659900 |            0.462172 |             0.461312 |        109.61x |         109.82x |      OK |
+| keyswitch_bconv_modup           |       7.794398 |            0.036994 |             0.036045 |        210.69x |         216.24x |      OK |
+| add                             |       0.407067 |            0.005256 |             0.004403 |         77.44x |          92.45x |      OK |
+| sub                             |       0.437764 |            0.007575 |             0.006861 |         57.79x |          63.81x |      OK |
+| negate                          |       0.380565 |            0.007539 |             0.006758 |         50.48x |          56.31x |      OK |
+| add_plain                       |       0.259796 |            0.008197 |             0.007373 |         31.69x |          35.24x |      OK |
+| sub_plain                       |       0.271950 |            0.008460 |             0.007680 |         32.14x |          35.41x |      OK |
+| multiply_plain                  |       1.037775 |            0.008254 |             0.007475 |        125.73x |         138.83x |      OK |
+| rotate                          |      48.494971 |            0.460120 |             0.458957 |        105.40x |         105.66x |      OK |
+| conjugate                       |      49.642817 |            0.456151 |             0.455168 |        108.83x |         109.06x |      OK |
+| rescale                         |       4.111409 |            0.148705 |             0.147866 |         27.65x |          27.81x |      OK |
+| ntt_inv                         |       3.194913 |            0.071794 |             0.071066 |         44.50x |          44.96x |      OK |
+| ntt_fwd                         |       4.195051 |            0.071271 |             0.070451 |         58.86x |          59.55x |      OK |
++---------------------------------+----------------+---------------------+----------------------+----------------+-----------------+---------+
+parameters: CKKS, degree=8192, q=13, p=2, iterations=10, warmup=20 average
+benchmark input: deterministic key/encrypt randomness
+excluded from timing: encode/encrypt/upload/download/decrypt/decode
+correct: raw residues and metadata compared with CPU result; BConv compares generated limbs in the last HYBRID ModUp block
+ntt variants: N=65536 out-of-place NTT/INTT use shared-memory four-step by default; POSEIDON_NTT_ALGO=fused restores fused3
+keyswitch_bconv_modup: HYBRID ModUp/BConv only; c2 INTT and later NTT/key multiply/ModDown are excluded
+
+===== DEMO FINISHED =====

@@ -1,0 +1,100 @@
+{
+  "allow_no_boot": true,
+  "cuda_devices": [
+    0
+  ],
+  "device_backfill": false,
+  "device_dependencies": false,
+  "device_worker_count": 1,
+  "device_workers": true,
+  "format_version": 1,
+  "input_level": 39,
+  "input_scale_log2": 40,
+  "key_generation_seconds": 5.249449854,
+  "logical_rotation_count": 1,
+  "max_imaginary": 2359947646.391282,
+  "mock_comparison": {
+    "max_abs": 891269914840786.7,
+    "max_relative": 536518799769829.6,
+    "rms": 682842208529327.2,
+    "within_tolerance": false
+  },
+  "mock_output": [
+    26.50720364428741,
+    71.27703900936244,
+    -5.018099794983987,
+    18.86925463333062,
+    92.18425497178299,
+    19.321834645114627,
+    -30.237559456043098,
+    -1.6612091043653043,
+    -31.89641055719177,
+    19.189542574867446
+  ],
+  "model": "mlp",
+  "model_sha256": "sha256:581ec4e02ac454e49f0ec0fa29ee2b2f8e1ddf43f797e9c96a363d23bfa41de3",
+  "operator_spec_sha256": "sha256:1f12fb5f6a7228e7373ada0d96d5115d190533a887f801a6928ba4ae14c193ff",
+  "output_level": 31,
+  "output_scale_log2": 40,
+  "passed": false,
+  "plan_sha256": "sha256:a8d81869d3e77c983f0a8dab7f7b582d7e4dc7ee2ded102fd7e372e33972e97c",
+  "poly_degree": 65536,
+  "poseidon_output": [
+    303123742535527.25,
+    853202735804891.0,
+    548523661917510.75,
+    717334694786919.7,
+    799053644229627.0,
+    665398339776144.6,
+    7794243606281.203,
+    891269914840785.1,
+    775179830976023.7,
+    742213160197970.8
+  ],
+  "python_comparison": {
+    "max_abs": 891269914840786.7,
+    "max_relative": 536518799769812.1,
+    "rms": 682842208529327.2,
+    "within_tolerance": false
+  },
+  "python_output": [
+    26.507203644287394,
+    71.2770390093625,
+    -5.018099794983979,
+    18.86925463333058,
+    92.18425497178299,
+    19.321834645114635,
+    -30.237559456043147,
+    -1.6612091043653585,
+    -31.896410557191793,
+    19.18954257486757
+  ],
+  "q_modulus_count": 40,
+  "require_python_match": true,
+  "rotation_key_count": 1,
+  "rotation_key_policy": "binary",
+  "runtime_scope": "online_execution_only",
+  "runtime_seconds": 3.0669672720000003,
+  "runtime_timing": {
+    "boot_calls": 0,
+    "boot_seconds": 0.0,
+    "compute_calls": 999,
+    "compute_excluding_boot_seconds": 2.989027918,
+    "compute_including_boot_seconds": 2.989027918,
+    "device_backfill_tasks": 0,
+    "device_ready_wait_calls": 0,
+    "device_ready_wait_seconds": 0.0,
+    "initialization_seconds": 0.309780969,
+    "online_execution_seconds": 3.0669672720000003,
+    "setup_seconds": 0.159454905
+  },
+  "seed": 20260717,
+  "tolerances": {
+    "absolute": 0.1,
+    "imaginary": 0.01,
+    "python_absolute": 0.1,
+    "relative": 0.006
+  },
+  "transfer_count": 1,
+  "transfer_events": false
+}

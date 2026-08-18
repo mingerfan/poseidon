@@ -1,0 +1,10 @@
+WARNING: GPU initialization took too long. Please run the NVIDIA persistence daemon.
+For more information, visit the following page:
+https://docs.nvidia.com/deploy/driver-persistence/index.html#persistence-daemon
+
+PASS boots=0 transfers=122 rotations=14 key_seconds=1.87699 runtime_seconds=0.156007 initialization_seconds=5.84949 online_execution_seconds=0.156007 boot_seconds=0 python_max_abs=0.524794 max_imaginary=1.2711e-06
+report=test-results/e2e-new-profile-e63ec18/runs-single-plan-ab/nsys-old.json
+Generating '/tmp/nsys-report-ac08.qdstrm'
+[1/1] [0%                          ] nsys-old.nsys-rep[1/1] [0%                          ] nsys-old.nsys-rep[1/1] [6%                          ] nsys-old.nsys-rep[1/1] [12%                         ] nsys-old.nsys-rep[1/1] [6%                          ] nsys-old.nsys-rep[1/1] [==19%                       ] nsys-old.nsys-rep[1/1] [========40%                 ] nsys-old.nsys-rep[1/1] [==============62%           ] nsys-old.nsys-rep[1/1] [==================76%       ] nsys-old.nsys-rep[1/1] [===================81%      ] nsys-old.nsys-rep[1/1] [========================100%] nsys-old.nsys-rep[1/1] [========================100%] nsys-old.nsys-rep
+Generated:
+    /home/xuming/poseidon-gpu-worker-experiment/test-results/e2e-new-profile-e63ec18/runs-single-plan-ab/nsys-old.nsys-rep

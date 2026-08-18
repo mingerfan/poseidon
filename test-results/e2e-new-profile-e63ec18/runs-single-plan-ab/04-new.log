@@ -1,0 +1,2 @@
+PASS boots=0 transfers=122 rotations=14 key_seconds=1.81209 runtime_seconds=0.0828042 initialization_seconds=2.82792 online_execution_seconds=0.0828042 boot_seconds=0 python_max_abs=0.524795 max_imaginary=5.19312e-07
+report=test-results/e2e-new-profile-e63ec18/runs-single-plan-ab/04-new.json

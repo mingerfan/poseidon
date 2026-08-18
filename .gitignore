@@ -2,6 +2,9 @@ build*/
 .venv/
 .vscode/
 /thirdparty/
+/third_party/cpm/*
+!/third_party/cpm/cpm/
+!/third_party/cpm/cpm/**
 .clangd
 .claude/
 compile_commands.json

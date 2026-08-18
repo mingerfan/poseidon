@@ -1,0 +1,5 @@
+index, pstate, clocks.current.sm [MHz], clocks.current.memory [MHz], power.draw [W], temperature.gpu, utilization.gpu [%]
+0, P0, 135 MHz, 877 MHz, 56.52 W, 36, 0 %
+1, P0, 135 MHz, 877 MHz, 55.50 W, 39, 0 %
+2, P0, 135 MHz, 877 MHz, 80.71 W, 43, 0 %
+3, P0, 135 MHz, 877 MHz, 56.03 W, 40, 0 %

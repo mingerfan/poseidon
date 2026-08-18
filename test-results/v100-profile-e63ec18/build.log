@@ -1,0 +1,33 @@
+-- CROSS_COMPILE_ARRCH64: OFF
+-- AddressSanitizer disabled.
+-- Build type (CMAKE_BUILD_TYPE): Release
+-- POSEIDON_USE_CXX17: ON
+-- Install Path: /usr/local
+-- POSEIDON_BUILD_DEPS: OFF
+-- POSEIDON_USE_ZLIB: OFF
+-- POSEIDON_USE_ZSTD: OFF
+-- POSEIDON_USE_MSGSL: OFF
+-- POSEIDON_USE_INTEL_HEXL: OFF
+-- POSEIDON_USE_HARDWARE: OFF
+-- POSEIDON_BUILD_EXAMPLES: OFF
+-- POSEIDON_BUILD_BENCH: OFF
+-- POSEIDON_BUILD_CKKS_RUNTIME_API: OFF
+-- RMM: using bundled source at /home/xuming/deps/rmm-v24.12.01
+-- RMM: RMM_LOGGING_LEVEL = 'OFF'
+-- {fmt} version: 11.0.2
+-- Build type: Release
+-- CPM: Adding package fmt@11.0.2 (11.0.2 at /home/xuming/poseidon-gpu-worker-experiment/third_party/cpm/fmt/cf55aebb63850a5f4706bbd84a07e498a8b0b52b)
+-- rapids-cmake [fmt]: applied diff fix_11_0_2_unreachable_loop.diff to fix issue: 'fmt 11.0.2 produces a warning about an unreachable loop when compiled with nvcc'
+-- Build spdlog: 1.14.1
+-- Build type: Release
+-- Generating install
+-- CPM: Adding package spdlog@1.14.1 (v1.14.1 at /home/xuming/poseidon-gpu-worker-experiment/third_party/cpm/spdlog/443410e221e7e8ec28a604b5582ec74f8de96906)
+-- CPM: Using local package CCCL@2.5.0.0
+-- CPM: Adding package nvtx3@3.1.0 (v3.1.0 at /home/xuming/poseidon-gpu-worker-experiment/third_party/cpm/nvtx3/72787e0a62f981a1041689c3aa467492b6b367e9)
+-- Configuring done (0.4s)
+-- Generating done (0.1s)
+-- Build files have been written to: /home/xuming/poseidon-gpu-worker-experiment/build-v100-profile-sm70
+[ 78%] Built target poseidon_shared
+[ 79%] Building CXX object CMakeFiles/demo_gpu_ciphertext_add_handler.dir/home/xuming/poseidon-gpu-worker-experiment/src/poseidon/gpu/gpu_memory.cpp.o
+[ 80%] Linking CXX executable demo_gpu_ciphertext_add_handler
+[100%] Built target demo_gpu_ciphertext_add_handler

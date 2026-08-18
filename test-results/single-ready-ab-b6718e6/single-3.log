@@ -1,0 +1,2 @@
+PASS boots=0 transfers=122 rotations=14 key_seconds=1.79583 runtime_seconds=0.0969979 initialization_seconds=0.310342 online_execution_seconds=0.0969979 boot_seconds=0 python_max_abs=0.524794 max_imaginary=8.47169e-07
+report=/home/xuming/poseidon-gpu-worker-experiment/test-results/single-ready-ab-b6718e6/single-3.json

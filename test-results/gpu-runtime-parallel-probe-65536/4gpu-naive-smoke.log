@@ -1,0 +1,2 @@
+FAIL boots=0 transfers=199 rotation_key_policy=binary rotations=1 key_seconds=5.21075 runtime_seconds=3.57597 initialization_seconds=0.723516 online_execution_seconds=3.57597 boot_seconds=0 python_max_abs=166.842 max_imaginary=0.000947051
+report=/home/xuming/test-results/gpu-runtime-parallel-probe-65536/reports/4gpu-naive-smoke.json
