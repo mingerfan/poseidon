@@ -98,6 +98,19 @@ if(POSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS)
         COMMAND poseidon_runtime_gpu_api_tests
     )
 
+    add_executable(poseidon_gpu_stream_wait_trace_test
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/runtime_api/gpu_stream_wait_trace_test.cpp
+    )
+    target_link_libraries(poseidon_gpu_stream_wait_trace_test
+        PRIVATE
+            poseidon::gpu
+            ckks_runtime::core
+    )
+    add_test(
+        NAME poseidon_gpu_stream_wait_trace_test
+        COMMAND poseidon_gpu_stream_wait_trace_test
+    )
+
     add_executable(poseidon_runtime_gpu_plan_e2e
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/runtime_api/poseidon_gpu_plan_e2e.cpp
     )

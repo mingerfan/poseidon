@@ -1,7 +1,8 @@
 #include "poseidon/gpu/gpu_keyswitch_handler.h"
-#include "runtime/thread_trace.hpp"
+#include "poseidon/gpu/gpu_stream_wait_trace.h"
 #include "poseidon/gpu/kernels/gpu_keyswitch_kernels.h"
 #include "poseidon/gpu/kernels/gpu_ntt_kernels.h"
+#include "runtime/thread_trace.hpp"
 
 #include <cuda_runtime_api.h>
 #include <nvtx3/nvToolsExt.h>
@@ -1746,8 +1747,9 @@ public:
         {
             return;
         }
-        gpu_check_cuda(
-            cudaStreamWaitEvent(stream, completion_, 0),
+        gpu_stream_wait_event(
+            stream, completion_, device_id_,
+            "gpu.stream_wait.rotation_graph_workspace",
             "rotation graph cudaStreamWaitEvent");
     }
 

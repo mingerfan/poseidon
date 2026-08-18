@@ -42,6 +42,7 @@ add_library(poseidon_gpu STATIC
     gpu_memory.cpp
     gpu_parameter.cpp
     gpu_plaintext.cpp
+    gpu_stream_wait_trace.cpp
     gpu_uploader.cpp
     gpu_evaluator.cpp
     gpu_elementwise_handler.cpp

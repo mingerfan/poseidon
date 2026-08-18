@@ -7,6 +7,7 @@
 #include "poseidon/gpu/gpu_evaluator.h"
 #include "poseidon/gpu/gpu_memory.h"
 #include "poseidon/gpu/gpu_parameter.h"
+#include "poseidon/gpu/gpu_stream_wait_trace.h"
 #include "poseidon/gpu/gpu_uploader.h"
 #include "poseidon/key/galoiskeys.h"
 #include "poseidon/key/relinkeys.h"
@@ -576,8 +577,9 @@ public:
         {
             return;
         }
-        gpu::gpu_check_cuda(
-            cudaStreamWaitEvent(gpu::gpu_execution_stream(), event(), 0),
+        gpu::gpu_stream_wait_event(
+            gpu::gpu_execution_stream(), event(), cuda_device_id,
+            "gpu.stream_wait.compute_input",
             "cudaStreamWaitEvent compute input");
     }
 
