@@ -1,4 +1,5 @@
 #include "poseidon/runtime_api/poseidon_gpu_api.h"
+#include "runtime/thread_trace.hpp"
 
 #include "poseidon/ckks_encoder.h"
 #include "poseidon/decryptor.h"
@@ -91,7 +92,8 @@ std::shared_ptr<DeviceMemoryPool> acquire_device_memory_pool(int cuda_device_id)
     static std::unordered_map<int, std::weak_ptr<DeviceMemoryPool>> pools;
 
     gpu::gpu_check_cuda(cudaSetDevice(cuda_device_id), "cudaSetDevice");
-    std::lock_guard<std::mutex> lock(mutex);
+    fhegpu::ThreadTraceLockGuard lock(
+        mutex, "gpu.device_memory_pool_registry");
     const auto existing = pools.find(cuda_device_id);
     if (existing != pools.end())
     {
@@ -1676,7 +1678,8 @@ void PoseidonGpuApi::retain_in_flight(
             },
             value.storage_);
     }
-    std::lock_guard<std::mutex> lock(in_flight_mutex_);
+    fhegpu::ThreadTraceLockGuard lock(
+        in_flight_mutex_, "gpu.in_flight_resources");
     for (auto &resource : resources)
     {
         in_flight_resources_.push_back(std::move(resource));

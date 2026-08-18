@@ -1,4 +1,5 @@
 #include "poseidon/gpu/gpu_memory.h"
+#include "runtime/thread_trace.hpp"
 
 #include <mutex>
 #include <unordered_map>
@@ -52,7 +53,8 @@ std::shared_ptr<void> device_memory_resource_owner(
     }
 
     auto &registry = device_memory_resource_owners();
-    std::lock_guard<std::mutex> lock(registry.mutex);
+    fhegpu::ThreadTraceLockGuard lock(
+        registry.mutex, "gpu.memory_resource_registry");
     const auto found = registry.owners.find(resource);
     if (found == registry.owners.end())
     {
@@ -79,7 +81,8 @@ void register_device_memory_resource_owner(
     }
 
     auto &registry = device_memory_resource_owners();
-    std::lock_guard<std::mutex> lock(registry.mutex);
+    fhegpu::ThreadTraceLockGuard lock(
+        registry.mutex, "gpu.memory_resource_registry");
     const auto found = registry.owners.find(resource);
     if (found != registry.owners.end())
     {
@@ -101,7 +104,8 @@ void unregister_device_memory_resource_owner(
     }
 
     auto &registry = device_memory_resource_owners();
-    std::lock_guard<std::mutex> lock(registry.mutex);
+    fhegpu::ThreadTraceLockGuard lock(
+        registry.mutex, "gpu.memory_resource_registry");
     const auto found = registry.owners.find(resource);
     if (found == registry.owners.end())
     {

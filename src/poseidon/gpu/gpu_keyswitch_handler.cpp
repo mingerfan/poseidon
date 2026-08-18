@@ -1,4 +1,5 @@
 #include "poseidon/gpu/gpu_keyswitch_handler.h"
+#include "runtime/thread_trace.hpp"
 #include "poseidon/gpu/kernels/gpu_keyswitch_kernels.h"
 #include "poseidon/gpu/kernels/gpu_ntt_kernels.h"
 
@@ -2019,7 +2020,8 @@ void GpuKeySwitchHandler::rotate_hybrid_ciphertext_graph(
         throw std::invalid_argument(
             "GpuKeySwitchHandler rotation graph device mismatch");
     }
-    std::lock_guard<std::mutex> lock(graph_state_->mutex);
+    fhegpu::ThreadTraceLockGuard lock(
+        graph_state_->mutex, "gpu.rotation_graph_state");
     auto workspace_it = graph_state_->workspaces.find(workspace_key);
     if (workspace_it == graph_state_->workspaces.end())
     {
