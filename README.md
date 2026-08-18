@@ -34,3 +34,21 @@ ctest --test-dir build-runtime-cpu -R poseidon_runtime_cpu_api_tests --output-on
 for local development. CPU MPI and CUDA test paths are controlled by
 `POSEIDON_BUILD_CKKS_RUNTIME_MPI` and
 `POSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS`.
+
+## Nsight Systems GPU Kernel Gap Analysis
+
+After collecting one or more Nsight Systems reports, compare actual GPU kernel
+execution, per-stream idle gaps, and end-to-end compute wall time with:
+
+```bash
+python3 scripts/analyze_nsys_kernel_gaps.py \
+  1GPU=/path/probe_1gpu.nsys-rep \
+  4GPU=/path/probe_4gpu_4w.nsys-rep \
+  8GPU=/path/8gpu-probe-strong.nsys-rep \
+  --output-dir nsys-kernel-analysis
+```
+
+The tool invokes `nsys export` as needed and writes a Markdown report, combined
+summary CSV files, and one per-kernel interval CSV for each input report. Run
+`python3 scripts/analyze_nsys_kernel_gaps.py --help` for anchor overrides, gap
+filtering, SQLite input, and overwrite options.
