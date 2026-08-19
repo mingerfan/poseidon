@@ -3,6 +3,7 @@
 #include "poseidon/gpu/kernels/gpu_double_hoist_kernels.h"
 #include "poseidon/gpu/kernels/gpu_elementwise_kernels.h"
 #include "poseidon/gpu/kernels/gpu_keyswitch_kernels.h"
+#include "poseidon/gpu/kernels/gpu_ntt_kernels.h"
 
 #include "poseidon/advance/homomorphic_linear_transform.h"
 
@@ -82,9 +83,102 @@ bool use_relinearize_rescale_x2()
            value != "FALSE";
 }
 
+bool use_double_hoist_direct_giant_accumulate()
+{
+    const char *raw =
+        std::getenv("POSEIDON_DOUBLE_HOIST_DIRECT_GIANT_ACCUMULATE");
+    if (raw == nullptr || *raw == '\0')
+    {
+        return true;
+    }
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
+bool use_double_hoist_qp_mac_direct_init()
+{
+    const char *raw =
+        std::getenv("POSEIDON_DOUBLE_HOIST_QP_MAC_DIRECT_INIT");
+    if (raw == nullptr || *raw == '\0')
+    {
+        return true;
+    }
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
+bool use_double_hoist_fused_baby_keyswitch_c0()
+{
+    const char *raw = std::getenv(
+        "POSEIDON_DOUBLE_HOIST_FUSED_BABY_KEYSWITCH_C0");
+    if (raw == nullptr || *raw == '\0')
+    {
+        return true;
+    }
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
+bool use_double_hoist_batched_giant_intt()
+{
+    const char *raw = std::getenv(
+        "POSEIDON_DOUBLE_HOIST_BATCHED_GIANT_INTT");
+    bool enabled = true;
+    if (raw != nullptr && *raw != '\0')
+    {
+        const std::string value(raw);
+        enabled = value != "0" &&
+                  value != "OFF" &&
+                  value != "off" &&
+                  value != "false" &&
+                  value != "FALSE";
+    }
+    if (!enabled)
+    {
+        return false;
+    }
+
+    const char *ntt_raw = std::getenv("POSEIDON_NTT_ALGO");
+    if (ntt_raw == nullptr || *ntt_raw == '\0')
+    {
+        return true;
+    }
+    const std::string ntt_value(ntt_raw);
+    return ntt_value == "fourstep" ||
+           ntt_value == "four_step" ||
+           ntt_value == "cheddar";
+}
+
 bool use_evalmod_inline_leaf()
 {
     const char *raw = std::getenv("POSEIDON_EVALMOD_INLINE_LEAF");
+    if (raw == nullptr || *raw == '\0')
+    {
+        return true;
+    }
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
+bool use_evalmod_lazy_relinearization()
+{
+    const char *raw = std::getenv("POSEIDON_EVALMOD_LAZY_RELIN");
     if (raw == nullptr || *raw == '\0')
     {
         return true;
@@ -692,7 +786,8 @@ std::uint32_t galois_elt_for_conjugation(std::size_t degree)
 
 std::vector<GpuEvalModBasisStep> make_gpu_eval_mod_basis_plan(
     GpuEvalModPolynomialBasis basis,
-    const std::vector<std::uint32_t> &requested_degrees)
+    const std::vector<std::uint32_t> &requested_degrees,
+    std::uint32_t preferred_giant_stride)
 {
     std::vector<GpuEvalModBasisStep> steps;
     std::map<std::uint32_t, bool> available;
@@ -715,7 +810,42 @@ std::vector<GpuEvalModBasisStep> make_gpu_eval_mod_basis_plan(
             std::uint32_t left_degree = 0;
             std::uint32_t right_degree = 0;
             std::uint32_t correction_degree = 0;
-            if (is_power_of_two)
+            bool used_preferred_giant_pair = false;
+            if (basis == GpuEvalModPolynomialBasis::Chebyshev &&
+                preferred_giant_stride > 0 &&
+                degree > preferred_giant_stride &&
+                degree % preferred_giant_stride == 0)
+            {
+                /*
+                 * The flat-b8 plan requests T8,T16,... in ascending order.
+                 * Prefer the most balanced pair of already-live giant bases,
+                 * e.g. T24=2*T8*T16-T8 and T48=2*T24^2-1.  Keeping this
+                 * opt-in avoids changing the production recursive DAG.
+                 */
+                for (std::uint32_t candidate_left = preferred_giant_stride;
+                     candidate_left <= degree / 2;
+                     candidate_left += preferred_giant_stride)
+                {
+                    const auto candidate_right = degree - candidate_left;
+                    const auto candidate_correction =
+                        candidate_right - candidate_left;
+                    if (available.count(candidate_left) != 0 &&
+                        available.count(candidate_right) != 0 &&
+                        (candidate_correction == 0 ||
+                         available.count(candidate_correction) != 0))
+                    {
+                        left_degree = candidate_left;
+                        right_degree = candidate_right;
+                        correction_degree = candidate_correction;
+                        used_preferred_giant_pair = true;
+                    }
+                }
+            }
+            if (used_preferred_giant_pair)
+            {
+                // All dependencies were checked above and are already live.
+            }
+            else if (is_power_of_two)
             {
                 left_degree = degree >> 1U;
                 right_degree = left_degree;
@@ -3106,7 +3236,10 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
             "GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist: "
             "requires one-shard, size-2, Q-only input");
     }
-    if (matrix.plain_vec_qp.empty() ||
+    const bool has_full_plaintexts = !matrix.plain_vec_qp.empty();
+    const bool has_compressed_plaintexts =
+        !matrix.compressed_plain_vec_qp.empty();
+    if (has_full_plaintexts == has_compressed_plaintexts ||
         matrix.plan.terms.empty() ||
         matrix.plan.baby_steps.empty() ||
         matrix.plan.giant_steps.empty() ||
@@ -3155,7 +3288,10 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
     const std::size_t dnum = (q_count + p_count - 1) / p_count;
     const std::size_t group_count = matrix.plan.giant_steps.size();
     const std::size_t baby_count = matrix.plan.baby_steps.size();
-
+    const bool requested_batched_giant_intt =
+        use_double_hoist_batched_giant_intt() &&
+        degree == 65536 &&
+        group_count > 1;
     std::size_t requested_tile = workspace.baby_tile_size;
     if (const char *raw = std::getenv("POSEIDON_GPU_DOUBLE_HOIST_BABY_TILE"))
     {
@@ -3163,6 +3299,22 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
         if (parsed != 0)
         {
             requested_tile = static_cast<std::size_t>(parsed);
+        }
+    }
+    if (dnum == 1)
+    {
+        if (const char *raw = std::getenv(
+                "POSEIDON_GPU_DOUBLE_HOIST_DNUM1_BABY_TILE"))
+        {
+            const auto parsed = std::strtoull(raw, nullptr, 10);
+            if (parsed != 0)
+            {
+                requested_tile = static_cast<std::size_t>(parsed);
+            }
+        }
+        else
+        {
+            requested_tile = 8;
         }
     }
     requested_tile = std::max<std::size_t>(
@@ -3177,7 +3329,10 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
         requested_tile * 2 * qp_poly_bytes +
         group_count * 2 * qp_poly_bytes +
         2 * qp_poly_bytes +
-        (4 * q_count + 4 * p_count) * degree * sizeof(GpuWord);
+        (4 * q_count + 4 * p_count) * degree * sizeof(GpuWord) +
+        (requested_batched_giant_intt
+             ? (group_count - 1) * q_count * degree * sizeof(GpuWord)
+             : 0);
     std::size_t max_workspace_bytes = workspace.max_workspace_bytes;
     if (const char *raw =
             std::getenv("POSEIDON_GPU_DOUBLE_HOIST_MAX_WORKSPACE_MB"))
@@ -3205,8 +3360,13 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
         q_count,
         p_count,
         group_count);
-    workspace.group_accumulators.q.fill_zero();
-    workspace.group_accumulators.p.fill_zero();
+    const bool direct_qp_mac_init =
+        use_double_hoist_qp_mac_direct_init();
+    if (!direct_qp_mac_init)
+    {
+        workspace.group_accumulators.q.fill_zero();
+        workspace.group_accumulators.p.fill_zero();
+    }
 
     keyswitch_handler_.hoist_decompose_modup_ntt(
         source_view.polys[1],
@@ -3217,19 +3377,24 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
 
     const auto galois_keys_view =
         galois_keys.make_const_view(q_count);
+    const bool fused_baby_keyswitch_c0 =
+        use_double_hoist_fused_baby_keyswitch_c0() &&
+        dnum == 1 &&
+        galois_keys.meta.galois_format ==
+            GpuGaloisKeyFormat::InversePreRotated;
     for (std::size_t tile_begin = 0;
          tile_begin < baby_count;
          tile_begin += requested_tile)
     {
         const std::size_t tile_count =
             std::min(requested_tile, baby_count - tile_begin);
+        ++workspace.last_counts.baby_tile_count;
         workspace.baby_tile.ensure_capacity(
             source_shard0.device_id,
             degree,
             q_count,
             p_count,
             tile_count);
-        ++workspace.last_counts.baby_tile_count;
 
         for (std::size_t local = 0; local < tile_count; ++local)
         {
@@ -3264,13 +3429,19 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
                 local,
                 true,
                 level_info,
-                workspace.keyswitch);
-            kernel::launch_double_hoist_add_lifted_galois_c0(
-                workspace.baby_tile.q_component(local, 0),
-                source_shard0.ptr,
-                galois_elt,
-                *parameter_shard,
-                degree);
+                workspace.keyswitch,
+                fused_baby_keyswitch_c0
+                    ? source_shard0.ptr
+                    : nullptr);
+            if (!fused_baby_keyswitch_c0)
+            {
+                kernel::launch_double_hoist_add_lifted_galois_c0(
+                    workspace.baby_tile.q_component(local, 0),
+                    source_shard0.ptr,
+                    galois_elt,
+                    *parameter_shard,
+                    degree);
+            }
             ++workspace.last_counts.keymul_count;
             workspace.last_counts.permute_count +=
                 galois_keys.meta.galois_format ==
@@ -3286,6 +3457,7 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
             workspace.baby_tile.p.data(),
             matrix.plan.diagonal_q_ptrs.data(),
             matrix.plan.diagonal_p_ptrs.data(),
+            matrix.plan.diagonal_periods.data(),
             matrix.plan.term_baby_indices.data(),
             matrix.plan.group_term_offsets_device.data(),
             group_count,
@@ -3293,7 +3465,9 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
             tile_begin,
             tile_count,
             *parameter_shard,
-            degree);
+            degree,
+            matrix.plan.compressed_plaintexts,
+            direct_qp_mac_init && tile_begin == 0);
     }
     workspace.last_counts.qp_pmult_count = matrix.plan.terms.size();
 
@@ -3303,6 +3477,54 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
     const bool grouped_outer_moddown =
         galois_keys.meta.galois_format ==
         GpuGaloisKeyFormat::InversePreRotated;
+    const auto identity_it = std::find(
+        matrix.plan.giant_steps.begin(),
+        matrix.plan.giant_steps.end(),
+        0);
+    const bool direct_giant_accumulate =
+        grouped_outer_moddown &&
+        use_double_hoist_direct_giant_accumulate() &&
+        identity_it != matrix.plan.giant_steps.end() &&
+        group_count > 1;
+    const std::size_t identity_group_index =
+        identity_it == matrix.plan.giant_steps.end()
+            ? group_count
+            : static_cast<std::size_t>(
+                  identity_it - matrix.plan.giant_steps.begin());
+    const bool direct_identity_only =
+        grouped_outer_moddown &&
+        group_count == 1 &&
+        identity_group_index == 0;
+    if (direct_identity_only)
+    {
+        /*
+         * A direct diagonal plan places every term in the identity giant
+         * group. Its QP plaintext-MAC accumulator is already the final
+         * linear-transform result, so a single ModDown is sufficient. Do not
+         * run the generic identity path, which would ModDown, lift back to QP,
+         * and ModDown a second time only to satisfy the outer BSGS pipeline.
+         */
+        keyswitch_handler_.moddown_qp_ciphertext_to_q(
+            workspace.group_accumulators,
+            0,
+            workspace.result_q,
+            product_meta,
+            level_info,
+            workspace.keyswitch);
+        workspace.last_counts.outer_moddown_count = 1;
+        if (rescale_count == 0)
+        {
+            destination_ciphertext = std::move(workspace.result_q);
+        }
+        else
+        {
+            rescale_many(
+                workspace.result_q,
+                destination_ciphertext,
+                rescale_count);
+        }
+        return;
+    }
     if (grouped_outer_moddown)
     {
         /*
@@ -3318,6 +3540,59 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
             workspace.batch_p_coeff,
             workspace.batch_converted_q);
         workspace.last_counts.inner_moddown_count += group_count;
+
+        bool batched_giant_intt =
+            requested_batched_giant_intt &&
+            identity_group_index == 0;
+        for (std::size_t group = 1;
+             batched_giant_intt && group < group_count;
+             ++group)
+        {
+            batched_giant_intt = matrix.plan.giant_steps[group] != 0;
+        }
+        const std::size_t batched_giant_count =
+            batched_giant_intt ? group_count - 1 : 0;
+        const std::size_t q_words = q_count * degree;
+        if (batched_giant_intt)
+        {
+            const std::size_t required_words =
+                batched_giant_count * q_words;
+            if (workspace.outer_source_intt_q_batch.device_id() !=
+                    source_shard0.device_id ||
+                workspace.outer_source_intt_q_batch.size() < required_words)
+            {
+                workspace.outer_source_intt_q_batch.allocate(
+                    required_words,
+                    source_shard0.device_id);
+            }
+
+            GpuPolyShardView destination_intt;
+            destination_intt.device_id = source_shard0.device_id;
+            destination_intt.ptr =
+                workspace.outer_source_intt_q_batch.data();
+            destination_intt.limb_begin = 0;
+            destination_intt.limb_count = q_count;
+            destination_intt.coeff_begin = 0;
+            destination_intt.coeff_count = degree;
+
+            GpuConstPolyShardView source_ntt;
+            source_ntt.device_id = source_shard0.device_id;
+            source_ntt.ptr =
+                workspace.inner_q_batch.q_component(1, 1);
+            source_ntt.limb_begin = 0;
+            source_ntt.limb_count = q_count;
+            source_ntt.coeff_begin = 0;
+            source_ntt.coeff_count = degree;
+
+            kernel::launch_inverse_ntt_poly_shard_batch_fourstep_65536(
+                destination_intt,
+                source_ntt,
+                *parameter_shard,
+                degree,
+                batched_giant_count,
+                q_words,
+                2 * q_words);
+        }
 
         std::vector<const GpuWord *> digit_q_ptrs;
         std::vector<const GpuWord *> digit_p_ptrs;
@@ -3339,16 +3614,19 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
             const int giant_step = matrix.plan.giant_steps[group];
             if (giant_step == 0)
             {
-                kernel::launch_double_hoist_lift_identity(
-                    workspace.group_accumulators.q_component(group, 0),
-                    workspace.group_accumulators.q_component(group, 1),
-                    workspace.group_accumulators.p_component(group, 0),
-                    workspace.group_accumulators.p_component(group, 1),
-                    workspace.inner_q_batch.q_component(group, 0),
-                    workspace.inner_q_batch.q_component(group, 1),
-                    *parameter_shard,
-                    degree,
-                    false);
+                if (!direct_giant_accumulate)
+                {
+                    kernel::launch_double_hoist_lift_identity(
+                        workspace.group_accumulators.q_component(group, 0),
+                        workspace.group_accumulators.q_component(group, 1),
+                        workspace.group_accumulators.p_component(group, 0),
+                        workspace.group_accumulators.p_component(group, 1),
+                        workspace.inner_q_batch.q_component(group, 0),
+                        workspace.inner_q_batch.q_component(group, 1),
+                        *parameter_shard,
+                        degree,
+                        false);
+                }
                 have_outer = true;
                 continue;
             }
@@ -3362,12 +3640,23 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
                 q_count,
                 0,
                 degree});
+            const std::size_t non_identity_group = group - 1;
             auto &group_hoist = workspace.outer_group_hoists[group];
+            const GpuWord *precomputed_source_intt_q =
+                batched_giant_intt
+                    ? workspace.outer_source_intt_q_batch.data() +
+                          non_identity_group * q_words
+                    : nullptr;
             keyswitch_handler_.hoist_decompose_modup_ntt(
                 inner_c1,
                 level_info,
                 group_hoist,
-                workspace.keyswitch);
+                workspace.keyswitch,
+                precomputed_source_intt_q);
+            const GpuWord *digit_q_ptr =
+                group_hoist.digits_q_ntt.data();
+            const GpuWord *digit_p_ptr =
+                group_hoist.digits_p_ntt.data();
             ++workspace.last_counts.outer_decompose_count;
 
             const std::uint32_t galois_elt =
@@ -3379,8 +3668,8 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
                 throw std::overflow_error(
                     "double-hoist giant key index exceeds uint32_t");
             }
-            digit_q_ptrs.push_back(group_hoist.digits_q_ntt.data());
-            digit_p_ptrs.push_back(group_hoist.digits_p_ntt.data());
+            digit_q_ptrs.push_back(digit_q_ptr);
+            digit_p_ptrs.push_back(digit_p_ptr);
             group_indices.push_back(static_cast<std::uint32_t>(group));
             galois_elts.push_back(galois_elt);
             key_indices.push_back(static_cast<std::uint32_t>(key_index));
@@ -3389,24 +3678,57 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
         const std::size_t active_group_count = group_indices.size();
         if (active_group_count != 0)
         {
-            kernel::launch_double_hoist_pre_rotated_giant_group_reduce(
-                workspace.group_accumulators.q.data(),
-                workspace.group_accumulators.p.data(),
-                workspace.inner_q_batch.q.data(),
-                digit_q_ptrs.data(),
-                digit_p_ptrs.data(),
-                group_indices.data(),
-                galois_elts.data(),
-                key_indices.data(),
-                galois_keys.galois_key_q0_ptrs.data(),
-                galois_keys.galois_key_p0_ptrs.data(),
-                galois_keys.galois_key_q1_ptrs.data(),
-                galois_keys.galois_key_p1_ptrs.data(),
-                active_group_count,
-                dnum,
-                galois_keys.meta.decomposition_count,
-                *parameter_shard,
-                degree);
+            if (direct_giant_accumulate)
+            {
+                workspace.outer_accumulator.ensure_capacity(
+                    source_shard0.device_id,
+                    degree,
+                    q_count,
+                    p_count,
+                    1);
+                kernel::launch_double_hoist_pre_rotated_giant_group_accumulate(
+                    workspace.outer_accumulator.q_component(0, 0),
+                    workspace.outer_accumulator.q_component(0, 1),
+                    workspace.outer_accumulator.p_component(0, 0),
+                    workspace.outer_accumulator.p_component(0, 1),
+                    workspace.inner_q_batch.q.data(),
+                    identity_group_index,
+                    digit_q_ptrs.data(),
+                    digit_p_ptrs.data(),
+                    group_indices.data(),
+                    galois_elts.data(),
+                    key_indices.data(),
+                    galois_keys.galois_key_q0_ptrs.data(),
+                    galois_keys.galois_key_p0_ptrs.data(),
+                    galois_keys.galois_key_q1_ptrs.data(),
+                    galois_keys.galois_key_p1_ptrs.data(),
+                    active_group_count,
+                    dnum,
+                    galois_keys.meta.decomposition_count,
+                    *parameter_shard,
+                    degree);
+            }
+            else
+            {
+                kernel::launch_double_hoist_pre_rotated_giant_group_reduce(
+                    workspace.group_accumulators.q.data(),
+                    workspace.group_accumulators.p.data(),
+                    workspace.inner_q_batch.q.data(),
+                    digit_q_ptrs.data(),
+                    digit_p_ptrs.data(),
+                    group_indices.data(),
+                    galois_elts.data(),
+                    key_indices.data(),
+                    galois_keys.galois_key_q0_ptrs.data(),
+                    galois_keys.galois_key_p0_ptrs.data(),
+                    galois_keys.galois_key_q1_ptrs.data(),
+                    galois_keys.galois_key_p1_ptrs.data(),
+                    active_group_count,
+                    dnum,
+                    galois_keys.meta.decomposition_count,
+                    *parameter_shard,
+                    degree);
+            }
             have_outer = true;
             workspace.last_counts.keymul_count += active_group_count;
             workspace.last_counts.permute_count += active_group_count;
@@ -3493,7 +3815,17 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
             "outer accumulator is empty");
     }
 
-    if (grouped_outer_moddown)
+    if (direct_giant_accumulate)
+    {
+        keyswitch_handler_.moddown_qp_ciphertext_to_q(
+            workspace.outer_accumulator,
+            0,
+            workspace.result_q,
+            product_meta,
+            level_info,
+            workspace.keyswitch);
+    }
+    else if (grouped_outer_moddown)
     {
         keyswitch_handler_.moddown_qp_groups_to_q(
             workspace.group_accumulators,
@@ -5398,6 +5730,48 @@ void GpuEvaluator::eval_mod_high_precision(
             }
         }
 
+        /*
+         * A size-3 Q*T+R result may remain unrelinearized when it is consumed
+         * only as the remainder of its parent. The parent product is also a
+         * size-3 ciphertext, so the two raw ciphertexts can be added and one
+         * HYBRID key-switch can relinearize their combined c2 component.
+         *
+         * Quotient children are deliberately excluded: multiplying a size-3
+         * quotient by a size-2 basis would create a size-4 ciphertext and
+         * require higher-power relinearization keys. Each candidate remainder
+         * edge is checked independently below; an edge that needs an
+         * intervening rescale or scale multiplication remains eagerly
+         * relinearized. The validated plans are degree 22 with baby width 4,
+         * and degree 58/59 with their existing recursive splits.
+         */
+        const bool lazy_relinearization =
+            use_evalmod_lazy_relinearization() &&
+            bootstrap_data.eval_mod.dynamic_rescale &&
+            (bootstrap_data.eval_mod.polynomial_degree == 22 ||
+             bootstrap_data.eval_mod.polynomial_degree == 58 ||
+             bootstrap_data.eval_mod.polynomial_degree == 59) &&
+            bootstrap_data.eval_mod.polynomial_basis ==
+                GpuEvalModPolynomialBasis::Chebyshev;
+        std::vector<bool> lazy_raw_output(
+            static_cast<std::size_t>(maximum_node) + 1,
+            false);
+        if (lazy_relinearization)
+        {
+            for (const auto &parent : polynomial_combine_steps)
+            {
+                if (parent.remainder_node < polynomial_blocks.size() ||
+                    parent.remainder_node >= lazy_raw_output.size() ||
+                    parent.remainder_node >= node_use_counts.size() ||
+                    node_use_counts[parent.remainder_node] != 1 ||
+                    parent.remainder_rescale_count != 0 ||
+                    !parent.remainder_scale_plaintext.empty())
+                {
+                    continue;
+                }
+                lazy_raw_output[parent.remainder_node] = true;
+            }
+        }
+
         std::vector<bool> inline_leaf_candidate(polynomial_blocks.size(), false);
         if (use_evalmod_inline_leaf() &&
             !bootstrap_data.eval_mod.dynamic_rescale)
@@ -5492,6 +5866,216 @@ void GpuEvaluator::eval_mod_high_precision(
                 }
                 if (bootstrap_data.eval_mod.dynamic_rescale)
                 {
+                    if (lazy_relinearization)
+                    {
+                        if (!node_available[combine.quotient_node] ||
+                            !node_available[combine.remainder_node])
+                        {
+                            throw std::invalid_argument(
+                                "GpuEvaluator::eval_mod_high_precision: lazy combine input is unavailable");
+                        }
+                        if (combine.output_q_count == 0 ||
+                            combine.product_q_count == 0 ||
+                            combine.output_q_count != combine.product_q_count ||
+                            !(combine.product_scale > 0.0) ||
+                            !std::isfinite(combine.product_scale))
+                        {
+                            throw std::invalid_argument(
+                                "GpuEvaluator::eval_mod_high_precision: unsupported lazy dynamic combine plan");
+                        }
+
+                        const GpuCiphertextData *quotient =
+                            &workspace.eval_mod_nodes[combine.quotient_node];
+                        if (quotient->size() != 2)
+                        {
+                            throw std::invalid_argument(
+                                "GpuEvaluator::eval_mod_high_precision: lazy quotient must be relinearized");
+                        }
+                        if (combine.quotient_rescale_count > 0)
+                        {
+                            rescale_many(
+                                *quotient,
+                                workspace.scratch2,
+                                combine.quotient_rescale_count);
+                            workspace.scratch2.meta.scale =
+                                combine.quotient_output_scale;
+                            quotient = &workspace.scratch2;
+                        }
+
+                        const GpuCiphertextData *basis =
+                            &workspace.eval_mod_basis[combine.basis_degree];
+                        if (!(quotient->meta.parms_id == basis->meta.parms_id))
+                        {
+                            if (quotient->meta.q_count == basis->meta.q_count)
+                            {
+                                throw std::invalid_argument(
+                                    "GpuEvaluator::eval_mod_high_precision: lazy combine equal q_count has different parms_id");
+                            }
+                            if (quotient->meta.q_count > basis->meta.q_count)
+                            {
+                                drop_modulus(
+                                    *quotient,
+                                    workspace.scratch3,
+                                    basis->meta.parms_id);
+                                quotient = &workspace.scratch3;
+                            }
+                            else
+                            {
+                                drop_modulus(
+                                    *basis,
+                                    workspace.scratch4,
+                                    quotient->meta.parms_id);
+                                basis = &workspace.scratch4;
+                            }
+                        }
+
+                        const bool is_square = quotient == basis;
+                        if (workspace.capture_eval_mod_stage_timing)
+                        {
+                            multiply_recorder.begin(
+                                "EvalMod.mul.combine.lazy." +
+                                    std::to_string(combine_index) +
+                                    ".T" + std::to_string(combine.basis_degree) +
+                                    ".q" + std::to_string(quotient->meta.q_count),
+                                quotient->meta.q_count,
+                                relin_keys.meta.p_count,
+                                is_square);
+                        }
+                        if (is_square)
+                        {
+                            square(*quotient, workspace.scratch5);
+                        }
+                        else
+                        {
+                            multiply(*quotient, *basis, workspace.scratch5);
+                        }
+                        workspace.scratch5.meta.scale = combine.product_scale;
+
+                        GpuCiphertextData product_scaled;
+                        const GpuCiphertextData *product = &workspace.scratch5;
+                        if (!combine.product_scale_plaintext.empty())
+                        {
+                            multiply_plain(
+                                *product,
+                                combine.product_scale_plaintext,
+                                product_scaled);
+                            product_scaled.meta.scale =
+                                combine.product_aligned_scale;
+                            product = &product_scaled;
+                        }
+
+                        const GpuCiphertextData *remainder =
+                            &workspace.eval_mod_nodes[combine.remainder_node];
+                        GpuCiphertextData remainder_rescaled;
+                        GpuCiphertextData remainder_scaled;
+                        GpuCiphertextData product_dropped;
+                        GpuCiphertextData remainder_dropped;
+
+                        if (combine.remainder_rescale_count > 0)
+                        {
+                            rescale_many(
+                                *remainder,
+                                remainder_rescaled,
+                                combine.remainder_rescale_count);
+                            if (combine.remainder_scale_plaintext.empty() &&
+                                combine.remainder_aligned_scale > 0.0)
+                            {
+                                remainder_rescaled.meta.scale =
+                                    combine.remainder_aligned_scale;
+                            }
+                            remainder = &remainder_rescaled;
+                        }
+                        if (!combine.remainder_scale_plaintext.empty())
+                        {
+                            multiply_plain(
+                                *remainder,
+                                combine.remainder_scale_plaintext,
+                                remainder_scaled);
+                            remainder_scaled.meta.scale =
+                                combine.remainder_aligned_scale;
+                            remainder = &remainder_scaled;
+                        }
+
+                        if (!(product->meta.parms_id == remainder->meta.parms_id))
+                        {
+                            if (product->meta.q_count == remainder->meta.q_count)
+                            {
+                                throw std::invalid_argument(
+                                    "GpuEvaluator::eval_mod_high_precision: lazy remainder equal q_count has different parms_id");
+                            }
+                            if (product->meta.q_count > remainder->meta.q_count)
+                            {
+                                drop_modulus(
+                                    *product,
+                                    product_dropped,
+                                    remainder->meta.parms_id);
+                                product_dropped.meta.scale = product->meta.scale;
+                                product = &product_dropped;
+                            }
+                            else
+                            {
+                                drop_modulus(
+                                    *remainder,
+                                    remainder_dropped,
+                                    product->meta.parms_id);
+                                remainder_dropped.meta.scale = remainder->meta.scale;
+                                remainder = &remainder_dropped;
+                            }
+                        }
+
+                        GpuCiphertextData combined_raw;
+                        add(*product, *remainder, combined_raw);
+                        combined_raw.meta.scale = combine.output_scale;
+                        if (combined_raw.size() != 3)
+                        {
+                            throw std::invalid_argument(
+                                "GpuEvaluator::eval_mod_high_precision: lazy combine did not produce size-3 output");
+                        }
+
+                        const bool defer_output =
+                            combine.output_node < lazy_raw_output.size() &&
+                            lazy_raw_output[combine.output_node];
+                        if (defer_output)
+                        {
+                            workspace.eval_mod_nodes[combine.output_node] =
+                                std::move(combined_raw);
+                        }
+                        else
+                        {
+                            relinearize(
+                                combined_raw,
+                                relin_keys,
+                                workspace.eval_mod_nodes[combine.output_node]);
+                            workspace.eval_mod_nodes[combine.output_node].meta.scale =
+                                combine.output_scale;
+                        }
+                        multiply_recorder.end();
+                        node_available[combine.output_node] = true;
+                        if (workspace.capture_eval_mod_trace)
+                        {
+                            const GpuCiphertextData *trace_source =
+                                &workspace.eval_mod_nodes[combine.output_node];
+                            GpuCiphertextData trace_relinearized;
+                            if (trace_source->size() == 3)
+                            {
+                                relinearize(
+                                    *trace_source,
+                                    relin_keys,
+                                    trace_relinearized);
+                                trace_relinearized.meta.scale =
+                                    trace_source->meta.scale;
+                                trace_source = &trace_relinearized;
+                            }
+                            workspace.eval_mod_trace_polynomial_combine_outputs.emplace_back();
+                            copy_ciphertext_data(
+                                *trace_source,
+                                workspace.eval_mod_trace_polynomial_combine_outputs.back(),
+                                "GpuEvaluator::eval_mod_high_precision trace lazy combine copy");
+                            workspace.eval_mod_trace_polynomial_combine_outputs.back().meta.scale =
+                                trace_source->meta.scale;
+                        }
+                        continue;
+                    }
                     if (!node_available[combine.quotient_node])
                     {
                         throw std::invalid_argument(

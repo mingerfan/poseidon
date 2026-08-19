@@ -128,6 +128,20 @@ void launch_inverse_ntt_poly_shard_fourstep_65536(
     const GpuParameterShard &parameter_shard,
     std::size_t degree);
 
+/**
+ * Apply the N=65536 two-phase inverse NTT to equally shaped, strided RNS
+ * polynomials. The batch dimension is folded into grid.z so all inputs share
+ * one phase-1 launch and one phase-2 launch.
+ */
+void launch_inverse_ntt_poly_shard_batch_fourstep_65536(
+    const GpuPolyShardView &first_destination_shard,
+    const GpuConstPolyShardView &first_source_shard,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree,
+    std::size_t batch_count,
+    std::size_t destination_batch_stride,
+    std::size_t source_batch_stride);
+
 void launch_forward_ntt_components_shard_tensor(
     const GpuPolyShardView &first_destination_shard,
     const GpuConstPolyShardView &first_source_shard,

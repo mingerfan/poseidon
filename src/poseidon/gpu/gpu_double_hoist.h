@@ -46,8 +46,10 @@ struct GpuDoubleHoistMatrixPlan
 
     DeviceVector<const GpuWord *> diagonal_q_ptrs;
     DeviceVector<const GpuWord *> diagonal_p_ptrs;
+    DeviceVector<std::uint32_t> diagonal_periods;
     DeviceVector<std::uint32_t> term_baby_indices;
     DeviceVector<std::uint32_t> group_term_offsets_device;
+    bool compressed_plaintexts = false;
 };
 
 /**
@@ -63,6 +65,7 @@ struct GpuMatrixPlainQP
     double scale = 1.0;
     std::vector<int> rot_index;
     std::map<int, GpuPlaintextData> plain_vec_qp;
+    std::map<int, GpuCompressedPlaintextQP> compressed_plain_vec_qp;
     GpuDoubleHoistMatrixPlan plan;
 };
 
@@ -232,6 +235,7 @@ struct GpuDoubleHoistWorkspace
 
     DeviceVector<GpuWord> batch_p_coeff;
     DeviceVector<GpuWord> batch_converted_q;
+    DeviceVector<GpuWord> outer_source_intt_q_batch;
     DeviceVector<GpuWord> outer_reduced_p;
     std::vector<GpuHoistedDecomposition> outer_group_hoists;
 

@@ -114,7 +114,8 @@ struct GpuEvalModPolynomialCombineStep
  */
 std::vector<GpuEvalModBasisStep> make_gpu_eval_mod_basis_plan(
     GpuEvalModPolynomialBasis basis,
-    const std::vector<std::uint32_t> &requested_degrees);
+    const std::vector<std::uint32_t> &requested_degrees,
+    std::uint32_t preferred_giant_stride = 0);
 
 /**
  * @brief GPU-resident bootstrapping constants and precomputed objects.
@@ -161,6 +162,11 @@ struct GpuBootstrapData
          */
         GpuEvalModPolynomialBasis polynomial_basis =
             GpuEvalModPolynomialBasis::Monomial;
+        std::uint32_t polynomial_degree = 0;
+        std::uint32_t polynomial_log_split = 0;
+        bool polynomial_flat_bsgs = false;
+        bool polynomial_degree_bound_virtual = false;
+        std::size_t polynomial_root_anchor_q_count = 0;
         std::vector<GpuEvalModBasisStep> basis_steps;
         std::vector<GpuEvalModPolynomialTerm> polynomial_terms;
 

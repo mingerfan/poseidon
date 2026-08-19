@@ -118,7 +118,8 @@ public:
         const LinearMatrixGroup &src,
         const PoseidonContext &context,
         int device_id,
-        std::uint32_t rescale_count = 1);
+        std::uint32_t rescale_count = 1,
+        bool compress_plaintexts = false);
 
     /**
      * @brief Generate and upload the fixed high-precision EvalMod BSGS plan.
@@ -148,7 +149,8 @@ public:
         double polynomial_output_scale_override =
             std::numeric_limits<double>::quiet_NaN(),
         bool fuse_leaf_terms_before_rescale = true,
-        double input_scale = 0.0);
+        double input_scale = 0.0,
+        bool metadata_only = false);
 
     /**
      * @brief Upload CPU relinearization keys to GPU.

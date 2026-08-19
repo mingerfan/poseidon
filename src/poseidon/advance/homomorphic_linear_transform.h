@@ -233,10 +233,17 @@ template <typename T>
 void gen_linear_transform_bsgs(MatrixPlain &plain_mat, std::vector<int> &rotate_index,
                                CKKSEncoder &encoder, std::map<int, std::vector<T>> &value,
                                uint32_t level, double scale, uint32_t log_bsgs_ratio,
-                               uint32_t log_slots)
+                               uint32_t log_slots, uint32_t n1_override = 0)
 {
     auto slots = 1 << log_slots;
-    auto n1 = find_best_bsgs_ratio(value, slots, log_bsgs_ratio);
+    auto n1 = n1_override == 0
+        ? find_best_bsgs_ratio(value, slots, log_bsgs_ratio)
+        : static_cast<int>(n1_override);
+    if (n1 <= 0 || n1 > slots || (n1 & (n1 - 1)) != 0)
+    {
+        throw std::invalid_argument(
+            "gen_linear_transform_bsgs: n1 override must be a power of two no greater than slots");
+    }
     auto parms_id_map = encoder.context().crt_context()->parms_id_map();
     auto parms_id = parms_id_map.at(level);
     plain_mat.n1 = n1;

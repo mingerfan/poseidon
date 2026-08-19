@@ -49,6 +49,23 @@ public:
     inline double sine_poly_b() const { return sine_poly_b_; }
     inline const Polynomial &sine_poly() const { return this->sine_poly_; }
 
+    /**
+     * Keep Chebyshev coefficients T_0 through T_max_degree. This is an
+     * explicit experimental approximation change, not a level/scale change.
+     */
+    void truncate_sine_polynomial(uint32_t max_degree)
+    {
+        auto &coefficients = sine_poly_.data();
+        const std::size_t requested_size =
+            static_cast<std::size_t>(max_degree) + 1;
+        if (coefficients.size() > requested_size)
+        {
+            coefficients.resize(requested_size);
+        }
+        sine_poly_.max_degree() = static_cast<int>(
+            coefficients.empty() ? 0 : coefficients.size() - 1);
+    }
+
     inline const Polynomial &arcsine_poly() const { return this->arcsine_poly_; }
 
     void set_level_start(uint32_t level) { level_start_ = level; }

@@ -64,7 +64,8 @@ public:
         const GpuConstRNSPolyView &switch_poly_ntt,
         const GpuLevelInfo &level_info,
         GpuHoistedDecomposition &destination,
-        GpuHybridKeySwitchWorkspace &workspace) const;
+        GpuHybridKeySwitchWorkspace &workspace,
+        const GpuWord *precomputed_source_intt_q = nullptr) const;
 
     /**
      * Standard-key staged path. The automorphism is applied to each already
@@ -81,7 +82,8 @@ public:
         std::size_t destination_batch,
         bool initialize,
         const GpuLevelInfo &level_info,
-        GpuHybridKeySwitchWorkspace &workspace) const;
+        GpuHybridKeySwitchWorkspace &workspace,
+        const GpuWord *lifted_c0_source_q = nullptr) const;
 
     /**
      * Apply HYBRID P->Q ModDown to one QP ciphertext batch. P INTT and its

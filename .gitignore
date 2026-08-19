@@ -9,6 +9,7 @@ build*/
 .claude/
 compile_commands.json
 stubs/
+Doc/*.pdf
 
 # Generated bootstrap benchmark and Nsight Systems results.
 bootstrap*.log

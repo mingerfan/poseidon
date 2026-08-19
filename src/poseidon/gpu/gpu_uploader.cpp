@@ -411,6 +411,67 @@ bool use_evalmod_lead_leaf_resplit()
            value != "FALSE";
 }
 
+bool use_evalmod_flat_bsgs_b8()
+{
+    const char *raw = std::getenv("POSEIDON_EVALMOD_FLAT_BSGS_B8");
+    if (raw == nullptr || *raw == '\0')
+    {
+        return false;
+    }
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
+bool use_evalmod_virtual_degree_bound()
+{
+    const char *raw = std::getenv("POSEIDON_EVALMOD_VIRTUAL_DEGREE_BOUND");
+    if (raw == nullptr || *raw == '\0')
+    {
+        return false;
+    }
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
+std::uint32_t evalmod_log_split_or(
+    std::uint32_t default_log_split,
+    std::uint32_t log_degree)
+{
+    const char *raw = std::getenv("POSEIDON_EVALMOD_LOG_SPLIT");
+    if (raw == nullptr || *raw == '\0')
+    {
+        return default_log_split;
+    }
+
+    const std::string value(raw);
+    std::size_t consumed = 0;
+    unsigned long parsed = 0;
+    try
+    {
+        parsed = std::stoul(value, &consumed, 10);
+    }
+    catch (const std::exception &)
+    {
+        throw std::invalid_argument(
+            "POSEIDON_EVALMOD_LOG_SPLIT must be an integer");
+    }
+    if (consumed != value.size() || parsed == 0 || parsed >= 31 ||
+        parsed > log_degree)
+    {
+        throw std::invalid_argument(
+            "POSEIDON_EVALMOD_LOG_SPLIT must be in [1, log_degree]");
+    }
+    return static_cast<std::uint32_t>(parsed);
+}
+
 std::unique_ptr<EvalModSplitNode> build_eval_mod_split_tree(
     Polynomial polynomial,
     std::uint32_t log_split,
@@ -480,6 +541,53 @@ std::unique_ptr<EvalModSplitNode> build_eval_mod_split_tree(
         log_split,
         log_degree,
         resplit_lead_leaf);
+    return node;
+}
+
+std::unique_ptr<EvalModSplitNode> build_eval_mod_flat_split_tree(
+    Polynomial polynomial,
+    std::uint32_t log_split)
+{
+    if (polynomial.data().empty())
+    {
+        throw std::invalid_argument("EvalMod flat polynomial is empty");
+    }
+    if (log_split >= 31)
+    {
+        throw std::invalid_argument("EvalMod flat split is too large");
+    }
+
+    auto node = std::make_unique<EvalModSplitNode>();
+    node->polynomial = std::move(polynomial);
+    const auto degree = static_cast<std::uint32_t>(node->polynomial.degree());
+    const std::uint32_t leaf_degree = 1U << log_split;
+    if (degree < leaf_degree)
+    {
+        return node;
+    }
+
+    /*
+     * Peel the highest complete baby-width block. For degree 58 and b=8,
+     * recursive calls split at T56,T48,...,T8 and create
+     * P=L0+L1*T8+...+L7*T56. split_coeffs applies the reflected lower-degree
+     * Chebyshev corrections, so this is algebraically the same polynomial.
+     */
+    const auto split_degree = (degree / leaf_degree) * leaf_degree;
+    if (split_degree == 0 || split_degree >
+        static_cast<std::uint32_t>(std::numeric_limits<int>::max()))
+    {
+        throw std::invalid_argument("EvalMod flat split degree is invalid");
+    }
+    auto split = split_coeffs(
+        node->polynomial,
+        static_cast<int>(split_degree));
+    node->split_degree = split_degree;
+    node->quotient = build_eval_mod_flat_split_tree(
+        std::move(std::get<0>(split)),
+        log_split);
+    node->remainder = build_eval_mod_flat_split_tree(
+        std::move(std::get<1>(split)),
+        log_split);
     return node;
 }
 
@@ -795,10 +903,19 @@ GpuLinearMatrixGroup GpuUploader::upload_linear_matrix_group(
 namespace
 {
 
-GpuPlaintextData upload_qp_plaintext_exact(
+struct ExactQpPlaintextHost
+{
+    parms_id_type parms_id{};
+    double scale = 1.0;
+    std::size_t degree = 0;
+    std::size_t q_count = 0;
+    std::size_t p_count = 0;
+    std::vector<std::uint64_t> values;
+};
+
+ExactQpPlaintextHost make_qp_plaintext_exact_host(
     const Plaintext &src,
-    const PoseidonContext &context,
-    int device_id)
+    const PoseidonContext &context)
 {
     if (!src.is_ntt_form())
     {
@@ -913,32 +1030,220 @@ GpuPlaintextData upload_qp_plaintext_exact(
             ntt_tables[p_table_offset + limb]);
     }
 
+    ExactQpPlaintextHost result;
+    result.parms_id = src.parms_id();
+    result.scale = src.scale();
+    result.degree = degree;
+    result.q_count = q_count;
+    result.p_count = p_count;
+    result.values = std::move(qp);
+    return result;
+}
+
+GpuPlaintextData upload_qp_plaintext_exact(
+    const Plaintext &src,
+    const PoseidonContext &context,
+    int device_id)
+{
+    auto host = make_qp_plaintext_exact_host(src, context);
     auto result = GpuPlaintextData::allocate_single_device(
-        degree,
-        q_count,
+        host.degree,
+        host.q_count,
         device_id,
-        p_count);
+        host.p_count);
     result.meta.parms_id = src.parms_id();
     result.meta.scale = src.scale();
     result.meta.is_ntt_form = true;
     copy_uint64_to_device_field(
-        qp.data(),
-        qp.size(),
+        host.values.data(),
+        host.values.size(),
         result.fields_.front(),
         "QP plaintext residue exceeds GpuWord");
+    return result;
+}
+
+std::vector<std::uint32_t> bit_reversed_indices(std::size_t degree)
+{
+    if (degree == 0 || (degree & (degree - 1)) != 0 ||
+        degree > std::numeric_limits<std::uint32_t>::max())
+    {
+        throw std::invalid_argument(
+            "compressed QP plaintext requires a power-of-two degree");
+    }
+    int log_degree = 0;
+    for (std::size_t value = degree; value > 1; value >>= 1)
+    {
+        ++log_degree;
+    }
+    std::vector<std::uint32_t> result(degree);
+    for (std::size_t coefficient = 0; coefficient < degree; ++coefficient)
+    {
+        result[coefficient] = util::reverse_bits(
+            static_cast<std::uint32_t>(coefficient),
+            log_degree);
+    }
+    return result;
+}
+
+bool exact_qp_has_period(
+    const ExactQpPlaintextHost &host,
+    std::size_t period,
+    const std::vector<std::uint32_t> &bit_reversed)
+{
+    if (period == 0 || period > host.degree ||
+        (period & (period - 1)) != 0 ||
+        bit_reversed.size() != host.degree)
+    {
+        return false;
+    }
+    std::vector<std::uint64_t> representatives(period);
+    std::vector<bool> initialized(period);
+    const std::size_t period_mask = period - 1;
+    for (std::size_t limb = 0;
+         limb < host.q_count + host.p_count;
+         ++limb)
+    {
+        std::fill(initialized.begin(), initialized.end(), false);
+        const auto *values = host.values.data() + limb * host.degree;
+        for (std::size_t coefficient = 0;
+             coefficient < host.degree;
+             ++coefficient)
+        {
+            const std::size_t compact_index =
+                period == host.degree
+                    ? coefficient
+                    : bit_reversed[coefficient] & period_mask;
+            if (!initialized[compact_index])
+            {
+                representatives[compact_index] = values[coefficient];
+                initialized[compact_index] = true;
+            }
+            else if (representatives[compact_index] != values[coefficient])
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+GpuCompressedPlaintextQP upload_qp_plaintext_exact_compressed(
+    const Plaintext &src,
+    const PoseidonContext &context,
+    int device_id)
+{
+    auto host = make_qp_plaintext_exact_host(src, context);
+    const auto bit_reversed = bit_reversed_indices(host.degree);
+    std::size_t period = 1;
+    while (period < host.degree &&
+           !exact_qp_has_period(host, period, bit_reversed))
+    {
+        period <<= 1;
+    }
+    if (!exact_qp_has_period(host, period, bit_reversed))
+    {
+        throw std::logic_error(
+            "compressed QP plaintext period did not reconstruct exactly");
+    }
+
+    const std::size_t limb_count = host.q_count + host.p_count;
+    std::vector<GpuWord> compact(limb_count * period);
+    std::vector<bool> initialized(period);
+    const std::size_t period_mask = period - 1;
+    for (std::size_t limb = 0; limb < limb_count; ++limb)
+    {
+        std::fill(initialized.begin(), initialized.end(), false);
+        for (std::size_t coefficient = 0;
+             coefficient < host.degree;
+             ++coefficient)
+        {
+            const std::size_t compact_index =
+                period == host.degree
+                    ? coefficient
+                    : bit_reversed[coefficient] & period_mask;
+            if (!initialized[compact_index])
+            {
+                const auto value =
+                    host.values[limb * host.degree + coefficient];
+                if (value > std::numeric_limits<GpuWord>::max())
+                {
+                    throw std::overflow_error(
+                        "compressed QP plaintext residue exceeds GpuWord");
+                }
+                compact[limb * period + compact_index] =
+                    static_cast<GpuWord>(value);
+                initialized[compact_index] = true;
+            }
+        }
+    }
+
+    GpuCompressedPlaintextQP result;
+    result.meta.parms_id = host.parms_id;
+    result.meta.scale = host.scale;
+    result.meta.is_ntt_form = true;
+    result.meta.degree = host.degree;
+    result.meta.q_count = host.q_count;
+    result.meta.p_count = host.p_count;
+    result.period = period;
+    result.residues.allocate(compact.size(), device_id);
+    result.residues.copy_from_host(compact.data(), compact.size());
+
+    // Compression is a setup-time, exact representation change.  Read the
+    // actual device allocation back once and require every Q/P residue to
+    // reconstruct bit-for-bit before the object can enter an experimental
+    // compute plan.
+    std::vector<GpuWord> device_compact(compact.size());
+    result.residues.copy_to_host(
+        device_compact.data(),
+        device_compact.size());
+    bool exact = true;
+    for (std::size_t limb = 0; limb < limb_count && exact; ++limb)
+    {
+        for (std::size_t coefficient = 0;
+             coefficient < host.degree;
+             ++coefficient)
+        {
+            const std::size_t compact_index =
+                period == host.degree
+                    ? coefficient
+                    : bit_reversed[coefficient] & period_mask;
+            if (static_cast<std::uint64_t>(
+                    device_compact[limb * period + compact_index]) !=
+                host.values[limb * host.degree + coefficient])
+            {
+                exact = false;
+                break;
+            }
+        }
+    }
+    result.exact_device_reconstruction = exact;
+    if (!exact)
+    {
+        throw std::runtime_error(
+            "compressed QP device round-trip was not bit-exact");
+    }
     return result;
 }
 
 GpuDoubleHoistMatrixPlan make_double_hoist_plan(
     const MatrixPlain &src,
     const std::map<int, GpuPlaintextData> &plain_vec_qp,
+    const std::map<int, GpuCompressedPlaintextQP> &compressed_plain_vec_qp,
     int device_id,
     std::uint32_t rescale_count)
 {
+    const bool use_compressed = !compressed_plain_vec_qp.empty();
+    if (use_compressed == !plain_vec_qp.empty())
+    {
+        throw std::invalid_argument(
+            "make_double_hoist_plan: exactly one plaintext layout is required");
+    }
+
     GpuDoubleHoistMatrixPlan plan;
     plan.log_slots = src.log_slots;
     plan.n1 = src.n1;
     plan.rescale_count = std::max(rescale_count, std::uint32_t{1});
+    plan.compressed_plaintexts = use_compressed;
 
     const auto [index, unused_giant_steps, baby_steps] =
         poseidon::bsgs_index(
@@ -961,6 +1266,7 @@ GpuDoubleHoistMatrixPlan make_double_hoist_plan(
 
     std::vector<const GpuWord *> q_ptrs;
     std::vector<const GpuWord *> p_ptrs;
+    std::vector<std::uint32_t> diagonal_periods;
     std::vector<std::uint32_t> term_baby_indices;
     for (const auto &group : index)
     {
@@ -970,24 +1276,64 @@ GpuDoubleHoistMatrixPlan make_double_hoist_plan(
         for (const int baby_step : group.second)
         {
             const int diagonal = group.first + baby_step;
-            const auto plain_it = plain_vec_qp.find(diagonal);
             const auto baby_it = baby_ids.find(baby_step);
-            if (plain_it == plain_vec_qp.end() || baby_it == baby_ids.end())
+            if (baby_it == baby_ids.end())
             {
                 throw std::logic_error(
                     "make_double_hoist_plan: incomplete BSGS schedule");
             }
-            const auto view = plain_it->second.make_const_view();
-            if (view.poly.shards.size() != 1 ||
-                view.meta.p_count == 0)
+
+            if (use_compressed)
             {
-                throw std::invalid_argument(
-                    "make_double_hoist_plan: QP diagonal must have one shard");
+                const auto plain_it =
+                    compressed_plain_vec_qp.find(diagonal);
+                if (plain_it == compressed_plain_vec_qp.end())
+                {
+                    throw std::logic_error(
+                        "make_double_hoist_plan: incomplete compressed BSGS schedule");
+                }
+                const auto &plain = plain_it->second;
+                if (!plain.exact_device_reconstruction ||
+                    plain.meta.p_count == 0 || plain.period == 0 ||
+                    plain.period > plain.meta.degree ||
+                    (plain.period & (plain.period - 1)) != 0 ||
+                    plain.period >
+                        std::numeric_limits<std::uint32_t>::max())
+                {
+                    throw std::invalid_argument(
+                        "make_double_hoist_plan: invalid compressed QP diagonal");
+                }
+                q_ptrs.push_back(plain.residues.data());
+                p_ptrs.push_back(
+                    plain.residues.data() +
+                    plain.meta.q_count * plain.period);
+                diagonal_periods.push_back(
+                    static_cast<std::uint32_t>(plain.period));
             }
-            const auto &shard = view.poly.shards.front();
-            q_ptrs.push_back(shard.ptr);
-            p_ptrs.push_back(
-                shard.ptr + view.meta.q_count * view.meta.degree);
+            else
+            {
+                const auto plain_it = plain_vec_qp.find(diagonal);
+                if (plain_it == plain_vec_qp.end())
+                {
+                    throw std::logic_error(
+                        "make_double_hoist_plan: incomplete BSGS schedule");
+                }
+                const auto view = plain_it->second.make_const_view();
+                if (view.poly.shards.size() != 1 ||
+                    view.meta.p_count == 0 ||
+                    view.meta.degree >
+                        std::numeric_limits<std::uint32_t>::max())
+                {
+                    throw std::invalid_argument(
+                        "make_double_hoist_plan: QP diagonal must have one shard");
+                }
+                const auto &shard = view.poly.shards.front();
+                q_ptrs.push_back(shard.ptr);
+                p_ptrs.push_back(
+                    shard.ptr + view.meta.q_count * view.meta.degree);
+                diagonal_periods.push_back(
+                    static_cast<std::uint32_t>(view.meta.degree));
+            }
             term_baby_indices.push_back(baby_it->second);
             plan.terms.push_back(GpuDoubleHoistTerm{
                 giant_index,
@@ -1006,12 +1352,16 @@ GpuDoubleHoistMatrixPlan make_double_hoist_plan(
 
     plan.diagonal_q_ptrs.allocate(q_ptrs.size(), device_id);
     plan.diagonal_p_ptrs.allocate(p_ptrs.size(), device_id);
+    plan.diagonal_periods.allocate(diagonal_periods.size(), device_id);
     plan.term_baby_indices.allocate(term_baby_indices.size(), device_id);
     plan.group_term_offsets_device.allocate(
         plan.group_term_offsets.size(),
         device_id);
     plan.diagonal_q_ptrs.copy_from_host(q_ptrs.data(), q_ptrs.size());
     plan.diagonal_p_ptrs.copy_from_host(p_ptrs.data(), p_ptrs.size());
+    plan.diagonal_periods.copy_from_host(
+        diagonal_periods.data(),
+        diagonal_periods.size());
     plan.term_baby_indices.copy_from_host(
         term_baby_indices.data(),
         term_baby_indices.size());
@@ -1027,7 +1377,8 @@ GpuLinearMatrixGroupQP GpuUploader::upload_linear_matrix_group_qp(
     const LinearMatrixGroup &src,
     const PoseidonContext &context,
     int device_id,
-    std::uint32_t rescale_count)
+    std::uint32_t rescale_count,
+    bool compress_plaintexts)
 {
     GpuLinearMatrixGroupQP result;
     result.rot_index() = src.rot_index();
@@ -1046,16 +1397,29 @@ GpuLinearMatrixGroupQP GpuUploader::upload_linear_matrix_group_qp(
         uploaded.rot_index = matrix.rot_index;
         for (const auto &entry : matrix.plain_vec)
         {
-            uploaded.plain_vec_qp.emplace(
-                entry.first,
-                upload_qp_plaintext_exact(
-                    entry.second,
-                    context,
-                    device_id));
+            if (compress_plaintexts)
+            {
+                uploaded.compressed_plain_vec_qp.emplace(
+                    entry.first,
+                    upload_qp_plaintext_exact_compressed(
+                        entry.second,
+                        context,
+                        device_id));
+            }
+            else
+            {
+                uploaded.plain_vec_qp.emplace(
+                    entry.first,
+                    upload_qp_plaintext_exact(
+                        entry.second,
+                        context,
+                        device_id));
+            }
         }
         uploaded.plan = make_double_hoist_plan(
             matrix,
             uploaded.plain_vec_qp,
+            uploaded.compressed_plain_vec_qp,
             device_id,
             rescale_count);
         result.data().push_back(std::move(uploaded));
@@ -1077,7 +1441,8 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
     double double_angle_base_override,
     double polynomial_output_scale_override,
     bool fuse_leaf_terms_before_rescale,
-    double input_scale)
+    double input_scale,
+    bool metadata_only)
 {
     const auto &context = encoder.context();
     const auto crt_context = context.crt_context();
@@ -1161,6 +1526,24 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
         [&](std::complex<double> value,
             std::size_t q_count,
             double scale) -> GpuPlaintextData {
+            if (metadata_only)
+            {
+                /*
+                 * Scale-chain search needs the exact EvalMod DAG and level
+                 * transitions, but none of the coefficient payloads.  Keep
+                 * enough metadata for diagnostics while avoiding N=65536
+                 * plaintext encoding and device allocation for every search
+                 * candidate.  The default runtime path never sets this flag.
+                 */
+                GpuPlaintextData result;
+                result.meta.parms_id = parms_id_for_q_count(q_count);
+                result.meta.scale = scale;
+                result.meta.is_ntt_form = true;
+                result.meta.degree =
+                    std::size_t{1} << context.parameters_literal()->log_n();
+                result.meta.q_count = q_count;
+                return result;
+            }
             Plaintext plaintext;
             try
             {
@@ -1271,14 +1654,29 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
         degree_bound <<= 1U;
         ++log_degree;
     }
-    const auto log_split =
+    const auto default_log_split =
         static_cast<std::uint32_t>(optimal_split(static_cast<int>(log_degree)));
+    const auto log_split = evalmod_log_split_or(default_log_split, log_degree);
+    const bool flat_bsgs_b8 = use_evalmod_flat_bsgs_b8();
+    const bool virtual_degree_bound =
+        dynamic_rescale && use_evalmod_virtual_degree_bound();
+    if (flat_bsgs_b8 &&
+        (log_split != 3 || !dynamic_rescale ||
+         sine_polynomial.basis_type() != Chebyshev ||
+         (polynomial_degree != 58 && polynomial_degree != 59)))
+    {
+        throw std::invalid_argument(
+            "POSEIDON_EVALMOD_FLAT_BSGS_B8 requires dynamic Chebyshev "
+            "degree 58/59 with log_split=3");
+    }
 
-    auto split_tree = build_eval_mod_split_tree(
-        sine_polynomial,
-        log_split,
-        log_degree,
-        !dynamic_rescale || use_evalmod_lead_leaf_resplit());
+    auto split_tree = flat_bsgs_b8
+        ? build_eval_mod_flat_split_tree(sine_polynomial, log_split)
+        : build_eval_mod_split_tree(
+              sine_polynomial,
+              log_split,
+              log_degree,
+              !dynamic_rescale || use_evalmod_lead_leaf_resplit());
     std::vector<EvalModSplitNode *> leaves;
     collect_eval_mod_leaves(*split_tree, leaves);
     if (leaves.empty() ||
@@ -1302,6 +1700,10 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
         sine_polynomial.basis_type() == Chebyshev
             ? GpuEvalModPolynomialBasis::Chebyshev
             : GpuEvalModPolynomialBasis::Monomial;
+    result.polynomial_degree = polynomial_degree;
+    result.polynomial_log_split = log_split;
+    result.polynomial_flat_bsgs = flat_bsgs_b8;
+    result.polynomial_degree_bound_virtual = virtual_degree_bound;
 
     std::uint32_t next_node_id = static_cast<std::uint32_t>(leaves.size());
     result.polynomial_result_node = schedule_eval_mod_combines(
@@ -1325,13 +1727,14 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
     {
         requested_degrees.push_back(combine.basis_degree);
     }
-    if (dynamic_rescale)
+    if (dynamic_rescale && !virtual_degree_bound)
     {
         requested_degrees.push_back(degree_bound);
     }
     result.basis_steps = make_gpu_eval_mod_basis_plan(
         result.polynomial_basis,
-        requested_degrees);
+        requested_degrees,
+        flat_bsgs_b8 ? (1U << log_split) : 0U);
 
     std::map<std::uint32_t, std::size_t> basis_q_counts;
     std::map<std::uint32_t, double> basis_scales;
@@ -1526,6 +1929,59 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
         step.output_scale = output_scale;
         basis_q_counts.emplace(step.output_degree, output_q_count);
         basis_scales.emplace(step.output_degree, output_scale);
+    }
+
+    std::size_t dynamic_root_anchor_q_count = 0;
+    if (dynamic_rescale)
+    {
+        const auto materialized_anchor = basis_q_counts.find(degree_bound);
+        if (materialized_anchor != basis_q_counts.end())
+        {
+            dynamic_root_anchor_q_count = materialized_anchor->second;
+        }
+        else
+        {
+            if (!virtual_degree_bound || degree_bound <= 1)
+            {
+                throw std::logic_error(
+                    "GpuUploader::upload_eval_mod_high_precision: dynamic polynomial root basis is absent");
+            }
+
+            /*
+             * The dynamic level planner historically used T_degree_bound as
+             * a depth sentinel, even when the polynomial split never consumes
+             * that basis. Reproduce only its q-count transition here. This
+             * preserves the existing level/scale schedule without emitting a
+             * GPU square, relinearization, correction, rescale, or buffer for
+             * the unused Chebyshev basis.
+             */
+            const auto parent_degree = degree_bound >> 1U;
+            const auto parent_q = basis_q_counts.find(parent_degree);
+            const auto parent_scale = basis_scales.find(parent_degree);
+            if (parent_q == basis_q_counts.end() ||
+                parent_scale == basis_scales.end())
+            {
+                throw std::logic_error(
+                    "GpuUploader::upload_eval_mod_high_precision: virtual root parent basis is absent");
+            }
+            const double virtual_pre_rescale_scale =
+                parent_scale->second * parent_scale->second;
+            require_valid_scale(
+                virtual_pre_rescale_scale,
+                "virtual degree-bound pre-rescale scale");
+            const auto virtual_rescale_count = choose_dynamic_rescale(
+                parent_q->second,
+                virtual_pre_rescale_scale);
+            if (parent_q->second <= virtual_rescale_count)
+            {
+                throw std::invalid_argument(
+                    "GpuUploader::upload_eval_mod_high_precision: virtual degree-bound exhausts modulus chain");
+            }
+            dynamic_root_anchor_q_count =
+                parent_q->second - virtual_rescale_count;
+        }
+        result.polynomial_root_anchor_q_count =
+            dynamic_root_anchor_q_count;
     }
 
     struct LeafTermSpec
@@ -1992,22 +2448,24 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
 
     if (dynamic_rescale)
     {
-        const auto basis64_iter = basis_q_counts.find(degree_bound);
-        if (basis64_iter == basis_q_counts.end())
+        if (dynamic_root_anchor_q_count == 0 ||
+            dynamic_root_anchor_q_count - 1 >
+                std::numeric_limits<std::uint32_t>::max())
         {
-            throw std::logic_error(
-                "GpuUploader::upload_eval_mod_high_precision: dynamic polynomial root basis is absent");
+            throw std::invalid_argument(
+                "GpuUploader::upload_eval_mod_high_precision: invalid dynamic root anchor level");
         }
         auto root_node =
             plan_dynamic_node(
                 *split_tree,
-                static_cast<std::uint32_t>(basis64_iter->second - 1),
+                static_cast<std::uint32_t>(dynamic_root_anchor_q_count - 1),
                 target_scale);
         if (!root_node.valid)
         {
             throw std::invalid_argument(
                 "GpuUploader::upload_eval_mod_high_precision: dynamic polynomial produced no output");
         }
+
         const auto final_rescale_count =
             choose_dynamic_rescale_allow_zero(
                 root_node.q_count,

@@ -39,10 +39,12 @@
 #include <map>
 #include <numeric>
 #include <optional>
+#include <random>
 #include <set>
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 namespace
@@ -116,6 +118,39 @@ bool env_flag_enabled_or(const char *name, bool fallback)
            text != "off" &&
            text != "false" &&
            text != "FALSE";
+}
+
+std::optional<std::vector<std::uint32_t>> env_u32_list(const char *name)
+{
+    const char *value = std::getenv(name);
+    if (value == nullptr || value[0] == '\0')
+    {
+        return std::nullopt;
+    }
+
+    std::vector<std::uint32_t> result;
+    std::stringstream stream(value);
+    std::string token;
+    while (std::getline(stream, token, ','))
+    {
+        if (token.empty())
+        {
+            throw std::invalid_argument(
+                std::string(name) + " contains an empty entry");
+        }
+        const auto parsed = std::stoul(token);
+        if (parsed > std::numeric_limits<std::uint32_t>::max())
+        {
+            throw std::invalid_argument(
+                std::string(name) + " contains an out-of-range entry");
+        }
+        result.push_back(static_cast<std::uint32_t>(parsed));
+    }
+    if (result.empty())
+    {
+        throw std::invalid_argument(std::string(name) + " is empty");
+    }
+    return result;
 }
 
 int log2_degree(std::size_t degree)
@@ -383,18 +418,24 @@ poseidon::LinearMatrixGroup make_coeff_to_slot_matrix_group(
     std::uint32_t step,
     double input_scale = 0.0,
     double min_scale = 0.0,
-    double value_normalization = 1.0)
+    double value_normalization = 1.0,
+    const std::vector<std::uint32_t> &layer_groups = {},
+    std::uint32_t direct_layer_threshold = 0)
 {
+    const std::size_t matrix_depth =
+        layer_groups.empty() ? 3 : layer_groups.size();
     poseidon::HomomorphicDFTMatrixLiteral matrix_literal(
         poseidon::encode,
         context.parameters_literal()->log_n(),
         context.parameters_literal()->log_slots(),
         static_cast<std::uint32_t>(context.parameters_literal()->q().size() - 1),
-        std::vector<std::uint32_t>(3, 1),
+        std::vector<std::uint32_t>(matrix_depth, 1),
         /*repack_imag_to_real=*/true,
         scaling,
         /*bit_reversed=*/false,
-        log_bsgs_ratio);
+        log_bsgs_ratio,
+        layer_groups,
+        direct_layer_threshold);
 
     poseidon::LinearMatrixGroup matrix_group;
     if (min_scale > 0.0)
@@ -535,6 +576,278 @@ std::string format_context_level(
     return "not-in-context-map";
 }
 
+struct PlaintextCompressionStats
+{
+    std::size_t diagonal_count = 0;
+    std::size_t full_q_words = 0;
+    std::size_t compressed_q_words = 0;
+    std::size_t full_qp_words = 0;
+    std::size_t compressed_qp_words = 0;
+    std::map<std::size_t, std::size_t> compression_histogram;
+    bool exact_q_reconstruction = true;
+    bool exact_qp_device_reconstruction = true;
+};
+
+bool plaintext_has_bit_reversed_period(
+    const poseidon::Plaintext &plaintext,
+    std::size_t degree,
+    std::size_t period,
+    const std::vector<std::uint32_t> &bit_reversed_indices)
+{
+    if (!plaintext.is_ntt_form() || degree == 0 || period == 0 ||
+        period > degree || degree % period != 0 ||
+        plaintext.coeff_count() % degree != 0 ||
+        bit_reversed_indices.size() != degree)
+    {
+        return false;
+    }
+
+    const std::size_t q_count = plaintext.coeff_count() / degree;
+    std::vector<std::uint64_t> representatives(period);
+    std::vector<bool> initialized(period);
+    const std::size_t mask = period - 1;
+    for (std::size_t limb = 0; limb < q_count; ++limb)
+    {
+        std::fill(initialized.begin(), initialized.end(), false);
+        const auto *values = plaintext.data() + limb * degree;
+        for (std::size_t coefficient = 0;
+             coefficient < degree;
+             ++coefficient)
+        {
+            const std::size_t compact_index =
+                bit_reversed_indices[coefficient] & mask;
+            if (!initialized[compact_index])
+            {
+                representatives[compact_index] = values[coefficient];
+                initialized[compact_index] = true;
+            }
+            else if (representatives[compact_index] != values[coefficient])
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+std::size_t plaintext_bit_reversed_period(
+    const poseidon::Plaintext &plaintext,
+    std::size_t degree,
+    const std::vector<std::uint32_t> &bit_reversed_indices)
+{
+    for (std::size_t period = 1; period <= degree; period <<= 1)
+    {
+        if (plaintext_has_bit_reversed_period(
+                plaintext,
+                degree,
+                period,
+                bit_reversed_indices))
+        {
+            return period;
+        }
+    }
+    return degree;
+}
+
+PlaintextCompressionStats analyze_plaintext_compression(
+    const std::string &label,
+    const poseidon::LinearMatrixGroup &matrix_group,
+    std::size_t degree,
+    std::size_t p_count)
+{
+    if (degree == 0 || (degree & (degree - 1)) != 0)
+    {
+        throw std::invalid_argument(
+            "plaintext compression probe requires a power-of-two degree");
+    }
+    int log_degree = 0;
+    for (std::size_t value = degree; value > 1; value >>= 1)
+    {
+        ++log_degree;
+    }
+    std::vector<std::uint32_t> bit_reversed_indices(degree);
+    for (std::size_t coefficient = 0; coefficient < degree; ++coefficient)
+    {
+        bit_reversed_indices[coefficient] =
+            poseidon::util::reverse_bits(
+                static_cast<std::uint32_t>(coefficient),
+                log_degree);
+    }
+
+    PlaintextCompressionStats total;
+    std::cout << "\n[WHET plaintext compression probe: " << label << "]\n";
+    for (std::size_t stage = 0;
+         stage < matrix_group.data().size();
+         ++stage)
+    {
+        PlaintextCompressionStats stage_stats;
+        const auto &matrix = matrix_group.data()[stage];
+        for (const auto &entry : matrix.plain_vec)
+        {
+            const auto &plaintext = entry.second;
+            if (plaintext.coeff_count() % degree != 0)
+            {
+                throw std::runtime_error(
+                    "plaintext compression probe found an invalid plaintext shape");
+            }
+            const std::size_t q_count =
+                plaintext.coeff_count() / degree;
+            const std::size_t period = plaintext_bit_reversed_period(
+                plaintext,
+                degree,
+                bit_reversed_indices);
+            const bool exact = plaintext_has_bit_reversed_period(
+                plaintext,
+                degree,
+                period,
+                bit_reversed_indices);
+            const std::size_t compression = degree / period;
+
+            ++stage_stats.diagonal_count;
+            stage_stats.full_q_words += q_count * degree;
+            stage_stats.compressed_q_words += q_count * period;
+            stage_stats.full_qp_words += (q_count + p_count) * degree;
+            stage_stats.compressed_qp_words +=
+                (q_count + p_count) * period;
+            ++stage_stats.compression_histogram[compression];
+            stage_stats.exact_q_reconstruction &= exact;
+        }
+
+        total.diagonal_count += stage_stats.diagonal_count;
+        total.full_q_words += stage_stats.full_q_words;
+        total.compressed_q_words += stage_stats.compressed_q_words;
+        total.full_qp_words += stage_stats.full_qp_words;
+        total.compressed_qp_words += stage_stats.compressed_qp_words;
+        total.exact_q_reconstruction &= stage_stats.exact_q_reconstruction;
+        for (const auto &entry : stage_stats.compression_histogram)
+        {
+            total.compression_histogram[entry.first] += entry.second;
+        }
+
+        const double qp_ratio = stage_stats.compressed_qp_words == 0
+            ? 1.0
+            : static_cast<double>(stage_stats.full_qp_words) /
+                  static_cast<double>(stage_stats.compressed_qp_words);
+        std::cout << "stage=" << stage
+                  << " q=" << (matrix.level + 1)
+                  << " diagonals=" << stage_stats.diagonal_count
+                  << " QP compression=" << qp_ratio << "x"
+                  << " exact_Q="
+                  << (stage_stats.exact_q_reconstruction ? "YES" : "NO")
+                  << " factors=";
+        bool first = true;
+        for (const auto &entry : stage_stats.compression_histogram)
+        {
+            if (!first)
+            {
+                std::cout << ",";
+            }
+            first = false;
+            std::cout << entry.first << "x:" << entry.second;
+        }
+        std::cout << "\n";
+    }
+
+    const double gpu_word_mib =
+        static_cast<double>(sizeof(poseidon::gpu::GpuWord)) /
+        (1024.0 * 1024.0);
+    const double total_ratio = total.compressed_qp_words == 0
+        ? 1.0
+        : static_cast<double>(total.full_qp_words) /
+              static_cast<double>(total.compressed_qp_words);
+    std::cout << "total diagonals       = " << total.diagonal_count << "\n"
+              << "full QP storage MiB   = "
+              << total.full_qp_words * gpu_word_mib << "\n"
+              << "compact QP storage MiB= "
+              << total.compressed_qp_words * gpu_word_mib << "\n"
+              << "aggregate compression = " << total_ratio << "x\n"
+              << "exact Q reconstruction= "
+              << (total.exact_q_reconstruction ? "YES" : "NO") << "\n";
+    return total;
+}
+
+PlaintextCompressionStats analyze_uploaded_compressed_qp(
+    const std::string &label,
+    const poseidon::gpu::GpuLinearMatrixGroupQP &matrix_group)
+{
+    PlaintextCompressionStats total;
+    for (const auto &matrix : matrix_group.data())
+    {
+        if (!matrix.plain_vec_qp.empty() ||
+            !matrix.plan.compressed_plaintexts ||
+            matrix.plan.terms.size() !=
+                matrix.compressed_plain_vec_qp.size() ||
+            matrix.plan.diagonal_periods.size() !=
+                matrix.plan.terms.size())
+        {
+            throw std::runtime_error(
+                "compressed QP upload produced an inconsistent matrix plan");
+        }
+
+        std::vector<std::uint32_t> device_periods(
+            matrix.plan.diagonal_periods.size());
+        matrix.plan.diagonal_periods.copy_to_host(
+            device_periods.data(),
+            device_periods.size());
+
+        std::map<std::size_t, std::size_t> expected_period_counts;
+        for (const auto &entry : matrix.compressed_plain_vec_qp)
+        {
+            const auto &plaintext = entry.second;
+            if (plaintext.meta.degree == 0 || plaintext.period == 0 ||
+                plaintext.meta.p_count == 0 ||
+                plaintext.period > plaintext.meta.degree ||
+                (plaintext.period & (plaintext.period - 1)) != 0)
+            {
+                throw std::runtime_error(
+                    "compressed QP upload produced invalid plaintext metadata");
+            }
+            ++total.diagonal_count;
+            total.full_q_words +=
+                plaintext.meta.q_count * plaintext.meta.degree;
+            total.compressed_q_words +=
+                plaintext.meta.q_count * plaintext.period;
+            total.full_qp_words += plaintext.full_word_count();
+            total.compressed_qp_words += plaintext.compact_word_count();
+            ++total.compression_histogram[
+                plaintext.meta.degree / plaintext.period];
+            ++expected_period_counts[plaintext.period];
+            total.exact_qp_device_reconstruction &=
+                plaintext.exact_device_reconstruction;
+        }
+
+        std::map<std::size_t, std::size_t> device_period_counts;
+        for (const auto period : device_periods)
+        {
+            ++device_period_counts[period];
+        }
+        if (device_period_counts != expected_period_counts)
+        {
+            throw std::runtime_error(
+                "compressed QP plan periods do not match device plaintexts");
+        }
+    }
+
+    const double gpu_word_mib =
+        static_cast<double>(sizeof(poseidon::gpu::GpuWord)) /
+        (1024.0 * 1024.0);
+    const double ratio = total.compressed_qp_words == 0
+        ? 1.0
+        : static_cast<double>(total.full_qp_words) /
+              static_cast<double>(total.compressed_qp_words);
+    std::cout << "\n[Exact compact QP device upload: " << label << "]\n"
+              << "diagonals             = " << total.diagonal_count << "\n"
+              << "full QP storage MiB   = "
+              << total.full_qp_words * gpu_word_mib << "\n"
+              << "compact QP storage MiB= "
+              << total.compressed_qp_words * gpu_word_mib << "\n"
+              << "aggregate compression = " << ratio << "x\n"
+              << "exact device Q+P      = "
+              << (total.exact_qp_device_reconstruction ? "YES" : "NO")
+              << "\n";
+    return total;
+}
+
 void print_matrix_group_levels(
     const poseidon::PoseidonContext &context,
     const poseidon::LinearMatrixGroup &matrix_group,
@@ -667,11 +980,17 @@ void cpu_dft_rescale(
     const poseidon::LinearMatrixGroup &matrix_group,
     poseidon::Ciphertext &result,
     const poseidon::EvaluatorCkksBase &evaluator,
-    const poseidon::GaloisKeys &galois_keys)
+    const poseidon::GaloisKeys &galois_keys,
+    std::vector<poseidon::Ciphertext> *stage_trace = nullptr)
 {
     if (matrix_group.data().empty())
     {
         throw std::invalid_argument("cpu_dft_rescale: empty matrix group");
+    }
+    if (stage_trace)
+    {
+        stage_trace->clear();
+        stage_trace->reserve(matrix_group.data().size());
     }
 
     cpu_multiply_by_diag_matrix_bsgs_rescale(
@@ -682,6 +1001,10 @@ void cpu_dft_rescale(
         galois_keys,
         std::max(matrix_group.step(), std::uint32_t{1}),
         matrix_group.rescale_min_scale());
+    if (stage_trace)
+    {
+        stage_trace->push_back(result);
+    }
 
     for (std::size_t i = 1; i < matrix_group.data().size(); ++i)
     {
@@ -695,6 +1018,10 @@ void cpu_dft_rescale(
             std::max(matrix_group.step(), std::uint32_t{1}),
             matrix_group.rescale_min_scale());
         result = std::move(next);
+        if (stage_trace)
+        {
+            stage_trace->push_back(result);
+        }
     }
 }
 
@@ -864,6 +1191,65 @@ RawComparison compare_ciphertexts(
         expected.poly_modulus_degree() == actual.poly_modulus_degree() &&
         expected.coeff_modulus_size() == actual.coeff_modulus_size() &&
         expected.scale() == actual.scale();
+    return result;
+}
+
+RawComparison compare_device_words_exact(
+    const poseidon::gpu::DeviceVector<poseidon::gpu::GpuWord> &expected,
+    const poseidon::gpu::DeviceVector<poseidon::gpu::GpuWord> &actual,
+    std::size_t active_words,
+    const std::string &label,
+    std::size_t max_printed_mismatches = 8)
+{
+    RawComparison result;
+    result.expected_words = active_words;
+    result.actual_words = active_words;
+    if (expected.size() < active_words || actual.size() < active_words)
+    {
+        result.actual_words = std::min(expected.size(), actual.size());
+        return result;
+    }
+
+    constexpr std::size_t kChunkWords = 1U << 20;
+    std::vector<poseidon::gpu::GpuWord> expected_host(kChunkWords);
+    std::vector<poseidon::gpu::GpuWord> actual_host(kChunkWords);
+    for (std::size_t offset = 0; offset < active_words;
+         offset += kChunkWords)
+    {
+        const std::size_t count =
+            std::min(kChunkWords, active_words - offset);
+        const auto expected_status = cudaMemcpy(
+            expected_host.data(),
+            expected.data() + offset,
+            count * sizeof(poseidon::gpu::GpuWord),
+            cudaMemcpyDeviceToHost);
+        const auto actual_status = cudaMemcpy(
+            actual_host.data(),
+            actual.data() + offset,
+            count * sizeof(poseidon::gpu::GpuWord),
+            cudaMemcpyDeviceToHost);
+        if (expected_status != cudaSuccess || actual_status != cudaSuccess)
+        {
+            throw std::runtime_error(
+                label + ": device QP comparison copy failed");
+        }
+        for (std::size_t index = 0; index < count; ++index)
+        {
+            if (expected_host[index] != actual_host[index])
+            {
+                if (result.mismatch_count < max_printed_mismatches)
+                {
+                    std::cout
+                        << label << " mismatch[" << result.mismatch_count
+                        << "] index=" << (offset + index)
+                        << " full=" << expected_host[index]
+                        << " compressed=" << actual_host[index] << "\n";
+                }
+                ++result.mismatch_count;
+            }
+        }
+    }
+    result.equal = result.mismatch_count == 0;
     return result;
 }
 
@@ -1097,6 +1483,68 @@ ApproxComparison compare_approx(
         static_cast<double>(squared_error_sum / expected.size()));
     result.equal = result.max_abs_error <= tolerance;
     return result;
+}
+
+std::complex<double> evaluate_chebyshev_series(
+    const poseidon::Polynomial &polynomial,
+    const std::complex<double> &input)
+{
+    const auto &coefficients = polynomial.data();
+    if (coefficients.empty())
+    {
+        return {};
+    }
+
+    std::complex<double> value = coefficients[0];
+    if (coefficients.size() == 1)
+    {
+        return value;
+    }
+
+    std::complex<double> previous = 1.0;
+    std::complex<double> current = input;
+    value += coefficients[1] * current;
+    for (std::size_t degree = 2; degree < coefficients.size(); ++degree)
+    {
+        const auto next = 2.0 * input * current - previous;
+        value += coefficients[degree] * next;
+        previous = current;
+        current = next;
+    }
+    return value;
+}
+
+std::complex<double> evaluate_evalmod_polynomial_plain(
+    const poseidon::EvalModPoly &eval_mod_poly,
+    const std::complex<double> &input)
+{
+    const double interval_width =
+        eval_mod_poly.sine_poly_b() - eval_mod_poly.sine_poly_a();
+    const double offset =
+        -0.5 / (eval_mod_poly.sc_fac() * interval_width);
+    auto value = evaluate_chebyshev_series(
+        eval_mod_poly.sine_poly(),
+        input + offset);
+
+    double double_angle_constant = eval_mod_poly.sqrt_2pi();
+    for (std::uint32_t index = 0;
+         index < eval_mod_poly.double_angle();
+         ++index)
+    {
+        double_angle_constant *= double_angle_constant;
+        value = 2.0 * value * value - double_angle_constant;
+    }
+    return value;
+}
+
+std::complex<double> evaluate_evalmod_ideal_sine(
+    const poseidon::EvalModPoly &eval_mod_poly,
+    const std::complex<double> &input)
+{
+    const double pi = std::acos(-1.0);
+    const double total_k = eval_mod_poly.k() * eval_mod_poly.sc_fac();
+    return eval_mod_poly.q_diff() / (2.0 * pi) *
+           std::sin(2.0 * pi * total_k * input);
 }
 
 ApproxComparison compare_decrypted_ciphertexts(
@@ -1901,6 +2349,17 @@ int main()
             env_size_or("POSEIDON_BOOTSTRAP_EVALMOD_ARCSINE_DEGREE", 0));
         const std::uint32_t evalmod_sine_degree = static_cast<std::uint32_t>(
             env_size_or("POSEIDON_BOOTSTRAP_EVALMOD_SINE_DEGREE", 30));
+        const std::uint32_t evalmod_generation_degree =
+            static_cast<std::uint32_t>(env_size_or(
+                "POSEIDON_BOOTSTRAP_EVALMOD_GENERATION_DEGREE",
+                evalmod_sine_degree));
+        const std::optional<std::uint32_t> evalmod_truncate_degree =
+            std::getenv("POSEIDON_BOOTSTRAP_EVALMOD_TRUNCATE_DEGREE")
+                ? std::optional<std::uint32_t>(
+                      static_cast<std::uint32_t>(env_size_or(
+                          "POSEIDON_BOOTSTRAP_EVALMOD_TRUNCATE_DEGREE",
+                          evalmod_sine_degree)))
+                : std::nullopt;
         const double correctness_tolerance = env_double_or(
             "POSEIDON_BOOTSTRAP_CORRECTNESS_TOLERANCE", 1.0e-3);
         const bool detailed_diagnostics =
@@ -1919,10 +2378,40 @@ int main()
             env_flag_enabled("POSEIDON_BOOTSTRAP_SETUP_ONLY");
         const bool scale_planner_only =
             env_flag_enabled("POSEIDON_BOOTSTRAP_SCALE_PLANNER_ONLY");
+        const bool slim_scale_chain_plan_only =
+            env_flag_enabled(
+                "POSEIDON_BOOTSTRAP_SLIM_SCALE_CHAIN_PLAN_ONLY");
+        const bool slim_global_scale_chain_search =
+            env_flag_enabled(
+                "POSEIDON_BOOTSTRAP_SLIM_GLOBAL_SCALE_CHAIN_SEARCH");
         const bool c2s_only =
             env_flag_enabled("POSEIDON_BOOTSTRAP_C2S_ONLY");
         const bool evalmod_only =
             env_flag_enabled("POSEIDON_BOOTSTRAP_EVALMOD_ONLY");
+        const bool slim_stc_first_probe =
+            env_flag_enabled("POSEIDON_BOOTSTRAP_SLIM_STC_FIRST_PROBE");
+        const bool slim_stc_modraise_probe =
+            env_flag_enabled("POSEIDON_BOOTSTRAP_SLIM_STC_MODRAISE_PROBE");
+        const bool slim_stc_c2s_probe =
+            env_flag_enabled("POSEIDON_BOOTSTRAP_SLIM_STC_C2S_PROBE");
+        const bool slim_stc_evalmod_probe =
+            env_flag_enabled("POSEIDON_BOOTSTRAP_SLIM_STC_EVALMOD_PROBE");
+        const bool slim_c2s_5433 =
+            env_flag_enabled("POSEIDON_BOOTSTRAP_SLIM_C2S_5433");
+        const bool plaintext_compression_probe =
+            env_flag_enabled(
+                "POSEIDON_BOOTSTRAP_PLAINTEXT_COMPRESSION_PROBE");
+        const bool compressed_qp_mac_probe =
+            env_flag_enabled(
+                "POSEIDON_BOOTSTRAP_COMPRESSED_QP_MAC_PROBE");
+        const bool slim_stc_run_c2s =
+            slim_stc_c2s_probe || slim_stc_evalmod_probe ||
+            plaintext_compression_probe || compressed_qp_mac_probe ||
+            slim_c2s_5433;
+        const bool slim_stc_run_modraise =
+            slim_stc_modraise_probe || slim_stc_run_c2s;
+        const std::size_t slim_stc_input_q_count =
+            env_size_or("POSEIDON_BOOTSTRAP_SLIM_STC_INPUT_Q_COUNT", 6);
         const std::size_t evalmod_stage_profile_iterations =
             env_size_or(
                 "POSEIDON_BOOTSTRAP_STAGE_PROFILE_ITERATIONS",
@@ -1962,9 +2451,20 @@ int main()
 
         const bool mixed_45_q_chain =
             env_size_or("POSEIDON_BOOTSTRAP_MIXED_45_Q_CHAIN", 1) != 0;
-        const auto log_q_chain = mixed_45_q_chain
+        auto log_q_chain = mixed_45_q_chain
             ? make_mixed_45_bootstrap_q_chain(q_count, log_q)
             : std::vector<std::uint32_t>(q_count, log_q);
+        if (const auto override_chain =
+                env_u32_list("POSEIDON_BOOTSTRAP_Q_BIT_CHAIN"))
+        {
+            if (override_chain->size() != q_count)
+            {
+                throw std::invalid_argument(
+                    "POSEIDON_BOOTSTRAP_Q_BIT_CHAIN must contain exactly " +
+                    std::to_string(q_count) + " comma-separated entries");
+            }
+            log_q_chain = *override_chain;
+        }
         auto parms = make_test_parameters(
             degree,
             log_q_chain,
@@ -1992,7 +2492,23 @@ int main()
             evalmod_double_angle,
             evalmod_k,
             evalmod_arcsine_degree,
-            evalmod_sine_degree);
+            evalmod_generation_degree);
+        if (evalmod_truncate_degree.has_value())
+        {
+            if (*evalmod_truncate_degree != evalmod_sine_degree)
+            {
+                throw std::invalid_argument(
+                    "EvalMod truncate degree must match the requested sine degree");
+            }
+            eval_mod_poly.truncate_sine_polynomial(
+                *evalmod_truncate_degree);
+            if (eval_mod_poly.sine_poly().degree() !=
+                *evalmod_truncate_degree)
+            {
+                throw std::runtime_error(
+                    "EvalMod truncated polynomial has an unexpected effective degree");
+            }
+        }
         if (!std::isfinite(c2s_scaling))
         {
             c2s_scaling =
@@ -2004,6 +2520,535 @@ int main()
             s2c_scaling =
                 context.parameters_literal()->scale() /
                 (eval_mod_poly.scaling_factor() / eval_mod_poly.message_ratio());
+        }
+
+        if (slim_global_scale_chain_search)
+        {
+            if (!evalmod_dynamic_rescale ||
+                !env_flag_enabled("POSEIDON_BOOTSTRAP_SLIM_C2S_5433"))
+            {
+                throw std::invalid_argument(
+                    "POSEIDON_BOOTSTRAP_SLIM_GLOBAL_SCALE_CHAIN_SEARCH "
+                    "requires dynamic rescale and "
+                    "POSEIDON_BOOTSTRAP_SLIM_C2S_5433=1");
+            }
+
+            struct ScaleChainCandidate
+            {
+                std::vector<std::uint32_t> bits;
+                std::vector<std::uint32_t> c2s_drops;
+                std::vector<double> c2s_stage_log_scales;
+                std::size_t c2s_q_count = 0;
+                double c2s_log_scale = 0.0;
+                std::size_t eval_q_count = 0;
+                double eval_log_scale = 0.0;
+                double score = -std::numeric_limits<double>::infinity();
+            };
+
+            const std::size_t search_budget = env_size_or(
+                "POSEIDON_BOOTSTRAP_SLIM_GLOBAL_SEARCH_BUDGET", 320);
+            const std::uint32_t search_min_bits =
+                static_cast<std::uint32_t>(env_size_or(
+                    "POSEIDON_BOOTSTRAP_SLIM_GLOBAL_SEARCH_MIN_BITS", 20));
+            const std::uint32_t search_max_bits =
+                static_cast<std::uint32_t>(env_size_or(
+                    "POSEIDON_BOOTSTRAP_SLIM_GLOBAL_SEARCH_MAX_BITS", 32));
+            const std::size_t search_first_index = env_size_or(
+                "POSEIDON_BOOTSTRAP_SLIM_GLOBAL_SEARCH_FIRST_INDEX", 13);
+            if (search_budget == 0 || search_min_bits < 20 ||
+                search_min_bits > search_max_bits || search_max_bits > 32 ||
+                search_first_index >= q_count)
+            {
+                throw std::invalid_argument(
+                    "invalid slim global scale-chain search bounds");
+            }
+
+            auto chain_key = [](const std::vector<std::uint32_t> &bits) {
+                std::string key;
+                key.reserve(bits.size() * 3);
+                for (const auto bit : bits)
+                {
+                    key.append(std::to_string(bit));
+                    key.push_back(',');
+                }
+                return key;
+            };
+
+            auto evaluate_candidate =
+                [&](const std::vector<std::uint32_t> &candidate_bits)
+                    -> std::optional<ScaleChainCandidate> {
+                try
+                {
+                    auto candidate_parms = make_test_parameters(
+                        degree,
+                        candidate_bits,
+                        p_count,
+                        log_p,
+                        log_scale,
+                        q0_level);
+                    auto candidate_context =
+                        poseidon::PoseidonFactory::get_instance()
+                            ->create_poseidon_context(candidate_parms);
+                    poseidon::CKKSEncoder candidate_encoder(
+                        candidate_context);
+                    const auto first_context_data =
+                        candidate_context.crt_context()
+                            ->first_context_data();
+                    if (!first_context_data ||
+                        first_context_data->parms().q().size() != q_count)
+                    {
+                        return std::nullopt;
+                    }
+
+                    std::vector<std::uint64_t> active_moduli;
+                    active_moduli.reserve(q_count);
+                    for (const auto &modulus :
+                         first_context_data->parms().q())
+                    {
+                        active_moduli.push_back(modulus.value());
+                    }
+
+                    ScaleChainCandidate candidate;
+                    candidate.bits = candidate_bits;
+                    candidate.c2s_q_count = q_count;
+                    double c2s_scale = evalmod_scale;
+                    for (std::size_t stage = 0; stage < 4; ++stage)
+                    {
+                        const auto plan =
+                            poseidon::gpu::plan_gpu_dynamic_rescale(
+                                c2s_scale * evalmod_scale,
+                                evalmod_scale,
+                                std::span<const std::uint64_t>(
+                                    active_moduli.data(),
+                                    candidate.c2s_q_count),
+                                /*require_rescale=*/true);
+                        c2s_scale = plan.output_scale;
+                        candidate.c2s_q_count = plan.output_q_count;
+                        candidate.c2s_drops.push_back(
+                            plan.rescale_count);
+                        candidate.c2s_stage_log_scales.push_back(
+                            std::log2(plan.output_scale));
+                    }
+                    candidate.c2s_log_scale = std::log2(c2s_scale);
+
+                    // This is the production scale interval for the reordered
+                    // C2S path: target/2 through target times one remaining
+                    // <=32-bit prime. Keep the explicit 44-bit lower guard
+                    // used by the correctness tests and reject pathological
+                    // chains before building the EvalMod metadata DAG.
+                    for (const double stage_log_scale :
+                         candidate.c2s_stage_log_scales)
+                    {
+                        if (stage_log_scale < 44.0 ||
+                            stage_log_scale >= 77.0)
+                        {
+                            return std::nullopt;
+                        }
+                    }
+
+                    const auto c2s_output_parms_id =
+                        candidate_context.crt_context()
+                            ->parms_id_map()
+                            .at(static_cast<std::uint32_t>(
+                                candidate.c2s_q_count - 1));
+                    const auto c2s_output_context =
+                        candidate_context.crt_context()->get_context_data(
+                            c2s_output_parms_id);
+                    if (!c2s_output_context)
+                    {
+                        return std::nullopt;
+                    }
+                    eval_mod_poly.set_level_start(
+                        static_cast<std::uint32_t>(
+                            c2s_output_context->level()));
+                    const auto evalmod_plan =
+                        poseidon::gpu::GpuUploader::
+                            upload_eval_mod_high_precision(
+                                eval_mod_poly,
+                                candidate_encoder,
+                                c2s_output_parms_id,
+                                device_id,
+                                nullptr,
+                                poseidon::parms_id_zero,
+                                evalmod_rescale_count,
+                                &eval_mod_poly.sine_poly(),
+                                /*include_input_offset=*/true,
+                                std::numeric_limits<std::uint32_t>::max(),
+                                std::numeric_limits<double>::quiet_NaN(),
+                                std::numeric_limits<double>::quiet_NaN(),
+                                /*fuse_leaf_terms_before_rescale=*/true,
+                                c2s_scale,
+                                /*metadata_only=*/true);
+                    candidate.eval_q_count = evalmod_plan.output_q_count;
+                    candidate.eval_log_scale =
+                        std::log2(evalmod_plan.output_scale);
+                    if (!std::isfinite(candidate.eval_log_scale) ||
+                        candidate.eval_log_scale < 44.0 ||
+                        candidate.eval_log_scale >= 77.0)
+                    {
+                        return std::nullopt;
+                    }
+
+                    // Remaining Q limbs dominate. Within the same q-count,
+                    // prefer the native EvalMod target 2^45, then a C2S output
+                    // near 2^45. A tiny penalty discourages gratuitously tiny
+                    // physical primes when scale behavior is otherwise equal.
+                    double small_prime_penalty = 0.0;
+                    for (std::size_t index = search_first_index;
+                         index < candidate.bits.size();
+                         ++index)
+                    {
+                        small_prime_penalty +=
+                            static_cast<double>(
+                                search_max_bits - candidate.bits[index]);
+                    }
+                    candidate.score =
+                        10000.0 *
+                            static_cast<double>(candidate.eval_q_count) -
+                        20.0 * std::abs(candidate.eval_log_scale - 45.0) -
+                        0.5 * std::abs(candidate.c2s_log_scale - 45.0) -
+                        0.01 * small_prime_penalty;
+                    return candidate;
+                }
+                catch (const std::exception &)
+                {
+                    return std::nullopt;
+                }
+            };
+
+            std::vector<ScaleChainCandidate> population;
+            std::unordered_set<std::string> visited;
+            std::mt19937 generator(static_cast<std::uint32_t>(env_size_or(
+                "POSEIDON_BOOTSTRAP_SLIM_GLOBAL_SEARCH_SEED",
+                0x5343414cU)));
+            std::uniform_int_distribution<std::uint32_t> random_bit(
+                search_min_bits, search_max_bits);
+            std::uniform_int_distribution<std::size_t> random_index(
+                search_first_index, q_count - 1);
+
+            auto try_candidate =
+                [&](const std::vector<std::uint32_t> &candidate_bits) {
+                if (visited.size() >= search_budget ||
+                    !visited.emplace(chain_key(candidate_bits)).second)
+                {
+                    return;
+                }
+                if (auto candidate = evaluate_candidate(candidate_bits))
+                {
+                    population.push_back(std::move(*candidate));
+                }
+                if (visited.size() % 25 == 0)
+                {
+                    std::cout
+                        << "[scale-search] tried=" << visited.size()
+                        << " valid=" << population.size() << "\n"
+                        << std::flush;
+                }
+            };
+
+            try_candidate(log_q_chain);
+            auto all_max_chain = log_q_chain;
+            std::fill(
+                all_max_chain.begin() +
+                    static_cast<std::ptrdiff_t>(search_first_index),
+                all_max_chain.end(),
+                search_max_bits);
+            try_candidate(all_max_chain);
+
+            // Seed the population with the previously observed 34->14
+            // transition (low q[28]) and with broad random chains. The later
+            // evolutionary rounds search all q[14..33], not just the former
+            // two hand-tuned boundary primes. q[13] is included because the
+            // dynamic leaf/combine alignment can use the highest retained
+            // prime even when the final result keeps q[0..13].
+            auto low_q28_chain = log_q_chain;
+            if (q_count > 13)
+            {
+                low_q28_chain[13] = search_max_bits;
+            }
+            if (q_count > 28)
+            {
+                low_q28_chain[28] = std::max(search_min_bits, 22U);
+                try_candidate(low_q28_chain);
+            }
+            const std::size_t initial_random_budget = env_size_or(
+                "POSEIDON_BOOTSTRAP_SLIM_GLOBAL_SEARCH_INITIAL_RANDOM", 12);
+            while (visited.size() < std::min<std::size_t>(
+                       search_budget, initial_random_budget))
+            {
+                auto random_chain = all_max_chain;
+                const std::size_t changes =
+                    2 + static_cast<std::size_t>(generator() % 9U);
+                for (std::size_t change = 0; change < changes; ++change)
+                {
+                    random_chain[random_index(generator)] =
+                        random_bit(generator);
+                }
+                try_candidate(random_chain);
+            }
+
+            auto sort_population = [&]() {
+                std::sort(
+                    population.begin(),
+                    population.end(),
+                    [](const auto &lhs, const auto &rhs) {
+                        return lhs.score > rhs.score;
+                    });
+            };
+            sort_population();
+            while (visited.size() < search_budget && !population.empty())
+            {
+                sort_population();
+                const std::size_t parent_count =
+                    std::min<std::size_t>(8, population.size());
+                const auto parent = population[
+                    static_cast<std::size_t>(generator()) % parent_count];
+                auto child = parent.bits;
+                const std::size_t changes =
+                    1 + static_cast<std::size_t>(generator() % 4U);
+                for (std::size_t change = 0; change < changes; ++change)
+                {
+                    const auto index = random_index(generator);
+                    if ((generator() & 1U) != 0U)
+                    {
+                        const int delta =
+                            static_cast<int>(generator() % 7U) - 3;
+                        child[index] = static_cast<std::uint32_t>(
+                            std::clamp(
+                                static_cast<int>(child[index]) + delta,
+                                static_cast<int>(search_min_bits),
+                                static_cast<int>(search_max_bits)));
+                    }
+                    else
+                    {
+                        child[index] = random_bit(generator);
+                    }
+                }
+                try_candidate(child);
+            }
+            sort_population();
+
+            std::cout
+                << "\n[Slim post-ModRaise C2S+EvalMod global scale search]\n"
+                << "searched q indexes = " << search_first_index << ".."
+                << (q_count - 1) << "\n"
+                << "candidate bit range= " << search_min_bits << ".."
+                << search_max_bits << "\n"
+                << "objective          = maximize remaining Q, then "
+                   "minimize |final_log_scale-45|\n"
+                << "tried/valid        = " << visited.size() << "/"
+                << population.size() << "\n";
+            const std::size_t report_count =
+                std::min<std::size_t>(12, population.size());
+            for (std::size_t rank = 0; rank < report_count; ++rank)
+            {
+                const auto &candidate = population[rank];
+                std::cout
+                    << "SEARCH_RESULT rank=" << (rank + 1)
+                    << " c2s_q=" << candidate.c2s_q_count
+                    << " c2s_log_scale=" << std::setprecision(12)
+                    << candidate.c2s_log_scale
+                    << " eval_q=" << candidate.eval_q_count
+                    << " eval_log_scale=" << candidate.eval_log_scale
+                    << " dist40="
+                    << std::abs(candidate.eval_log_scale - 40.0)
+                    << " dist45="
+                    << std::abs(candidate.eval_log_scale - 45.0)
+                    << " c2s_drops=";
+                for (std::size_t index = 0;
+                     index < candidate.c2s_drops.size();
+                     ++index)
+                {
+                    if (index != 0)
+                        std::cout << ',';
+                    std::cout << candidate.c2s_drops[index];
+                }
+                std::cout << " chain=";
+                for (std::size_t index = 0;
+                     index < candidate.bits.size();
+                     ++index)
+                {
+                    if (index != 0)
+                        std::cout << ',';
+                    std::cout << candidate.bits[index];
+                }
+                std::cout << "\n";
+            }
+            return population.empty() ? EXIT_FAILURE : EXIT_SUCCESS;
+        }
+
+        if (slim_scale_chain_plan_only)
+        {
+            if (!evalmod_dynamic_rescale ||
+                !env_flag_enabled("POSEIDON_BOOTSTRAP_SLIM_C2S_5433"))
+            {
+                throw std::invalid_argument(
+                    "POSEIDON_BOOTSTRAP_SLIM_SCALE_CHAIN_PLAN_ONLY requires "
+                    "dynamic rescale and POSEIDON_BOOTSTRAP_SLIM_C2S_5433=1");
+            }
+
+            const auto first_context_data =
+                context.crt_context()->first_context_data();
+            if (!first_context_data ||
+                first_context_data->parms().q().size() != q_count)
+            {
+                throw std::runtime_error(
+                    "scale-chain planner could not load the full Q chain");
+            }
+            std::vector<std::uint64_t> active_moduli;
+            active_moduli.reserve(q_count);
+            for (const auto &modulus : first_context_data->parms().q())
+            {
+                active_moduli.push_back(modulus.value());
+            }
+
+            std::size_t c2s_q_count = q_count;
+            double c2s_scale = evalmod_scale;
+            std::vector<std::uint32_t> c2s_drops;
+            std::vector<double> c2s_output_scales;
+            c2s_drops.reserve(4);
+            c2s_output_scales.reserve(4);
+            for (std::size_t stage = 0; stage < 4; ++stage)
+            {
+                const double pre_rescale_scale =
+                    c2s_scale * evalmod_scale;
+                const auto plan = poseidon::gpu::plan_gpu_dynamic_rescale(
+                    pre_rescale_scale,
+                    evalmod_scale,
+                    std::span<const std::uint64_t>(
+                        active_moduli.data(),
+                        c2s_q_count),
+                    /*require_rescale=*/true);
+                c2s_drops.push_back(plan.rescale_count);
+                c2s_output_scales.push_back(plan.output_scale);
+                c2s_q_count = plan.output_q_count;
+                c2s_scale = plan.output_scale;
+            }
+
+            const auto c2s_output_parms_id =
+                context.crt_context()->parms_id_map().at(
+                    static_cast<std::uint32_t>(c2s_q_count - 1));
+            const auto c2s_output_context =
+                context.crt_context()->get_context_data(
+                    c2s_output_parms_id);
+            if (!c2s_output_context)
+            {
+                throw std::runtime_error(
+                    "scale-chain planner C2S output level is absent");
+            }
+            eval_mod_poly.set_level_start(
+                static_cast<std::uint32_t>(c2s_output_context->level()));
+            const auto evalmod_plan =
+                poseidon::gpu::GpuUploader::upload_eval_mod_high_precision(
+                    eval_mod_poly,
+                    encoder,
+                    c2s_output_parms_id,
+                    device_id,
+                    nullptr,
+                    poseidon::parms_id_zero,
+                    evalmod_rescale_count,
+                    nullptr,
+                    /*include_input_offset=*/true,
+                    std::numeric_limits<std::uint32_t>::max(),
+                    std::numeric_limits<double>::quiet_NaN(),
+                    std::numeric_limits<double>::quiet_NaN(),
+                    /*fuse_leaf_terms_before_rescale=*/true,
+                    c2s_scale,
+                    /*metadata_only=*/true);
+
+            std::cout << "[Slim C2S+EvalMod scale-chain plan]\n";
+            std::cout << "q bit chain       = ";
+            for (std::size_t index = 0; index < log_q_chain.size(); ++index)
+            {
+                if (index != 0)
+                    std::cout << ',';
+                std::cout << log_q_chain[index];
+            }
+            std::cout << "\nC2S drops         = ";
+            for (std::size_t stage = 0; stage < c2s_drops.size(); ++stage)
+            {
+                if (stage != 0)
+                    std::cout << ',';
+                std::cout << c2s_drops[stage];
+            }
+            std::cout << "\nC2S stage scales  = ";
+            for (std::size_t stage = 0;
+                 stage < c2s_output_scales.size();
+                 ++stage)
+            {
+                if (stage != 0)
+                    std::cout << ',';
+                std::cout << std::log2(c2s_output_scales[stage]);
+            }
+            std::cout
+                << "\nC2S q/output scale= " << c2s_q_count
+                << "/2^" << std::log2(c2s_scale)
+                << "\nEvalMod q/scale   = " << c2s_q_count << "->"
+                << evalmod_plan.output_q_count << "/2^"
+                << std::log2(evalmod_plan.output_scale)
+                << "\nTotal Q consumed  = "
+                << (q_count - evalmod_plan.output_q_count) << "\n";
+            std::cout << "Eval basis plan   = ";
+            for (std::size_t index = 0;
+                 index < evalmod_plan.basis_steps.size();
+                 ++index)
+            {
+                const auto &step = evalmod_plan.basis_steps[index];
+                if (index != 0)
+                    std::cout << ";";
+                std::cout << "T" << step.output_degree
+                          << ":q" << step.correction_plaintext.meta.q_count
+                          << "-" << step.rescale_count
+                          << "@" << std::log2(step.output_scale);
+            }
+            std::cout << "\nEval leaf plan    = ";
+            for (std::size_t index = 0;
+                 index < evalmod_plan.polynomial_blocks.size();
+                 ++index)
+            {
+                const auto &block = evalmod_plan.polynomial_blocks[index];
+                if (index != 0)
+                    std::cout << ";";
+                std::cout << index << ":q" << block.output_q_count
+                          << "-" << block.rescale_count
+                          << "@" << std::log2(block.output_scale);
+            }
+            std::cout << "\nEval combine plan = ";
+            for (std::size_t index = 0;
+                 index < evalmod_plan.polynomial_combine_steps.size();
+                 ++index)
+            {
+                const auto &step =
+                    evalmod_plan.polynomial_combine_steps[index];
+                if (index != 0)
+                    std::cout << ";";
+                std::cout << index << ":T" << step.basis_degree
+                          << "/q" << step.product_q_count
+                          << "-" << step.quotient_rescale_count
+                          << "-" << step.remainder_rescale_count
+                          << "->q" << step.output_q_count
+                          << "@" << std::log2(step.output_scale);
+            }
+            std::cout << "\nEval double-angle= ";
+            for (std::size_t index = 0;
+                 index < evalmod_plan.double_angle_rescale_counts.size();
+                 ++index)
+            {
+                if (index != 0)
+                    std::cout << ',';
+                std::cout << evalmod_plan.double_angle_rescale_counts[index];
+            }
+            std::cout
+                << "\nPLAN_RESULT c2s_q=" << c2s_q_count
+                << " c2s_log_scale=" << std::setprecision(12)
+                << std::log2(c2s_scale)
+                << " eval_q=" << evalmod_plan.output_q_count
+                << " eval_log_scale="
+                << std::log2(evalmod_plan.output_scale)
+                << " total_consumed="
+                << (q_count - evalmod_plan.output_q_count)
+                << "\n";
+            return EXIT_SUCCESS;
         }
 
         poseidon::KeyGenerator keygen(context);
@@ -2047,6 +3092,10 @@ int main()
         std::cout << "message_ratio   = " << bootstrap_ratio << "\n";
         std::cout << "evalmod_scale   = 2^" << evalmod_log_scale << "\n";
         std::cout << "evalmod_degree  = " << evalmod_sine_degree << "\n";
+        std::cout << "generation_degree= "
+                  << evalmod_generation_degree << "\n";
+        std::cout << "effective_degree= "
+                  << eval_mod_poly.sine_poly().degree() << "\n";
         std::cout << "evalmod_rescale = " << evalmod_rescale_count
                   << " physical prime(s) per logical step\n";
         std::cout << "evalmod_dynamic = "
@@ -2100,6 +3149,25 @@ int main()
                   << (c2s_only ? "YES" : "NO") << "\n";
         std::cout << "evalmod_only    = "
                   << (evalmod_only ? "YES" : "NO") << "\n";
+        std::cout << "slim_stc_probe  = "
+                  << (slim_stc_first_probe ? "YES" : "NO") << "\n";
+        std::cout << "slim_stc_raise  = "
+                  << (slim_stc_modraise_probe ? "YES" : "NO") << "\n";
+        std::cout << "slim_stc_c2s    = "
+                  << (slim_stc_c2s_probe ? "YES" : "NO") << "\n";
+        std::cout << "slim_c2s_5433   = "
+                  << (slim_c2s_5433 ? "YES" : "NO") << "\n";
+        std::cout << "slim_stc_evalmod= "
+                  << (slim_stc_evalmod_probe ? "YES" : "NO") << "\n";
+        std::cout << "ptxt_compress   = "
+                  << (plaintext_compression_probe ? "YES" : "NO") << "\n";
+        std::cout << "compact_qp_mac  = "
+                  << (compressed_qp_mac_probe ? "YES" : "NO") << "\n";
+        if (slim_stc_first_probe || slim_stc_run_modraise)
+        {
+            std::cout << "slim_stc_input_q= "
+                      << slim_stc_input_q_count << "\n";
+        }
 
         poseidon::gpu::GpuParameterData gpu_params(context, device_id);
         poseidon::gpu::GpuEvaluator gpu_evaluator(gpu_params);
@@ -2114,6 +3182,1882 @@ int main()
                 device_id);
             std::cout << "\n[OK] Stage 1 GS-compatible dynamic scale planner "
                          "and GPU rescale tests passed\n";
+            return EXIT_SUCCESS;
+        }
+        if (slim_stc_first_probe || slim_stc_run_modraise)
+        {
+            if (!evalmod_dynamic_rescale)
+            {
+                throw std::invalid_argument(
+                    "POSEIDON_BOOTSTRAP_SLIM_STC_FIRST_PROBE requires "
+                    "POSEIDON_BOOTSTRAP_EVALMOD_DYNAMIC_RESCALE=1");
+            }
+            if (slim_stc_input_q_count <= 1 ||
+                slim_stc_input_q_count > q_count)
+            {
+                throw std::invalid_argument(
+                    "POSEIDON_BOOTSTRAP_SLIM_STC_INPUT_Q_COUNT must be in "
+                    "[2, POSEIDON_BOOTSTRAP_Q_COUNT]");
+            }
+
+            const auto slim_input_parms_id =
+                context.crt_context()->parms_id_map().at(
+                    static_cast<std::uint32_t>(
+                        slim_stc_input_q_count - 1));
+            poseidon::Ciphertext cpu_slim_input;
+            cpu_evaluator->drop_modulus(
+                source,
+                cpu_slim_input,
+                slim_input_parms_id);
+            cpu_slim_input.scale() = source.scale();
+
+            // StC-first changes only the position in the modulus chain. Keep
+            // the production DFT scale policy unchanged: every plaintext
+            // matrix uses EvalMod's 2^45 working scale and dynamic rescale
+            // keeps each physical result above the 2^44 half-target floor.
+            const double slim_plaintext_scale = evalmod_scale;
+            const double slim_min_scale = evalmod_scale;
+            // In the production order, the trailing StC normalization
+            // includes message_ratio because it follows EvalMod.  Once StC
+            // is moved before ModRaise, that factor would be applied a second
+            // time by the final EvalMod output multiplication.  Keep the
+            // reordered transform pair normalized independently of the
+            // message ratio.  The explicit override is retained for focused
+            // experiments without changing the production path.
+            const double slim_stc_scaling = env_double_or(
+                "POSEIDON_BOOTSTRAP_SLIM_STC_SCALING",
+                1.0);
+            const double slim_semantic_target_tolerance = env_double_or(
+                "POSEIDON_BOOTSTRAP_SLIM_STC_TARGET_TOLERANCE",
+                1.0e-4);
+            const double slim_semantic_minimum_tolerance = env_double_or(
+                "POSEIDON_BOOTSTRAP_SLIM_STC_MINIMUM_TOLERANCE",
+                1.0e-3);
+            if (!(slim_semantic_target_tolerance > 0.0) ||
+                !(slim_semantic_minimum_tolerance >=
+                  slim_semantic_target_tolerance))
+            {
+                throw std::invalid_argument(
+                    "slim StC semantic tolerances must satisfy "
+                    "0 < target <= minimum");
+            }
+
+            std::cout
+                << "\n[Slim StC-first phase 1 probe]\n"
+                << "Creating only the low-level StC matrices/keys; "
+                   "full bootstrap remains unchanged.\n"
+                << "[phase] create low-level StC matrix group"
+                << " input_q=" << slim_stc_input_q_count
+                << " input_scale=2^" << std::log2(cpu_slim_input.scale())
+                << " plaintext_scale=2^"
+                << std::log2(slim_plaintext_scale)
+                << " min_scale=2^" << std::log2(slim_min_scale)
+                << " normalization=" << slim_stc_scaling
+                << "\n" << std::flush;
+
+            auto slim_stc_matrix_group =
+                make_slot_to_coeff_matrix_group(
+                    context,
+                    encoder,
+                    static_cast<std::uint32_t>(
+                        slim_stc_input_q_count - 1),
+                    slim_stc_scaling,
+                    s2c_log_bsgs_ratio,
+                    s2c_step,
+                    cpu_slim_input.scale(),
+                    slim_min_scale);
+            const std::size_t slim_reference_input_q_count =
+                env_size_or(
+                    "POSEIDON_BOOTSTRAP_SLIM_STC_REFERENCE_Q_COUNT",
+                    15);
+            if (slim_reference_input_q_count <= slim_stc_input_q_count ||
+                slim_reference_input_q_count > q_count)
+            {
+                throw std::invalid_argument(
+                    "POSEIDON_BOOTSTRAP_SLIM_STC_REFERENCE_Q_COUNT must be "
+                    "greater than the low-level input and no greater than Q");
+            }
+            poseidon::Ciphertext cpu_slim_reference_input;
+            cpu_evaluator->drop_modulus(
+                source,
+                cpu_slim_reference_input,
+                context.crt_context()->parms_id_map().at(
+                    static_cast<std::uint32_t>(
+                        slim_reference_input_q_count - 1)));
+            cpu_slim_reference_input.scale() = source.scale();
+            auto slim_stc_reference_matrix_group =
+                make_slot_to_coeff_matrix_group(
+                    context,
+                    encoder,
+                    static_cast<std::uint32_t>(
+                        slim_reference_input_q_count - 1),
+                    slim_stc_scaling,
+                    s2c_log_bsgs_ratio,
+                    s2c_step,
+                    cpu_slim_reference_input.scale(),
+                    evalmod_scale);
+            poseidon::LinearMatrixGroup slim_c2s_matrix_group;
+            if (slim_stc_run_c2s)
+            {
+                std::cout
+                    << "[phase] create post-ModRaise C2S matrix group"
+                    << " input_q=" << q_count
+                    << " logical_input_scale=2^"
+                    << std::log2(evalmod_scale)
+                    << " plaintext_scale=2^"
+                    << std::log2(evalmod_scale)
+                    << " min_scale=2^"
+                    << std::log2(evalmod_scale) << "\n" << std::flush;
+                slim_c2s_matrix_group = make_coeff_to_slot_matrix_group(
+                    context,
+                    encoder,
+                    c2s_scaling,
+                    c2s_log_bsgs_ratio,
+                    c2s_step,
+                    evalmod_scale,
+                    evalmod_scale,
+                    1.0,
+                    slim_c2s_5433
+                        ? std::vector<std::uint32_t>{5, 4, 3, 3}
+                        : std::vector<std::uint32_t>{},
+                    slim_c2s_5433 ? 3 : 0);
+                if (slim_c2s_5433)
+                {
+                    const std::vector<std::uint32_t> layer_groups{
+                        5, 4, 3, 3};
+                    const std::vector<std::size_t> expected_diagonals{
+                        32, 31, 15, 15};
+                    const int slots =
+                        1 << context.parameters_literal()->log_slots();
+                    if (slim_c2s_matrix_group.data().size() !=
+                        layer_groups.size())
+                    {
+                        throw std::runtime_error(
+                            "slim C2S [5,4,3,3] matrix count mismatch");
+                    }
+                    std::cout
+                        << "[Slim C2S 5+4+3+3 matrix plan]\n";
+                    for (std::size_t stage = 0;
+                         stage < layer_groups.size();
+                         ++stage)
+                    {
+                        const auto &matrix =
+                            slim_c2s_matrix_group.data()[stage];
+                        const auto [index, unused_giant_steps, baby_steps] =
+                            poseidon::bsgs_index(
+                                matrix.plain_vec,
+                                slots,
+                                static_cast<int>(matrix.n1));
+                        (void)unused_giant_steps;
+                        const bool direct = layer_groups[stage] <= 3;
+                        std::cout
+                            << "stage=" << stage
+                            << " fused_layers=" << layer_groups[stage]
+                            << " diagonals=" << matrix.plain_vec.size()
+                            << " n1=" << matrix.n1
+                            << " baby=" << baby_steps.size()
+                            << " giant=" << index.size()
+                            << " mode=" << (direct ? "direct" : "BSGS")
+                            << "\n" << std::flush;
+                        if (matrix.plain_vec.size() !=
+                                expected_diagonals[stage] ||
+                            direct != (matrix.n1 ==
+                                       static_cast<std::uint32_t>(slots)) ||
+                            (direct && index.size() != 1))
+                        {
+                            throw std::runtime_error(
+                                "slim C2S [5,4,3,3] stage plan mismatch");
+                        }
+                    }
+                }
+            }
+            poseidon::gpu::GpuLinearMatrixGroupQP compact_probe_stc;
+            poseidon::gpu::GpuLinearMatrixGroupQP compact_probe_c2s;
+            if (plaintext_compression_probe || compressed_qp_mac_probe)
+            {
+                const auto stc_stats = analyze_plaintext_compression(
+                    "front-loaded StC",
+                    slim_stc_matrix_group,
+                    degree,
+                    p_count);
+                const auto c2s_stats = analyze_plaintext_compression(
+                    "post-ModRaise C2S",
+                    slim_c2s_matrix_group,
+                    degree,
+                    p_count);
+                if (!stc_stats.exact_q_reconstruction ||
+                    !c2s_stats.exact_q_reconstruction)
+                {
+                    std::cerr
+                        << "[FAILED] WHET plaintext compression probe did "
+                           "not reconstruct every Q plaintext exactly\n";
+                    return EXIT_FAILURE;
+                }
+
+                std::cout
+                    << "\n[phase] construct compact QP device plaintexts "
+                       "and verify every residue\n"
+                    << std::flush;
+                compact_probe_stc =
+                    poseidon::gpu::GpuUploader::
+                        upload_linear_matrix_group_qp(
+                            slim_stc_matrix_group,
+                            context,
+                            device_id,
+                            std::max(
+                                slim_stc_matrix_group.step(),
+                                std::uint32_t{1}),
+                            true);
+                compact_probe_c2s =
+                    poseidon::gpu::GpuUploader::
+                        upload_linear_matrix_group_qp(
+                            slim_c2s_matrix_group,
+                            context,
+                            device_id,
+                            std::max(
+                                slim_c2s_matrix_group.step(),
+                                std::uint32_t{1}),
+                            true);
+                const auto actual_stc_stats =
+                    analyze_uploaded_compressed_qp(
+                        "front-loaded StC",
+                        compact_probe_stc);
+                const auto actual_c2s_stats =
+                    analyze_uploaded_compressed_qp(
+                        "post-ModRaise C2S",
+                        compact_probe_c2s);
+                if (!actual_stc_stats.exact_qp_device_reconstruction ||
+                    !actual_c2s_stats.exact_qp_device_reconstruction)
+                {
+                    std::cerr
+                        << "[FAILED] compact QP device plaintexts did not "
+                           "reconstruct every Q/P residue exactly\n";
+                    return EXIT_FAILURE;
+                }
+                const auto estimated_words =
+                    stc_stats.compressed_qp_words +
+                    c2s_stats.compressed_qp_words;
+                const auto actual_words =
+                    actual_stc_stats.compressed_qp_words +
+                    actual_c2s_stats.compressed_qp_words;
+                std::cout
+                    << "[OK] WHET bit-reversed periodicity reconstructed "
+                       "all encoded Q plaintexts exactly. Compact device "
+                       "storage also reconstructed every Q residue and all "
+                    << p_count
+                    << " P residues bit-for-bit. Q-only period estimate "
+                       "matches exact QP upload="
+                    << (estimated_words == actual_words ? "YES" : "NO")
+                    << (compressed_qp_mac_probe
+                            ? ". Proceeding to the isolated compressed QP "
+                              "MAC compute probe.\n"
+                            : ". No compressed plaintext entered a compute "
+                              "kernel.\n");
+                if (!compressed_qp_mac_probe)
+                {
+                    return EXIT_SUCCESS;
+                }
+            }
+            const auto slim_rescale_counts =
+                dft_stage_rescale_counts(slim_stc_matrix_group);
+            const std::size_t slim_consumed_q = std::accumulate(
+                slim_rescale_counts.begin(),
+                slim_rescale_counts.end(),
+                std::size_t{0});
+            if (slim_consumed_q >= slim_stc_input_q_count)
+            {
+                throw std::runtime_error(
+                    "low-level StC consumes all available Q moduli");
+            }
+            const std::size_t slim_output_q_count =
+                slim_stc_input_q_count - slim_consumed_q;
+            const std::size_t modraise_base_q_count =
+                static_cast<std::size_t>(q0_level) + 1;
+            if (slim_output_q_count != modraise_base_q_count)
+            {
+                throw std::runtime_error(
+                    "phase-1 low-level StC probe must finish at the configured "
+                    "ModRaise base q_count; "
+                    "adjust POSEIDON_BOOTSTRAP_SLIM_STC_INPUT_Q_COUNT");
+            }
+
+            std::vector<const poseidon::LinearMatrixGroup *>
+                slim_matrix_groups_for_keys{
+                    &slim_stc_matrix_group,
+                    &slim_stc_reference_matrix_group};
+            if (slim_stc_run_c2s)
+            {
+                slim_matrix_groups_for_keys.push_back(
+                    &slim_c2s_matrix_group);
+            }
+            auto slim_galois_keys = make_galois_keys_for_matrix_groups(
+                context,
+                keygen,
+                slim_matrix_groups_for_keys);
+            const auto slim_mode =
+                poseidon::gpu::gpu_linear_transform_mode_from_environment(
+                    poseidon::gpu::GpuLinearTransformMode::ClassicBsgs);
+            if (compressed_qp_mac_probe &&
+                slim_mode !=
+                    poseidon::gpu::GpuLinearTransformMode::DoubleHoistBsgs)
+            {
+                throw std::invalid_argument(
+                    "POSEIDON_BOOTSTRAP_COMPRESSED_QP_MAC_PROBE requires "
+                    "POSEIDON_GPU_LINEAR_TRANSFORM_MODE=double_hoist");
+            }
+            auto gpu_slim_galois_keys =
+                slim_mode ==
+                        poseidon::gpu::GpuLinearTransformMode::DoubleHoistBsgs
+                    ? poseidon::gpu::GpuUploader::
+                          upload_double_hoist_galois_keys(
+                              slim_galois_keys,
+                              device_id)
+                    : poseidon::gpu::GpuUploader::upload_galois_keys(
+                          slim_galois_keys,
+                          device_id);
+            const auto slim_key_q_counts = required_dft_key_q_counts(
+                slim_stc_input_q_count,
+                slim_stc_matrix_group.data().size(),
+                slim_stc_matrix_group.step(),
+                false,
+                slim_rescale_counts);
+            auto slim_all_key_q_counts = slim_key_q_counts;
+            if (slim_stc_run_c2s)
+            {
+                const auto slim_c2s_rescale_counts =
+                    dft_stage_rescale_counts(slim_c2s_matrix_group);
+                const auto slim_c2s_key_q_counts =
+                    required_dft_key_q_counts(
+                        q_count,
+                        slim_c2s_matrix_group.data().size(),
+                        slim_c2s_matrix_group.step(),
+                        true,
+                        slim_c2s_rescale_counts);
+                slim_all_key_q_counts = merge_q_counts(
+                    slim_all_key_q_counts,
+                    slim_c2s_key_q_counts);
+            }
+            poseidon::gpu::GpuUploader::prepare_key_views_for_q_counts(
+                gpu_slim_galois_keys,
+                slim_all_key_q_counts);
+
+            poseidon::gpu::GpuLinearMatrixGroup gpu_slim_matrix;
+            poseidon::gpu::GpuLinearMatrixGroupQP gpu_slim_matrix_qp;
+            if (slim_mode ==
+                poseidon::gpu::GpuLinearTransformMode::DoubleHoistBsgs)
+            {
+                gpu_slim_matrix_qp =
+                    poseidon::gpu::GpuUploader::upload_linear_matrix_group_qp(
+                        slim_stc_matrix_group,
+                        context,
+                        device_id,
+                        std::max(
+                            slim_stc_matrix_group.step(),
+                            std::uint32_t{1}));
+            }
+            else
+            {
+                gpu_slim_matrix =
+                    poseidon::gpu::GpuUploader::upload_linear_matrix_group(
+                        slim_stc_matrix_group,
+                        device_id);
+            }
+            poseidon::gpu::GpuLinearMatrixGroup gpu_slim_c2s_matrix;
+            poseidon::gpu::GpuLinearMatrixGroupQP gpu_slim_c2s_matrix_qp;
+            if (slim_stc_run_c2s)
+            {
+                if (slim_mode ==
+                    poseidon::gpu::GpuLinearTransformMode::DoubleHoistBsgs)
+                {
+                    gpu_slim_c2s_matrix_qp =
+                        poseidon::gpu::GpuUploader::
+                            upload_linear_matrix_group_qp(
+                                slim_c2s_matrix_group,
+                                context,
+                                device_id,
+                                std::max(
+                                    slim_c2s_matrix_group.step(),
+                                    std::uint32_t{1}));
+                }
+                else
+                {
+                    gpu_slim_c2s_matrix =
+                        poseidon::gpu::GpuUploader::
+                            upload_linear_matrix_group(
+                                slim_c2s_matrix_group,
+                                device_id);
+                }
+            }
+
+            poseidon::Ciphertext cpu_slim_output;
+            std::vector<poseidon::Ciphertext> cpu_slim_stage_trace;
+            std::cout << "[phase] CPU low-level StC correctness\n"
+                      << std::flush;
+            cpu_dft_rescale(
+                cpu_slim_input,
+                slim_stc_matrix_group,
+                cpu_slim_output,
+                *cpu_evaluator,
+                slim_galois_keys,
+                &cpu_slim_stage_trace);
+            poseidon::Ciphertext cpu_slim_reference_output;
+            std::vector<poseidon::Ciphertext> cpu_slim_reference_stage_trace;
+            std::cout << "[phase] high-level CPU StC semantic oracle\n"
+                      << std::flush;
+            cpu_dft_rescale(
+                cpu_slim_reference_input,
+                slim_stc_reference_matrix_group,
+                cpu_slim_reference_output,
+                *cpu_evaluator,
+                slim_galois_keys,
+                &cpu_slim_reference_stage_trace);
+            const auto slim_input_comparison =
+                compare_decrypted_ciphertexts(
+                    cpu_slim_reference_input,
+                    cpu_slim_input,
+                    decryptor,
+                    encoder,
+                    slim_semantic_minimum_tolerance);
+            const auto slim_semantic_comparison =
+                compare_decrypted_ciphertexts(
+                    cpu_slim_reference_output,
+                    cpu_slim_output,
+                    decryptor,
+                    encoder,
+                    slim_semantic_minimum_tolerance);
+            if (cpu_slim_stage_trace.size() !=
+                    cpu_slim_reference_stage_trace.size())
+            {
+                throw std::runtime_error(
+                    "low/high StC stage trace size mismatch");
+            }
+            std::vector<ApproxComparison> slim_stage_comparisons;
+            slim_stage_comparisons.reserve(cpu_slim_stage_trace.size());
+            for (std::size_t stage = 0;
+                 stage < cpu_slim_stage_trace.size();
+                 ++stage)
+            {
+                slim_stage_comparisons.push_back(
+                    compare_decrypted_ciphertexts(
+                        cpu_slim_reference_stage_trace[stage],
+                        cpu_slim_stage_trace[stage],
+                        decryptor,
+                        encoder,
+                        slim_semantic_minimum_tolerance));
+            }
+
+            auto gpu_slim_input =
+                poseidon::gpu::GpuUploader::upload_ciphertext(
+                    cpu_slim_input,
+                    device_id);
+            poseidon::gpu::GpuCiphertextData gpu_slim_output;
+            poseidon::gpu::GpuDoubleHoistWorkspace slim_workspace;
+            poseidon::gpu::GpuCiphertextData gpu_compact_slim_output;
+            poseidon::gpu::GpuDoubleHoistWorkspace compact_slim_workspace;
+            auto run_gpu_slim_stc = [&]() {
+                if (slim_mode ==
+                    poseidon::gpu::GpuLinearTransformMode::DoubleHoistBsgs)
+                {
+                    gpu_evaluator.dft_double_hoist(
+                        gpu_slim_input,
+                        gpu_slim_matrix_qp,
+                        gpu_slim_galois_keys,
+                        slim_workspace,
+                        gpu_slim_output);
+                }
+                else
+                {
+                    gpu_evaluator.dft(
+                        gpu_slim_input,
+                        gpu_slim_matrix,
+                        gpu_slim_galois_keys,
+                    gpu_slim_output);
+                }
+            };
+            auto run_gpu_compact_slim_stc = [&]() {
+                gpu_evaluator.dft_double_hoist(
+                    gpu_slim_input,
+                    compact_probe_stc,
+                    gpu_slim_galois_keys,
+                    compact_slim_workspace,
+                    gpu_compact_slim_output);
+            };
+
+            std::cout << "[phase] GPU low-level StC correctness\n"
+                      << std::flush;
+            run_gpu_slim_stc();
+            cudaDeviceSynchronize();
+            poseidon::Ciphertext gpu_slim_download;
+            poseidon::gpu::GpuUploader::download_ciphertext(
+                gpu_slim_output,
+                gpu_slim_download,
+                context);
+            RawComparison compact_slim_qp_q;
+            RawComparison compact_slim_qp_p;
+            RawComparison compact_slim_output_raw;
+            ApproxComparison compact_slim_output_approx;
+            if (compressed_qp_mac_probe)
+            {
+                std::cout
+                    << "[phase] compressed QP MAC low-level StC exactness\n"
+                    << std::flush;
+                run_gpu_compact_slim_stc();
+                cudaDeviceSynchronize();
+                const auto compact_slim_download =
+                    download_gpu_ciphertext(
+                        gpu_compact_slim_output,
+                        context);
+                compact_slim_output_raw = compare_ciphertexts(
+                    gpu_slim_download,
+                    compact_slim_download,
+                    8);
+                compact_slim_output_approx =
+                    compare_decrypted_ciphertexts(
+                        gpu_slim_download,
+                        compact_slim_download,
+                        decryptor,
+                        encoder,
+                        0.0);
+
+                const auto &full_qp =
+                    slim_workspace.group_accumulators;
+                const auto &compact_qp =
+                    compact_slim_workspace.group_accumulators;
+                if (full_qp.degree != compact_qp.degree ||
+                    full_qp.q_count != compact_qp.q_count ||
+                    full_qp.p_count != compact_qp.p_count ||
+                    full_qp.batch_count != compact_qp.batch_count)
+                {
+                    throw std::runtime_error(
+                        "compressed StC QP MAC workspace shape mismatch");
+                }
+                const std::size_t active_q_words =
+                    full_qp.batch_count * 2 * full_qp.q_count *
+                    full_qp.degree;
+                const std::size_t active_p_words =
+                    full_qp.batch_count * 2 * full_qp.p_count *
+                    full_qp.degree;
+                compact_slim_qp_q = compare_device_words_exact(
+                    full_qp.q,
+                    compact_qp.q,
+                    active_q_words,
+                    "StC compact Q MAC");
+                compact_slim_qp_p = compare_device_words_exact(
+                    full_qp.p,
+                    compact_qp.p,
+                    active_p_words,
+                    "StC compact P MAC");
+                if (!compact_slim_qp_q.equal ||
+                    !compact_slim_qp_p.equal ||
+                    !compact_slim_output_raw.equal ||
+                    !compact_slim_output_approx.equal)
+                {
+                    std::cerr
+                        << "[FAILED] compressed QP MAC changed low-level "
+                           "StC residues or output\n";
+                    return EXIT_FAILURE;
+                }
+            }
+            const auto slim_comparison = compare_decrypted_ciphertexts(
+                cpu_slim_output,
+                gpu_slim_download,
+                decryptor,
+                encoder,
+                correctness_tolerance);
+            if (cpu_slim_output.coeff_modulus_size() !=
+                    modraise_base_q_count ||
+                gpu_slim_download.coeff_modulus_size() !=
+                    modraise_base_q_count)
+            {
+                throw std::runtime_error(
+                    "low-level StC CPU/GPU execution did not finish at the "
+                    "configured ModRaise base q_count");
+            }
+
+            for (std::size_t index = 0; index < warmup; ++index)
+            {
+                run_gpu_slim_stc();
+            }
+            cudaDeviceSynchronize();
+            const double slim_gpu_ms = time_gpu_ms(
+                iterations,
+                run_gpu_slim_stc);
+            double compact_slim_gpu_ms =
+                std::numeric_limits<double>::quiet_NaN();
+            if (compressed_qp_mac_probe)
+            {
+                for (std::size_t index = 0; index < warmup; ++index)
+                {
+                    run_gpu_compact_slim_stc();
+                }
+                cudaDeviceSynchronize();
+                compact_slim_gpu_ms = time_gpu_ms(
+                    iterations,
+                    run_gpu_compact_slim_stc);
+            }
+
+            std::cout << "\n[low-level StC q-count/scale trace]\n";
+            std::size_t trace_q_count = slim_stc_input_q_count;
+            double trace_scale = cpu_slim_input.scale();
+            const auto first_context =
+                context.crt_context()->first_context_data();
+            const double slim_scale_floor =
+                (slim_min_scale + 1.0) / 2.0;
+            for (std::size_t stage = 0;
+                 stage < slim_stc_matrix_group.data().size();
+                 ++stage)
+            {
+                const auto input_q_count = trace_q_count;
+                const auto input_scale = trace_scale;
+                const auto plaintext_scale =
+                    slim_stc_matrix_group.data()[stage].scale;
+                trace_scale *= plaintext_scale;
+                for (std::uint32_t drop = 0;
+                     drop < slim_rescale_counts[stage];
+                     ++drop)
+                {
+                    trace_scale /= static_cast<double>(
+                        first_context->coeff_modulus()
+                            .at(trace_q_count - 1)
+                            .value());
+                    --trace_q_count;
+                }
+                const double stage_scale_upper =
+                    slim_scale_floor * static_cast<double>(
+                        first_context->coeff_modulus()
+                            .at(trace_q_count - 1)
+                            .value());
+                if (trace_scale < slim_scale_floor ||
+                    trace_scale >= stage_scale_upper)
+                {
+                    throw std::runtime_error(
+                        "low-level StC output escaped the production dynamic "
+                        "scale interval");
+                }
+                std::cout << "stage=" << stage
+                          << " q=" << input_q_count
+                          << "->" << trace_q_count
+                          << " input=2^" << std::log2(input_scale)
+                          << " plain=2^" << std::log2(plaintext_scale)
+                          << " drop=" << slim_rescale_counts[stage]
+                          << " output=2^" << std::log2(trace_scale)
+                          << " allowed=[2^"
+                          << std::log2(slim_scale_floor) << ",2^"
+                          << std::log2(stage_scale_upper) << ")"
+                          << "\n";
+            }
+            std::cout << "mode             = "
+                      << (slim_mode ==
+                                  poseidon::gpu::GpuLinearTransformMode::
+                                      DoubleHoistBsgs
+                              ? "double_hoist"
+                              : "classic")
+                      << "\n"
+                      << "matrix groups    = "
+                      << slim_stc_matrix_group.data().size() << "\n"
+                      << "rescale pattern  = ";
+            for (std::size_t index = 0;
+                 index < slim_rescale_counts.size();
+                 ++index)
+            {
+                if (index != 0)
+                {
+                    std::cout << ",";
+                }
+                std::cout << slim_rescale_counts[index];
+            }
+            std::cout << " (total=" << slim_consumed_q << ")\n"
+                      << "key q views      = "
+                      << join_q_counts(slim_key_q_counts) << "\n"
+                      << "CPU/GPU max error= "
+                      << slim_comparison.max_abs_error << "\n"
+                      << "low/high input err= "
+                      << slim_input_comparison.max_abs_error << " (rms="
+                      << slim_input_comparison.rms_error << ")\n";
+            for (std::size_t stage = 0;
+                 stage < slim_stage_comparisons.size();
+                 ++stage)
+            {
+                std::cout << "low/high stage " << stage << " err= "
+                          << slim_stage_comparisons[stage].max_abs_error
+                          << " (rms="
+                          << slim_stage_comparisons[stage].rms_error << ")\n";
+            }
+            std::cout
+                      << "low/high StC delta= "
+                      << slim_semantic_comparison.max_abs_error << "\n"
+                      << "semantic target  = "
+                      << slim_semantic_target_tolerance << "\n"
+                      << "semantic minimum = "
+                      << slim_semantic_minimum_tolerance << "\n"
+                      << "delta scope      = intermediate coefficient "
+                         "representation (not end-to-end precision)\n"
+                      << "GPU avg latency  = " << slim_gpu_ms << " ms\n";
+            if (compressed_qp_mac_probe)
+            {
+                std::cout
+                    << "compact Q MAC exact= "
+                    << (compact_slim_qp_q.equal ? "YES" : "NO") << "\n"
+                    << "compact P MAC exact= "
+                    << (compact_slim_qp_p.equal ? "YES" : "NO") << "\n"
+                    << "compact output exact= "
+                    << (compact_slim_output_raw.equal ? "YES" : "NO")
+                    << "\n"
+                    << "compact GPU latency= "
+                    << compact_slim_gpu_ms << " ms\n";
+            }
+            if (!slim_comparison.equal || !slim_semantic_comparison.equal)
+            {
+                std::cerr
+                    << "[FAILED] low-level StC implementation or semantic "
+                       "oracle mismatch\n";
+                return EXIT_FAILURE;
+            }
+            if (slim_semantic_comparison.max_abs_error >
+                slim_semantic_target_tolerance)
+            {
+                std::cout
+                    << "[WARN] The intermediate low/high StC delta exceeds "
+                       "the final bootstrap target. This is diagnostic only; "
+                       "validate precision after the complete StC-first "
+                       "bootstrap schedule.\n";
+            }
+            if (slim_stc_run_modraise)
+            {
+                std::cout
+                    << "\n[Slim StC-first phase 2: ModRaise]\n"
+                    << "Preparing the q=" << modraise_base_q_count
+                    << " StC output at q0/message_ratio and raising it to q="
+                    << q_count << ".\n" << std::flush;
+
+                poseidon::Ciphertext cpu_slim_raised =
+                    cpu_bootstrap_prepare_and_raise(
+                        cpu_slim_output,
+                        *cpu_evaluator,
+                        context,
+                        encoder,
+                        target_q0_scale);
+
+                poseidon::gpu::GpuCiphertextData gpu_slim_prepared;
+                poseidon::gpu::GpuCiphertextData gpu_slim_raised;
+                auto run_gpu_slim_modraise = [&]() {
+                    gpu_evaluator.bootstrap_prepare_modraise_input(
+                        gpu_slim_output,
+                        gpu_slim_prepared,
+                        q0_parms_id,
+                        target_q0_scale);
+                    gpu_evaluator.raise_modulus(
+                        gpu_slim_prepared,
+                        gpu_slim_raised);
+                };
+                run_gpu_slim_modraise();
+                cudaDeviceSynchronize();
+
+                const auto gpu_slim_modraise_input_cpu =
+                    download_gpu_ciphertext(gpu_slim_output, context);
+                const auto cpu_from_gpu_slim_raised =
+                    cpu_bootstrap_prepare_and_raise(
+                        gpu_slim_modraise_input_cpu,
+                        *cpu_evaluator,
+                        context,
+                        encoder,
+                        target_q0_scale);
+                const auto cpu_gpu_slim_raised =
+                    download_gpu_ciphertext(gpu_slim_raised, context);
+                const auto gpu_slim_prepared_cpu =
+                    download_gpu_ciphertext(gpu_slim_prepared, context);
+                const auto slim_modraise_raw = compare_ciphertexts(
+                    cpu_from_gpu_slim_raised,
+                    cpu_gpu_slim_raised,
+                    8);
+                const auto slim_prepare_semantic =
+                    compare_decrypted_ciphertexts(
+                        cpu_slim_output,
+                        gpu_slim_prepared_cpu,
+                        decryptor,
+                        encoder,
+                        slim_semantic_minimum_tolerance);
+                const auto slim_cpu_raise_semantic =
+                    compare_decrypted_ciphertexts(
+                        cpu_slim_output,
+                        cpu_slim_raised,
+                        decryptor,
+                        encoder,
+                        slim_semantic_minimum_tolerance);
+                const auto slim_gpu_raise_semantic =
+                    compare_decrypted_ciphertexts(
+                        cpu_slim_output,
+                        cpu_gpu_slim_raised,
+                        decryptor,
+                        encoder,
+                        slim_semantic_minimum_tolerance);
+
+                if (gpu_slim_prepared.meta.q_count !=
+                        modraise_base_q_count ||
+                    gpu_slim_raised.meta.q_count != q_count ||
+                    cpu_slim_raised.coeff_modulus_size() != q_count)
+                {
+                    throw std::runtime_error(
+                        "slim StC-first ModRaise q-count invariant failed");
+                }
+
+                for (std::size_t index = 0; index < warmup; ++index)
+                {
+                    run_gpu_slim_modraise();
+                }
+                cudaDeviceSynchronize();
+                const double slim_modraise_gpu_ms = time_gpu_ms(
+                    iterations,
+                    run_gpu_slim_modraise);
+                auto run_gpu_slim_stc_and_modraise = [&]() {
+                    run_gpu_slim_stc();
+                    run_gpu_slim_modraise();
+                };
+                for (std::size_t index = 0; index < warmup; ++index)
+                {
+                    run_gpu_slim_stc_and_modraise();
+                }
+                cudaDeviceSynchronize();
+                const double slim_stc_modraise_gpu_ms = time_gpu_ms(
+                    iterations,
+                    run_gpu_slim_stc_and_modraise);
+
+                std::cout
+                    << "input q/scale    = "
+                    << cpu_slim_output.coeff_modulus_size() << "/2^"
+                    << std::log2(cpu_slim_output.scale()) << "\n"
+                    << "prepared q/scale = "
+                    << gpu_slim_prepared.meta.q_count << "/2^"
+                    << std::log2(gpu_slim_prepared.meta.scale) << "\n"
+                    << "raised q/scale   = "
+                    << gpu_slim_raised.meta.q_count << "/2^"
+                    << std::log2(gpu_slim_raised.meta.scale) << "\n"
+                    << "CPU/GPU raw equal= "
+                    << (slim_modraise_raw.equal ? "YES" : "NO") << "\n"
+                    << "prepare delta    = "
+                    << slim_prepare_semantic.max_abs_error << " (rms="
+                    << slim_prepare_semantic.rms_error << ")\n"
+                    << "CPU raise delta  = "
+                    << slim_cpu_raise_semantic.max_abs_error << " (rms="
+                    << slim_cpu_raise_semantic.rms_error << ")\n"
+                    << "GPU raise delta  = "
+                    << slim_gpu_raise_semantic.max_abs_error << " (rms="
+                    << slim_gpu_raise_semantic.rms_error << ")\n"
+                    << "ModRaise GPU ms  = " << slim_modraise_gpu_ms << "\n"
+                    << "StC+raise GPU ms = "
+                    << slim_stc_modraise_gpu_ms << "\n";
+
+                if (!slim_modraise_raw.equal ||
+                    !slim_prepare_semantic.equal ||
+                    !slim_cpu_raise_semantic.equal ||
+                    !slim_gpu_raise_semantic.equal)
+                {
+                    std::cerr
+                        << "[FAILED] Slim StC-first ModRaise correctness "
+                           "validation failed\n";
+                    return EXIT_FAILURE;
+                }
+                std::cout
+                    << "[OK] Slim StC q=" << slim_stc_input_q_count
+                    << "->" << modraise_base_q_count
+                    << " and ModRaise q=" << modraise_base_q_count
+                    << "->" << q_count << " passed\n";
+                if (!slim_stc_run_c2s)
+                {
+                    return EXIT_SUCCESS;
+                }
+
+                std::cout
+                    << "\n[Slim StC-first phase 3: C2S]\n"
+                    << "Calibrating the raised physical scale for the "
+                       "reordered C2S input and applying C2S.\n"
+                    << std::flush;
+
+                const double slim_physical_raised_scale =
+                    gpu_slim_raised.meta.scale;
+                const double slim_ideal_input_factor =
+                    1.0 /
+                    (eval_mod_poly.k() * eval_mod_poly.sc_fac() *
+                     eval_mod_poly.q_diff() *
+                     static_cast<double>(bootstrap_ratio));
+                const bool slim_calibrate_c2s_scale = env_flag_enabled_or(
+                    "POSEIDON_BOOTSTRAP_SLIM_STC_CALIBRATE_C2S_SCALE",
+                    true);
+                const double slim_c2s_logical_input_scale =
+                    slim_calibrate_c2s_scale
+                        ? slim_physical_raised_scale * c2s_scaling /
+                              slim_ideal_input_factor
+                        : evalmod_scale;
+                const double slim_c2s_expected_value_factor =
+                    slim_physical_raised_scale /
+                    slim_c2s_logical_input_scale * c2s_scaling;
+                cpu_slim_raised.scale() = slim_c2s_logical_input_scale;
+                gpu_slim_raised.meta.scale = slim_c2s_logical_input_scale;
+
+                const auto slim_c2s_rescale_counts =
+                    dft_stage_rescale_counts(slim_c2s_matrix_group);
+                const std::size_t slim_c2s_consumed_q = std::accumulate(
+                    slim_c2s_rescale_counts.begin(),
+                    slim_c2s_rescale_counts.end(),
+                    std::size_t{0});
+                if (slim_c2s_consumed_q >= q_count)
+                {
+                    throw std::runtime_error(
+                        "slim StC-first C2S consumes the full Q chain");
+                }
+                const std::size_t slim_c2s_output_q_count =
+                    q_count - slim_c2s_consumed_q;
+                const auto slim_c2s_output_parms_id =
+                    context.crt_context()->parms_id_map().at(
+                        static_cast<std::uint32_t>(
+                            slim_c2s_output_q_count - 1));
+                poseidon::Plaintext slim_minus_i_plain;
+                encoder.encode(
+                    std::complex<double>(0.0, -1.0),
+                    slim_c2s_output_parms_id,
+                    1.0,
+                    slim_minus_i_plain);
+                auto gpu_slim_minus_i_plain =
+                    poseidon::gpu::GpuUploader::upload_plaintext(
+                        slim_minus_i_plain,
+                        device_id);
+
+                poseidon::Ciphertext cpu_slim_c2s_real;
+                poseidon::Ciphertext cpu_slim_c2s_imag;
+                cpu_coeff_to_slot_rescale(
+                    cpu_slim_raised,
+                    slim_c2s_matrix_group,
+                    cpu_slim_c2s_real,
+                    cpu_slim_c2s_imag,
+                    *cpu_evaluator,
+                    slim_galois_keys,
+                    encoder);
+
+                poseidon::gpu::GpuCiphertextData gpu_slim_c2s_real;
+                poseidon::gpu::GpuCiphertextData gpu_slim_c2s_imag;
+                poseidon::gpu::GpuDoubleHoistWorkspace slim_c2s_workspace;
+                poseidon::gpu::GpuCiphertextData gpu_compact_c2s_real;
+                poseidon::gpu::GpuCiphertextData gpu_compact_c2s_imag;
+                poseidon::gpu::GpuDoubleHoistWorkspace
+                    compact_c2s_workspace;
+                auto run_gpu_slim_c2s = [&]() {
+                    if (slim_mode ==
+                        poseidon::gpu::GpuLinearTransformMode::DoubleHoistBsgs)
+                    {
+                        gpu_evaluator.coeff_to_slot_double_hoist(
+                            gpu_slim_raised,
+                            gpu_slim_c2s_matrix_qp,
+                            gpu_slim_minus_i_plain,
+                            gpu_slim_galois_keys,
+                            slim_c2s_workspace,
+                            gpu_slim_c2s_real,
+                            gpu_slim_c2s_imag);
+                    }
+                    else
+                    {
+                        gpu_evaluator.coeff_to_slot(
+                            gpu_slim_raised,
+                            gpu_slim_c2s_matrix,
+                            gpu_slim_minus_i_plain,
+                            gpu_slim_galois_keys,
+                            gpu_slim_c2s_real,
+                        gpu_slim_c2s_imag);
+                    }
+                };
+                auto run_gpu_compact_c2s = [&]() {
+                    gpu_evaluator.coeff_to_slot_double_hoist(
+                        gpu_slim_raised,
+                        compact_probe_c2s,
+                        gpu_slim_minus_i_plain,
+                        gpu_slim_galois_keys,
+                        compact_c2s_workspace,
+                        gpu_compact_c2s_real,
+                        gpu_compact_c2s_imag);
+                };
+                run_gpu_slim_c2s();
+                cudaDeviceSynchronize();
+
+                const auto cpu_gpu_slim_c2s_real =
+                    download_gpu_ciphertext(gpu_slim_c2s_real, context);
+                const auto cpu_gpu_slim_c2s_imag =
+                    download_gpu_ciphertext(gpu_slim_c2s_imag, context);
+                RawComparison compact_c2s_qp_q;
+                RawComparison compact_c2s_qp_p;
+                RawComparison compact_c2s_real_raw;
+                RawComparison compact_c2s_imag_raw;
+                ApproxComparison compact_c2s_real_approx;
+                ApproxComparison compact_c2s_imag_approx;
+                if (compressed_qp_mac_probe)
+                {
+                    std::cout
+                        << "[phase] compressed QP MAC post-ModRaise C2S "
+                           "exactness\n"
+                        << std::flush;
+                    run_gpu_compact_c2s();
+                    cudaDeviceSynchronize();
+                    const auto compact_c2s_real =
+                        download_gpu_ciphertext(
+                            gpu_compact_c2s_real,
+                            context);
+                    const auto compact_c2s_imag =
+                        download_gpu_ciphertext(
+                            gpu_compact_c2s_imag,
+                            context);
+                    compact_c2s_real_raw = compare_ciphertexts(
+                        cpu_gpu_slim_c2s_real,
+                        compact_c2s_real,
+                        8);
+                    compact_c2s_imag_raw = compare_ciphertexts(
+                        cpu_gpu_slim_c2s_imag,
+                        compact_c2s_imag,
+                        8);
+                    compact_c2s_real_approx =
+                        compare_decrypted_ciphertexts(
+                            cpu_gpu_slim_c2s_real,
+                            compact_c2s_real,
+                            decryptor,
+                            encoder,
+                            0.0);
+                    compact_c2s_imag_approx =
+                        compare_decrypted_ciphertexts(
+                            cpu_gpu_slim_c2s_imag,
+                            compact_c2s_imag,
+                            decryptor,
+                            encoder,
+                            0.0);
+
+                    const auto &full_qp =
+                        slim_c2s_workspace.group_accumulators;
+                    const auto &compact_qp =
+                        compact_c2s_workspace.group_accumulators;
+                    if (full_qp.degree != compact_qp.degree ||
+                        full_qp.q_count != compact_qp.q_count ||
+                        full_qp.p_count != compact_qp.p_count ||
+                        full_qp.batch_count != compact_qp.batch_count)
+                    {
+                        throw std::runtime_error(
+                            "compressed C2S QP MAC workspace shape mismatch");
+                    }
+                    const std::size_t active_q_words =
+                        full_qp.batch_count * 2 * full_qp.q_count *
+                        full_qp.degree;
+                    const std::size_t active_p_words =
+                        full_qp.batch_count * 2 * full_qp.p_count *
+                        full_qp.degree;
+                    compact_c2s_qp_q = compare_device_words_exact(
+                        full_qp.q,
+                        compact_qp.q,
+                        active_q_words,
+                        "C2S compact Q MAC");
+                    compact_c2s_qp_p = compare_device_words_exact(
+                        full_qp.p,
+                        compact_qp.p,
+                        active_p_words,
+                        "C2S compact P MAC");
+                    if (!compact_c2s_qp_q.equal ||
+                        !compact_c2s_qp_p.equal ||
+                        !compact_c2s_real_raw.equal ||
+                        !compact_c2s_imag_raw.equal ||
+                        !compact_c2s_real_approx.equal ||
+                        !compact_c2s_imag_approx.equal)
+                    {
+                        std::cerr
+                            << "[FAILED] compressed QP MAC changed C2S "
+                               "residues or output\n";
+                        return EXIT_FAILURE;
+                    }
+                }
+                const auto slim_c2s_real_cpu_gpu =
+                    compare_decrypted_ciphertexts(
+                        cpu_slim_c2s_real,
+                        cpu_gpu_slim_c2s_real,
+                        decryptor,
+                        encoder,
+                        slim_semantic_minimum_tolerance);
+                const auto slim_c2s_imag_cpu_gpu =
+                    compare_decrypted_ciphertexts(
+                        cpu_slim_c2s_imag,
+                        cpu_gpu_slim_c2s_imag,
+                        decryptor,
+                        encoder,
+                        slim_semantic_minimum_tolerance);
+
+                const auto source_values = decrypt_decode(
+                    source,
+                    decryptor,
+                    encoder);
+                std::vector<std::complex<double>> expected_c2s_real(
+                    source_values.size());
+                std::vector<std::complex<double>> expected_c2s_imag(
+                    source_values.size());
+                for (std::size_t index = 0;
+                     index < source_values.size();
+                     ++index)
+                {
+                    expected_c2s_real[index] = {
+                        source_values[index].real() *
+                            slim_c2s_expected_value_factor,
+                        0.0};
+                    expected_c2s_imag[index] = {
+                        source_values[index].imag() *
+                            slim_c2s_expected_value_factor,
+                        0.0};
+                }
+                const auto slim_c2s_real_semantic = compare_approx(
+                    expected_c2s_real,
+                    decrypt_decode(
+                        cpu_gpu_slim_c2s_real,
+                        decryptor,
+                        encoder),
+                    slim_semantic_minimum_tolerance);
+                const auto slim_c2s_imag_semantic = compare_approx(
+                    expected_c2s_imag,
+                    decrypt_decode(
+                        cpu_gpu_slim_c2s_imag,
+                        decryptor,
+                        encoder),
+                    slim_semantic_minimum_tolerance);
+
+                if (gpu_slim_c2s_real.meta.q_count !=
+                        slim_c2s_output_q_count ||
+                    gpu_slim_c2s_imag.meta.q_count !=
+                        slim_c2s_output_q_count)
+                {
+                    throw std::runtime_error(
+                        "slim StC-first C2S q-count invariant failed");
+                }
+
+                for (std::size_t index = 0; index < warmup; ++index)
+                {
+                    run_gpu_slim_c2s();
+                }
+                cudaDeviceSynchronize();
+                const double slim_c2s_gpu_ms = time_gpu_ms(
+                    iterations,
+                    run_gpu_slim_c2s);
+                double compact_c2s_gpu_ms =
+                    std::numeric_limits<double>::quiet_NaN();
+                if (compressed_qp_mac_probe)
+                {
+                    for (std::size_t index = 0; index < warmup; ++index)
+                    {
+                        run_gpu_compact_c2s();
+                    }
+                    cudaDeviceSynchronize();
+                    compact_c2s_gpu_ms = time_gpu_ms(
+                        iterations,
+                        run_gpu_compact_c2s);
+                }
+                auto run_gpu_slim_through_c2s = [&]() {
+                    run_gpu_slim_stc();
+                    run_gpu_slim_modraise();
+                    gpu_slim_raised.meta.scale =
+                        slim_c2s_logical_input_scale;
+                    run_gpu_slim_c2s();
+                };
+                for (std::size_t index = 0; index < warmup; ++index)
+                {
+                    run_gpu_slim_through_c2s();
+                }
+                cudaDeviceSynchronize();
+                const double slim_through_c2s_gpu_ms = time_gpu_ms(
+                    iterations,
+                    run_gpu_slim_through_c2s);
+
+                std::cout << "\n[post-ModRaise C2S scale trace]\n";
+                std::size_t slim_c2s_trace_q = q_count;
+                double slim_c2s_trace_scale =
+                    slim_c2s_logical_input_scale;
+                const double slim_c2s_scale_floor =
+                    (evalmod_scale + 1.0) / 2.0;
+                for (std::size_t stage = 0;
+                     stage < slim_c2s_matrix_group.data().size();
+                     ++stage)
+                {
+                    const auto input_q_count = slim_c2s_trace_q;
+                    const auto input_scale = slim_c2s_trace_scale;
+                    const auto plaintext_scale =
+                        slim_c2s_matrix_group.data()[stage].scale;
+                    slim_c2s_trace_scale *= plaintext_scale;
+                    for (std::uint32_t drop = 0;
+                         drop < slim_c2s_rescale_counts[stage];
+                         ++drop)
+                    {
+                        slim_c2s_trace_scale /= static_cast<double>(
+                            first_context->coeff_modulus()
+                                .at(slim_c2s_trace_q - 1)
+                                .value());
+                        --slim_c2s_trace_q;
+                    }
+                    const double stage_scale_upper =
+                        slim_c2s_scale_floor * static_cast<double>(
+                            first_context->coeff_modulus()
+                                .at(slim_c2s_trace_q - 1)
+                                .value());
+                    if (slim_c2s_trace_scale < slim_c2s_scale_floor ||
+                        slim_c2s_trace_scale >= stage_scale_upper)
+                    {
+                        throw std::runtime_error(
+                            "post-ModRaise C2S output escaped the production "
+                            "dynamic scale interval");
+                    }
+                    std::cout
+                        << "stage=" << stage << " q=" << input_q_count
+                        << "->" << slim_c2s_trace_q
+                        << " input=2^" << std::log2(input_scale)
+                        << " plain=2^" << std::log2(plaintext_scale)
+                        << " drop=" << slim_c2s_rescale_counts[stage]
+                        << " output=2^"
+                        << std::log2(slim_c2s_trace_scale) << "\n";
+                }
+
+                std::cout
+                    << "physical/logical factor = 2^"
+                    << std::log2(
+                           slim_physical_raised_scale /
+                           slim_c2s_logical_input_scale)
+                    << "\n"
+                    << "logical input scale     = 2^"
+                    << std::log2(slim_c2s_logical_input_scale)
+                    << " (calibration="
+                    << (slim_calibrate_c2s_scale ? "ON" : "OFF") << ")"
+                    << "\n"
+                    << "expected value factor   = "
+                    << slim_c2s_expected_value_factor << "\n"
+                    << "C2S output q/scale      = "
+                    << gpu_slim_c2s_real.meta.q_count << "/2^"
+                    << std::log2(gpu_slim_c2s_real.meta.scale) << "\n"
+                    << "C2S real CPU/GPU delta  = "
+                    << slim_c2s_real_cpu_gpu.max_abs_error << " (rms="
+                    << slim_c2s_real_cpu_gpu.rms_error << ")\n"
+                    << "C2S imag CPU/GPU delta  = "
+                    << slim_c2s_imag_cpu_gpu.max_abs_error << " (rms="
+                    << slim_c2s_imag_cpu_gpu.rms_error << ")\n"
+                    << "roundtrip real delta    = "
+                    << slim_c2s_real_semantic.max_abs_error << " (rms="
+                    << slim_c2s_real_semantic.rms_error << ")\n"
+                    << "roundtrip imag delta    = "
+                    << slim_c2s_imag_semantic.max_abs_error << " (rms="
+                    << slim_c2s_imag_semantic.rms_error << ")\n"
+                    << "C2S GPU ms              = "
+                    << slim_c2s_gpu_ms << "\n"
+                    << "StC+raise+C2S GPU ms    = "
+                    << slim_through_c2s_gpu_ms << "\n";
+                if (compressed_qp_mac_probe)
+                {
+                    std::cout
+                        << "compact Q MAC exact   = "
+                        << (compact_c2s_qp_q.equal ? "YES" : "NO")
+                        << "\n"
+                        << "compact P MAC exact   = "
+                        << (compact_c2s_qp_p.equal ? "YES" : "NO")
+                        << "\n"
+                        << "compact real exact    = "
+                        << (compact_c2s_real_raw.equal ? "YES" : "NO")
+                        << "\n"
+                        << "compact imag exact    = "
+                        << (compact_c2s_imag_raw.equal ? "YES" : "NO")
+                        << "\n"
+                        << "compact C2S GPU ms    = "
+                        << compact_c2s_gpu_ms << "\n";
+                }
+
+                if (!slim_c2s_real_cpu_gpu.equal ||
+                    !slim_c2s_imag_cpu_gpu.equal ||
+                    !slim_c2s_real_semantic.equal ||
+                    !slim_c2s_imag_semantic.equal)
+                {
+                    std::cerr
+                        << "[FAILED] Slim StC-first post-ModRaise C2S "
+                           "validation failed\n";
+                    return EXIT_FAILURE;
+                }
+                std::cout
+                    << "[OK] Slim StC->ModRaise->C2S phase passed\n";
+                if (!slim_stc_evalmod_probe)
+                {
+                    return EXIT_SUCCESS;
+                }
+
+                std::cout
+                    << "\n[Slim StC-first phase 4: EvalMod]\n"
+                    << "Uploading the existing degree-"
+                    << evalmod_sine_degree
+                    << " dynamic EvalMod plan for the C2S q="
+                    << slim_c2s_output_q_count << " output.\n"
+                    << std::flush;
+
+                const auto slim_evalmod_input_parms_id =
+                    cpu_gpu_slim_c2s_real.parms_id();
+                const auto slim_evalmod_input_context =
+                    context.crt_context()->get_context_data(
+                        slim_evalmod_input_parms_id);
+                if (!slim_evalmod_input_context)
+                {
+                    throw std::runtime_error(
+                        "slim StC-first EvalMod input level is absent");
+                }
+                eval_mod_poly.set_level_start(
+                    static_cast<std::uint32_t>(
+                        slim_evalmod_input_context->level()));
+
+                auto gpu_slim_relin_keys =
+                    poseidon::gpu::GpuUploader::upload_relin_keys(
+                        relin_keys,
+                        device_id);
+                poseidon::gpu::GpuBootstrapData slim_evalmod_bootstrap_data;
+                slim_evalmod_bootstrap_data.eval_mod =
+                    poseidon::gpu::GpuUploader::
+                        upload_eval_mod_high_precision(
+                            eval_mod_poly,
+                            encoder,
+                            slim_evalmod_input_parms_id,
+                            device_id,
+                            &gpu_slim_relin_keys,
+                            poseidon::parms_id_zero,
+                            evalmod_rescale_count,
+                            nullptr,
+                            /*include_input_offset=*/true,
+                            std::numeric_limits<std::uint32_t>::max(),
+                            std::numeric_limits<double>::quiet_NaN(),
+                            std::numeric_limits<double>::quiet_NaN(),
+                            /*fuse_leaf_terms_before_rescale=*/true,
+                            cpu_gpu_slim_c2s_real.scale());
+                const auto slim_evalmod_output_q_count =
+                    slim_evalmod_bootstrap_data.eval_mod.output_q_count;
+                const auto slim_evalmod_output_parms_id =
+                    slim_evalmod_bootstrap_data.eval_mod.output_parms_id;
+                if (slim_evalmod_output_q_count == 0 ||
+                    slim_evalmod_output_q_count >=
+                        slim_c2s_output_q_count)
+                {
+                    throw std::runtime_error(
+                        "slim StC-first EvalMod returned an invalid output "
+                        "q-count");
+                }
+
+                const auto &slim_evalmod_plan =
+                    slim_evalmod_bootstrap_data.eval_mod;
+                std::uint32_t slim_degree_bound = 1;
+                while (slim_degree_bound < slim_evalmod_plan.polynomial_degree)
+                {
+                    slim_degree_bound <<= 1U;
+                }
+                bool slim_degree_bound_materialized = false;
+                std::vector<std::uint32_t> slim_basis_degrees;
+                slim_basis_degrees.reserve(slim_evalmod_plan.basis_steps.size());
+                for (const auto &step : slim_evalmod_plan.basis_steps)
+                {
+                    slim_basis_degrees.push_back(step.output_degree);
+                    slim_degree_bound_materialized |=
+                        step.output_degree == slim_degree_bound;
+                }
+                std::vector<std::size_t> slim_node_use_counts(
+                    slim_evalmod_plan.polynomial_blocks.size() +
+                        slim_evalmod_plan.polynomial_combine_steps.size(),
+                    0);
+                for (const auto &combine :
+                     slim_evalmod_plan.polynomial_combine_steps)
+                {
+                    if (combine.quotient_node < slim_node_use_counts.size())
+                    {
+                        ++slim_node_use_counts[combine.quotient_node];
+                    }
+                    if (combine.remainder_node < slim_node_use_counts.size())
+                    {
+                        ++slim_node_use_counts[combine.remainder_node];
+                    }
+                }
+                std::size_t slim_lazy_deferred_outputs = 0;
+                for (const auto &parent :
+                     slim_evalmod_plan.polynomial_combine_steps)
+                {
+                    if (parent.remainder_node >=
+                            slim_evalmod_plan.polynomial_blocks.size() &&
+                        parent.remainder_node < slim_node_use_counts.size() &&
+                        slim_node_use_counts[parent.remainder_node] == 1 &&
+                        parent.remainder_rescale_count == 0 &&
+                        parent.remainder_scale_plaintext.empty())
+                    {
+                        ++slim_lazy_deferred_outputs;
+                    }
+                }
+                const bool slim_lazy_relin_enabled =
+                    env_flag_enabled_or("POSEIDON_EVALMOD_LAZY_RELIN", true);
+                std::cout
+                    << "[Slim EvalMod execution plan]\n"
+                    << "split log/baby width = "
+                    << slim_evalmod_plan.polynomial_log_split << "/"
+                    << (1U << slim_evalmod_plan.polynomial_log_split) << "\n"
+                    << "basis degrees        = "
+                    << join_q_counts(std::vector<std::size_t>(
+                           slim_basis_degrees.begin(),
+                           slim_basis_degrees.end()))
+                    << "\n"
+                    << "leaf/combine counts  = "
+                    << slim_evalmod_plan.polynomial_blocks.size() << "/"
+                    << slim_evalmod_plan.polynomial_combine_steps.size() << "\n"
+                    << "combine relin plan   = "
+                    << slim_evalmod_plan.polynomial_combine_steps.size()
+                    << " -> "
+                    << (slim_lazy_relin_enabled
+                            ? slim_evalmod_plan.polynomial_combine_steps.size() -
+                                  slim_lazy_deferred_outputs
+                            : slim_evalmod_plan.polynomial_combine_steps.size())
+                    << " (deferred="
+                    << (slim_lazy_relin_enabled
+                            ? slim_lazy_deferred_outputs
+                            : 0)
+                    << ")\n"
+                    << "degree-bound T" << slim_degree_bound << "      = "
+                    << (slim_degree_bound_materialized
+                            ? "materialized"
+                            : "planning-only")
+                    << " (virtual_flag="
+                    << (slim_evalmod_plan.polynomial_degree_bound_virtual
+                            ? "ON"
+                            : "OFF")
+                    << ", root_q="
+                    << slim_evalmod_plan.polynomial_root_anchor_q_count
+                    << ")"
+                    << "\n";
+
+                if (evalmod_sine_degree == 22 &&
+                    slim_evalmod_plan.polynomial_log_split == 2 &&
+                    env_flag_enabled(
+                        "POSEIDON_EVALMOD_VIRTUAL_DEGREE_BOUND"))
+                {
+                    const std::vector<std::uint32_t> expected_basis{
+                        2, 3, 4, 8, 16};
+                    if (slim_basis_degrees != expected_basis ||
+                        slim_evalmod_plan.polynomial_blocks.size() != 6 ||
+                        slim_evalmod_plan.polynomial_combine_steps.size() != 5 ||
+                        (slim_lazy_relin_enabled &&
+                         slim_lazy_deferred_outputs != 2) ||
+                        slim_degree_bound_materialized)
+                    {
+                        throw std::runtime_error(
+                            "slim22 baby-4 plan contains an unexpected or unused computation");
+                    }
+
+                }
+
+                poseidon::Ciphertext cpu_slim_eval_real;
+                poseidon::Ciphertext cpu_slim_eval_imag;
+                std::cout
+                    << "[phase] CPU EvalMod correctness oracle\n"
+                    << std::flush;
+                cpu_evaluator->eval_mod_high_precision(
+                    cpu_gpu_slim_c2s_real,
+                    cpu_slim_eval_real,
+                    eval_mod_poly,
+                    relin_keys,
+                    encoder,
+                    nullptr,
+                    /*preserve_input_scale=*/true);
+                cpu_evaluator->eval_mod_high_precision(
+                    cpu_gpu_slim_c2s_imag,
+                    cpu_slim_eval_imag,
+                    eval_mod_poly,
+                    relin_keys,
+                    encoder,
+                    nullptr,
+                    /*preserve_input_scale=*/true);
+                if (slim_evalmod_bootstrap_data.eval_mod.polynomial_flat_bsgs &&
+                    cpu_slim_eval_real.coeff_modulus_size() >
+                        slim_evalmod_output_q_count)
+                {
+                    cpu_evaluator->drop_modulus(
+                        cpu_slim_eval_real,
+                        cpu_slim_eval_real,
+                        slim_evalmod_output_parms_id);
+                    cpu_evaluator->drop_modulus(
+                        cpu_slim_eval_imag,
+                        cpu_slim_eval_imag,
+                        slim_evalmod_output_parms_id);
+                }
+
+                poseidon::gpu::GpuBootstrapWorkspace slim_evalmod_workspace;
+                poseidon::gpu::GpuCiphertextData gpu_slim_eval_real;
+                poseidon::gpu::GpuCiphertextData gpu_slim_eval_imag;
+                auto run_gpu_slim_evalmod = [&]() {
+                    gpu_evaluator.eval_mod_high_precision(
+                        gpu_slim_c2s_real,
+                        slim_evalmod_bootstrap_data,
+                        gpu_slim_relin_keys,
+                        slim_evalmod_workspace,
+                        gpu_slim_eval_real);
+                    gpu_evaluator.eval_mod_high_precision(
+                        gpu_slim_c2s_imag,
+                        slim_evalmod_bootstrap_data,
+                        gpu_slim_relin_keys,
+                        slim_evalmod_workspace,
+                        gpu_slim_eval_imag);
+                };
+                std::cout
+                    << "[phase] GPU EvalMod correctness\n"
+                    << std::flush;
+                run_gpu_slim_evalmod();
+                cudaDeviceSynchronize();
+
+                const auto cpu_gpu_slim_eval_real =
+                    download_gpu_ciphertext(gpu_slim_eval_real, context);
+                const auto cpu_gpu_slim_eval_imag =
+                    download_gpu_ciphertext(gpu_slim_eval_imag, context);
+                const auto slim_eval_real_cpu_gpu =
+                    compare_decrypted_ciphertexts(
+                        cpu_slim_eval_real,
+                        cpu_gpu_slim_eval_real,
+                        decryptor,
+                        encoder,
+                        correctness_tolerance);
+                const auto slim_eval_imag_cpu_gpu =
+                    compare_decrypted_ciphertexts(
+                        cpu_slim_eval_imag,
+                        cpu_gpu_slim_eval_imag,
+                        decryptor,
+                        encoder,
+                        correctness_tolerance);
+
+                poseidon::Plaintext slim_plus_i_plain;
+                encoder.encode(
+                    std::complex<double>(0.0, 1.0),
+                    slim_evalmod_output_parms_id,
+                    1.0,
+                    slim_plus_i_plain);
+                auto gpu_slim_plus_i_plain =
+                    poseidon::gpu::GpuUploader::upload_plaintext(
+                        slim_plus_i_plain,
+                        device_id);
+
+                poseidon::Ciphertext cpu_slim_scaled_imag;
+                poseidon::Ciphertext cpu_slim_final;
+                cpu_evaluator->multiply_const(
+                    cpu_slim_eval_imag,
+                    std::complex<double>(0.0, 1.0),
+                    1.0,
+                    cpu_slim_scaled_imag,
+                    encoder);
+                cpu_evaluator->add(
+                    cpu_slim_eval_real,
+                    cpu_slim_scaled_imag,
+                    cpu_slim_final);
+                if (bootstrap_ratio > 1)
+                {
+                    cpu_evaluator->multiply_const_direct(
+                        cpu_slim_final,
+                        static_cast<int>(bootstrap_ratio),
+                        cpu_slim_final,
+                        encoder);
+                }
+
+                poseidon::gpu::GpuCiphertextData gpu_slim_scaled_imag;
+                poseidon::gpu::GpuCiphertextData gpu_slim_combined;
+                poseidon::gpu::GpuCiphertextData gpu_slim_final;
+                auto combine_gpu_slim_evalmod = [&]() {
+                    gpu_evaluator.multiply_plain(
+                        gpu_slim_eval_imag,
+                        gpu_slim_plus_i_plain,
+                        gpu_slim_scaled_imag);
+                    gpu_evaluator.add(
+                        gpu_slim_eval_real,
+                        gpu_slim_scaled_imag,
+                        gpu_slim_combined);
+                    if (bootstrap_ratio > 1)
+                    {
+                        gpu_evaluator.multiply_scalar(
+                            gpu_slim_combined,
+                            bootstrap_ratio,
+                            gpu_slim_final);
+                    }
+                    else
+                    {
+                        gpu_slim_final = std::move(gpu_slim_combined);
+                    }
+                };
+                combine_gpu_slim_evalmod();
+                cudaDeviceSynchronize();
+                const auto cpu_gpu_slim_final =
+                    download_gpu_ciphertext(gpu_slim_final, context);
+                const auto slim_final_cpu_gpu =
+                    compare_decrypted_ciphertexts(
+                        cpu_slim_final,
+                        cpu_gpu_slim_final,
+                        decryptor,
+                        encoder,
+                        correctness_tolerance);
+                const auto slim_final_source =
+                    compare_decrypted_ciphertexts(
+                        source,
+                        cpu_gpu_slim_final,
+                        decryptor,
+                        encoder,
+                        slim_semantic_minimum_tolerance);
+
+                // Decompose the end-to-end error without introducing another
+                // encrypted computation.  The CosDiscrete polynomial is a
+                // Chebyshev approximation to the scaled sine map below.  By
+                // evaluating both maps on the decoded C2S inputs, the report
+                // separates input/linear-transform error, the inherent
+                // sin(z) versus z error, polynomial approximation error, and
+                // homomorphic arithmetic error.
+                const auto slim_c2s_real_values = decrypt_decode(
+                    cpu_gpu_slim_c2s_real,
+                    decryptor,
+                    encoder);
+                const auto slim_c2s_imag_values = decrypt_decode(
+                    cpu_gpu_slim_c2s_imag,
+                    decryptor,
+                    encoder);
+                const auto slim_final_values = decrypt_decode(
+                    cpu_gpu_slim_final,
+                    decryptor,
+                    encoder);
+                if (slim_c2s_real_values.size() != source_values.size() ||
+                    slim_c2s_imag_values.size() != source_values.size())
+                {
+                    throw std::runtime_error(
+                        "slim EvalMod plaintext diagnostic slot-count mismatch");
+                }
+
+                std::vector<std::complex<double>> slim_ideal_c2s_real(
+                    source_values.size());
+                std::vector<std::complex<double>> slim_ideal_c2s_imag(
+                    source_values.size());
+                std::vector<std::complex<double>> slim_plain_poly_final(
+                    source_values.size());
+                std::vector<std::complex<double>> slim_ideal_actual_final(
+                    source_values.size());
+                std::vector<std::complex<double>> slim_ideal_linear_final(
+                    source_values.size());
+                double slim_max_actual_sine_argument = 0.0;
+                double slim_max_ideal_sine_argument = 0.0;
+                const double two_pi_k =
+                    2.0 * std::acos(-1.0) * eval_mod_poly.k() *
+                    eval_mod_poly.sc_fac();
+                for (std::size_t index = 0;
+                     index < source_values.size();
+                     ++index)
+                {
+                    slim_ideal_c2s_real[index] =
+                        source_values[index].real() *
+                        slim_ideal_input_factor;
+                    slim_ideal_c2s_imag[index] =
+                        source_values[index].imag() *
+                        slim_ideal_input_factor;
+
+                    const auto polynomial_real =
+                        evaluate_evalmod_polynomial_plain(
+                            eval_mod_poly,
+                            slim_c2s_real_values[index]);
+                    const auto polynomial_imag =
+                        evaluate_evalmod_polynomial_plain(
+                            eval_mod_poly,
+                            slim_c2s_imag_values[index]);
+                    const auto ideal_actual_real =
+                        evaluate_evalmod_ideal_sine(
+                            eval_mod_poly,
+                            slim_c2s_real_values[index]);
+                    const auto ideal_actual_imag =
+                        evaluate_evalmod_ideal_sine(
+                            eval_mod_poly,
+                            slim_c2s_imag_values[index]);
+                    const auto ideal_linear_real =
+                        evaluate_evalmod_ideal_sine(
+                            eval_mod_poly,
+                            slim_ideal_c2s_real[index]);
+                    const auto ideal_linear_imag =
+                        evaluate_evalmod_ideal_sine(
+                            eval_mod_poly,
+                            slim_ideal_c2s_imag[index]);
+                    slim_plain_poly_final[index] =
+                        static_cast<double>(bootstrap_ratio) *
+                        (polynomial_real +
+                         std::complex<double>(0.0, 1.0) * polynomial_imag);
+                    slim_ideal_actual_final[index] =
+                        static_cast<double>(bootstrap_ratio) *
+                        (ideal_actual_real +
+                         std::complex<double>(0.0, 1.0) * ideal_actual_imag);
+                    slim_ideal_linear_final[index] =
+                        static_cast<double>(bootstrap_ratio) *
+                        (ideal_linear_real +
+                         std::complex<double>(0.0, 1.0) * ideal_linear_imag);
+                    slim_max_actual_sine_argument = std::max(
+                        slim_max_actual_sine_argument,
+                        std::max(
+                            std::abs(two_pi_k * slim_c2s_real_values[index]),
+                            std::abs(two_pi_k * slim_c2s_imag_values[index])));
+                    slim_max_ideal_sine_argument = std::max(
+                        slim_max_ideal_sine_argument,
+                        std::max(
+                            std::abs(two_pi_k * slim_ideal_c2s_real[index]),
+                            std::abs(two_pi_k * slim_ideal_c2s_imag[index])));
+                }
+                const auto slim_c2s_real_ideal = compare_approx(
+                    slim_ideal_c2s_real,
+                    slim_c2s_real_values,
+                    slim_semantic_minimum_tolerance);
+                const auto slim_c2s_imag_ideal = compare_approx(
+                    slim_ideal_c2s_imag,
+                    slim_c2s_imag_values,
+                    slim_semantic_minimum_tolerance);
+                const auto slim_plain_predicted_total = compare_approx(
+                    source_values,
+                    slim_plain_poly_final,
+                    slim_semantic_minimum_tolerance);
+                const auto slim_homomorphic_arithmetic = compare_approx(
+                    slim_plain_poly_final,
+                    slim_final_values,
+                    slim_semantic_minimum_tolerance);
+                const auto slim_polynomial_approximation = compare_approx(
+                    slim_ideal_actual_final,
+                    slim_plain_poly_final,
+                    slim_semantic_minimum_tolerance);
+                const auto slim_linear_pipeline_effect = compare_approx(
+                    slim_ideal_linear_final,
+                    slim_ideal_actual_final,
+                    slim_semantic_minimum_tolerance);
+                const auto slim_sine_linearity = compare_approx(
+                    source_values,
+                    slim_ideal_linear_final,
+                    slim_semantic_minimum_tolerance);
+
+                if (gpu_slim_eval_real.meta.q_count !=
+                        slim_evalmod_output_q_count ||
+                    gpu_slim_eval_imag.meta.q_count !=
+                        slim_evalmod_output_q_count ||
+                    gpu_slim_final.meta.q_count !=
+                        slim_evalmod_output_q_count)
+                {
+                    throw std::runtime_error(
+                        "slim StC-first EvalMod q-count invariant failed");
+                }
+
+                for (std::size_t index = 0; index < warmup; ++index)
+                {
+                    run_gpu_slim_evalmod();
+                }
+                cudaDeviceSynchronize();
+                const double slim_evalmod_gpu_ms = time_gpu_ms(
+                    iterations,
+                    run_gpu_slim_evalmod);
+                auto run_gpu_slim_full = [&]() {
+                    run_gpu_slim_stc();
+                    run_gpu_slim_modraise();
+                    gpu_slim_raised.meta.scale =
+                        slim_c2s_logical_input_scale;
+                    run_gpu_slim_c2s();
+                    run_gpu_slim_evalmod();
+                    combine_gpu_slim_evalmod();
+                };
+                for (std::size_t index = 0; index < warmup; ++index)
+                {
+                    run_gpu_slim_full();
+                }
+                cudaDeviceSynchronize();
+                const double slim_full_gpu_ms = time_gpu_ms(
+                    iterations,
+                    run_gpu_slim_full);
+
+                std::cout
+                    << "EvalMod q              = "
+                    << slim_c2s_output_q_count << "->"
+                    << slim_evalmod_output_q_count << " (consumed="
+                    << (slim_c2s_output_q_count -
+                        slim_evalmod_output_q_count) << ")\n"
+                    << "EvalMod output scale   = 2^"
+                    << std::log2(gpu_slim_eval_real.meta.scale) << "\n"
+                    << "EvalMod real CPU/GPU   = "
+                    << slim_eval_real_cpu_gpu.max_abs_error << " (rms="
+                    << slim_eval_real_cpu_gpu.rms_error << ")\n"
+                    << "EvalMod imag CPU/GPU   = "
+                    << slim_eval_imag_cpu_gpu.max_abs_error << " (rms="
+                    << slim_eval_imag_cpu_gpu.rms_error << ")\n"
+                    << "final CPU/GPU delta    = "
+                    << slim_final_cpu_gpu.max_abs_error << " (rms="
+                    << slim_final_cpu_gpu.rms_error << ")\n"
+                    << "final source error     = "
+                    << slim_final_source.max_abs_error << " (rms="
+                    << slim_final_source.rms_error << ")\n"
+                    << "\n[EvalMod plaintext error decomposition]\n"
+                    << "ideal C2S factor       = "
+                    << slim_ideal_input_factor << "\n"
+                    << "measured C2S factor    = "
+                    << slim_c2s_expected_value_factor << "\n"
+                    << "C2S->ideal real delta  = "
+                    << slim_c2s_real_ideal.max_abs_error << " (rms="
+                    << slim_c2s_real_ideal.rms_error << ")\n"
+                    << "C2S->ideal imag delta  = "
+                    << slim_c2s_imag_ideal.max_abs_error << " (rms="
+                    << slim_c2s_imag_ideal.rms_error << ")\n"
+                    << "max sine argument      = "
+                    << slim_max_actual_sine_argument << " (ideal="
+                    << slim_max_ideal_sine_argument << ")\n"
+                    << "sine nonlinearity      = "
+                    << slim_sine_linearity.max_abs_error << " (rms="
+                    << slim_sine_linearity.rms_error << ")\n"
+                    << "linear pipeline effect = "
+                    << slim_linear_pipeline_effect.max_abs_error << " (rms="
+                    << slim_linear_pipeline_effect.rms_error << ")\n"
+                    << "polynomial approx      = "
+                    << slim_polynomial_approximation.max_abs_error << " (rms="
+                    << slim_polynomial_approximation.rms_error << ")\n"
+                    << "HE arithmetic          = "
+                    << slim_homomorphic_arithmetic.max_abs_error << " (rms="
+                    << slim_homomorphic_arithmetic.rms_error << ")\n"
+                    << "plaintext predicted    = "
+                    << slim_plain_predicted_total.max_abs_error << " (rms="
+                    << slim_plain_predicted_total.rms_error << ")\n"
+                    << "final target/minimum   = "
+                    << slim_semantic_target_tolerance << "/"
+                    << slim_semantic_minimum_tolerance << "\n"
+                    << "EvalMod GPU ms         = "
+                    << slim_evalmod_gpu_ms << "\n"
+                    << "full slim bootstrap ms = "
+                    << slim_full_gpu_ms << "\n";
+
+                if (!slim_eval_real_cpu_gpu.equal ||
+                    !slim_eval_imag_cpu_gpu.equal ||
+                    !slim_final_cpu_gpu.equal)
+                {
+                    std::cerr
+                        << "[FAILED] Slim StC-first GPU/CPU EvalMod "
+                           "validation failed\n";
+                    return EXIT_FAILURE;
+                }
+                if (!slim_final_source.equal &&
+                    !ignore_correctness_failure)
+                {
+                    std::cerr
+                        << "[FAILED] Slim StC-first end-to-end semantic "
+                           "validation failed\n";
+                    return EXIT_FAILURE;
+                }
+                if (!slim_final_source.equal)
+                {
+                    std::cout
+                        << "[WARN] Known end-to-end semantic error ignored "
+                           "because "
+                           "POSEIDON_BOOTSTRAP_IGNORE_CORRECTNESS_FAILURE=1; "
+                           "GPU/CPU arithmetic checks remain mandatory.\n";
+                }
+                if (slim_final_source.max_abs_error >
+                    slim_semantic_target_tolerance)
+                {
+                    std::cout
+                        << "[WARN] Slim StC-first full bootstrap meets the "
+                           "minimum precision but misses the target "
+                           "precision.\n";
+                }
+                std::cout
+                    << "[OK] Slim StC-first full bootstrap passed\n";
+                return EXIT_SUCCESS;
+            }
+            std::cout
+                << "\n[OK] Slim StC-first phase 1 probe passed scale-range, "
+                   "input-equivalence, and CPU/GPU checks for q="
+                << slim_stc_input_q_count << "->"
+                << modraise_base_q_count << " CPU/GPU validation\n";
             return EXIT_SUCCESS;
         }
         auto gpu_relin_keys =
@@ -2719,6 +5663,28 @@ int main()
                   << join_q_counts(full_key_q_counts) << "\n";
         std::cout << "polynomial degree= "
                   << bootstrap_evalmod_polynomial.degree() << "\n";
+        std::cout << "lazy relin       = "
+                  << (env_flag_enabled_or("POSEIDON_EVALMOD_LAZY_RELIN", true)
+                          ? "ON"
+                          : "OFF")
+                  << ", effective_degree="
+                  << bootstrap_data.eval_mod.polynomial_degree
+                  << ", basis="
+                  << (bootstrap_data.eval_mod.polynomial_basis ==
+                              poseidon::gpu::GpuEvalModPolynomialBasis::Chebyshev
+                          ? "Chebyshev"
+                          : "Monomial")
+                  << "\n";
+        std::cout << "evalmod split    = log_split="
+                  << bootstrap_data.eval_mod.polynomial_log_split
+                  << ", baby_width="
+                  << (std::uint64_t{1}
+                      << bootstrap_data.eval_mod.polynomial_log_split)
+                  << ", layout="
+                  << (bootstrap_data.eval_mod.polynomial_flat_bsgs
+                          ? "flat_b8"
+                          : "recursive")
+                  << "\n";
         std::cout << "basis steps       = "
                   << bootstrap_data.eval_mod.basis_steps.size() << "\n";
         if (bootstrap_data.eval_mod.dynamic_rescale)
@@ -3542,6 +6508,24 @@ int main()
                 evalmod_dynamic_rescale
                     ? evalmod_output_parms_id
                     : cpu_evalmod_output_parms_id;
+            // The experimental flat-b8 GPU circuit has one more
+            // multiplicative level than the balanced CPU Chebyshev tree.
+            // Dropping the CPU oracle to the GPU plan's level preserves the
+            // represented value and allows a decoded-value comparison without
+            // changing the production CPU or default GPU evaluation paths.
+            if (evalmod_dynamic_rescale &&
+                bootstrap_data.eval_mod.polynomial_flat_bsgs &&
+                cpu_eval_real.coeff_modulus_size() > evalmod_output_q_count)
+            {
+                cpu_evaluator->drop_modulus(
+                    cpu_eval_real,
+                    cpu_eval_real,
+                    expected_cpu_evalmod_parms_id);
+                cpu_evaluator->drop_modulus(
+                    cpu_eval_imag,
+                    cpu_eval_imag,
+                    expected_cpu_evalmod_parms_id);
+            }
             if (cpu_eval_real.parms_id() != expected_cpu_evalmod_parms_id ||
                 cpu_eval_imag.parms_id() != expected_cpu_evalmod_parms_id)
             {
@@ -5270,6 +8254,9 @@ int main()
             const bool qp_mac_component_fused = env_flag_enabled_or(
                 "POSEIDON_DOUBLE_HOIST_QP_MAC_COMPONENT_FUSED",
                 true);
+            const bool direct_giant_accumulate = env_flag_enabled_or(
+                "POSEIDON_DOUBLE_HOIST_DIRECT_GIANT_ACCUMULATE",
+                true);
             const auto state = [](bool enabled) {
                 return enabled ? "ON" : "OFF";
             };
@@ -5295,12 +8282,33 @@ int main()
                 << state(qp_mac_group_tiled8)
                 << ", QP-MAC-component-fused="
                 << state(qp_mac_component_fused)
+                << ", direct-giant-accumulate="
+                << state(direct_giant_accumulate)
                 << ", QP-phase2-MAC-alias/occupancy=ON"
                 << ". Set the corresponding POSEIDON_DOUBLE_HOIST_* "
                    "or POSEIDON_KEYSWITCH_P9_* variable to 0 for runtime "
                    "path rollback; phase2-MAC alias/occupancy tuning is a "
                    "compile-time N=65536 default.\n";
         }
+
+        std::cout
+            << "\n[WARN] EvalMod degree-59 lazy relinearization="
+            << (env_flag_enabled_or("POSEIDON_EVALMOD_LAZY_RELIN", true)
+                    ? "ON"
+                    : "OFF")
+            << ", log_split="
+            << bootstrap_data.eval_mod.polynomial_log_split
+            << ", layout="
+            << (bootstrap_data.eval_mod.polynomial_flat_bsgs
+                    ? "flat_b8"
+                    : "recursive")
+            << ", leaves="
+            << bootstrap_data.eval_mod.polynomial_blocks.size()
+            << ", combines="
+            << bootstrap_data.eval_mod.polynomial_combine_steps.size()
+            << ". Eligible remainder-chain outputs stay as size-3 "
+               "ciphertexts and share one later relinearization. Set "
+               "POSEIDON_EVALMOD_LAZY_RELIN=0 for rollback.\n";
 
         if (!evalmod_correct || !s2c_correct || !full_correct)
         {

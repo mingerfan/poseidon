@@ -6,12 +6,41 @@ HomomorphicDFTMatrixLiteral::HomomorphicDFTMatrixLiteral(LinearType type, uint32
                                                          uint32_t log_slots, uint32_t level_start,
                                                          vector<uint32_t> levels,
                                                          bool repack_imag_to_real, double scaling,
-                                                         bool bit_reversed, uint32_t log_bsgs_ratio)
+                                                         bool bit_reversed, uint32_t log_bsgs_ratio,
+                                                         vector<uint32_t> layer_groups,
+                                                         uint32_t direct_layer_threshold)
 
     : type_(type), log_n_(log_n), log_slots_(log_slots), level_start_(level_start),
       levels_(std::move(levels)), repack_imag_to_real_(repack_imag_to_real), scaling_(scaling),
-      bit_reversed_(bit_reversed), log_bsgs_ratio_(log_bsgs_ratio)
+      bit_reversed_(bit_reversed), log_bsgs_ratio_(log_bsgs_ratio),
+      layer_groups_(std::move(layer_groups)),
+      direct_layer_threshold_(direct_layer_threshold)
 {
+    if (!layer_groups_.empty())
+    {
+        uint32_t total_layers = 0;
+        for (const auto layers : layer_groups_)
+        {
+            if (layers == 0)
+            {
+                POSEIDON_THROW(invalid_argument_error, "DFT layer group cannot be zero");
+            }
+            total_layers += layers;
+        }
+        if (total_layers != log_slots_ ||
+            layer_groups_.size() != levels_.size())
+        {
+            POSEIDON_THROW(
+                invalid_argument_error,
+                "explicit DFT layer groups must match log_slots and level count");
+        }
+    }
+    else if (direct_layer_threshold_ != 0)
+    {
+        POSEIDON_THROW(
+            invalid_argument_error,
+            "direct DFT layer threshold requires explicit layer groups");
+    }
 }
 
 LinearType HomomorphicDFTMatrixLiteral::get_type() const { return type_; }
@@ -26,6 +55,8 @@ uint32_t HomomorphicDFTMatrixLiteral::get_log_bsgs_ratio() const { return log_bs
 
 uint32_t HomomorphicDFTMatrixLiteral::get_depth(bool actual)
 {
+    if (!layer_groups_.empty())
+        return static_cast<uint32_t>(layer_groups_.size());
     if (actual)
         return levels_.size();
     else
@@ -59,7 +90,11 @@ void HomomorphicDFTMatrixLiteral::create(LinearMatrixGroup &mat_group, CKKSEncod
         }
 
         gen_linear_transform_bsgs(mat_group.data()[i], mat_group.rot_index(), encoder, x[i], leveld,
-                                  modulus_group, log_bsgs_ratio_, log_slots_);
+                                  modulus_group, log_bsgs_ratio_, log_slots_,
+                                  !layer_groups_.empty() &&
+                                          layer_groups_[i] <= direct_layer_threshold_
+                                      ? (1U << log_slots_)
+                                      : 0);
         leveld = leveld - step;
     }
 }
@@ -181,7 +216,11 @@ void HomomorphicDFTMatrixLiteral::create_dynamic(
             static_cast<uint32_t>(q_count - 1),
             plaintext_scale,
             log_bsgs_ratio_,
-            log_slots_);
+            log_slots_,
+            !layer_groups_.empty() &&
+                    layer_groups_[stage] <= direct_layer_threshold_
+                ? (1U << log_slots_)
+                : 0);
         q_count -= rescale_counts[stage];
     }
 }
@@ -225,16 +264,24 @@ vector<map<int, vector<complex<double>>>> HomomorphicDFTMatrixLiteral::gen_matri
     vector<map<int, vector<complex<double>>>> plain_vector(max_depth);
 
     vector<int> merge(max_depth);
-    for (auto i = 0; i < max_depth; ++i)
+    if (!layer_groups_.empty())
     {
-        depth = int(ceil(float(fft_level) / float(max_depth - i)));
+        for (std::size_t i = 0; i < layer_groups_.size(); ++i)
+            merge[i] = static_cast<int>(layer_groups_[i]);
+    }
+    else
+    {
+        for (auto i = 0; i < max_depth; ++i)
+        {
+            depth = int(ceil(float(fft_level) / float(max_depth - i)));
 
-        if (lt_type == encode)
-            merge[i] = depth;
-        else
-            merge[merge.size() - i - 1] = depth;
+            if (lt_type == encode)
+                merge[i] = depth;
+            else
+                merge[merge.size() - i - 1] = depth;
 
-        fft_level -= depth;
+            fft_level -= depth;
+        }
     }
 
     fft_level = log_slots;

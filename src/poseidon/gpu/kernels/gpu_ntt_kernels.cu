@@ -2438,6 +2438,7 @@ forward_ntt_cheddar_qp_active_phase2_mul_accumulate_65536_kernel(
     }
 }
 
+template <bool Batched>
 __global__ void inverse_ntt_cheddar_phase1_65536_kernel(
     GpuWord *destination,
     const GpuWord *source,
@@ -2445,7 +2446,8 @@ __global__ void inverse_ntt_cheddar_phase1_65536_kernel(
     const GpuWide *rns_modulus_constants,
     const GpuWord *roots,
     std::size_t modulus_offset,
-    std::size_t limb_count)
+    std::size_t limb_count,
+    std::size_t batch_count)
 {
     constexpr int kLogDegree = 16;
     constexpr int kDegree = 1 << kLogDegree;
@@ -2453,9 +2455,17 @@ __global__ void inverse_ntt_cheddar_phase1_65536_kernel(
     extern __shared__ GpuWord shared_values[];
 
     const std::size_t local_limb = blockIdx.y;
-    if (local_limb >= limb_count)
+    const std::size_t batch_index = Batched ? blockIdx.z : 0;
+    if (local_limb >= limb_count || batch_index >= batch_count)
     {
         return;
+    }
+
+    if constexpr (Batched)
+    {
+        const std::size_t q_words = limb_count * kDegree;
+        destination += batch_index * q_words;
+        source += batch_index * 2 * q_words;
     }
 
     const std::size_t table_limb = modulus_offset + local_limb;
@@ -2529,6 +2539,7 @@ __global__ void inverse_ntt_cheddar_phase1_65536_kernel(
     }
 }
 
+template <bool Batched>
 __global__ void inverse_ntt_cheddar_phase2_65536_kernel(
     GpuWord *values,
     const GpuWord *rns_primes,
@@ -2536,7 +2547,8 @@ __global__ void inverse_ntt_cheddar_phase2_65536_kernel(
     const GpuWord *roots,
     const GpuWord *inv_degree_modulo,
     std::size_t modulus_offset,
-    std::size_t limb_count)
+    std::size_t limb_count,
+    std::size_t batch_count)
 {
     constexpr int kLogDegree = 16;
     constexpr int kDegree = 1 << kLogDegree;
@@ -2544,9 +2556,16 @@ __global__ void inverse_ntt_cheddar_phase2_65536_kernel(
     extern __shared__ GpuWord shared_values[];
 
     const std::size_t local_limb = blockIdx.y;
-    if (local_limb >= limb_count)
+    const std::size_t batch_index = Batched ? blockIdx.z : 0;
+    if (local_limb >= limb_count || batch_index >= batch_count)
     {
         return;
+    }
+
+
+    if constexpr (Batched)
+    {
+        values += batch_index * limb_count * kDegree;
     }
 
     const std::size_t table_limb = modulus_offset + local_limb;
@@ -5721,7 +5740,7 @@ void launch_inverse_cheddar_fourstep_65536(
     const std::size_t modulus_offset =
         destination_shard.limb_begin - parameter_shard.limb_begin;
 
-    inverse_ntt_cheddar_phase1_65536_kernel<<<
+    inverse_ntt_cheddar_phase1_65536_kernel<false><<<
         dim3(128, static_cast<unsigned int>(destination_shard.limb_count)),
         64,
         64 * 8 * sizeof(GpuWord)>>>(
@@ -5731,12 +5750,13 @@ void launch_inverse_cheddar_fourstep_65536(
             parameter_shard.rns_modulus_constants.data(),
             parameter_shard.fourstep_intt_tables.data(),
             modulus_offset,
-            destination_shard.limb_count);
+            destination_shard.limb_count,
+            1);
     gpu_check_cuda(
         cudaGetLastError(),
         "launch_inverse_ntt_poly_shard Cheddar phase1 kernel launch");
 
-    inverse_ntt_cheddar_phase2_65536_kernel<<<
+    inverse_ntt_cheddar_phase2_65536_kernel<false><<<
         dim3(32, static_cast<unsigned int>(destination_shard.limb_count)),
         128,
         128 * 16 * sizeof(GpuWord)>>>(
@@ -5746,7 +5766,8 @@ void launch_inverse_cheddar_fourstep_65536(
             parameter_shard.fourstep_intt_tables.data(),
             parameter_shard.inv_degree_modulo.data(),
             modulus_offset,
-            destination_shard.limb_count);
+            destination_shard.limb_count,
+            1);
     gpu_check_cuda(
         cudaGetLastError(),
         "launch_inverse_ntt_poly_shard Cheddar phase2 kernel launch");
@@ -6038,6 +6059,99 @@ void launch_inverse_ntt_poly_shard_fourstep_65536(
         destination_shard,
         source_shard,
         parameter_shard);
+}
+
+void launch_inverse_ntt_poly_shard_batch_fourstep_65536(
+    const GpuPolyShardView &first_destination_shard,
+    const GpuConstPolyShardView &first_source_shard,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree,
+    std::size_t batch_count,
+    std::size_t destination_batch_stride,
+    std::size_t source_batch_stride)
+{
+    const char *name =
+        "launch_inverse_ntt_poly_shard_batch_fourstep_65536";
+    validate_ntt_launch_shape(
+        name,
+        first_destination_shard,
+        first_source_shard,
+        parameter_shard,
+        degree,
+        true);
+    if (degree != 65536)
+    {
+        throw std::invalid_argument(
+            std::string(name) + ": degree must be 65536");
+    }
+    if (batch_count == 0)
+    {
+        return;
+    }
+    const std::size_t words_per_batch =
+        first_destination_shard.limb_count * degree;
+    if (first_destination_shard.ptr == first_source_shard.ptr ||
+        destination_batch_stride != words_per_batch ||
+        source_batch_stride != 2 * words_per_batch ||
+        batch_count > std::numeric_limits<unsigned int>::max())
+    {
+        throw std::invalid_argument(
+            std::string(name) + ": invalid batch layout");
+    }
+    const std::size_t modulus_offset =
+        first_destination_shard.limb_begin - parameter_shard.limb_begin;
+    const std::size_t roots_size =
+        (modulus_offset + first_destination_shard.limb_count) * degree;
+    if (parameter_shard.fourstep_intt_tables.data() == nullptr ||
+        parameter_shard.fourstep_intt_tables.size() < roots_size)
+    {
+        throw std::invalid_argument(
+            std::string(name) + ": inverse root table is too small");
+    }
+
+    gpu_check_cuda(
+        cudaSetDevice(first_destination_shard.device_id),
+        "batched inverse NTT cudaSetDevice");
+    const auto batch_grid = static_cast<unsigned int>(batch_count);
+    inverse_ntt_cheddar_phase1_65536_kernel<true><<<
+        dim3(
+            128,
+            static_cast<unsigned int>(
+                first_destination_shard.limb_count),
+            batch_grid),
+        64,
+        64 * 8 * sizeof(GpuWord)>>>(
+            first_destination_shard.ptr,
+            first_source_shard.ptr,
+            parameter_shard.rns_primes.data(),
+            parameter_shard.rns_modulus_constants.data(),
+            parameter_shard.fourstep_intt_tables.data(),
+            modulus_offset,
+            first_destination_shard.limb_count,
+            batch_count);
+    gpu_check_cuda(
+        cudaGetLastError(),
+        "batched inverse NTT phase1 kernel launch");
+
+    inverse_ntt_cheddar_phase2_65536_kernel<true><<<
+        dim3(
+            32,
+            static_cast<unsigned int>(
+                first_destination_shard.limb_count),
+            batch_grid),
+        128,
+        128 * 16 * sizeof(GpuWord)>>>(
+            first_destination_shard.ptr,
+            parameter_shard.rns_primes.data(),
+            parameter_shard.rns_modulus_constants.data(),
+            parameter_shard.fourstep_intt_tables.data(),
+            parameter_shard.inv_degree_modulo.data(),
+            modulus_offset,
+            first_destination_shard.limb_count,
+            batch_count);
+    gpu_check_cuda(
+        cudaGetLastError(),
+        "batched inverse NTT phase2 kernel launch");
 }
 
 void launch_forward_ntt_poly_shard_fourstep_65536(

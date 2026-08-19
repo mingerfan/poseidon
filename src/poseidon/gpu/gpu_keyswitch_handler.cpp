@@ -2134,7 +2134,8 @@ void GpuKeySwitchHandler::hoist_decompose_modup_ntt(
     const GpuConstRNSPolyView &switch_poly_ntt,
     const GpuLevelInfo &level_info,
     GpuHoistedDecomposition &destination,
-    GpuHybridKeySwitchWorkspace &workspace) const
+    GpuHybridKeySwitchWorkspace &workspace,
+    const GpuWord *precomputed_source_intt_q) const
 {
     NvtxRange range("double_hoist.decompose");
     validate_single_full_shard(
@@ -2168,22 +2169,30 @@ void GpuKeySwitchHandler::hoist_decompose_modup_ntt(
         level_info.degree,
         q_count,
         p_count);
-    const bool capacity_insufficient =
+    const bool shape_changed =
         destination.device_id != source_shard.device_id ||
         destination.degree != level_info.degree ||
-        destination.source_intt_q.size() < q_words ||
+        destination.q_count != q_count ||
+        destination.p_count != p_count ||
+        destination.dnum != dnum;
+    const bool digit_capacity_insufficient =
+        shape_changed ||
         destination.digits_q_ntt.size() < dnum * q_words ||
         destination.digits_p_ntt.size() < dnum * p_words;
-    if (capacity_insufficient)
+    if (digit_capacity_insufficient)
     {
-        destination.source_intt_q.allocate(
-            q_words,
-            source_shard.device_id);
         destination.digits_q_ntt.allocate(
             dnum * q_words,
             source_shard.device_id);
         destination.digits_p_ntt.allocate(
             dnum * p_words,
+            source_shard.device_id);
+    }
+    if (precomputed_source_intt_q == nullptr &&
+        (shape_changed || destination.source_intt_q.size() < q_words))
+    {
+        destination.source_intt_q.allocate(
+            q_words,
             source_shard.device_id);
     }
     destination.parms_id = level_info.parms_id;
@@ -2193,26 +2202,23 @@ void GpuKeySwitchHandler::hoist_decompose_modup_ntt(
     destination.p_count = p_count;
     destination.dnum = dnum;
 
-    GpuPolyShardView intt_q;
-    intt_q.device_id = source_shard.device_id;
-    intt_q.ptr = destination.source_intt_q.data();
-    intt_q.limb_begin = 0;
-    intt_q.limb_count = q_count;
-    intt_q.coeff_begin = 0;
-    intt_q.coeff_count = level_info.degree;
-    kernel::launch_inverse_ntt_poly_shard(
-        intt_q,
-        source_shard,
-        *parameter_shard,
-        level_info.degree);
-
-    GpuConstPolyShardView intt_q_const;
-    intt_q_const.device_id = intt_q.device_id;
-    intt_q_const.ptr = intt_q.ptr;
-    intt_q_const.limb_begin = intt_q.limb_begin;
-    intt_q_const.limb_count = intt_q.limb_count;
-    intt_q_const.coeff_begin = intt_q.coeff_begin;
-    intt_q_const.coeff_count = intt_q.coeff_count;
+    const GpuWord *source_intt_q = precomputed_source_intt_q;
+    if (source_intt_q == nullptr)
+    {
+        GpuPolyShardView intt_q;
+        intt_q.device_id = source_shard.device_id;
+        intt_q.ptr = destination.source_intt_q.data();
+        intt_q.limb_begin = 0;
+        intt_q.limb_count = q_count;
+        intt_q.coeff_begin = 0;
+        intt_q.coeff_count = level_info.degree;
+        kernel::launch_inverse_ntt_poly_shard(
+            intt_q,
+            source_shard,
+            *parameter_shard,
+            level_info.degree);
+        source_intt_q = intt_q.ptr;
+    }
 
     for (std::size_t digit = 0; digit < dnum; ++digit)
     {
@@ -2244,7 +2250,7 @@ void GpuKeySwitchHandler::hoist_decompose_modup_ntt(
             kernel::launch_hybrid_modup_p9_forward_ntt_qp_active_phase1_fourstep_65536(
                 digit_q,
                 digit_p,
-                destination.source_intt_q.data(),
+                source_intt_q,
                 digit,
                 limb_begin,
                 limb_count,
@@ -2260,7 +2266,7 @@ void GpuKeySwitchHandler::hoist_decompose_modup_ntt(
             kernel::launch_hybrid_modup_decomposition_row_tiled8(
                 modup_q,
                 modup_p,
-                destination.source_intt_q.data(),
+                source_intt_q,
                 digit,
                 limb_begin,
                 limb_count,
@@ -2274,7 +2280,7 @@ void GpuKeySwitchHandler::hoist_decompose_modup_ntt(
             kernel::launch_hybrid_modup_decomposition(
                 modup_q,
                 modup_p,
-                destination.source_intt_q.data(),
+                source_intt_q,
                 source_shard.ptr,
                 digit,
                 limb_begin,
@@ -2344,7 +2350,8 @@ void GpuKeySwitchHandler::keyswitch_multsum_no_moddown(
     std::size_t destination_batch,
     bool initialize,
     const GpuLevelInfo &level_info,
-    GpuHybridKeySwitchWorkspace &workspace) const
+    GpuHybridKeySwitchWorkspace &workspace,
+    const GpuWord *lifted_c0_source_q) const
 {
     NvtxRange range("double_hoist.keymult_no_moddown");
     if (!(hoisted.parms_id == level_info.parms_id) ||
@@ -2398,6 +2405,12 @@ void GpuKeySwitchHandler::keyswitch_multsum_no_moddown(
     const bool inverse_pre_rotated =
         keys.meta.galois_format ==
         GpuGaloisKeyFormat::InversePreRotated;
+    if (lifted_c0_source_q != nullptr && !inverse_pre_rotated)
+    {
+        throw std::invalid_argument(
+            "GpuKeySwitchHandler::keyswitch_multsum_no_moddown: "
+            "fused c0 requires inverse-pre-rotated keys");
+    }
     if (inverse_pre_rotated &&
         (key_storage.galois_elts_by_key_index.size() <= key_index ||
          key_storage.galois_elts_by_key_index[key_index] != galois_elt))
@@ -2435,6 +2448,7 @@ void GpuKeySwitchHandler::keyswitch_multsum_no_moddown(
             hoisted.dnum,
             galois_elt,
             initialize,
+            lifted_c0_source_q,
             *parameter_shard,
             hoisted.degree);
         return;
