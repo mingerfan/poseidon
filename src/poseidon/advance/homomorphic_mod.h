@@ -66,6 +66,14 @@ public:
             coefficients.empty() ? 0 : coefficients.size() - 1);
     }
 
+    /**
+     * Replace the discrete-cosine coefficients with an exact fixed-degree
+     * Chebyshev interpolation of the same phase-shifted base function.
+     * This experimental source preserves the current double-angle semantics
+     * but is not a Remez/minimax fit.
+     */
+    void refit_discrete_cosine_fixed_degree(uint32_t degree);
+
     inline const Polynomial &arcsine_poly() const { return this->arcsine_poly_; }
 
     void set_level_start(uint32_t level) { level_start_ = level; }

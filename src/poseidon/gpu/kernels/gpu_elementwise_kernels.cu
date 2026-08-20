@@ -494,6 +494,7 @@ __global__ void multiply_plain_caccumulate_two_components_4_kernel(
     const GpuWord *plaintext1,
     const GpuWord *plaintext2,
     const GpuWord *plaintext3,
+    const GpuWord *constant_plaintext,
     const GpuWord *q_primes,
     const GpuWide *q_modulus_constants,
     std::size_t limb_count,
@@ -532,6 +533,20 @@ __global__ void multiply_plain_caccumulate_two_components_4_kernel(
         value, source2, plaintext2, tid, modulus, barrett_ratio);
     add_plain_product_if_present(
         value, source3, plaintext3, tid, modulus, barrett_ratio);
+
+    // A polynomial leaf has at most one constant coefficient.  Folding it
+    // into the first CAccum launch avoids materializing a second ciphertext
+    // merely to preserve c1 while adding the constant to c0.
+    if (!second_component && constant_plaintext != nullptr)
+    {
+        GpuWide sum = static_cast<GpuWide>(value) +
+                      static_cast<GpuWide>(constant_plaintext[tid]);
+        if (sum >= modulus)
+        {
+            sum -= modulus;
+        }
+        value = static_cast<GpuWord>(sum);
+    }
 
     destination[tid] = value;
 }
@@ -1600,6 +1615,7 @@ void launch_multiply_plain_caccumulate_two_components_4(
     const GpuConstPolyShardView *ciphertexts1,
     const GpuConstPolyShardView *plaintexts,
     std::size_t term_count,
+    const GpuConstPolyShardView *constant_plaintext,
     bool accumulate,
     const GpuParameterShard &parameter_shard,
     std::size_t degree)
@@ -1649,6 +1665,10 @@ void launch_multiply_plain_caccumulate_two_components_4(
         validate_source(ciphertexts1[i], "ciphertext1");
         validate_source(plaintexts[i], "plaintext");
     }
+    if (constant_plaintext != nullptr)
+    {
+        validate_source(*constant_plaintext, "constant plaintext");
+    }
 
     if (destination0.limb_begin < parameter_shard.limb_begin)
     {
@@ -1696,6 +1716,7 @@ void launch_multiply_plain_caccumulate_two_components_4(
         ptr_or_null(plaintexts, 1),
         ptr_or_null(plaintexts, 2),
         ptr_or_null(plaintexts, 3),
+        constant_plaintext != nullptr ? constant_plaintext->ptr : nullptr,
         parameter_shard.q_primes.data() + modulus_offset,
         parameter_shard.q_modulus_constants.data() + modulus_offset,
         destination0.limb_count,

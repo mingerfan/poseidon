@@ -2360,6 +2360,9 @@ int main()
                           "POSEIDON_BOOTSTRAP_EVALMOD_TRUNCATE_DEGREE",
                           evalmod_sine_degree)))
                 : std::nullopt;
+        const bool evalmod_fixed_degree_refit =
+            env_flag_enabled(
+                "POSEIDON_BOOTSTRAP_EVALMOD_FIXED_DEGREE_REFIT");
         const double correctness_tolerance = env_double_or(
             "POSEIDON_BOOTSTRAP_CORRECTNESS_TOLERANCE", 1.0e-3);
         const bool detailed_diagnostics =
@@ -2493,6 +2496,21 @@ int main()
             evalmod_k,
             evalmod_arcsine_degree,
             evalmod_generation_degree);
+        if (evalmod_fixed_degree_refit)
+        {
+            if (evalmod_truncate_degree.has_value())
+            {
+                throw std::invalid_argument(
+                    "fixed-degree EvalMod refit and truncation are mutually exclusive");
+            }
+            eval_mod_poly.refit_discrete_cosine_fixed_degree(
+                evalmod_sine_degree);
+            if (eval_mod_poly.sine_poly().degree() != evalmod_sine_degree)
+            {
+                throw std::runtime_error(
+                    "fixed-degree EvalMod refit produced an unexpected degree");
+            }
+        }
         if (evalmod_truncate_degree.has_value())
         {
             if (*evalmod_truncate_degree != evalmod_sine_degree)
@@ -3096,6 +3114,13 @@ int main()
                   << evalmod_generation_degree << "\n";
         std::cout << "effective_degree= "
                   << eval_mod_poly.sine_poly().degree() << "\n";
+        std::cout << "coefficient_src = "
+                  << (evalmod_fixed_degree_refit
+                          ? "fixed-degree Chebyshev interpolation"
+                          : (evalmod_truncate_degree.has_value()
+                                 ? "higher-degree truncation"
+                                 : "native ApproximateCos"))
+                  << "\n";
         std::cout << "evalmod_rescale = " << evalmod_rescale_count
                   << " physical prime(s) per logical step\n";
         std::cout << "evalmod_dynamic = "

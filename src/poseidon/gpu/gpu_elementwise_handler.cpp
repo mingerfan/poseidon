@@ -499,6 +499,97 @@ void GpuElementwiseHandler::sub_plain_from_ciphertext(
     }
 }
 
+namespace
+{
+
+GpuConstPolyShardView const_alias(const GpuPolyShardView &view)
+{
+    GpuConstPolyShardView result;
+    result.device_id = view.device_id;
+    result.ptr = view.ptr;
+    result.limb_begin = view.limb_begin;
+    result.limb_count = view.limb_count;
+    result.coeff_begin = view.coeff_begin;
+    result.coeff_count = view.coeff_count;
+    return result;
+}
+
+}  // namespace
+
+void GpuElementwiseHandler::add_plain_to_ciphertext_inplace(
+    GpuCiphertextView &ciphertext_view,
+    const GpuConstPlaintextView &plaintext_view,
+    const GpuLevelInfo &level_info) const
+{
+    if (!(ciphertext_view.meta.parms_id == plaintext_view.meta.parms_id) ||
+        !ciphertext_view.meta.is_ntt_form ||
+        !plaintext_view.meta.is_ntt_form ||
+        ciphertext_view.meta.degree != plaintext_view.meta.degree ||
+        ciphertext_view.meta.q_count != plaintext_view.meta.q_count ||
+        ciphertext_view.meta.p_count != plaintext_view.meta.p_count ||
+        ciphertext_view.polys.empty() ||
+        ciphertext_view.polys[0].shards.size() != plaintext_view.poly.shards.size())
+    {
+        throw std::invalid_argument(
+            "add_plain_to_ciphertext_inplace: incompatible input");
+    }
+
+    for (std::size_t i = 0; i < ciphertext_view.polys[0].shards.size(); ++i)
+    {
+        const auto &dst = ciphertext_view.polys[0].shards[i];
+        const auto &plain = plaintext_view.poly.shards[i];
+        const auto *parameter_shard = find_parameter_shard(level_info, dst);
+        if (parameter_shard == nullptr)
+        {
+            throw std::invalid_argument(
+                "add_plain_to_ciphertext_inplace: no parameter shard");
+        }
+        kernel::launch_add_poly_shard(
+            dst,
+            const_alias(dst),
+            plain,
+            *parameter_shard,
+            level_info.degree);
+    }
+}
+
+void GpuElementwiseHandler::sub_plain_from_ciphertext_inplace(
+    GpuCiphertextView &ciphertext_view,
+    const GpuConstPlaintextView &plaintext_view,
+    const GpuLevelInfo &level_info) const
+{
+    if (!(ciphertext_view.meta.parms_id == plaintext_view.meta.parms_id) ||
+        !ciphertext_view.meta.is_ntt_form ||
+        !plaintext_view.meta.is_ntt_form ||
+        ciphertext_view.meta.degree != plaintext_view.meta.degree ||
+        ciphertext_view.meta.q_count != plaintext_view.meta.q_count ||
+        ciphertext_view.meta.p_count != plaintext_view.meta.p_count ||
+        ciphertext_view.polys.empty() ||
+        ciphertext_view.polys[0].shards.size() != plaintext_view.poly.shards.size())
+    {
+        throw std::invalid_argument(
+            "sub_plain_from_ciphertext_inplace: incompatible input");
+    }
+
+    for (std::size_t i = 0; i < ciphertext_view.polys[0].shards.size(); ++i)
+    {
+        const auto &dst = ciphertext_view.polys[0].shards[i];
+        const auto &plain = plaintext_view.poly.shards[i];
+        const auto *parameter_shard = find_parameter_shard(level_info, dst);
+        if (parameter_shard == nullptr)
+        {
+            throw std::invalid_argument(
+                "sub_plain_from_ciphertext_inplace: no parameter shard");
+        }
+        kernel::launch_sub_poly_shard(
+            dst,
+            const_alias(dst),
+            plain,
+            *parameter_shard,
+            level_info.degree);
+    }
+}
+
 void GpuElementwiseHandler::multiply_plain_with_ciphertext(
     GpuCiphertextView &destination_view,
     const GpuConstCiphertextView &ciphertext_view,

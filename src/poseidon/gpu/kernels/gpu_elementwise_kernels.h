@@ -161,6 +161,7 @@ void launch_multiply_plain_caccumulate_two_components_4(
     const GpuConstPolyShardView *ciphertexts1,
     const GpuConstPolyShardView *plaintexts,
     std::size_t term_count,
+    const GpuConstPolyShardView *constant_plaintext,
     bool accumulate,
     const GpuParameterShard &parameter_shard,
     std::size_t degree);

@@ -281,6 +281,28 @@ C2S real/imag CPU-GPU最大误差为约 `1.18e-10/1.91e-10`，说明四层线性
 
 **默认选择。** 虽然归一化21枚方案相对此前最快的22枚链有约`1.3～1.7 ms`的局部回退，但它把可直接继续计算的输出Q数量由12提高到13；在包含多次自举的真实电路中，这一层裕度可能延后下一次自举，从全局上抵消局部延迟。因此将 `34->28->13`、最终scale约`2^45`的链设为命名profile `slim22_da3_c2s5433` 的默认配置。取消显式chain覆盖后的默认路径复测得到C2S `40.784 ms`、EvalMod `44.107 ms`、完整路径`90.833 ms`，输出scale为`2^45.0732`，最终CPU/GPU差为`1.08e-9`。20枚高scale方案不设为默认，生产profile `dynamic32`及其他自举路径不受影响；显式设置`POSEIDON_BOOTSTRAP_Q_BIT_CHAIN`仍可覆盖该选择。
 
+### 16. EvalMod 动态 leaf 的目标层 CAccum 与同步 D2D 消除
+
+**原始瓶颈。** 22阶动态EvalMod的6个leaf虽然已经允许“先累加、后统一处理”，但运行时仍按单项执行：每个Chebyshev basis先与对应系数明文做独立PMult，生成完整size-2 ciphertext；不同basis位于不同Q层时，再通过同步DtoD复制把较高Q前缀物化到leaf目标层；随后以完整ciphertext Add链累加。常数项和Chebyshev校正使用out-of-place `add_plain/sub_plain`，为了只修改`c0`却仍需把未改变的`c1`（size-3时还包括`c2`）复制到新buffer。因此这部分既有重复HBM traversal，也在CPU线程上产生阻塞式`cudaMemcpy`。
+
+**优化思路。** 动态leaf的ModDrop只删除Q后缀，不改变保留prime上的NTT residue。于是无需先复制出低层ciphertext：新路径直接把各basis和系数明文的底层相同Q前缀作为只读view，在leaf最终`output_q_count`上计算。每个kernel同时处理`c0/c1`，在寄存器中合并最多4个`basis_i * plaintext_i`，直接写入最终leaf accumulator；6个leaf的常数系数也融合进各自第一批CAccum，对`c0`加常数而不触碰`c1`。这相当于把“PMult物化→Q前缀DtoD→多遍Add”改成一次目标层流式归约，并保持所有basis原buffer可供后续节点复用。
+
+对EvalMod中其他只改变`c0`的常数加减，新增原地路径：`c0`通过modular add/sub kernel更新，`c1/c2`保留在原地址，不再复制。输入准备直接写入`T1`持有的buffer，去掉`source→scratch→T1`的一次完整中转；动态rescale规划为0次时直接复用原对象；double-angle无需rescale的分支也用所有权移动代替DtoD。这里没有把memcpy伪装成copy kernel，减少的是实际global-memory字节和同步API。
+
+**计算图与访存变化。** 在`N=65536, Q=34, P=9`、`slim22_da3_c2s5433`、baby width 4、3次double-angle、EvalMod `Q:28->13`下，leaf区间的GPU kernel由96个降为12个：原先64个component级PMult、20个two-component Add和12个单component Add被12个two-component四项CAccum替代。leaf GPU kernel累计时间由`3.348 ms`降为`1.397 ms`。整个EvalMod kernel数由925降为841，恰好减少84次；basis、BSGS combine和double-angle的kernel数分别保持`346/292/184`，证明改动只压缩leaf而没有删错计算图。
+
+完整自举capture中的同步DtoD由200次、`963.641 MB`、`3.113 ms`降为104次、`350.749 MB`、`1.215 ms`。结合未变化的线性变换区间，EvalMod自身的同步DtoD约由134次降为38次，减少96次；完整capture减少约`612.9 MB`读取/写回载荷和约`1.90 ms`GPU memcpy时间。剩余38次主要属于仍需保留独立输入的basis/combine level alignment，并非本轮leaf物化。
+
+**正确性与性能结果。** 同一V100和同一二进制使用`POSEIDON_EVALMOD_D2D_FREE_DATAFLOW=0/1`，各执行1次warmup加3次CUDA-event测量：
+
+- 回退物化路径：EvalMod `43.816 ms`，完整前置StC自举 `88.995 ms`
+- 目标层CAccum路径：EvalMod `38.323 ms`，完整前置StC自举 `84.121 ms`
+- EvalMod减少`5.493 ms`、提升`12.54%`；完整路径减少`4.874 ms`、提升`5.48%`
+
+EvalMod real/imag CPU-GPU最大差保持在约`2.43e-11/2.26e-11`，完整CPU-GPU差约`1.02e-9`；输入输出层仍为`28->13`，最终scale仍为`2^45.0732`。22阶截断路径固有的`final source error=6.78436`和`polynomial approx=6.78361`没有变化，因此本优化没有增加已有的多项式逼近误差。
+
+**适用范围与状态。** 新数据流默认启用。动态leaf只有在所有非零项均为NTT form、basis与plaintext至少覆盖共同目标Q前缀、乘积scale一致且输出为两分量时才进入四项CAccum；不满足条件自动回退逐项求值。原地常数加减同样要求parms、shape、NTT form和scale严格匹配。设置`POSEIDON_EVALMOD_D2D_FREE_DATAFLOW=0`可整体恢复旧leaf物化、out-of-place明文加减和同步D2D，便于回归；`POSEIDON_EVALMOD_CACCUM_LEAF=0`可只关闭leaf CAccum。最终报告为`profiles/bootstrap22_leaf_d2dfree_v100_20260820.nsys-rep`，报告属于测试产物，不提交仓库。
+
 ## 3. 累计性能演进
 
 下表用于观察总体趋势，不应被视为完全相同环境下的一组严格单变量实验。nsys 数据包含 profiler 开销，release 数据来自 CUDA event。
@@ -298,6 +320,7 @@ C2S real/imag CPU-GPU最大误差为约 `1.18e-10/1.91e-10`，说明四层线性
 | Giant-source Four-step INTT 批处理 | 104.65 ms | release，22阶路径2+5 | 第 14 项；相对同配置逐group路径平均降低约 0.71 ms |
 | `[5,4,3,3]` C2S与3层direct矩阵 | 91.56 ms | release，22阶独立路径1+1 A/B | 第 15 项；C2S减少约14.79 ms，但额外消耗Q prime |
 | `[5,4,3,3]` 归一化Q链默认值 | 90.83～91.27 ms | release，22阶独立路径1+1 | 输出由12枚提高到13枚Q，最终scale约`2^45.073`；以约1.3～1.7 ms换取一层可用裕度 |
+| EvalMod目标层leaf CAccum与D2D消除 | 84.12 ms | release，22阶独立路径1+3 A/B | EvalMod `43.82->38.32 ms`；leaf kernel `96->12`，完整DtoD `200->104` |
 
 当前默认路径的最终 Nsight Systems 报告为 `final_component_fused_20260813.nsys-rep`。这些 profiler 报告属于测试产物，不需要与本文档一起提交到仓库。
 

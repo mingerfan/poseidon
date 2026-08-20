@@ -109,6 +109,17 @@ public:
         const GpuConstPlaintextView &plaintext_view,
         const GpuLevelInfo &level_info) const;
 
+    /** Add/subtract a plaintext directly in c0, preserving c1/c2 in place. */
+    void add_plain_to_ciphertext_inplace(
+        GpuCiphertextView &ciphertext_view,
+        const GpuConstPlaintextView &plaintext_view,
+        const GpuLevelInfo &level_info) const;
+
+    void sub_plain_from_ciphertext_inplace(
+        GpuCiphertextView &ciphertext_view,
+        const GpuConstPlaintextView &plaintext_view,
+        const GpuLevelInfo &level_info) const;
+
     /**
      * @brief destination_ciphertext = source_ciphertext * source_plaintext.
      *
