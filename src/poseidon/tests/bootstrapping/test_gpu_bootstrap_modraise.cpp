@@ -4942,22 +4942,70 @@ int main()
                     iterations,
                     run_gpu_slim_evalmod);
                 auto run_gpu_slim_full = [&]() {
+                    nvtxRangePushA("bootstrap_once");
+                    nvtxRangePushA("StC");
                     run_gpu_slim_stc();
+                    nvtxRangePop();
+                    nvtxRangePushA("ModRaise");
                     run_gpu_slim_modraise();
+                    nvtxRangePop();
                     gpu_slim_raised.meta.scale =
                         slim_c2s_logical_input_scale;
+                    nvtxRangePushA("CtS");
                     run_gpu_slim_c2s();
+                    nvtxRangePop();
+                    nvtxRangePushA("EvalMod");
                     run_gpu_slim_evalmod();
                     combine_gpu_slim_evalmod();
+                    nvtxRangePop();
+                    nvtxRangePop();
                 };
-                for (std::size_t index = 0; index < warmup; ++index)
+                for (std::size_t index = 0; index < full_warmup; ++index)
                 {
                     run_gpu_slim_full();
                 }
                 cudaDeviceSynchronize();
-                const double slim_full_gpu_ms = time_gpu_ms(
-                    iterations,
-                    run_gpu_slim_full);
+                double slim_full_gpu_ms =
+                    std::numeric_limits<double>::quiet_NaN();
+                if (nsys_capture_full)
+                {
+                    std::cout
+                        << "[phase] nsys capture: one profiled slim StC-first "
+                           "GPU bootstrap after warmup\n"
+                        << std::flush;
+                    const auto capture_start_status = cudaProfilerStart();
+                    if (capture_start_status != cudaSuccess)
+                    {
+                        throw std::runtime_error(
+                            std::string("cudaProfilerStart failed: ") +
+                            cudaGetErrorString(capture_start_status));
+                    }
+                    nvtxRangePushA(
+                        "profiled_slim_stc_first_bootstrap_once");
+                    const auto start = std::chrono::steady_clock::now();
+                    run_gpu_slim_full();
+                    cudaDeviceSynchronize();
+                    const auto stop = std::chrono::steady_clock::now();
+                    nvtxRangePop();
+                    const auto capture_stop_status = cudaProfilerStop();
+                    if (capture_stop_status != cudaSuccess)
+                    {
+                        throw std::runtime_error(
+                            std::string("cudaProfilerStop failed: ") +
+                            cudaGetErrorString(capture_stop_status));
+                    }
+                    const auto elapsed_us =
+                        std::chrono::duration_cast<std::chrono::microseconds>(
+                            stop - start).count();
+                    slim_full_gpu_ms =
+                        static_cast<double>(elapsed_us) / 1000.0;
+                }
+                else
+                {
+                    slim_full_gpu_ms = time_gpu_ms(
+                        iterations,
+                        run_gpu_slim_full);
+                }
 
                 std::cout
                     << "EvalMod q              = "
