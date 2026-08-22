@@ -303,6 +303,108 @@ EvalMod real/imag CPU-GPU最大差保持在约`2.43e-11/2.26e-11`，完整CPU-GP
 
 **适用范围与状态。** 新数据流默认启用。动态leaf只有在所有非零项均为NTT form、basis与plaintext至少覆盖共同目标Q前缀、乘积scale一致且输出为两分量时才进入四项CAccum；不满足条件自动回退逐项求值。原地常数加减同样要求parms、shape、NTT form和scale严格匹配。设置`POSEIDON_EVALMOD_D2D_FREE_DATAFLOW=0`可整体恢复旧leaf物化、out-of-place明文加减和同步D2D，便于回归；`POSEIDON_EVALMOD_CACCUM_LEAF=0`可只关闭leaf CAccum。最终报告为`profiles/bootstrap22_leaf_d2dfree_v100_20260820.nsys-rep`，报告属于测试产物，不提交仓库。
 
+### 17. EvalMod BSGS combine 的 last-use 零拷贝 ModDrop
+
+**原始瓶颈。** 第16项消除leaf物化后，nsys仍显示每个实部/虚部EvalMod的BSGS combine区间包含多次同步DtoD。它们来自动态计算图的level alignment：当quotient、Chebyshev basis、临时product或remainder的active Q数量不同时，旧实现会重新分配目标ciphertext，把保留的Q前缀逐component复制到新buffer，再立即进入乘法或加法。这里的`drop_modulus`不是CKKS rescale，也不进行模运算；它只丢弃RNS链末端limb，因此复制出的内容与原buffer的低Q前缀逐bit相同。
+
+**优化思路。** 为多项式combine DAG预先统计每个node的消费次数，并记录每个basis degree的最后一个combine消费者。当一个node只剩当前这一次消费、一个basis到达最后一次消费，或者对象本身就是当前combine产生的独占临时量时，不再物化Q前缀，而是保留原GPU allocation和每个ciphertext component的物理起始地址，仅把`parms_id/q_count`以及shard的逻辑`limb_count`缩到目标Q。后续kernel原本就根据每个component的shard指针和逻辑limb数访问数据，物理stride中未使用的尾部padding不会被读取。这样没有用copy kernel替代memcpy，也没有改变任何residue，而是直接删除整次HBM读写。
+
+该路径只处理单个full-Q shard、`P=0`、相同degree且目标level为源Q前缀的纯ModDrop。仍会被其他DAG节点复用的quotient/remainder、尚未到最后消费者的basis、布局不满足条件的对象，以及开启逐节点EvalMod trace时，全部自动回退原`drop_modulus`复制路径。真实rescale仍执行原有模约减kernel，不能也没有被此优化绕过。
+
+**访存与调用变化。** 在V100、`N=65536, Q=34, P=9`、`slim22_da3_c2s5433`、degree-22/baby-4/DA3和EvalMod `Q:28->13`下，两个EvalMod分支的BSGS combine各删除6个GPU memory op，区间GPU op由`159->153`；密码学kernel数量和乘法/relinearization图保持不变。完整自举capture的DtoD由104次、`350.749 MB`、`1.215 ms`降为92次、`287.834 MB`、`0.999 ms`，即实际减少12次同步复制、`62.915 MB`传输和约`0.216 ms`memcpy engine占用。combine投影时长由实/虚分支约`6.145/6.143 ms`降为`5.833/5.846 ms`，合计减少约`0.61 ms`；其余差额主要来自同步API及临时allocation/materialization不再阻塞host dataflow。该结果说明收益确实来自预期的combine level alignment，而非其他阶段波动。
+
+**正确性与性能结果。** 同一Release二进制固定GPU并仅切换`POSEIDON_EVALMOD_ZERO_COPY_MODDROP=0/1`，两组均执行1次warmup加3次CUDA-event测量：
+
+- 复制Q前缀：EvalMod `40.009 ms`，完整前置StC自举 `85.976 ms`
+- last-use逻辑缩短：EvalMod `39.325 ms`，完整前置StC自举 `84.619 ms`
+- EvalMod减少`0.684 ms`、提升约`1.71%`；完整路径减少`1.357 ms`、提升约`1.58%`
+
+两组输出层均为`Q:28->13`，最终scale均为`2^45.0732`；新路径EvalMod real/imag CPU-GPU最大差约为`2.23e-11/2.46e-11`，完整CPU-GPU差约为`9.68e-10`。已知的degree-22截断`final source error=6.78436`和`polynomial approx=6.78361`不变。因此该修改没有改变层数、scale或近似精度。
+
+**适用范围与状态。** 该优化默认启用，当前实现首先覆盖实际热点的动态lazy-relinearization combine路径；不满足严格shape和生命周期条件时透明回退。设置`POSEIDON_EVALMOD_ZERO_COPY_MODDROP=0`可恢复复制式Q前缀物化，便于回归。最终nsys报告为`profiles/bootstrap22_zero_copy_moddrop_v100_20260820.nsys-rep`，报告属于测试产物，不提交仓库。
+
+### 18. 共享 basis/combine operand 的只读 Q-prefix view
+
+**原始瓶颈。** 第17项只能原地缩短已经到最后一次使用的对象；T1/T2等Chebyshev basis以及部分BSGS quotient/basis仍会被后续DAG节点复用，不能修改其`q_count`。当一个共享高层ciphertext要和低层operand相乘时，旧路径因此仍需分配低层临时buffer，并按component同步复制其Q前缀。最终nsys定位到每个实部/虚部EvalMod的basis generation和BSGS combine分别保留2个这样的`drop_modulus`调用，也就是每个分支8个component级DtoD memory op。
+
+**优化思路。** 新路径不修改共享ciphertext的所有权和元数据，而是在单次乘法调用内构造临时只读view：view继承原component的GPU起始指针，只把本次调用可见的`parms_id/q_count/shard.limb_count`限制到双方共同的低Q前缀。乘法输出直接按该目标level分配，底层two-component ciphertext multiply仍读取完全相同的NTT residues并启动原kernel。调用结束后view销毁，原高层basis仍保持完整，可继续服务其他leaf/combine节点。
+
+只有两个输入均为NTT form、size-2、`P=0`、相同degree/device、单个full-Q shard且目标是双方共同Q前缀时才使用该路径；否则回退复制式ModDrop。对于basis correction中已经独占的output/PMult临时量，仍采用第17项的原地逻辑缩短。该设计没有浅拷贝GPU内存所有者，也没有让长期对象持有外部指针，因此不引入悬空引用或双重释放风险。
+
+**计算图与访存变化。** 在V100、`N=65536, Q=34, P=9`、`slim22_da3_c2s5433`、degree-22/baby-4/DA3和EvalMod `Q:28->13`下，basis generation每个实/虚分支的GPU op由`177->173`，BSGS combine由`153->149`；两阶段各删除4个memory op，密码学kernel数完全不变。完整自举DtoD由92次、`287.834 MB`、`0.999 ms`降为76次、`185.074 MB`、`0.691 ms`，即删除16次同步复制、`102.760 MB`传输和约`0.308 ms`memcpy engine占用。`multiply_outer_components`仍为26次、`multiply_cross_component`仍为12次，且两份nsys报告中它们的累计GPU时间几乎相同，证明优化没有退化到另一套慢乘法kernel。
+
+**正确性与性能结果。** 第一次1次warmup加3次测量受到机器速度漂移影响，ON比OFF慢约`0.269 ms`；同一次nsys中连未修改的double-angle也整体慢约3%～4%，因此没有据此直接设为默认。随后反转测试顺序并把两组都提高到2次warmup加5次CUDA-event测量：
+
+- Q-prefix view关闭：EvalMod `39.1506 ms`，完整前置StC自举 `83.9174 ms`
+- Q-prefix view开启：EvalMod `37.9392 ms`，完整前置StC自举 `83.5088 ms`
+- EvalMod减少`1.2114 ms`、提升约`3.09%`；完整路径减少`0.4086 ms`、提升约`0.49%`
+
+实验组EvalMod real/imag CPU-GPU最大差约为`2.28e-11/2.42e-11`，完整CPU-GPU差约为`9.29e-10`；输出仍为`Q:28->13`和scale `2^45.0732`。已知的degree-22截断近似误差仍为`6.78436`，没有新增数值误差。相邻两次测试的StC/C2S本身仍有约1%量级漂移，所以完整路径收益应保守理解；EvalMod局部收益同时得到稳定复测和结构性nsys计数支持。
+
+**适用范围与状态。** 该优化默认启用，设置`POSEIDON_EVALMOD_Q_PREFIX_VIEWS=0`可恢复共享operand的复制式level alignment。它依赖第17项的安全shape检查，逐节点EvalMod trace模式会自动回退复制路径。最终nsys报告为`profiles/bootstrap22_qprefix_probe_v100_20260820.nsys-rep`，报告属于测试产物，不提交仓库。
+
+### 19. Baby KeySwitch 与 QP plaintext MAC 的寄存器直达融合
+
+**原始瓶颈。** Double-Hoist虽然已经把一次source decomposition复用于全部baby rotations，但旧的baby阶段仍以完整QP ciphertext作为KeySwitch与明文矩阵乘之间的接口。每个baby rotation先分别在Q、P基上执行evaluation-key MAC，将两个ciphertext component完整写入`baby_tile`；随后的QP plaintext-MAC kernel再把它读回，与各giant group对应的diagonal相乘并累加。高性能库的nsys中出现`fused_kswitch_mac_ptx`一类主kernel，而本库融合前的C2S则由`pre_rotated_keymul_batch_kernel`和`qp_plain_mul_accumulate*`两族独立热点构成，这说明两条dataflow在中间结果物化上仍有实质差异。
+
+**优化思路。** 新kernel以一个QP limb和一个coefficient为线程粒度，在寄存器中完成当前baby的digit×evaluation-key乘加，并立即把得到的两个KeySwitch component乘上plaintext diagonal，再累加到对应giant-group accumulator。KeySwitch结果不再成为全局可见的baby ciphertext。对于同一个baby被多个giant group消费的情况，evaluation-key MAC只计算一次，随后在寄存器中对最多4组不同diagonal分别做模乘；这同时实现了“KeySwitch→plaintext MAC直达”和跨group复用，而不是简单把两个旧kernel机械拼接。identity baby的原密文分量以及Q侧需要补回的lifted Galois `c0`也进入同一dataflow，避免额外的完整ciphertext补写。
+
+当前专用路径覆盖`N=65536`、inverse-pre-rotated Galois key、baby tile不超过8且单tile消费的giant group不超过4的形状；Q与P基各启动一个融合kernel，保持各自模数和Montgomery参数不变。重复的`(group,baby)`映射、缺失key/pointer table或不支持的shape会自动回退旧路径，因此其他degree、key layout和矩阵分组不会被强制套用该实现。
+
+**访存与调用变化。** 对前置StC、C2S `[5,4,3,3]`路径，四个C2S stage的输入Q数分别为`34/33/32/30`，P数均为9，baby数分别为`8/8/15/15`。旧接口需要物化
+
+`2 * N * 4 bytes * [8*(34+9) + 8*(33+9) + 15*(32+9) + 15*(30+9)] = 985,661,440 bytes`
+
+的baby QP ciphertext；其后plaintext MAC至少还要把这些数据读回一次。因此融合消除了约`0.99 GB`写回和`0.99 GB`重新读取，即约`1.97 GB`的HBM流量，不包括随之删除的独立identity/c0补写。nsys的C2S区间中，旧路径的86次batch Key-MAC、24次独立plaintext MAC、43次lifted-c0 add和4次identity lift，变为24次融合kernel以及3次不满足融合形状的残余操作。C2S kernel实例由`454`降至`324`，减少130次、即`28.6%`；C2S累计GPU kernel时间由`40.242 ms`降至`33.851 ms`，减少`6.391 ms`、即`15.9%`。
+
+**正确性与release性能结果。** 同一Release二进制固定在同一张V100，仅切换`POSEIDON_DOUBLE_HOIST_FUSED_BABY_KEYSWITCH_PLAIN_MAC=0/1`，两组均使用2次warmup加5次CUDA-event正式测量：
+
+- 旧物化路径：C2S `40.2544 ms`，完整前置StC自举 `83.6054 ms`
+- 融合直达路径：C2S `35.1346 ms`，完整前置StC自举 `78.7710 ms`
+- C2S减少`5.1198 ms`、提升约`12.72%`；完整路径减少`4.8344 ms`、提升约`5.78%`
+
+融合路径的C2S real/imag CPU-GPU最大差均约`8.56e-7`，roundtrip差约`4.28e-7`；EvalMod仍为`Q:28->13`、输出scale `2^45.0732`，最终CPU-GPU差约`1.10e-9`。已知degree-22截断多项式误差仍为`6.78436`，说明该优化只改变GPU dataflow，没有改变明文矩阵、RNS层级或算法语义。
+
+**适用范围与状态。** 该融合已经成为满足上述shape检查时的默认路径，设置`POSEIDON_DOUBLE_HOIST_FUSED_BABY_KEYSWITCH_PLAIN_MAC=0`可恢复旧的baby-QP物化实现。验证报告为`profiles/bootstrap22_fused_baby_ks_ptxt_v100_20260821.nsys-rep`，报告和派生文本均属于测试产物，不提交仓库。
+
+### 20. 融合 Baby KeySwitch/Plaintext-MAC 的占用率感知 block 形状
+
+**原始瓶颈。** 第19项删除QP中间物化后，融合kernel成为C2S第一热点。对最终V100 cubin做静态资源检查表明，`GroupTile=4`的P/Q实例分别使用66和72个32-bit寄存器，每线程`STACK/LOCAL=0`，不存在寄存器spill；问题是原先每block 256 threads导致寄存器驻留受限。以较重的Q实例为例，每block需要`256*72=18,432`个寄存器，V100每SM的65,536个寄存器只能容纳3个block，即24个warp、理论occupancy 37.5%。
+
+**优化思路。** 将该融合kernel单独改成128-thread block，不改变其他KeySwitch、NTT或plaintext-MAC kernel。Q实例每block寄存器需求降为9,216，可同时驻留7个block，也就是28个warp、理论occupancy 43.75%；P实例也从3个256-thread block提高到7个128-thread block。更高的并发warp用于掩盖evaluation-key与diagonal的HBM读取延迟。该变化只把相同的`q_count*N`或`p_count*N`线程划分为更多block，线程到`(limb, coefficient)`的映射、模乘顺序、giant-group累加顺序和kernel发射次数均保持不变。
+
+64-thread block在66/72寄存器条件下也只能达到约43.75%的理论occupancy，但会进一步增加block数量和调度边界，因此没有在缺乏额外occupancy收益的情况下继续缩小。保留`64/128/256`三个合法值只是为了跨GPU架构复测；V100默认选择128。
+
+**正确性与性能结果。** 同一Release二进制固定在同一张V100，仅切换`POSEIDON_DOUBLE_HOIST_FUSED_BABY_BLOCK_SIZE=256/128`，两组均使用2次warmup加5次CUDA-event测量：
+
+- 256 threads：C2S `35.8998 ms`，完整前置StC自举 `79.7402 ms`
+- 128 threads：C2S `35.7774 ms`，完整前置StC自举 `78.6352 ms`
+- C2S减少`0.1224 ms`、提升约`0.34%`；完整时间差包含EvalMod和运行状态波动，不把全部`1.105 ms`归因于本项
+
+独立nsys结构对比进一步确认了局部收益。四类融合kernel的累计GPU时间由`12.6421 ms`降至`12.5098 ms`，减少`0.1322 ms`、即`1.05%`；C2S全部kernel累计时间由`33.851 ms`降至`33.703 ms`，减少`0.148 ms`，kernel实例数均为324。`GroupTile=4`两类实例合计减少约`0.200 ms`，`GroupTile=1`合计增加约`0.068 ms`，净结果仍与Release C2S的`0.122 ms`下降一致。
+
+128-thread路径的C2S CPU/GPU real/imag最大差约`8.36e-7`，roundtrip差约`4.17e-7`；最终仍为`Q:28->13`、scale `2^45.0732`，CPU/GPU差约`1.08e-9`，degree-22已知近似误差仍为`6.78436`。默认值已改为128；设置`POSEIDON_DOUBLE_HOIST_FUSED_BABY_BLOCK_SIZE=256`可恢复旧launch形状。验证报告为`profiles/bootstrap22_fused_baby_block128_v100_20260821.nsys-rep`。
+
+### 21. `[5,4,3,3]` C2S 的 full-baby 单层批处理
+
+**对比报告揭示的瓶颈。** 使用与先进库报告相同版本的 Nsight Systems 解析器重新导出原始数据后，先进库完整自举只有339次kernel发射，其中CtS为109次；本库第20项之后仍有1492次完整发射和324次CtS发射。两者在CtS中的核心kernel都已经是KeySwitch与plaintext MAC融合形式，但融合粒度不同：先进库四层CtS各只有一次`fused_kswitch_mac_ptxt`，本库的`fused_baby_keyswitch_plain_accumulate`仍发射24次。当前`[5,4,3,3]`矩阵的baby数为`[8,8,15,15]`，全局tile为4时需要`[2,2,4,4]`轮，每轮又分别启动Q和P kernel，因而恰好产生24次发射。这证明剩余差距不是“是否融合”，而是融合后仍按baby tile多次读写同一个giant accumulator。
+
+**优化思路。** 将融合kernel的host参数和device参数容量由8个baby扩展到16个，并将该命名路径的默认tile设为15。四个C2S stage现在都能在一个tile内处理全部baby step：每个线程在寄存器中依次完成本层全部baby的decomposition-digit/evaluation-key MAC，立即乘对应diagonal，并持续累加同一组输出；直到本层结束才写回giant-group QP accumulator。Q与P仍因模数表和输出地址不同而各使用一个kernel，因此四层合计从24次降为8次，而不是宣称已经达到先进库的4次。
+
+该变化不减少baby rotation、evaluation-key模乘或diagonal模乘的数学次数；它消除的是8轮额外tile边界。按四层的`(Q+P,group_count)=(43,4),(42,4),(41,1),(39,1)`、`N=65536`和两个密文分量估算，合并后的单层累加约避免580 MiB giant accumulator HBM读写，并减少16次kernel launch。容量扩展后的实际V100 cubin保持原资源形状：最重的Q/group-4实例仍为72个寄存器，P/group-4仍为66个寄存器，`STACK=0, LOCAL=0`；更大的参数表进入约885字节kernel constant argument区，没有引入寄存器spill。
+
+**正确性与release性能结果。** 严格A/B固定在同一张空闲V100（GPU 3），两组均使用2次warmup加5次CUDA-event正式测量；测试期间另一个GPU存在外部满载任务，因此没有混用其结果：
+
+- tile 4：C2S `33.9138 ms`，完整前置StC自举 `78.1568 ms`
+- full-baby tile 15：C2S `32.7668 ms`，完整前置StC自举 `74.8890 ms`
+- C2S减少`1.1470 ms`、提升约`3.38%`
+
+完整时间观测下降`3.2678 ms`，但其中EvalMod也从`38.3096 ms`波动到`37.1622 ms`，所以本项只保守归因得到CtS局部测量支持的`1.1470 ms`。tile 15路径的C2S real/imag CPU-GPU最大差约`8.42e-7`，roundtrip差约`4.20e-7`；最终CPU-GPU差约`9.37e-10`，输出仍为`Q:28->13`和scale `2^45.0732`。degree-22截断多项式原有的`final source error=6.78436`没有被本项改变。
+
+**nsys验证。** 新报告中CtS融合kernel由24次、`12.5098 ms`降为8次、`10.1976 ms`；CtS全部kernel由324次、`33.7028 ms`降为308次、`31.0351 ms`。完整capture由1492次、`80.3882 ms`降为1476次、`76.5703 ms`。StC仍为315次，EvalMod仍为841次，说明launch变化准确落在目标C2S路径，没有把其他阶段的波动冒充结构收益。
+
+**适用范围与状态。** full-baby tile 15只成为`slim22_da3_c2s5433`与`slim22_direct_da3_c2s5433`两条`[5,4,3,3]`实验路径的脚本默认值；其他profile继续使用tile 4，低层`dnum=1`路径继续使用独立的tile 8覆盖。用户显式设置`POSEIDON_GPU_DOUBLE_HOIST_BABY_TILE`时始终优先。最终验证报告为`profiles/bootstrap22_full_baby15_v100_gpu3_20260821.nsys-rep`，报告及派生文件属于测试产物，不提交仓库。
+
 ## 3. 累计性能演进
 
 下表用于观察总体趋势，不应被视为完全相同环境下的一组严格单变量实验。nsys 数据包含 profiler 开销，release 数据来自 CUDA event。
@@ -321,8 +423,13 @@ EvalMod real/imag CPU-GPU最大差保持在约`2.43e-11/2.26e-11`，完整CPU-GP
 | `[5,4,3,3]` C2S与3层direct矩阵 | 91.56 ms | release，22阶独立路径1+1 A/B | 第 15 项；C2S减少约14.79 ms，但额外消耗Q prime |
 | `[5,4,3,3]` 归一化Q链默认值 | 90.83～91.27 ms | release，22阶独立路径1+1 | 输出由12枚提高到13枚Q，最终scale约`2^45.073`；以约1.3～1.7 ms换取一层可用裕度 |
 | EvalMod目标层leaf CAccum与D2D消除 | 84.12 ms | release，22阶独立路径1+3 A/B | EvalMod `43.82->38.32 ms`；leaf kernel `96->12`，完整DtoD `200->104` |
+| EvalMod combine last-use零拷贝ModDrop | 84.62 ms | release，22阶独立路径1+3 A/B | EvalMod `40.01->39.33 ms`；完整DtoD `104->92`，减少`62.915 MB` |
+| EvalMod共享operand只读Q-prefix view | 83.51 ms | release，22阶独立路径2+5 A/B | EvalMod `39.15->37.94 ms`；完整DtoD `92->76`，减少`102.760 MB` |
+| Baby KeySwitch→QP plaintext MAC寄存器直达融合 | 78.77 ms | release，22阶独立路径2+5 A/B | C2S `40.25->35.13 ms`；C2S kernel `454->324`，消除约`1.97 GB`中间HBM流量 |
+| 融合Baby kernel改为128-thread block | 78.64 ms | release，22阶独立路径2+5 A/B | C2S `35.90->35.78 ms`；融合kernel累计时间减少约`1.05%` |
+| `[5,4,3,3]` C2S full-baby tile 15 | 74.89 ms | release，空闲V100、22阶路径2+5 A/B | C2S `33.91->32.77 ms`；融合kernel `24->8`，CtS nsys kernel累计`33.70->31.04 ms` |
 
-当前默认路径的最终 Nsight Systems 报告为 `final_component_fused_20260813.nsys-rep`。这些 profiler 报告属于测试产物，不需要与本文档一起提交到仓库。
+当前22阶前置StC实验路径的最新 Nsight Systems 报告为 `bootstrap22_full_baby15_v100_gpu3_20260821.nsys-rep`。这些 profiler 报告属于测试产物，不需要与本文档一起提交到仓库。
 
 ## 4. 后续记录规范
 

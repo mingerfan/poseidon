@@ -1955,7 +1955,7 @@ __global__ void forward_ntt_cheddar_qp_active_phase1_65536_kernel(
     }
 }
 
-template <int FixedSourceLimbCount>
+template <int FixedSourceLimbCount, bool SourcePreweighted>
 __global__ void
 hybrid_modup_p9_forward_ntt_qp_active_phase1_65536_kernel(
     GpuWord *destination_q,
@@ -2030,7 +2030,7 @@ hybrid_modup_p9_forward_ntt_qp_active_phase1_65536_kernel(
     for (int i = 0; i < kRadix; ++i)
     {
         const std::size_t coefficient = load_base + (i << 12);
-        if constexpr (FixedSourceLimbCount == 1)
+        if constexpr (FixedSourceLimbCount == 1 && !SourcePreweighted)
         {
             local[i] = barrett_reduce_u64_u32(
                 c2_coeff[decomp_limb_begin * kDegree + coefficient],
@@ -2045,22 +2045,32 @@ hybrid_modup_p9_forward_ntt_qp_active_phase1_65536_kernel(
                  source_col < FixedSourceLimbCount;
                  ++source_col)
             {
-                const std::size_t source_limb =
-                    decomp_limb_begin + source_col;
-                const GpuWord source_modulus = rns_primes[source_limb];
-                const GpuWide source_barrett =
-                    rns_modulus_constants[source_limb];
-                GpuWord source_value = c2_coeff[
-                    source_limb * kDegree + coefficient];
-                const GpuWord inv_punctured =
-                    qi_inv_punctured[inv_offset + source_col];
-                if (inv_punctured != 1)
+                GpuWord source_value = 0;
+                if constexpr (SourcePreweighted)
                 {
-                    source_value = mul_mod(
-                        source_value,
-                        inv_punctured,
-                        source_modulus,
-                        source_barrett);
+                    source_value = c2_coeff[
+                        source_col * kDegree + coefficient];
+                }
+                else
+                {
+                    const std::size_t source_limb =
+                        decomp_limb_begin + source_col;
+                    const GpuWord source_modulus =
+                        rns_primes[source_limb];
+                    const GpuWide source_barrett =
+                        rns_modulus_constants[source_limb];
+                    source_value = c2_coeff[
+                        source_limb * kDegree + coefficient];
+                    const GpuWord inv_punctured =
+                        qi_inv_punctured[inv_offset + source_col];
+                    if (inv_punctured != 1)
+                    {
+                        source_value = mul_mod(
+                            source_value,
+                            inv_punctured,
+                            source_modulus,
+                            source_barrett);
+                    }
                 }
                 sum = add_mod(
                     sum,
@@ -2110,6 +2120,202 @@ hybrid_modup_p9_forward_ntt_qp_active_phase1_65536_kernel(
     for (int i = 0; i < kRadix; ++i)
     {
         destination_limb[destination_base + (i << 9)] = local[i];
+    }
+}
+
+template <int FixedSourceLimbCount, int TargetLimbTile>
+__global__ void
+hybrid_modup_p9_forward_ntt_qp_active_phase1_grouped_65536_kernel(
+    GpuWord *destination_q,
+    GpuWord *destination_p,
+    const GpuWord *weighted_source,
+    const GpuWord *rns_primes,
+    const GpuWide *rns_modulus_constants,
+    const GpuWord *roots,
+    const GpuWord *q_matrix_offsets,
+    const GpuWord *q_matrices,
+    const GpuWord *p_matrix_offsets,
+    const GpuWord *p_matrices,
+    std::size_t decomp_index,
+    std::size_t decomp_limb_begin,
+    std::size_t base_q_size,
+    std::size_t base_p_size)
+{
+    static_assert(
+        FixedSourceLimbCount >= 2 && FixedSourceLimbCount <= 9,
+        "grouped P=9 ModUp requires two through nine source limbs");
+    static_assert(
+        TargetLimbTile == 2 || TargetLimbTile == 4,
+        "grouped P=9 ModUp supports target tiles of two or four limbs");
+    constexpr int kLogDegree = 16;
+    constexpr int kDegree = 1 << kLogDegree;
+    constexpr int kRadix = 16;
+    constexpr int kThreadsPerLimb = 128;
+    constexpr int kValuesPerLimb = kThreadsPerLimb * kRadix;
+    extern __shared__ GpuWord shared_values[];
+
+    const int target_slot = threadIdx.x / kThreadsPerLimb;
+    const int limb_thread = threadIdx.x % kThreadsPerLimb;
+    const std::size_t active_q_count =
+        base_q_size - FixedSourceLimbCount;
+    const std::size_t active_limb_count = active_q_count + base_p_size;
+    const std::size_t active_limb =
+        blockIdx.y * TargetLimbTile + target_slot;
+    const bool active = active_limb < active_limb_count;
+
+    const GpuWord *conversion_matrix = q_matrices;
+    std::size_t local_limb = 0;
+    std::size_t table_limb = 0;
+    std::size_t matrix_row_offset = 0;
+    GpuWord *destination_limb = destination_q;
+    if (active)
+    {
+        const bool is_p_limb = active_limb >= active_q_count;
+        local_limb = active_limb;
+        table_limb = active_limb;
+        std::size_t matrix_row_limb = active_limb;
+        std::size_t matrix_offset = q_matrix_offsets[decomp_index];
+        if (is_p_limb)
+        {
+            local_limb -= active_q_count;
+            table_limb = base_q_size + local_limb;
+            matrix_row_limb = local_limb;
+            matrix_offset = p_matrix_offsets[decomp_index];
+            conversion_matrix = p_matrices;
+            destination_limb = destination_p + local_limb * kDegree;
+        }
+        else
+        {
+            if (local_limb >= decomp_limb_begin)
+            {
+                local_limb += FixedSourceLimbCount;
+                table_limb = local_limb;
+                matrix_row_limb = local_limb;
+            }
+            destination_limb = destination_q + local_limb * kDegree;
+        }
+        matrix_row_offset =
+            matrix_offset + matrix_row_limb * base_p_size;
+    }
+
+    const GpuWord modulus = active ? rns_primes[table_limb] : 1;
+    const GpuWide barrett_ratio =
+        active ? rns_modulus_constants[table_limb] : 0;
+    const GpuWord *limb_roots =
+        active ? roots + table_limb * kDegree : roots;
+    const int stage_group = limb_thread >> 4;
+    const int batch = limb_thread & 15;
+    const int load_base =
+        batch + (blockIdx.x << 4) + (stage_group << 9);
+    GpuWord local[kRadix];
+#pragma unroll
+    for (int i = 0; i < kRadix; ++i)
+    {
+        local[i] = 0;
+    }
+
+    if (target_slot == 0)
+    {
+#pragma unroll
+        for (int i = 0; i < kRadix; ++i)
+        {
+            const std::size_t coefficient = load_base + (i << 12);
+            shared_values[limb_thread + i * kThreadsPerLimb] =
+                weighted_source[coefficient];
+        }
+    }
+    __syncthreads();
+
+#pragma unroll 1
+    for (int source_col = 0;
+         source_col < FixedSourceLimbCount;
+         ++source_col)
+    {
+        const int source_buffer = source_col & 1;
+        const GpuWord *source_shared =
+            shared_values + source_buffer * kValuesPerLimb;
+        if (active)
+        {
+            const GpuWord matrix_value =
+                conversion_matrix[matrix_row_offset + source_col];
+#pragma unroll
+            for (int i = 0; i < kRadix; ++i)
+            {
+                local[i] = add_mod(
+                    local[i],
+                    mul_mod(
+                        source_shared[
+                            limb_thread + i * kThreadsPerLimb],
+                        matrix_value,
+                        modulus,
+                        barrett_ratio),
+                    modulus);
+            }
+        }
+
+        const int next_source_col = source_col + 1;
+        if (next_source_col < FixedSourceLimbCount && target_slot == 0)
+        {
+            GpuWord *next_source_shared = shared_values +
+                ((next_source_col & 1) * kValuesPerLimb);
+#pragma unroll
+            for (int i = 0; i < kRadix; ++i)
+            {
+                const std::size_t coefficient = load_base + (i << 12);
+                next_source_shared[
+                    limb_thread + i * kThreadsPerLimb] =
+                    weighted_source[
+                        next_source_col * kDegree + coefficient];
+            }
+        }
+        __syncthreads();
+    }
+
+    if (active)
+    {
+        const std::size_t final_twiddle = 8 + stage_group;
+        fourstep_forward_first<kRadix, 3>(
+            local,
+            final_twiddle >> 3,
+            limb_roots,
+            modulus,
+            barrett_ratio);
+
+        GpuWord *limb_shared =
+            shared_values + target_slot * kValuesPerLimb;
+#pragma unroll
+        for (int i = 0; i < kRadix; ++i)
+        {
+            limb_shared[limb_thread + i * kThreadsPerLimb] = local[i];
+        }
+    }
+    __syncthreads();
+
+    if (active)
+    {
+        GpuWord *limb_shared =
+            shared_values + target_slot * kValuesPerLimb;
+        const int shared_index = (stage_group << 8) + batch;
+#pragma unroll
+        for (int i = 0; i < kRadix; ++i)
+        {
+            local[i] = limb_shared[shared_index + (i << 4)];
+        }
+        const std::size_t final_twiddle = 8 + stage_group;
+        fourstep_forward_radix<kRadix, 4>(
+            local,
+            final_twiddle,
+            limb_roots,
+            modulus,
+            barrett_ratio);
+
+        const int destination_base =
+            batch + (stage_group << 13) + (blockIdx.x << 4);
+#pragma unroll
+        for (int i = 0; i < kRadix; ++i)
+        {
+            destination_limb[destination_base + (i << 9)] = local[i];
+        }
     }
 }
 
@@ -6284,7 +6490,9 @@ void launch_hybrid_modup_p9_forward_ntt_qp_active_phase1_fourstep_65536(
     std::size_t decomp_limb_begin,
     std::size_t decomp_limb_count,
     const GpuParameterShard &parameter_shard,
-    std::size_t degree)
+    std::size_t degree,
+    bool source_preweighted,
+    unsigned int target_limb_tile)
 {
     if (degree != 65536 || parameter_shard.hybrid_base_p_count != 9)
     {
@@ -6321,14 +6529,93 @@ void launch_hybrid_modup_p9_forward_ntt_qp_active_phase1_fourstep_65536(
 
     const std::size_t active_limb_count =
         base_q_size - decomp_limb_count + base_p_size;
+    if (target_limb_tile != 1 && target_limb_tile != 2 &&
+        target_limb_tile != 4)
+    {
+        throw std::invalid_argument(
+            "launch_hybrid_modup_p9_forward_ntt_qp_active_phase1_fourstep_65536: target limb tile must be 1, 2, or 4");
+    }
+    if (target_limb_tile != 1 &&
+        (!source_preweighted || decomp_limb_count == 1))
+    {
+        throw std::invalid_argument(
+            "launch_hybrid_modup_p9_forward_ntt_qp_active_phase1_fourstep_65536: grouped targets require a preweighted multi-limb source");
+    }
+
+    if (target_limb_tile != 1)
+    {
+        const dim3 grouped_grid(
+            32,
+            static_cast<unsigned int>(
+                (active_limb_count + target_limb_tile - 1) /
+                target_limb_tile));
+        const unsigned int grouped_block = 128 * target_limb_tile;
+        const std::size_t grouped_shared_bytes =
+            grouped_block * 16 * sizeof(GpuWord);
+
+#define POSEIDON_LAUNCH_GROUPED_P9_MODUP_PHASE1(                          \
+    FIXED_COUNT, TARGET_TILE)                                             \
+        hybrid_modup_p9_forward_ntt_qp_active_phase1_grouped_65536_kernel \
+            <FIXED_COUNT, TARGET_TILE>                                    \
+            <<<grouped_grid, grouped_block, grouped_shared_bytes>>>(      \
+                destination_q,                                           \
+                destination_p,                                           \
+                c2_coeff,                                                 \
+                parameter_shard.rns_primes.data(),                       \
+                parameter_shard.rns_modulus_constants.data(),            \
+                parameter_shard.ntt_tables.data(),                       \
+                parameter_shard.hybrid_q_conv_matrix_offsets.data(),     \
+                parameter_shard.hybrid_q_conv_matrices.data(),            \
+                parameter_shard.hybrid_p_conv_matrix_offsets.data(),     \
+                parameter_shard.hybrid_p_conv_matrices.data(),            \
+                decomp_index,                                             \
+                decomp_limb_begin,                                        \
+                base_q_size,                                              \
+                base_p_size)
+
+#define POSEIDON_DISPATCH_GROUPED_P9_MODUP(TARGET_TILE)                   \
+        switch (decomp_limb_count)                                       \
+        {                                                                 \
+        case 2: POSEIDON_LAUNCH_GROUPED_P9_MODUP_PHASE1(2, TARGET_TILE); break; \
+        case 3: POSEIDON_LAUNCH_GROUPED_P9_MODUP_PHASE1(3, TARGET_TILE); break; \
+        case 4: POSEIDON_LAUNCH_GROUPED_P9_MODUP_PHASE1(4, TARGET_TILE); break; \
+        case 5: POSEIDON_LAUNCH_GROUPED_P9_MODUP_PHASE1(5, TARGET_TILE); break; \
+        case 6: POSEIDON_LAUNCH_GROUPED_P9_MODUP_PHASE1(6, TARGET_TILE); break; \
+        case 7: POSEIDON_LAUNCH_GROUPED_P9_MODUP_PHASE1(7, TARGET_TILE); break; \
+        case 8: POSEIDON_LAUNCH_GROUPED_P9_MODUP_PHASE1(8, TARGET_TILE); break; \
+        case 9: POSEIDON_LAUNCH_GROUPED_P9_MODUP_PHASE1(9, TARGET_TILE); break; \
+        default:                                                          \
+            throw std::logic_error(                                      \
+                "launch_hybrid_modup_p9_forward_ntt_qp_active_phase1_fourstep_65536: unreachable grouped decomposition width"); \
+        }
+
+        if (target_limb_tile == 2)
+        {
+            POSEIDON_DISPATCH_GROUPED_P9_MODUP(2);
+        }
+        else
+        {
+            POSEIDON_DISPATCH_GROUPED_P9_MODUP(4);
+        }
+#undef POSEIDON_DISPATCH_GROUPED_P9_MODUP
+#undef POSEIDON_LAUNCH_GROUPED_P9_MODUP_PHASE1
+
+        gpu_check_cuda(
+            cudaGetLastError(),
+            "launch_hybrid_modup_p9_forward_ntt_qp_active_phase1_fourstep_65536 grouped kernel launch");
+        return;
+    }
+
     const dim3 grid(32, static_cast<unsigned int>(active_limb_count));
     constexpr int block_size = 128;
     constexpr std::size_t shared_bytes =
         block_size * 16 * sizeof(GpuWord);
 
-#define POSEIDON_LAUNCH_P9_MODUP_FOURSTEP_PHASE1(FIXED_COUNT)             \
+#define POSEIDON_LAUNCH_P9_MODUP_FOURSTEP_PHASE1(                         \
+    FIXED_COUNT, SOURCE_PREWEIGHTED)                                      \
     hybrid_modup_p9_forward_ntt_qp_active_phase1_65536_kernel             \
-        <FIXED_COUNT><<<grid, block_size, shared_bytes>>>(                 \
+        <FIXED_COUNT, SOURCE_PREWEIGHTED>                                  \
+        <<<grid, block_size, shared_bytes>>>(                              \
             destination_q,                                                \
             destination_p,                                                \
             c2_coeff,                                                     \
@@ -6345,20 +6632,41 @@ void launch_hybrid_modup_p9_forward_ntt_qp_active_phase1_fourstep_65536(
             base_q_size,                                                  \
             base_p_size)
 
-    switch (decomp_limb_count)
+    if (source_preweighted)
     {
-    case 1: POSEIDON_LAUNCH_P9_MODUP_FOURSTEP_PHASE1(1); break;
-    case 2: POSEIDON_LAUNCH_P9_MODUP_FOURSTEP_PHASE1(2); break;
-    case 3: POSEIDON_LAUNCH_P9_MODUP_FOURSTEP_PHASE1(3); break;
-    case 4: POSEIDON_LAUNCH_P9_MODUP_FOURSTEP_PHASE1(4); break;
-    case 5: POSEIDON_LAUNCH_P9_MODUP_FOURSTEP_PHASE1(5); break;
-    case 6: POSEIDON_LAUNCH_P9_MODUP_FOURSTEP_PHASE1(6); break;
-    case 7: POSEIDON_LAUNCH_P9_MODUP_FOURSTEP_PHASE1(7); break;
-    case 8: POSEIDON_LAUNCH_P9_MODUP_FOURSTEP_PHASE1(8); break;
-    case 9: POSEIDON_LAUNCH_P9_MODUP_FOURSTEP_PHASE1(9); break;
-    default:
-        throw std::logic_error(
-            "launch_hybrid_modup_p9_forward_ntt_qp_active_phase1_fourstep_65536: unreachable decomposition width");
+        switch (decomp_limb_count)
+        {
+        case 1: POSEIDON_LAUNCH_P9_MODUP_FOURSTEP_PHASE1(1, true); break;
+        case 2: POSEIDON_LAUNCH_P9_MODUP_FOURSTEP_PHASE1(2, true); break;
+        case 3: POSEIDON_LAUNCH_P9_MODUP_FOURSTEP_PHASE1(3, true); break;
+        case 4: POSEIDON_LAUNCH_P9_MODUP_FOURSTEP_PHASE1(4, true); break;
+        case 5: POSEIDON_LAUNCH_P9_MODUP_FOURSTEP_PHASE1(5, true); break;
+        case 6: POSEIDON_LAUNCH_P9_MODUP_FOURSTEP_PHASE1(6, true); break;
+        case 7: POSEIDON_LAUNCH_P9_MODUP_FOURSTEP_PHASE1(7, true); break;
+        case 8: POSEIDON_LAUNCH_P9_MODUP_FOURSTEP_PHASE1(8, true); break;
+        case 9: POSEIDON_LAUNCH_P9_MODUP_FOURSTEP_PHASE1(9, true); break;
+        default:
+            throw std::logic_error(
+                "launch_hybrid_modup_p9_forward_ntt_qp_active_phase1_fourstep_65536: unreachable decomposition width");
+        }
+    }
+    else
+    {
+        switch (decomp_limb_count)
+        {
+        case 1: POSEIDON_LAUNCH_P9_MODUP_FOURSTEP_PHASE1(1, false); break;
+        case 2: POSEIDON_LAUNCH_P9_MODUP_FOURSTEP_PHASE1(2, false); break;
+        case 3: POSEIDON_LAUNCH_P9_MODUP_FOURSTEP_PHASE1(3, false); break;
+        case 4: POSEIDON_LAUNCH_P9_MODUP_FOURSTEP_PHASE1(4, false); break;
+        case 5: POSEIDON_LAUNCH_P9_MODUP_FOURSTEP_PHASE1(5, false); break;
+        case 6: POSEIDON_LAUNCH_P9_MODUP_FOURSTEP_PHASE1(6, false); break;
+        case 7: POSEIDON_LAUNCH_P9_MODUP_FOURSTEP_PHASE1(7, false); break;
+        case 8: POSEIDON_LAUNCH_P9_MODUP_FOURSTEP_PHASE1(8, false); break;
+        case 9: POSEIDON_LAUNCH_P9_MODUP_FOURSTEP_PHASE1(9, false); break;
+        default:
+            throw std::logic_error(
+                "launch_hybrid_modup_p9_forward_ntt_qp_active_phase1_fourstep_65536: unreachable decomposition width");
+        }
     }
 #undef POSEIDON_LAUNCH_P9_MODUP_FOURSTEP_PHASE1
 

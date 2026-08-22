@@ -18,6 +18,7 @@ namespace
 {
 
 constexpr std::size_t kMaxFusedGiantGroups = 64;
+constexpr std::size_t kMaxFusedBabyGroups = 4;
 
 struct GiantGroupKernelArguments
 {
@@ -25,6 +26,15 @@ struct GiantGroupKernelArguments
     std::uint32_t group_indices[kMaxFusedGiantGroups];
     std::uint32_t galois_elts[kMaxFusedGiantGroups];
     std::uint32_t key_indices[kMaxFusedGiantGroups];
+};
+
+struct BabyKeyMacKernelArguments
+{
+    std::uint32_t galois_elts[kMaxDoubleHoistFusedBabySteps];
+    std::uint32_t key_indices[kMaxDoubleHoistFusedBabySteps];
+    std::uint32_t
+        term_indices[kMaxFusedBabyGroups]
+                    [kMaxDoubleHoistFusedBabySteps];
 };
 
 __device__ __forceinline__ GpuWord reduce_u64(
@@ -984,6 +994,179 @@ __global__ void qp_plain_mul_accumulate_group_component_fused_kernel(
     group_values[group_offset + component_stride] = accumulator1;
 }
 
+template <int GroupTile, bool IsQ, bool Compressed>
+__global__ void fused_baby_keyswitch_plain_accumulate_kernel(
+    GpuWord *__restrict__ group_values,
+    const GpuWord *__restrict__ digits,
+    const GpuWord *__restrict__ source_q0,
+    const GpuWord *__restrict__ source_q1,
+    BabyKeyMacKernelArguments arguments,
+    const GpuWord *const *__restrict__ key0_ptrs,
+    const GpuWord *const *__restrict__ key1_ptrs,
+    const GpuWord *const *__restrict__ diagonal_ptrs,
+    const std::uint32_t *__restrict__ diagonal_periods,
+    const GpuWord *__restrict__ p_mod_q,
+    const GpuWord *__restrict__ moduli,
+    const GpuWide *__restrict__ barrett,
+    std::size_t group_count,
+    std::size_t term_count,
+    std::size_t tile_count,
+    std::size_t dnum,
+    std::size_t storage_dnum,
+    std::size_t limb_count,
+    std::size_t degree,
+    unsigned int degree_power,
+    bool initialize_accumulators)
+{
+    static_assert(GroupTile == 1 || GroupTile == 4);
+    const std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    const std::size_t words_per_digit = limb_count * degree;
+    if (tid >= words_per_digit)
+    {
+        return;
+    }
+
+    const std::size_t limb = tid >> degree_power;
+    const std::uint32_t coefficient = static_cast<std::uint32_t>(
+        tid & (degree - 1));
+    const GpuWord modulus = moduli[limb];
+    const GpuWide ratio = barrett[limb];
+    const std::size_t component_stride = limb_count * degree;
+    const std::size_t group_stride = 2 * component_stride;
+
+    GpuWord accumulator0[GroupTile];
+    GpuWord accumulator1[GroupTile];
+#pragma unroll
+    for (int group = 0; group < GroupTile; ++group)
+    {
+        if (static_cast<std::size_t>(group) < group_count)
+        {
+            const std::size_t offset =
+                static_cast<std::size_t>(group) * group_stride + tid;
+            accumulator0[group] = initialize_accumulators
+                ? 0
+                : group_values[offset];
+            accumulator1[group] = initialize_accumulators
+                ? 0
+                : group_values[offset + component_stride];
+        }
+        else
+        {
+            accumulator0[group] = 0;
+            accumulator1[group] = 0;
+        }
+    }
+
+    const std::uint32_t degree_u32 = static_cast<std::uint32_t>(degree);
+    const std::uint32_t degree_mask = degree_u32 - 1;
+    for (std::size_t baby = 0; baby < tile_count; ++baby)
+    {
+        const std::uint32_t galois_elt = arguments.galois_elts[baby];
+        GpuWord baby0 = 0;
+        GpuWord baby1 = 0;
+        if (galois_elt == 0)
+        {
+            if constexpr (IsQ)
+            {
+                baby0 = multiply_mod(
+                    source_q0[tid], p_mod_q[limb], modulus, ratio);
+                baby1 = multiply_mod(
+                    source_q1[tid], p_mod_q[limb], modulus, ratio);
+            }
+        }
+        else
+        {
+            const std::uint32_t reversed = reverse_bits_limited(
+                degree_u32 + coefficient, degree_power + 1);
+            const std::uint64_t index_raw =
+                (static_cast<std::uint64_t>(galois_elt) * reversed) >> 1;
+            const std::uint32_t source_coefficient = reverse_bits_limited(
+                static_cast<std::uint32_t>(index_raw & degree_mask),
+                degree_power);
+            const std::size_t source_index =
+                limb * degree + source_coefficient;
+            const std::size_t key_base =
+                static_cast<std::size_t>(arguments.key_indices[baby]) *
+                storage_dnum;
+            for (std::size_t digit = 0; digit < dnum; ++digit)
+            {
+                const GpuWord digit_value =
+                    digits[digit * words_per_digit + source_index];
+                baby0 = add_mod(
+                    baby0,
+                    multiply_mod(
+                        digit_value,
+                        key0_ptrs[key_base + digit][source_index],
+                        modulus,
+                        ratio),
+                    modulus);
+                baby1 = add_mod(
+                    baby1,
+                    multiply_mod(
+                        digit_value,
+                        key1_ptrs[key_base + digit][source_index],
+                        modulus,
+                        ratio),
+                    modulus);
+            }
+            if constexpr (IsQ)
+            {
+                baby0 = add_mod(
+                    baby0,
+                    multiply_mod(
+                        source_q0[source_index],
+                        p_mod_q[limb],
+                        modulus,
+                        ratio),
+                    modulus);
+            }
+        }
+
+#pragma unroll
+        for (int group = 0; group < GroupTile; ++group)
+        {
+            if (static_cast<std::size_t>(group) >= group_count)
+            {
+                continue;
+            }
+            const std::uint32_t term =
+                arguments.term_indices[group][baby];
+            if (term >= term_count)
+            {
+                continue;
+            }
+            const GpuWord diagonal = load_qp_diagonal<Compressed>(
+                diagonal_ptrs,
+                diagonal_periods,
+                term,
+                limb,
+                coefficient,
+                degree,
+                degree_power);
+            accumulator0[group] = add_mod(
+                accumulator0[group],
+                multiply_mod(baby0, diagonal, modulus, ratio),
+                modulus);
+            accumulator1[group] = add_mod(
+                accumulator1[group],
+                multiply_mod(baby1, diagonal, modulus, ratio),
+                modulus);
+        }
+    }
+
+#pragma unroll
+    for (int group = 0; group < GroupTile; ++group)
+    {
+        if (static_cast<std::size_t>(group) < group_count)
+        {
+            const std::size_t offset =
+                static_cast<std::size_t>(group) * group_stride + tid;
+            group_values[offset] = accumulator0[group];
+            group_values[offset + component_stride] = accumulator1[group];
+        }
+    }
+}
+
 unsigned int log2_degree(std::size_t degree, const char *name)
 {
     if (degree == 0 || (degree & (degree - 1)) != 0 ||
@@ -1896,6 +2079,164 @@ void launch_double_hoist_qp_plain_mul_accumulate_groups(
     gpu_check_cuda(cudaGetLastError(), name);
     };
 
+    if (compressed_plaintexts)
+    {
+        launch_for_layout(std::true_type{});
+    }
+    else
+    {
+        launch_for_layout(std::false_type{});
+    }
+}
+
+void launch_double_hoist_fused_baby_keyswitch_plain_accumulate(
+    GpuWord *group_q,
+    GpuWord *group_p,
+    const GpuWord *digits_q,
+    const GpuWord *digits_p,
+    const GpuWord *source_q0,
+    const GpuWord *source_q1,
+    const std::uint32_t *host_galois_elts,
+    const std::uint32_t *host_key_indices,
+    const std::uint32_t *host_term_indices,
+    const GpuWord *const *key_q0_ptrs,
+    const GpuWord *const *key_p0_ptrs,
+    const GpuWord *const *key_q1_ptrs,
+    const GpuWord *const *key_p1_ptrs,
+    const GpuWord *const *diagonal_q_ptrs,
+    const GpuWord *const *diagonal_p_ptrs,
+    const std::uint32_t *diagonal_periods,
+    std::size_t group_count,
+    std::size_t term_count,
+    std::size_t tile_count,
+    std::size_t dnum,
+    std::size_t storage_dnum,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree,
+    bool compressed_plaintexts,
+    bool initialize_accumulators)
+{
+    const char *name =
+        "launch_double_hoist_fused_baby_keyswitch_plain_accumulate";
+    validate_parameter_shard(parameter_shard, degree, name);
+    if (group_q == nullptr || group_p == nullptr ||
+        digits_q == nullptr || digits_p == nullptr ||
+        source_q0 == nullptr || source_q1 == nullptr ||
+        host_galois_elts == nullptr || host_key_indices == nullptr ||
+        host_term_indices == nullptr ||
+        key_q0_ptrs == nullptr || key_p0_ptrs == nullptr ||
+        key_q1_ptrs == nullptr || key_p1_ptrs == nullptr ||
+        diagonal_q_ptrs == nullptr || diagonal_p_ptrs == nullptr ||
+        (compressed_plaintexts && diagonal_periods == nullptr) ||
+        group_count == 0 || group_count > kMaxFusedBabyGroups ||
+        term_count == 0 || tile_count == 0 ||
+        tile_count > kMaxDoubleHoistFusedBabySteps ||
+        dnum == 0 || storage_dnum < dnum)
+    {
+        throw std::invalid_argument(std::string(name) + ": invalid argument");
+    }
+    gpu_check_cuda(cudaSetDevice(parameter_shard.device_id), name);
+
+    BabyKeyMacKernelArguments arguments{};
+    for (std::size_t group = 0; group < kMaxFusedBabyGroups; ++group)
+    {
+        for (std::size_t baby = 0;
+             baby < kMaxDoubleHoistFusedBabySteps;
+             ++baby)
+        {
+            arguments.term_indices[group][baby] =
+                std::numeric_limits<std::uint32_t>::max();
+        }
+    }
+    for (std::size_t baby = 0; baby < tile_count; ++baby)
+    {
+        arguments.galois_elts[baby] = host_galois_elts[baby];
+        arguments.key_indices[baby] = host_key_indices[baby];
+    }
+    for (std::size_t group = 0; group < group_count; ++group)
+    {
+        for (std::size_t baby = 0; baby < tile_count; ++baby)
+        {
+            arguments.term_indices[group][baby] =
+                host_term_indices[
+                    group * kMaxDoubleHoistFusedBabySteps + baby];
+        }
+    }
+
+    int block_size = 128;
+    if (const char *raw = std::getenv(
+            "POSEIDON_DOUBLE_HOIST_FUSED_BABY_BLOCK_SIZE"))
+    {
+        try
+        {
+            block_size = std::stoi(raw);
+        }
+        catch (const std::exception &)
+        {
+            throw std::invalid_argument(
+                std::string(name) + ": invalid fused baby block size");
+        }
+        if (block_size != 64 && block_size != 128 && block_size != 256)
+        {
+            throw std::invalid_argument(
+                std::string(name) +
+                ": fused baby block size must be 64, 128, or 256");
+        }
+    }
+    const unsigned int degree_power = log2_degree(degree, name);
+    const std::size_t q_count = parameter_shard.hybrid_base_q_count;
+    const std::size_t p_count = parameter_shard.hybrid_base_p_count;
+    const int q_grid = static_cast<int>(
+        (q_count * degree + block_size - 1) / block_size);
+    const int p_grid = static_cast<int>(
+        (p_count * degree + block_size - 1) / block_size);
+
+    auto launch_for_layout = [&](auto layout_tag) {
+        constexpr bool kCompressed = decltype(layout_tag)::value;
+        if (group_count == 1)
+        {
+            fused_baby_keyswitch_plain_accumulate_kernel<1, true, kCompressed>
+                <<<q_grid, block_size>>>(
+                    group_q, digits_q, source_q0, source_q1, arguments,
+                    key_q0_ptrs, key_q1_ptrs, diagonal_q_ptrs,
+                    diagonal_periods, parameter_shard.hybrid_p_mod_q.data(),
+                    parameter_shard.rns_primes.data(),
+                    parameter_shard.rns_modulus_constants.data(),
+                    group_count, term_count, tile_count, dnum, storage_dnum,
+                    q_count, degree, degree_power, initialize_accumulators);
+            fused_baby_keyswitch_plain_accumulate_kernel<1, false, kCompressed>
+                <<<p_grid, block_size>>>(
+                    group_p, digits_p, nullptr, nullptr, arguments,
+                    key_p0_ptrs, key_p1_ptrs, diagonal_p_ptrs,
+                    diagonal_periods, nullptr,
+                    parameter_shard.rns_primes.data() + q_count,
+                    parameter_shard.rns_modulus_constants.data() + q_count,
+                    group_count, term_count, tile_count, dnum, storage_dnum,
+                    p_count, degree, degree_power, initialize_accumulators);
+        }
+        else
+        {
+            fused_baby_keyswitch_plain_accumulate_kernel<4, true, kCompressed>
+                <<<q_grid, block_size>>>(
+                    group_q, digits_q, source_q0, source_q1, arguments,
+                    key_q0_ptrs, key_q1_ptrs, diagonal_q_ptrs,
+                    diagonal_periods, parameter_shard.hybrid_p_mod_q.data(),
+                    parameter_shard.rns_primes.data(),
+                    parameter_shard.rns_modulus_constants.data(),
+                    group_count, term_count, tile_count, dnum, storage_dnum,
+                    q_count, degree, degree_power, initialize_accumulators);
+            fused_baby_keyswitch_plain_accumulate_kernel<4, false, kCompressed>
+                <<<p_grid, block_size>>>(
+                    group_p, digits_p, nullptr, nullptr, arguments,
+                    key_p0_ptrs, key_p1_ptrs, diagonal_p_ptrs,
+                    diagonal_periods, nullptr,
+                    parameter_shard.rns_primes.data() + q_count,
+                    parameter_shard.rns_modulus_constants.data() + q_count,
+                    group_count, term_count, tile_count, dnum, storage_dnum,
+                    p_count, degree, degree_power, initialize_accumulators);
+        }
+        gpu_check_cuda(cudaGetLastError(), name);
+    };
     if (compressed_plaintexts)
     {
         launch_for_layout(std::true_type{});

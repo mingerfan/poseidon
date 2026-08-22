@@ -13,6 +13,11 @@ namespace gpu
 namespace kernel
 {
 
+// The largest baby-step batch carried by the fused KeySwitch/plaintext-MAC
+// launch. Keep this shared with the host-side argument packing so a complete
+// 15-diagonal direct stage can be issued as one Q launch and one P launch.
+inline constexpr std::size_t kMaxDoubleHoistFusedBabySteps = 16;
+
 void launch_double_hoist_pre_rotated_keymul_digit(
     GpuWord *destination_q0,
     GpuWord *destination_p0,
@@ -140,6 +145,38 @@ void launch_double_hoist_qp_plain_mul_accumulate_groups(
     std::size_t term_count,
     std::size_t tile_begin,
     std::size_t tile_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree,
+    bool compressed_plaintexts,
+    bool initialize_accumulators);
+
+/**
+ * Fuse inverse-pre-rotated baby KeySwitch with QP plaintext MAC. One thread
+ * computes a baby result in registers, applies every giant-group diagonal
+ * that consumes it, and writes only the final group accumulators.
+ */
+void launch_double_hoist_fused_baby_keyswitch_plain_accumulate(
+    GpuWord *group_q,
+    GpuWord *group_p,
+    const GpuWord *digits_q,
+    const GpuWord *digits_p,
+    const GpuWord *source_q0,
+    const GpuWord *source_q1,
+    const std::uint32_t *host_galois_elts,
+    const std::uint32_t *host_key_indices,
+    const std::uint32_t *host_term_indices,
+    const GpuWord *const *key_q0_ptrs,
+    const GpuWord *const *key_p0_ptrs,
+    const GpuWord *const *key_q1_ptrs,
+    const GpuWord *const *key_p1_ptrs,
+    const GpuWord *const *diagonal_q_ptrs,
+    const GpuWord *const *diagonal_p_ptrs,
+    const std::uint32_t *diagonal_periods,
+    std::size_t group_count,
+    std::size_t term_count,
+    std::size_t tile_count,
+    std::size_t dnum,
+    std::size_t storage_dnum,
     const GpuParameterShard &parameter_shard,
     std::size_t degree,
     bool compressed_plaintexts,

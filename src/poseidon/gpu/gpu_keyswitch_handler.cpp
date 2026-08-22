@@ -55,6 +55,10 @@ constexpr const char *kDoubleHoistP9PToQFourstepEnv =
     "POSEIDON_DOUBLE_HOIST_P9_P_TO_Q_FOURSTEP";
 constexpr const char *kP9ModupFourstepPhase1FusedEnv =
     "POSEIDON_P9_MODUP_FOURSTEP_PHASE1_FUSED";
+constexpr const char *kP9ModupFourstepCompactPreweightEnv =
+    "POSEIDON_P9_MODUP_FOURSTEP_COMPACT_PREWEIGHT";
+constexpr const char *kP9ModupFourstepGroupedTargetsEnv =
+    "POSEIDON_P9_MODUP_FOURSTEP_GROUPED_TARGETS";
 constexpr const char *kFourstepC2InttEnv =
     "POSEIDON_KEYSWITCH_FOURSTEP_C2_INTT";
 constexpr const char *kFourstepAllNttEnv =
@@ -443,6 +447,53 @@ bool use_p9_modup_fourstep_phase1_fused(
            value != "off" &&
            value != "false" &&
            value != "FALSE";
+}
+
+bool use_p9_modup_fourstep_compact_preweight(
+    std::size_t degree,
+    std::size_t base_p_size)
+{
+    if (degree != 65536 || base_p_size != 9)
+    {
+        return false;
+    }
+
+    const char *raw = std::getenv(kP9ModupFourstepCompactPreweightEnv);
+    if (raw == nullptr || *raw == '\0')
+    {
+        return false;
+    }
+
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
+unsigned int p9_modup_fourstep_grouped_targets()
+{
+    const char *raw = std::getenv(kP9ModupFourstepGroupedTargetsEnv);
+    if (raw == nullptr || *raw == '\0' || std::string(raw) == "0")
+    {
+        return 1;
+    }
+    const std::string value(raw);
+    if (value == "1")
+    {
+        return 1;
+    }
+    if (value == "2")
+    {
+        return 2;
+    }
+    if (value == "4")
+    {
+        return 4;
+    }
+    throw std::invalid_argument(
+        "POSEIDON_P9_MODUP_FOURSTEP_GROUPED_TARGETS must be 0, 1, 2, or 4");
 }
 
 void launch_double_hoist_p_to_q_forward_ntt(
@@ -1054,23 +1105,51 @@ void process_hybrid_decomposition_block(
     if (fourstep_all_ntt || p9_fourstep_qp)
     {
         const bool fuse_phase2_mac = use_fourstep_phase2_mac();
-        const bool fuse_modup_phase1 =
+        const bool compact_preweight =
+            use_p9_modup_fourstep_compact_preweight(
+                scratch.degree,
+                scratch.base_p_size);
+        const bool fuse_modup_phase1 = compact_preweight ||
             use_p9_modup_fourstep_phase1_fused(
                 scratch.degree,
                 scratch.base_p_size);
         if (fuse_modup_phase1)
         {
+            const bool source_preweighted =
+                compact_preweight && decomp_limb_count > 1;
+            const unsigned int target_limb_tile = source_preweighted
+                ? p9_modup_fourstep_grouped_targets()
+                : 1;
+            const GpuWord *modup_source = scratch.c2_intt.data();
+            if (source_preweighted)
+            {
+                NvtxRange preweight_range(
+                    "keyswitch.dnum.modup.compact_preweight_p9");
+                kernel::launch_hybrid_preweight_modup_source_p9(
+                    scratch.modup_p.data(),
+                    scratch.c2_intt.data(),
+                    decomp_index,
+                    decomp_limb_begin,
+                    decomp_limb_count,
+                    *parameter_shard,
+                    scratch.degree);
+                modup_source = scratch.modup_p.data();
+            }
             NvtxRange range(
-                "keyswitch.dnum.modup_fourstep_phase1.fused_p9");
+                source_preweighted
+                    ? "keyswitch.dnum.modup_fourstep_phase1.compact_preweight_p9"
+                    : "keyswitch.dnum.modup_fourstep_phase1.fused_p9");
             kernel::launch_hybrid_modup_p9_forward_ntt_qp_active_phase1_fourstep_65536(
                 scratch.fourstep_q0.data(),
                 scratch.fourstep_p0.data(),
-                scratch.c2_intt.data(),
+                modup_source,
                 decomp_index,
                 decomp_limb_begin,
                 decomp_limb_count,
                 *parameter_shard,
-                scratch.degree);
+                scratch.degree,
+                source_preweighted,
+                target_limb_tile);
         }
         else if (fourstep_all_ntt)
         {
@@ -2232,10 +2311,15 @@ void GpuKeySwitchHandler::hoist_decompose_modup_ntt(
         const bool qp_fourstep = use_double_hoist_p9_qp_fourstep(
             level_info.degree,
             p_count);
-        const bool fuse_modup_phase1 = qp_fourstep &&
-            use_p9_modup_fourstep_phase1_fused(
+        const bool compact_preweight = qp_fourstep &&
+            use_p9_modup_fourstep_compact_preweight(
                 level_info.degree,
                 p_count);
+        const bool fuse_modup_phase1 = qp_fourstep &&
+            (compact_preweight ||
+            use_p9_modup_fourstep_phase1_fused(
+                level_info.degree,
+                p_count));
         GpuWord *modup_q = qp_fourstep && !fuse_modup_phase1
             ? workspace.permuted_digit_q.data()
             : digit_q;
@@ -2245,17 +2329,41 @@ void GpuKeySwitchHandler::hoist_decompose_modup_ntt(
 
         if (fuse_modup_phase1)
         {
+            const bool source_preweighted =
+                compact_preweight && limb_count > 1;
+            const unsigned int target_limb_tile = source_preweighted
+                ? p9_modup_fourstep_grouped_targets()
+                : 1;
+            const GpuWord *modup_source = source_intt_q;
+            if (source_preweighted)
+            {
+                NvtxRange preweight_range(
+                    "double_hoist.decompose.modup.compact_preweight_p9");
+                kernel::launch_hybrid_preweight_modup_source_p9(
+                    workspace.permuted_digit_p.data(),
+                    source_intt_q,
+                    digit,
+                    limb_begin,
+                    limb_count,
+                    *parameter_shard,
+                    level_info.degree);
+                modup_source = workspace.permuted_digit_p.data();
+            }
             NvtxRange modup_range(
-                "double_hoist.decompose.modup_fourstep_phase1.fused_p9");
+                source_preweighted
+                    ? "double_hoist.decompose.modup_fourstep_phase1.compact_preweight_p9"
+                    : "double_hoist.decompose.modup_fourstep_phase1.fused_p9");
             kernel::launch_hybrid_modup_p9_forward_ntt_qp_active_phase1_fourstep_65536(
                 digit_q,
                 digit_p,
-                source_intt_q,
+                modup_source,
                 digit,
                 limb_begin,
                 limb_count,
                 *parameter_shard,
-                level_info.degree);
+                level_info.degree,
+                source_preweighted,
+                target_limb_tile);
         }
         else if (use_double_hoist_p9_modup_row_tiled8(
                 level_info.degree,

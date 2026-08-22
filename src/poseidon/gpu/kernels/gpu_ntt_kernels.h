@@ -67,7 +67,9 @@ void launch_hybrid_modup_p9_forward_ntt_qp_active_phase1_fourstep_65536(
     std::size_t decomp_limb_begin,
     std::size_t decomp_limb_count,
     const GpuParameterShard &parameter_shard,
-    std::size_t degree);
+    std::size_t degree,
+    bool source_preweighted = false,
+    unsigned int target_limb_tile = 1);
 
 void launch_forward_ntt_qp_active_fourstep_mul_accumulate_two_components_65536(
     GpuWord *partial_q,
