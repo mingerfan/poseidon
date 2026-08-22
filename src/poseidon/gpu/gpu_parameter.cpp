@@ -2387,6 +2387,83 @@ void GpuParameterData::build_from_poseidon_context(
     }
 }
 
+void GpuParameterData::configure_bootstrap_raise_target(
+    const PoseidonContext &context,
+    std::size_t source_q_count,
+    std::size_t target_q_count)
+{
+    auto crt_context = context.crt_context();
+    auto first_context_data = crt_context ? crt_context->first_context_data() : nullptr;
+    if (!first_context_data)
+    {
+        throw std::invalid_argument(
+            "GpuParameterData bootstrap target requires a q-only context");
+    }
+    const auto &full_q = first_context_data->parms().q();
+    if (source_q_count == 0 || source_q_count > target_q_count ||
+        target_q_count > full_q.size())
+    {
+        throw std::invalid_argument(
+            "GpuParameterData bootstrap target q-count is invalid");
+    }
+    std::vector<Modulus> source_q(
+        full_q.begin(), full_q.begin() + static_cast<std::ptrdiff_t>(source_q_count));
+    std::vector<Modulus> target_q(
+        full_q.begin(), full_q.begin() + static_cast<std::ptrdiff_t>(target_q_count));
+    for (auto &level : levels_)
+    {
+        if (level.p_count != 0 || level.q_count != source_q_count)
+        {
+            continue;
+        }
+        const bool already_configured = std::all_of(
+            level.shards.begin(),
+            level.shards.end(),
+            [source_q_count, target_q_count](const GpuParameterShard &shard)
+            {
+                return shard.bootstrap_raise_source_q_count == source_q_count &&
+                       shard.bootstrap_raise_target_q_count == target_q_count;
+            });
+        if (already_configured)
+        {
+            return;
+        }
+        for (auto &shard : level.shards)
+        {
+            if (shard.bootstrap_raise_cached_source_q_count == source_q_count &&
+                shard.bootstrap_raise_cached_target_q_count == target_q_count)
+            {
+                std::swap(
+                    shard.bootstrap_raise_source_q_count,
+                    shard.bootstrap_raise_cached_source_q_count);
+                std::swap(
+                    shard.bootstrap_raise_target_q_count,
+                    shard.bootstrap_raise_cached_target_q_count);
+                std::swap(
+                    shard.bootstrap_raise_inv_punctured,
+                    shard.bootstrap_raise_cached_inv_punctured);
+                std::swap(
+                    shard.bootstrap_raise_matrix,
+                    shard.bootstrap_raise_cached_matrix);
+                continue;
+            }
+            shard.bootstrap_raise_cached_source_q_count =
+                shard.bootstrap_raise_source_q_count;
+            shard.bootstrap_raise_cached_target_q_count =
+                shard.bootstrap_raise_target_q_count;
+            shard.bootstrap_raise_cached_inv_punctured =
+                std::move(shard.bootstrap_raise_inv_punctured);
+            shard.bootstrap_raise_cached_matrix =
+                std::move(shard.bootstrap_raise_matrix);
+            copy_bootstrap_raise_tables(
+                source_q, target_q, shard, shard.device_id);
+        }
+        return;
+    }
+    throw std::out_of_range(
+        "GpuParameterData bootstrap source q-count was not found");
+}
+
 const GpuLevelInfo &GpuParameterData::get_level(const parms_id_type &parms_id) const
 {
     for (const auto &level : levels_)

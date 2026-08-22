@@ -129,6 +129,9 @@ struct GpuBootstrapData
         GpuLinearTransformMode::ClassicBsgs;
 
     parms_id_type q0_parms_id{};
+    // Optional q-only prefix targeted by ModRaise. parms_id_zero preserves
+    // the historical behavior of raising to the first/full Q level.
+    parms_id_type raised_parms_id{};
     double q0_over_message_ratio = 0.0;
 
     double raised_scale_override = 0.0;
@@ -449,6 +452,11 @@ public:
      */
     void raise_modulus(
         const GpuCiphertextData &source_ciphertext,
+        GpuCiphertextData &destination_ciphertext) const;
+
+    void raise_modulus(
+        const GpuCiphertextData &source_ciphertext,
+        parms_id_type destination_parms_id,
         GpuCiphertextData &destination_ciphertext) const;
 
     /**

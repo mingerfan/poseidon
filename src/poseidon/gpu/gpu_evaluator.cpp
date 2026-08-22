@@ -2164,6 +2164,17 @@ void GpuEvaluator::raise_modulus(
     const GpuCiphertextData &source_ciphertext,
     GpuCiphertextData &destination_ciphertext) const
 {
+    raise_modulus(
+        source_ciphertext,
+        params_.get_first_q_level().parms_id,
+        destination_ciphertext);
+}
+
+void GpuEvaluator::raise_modulus(
+    const GpuCiphertextData &source_ciphertext,
+    parms_id_type destination_parms_id,
+    GpuCiphertextData &destination_ciphertext) const
+{
     if (source_ciphertext.empty())
     {
         throw std::invalid_argument("GpuEvaluator::raise_modulus: empty ciphertext");
@@ -2183,7 +2194,7 @@ void GpuEvaluator::raise_modulus(
 
     const auto &source_level_info =
         params_.get_level(source_ciphertext.meta.parms_id);
-    const auto &destination_level_info = params_.get_first_q_level();
+    const auto &destination_level_info = params_.get_level(destination_parms_id);
     if (source_level_info.p_count != 0 ||
         destination_level_info.p_count != 0 ||
         source_level_info.degree != source_ciphertext.meta.degree ||
@@ -3826,7 +3837,17 @@ void GpuEvaluator::bootstrap(
             bootstrap_data.q0_parms_id,
             bootstrap_data.q0_over_message_ratio);
 
-        raise_modulus(workspace.modraise_input, workspace.raised);
+        if (bootstrap_data.raised_parms_id == parms_id_zero)
+        {
+            raise_modulus(workspace.modraise_input, workspace.raised);
+        }
+        else
+        {
+            raise_modulus(
+                workspace.modraise_input,
+                bootstrap_data.raised_parms_id,
+                workspace.raised);
+        }
 
         if (bootstrap_data.raised_scale_override > 0.0)
         {

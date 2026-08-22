@@ -1,0 +1,24 @@
+# CMake build trees
+/build/
+/build-*/
+/cmake-build-*/
+
+# Runtime and profiler output; keep the directory itself in Git
+/output/*
+!/output/.gitkeep
+*.log
+rmm_log.txt
+*.nsys-rep
+*.qdrep
+*.ncu-rep
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# Local caches and temporary files
+/.cache/
+/core
+/core.*
+*.tmp
+*.swp
+*~
