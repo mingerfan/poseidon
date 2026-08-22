@@ -42,7 +42,6 @@ add_library(poseidon_gpu STATIC
     gpu_memory.cpp
     gpu_parameter.cpp
     gpu_plaintext.cpp
-    gpu_stream_wait_trace.cpp
     gpu_uploader.cpp
     gpu_evaluator.cpp
     gpu_elementwise_handler.cpp
@@ -66,8 +65,6 @@ target_link_libraries(poseidon_gpu
         poseidon_shared
         CUDA::cudart
         rmm::rmm
-    PRIVATE
-        ckks_runtime::core
 )
 target_compile_features(poseidon_gpu PUBLIC cxx_std_17)
 target_compile_options(poseidon_gpu

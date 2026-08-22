@@ -1,8 +1,6 @@
 #include "poseidon/gpu/gpu_keyswitch_handler.h"
-#include "poseidon/gpu/gpu_stream_wait_trace.h"
 #include "poseidon/gpu/kernels/gpu_keyswitch_kernels.h"
 #include "poseidon/gpu/kernels/gpu_ntt_kernels.h"
-#include "runtime/thread_trace.hpp"
 
 #include <cuda_runtime_api.h>
 #include <nvtx3/nvToolsExt.h>
@@ -1747,9 +1745,8 @@ public:
         {
             return;
         }
-        gpu_stream_wait_event(
-            stream, completion_, device_id_,
-            "gpu.stream_wait.rotation_graph_workspace",
+        gpu_check_cuda(
+            cudaStreamWaitEvent(stream, completion_, 0),
             "rotation graph cudaStreamWaitEvent");
     }
 
@@ -2022,8 +2019,7 @@ void GpuKeySwitchHandler::rotate_hybrid_ciphertext_graph(
         throw std::invalid_argument(
             "GpuKeySwitchHandler rotation graph device mismatch");
     }
-    fhegpu::ThreadTraceLockGuard lock(
-        graph_state_->mutex, "gpu.rotation_graph_state");
+    std::lock_guard<std::mutex> lock(graph_state_->mutex);
     auto workspace_it = graph_state_->workspaces.find(workspace_key);
     if (workspace_it == graph_state_->workspaces.end())
     {
