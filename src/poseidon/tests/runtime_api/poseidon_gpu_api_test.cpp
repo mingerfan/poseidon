@@ -514,6 +514,16 @@ void test_device_mapping_rejections(const poseidon::PoseidonContext &context,
 void test_preflight_rejections(PoseidonGpuApi &api,
                                const fhegpu::LoadedOperatorSpec &loaded_spec)
 {
+    require_rejected(
+        [&] {
+            api.configure_native_bootstrap(
+                "missing-native-boot-keys", 0,
+                poseidon::gpu::GpuBootstrapData{},
+                std::shared_ptr<const poseidon::gpu::GpuRelinKeysData>{},
+                std::shared_ptr<const poseidon::gpu::GpuGaloisKeysData>{});
+        },
+        "evaluation keys");
+
     const auto target = make_target(loaded_spec);
     const fhegpu::PlanRequirements valid_requirements{
         {fhegpu::RequiredCapability::Encode, fhegpu::RequiredCapability::Transfer,

@@ -134,6 +134,20 @@ public:
         gpu::GpuRelinKeysData relin_keys,
         gpu::GpuGaloisKeysData galois_keys);
 
+    /**
+     * @brief Install a profile while sharing immutable evaluation keys.
+     *
+     * Shared keys must belong to the selected CUDA device. This overload
+     * avoids duplicating large key allocations when one device exposes
+     * several native-bootstrap profiles.
+     */
+    void configure_native_bootstrap(
+        std::string operator_profile,
+        int logical_device_index,
+        gpu::GpuBootstrapData bootstrap_data,
+        std::shared_ptr<const gpu::GpuRelinKeysData> relin_keys,
+        std::shared_ptr<const gpu::GpuGaloisKeysData> galois_keys);
+
     std::string name() const;
     int local_device_count() const noexcept;
     int cuda_device_id(int logical_device_index) const;

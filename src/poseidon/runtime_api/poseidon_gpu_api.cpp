@@ -494,16 +494,16 @@ struct PoseidonGpuApi::DeviceState
     {
         NativeBootstrapState(
             gpu::GpuBootstrapData bootstrap_data,
-            gpu::GpuRelinKeysData relin_keys,
-            gpu::GpuGaloisKeysData galois_keys)
+            std::shared_ptr<const gpu::GpuRelinKeysData> relin_keys,
+            std::shared_ptr<const gpu::GpuGaloisKeysData> galois_keys)
             : bootstrap_data(std::move(bootstrap_data)),
               relin_keys(std::move(relin_keys)),
               galois_keys(std::move(galois_keys))
         {}
 
         gpu::GpuBootstrapData bootstrap_data;
-        gpu::GpuRelinKeysData relin_keys;
-        gpu::GpuGaloisKeysData galois_keys;
+        std::shared_ptr<const gpu::GpuRelinKeysData> relin_keys;
+        std::shared_ptr<const gpu::GpuGaloisKeysData> galois_keys;
         gpu::GpuBootstrapWorkspace workspace;
     };
 
@@ -865,12 +865,34 @@ void PoseidonGpuApi::configure_native_bootstrap(
     gpu::GpuRelinKeysData relin_keys,
     gpu::GpuGaloisKeysData galois_keys)
 {
+    if (relin_keys.empty() || galois_keys.empty())
+    {
+        throw std::invalid_argument(
+            "Poseidon GPU native Boot requires uploaded evaluation keys");
+    }
+
+    configure_native_bootstrap(
+        std::move(operator_profile),
+        logical_device_index,
+        std::move(bootstrap_data),
+        std::make_shared<const gpu::GpuRelinKeysData>(std::move(relin_keys)),
+        std::make_shared<const gpu::GpuGaloisKeysData>(std::move(galois_keys)));
+}
+
+void PoseidonGpuApi::configure_native_bootstrap(
+    std::string operator_profile,
+    int logical_device_index,
+    gpu::GpuBootstrapData bootstrap_data,
+    std::shared_ptr<const gpu::GpuRelinKeysData> relin_keys,
+    std::shared_ptr<const gpu::GpuGaloisKeysData> galois_keys)
+{
     if (operator_profile.empty())
     {
         throw std::invalid_argument(
             "Poseidon GPU native Boot profile id is empty");
     }
-    if (relin_keys.empty() || galois_keys.empty())
+    if (relin_keys == nullptr || galois_keys == nullptr ||
+        relin_keys->empty() || galois_keys->empty())
     {
         throw std::invalid_argument(
             "Poseidon GPU native Boot requires uploaded evaluation keys");
@@ -965,8 +987,8 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
             device.evaluator->bootstrap(
                 require_ciphertext(inputs, 0),
                 native.bootstrap_data,
-                native.relin_keys,
-                native.galois_keys,
+                *native.relin_keys,
+                *native.galois_keys,
                 native.workspace,
                 output);
             if (output.meta.q_count != q_count_for_level(attrs.target_level) ||
