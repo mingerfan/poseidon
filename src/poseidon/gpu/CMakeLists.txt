@@ -38,6 +38,7 @@ endif()
 
 add_library(poseidon_gpu STATIC
     gpu_ciphertext.cpp
+    gpu_double_hoist.cpp
     gpu_key.cpp
     gpu_memory.cpp
     gpu_parameter.cpp
@@ -49,6 +50,7 @@ add_library(poseidon_gpu STATIC
     gpu_modswitch_handler.cpp
     gpu_ntt_handler.cpp
     gpu_tensor_core_gemm.cu
+    kernels/gpu_double_hoist_kernels.cu
     kernels/gpu_elementwise_kernels.cu
     kernels/gpu_keyswitch_kernels.cu
     kernels/gpu_ntt_kernels.cu

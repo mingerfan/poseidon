@@ -72,6 +72,18 @@ public:
         const GpuLevelInfo &level_info) const;
 
     /**
+     * @brief destination_ciphertext = source_ciphertext * scalar mod q.
+     *
+     * CKKS bootstrap scale matching uses this for integer constant
+     * multiplication without constructing a full plaintext.
+     */
+    void multiply_scalar_ciphertext(
+        GpuCiphertextView &destination_view,
+        const GpuConstCiphertextView &source_view,
+        GpuWord scalar,
+        const GpuLevelInfo &level_info) const;
+
+    /**
      * @brief destination_ciphertext = source_ciphertext + source_plaintext.
      *
      * CKKS rule:
@@ -97,6 +109,17 @@ public:
         const GpuConstPlaintextView &plaintext_view,
         const GpuLevelInfo &level_info) const;
 
+    /** Add/subtract a plaintext directly in c0, preserving c1/c2 in place. */
+    void add_plain_to_ciphertext_inplace(
+        GpuCiphertextView &ciphertext_view,
+        const GpuConstPlaintextView &plaintext_view,
+        const GpuLevelInfo &level_info) const;
+
+    void sub_plain_from_ciphertext_inplace(
+        GpuCiphertextView &ciphertext_view,
+        const GpuConstPlaintextView &plaintext_view,
+        const GpuLevelInfo &level_info) const;
+
     /**
      * @brief destination_ciphertext = source_ciphertext * source_plaintext.
      *
@@ -104,6 +127,20 @@ public:
      * - every ciphertext component is multiplied by the plaintext polynomial.
      */
     void multiply_plain_with_ciphertext(
+        GpuCiphertextView &destination_view,
+        const GpuConstCiphertextView &ciphertext_view,
+        const GpuConstPlaintextView &plaintext_view,
+        const GpuLevelInfo &level_info) const;
+
+    /**
+     * @brief destination[0..1] += ciphertext[0..1] * plaintext.
+     *
+     * The source ciphertext must have two components. The destination may have
+     * two or more components; only c0/c1 are updated. This lets EvalMod add a
+     * linear leaf into a size-3 multiplication accumulator before
+     * relinearize-rescale, without touching c2.
+     */
+    void multiply_plain_accumulate_with_ciphertext(
         GpuCiphertextView &destination_view,
         const GpuConstCiphertextView &ciphertext_view,
         const GpuConstPlaintextView &plaintext_view,

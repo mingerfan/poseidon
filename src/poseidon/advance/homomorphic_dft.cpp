@@ -6,12 +6,41 @@ HomomorphicDFTMatrixLiteral::HomomorphicDFTMatrixLiteral(LinearType type, uint32
                                                          uint32_t log_slots, uint32_t level_start,
                                                          vector<uint32_t> levels,
                                                          bool repack_imag_to_real, double scaling,
-                                                         bool bit_reversed, uint32_t log_bsgs_ratio)
+                                                         bool bit_reversed, uint32_t log_bsgs_ratio,
+                                                         vector<uint32_t> layer_groups,
+                                                         uint32_t direct_layer_threshold)
 
     : type_(type), log_n_(log_n), log_slots_(log_slots), level_start_(level_start),
       levels_(std::move(levels)), repack_imag_to_real_(repack_imag_to_real), scaling_(scaling),
-      bit_reversed_(bit_reversed), log_bsgs_ratio_(log_bsgs_ratio)
+      bit_reversed_(bit_reversed), log_bsgs_ratio_(log_bsgs_ratio),
+      layer_groups_(std::move(layer_groups)),
+      direct_layer_threshold_(direct_layer_threshold)
 {
+    if (!layer_groups_.empty())
+    {
+        uint32_t total_layers = 0;
+        for (const auto layers : layer_groups_)
+        {
+            if (layers == 0)
+            {
+                POSEIDON_THROW(invalid_argument_error, "DFT layer group cannot be zero");
+            }
+            total_layers += layers;
+        }
+        if (total_layers != log_slots_ ||
+            layer_groups_.size() != levels_.size())
+        {
+            POSEIDON_THROW(
+                invalid_argument_error,
+                "explicit DFT layer groups must match log_slots and level count");
+        }
+    }
+    else if (direct_layer_threshold_ != 0)
+    {
+        POSEIDON_THROW(
+            invalid_argument_error,
+            "direct DFT layer threshold requires explicit layer groups");
+    }
 }
 
 LinearType HomomorphicDFTMatrixLiteral::get_type() const { return type_; }
@@ -26,6 +55,8 @@ uint32_t HomomorphicDFTMatrixLiteral::get_log_bsgs_ratio() const { return log_bs
 
 uint32_t HomomorphicDFTMatrixLiteral::get_depth(bool actual)
 {
+    if (!layer_groups_.empty())
+        return static_cast<uint32_t>(layer_groups_.size());
     if (actual)
         return levels_.size();
     else
@@ -59,8 +90,138 @@ void HomomorphicDFTMatrixLiteral::create(LinearMatrixGroup &mat_group, CKKSEncod
         }
 
         gen_linear_transform_bsgs(mat_group.data()[i], mat_group.rot_index(), encoder, x[i], leveld,
-                                  modulus_group, log_bsgs_ratio_, log_slots_);
+                                  modulus_group, log_bsgs_ratio_, log_slots_,
+                                  !layer_groups_.empty() &&
+                                          layer_groups_[i] <= direct_layer_threshold_
+                                      ? (1U << log_slots_)
+                                      : 0);
         leveld = leveld - step;
+    }
+}
+
+void HomomorphicDFTMatrixLiteral::create_dynamic(
+    LinearMatrixGroup &mat_group,
+    CKKSEncoder &encoder,
+    double input_scale,
+    double plaintext_scale,
+    double min_scale,
+    double value_normalization)
+{
+    if (!(input_scale > 0.0) || !std::isfinite(input_scale) ||
+        !(plaintext_scale > 0.0) || !std::isfinite(plaintext_scale) ||
+        !(min_scale > 0.0) || !std::isfinite(min_scale))
+    {
+        POSEIDON_THROW(invalid_argument_error, "invalid dynamic DFT scale");
+    }
+
+    auto context_data = encoder.context().crt_context()->first_context_data();
+    if (!context_data)
+    {
+        POSEIDON_THROW(invalid_argument_error, "dynamic DFT context is empty");
+    }
+    const auto &modulus = context_data->parms().q();
+    auto matrices = gen_matrices();
+
+    std::size_t q_count = static_cast<std::size_t>(level_start_) + 1;
+    if (q_count == 0 || q_count > modulus.size())
+    {
+        POSEIDON_THROW(invalid_argument_error, "dynamic DFT start level is invalid");
+    }
+    double current_scale = input_scale;
+    const double threshold = (min_scale + 1.0) / 2.0;
+    std::vector<uint32_t> rescale_counts;
+    rescale_counts.reserve(matrices.size());
+    for (std::size_t stage = 0; stage < matrices.size(); ++stage)
+    {
+        double output_scale = current_scale * plaintext_scale;
+        uint32_t drop_count = 0;
+        while (q_count > 1)
+        {
+            const double candidate =
+                output_scale /
+                static_cast<double>(modulus[q_count - 1].value());
+            if (candidate < threshold)
+            {
+                break;
+            }
+            output_scale = candidate;
+            --q_count;
+            ++drop_count;
+        }
+        if (drop_count == 0)
+        {
+            POSEIDON_THROW(
+                invalid_argument_error,
+                "dynamic DFT multiplication cannot rescale at min_scale/2");
+        }
+        rescale_counts.push_back(drop_count);
+        current_scale = output_scale;
+    }
+
+    /*
+     * In the GS path a DFT stage is encoded at the exact modulus product that
+     * it subsequently removes, so C2S keeps its input scale. With several
+     * narrow GPU primes, min-scale planning intentionally leaves a different
+     * physical output scale. The dynamic EvalMod path preserves that physical
+     * scale, while this coefficient-only factor maps the C2S values into the
+     * normalized EvalMod approximation domain.
+     *
+     * Fold a caller-provided value normalization into the DFT coefficients.
+     * The factor is spread over all matrices, just like
+     * HomomorphicDFTMatrixLiteral::scaling_. This changes no plaintext encoding
+     * scale and consumes no additional Q prime.
+     */
+    if (value_normalization != 1.0)
+    {
+        if (!(value_normalization > 0.0) ||
+            !std::isfinite(value_normalization))
+        {
+            POSEIDON_THROW(
+                invalid_argument_error,
+                "invalid dynamic DFT value normalization");
+        }
+        const double stage_normalization =
+            std::pow(value_normalization, 1.0 / static_cast<double>(matrices.size()));
+        if (!(stage_normalization > 0.0) || !std::isfinite(stage_normalization))
+        {
+            POSEIDON_THROW(
+                invalid_argument_error,
+                "dynamic DFT value normalization is not representable");
+        }
+        for (auto &matrix : matrices)
+        {
+            for (auto &diagonal : matrix)
+            {
+                for (auto &coefficient : diagonal.second)
+                {
+                    coefficient *= stage_normalization;
+                }
+            }
+        }
+    }
+
+    mat_group.data().resize(matrices.size());
+    mat_group.set_step(0);
+    mat_group.set_rescale_min_scale(min_scale);
+    mat_group.rescale_counts() = rescale_counts;
+
+    q_count = static_cast<std::size_t>(level_start_) + 1;
+    for (std::size_t stage = 0; stage < matrices.size(); ++stage)
+    {
+        gen_linear_transform_bsgs(
+            mat_group.data()[stage],
+            mat_group.rot_index(),
+            encoder,
+            matrices[stage],
+            static_cast<uint32_t>(q_count - 1),
+            plaintext_scale,
+            log_bsgs_ratio_,
+            log_slots_,
+            !layer_groups_.empty() &&
+                    layer_groups_[stage] <= direct_layer_threshold_
+                ? (1U << log_slots_)
+                : 0);
+        q_count -= rescale_counts[stage];
     }
 }
 
@@ -103,16 +264,24 @@ vector<map<int, vector<complex<double>>>> HomomorphicDFTMatrixLiteral::gen_matri
     vector<map<int, vector<complex<double>>>> plain_vector(max_depth);
 
     vector<int> merge(max_depth);
-    for (auto i = 0; i < max_depth; ++i)
+    if (!layer_groups_.empty())
     {
-        depth = int(ceil(float(fft_level) / float(max_depth - i)));
+        for (std::size_t i = 0; i < layer_groups_.size(); ++i)
+            merge[i] = static_cast<int>(layer_groups_[i]);
+    }
+    else
+    {
+        for (auto i = 0; i < max_depth; ++i)
+        {
+            depth = int(ceil(float(fft_level) / float(max_depth - i)));
 
-        if (lt_type == encode)
-            merge[i] = depth;
-        else
-            merge[merge.size() - i - 1] = depth;
+            if (lt_type == encode)
+                merge[i] = depth;
+            else
+                merge[merge.size() - i - 1] = depth;
 
-        fft_level -= depth;
+            fft_level -= depth;
+        }
     }
 
     fft_level = log_slots;

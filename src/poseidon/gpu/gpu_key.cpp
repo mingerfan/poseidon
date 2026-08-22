@@ -2,7 +2,6 @@
 
 #include <limits>
 #include <stdexcept>
-#include <utility>
 
 namespace poseidon
 {
@@ -110,6 +109,7 @@ GpuConstEvaluationKeyView GpuEvaluationKeyData::make_const_view() const
 {
     GpuConstEvaluationKeyView result;
     result.meta = meta;
+    result.storage_q_count = meta.q_count;
     result.polys.reserve(polys_.size());
 
     for (const auto &poly : polys_)
@@ -136,6 +136,20 @@ GpuConstEvaluationKeyView GpuEvaluationKeyData::make_const_view() const
         result.polys.push_back(std::move(poly_view));
     }
 
+    return result;
+}
+
+GpuConstEvaluationKeyView GpuEvaluationKeyData::make_const_view(
+    std::size_t active_q_count) const
+{
+    if (active_q_count == 0 || active_q_count > meta.q_count)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluationKeyData::make_const_view: active q_count is outside the stored Q prefix");
+    }
+
+    auto result = make_const_view();
+    result.meta.q_count = active_q_count;
     return result;
 }
 

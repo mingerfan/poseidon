@@ -3,11 +3,70 @@
 #include "evaluator_base.h"
 #include "poseidon/advance/homomorphic_mod.h"
 #include "poseidon/advance/polynomial_evaluation.h"
-#include "poseidon/key/keyswitch.h"
 #include "poseidon/encryptor.h"
+#include "poseidon/key/keyswitch.h"
+
+#include <string>
 
 namespace poseidon
 {
+struct BootstrapEvalModTrace
+{
+    Ciphertext input;
+    Ciphertext polynomial_output;
+    vector<Ciphertext> double_angle_outputs;
+};
+
+struct BootstrapTrace
+{
+    Ciphertext prepared_q0;
+    Ciphertext raised;
+    Ciphertext coeff_to_slot_real_raw;
+    Ciphertext coeff_to_slot_imag_raw;
+    Ciphertext coeff_to_slot_real_aligned;
+    Ciphertext coeff_to_slot_imag_aligned;
+    BootstrapEvalModTrace eval_mod_real;
+    BootstrapEvalModTrace eval_mod_imag;
+    Ciphertext slot_to_coeff;
+    Ciphertext projected;
+    Ciphertext final_output;
+};
+
+struct BootstrapConfig
+{
+    uint32_t boundary_k = 25;
+    uint32_t log_message_ratio = 5;
+    uint32_t double_angle = 2;
+    uint32_t scaling_log = 51;
+    uint32_t output_ratio = 32;
+    bool project_real = true;
+    double inverse_coeff = 0.0;
+    std::string cosine_heap_path;
+
+    /*
+     * Number of physical Q primes in one logical bootstrap rescale. The
+     * default preserves the original 51-bit path. A value of two lets a
+     * 30-bit chain maintain an approximately 60-bit bootstrap scale.
+     */
+    uint32_t logical_rescale_count = 1;
+
+    /* Number of leading Q primes forming the centered ModRaise q0 base. */
+    uint32_t q0_modulus_count = 1;
+
+    /* Optional non-owning destination for CPU bootstrap diagnostics. */
+    BootstrapTrace *trace = nullptr;
+};
+
+struct EvalModTrace
+{
+    Ciphertext offset_input;
+    map<uint32_t, Ciphertext> basis;
+    vector<Ciphertext> polynomial_leaves;
+    vector<Ciphertext> polynomial_combines;
+    Ciphertext polynomial_output;
+    vector<Ciphertext> double_angle_outputs;
+};
+
 class EvaluatorCkksBase : public EvaluatorBase
 {
     using Base = EvaluatorBase;
@@ -86,10 +145,22 @@ public:
 
     void eval_mod(const Ciphertext &ciph, Ciphertext &result, const EvalModPoly &eva_poly,
                   const RelinKeys &relin_keys, const CKKSEncoder &encoder);
+    void eval_mod_high_precision(const Ciphertext &ciph, Ciphertext &result,
+                                 const EvalModPoly &eva_poly, const RelinKeys &relin_keys,
+                                 const CKKSEncoder &encoder,
+                                 EvalModTrace *trace = nullptr,
+                                 bool preserve_input_scale = false);
 
-    void bootstrap(const Ciphertext &ciph, Ciphertext &result,
-                   const RelinKeys &relin_keys, const GaloisKeys &galois_keys,
-                   const CKKSEncoder &encoder, EvalModPoly &eval_mod_poly);
+    void bootstrap(const Ciphertext &ciph, Ciphertext &result, const RelinKeys &relin_keys,
+                   const GaloisKeys &galois_keys, const CKKSEncoder &encoder,
+                   EvalModPoly &eval_mod_poly);
+    void bootstrap(const Ciphertext &ciph, Ciphertext &result, const RelinKeys &relin_keys,
+                   const GaloisKeys &galois_keys, const CKKSEncoder &encoder,
+                   const BootstrapConfig &config = BootstrapConfig{});
+    void bootstrap_high_precision(const Ciphertext &ciph, Ciphertext &result,
+                                  const RelinKeys &relin_keys,
+                                  const GaloisKeys &galois_keys,
+                                  const CKKSEncoder &encoder, EvalModPoly &eval_mod_poly);
 
     void multiply_const_direct(const Ciphertext &ciph, int const_data, Ciphertext &result,
                                const CKKSEncoder &encoder) const;
@@ -152,8 +223,9 @@ public:
     void sigmoid_approx(const Ciphertext &ciph, Ciphertext &result, const CKKSEncoder &encoder,
                         const RelinKeys &relin_keys);
 
-    void accumulate_top_n(const Ciphertext &ciph, Ciphertext &result, int n, const CKKSEncoder &encoder,
-                          const Encryptor &enc, const GaloisKeys &rot_keys) const;
+    void accumulate_top_n(const Ciphertext &ciph, Ciphertext &result, int n,
+                          const CKKSEncoder &encoder, const Encryptor &enc,
+                          const GaloisKeys &rot_keys) const;
 
     // result = conv(ciph_f, ciph_g_rev)
     void conv(const Ciphertext &ciph_f, const Ciphertext &ciph_g_rev, Ciphertext &result,
@@ -162,6 +234,10 @@ public:
 
 private:
     inline void set_min_scale(double scale) { min_scale_ = scale; }
+
+    void bootstrap_core(const Ciphertext &ciph, Ciphertext &result, const RelinKeys &relin_keys,
+                        const GaloisKeys &galois_keys, const CKKSEncoder &encoder,
+                        EvalModPoly &eval_mod_poly, bool high_precision_eval_mod);
 
     void rescale_for_bootstrap(Ciphertext &ciph1);
 
@@ -200,6 +276,7 @@ private:
 
 protected:
     double min_scale_;
+    mutable EvalModTrace *active_eval_mod_trace_ = nullptr;
 };
 
 }  // namespace poseidon

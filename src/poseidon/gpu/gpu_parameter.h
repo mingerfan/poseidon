@@ -69,6 +69,36 @@ struct GpuParameterShard
     DeviceVector<GpuWord> inv_q_last_mod_q;
 
     /**
+     * @brief Constants for dropping the last two q moduli in one rescale.
+     *
+     * For M = q[q_count-2] * q[q_count-1]:
+     * - q_last_two_product and half_q_last_two_product describe M;
+     * - inv_q_last_mod_q_second_last reconstructs a coefficient from the two
+     *   dropped residues;
+     * - q_last_two_product_mod_q[i] and
+     *   inv_q_last_two_product_mod_q[i] are M and M^{-1} modulo each retained
+     *   q_i, i = 0..q_count-3.
+     */
+    GpuWord q_second_last = 0;
+    GpuWide q_last_two_product = 0;
+    GpuWide half_q_last_two_product = 0;
+    GpuWord inv_q_last_mod_q_second_last = 0;
+    GpuWide q_second_last_modulus_constant = 0;
+    DeviceVector<GpuWord> q_last_two_product_mod_q;
+    DeviceVector<GpuWord> inv_q_last_two_product_mod_q;
+
+    /**
+     * @brief Pairwise q-prime inverses for an arbitrary multi-prime rescale.
+     *
+     * The flattened q_count-by-q_count matrix stores
+     * q_i^{-1} mod q_j at [i * q_count + j] for i != j. Diagonal entries
+     * are zero. It is used both by exact mixed-radix reconstruction of the
+     * dropped suffix and by the final multiplication with
+     * prod(Q_drop)^{-1} in every retained q limb.
+     */
+    DeviceVector<GpuWord> rescale_q_inv_mod_q;
+
+    /**
      * @brief HYBRID key-switch base-conversion constants.
      *
      * For each decomposition block d:
@@ -103,6 +133,25 @@ struct GpuParameterShard
     DeviceVector<GpuWord> hybrid_moddown_p_to_q_matrix;
     DeviceVector<GpuWord> hybrid_qi_inv_punctured;
     DeviceVector<GpuWord> hybrid_p_inv_punctured;
+
+    /**
+     * @brief CKKS bootstrap ModRaise base-conversion constants.
+     *
+     * These tables convert the current q-only level Q_l into the missing
+     * suffix limbs of the first q-only level Q_L. The input level's existing
+     * q limbs are copied verbatim. For the one/two-limb bootstrap q0 base the
+     * kernel uses these constants to reconstruct and extend the centered
+     * representative exactly; larger bases retain the generic RNS conversion.
+     *
+     * - bootstrap_raise_inv_punctured[j] is the input base weight
+     *   prod(Q_l / q_j)^(-1) mod q_j;
+     * - bootstrap_raise_matrix is flattened as
+     *   [target_suffix_limb][source_q_limb].
+     */
+    std::size_t bootstrap_raise_source_q_count = 0;
+    std::size_t bootstrap_raise_target_q_count = 0;
+    DeviceVector<GpuWord> bootstrap_raise_inv_punctured;
+    DeviceVector<GpuWord> bootstrap_raise_matrix;
 
     /**
      * @brief NTT tables for q/p RNS limbs.
@@ -219,6 +268,25 @@ public:
      * the context level after dropping the current last q modulus.
      */
     const GpuLevelInfo &get_next_level(const parms_id_type &parms_id) const;
+
+    /**
+     * @brief Query one q-only modulus-chain level by q limb count.
+     *
+     * This is useful for bootstrap scale-down, where the CPU path targets
+     * q0_level and q0_level + 1 by logical q-count rather than by stepping one
+     * level at a time.
+     */
+    const GpuLevelInfo &get_level_by_q_count(
+        std::size_t q_count,
+        std::size_t p_count = 0) const;
+
+    /**
+     * @brief Query the first q-only modulus-chain level.
+     *
+     * This is the full Q level used as the output level for CKKS bootstrap
+     * ModRaise.
+     */
+    const GpuLevelInfo &get_first_q_level() const;
 
     bool empty() const;
 

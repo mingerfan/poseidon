@@ -27,7 +27,7 @@ public:
 
     inline SineType type() const { return this->type_; }
 
-    inline int k() const { return this->k_; }
+    inline double k() const { return this->k_; }
 
     inline double q_div() const { return this->q_div_; }
 
@@ -45,16 +45,38 @@ public:
 
     inline double sqrt_2pi() const { return this->sqrt_2pi_; }
 
-    inline int32_t sine_poly_a() const { return sine_poly_a_; }
-    inline int32_t sine_poly_b() const { return sine_poly_b_; }
+    inline double sine_poly_a() const { return sine_poly_a_; }
+    inline double sine_poly_b() const { return sine_poly_b_; }
     inline const Polynomial &sine_poly() const { return this->sine_poly_; }
+
+    /**
+     * Keep Chebyshev coefficients T_0 through T_max_degree. This is an
+     * explicit experimental approximation change, not a level/scale change.
+     */
+    void truncate_sine_polynomial(uint32_t max_degree)
+    {
+        auto &coefficients = sine_poly_.data();
+        const std::size_t requested_size =
+            static_cast<std::size_t>(max_degree) + 1;
+        if (coefficients.size() > requested_size)
+        {
+            coefficients.resize(requested_size);
+        }
+        sine_poly_.max_degree() = static_cast<int>(
+            coefficients.empty() ? 0 : coefficients.size() - 1);
+    }
+
+    /**
+     * Replace the discrete-cosine coefficients with an exact fixed-degree
+     * Chebyshev interpolation of the same phase-shifted base function.
+     * This experimental source preserves the current double-angle semantics
+     * but is not a Remez/minimax fit.
+     */
+    void refit_discrete_cosine_fixed_degree(uint32_t degree);
 
     inline const Polynomial &arcsine_poly() const { return this->arcsine_poly_; }
 
-    void set_level_start(uint32_t level)
-    {
-        level_start_ = level;
-    }
+    void set_level_start(uint32_t level) { level_start_ = level; }
 
 private:
     SineType type_;
@@ -62,14 +84,14 @@ private:
     uint32_t level_start_;
     uint32_t log_message_ratio_;
     uint32_t double_angle_;
-    uint32_t k_;
+    double k_;
     double q_div_;
     double q_diff_;
     double sc_fac_;
     double sqrt_2pi_;
     Polynomial sine_poly_;
-    int32_t sine_poly_a_;
-    int32_t sine_poly_b_;
+    double sine_poly_a_;
+    double sine_poly_b_;
 
     Polynomial arcsine_poly_;
 };
