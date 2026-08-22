@@ -31,6 +31,7 @@ class SecretKey;
 
 namespace gpu
 {
+struct GpuBootstrapData;
 class GpuEvaluator;
 class GpuParameterData;
 } // namespace gpu
@@ -118,6 +119,20 @@ public:
 
     PoseidonGpuApi(const PoseidonGpuApi &) = delete;
     PoseidonGpuApi &operator=(const PoseidonGpuApi &) = delete;
+
+    /**
+     * @brief Install one fully uploaded native-bootstrap profile on a device.
+     *
+     * Bootstrap constants and keys remain full single-device objects. The
+     * RuntimePlan selects the profile and device; this method performs no
+     * placement or cross-device movement.
+     */
+    void configure_native_bootstrap(
+        std::string operator_profile,
+        int logical_device_index,
+        gpu::GpuBootstrapData bootstrap_data,
+        gpu::GpuRelinKeysData relin_keys,
+        gpu::GpuGaloisKeysData galois_keys);
 
     std::string name() const;
     int local_device_count() const noexcept;

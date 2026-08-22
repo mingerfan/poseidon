@@ -548,6 +548,28 @@ void test_preflight_rejections(PoseidonGpuApi &api,
         },
         "Boot profiles");
 
+    auto native_boot = loaded_spec.spec;
+    native_boot.operators.at(fhegpu::ComputeKind::Boot).supported = true;
+    fhegpu::BootProfile native_profile;
+    native_profile.profile_id = "unconfigured-native-boot";
+    native_profile.implementation = fhegpu::BootImplementation::Native;
+    native_profile.input_level_min = native_boot.level_lower_bound;
+    native_profile.input_level_max = native_boot.level_upper_bound;
+    native_profile.input_components = 2;
+    native_profile.output_level = native_boot.level_upper_bound;
+    native_profile.output_scale_log2 = native_boot.default_scale_log2;
+    native_profile.output_components = 2;
+    native_boot.boot_profiles = {std::move(native_profile)};
+    api.preflight(kPlanSha, false, target, native_boot, valid_requirements);
+    const fhegpu::PlanRequirements native_boot_requirement{
+        {fhegpu::RequiredCapability::BootNative}, {}};
+    require_rejected(
+        [&] {
+            api.preflight(kPlanSha, false, target, native_boot,
+                          native_boot_requirement);
+        },
+        "boot_native");
+
     const fhegpu::PlanRequirements host_compute{
         {fhegpu::RequiredCapability::HostCompute}, {}};
     require_rejected(
