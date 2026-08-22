@@ -37,6 +37,7 @@ if(NOT TARGET rmm::rmm)
 endif()
 
 add_library(poseidon_gpu STATIC
+    gpu_bootstrap_profile.cpp
     gpu_ciphertext.cpp
     gpu_double_hoist.cpp
     gpu_key.cpp

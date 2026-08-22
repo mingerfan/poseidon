@@ -70,6 +70,7 @@ if(POSEIDON_GPU_BOOTSTRAPPING_ENABLE_GPU_TESTS)
     endif()
 
     set(POSEIDON_GPU_DATA_STRUCT_SOURCES
+        "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_bootstrap_profile.cpp"
         "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_ciphertext.cpp"
         "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_key.cpp"
         "${POSEIDON_ROOT}/src/poseidon/gpu/gpu_memory.cpp"

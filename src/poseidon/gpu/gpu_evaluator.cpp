@@ -4298,8 +4298,10 @@ void GpuEvaluator::bootstrap(
     GpuCiphertextData &destination_ciphertext) const
 {
     const auto linear_transform_mode =
-        gpu_linear_transform_mode_from_environment(
-            bootstrap_data.linear_transform_mode);
+        bootstrap_data.allow_environment_linear_transform_override
+            ? gpu_linear_transform_mode_from_environment(
+                  bootstrap_data.linear_transform_mode)
+            : bootstrap_data.linear_transform_mode;
     const bool use_double_hoist =
         linear_transform_mode == GpuLinearTransformMode::DoubleHoistBsgs;
     if (linear_transform_mode ==

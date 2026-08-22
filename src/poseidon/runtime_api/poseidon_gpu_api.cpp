@@ -3,6 +3,7 @@
 #include "poseidon/ckks_encoder.h"
 #include "poseidon/decryptor.h"
 #include "poseidon/encryptor.h"
+#include "poseidon/gpu/gpu_bootstrap_profile.h"
 #include "poseidon/gpu/gpu_evaluator.h"
 #include "poseidon/gpu/gpu_memory.h"
 #include "poseidon/gpu/gpu_parameter.h"
@@ -16,6 +17,7 @@
 #include <algorithm>
 #include <cmath>
 #include <complex>
+#include <cstdlib>
 #include <cstdint>
 #include <limits>
 #include <map>
@@ -36,10 +38,90 @@
 
 namespace poseidon::runtime_api
 {
+
+fhegpu::BootProfile make_native_boot_profile(
+    const gpu::GpuBootstrapProfile &profile)
+{
+    if (profile.profile_id.empty() ||
+        profile.input_level_min < 0 ||
+        profile.input_level_min > profile.input_level_max ||
+        profile.input_components <= 0 || profile.output_level < 0 ||
+        profile.output_scale_log2 <= 0 || profile.output_components <= 0)
+    {
+        throw std::invalid_argument(
+            "Poseidon GPU native Boot profile metadata is invalid");
+    }
+    fhegpu::BootProfile result;
+    result.profile_id = profile.profile_id;
+    result.implementation = fhegpu::BootImplementation::Native;
+    result.input_level_min = profile.input_level_min;
+    result.input_level_max = profile.input_level_max;
+    result.input_components = profile.input_components;
+    result.output_level = profile.output_level;
+    result.output_scale_log2 = profile.output_scale_log2;
+    result.output_components = profile.output_components;
+    result.needs_secret_key = false;
+    result.needs_host_compute = false;
+    return result;
+}
+
 namespace
 {
 
-constexpr std::size_t kInitialDevicePoolSize = 24ULL << 30;
+constexpr std::size_t kMaximumInitialDevicePoolSize = 24ULL << 30;
+constexpr std::size_t kMinimumInitialDevicePoolSize = 64ULL << 20;
+
+std::size_t initial_device_pool_size()
+{
+    std::size_t free_bytes = 0;
+    std::size_t total_bytes = 0;
+    gpu::gpu_check_cuda(
+        cudaMemGetInfo(&free_bytes, &total_bytes), "cudaMemGetInfo");
+    (void)total_bytes;
+    if (free_bytes < kMinimumInitialDevicePoolSize)
+    {
+        throw std::runtime_error(
+            "Poseidon GPU Runtime has insufficient free device memory");
+    }
+
+    const char *configured =
+        std::getenv("POSEIDON_GPU_RUNTIME_INITIAL_POOL_MB");
+    if (configured != nullptr && *configured != '\0')
+    {
+        std::size_t consumed = 0;
+        const std::string text(configured);
+        unsigned long long megabytes = 0;
+        try
+        {
+            megabytes = std::stoull(text, &consumed, 10);
+        }
+        catch (const std::exception &)
+        {
+            throw std::invalid_argument(
+                "POSEIDON_GPU_RUNTIME_INITIAL_POOL_MB must be an integer");
+        }
+        if (consumed != text.size() || megabytes == 0 ||
+            megabytes >
+                std::numeric_limits<std::size_t>::max() / (1ULL << 20))
+        {
+            throw std::invalid_argument(
+                "POSEIDON_GPU_RUNTIME_INITIAL_POOL_MB is out of range");
+        }
+        const std::size_t requested =
+            static_cast<std::size_t>(megabytes) << 20;
+        if (requested > free_bytes - free_bytes / 10)
+        {
+            throw std::invalid_argument(
+                "POSEIDON_GPU_RUNTIME_INITIAL_POOL_MB leaves insufficient "
+                "device-memory headroom");
+        }
+        return requested;
+    }
+
+    return std::min(
+        kMaximumInitialDevicePoolSize,
+        free_bytes / 4);
+}
 
 class DeviceMemoryPool
 {
@@ -52,7 +134,7 @@ public:
         upstream_ = std::make_unique<rmm::mr::cuda_memory_resource>();
         pool_ = std::make_unique<
             rmm::mr::pool_memory_resource<rmm::mr::cuda_memory_resource>>(
-            upstream_.get(), kInitialDevicePoolSize);
+            upstream_.get(), initial_device_pool_size());
         rmm::mr::set_per_device_resource(
             rmm::cuda_device_id{cuda_device_id_}, pool_.get());
     }
@@ -911,6 +993,24 @@ void PoseidonGpuApi::configure_native_bootstrap(
         throw std::invalid_argument(
             "Poseidon GPU native Boot profile is already configured");
     }
+}
+
+void PoseidonGpuApi::configure_native_bootstrap(
+    int logical_device_index,
+    gpu::GpuBootstrapProfile profile)
+{
+    const auto &device = device_state(logical_device_index);
+    if (profile.cuda_device_id != device.cuda_device_id)
+    {
+        throw std::invalid_argument(
+            "Poseidon GPU native Boot profile belongs to a different CUDA device");
+    }
+    configure_native_bootstrap(
+        std::move(profile.profile_id),
+        logical_device_index,
+        std::move(profile.bootstrap_data),
+        std::move(profile.relin_keys),
+        std::move(profile.galois_keys));
 }
 
 std::string PoseidonGpuApi::name() const

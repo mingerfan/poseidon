@@ -1465,7 +1465,8 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
     double polynomial_output_scale_override,
     bool fuse_leaf_terms_before_rescale,
     double input_scale,
-    bool metadata_only)
+    bool metadata_only,
+    const GpuEvalModUploadOptions &options)
 {
     const auto &context = encoder.context();
     const auto crt_context = context.crt_context();
@@ -1509,8 +1510,9 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
         throw std::invalid_argument(
             "GpuUploader::upload_eval_mod_high_precision: invalid scaling factor");
     }
-    const bool dynamic_rescale =
-        env_flag_enabled("POSEIDON_BOOTSTRAP_EVALMOD_DYNAMIC_RESCALE");
+    const bool dynamic_rescale = options.dynamic_rescale.has_value()
+        ? *options.dynamic_rescale
+        : env_flag_enabled("POSEIDON_BOOTSTRAP_EVALMOD_DYNAMIC_RESCALE");
     const double effective_input_scale = input_scale > 0.0
         ? input_scale
         : target_scale;
@@ -1679,10 +1681,23 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
     }
     const auto default_log_split =
         static_cast<std::uint32_t>(optimal_split(static_cast<int>(log_degree)));
-    const auto log_split = evalmod_log_split_or(default_log_split, log_degree);
-    const bool flat_bsgs_b8 = use_evalmod_flat_bsgs_b8();
+    const auto log_split = options.polynomial_log_split.has_value()
+        ? *options.polynomial_log_split
+        : evalmod_log_split_or(default_log_split, log_degree);
+    if (log_split == 0 || log_split > log_degree)
+    {
+        throw std::invalid_argument(
+            "GpuUploader::upload_eval_mod_high_precision: polynomial_log_split "
+            "must be in [1, log_degree]");
+    }
+    const bool flat_bsgs_b8 = options.flat_bsgs_b8.has_value()
+        ? *options.flat_bsgs_b8
+        : use_evalmod_flat_bsgs_b8();
     const bool virtual_degree_bound =
-        dynamic_rescale && use_evalmod_virtual_degree_bound();
+        dynamic_rescale &&
+        (options.virtual_degree_bound.has_value()
+             ? *options.virtual_degree_bound
+             : use_evalmod_virtual_degree_bound());
     if (flat_bsgs_b8 &&
         (log_split != 3 || !dynamic_rescale ||
          sine_polynomial.basis_type() != Chebyshev ||
@@ -1699,7 +1714,10 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
               sine_polynomial,
               log_split,
               log_degree,
-              !dynamic_rescale || use_evalmod_lead_leaf_resplit());
+              !dynamic_rescale ||
+                  (options.lead_leaf_resplit.has_value()
+                       ? *options.lead_leaf_resplit
+                       : use_evalmod_lead_leaf_resplit()));
     std::vector<EvalModSplitNode *> leaves;
     collect_eval_mod_leaves(*split_tree, leaves);
     if (leaves.empty() ||

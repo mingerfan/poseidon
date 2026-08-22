@@ -8,6 +8,7 @@
 
 #include <cstddef>
 #include <limits>
+#include <optional>
 #include <vector>
 
 namespace poseidon
@@ -26,6 +27,22 @@ class Polynomial;
 
 namespace gpu
 {
+
+/**
+ * @brief Explicit setup policy for a generated GPU EvalMod plan.
+ *
+ * Unset fields retain the legacy environment-controlled behavior. Runtime
+ * profile builders set every field so an artifact is independent of process
+ * environment.
+ */
+struct GpuEvalModUploadOptions
+{
+    std::optional<bool> dynamic_rescale;
+    std::optional<std::uint32_t> polynomial_log_split;
+    std::optional<bool> flat_bsgs_b8;
+    std::optional<bool> virtual_degree_bound;
+    std::optional<bool> lead_leaf_resplit;
+};
 
 /**
  * @brief CPU/GPU conversion helper.
@@ -150,7 +167,8 @@ public:
             std::numeric_limits<double>::quiet_NaN(),
         bool fuse_leaf_terms_before_rescale = true,
         double input_scale = 0.0,
-        bool metadata_only = false);
+        bool metadata_only = false,
+        const GpuEvalModUploadOptions &options = {});
 
     /**
      * @brief Upload CPU relinearization keys to GPU.

@@ -32,12 +32,16 @@ class SecretKey;
 namespace gpu
 {
 struct GpuBootstrapData;
+struct GpuBootstrapProfile;
 class GpuEvaluator;
 class GpuParameterData;
 } // namespace gpu
 
 namespace runtime_api
 {
+
+fhegpu::BootProfile make_native_boot_profile(
+    const gpu::GpuBootstrapProfile &profile);
 
 namespace communication
 {
@@ -147,6 +151,11 @@ public:
         gpu::GpuBootstrapData bootstrap_data,
         std::shared_ptr<const gpu::GpuRelinKeysData> relin_keys,
         std::shared_ptr<const gpu::GpuGaloisKeysData> galois_keys);
+
+    /** Install the complete result returned by GpuBootstrapProfileBuilder. */
+    void configure_native_bootstrap(
+        int logical_device_index,
+        gpu::GpuBootstrapProfile profile);
 
     std::string name() const;
     int local_device_count() const noexcept;
