@@ -5073,7 +5073,8 @@ void GpuEvaluator::eval_mod_high_precision(
     const GpuBootstrapData &bootstrap_data,
     const GpuRelinKeysData &relin_keys,
     GpuBootstrapWorkspace &workspace,
-    GpuCiphertextData &destination_ciphertext) const
+    GpuCiphertextData &destination_ciphertext,
+    const GpuEvalModPolynomialPartition *polynomial_partition) const
 {
     validate_ntt_ciphertext_input(
         "GpuEvaluator::eval_mod_high_precision",
@@ -5101,6 +5102,31 @@ void GpuEvaluator::eval_mod_high_precision(
     const auto &polynomial_blocks = bootstrap_data.eval_mod.polynomial_blocks;
     const auto &polynomial_combine_steps =
         bootstrap_data.eval_mod.polynomial_combine_steps;
+    const bool partitioned_polynomial = polynomial_partition != nullptr;
+    const std::size_t combine_begin = partitioned_polynomial
+        ? polynomial_partition->combine_begin
+        : 0;
+    const std::size_t combine_end = partitioned_polynomial
+        ? std::min(
+              polynomial_partition->combine_end,
+              polynomial_combine_steps.size())
+        : polynomial_combine_steps.size();
+    const std::uint32_t polynomial_result_node = partitioned_polynomial
+        ? polynomial_partition->result_node
+        : bootstrap_data.eval_mod.polynomial_result_node;
+    const std::size_t basis_step_end = partitioned_polynomial
+        ? std::min(
+              polynomial_partition->basis_step_end,
+              basis_steps.size())
+        : basis_steps.size();
+    const std::size_t leaf_begin = partitioned_polynomial
+        ? polynomial_partition->leaf_begin
+        : 0;
+    const std::size_t leaf_end = partitioned_polynomial
+        ? std::min(
+              polynomial_partition->leaf_end,
+              polynomial_blocks.size())
+        : polynomial_blocks.size();
     const auto &configured_double_angle_constants =
         !bootstrap_data.eval_mod.double_angle_constants.empty()
             ? bootstrap_data.eval_mod.double_angle_constants
@@ -5124,6 +5150,19 @@ void GpuEvaluator::eval_mod_high_precision(
     {
         throw std::invalid_argument(
             "GpuEvaluator::eval_mod_high_precision: empty polynomial plaintexts");
+    }
+    if (partitioned_polynomial &&
+        (polynomial_blocks.empty() ||
+         combine_begin > combine_end ||
+         combine_end > polynomial_combine_steps.size() ||
+         basis_step_end > basis_steps.size() ||
+         leaf_begin > leaf_end ||
+         leaf_end > polynomial_blocks.size() ||
+         polynomial_result_node ==
+             std::numeric_limits<std::uint32_t>::max()))
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::eval_mod_high_precision: invalid polynomial partition");
     }
 
     const double target_scale = configured_target_scale;
@@ -5810,8 +5849,11 @@ void GpuEvaluator::eval_mod_high_precision(
 
     {
         NvtxRange range("EvalMod Chebyshev basis generation");
-        for (const auto &step : basis_steps)
+        for (std::size_t basis_step_index = 0;
+             basis_step_index < basis_step_end;
+             ++basis_step_index)
         {
+            const auto &step = basis_steps[basis_step_index];
             auto &output = workspace.eval_mod_basis[step.output_degree];
             const GpuCiphertextData *basis_left =
                 &workspace.eval_mod_basis[step.left_degree];
@@ -6946,7 +6988,7 @@ void GpuEvaluator::eval_mod_high_precision(
             false);
         {
             NvtxRange range("EvalMod fused leaf evaluation");
-            for (std::size_t i = 0; i < polynomial_blocks.size(); ++i)
+            for (std::size_t i = leaf_begin; i < leaf_end; ++i)
             {
                 if (i >= node_available.size())
                 {
@@ -6980,8 +7022,8 @@ void GpuEvaluator::eval_mod_high_precision(
 
         {
             NvtxRange range("EvalMod BSGS tree combine");
-            for (std::size_t combine_index = 0;
-                 combine_index < polynomial_combine_steps.size();
+            for (std::size_t combine_index = combine_begin;
+                 combine_index < combine_end;
                  ++combine_index)
             {
                 const auto &combine = polynomial_combine_steps[combine_index];
@@ -7550,8 +7592,7 @@ void GpuEvaluator::eval_mod_high_precision(
                 }
             }
 
-            const auto result_node =
-                bootstrap_data.eval_mod.polynomial_result_node;
+            const auto result_node = polynomial_result_node;
             if (!node_available[result_node])
             {
                 throw std::invalid_argument(
@@ -7569,6 +7610,15 @@ void GpuEvaluator::eval_mod_high_precision(
             else
             {
                 accumulator = std::move(workspace.eval_mod_nodes[result_node]);
+            }
+            if (partitioned_polynomial)
+            {
+                destination_ciphertext = std::move(accumulator);
+                stage_recorder.record(4);
+                stage_recorder.record(5);
+                stage_recorder.finish(workspace.eval_mod_stage_timing);
+                multiply_recorder.finish(workspace.eval_mod_multiply_timings);
+                return;
             }
             if (bootstrap_data.eval_mod.dynamic_rescale)
             {
@@ -7817,6 +7867,257 @@ void GpuEvaluator::eval_mod_high_precision(
     }
     stage_recorder.finish(workspace.eval_mod_stage_timing);
     multiply_recorder.finish(workspace.eval_mod_multiply_timings);
+}
+
+void GpuEvaluator::eval_mod_degree22_root_product(
+    const GpuCiphertextData &source_quotient,
+    const GpuBootstrapData &bootstrap_data,
+    const GpuRelinKeysData &,
+    GpuBootstrapWorkspace &workspace,
+    GpuCiphertextData &destination_product) const
+{
+    const auto &eval_mod = bootstrap_data.eval_mod;
+    if (eval_mod.polynomial_degree != 22 ||
+        eval_mod.polynomial_blocks.size() != 6 ||
+        eval_mod.polynomial_combine_steps.size() != 5)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::eval_mod_degree22_root_product: expected degree-22 baby-4 plan");
+    }
+    const auto &root = eval_mod.polynomial_combine_steps.back();
+    if (root.basis_degree >= workspace.eval_mod_basis.size() ||
+        workspace.eval_mod_basis[root.basis_degree].empty())
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::eval_mod_degree22_root_product: root basis is unavailable");
+    }
+
+    const GpuCiphertextData *quotient = &source_quotient;
+    if (root.quotient_rescale_count > 0)
+    {
+        rescale_many(
+            source_quotient,
+            workspace.scratch0,
+            root.quotient_rescale_count);
+        workspace.scratch0.meta.scale = root.quotient_output_scale;
+        quotient = &workspace.scratch0;
+    }
+
+    const GpuCiphertextData *basis =
+        &workspace.eval_mod_basis[root.basis_degree];
+    if (!(quotient->meta.parms_id == basis->meta.parms_id))
+    {
+        if (quotient->meta.q_count == basis->meta.q_count)
+        {
+            throw std::invalid_argument(
+                "GpuEvaluator::eval_mod_degree22_root_product: equal q-count operands have different parms_id");
+        }
+        if (quotient->meta.q_count > basis->meta.q_count)
+        {
+            drop_modulus(
+                *quotient,
+                workspace.scratch1,
+                basis->meta.parms_id);
+            workspace.scratch1.meta.scale = quotient->meta.scale;
+            quotient = &workspace.scratch1;
+        }
+        else
+        {
+            drop_modulus(
+                *basis,
+                workspace.scratch2,
+                quotient->meta.parms_id);
+            workspace.scratch2.meta.scale = basis->meta.scale;
+            basis = &workspace.scratch2;
+        }
+    }
+
+    multiply(*quotient, *basis, workspace.scratch5);
+    workspace.scratch5.meta.scale = root.product_scale;
+    const GpuCiphertextData *product = &workspace.scratch5;
+    if (!root.product_scale_plaintext.empty())
+    {
+        multiply_plain(
+            *product,
+            root.product_scale_plaintext,
+            workspace.scratch3);
+        workspace.scratch3.meta.scale = root.product_aligned_scale;
+        product = &workspace.scratch3;
+    }
+
+    if (root.product_q_count != 0 &&
+        product->meta.q_count > root.product_q_count)
+    {
+        const auto &target_level =
+            params_.get_level_by_q_count(root.product_q_count, 0);
+        drop_modulus(
+            *product,
+            destination_product,
+            target_level.parms_id);
+        destination_product.meta.scale = product->meta.scale;
+    }
+    else
+    {
+        destination_product = std::move(
+            product == &workspace.scratch3
+                ? workspace.scratch3
+                : workspace.scratch5);
+    }
+    if (destination_product.size() != 3)
+    {
+        throw std::logic_error(
+            "GpuEvaluator::eval_mod_degree22_root_product: raw root product is not size 3");
+    }
+}
+
+void GpuEvaluator::eval_mod_degree22_finish_partials(
+    const GpuCiphertextData &source_product,
+    const GpuCiphertextData &source_remainder,
+    const GpuBootstrapData &bootstrap_data,
+    const GpuRelinKeysData &relin_keys,
+    GpuBootstrapWorkspace &workspace,
+    GpuCiphertextData &destination_ciphertext) const
+{
+    const auto &eval_mod = bootstrap_data.eval_mod;
+    if (eval_mod.polynomial_degree != 22 ||
+        eval_mod.polynomial_combine_steps.size() != 5 ||
+        source_product.size() != 3 ||
+        source_remainder.size() != 3)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::eval_mod_degree22_finish_partials: invalid degree-22 partials");
+    }
+    const auto &root = eval_mod.polynomial_combine_steps.back();
+    if (root.remainder_rescale_count != 0 ||
+        !root.remainder_scale_plaintext.empty())
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::eval_mod_degree22_finish_partials: root remainder is not lazy-compatible");
+    }
+
+    const GpuCiphertextData *product = &source_product;
+    const GpuCiphertextData *remainder = &source_remainder;
+    if (!(product->meta.parms_id == remainder->meta.parms_id))
+    {
+        if (product->meta.q_count == remainder->meta.q_count)
+        {
+            throw std::invalid_argument(
+                "GpuEvaluator::eval_mod_degree22_finish_partials: equal q-count partials have different parms_id");
+        }
+        if (product->meta.q_count > remainder->meta.q_count)
+        {
+            drop_modulus(
+                *product,
+                workspace.scratch0,
+                remainder->meta.parms_id);
+            workspace.scratch0.meta.scale = product->meta.scale;
+            product = &workspace.scratch0;
+        }
+        else
+        {
+            drop_modulus(
+                *remainder,
+                workspace.scratch1,
+                product->meta.parms_id);
+            workspace.scratch1.meta.scale = remainder->meta.scale;
+            remainder = &workspace.scratch1;
+        }
+    }
+
+    add(*product, *remainder, workspace.scratch5);
+    workspace.scratch5.meta.scale = root.output_scale;
+    relinearize(workspace.scratch5, relin_keys, workspace.scratch2);
+    workspace.scratch2.meta.scale = root.output_scale;
+    GpuCiphertextData accumulator = std::move(workspace.scratch2);
+
+    if (root.output_q_count != 0 &&
+        accumulator.meta.q_count > root.output_q_count)
+    {
+        const auto &target_level =
+            params_.get_level_by_q_count(root.output_q_count, 0);
+        drop_modulus(
+            accumulator,
+            workspace.scratch0,
+            target_level.parms_id);
+        accumulator = std::move(workspace.scratch0);
+        accumulator.meta.scale = root.output_scale;
+    }
+
+    const double target_scale = eval_mod.target_scale > 0.0
+        ? eval_mod.target_scale
+        : bootstrap_data.eval_mod_target_scale;
+    if (eval_mod.dynamic_rescale)
+    {
+        rescale_dynamic(accumulator, workspace.scratch2, target_scale);
+        accumulator = std::move(workspace.scratch2);
+        if (eval_mod.polynomial_output_scale > 0.0)
+        {
+            accumulator.meta.scale = eval_mod.polynomial_output_scale;
+        }
+    }
+
+    const auto &double_angle_constants =
+        !eval_mod.double_angle_constants.empty()
+            ? eval_mod.double_angle_constants
+            : bootstrap_data.double_angle_plaintexts;
+    const auto &double_angle_rescale_counts =
+        eval_mod.double_angle_rescale_counts;
+    const auto logical_rescale_count =
+        std::max(eval_mod.logical_rescale_count, std::uint32_t{1});
+    for (std::size_t index = 0;
+         index < double_angle_constants.size();
+         ++index)
+    {
+        const auto rescale_count =
+            index < double_angle_rescale_counts.size()
+                ? std::max(
+                      double_angle_rescale_counts[index],
+                      std::uint32_t{1})
+                : logical_rescale_count;
+        square(accumulator, workspace.scratch5);
+        relinearize(workspace.scratch5, relin_keys, workspace.scratch2);
+        add(workspace.scratch2, workspace.scratch2, workspace.scratch3);
+        if (!double_angle_constants[index].empty())
+        {
+            add_plain(
+                workspace.scratch3,
+                double_angle_constants[index],
+                workspace.scratch4);
+            workspace.scratch3 = std::move(workspace.scratch4);
+        }
+        if (rescale_count > 0)
+        {
+            rescale_many(
+                workspace.scratch3,
+                workspace.scratch5,
+                rescale_count);
+            accumulator = std::move(workspace.scratch5);
+        }
+        else
+        {
+            accumulator = std::move(workspace.scratch3);
+        }
+    }
+
+    if (eval_mod.output_parms_id != parms_id_zero &&
+        accumulator.meta.parms_id != eval_mod.output_parms_id)
+    {
+        if (accumulator.meta.q_count < eval_mod.output_q_count)
+        {
+            throw std::invalid_argument(
+                "GpuEvaluator::eval_mod_degree22_finish_partials: output fell below configured level");
+        }
+        drop_modulus(
+            accumulator,
+            workspace.scratch2,
+            eval_mod.output_parms_id);
+        accumulator = std::move(workspace.scratch2);
+    }
+    if (eval_mod.output_scale > 0.0)
+    {
+        accumulator.meta.scale = eval_mod.output_scale;
+    }
+    destination_ciphertext = std::move(accumulator);
 }
 
 }  // namespace gpu

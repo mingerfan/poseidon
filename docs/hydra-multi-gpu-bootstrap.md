@@ -66,11 +66,42 @@ EvalMod，GPU2/GPU3 在首个正确性版本中不参与 EvalMod。
 - 冷态 Device-final Boot 为 `203.361 ms`；同一进程后续一次 Boot+D2H 为
   `99.1505 ms`。这组数据只验证冷热差异，不能作为最终性能结论。
 
-## 四卡性能版本的下一步
+## 四卡性能版本
 
-正确性基线会保留 QP 统一归并。性能阶段首先加入 StC、ModRaise、每层 C2S 的
-broadcast/partial/reduce/shared-ModDown、两个 EvalMod 分支和 finalize 的独立计时，
-然后依据计算/通信比选择需要分卡的 C2S 层。需要重点消除每层临时 `std::async`
-线程、硬 stream synchronize、重复设备分配，并复用跨卡传输缓冲区。由于本机
-四张 V100 的可见拓扑为 PCIe `PIX` 而不是 NVLink，QP 归并增加的 P-side 流量也
-必须纳入分片收益模型。
+性能版本加入了 StC/ModRaise、每层 C2S fanout/partial、QP reduction、共享
+ModDown/rescale、EvalMod 分支、结果回传和 finalize 的分段计时。实测表明本机
+四张 V100 之间是 PCIe `PIX`，对单个 degree-22 密文，物理卡数不等于有效并行度：
+
+- 单卡 C2S 四层约为 `10.5,10.4,4.9,4.8 ms`。
+- 前两层使用两卡后，重复 baby-step、QP 传输和归约使每层增长到约 `13.3 ms`。
+- 前两层强制四卡更慢，因此最低延迟计划让 C2S 只使用 GPU0。
+- 单个 EvalMod 约 `19.3--20.0 ms`，其中基生成约 `9.1--9.5 ms`、BSGS 合并约
+  `6.1--6.3 ms`、三次二倍角约 `3.3--3.4 ms`；叶计算只有约 `0.72 ms`。
+
+为验证 Hydra 的多项式树映射，当前实现提供 degree-22 根分区：GPU0/GPU2 协作
+real，GPU1/GPU3 协作 imag。coordinator 计算叶 0--1、根商子树和 `Q*T16` 原始
+size-3 乘积；helper 计算叶 2--5 和根余数子树，并跳过不需要的 T16 基。helper
+只回传一个低层级 size-3 余数，两部分相加后统一执行一次 HYBRID keyswitch，保持
+与单卡 lazy-relinearization 相同的运算顺序。分支输入通过 CUDA source-ready event
+连接到 P2P stream，避免读取未完成的 real/imag 提取结果。
+
+四卡根分区的正确性结果为：Runtime/direct、partitioned/direct 最大差异均严格为
+`0`，源消息误差仍为 `6.78437`。但在 2 次预热、5 次计时下，强制四卡根分区为
+`65.97 ms`，没有超过两卡 real/imag 分支。这是因为 degree-22 的 T2/T3/T4/T8
+基链仍需在两个分区重复，而两次 PCIe 传输无法被较小的子树完全掩盖。
+
+因此编译后的默认低延迟计划是“四卡安装、按成本选择活跃子集”：C2S 使用 1 卡，
+real/imag EvalMod 使用 2 卡。稳定结果如下：
+
+- 直接单卡完整 profile：`85.1568 ms`。
+- 默认 Runtime Device-final Boot：`65.4409 ms`，相对同轮直接执行为 `1.301x`。
+- 两个 EvalMod 分支：`23.4150 ms`。
+- Runtime/direct、partitioned/direct 最大差异：`0`。
+- Boot+D2H：`79.1030 ms`；完整 Host-final RuntimePlan：`83.7438 ms`。
+
+`POSEIDON_RUNTIME_BOOTSTRAP_C2S_DEVICE_LIMIT=1|2|4` 控制 C2S 活跃卡数；
+`POSEIDON_RUNTIME_BOOTSTRAP_EVALMOD_DEVICE_LIMIT=2|4` 控制 EvalMod 选择普通
+real/imag 双卡路径还是四卡根分区路径。四卡根分区保留为可复现实验路径，也可在
+更快互连或更高阶多项式上重新评估。下一阶段若追求四卡收益，应优先调度多个独立
+bootstrap 获得吞吐并行，或者实现 RNS/keyswitch 粒度的数据并行，而不是继续拆分
+degree-22 单密文的窄依赖链。

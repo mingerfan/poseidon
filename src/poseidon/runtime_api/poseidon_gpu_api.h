@@ -9,6 +9,7 @@
 #include "runtime/operator_spec.hpp"
 #include "runtime/plan.hpp"
 
+#include <cstddef>
 #include <cstdint>
 #include <memory>
 #include <mutex>
@@ -43,6 +44,27 @@ namespace runtime_api
 
 fhegpu::BootProfile make_native_boot_profile(
     const gpu::GpuBootstrapProfile &profile);
+
+struct MultiGpuBootstrapLayerTiming
+{
+    std::size_t active_device_count = 0;
+    double fanout_and_partial_compute_ms = 0.0;
+    double qp_reduction_ms = 0.0;
+    double shared_moddown_rescale_ms = 0.0;
+    double total_ms = 0.0;
+};
+
+struct MultiGpuBootstrapTiming
+{
+    std::size_t gpu_count = 0;
+    std::size_t eval_mod_device_count = 0;
+    double prepare_c2s_ms = 0.0;
+    std::vector<MultiGpuBootstrapLayerTiming> c2s_layers;
+    double eval_mod_branches_ms = 0.0;
+    double imag_result_copy_ms = 0.0;
+    double finalize_ms = 0.0;
+    double total_ms = 0.0;
+};
 
 namespace communication
 {
@@ -162,14 +184,20 @@ public:
      * @brief Compile one native Boot profile for multi-device execution.
      *
      * The first device owns the RuntimePlan input/output. Two devices split
-     * the real/imaginary EvalMod branches. Four devices additionally shard
-     * each C2S double-hoist giant-step layer and tree-reduce its partial
-     * results. The same native profile must already be installed on every
-     * listed device.
+     * the real/imaginary EvalMod branches. A four-device experimental plan
+     * can additionally split each degree-22 EvalMod polynomial at its root.
+     * Device limits let the compiler retain a four-device installation while
+     * selecting the lowest-latency subset for one ciphertext.
      */
     void configure_multi_gpu_bootstrap(
         std::string operator_profile,
-        std::vector<int> logical_device_indices);
+        std::vector<int> logical_device_indices,
+        std::size_t c2s_device_limit = 0,
+        std::size_t eval_mod_device_limit = 0);
+
+    std::optional<MultiGpuBootstrapTiming>
+    last_multi_gpu_bootstrap_timing(
+        const std::string &operator_profile) const;
 
     std::string name() const;
     int local_device_count() const noexcept;
@@ -194,6 +222,7 @@ private:
     {
         std::vector<int> logical_device_indices;
         std::vector<std::size_t> c2s_active_device_counts;
+        std::size_t eval_mod_device_count = 2;
     };
 
     DeviceState &device_state(const fhegpu::Place &place, const char *where);
@@ -230,6 +259,9 @@ private:
     std::mutex in_flight_mutex_;
     std::unordered_map<std::string, MultiGpuBootstrapPlan>
         multi_gpu_bootstrap_by_profile_;
+    mutable std::mutex multi_gpu_bootstrap_timing_mutex_;
+    std::unordered_map<std::string, MultiGpuBootstrapTiming>
+        multi_gpu_bootstrap_timing_by_profile_;
 };
 
 } // namespace runtime_api

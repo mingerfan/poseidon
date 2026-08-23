@@ -247,11 +247,60 @@ double milliseconds(std::uint64_t nanoseconds)
     return static_cast<double>(nanoseconds) / 1.0e6;
 }
 
+double elapsed_milliseconds(
+    std::chrono::steady_clock::time_point begin,
+    std::chrono::steady_clock::time_point end)
+{
+    return std::chrono::duration<double, std::milli>(end - begin).count();
+}
+
 std::string precise_double(double value)
 {
     std::ostringstream stream;
     stream << std::setprecision(17) << value;
     return stream.str();
+}
+
+void accumulate_multi_gpu_timing(
+    poseidon::runtime_api::MultiGpuBootstrapTiming &sum,
+    const poseidon::runtime_api::MultiGpuBootstrapTiming &sample)
+{
+    if (sum.gpu_count == 0)
+    {
+        sum.gpu_count = sample.gpu_count;
+        sum.eval_mod_device_count = sample.eval_mod_device_count;
+        sum.c2s_layers.resize(sample.c2s_layers.size());
+        for (std::size_t layer = 0;
+             layer < sample.c2s_layers.size();
+             ++layer)
+        {
+            sum.c2s_layers[layer].active_device_count =
+                sample.c2s_layers[layer].active_device_count;
+        }
+    }
+    if (sum.gpu_count != sample.gpu_count ||
+        sum.eval_mod_device_count != sample.eval_mod_device_count ||
+        sum.c2s_layers.size() != sample.c2s_layers.size())
+    {
+        throw std::runtime_error(
+            "multi-GPU bootstrap timing shape changed between iterations");
+    }
+    sum.prepare_c2s_ms += sample.prepare_c2s_ms;
+    sum.eval_mod_branches_ms += sample.eval_mod_branches_ms;
+    sum.imag_result_copy_ms += sample.imag_result_copy_ms;
+    sum.finalize_ms += sample.finalize_ms;
+    sum.total_ms += sample.total_ms;
+    for (std::size_t layer = 0; layer < sample.c2s_layers.size(); ++layer)
+    {
+        auto &destination = sum.c2s_layers[layer];
+        const auto &source = sample.c2s_layers[layer];
+        destination.fanout_and_partial_compute_ms +=
+            source.fanout_and_partial_compute_ms;
+        destination.qp_reduction_ms += source.qp_reduction_ms;
+        destination.shared_moddown_rescale_ms +=
+            source.shared_moddown_rescale_ms;
+        destination.total_ms += source.total_ms;
+    }
 }
 
 std::vector<std::complex<double>> make_message(std::size_t slot_count)
@@ -272,11 +321,31 @@ int main()
 {
     const std::size_t requested_gpu_count = env_size_or(
         "POSEIDON_RUNTIME_BOOTSTRAP_GPU_COUNT", 1);
+    const std::size_t c2s_device_limit = env_size_or(
+        "POSEIDON_RUNTIME_BOOTSTRAP_C2S_DEVICE_LIMIT",
+        1);
+    const std::size_t eval_mod_device_limit = env_size_or(
+        "POSEIDON_RUNTIME_BOOTSTRAP_EVALMOD_DEVICE_LIMIT",
+        std::min(requested_gpu_count, std::size_t{2}));
     if (requested_gpu_count != 1 && requested_gpu_count != 2 &&
         requested_gpu_count != 4)
     {
         std::cerr
             << "[FAIL] POSEIDON_RUNTIME_BOOTSTRAP_GPU_COUNT must be 1, 2, or 4\n";
+        return 1;
+    }
+    if (c2s_device_limit == 0 || c2s_device_limit > requested_gpu_count)
+    {
+        std::cerr
+            << "[FAIL] POSEIDON_RUNTIME_BOOTSTRAP_C2S_DEVICE_LIMIT must be in [1, gpu_count]\n";
+        return 1;
+    }
+    if (requested_gpu_count > 1 &&
+        ((eval_mod_device_limit != 2 && eval_mod_device_limit != 4) ||
+         eval_mod_device_limit > requested_gpu_count))
+    {
+        std::cerr
+            << "[FAIL] POSEIDON_RUNTIME_BOOTSTRAP_EVALMOD_DEVICE_LIMIT must be 2 or 4 and not exceed gpu_count\n";
         return 1;
     }
     int device_count = 0;
@@ -378,6 +447,7 @@ int main()
 
         std::vector<std::complex<double>> direct_decoded;
         std::vector<std::complex<double>> staged_decoded;
+        std::vector<std::complex<double>> partitioned_decoded;
         int staged_raw_level = 0;
         double staged_raw_scale_log2 = 0.0;
         int staged_branch_level = 0;
@@ -385,6 +455,12 @@ int main()
         int staged_eval_mod_level = 0;
         double staged_eval_mod_scale_log2 = 0.0;
         double direct_gpu_boot_ms = 0.0;
+        double direct_prepare_c2s_ms = 0.0;
+        std::vector<double> direct_c2s_layer_ms;
+        poseidon::gpu::GpuBootstrapWorkspace::EvalModStageTiming
+            direct_eval_mod_timing;
+        std::vector<poseidon::gpu::GpuBootstrapWorkspace::EvalModMultiplyTiming>
+            direct_eval_mod_multiply_timings;
         {
             poseidon::gpu::GpuParameterData gpu_parameters(
                 context, kCudaDevice);
@@ -435,6 +511,11 @@ int main()
             poseidon::gpu::GpuCiphertextData staged_eval_real;
             poseidon::gpu::GpuCiphertextData staged_eval_imag;
             poseidon::gpu::GpuCiphertextData staged_output;
+            poseidon::gpu::GpuCiphertextData partitioned_quotient;
+            poseidon::gpu::GpuCiphertextData partitioned_product;
+            poseidon::gpu::GpuCiphertextData partitioned_remainder;
+            poseidon::gpu::GpuCiphertextData partitioned_eval_real;
+            poseidon::gpu::GpuCiphertextData partitioned_output;
             gpu_evaluator.bootstrap_stc_first_transform(
                 gpu_input,
                 profile.bootstrap_data,
@@ -463,18 +544,65 @@ int main()
                     ->get_context_data(staged_real.meta.parms_id)
                     ->level());
             staged_branch_scale_log2 = std::log2(staged_real.meta.scale);
+            staged_workspace.capture_eval_mod_stage_timing = true;
             gpu_evaluator.eval_mod_high_precision(
                 staged_real,
                 profile.bootstrap_data,
                 *profile.relin_keys,
                 staged_workspace,
                 staged_eval_real);
+            direct_eval_mod_timing = staged_workspace.eval_mod_stage_timing;
+            direct_eval_mod_multiply_timings =
+                staged_workspace.eval_mod_multiply_timings;
+            staged_workspace.capture_eval_mod_stage_timing = false;
             gpu_evaluator.eval_mod_high_precision(
                 staged_imag,
                 profile.bootstrap_data,
                 *profile.relin_keys,
                 staged_workspace,
                 staged_eval_imag);
+            const auto &eval_mod_combines =
+                profile.bootstrap_data.eval_mod.polynomial_combine_steps;
+            if (eval_mod_combines.size() != 5)
+            {
+                throw std::runtime_error(
+                    "degree-22 partition test requires five combine nodes");
+            }
+            poseidon::gpu::GpuBootstrapWorkspace quotient_workspace;
+            poseidon::gpu::GpuBootstrapWorkspace remainder_workspace;
+            const poseidon::gpu::GpuEvalModPolynomialPartition
+                quotient_partition{
+                    0, 1, eval_mod_combines.front().output_node};
+            const poseidon::gpu::GpuEvalModPolynomialPartition
+                remainder_partition{
+                    1, 4, eval_mod_combines[3].output_node};
+            gpu_evaluator.eval_mod_high_precision(
+                staged_real,
+                profile.bootstrap_data,
+                *profile.relin_keys,
+                quotient_workspace,
+                partitioned_quotient,
+                &quotient_partition);
+            gpu_evaluator.eval_mod_degree22_root_product(
+                partitioned_quotient,
+                profile.bootstrap_data,
+                *profile.relin_keys,
+                quotient_workspace,
+                partitioned_product);
+            gpu_evaluator.eval_mod_high_precision(
+                staged_real,
+                profile.bootstrap_data,
+                *profile.relin_keys,
+                remainder_workspace,
+                partitioned_remainder,
+                &remainder_partition);
+            gpu_evaluator.eval_mod_degree22_finish_partials(
+                partitioned_product,
+                partitioned_remainder,
+                profile.bootstrap_data,
+                *profile.relin_keys,
+                remainder_workspace,
+                partitioned_eval_real);
             staged_eval_mod_level = static_cast<int>(
                 context.crt_context()
                     ->get_context_data(staged_eval_real.meta.parms_id)
@@ -487,12 +615,86 @@ int main()
                 profile.bootstrap_data,
                 staged_workspace,
                 staged_output);
+            gpu_evaluator.bootstrap_stc_first_finalize(
+                partitioned_eval_real,
+                staged_eval_imag,
+                profile.bootstrap_data,
+                remainder_workspace,
+                partitioned_output);
             poseidon::Ciphertext staged_host_output;
             poseidon::gpu::GpuUploader::download_ciphertext(
                 staged_output, staged_host_output, context);
             poseidon::Plaintext staged_plaintext;
             decryptor.decrypt(staged_host_output, staged_plaintext);
             encoder.decode(staged_plaintext, staged_decoded);
+            poseidon::Ciphertext partitioned_host_output;
+            poseidon::gpu::GpuUploader::download_ciphertext(
+                partitioned_output, partitioned_host_output, context);
+            poseidon::Plaintext partitioned_plaintext;
+            decryptor.decrypt(
+                partitioned_host_output, partitioned_plaintext);
+            encoder.decode(partitioned_plaintext, partitioned_decoded);
+
+            direct_c2s_layer_ms.assign(
+                profile.bootstrap_data.coeff_to_slot_matrix_qp.data().size(),
+                0.0);
+            poseidon::gpu::GpuBootstrapWorkspace timing_workspace;
+            auto run_direct_c2s_stages = [&](bool record) {
+                poseidon::gpu::GpuCiphertextData current;
+                auto stage_start = std::chrono::steady_clock::now();
+                gpu_evaluator.bootstrap_stc_first_prepare_c2s(
+                    gpu_input,
+                    profile.bootstrap_data,
+                    *profile.galois_keys,
+                    timing_workspace,
+                    current);
+                poseidon::gpu::gpu_check_cuda(
+                    cudaStreamSynchronize(
+                        poseidon::gpu::gpu_execution_stream()),
+                    "cudaStreamSynchronize direct C2S prepare timing");
+                if (record)
+                {
+                    direct_prepare_c2s_ms += elapsed_milliseconds(
+                        stage_start, std::chrono::steady_clock::now());
+                }
+                for (std::size_t layer = 0;
+                     layer < direct_c2s_layer_ms.size();
+                     ++layer)
+                {
+                    poseidon::gpu::GpuCiphertextData next;
+                    stage_start = std::chrono::steady_clock::now();
+                    gpu_evaluator.dft_double_hoist_layer(
+                        current,
+                        profile.bootstrap_data.coeff_to_slot_matrix_qp,
+                        layer,
+                        *profile.galois_keys,
+                        timing_workspace.coeff_to_slot_double_hoist,
+                        next);
+                    poseidon::gpu::gpu_check_cuda(
+                        cudaStreamSynchronize(
+                            poseidon::gpu::gpu_execution_stream()),
+                        "cudaStreamSynchronize direct C2S layer timing");
+                    if (record)
+                    {
+                        direct_c2s_layer_ms[layer] += elapsed_milliseconds(
+                            stage_start, std::chrono::steady_clock::now());
+                    }
+                    current = std::move(next);
+                }
+            };
+            for (std::size_t index = 0; index < warmup; ++index)
+            {
+                run_direct_c2s_stages(false);
+            }
+            for (std::size_t index = 0; index < iterations; ++index)
+            {
+                run_direct_c2s_stages(true);
+            }
+            direct_prepare_c2s_ms /= static_cast<double>(iterations);
+            for (auto &layer_ms : direct_c2s_layer_ms)
+            {
+                layer_ms /= static_cast<double>(iterations);
+            }
         }
 
         api.configure_native_bootstrap(0, std::move(profile));
@@ -507,7 +709,10 @@ int main()
         if (requested_gpu_count > 1)
         {
             api.configure_multi_gpu_bootstrap(
-                boot_profile.profile_id, cuda_device_ids);
+                boot_profile.profile_id,
+                cuda_device_ids,
+                c2s_device_limit,
+                eval_mod_device_limit);
         }
 
         fhegpu::SequentialRuntime<PoseidonGpuApi> runtime(
@@ -525,11 +730,24 @@ int main()
                 runtime.run(device_plan, resources, inputs));
         }
         double runtime_device_boot_ms = 0.0;
+        poseidon::runtime_api::MultiGpuBootstrapTiming multi_gpu_timing_sum;
         for (std::size_t index = 0; index < iterations; ++index)
         {
             const auto artifact = runtime.run(device_plan, resources, inputs);
             runtime_device_boot_ms += milliseconds(
                 artifact.timing.online_execution_nanoseconds);
+            if (requested_gpu_count > 1)
+            {
+                const auto timing = api.last_multi_gpu_bootstrap_timing(
+                    boot_profile.profile_id);
+                if (!timing)
+                {
+                    throw std::runtime_error(
+                        "multi-GPU bootstrap timing was not recorded");
+                }
+                accumulate_multi_gpu_timing(
+                    multi_gpu_timing_sum, *timing);
+            }
         }
         runtime_device_boot_ms /= static_cast<double>(iterations);
 
@@ -540,6 +758,8 @@ int main()
         double host_setup_ms = 0.0;
         double host_h2d_ms = 0.0;
         double runtime_boot_d2h_ms = 0.0;
+        poseidon::runtime_api::MultiGpuBootstrapTiming
+            host_multi_gpu_timing_sum;
         for (std::size_t index = 0; index < iterations; ++index)
         {
             const auto artifact = runtime.run(host_plan, resources, inputs);
@@ -549,6 +769,18 @@ int main()
                 artifact.timing.initialization_nanoseconds);
             runtime_boot_d2h_ms += milliseconds(
                 artifact.timing.online_execution_nanoseconds);
+            if (requested_gpu_count > 1)
+            {
+                const auto timing = api.last_multi_gpu_bootstrap_timing(
+                    boot_profile.profile_id);
+                if (!timing)
+                {
+                    throw std::runtime_error(
+                        "host-plan multi-GPU bootstrap timing was not recorded");
+                }
+                accumulate_multi_gpu_timing(
+                    host_multi_gpu_timing_sum, *timing);
+            }
             if (index + 1 == iterations)
             {
                 const auto &output =
@@ -571,6 +803,7 @@ int main()
         double max_abs_error = 0.0;
         double runtime_direct_max_abs_error = 0.0;
         double staged_direct_max_abs_error = 0.0;
+        double partitioned_direct_max_abs_error = 0.0;
         for (std::size_t index = 0; index < message.size(); ++index)
         {
             max_abs_error = std::max(
@@ -581,6 +814,11 @@ int main()
             staged_direct_max_abs_error = std::max(
                 staged_direct_max_abs_error,
                 std::abs(staged_decoded.at(index) - direct_decoded.at(index)));
+            partitioned_direct_max_abs_error = std::max(
+                partitioned_direct_max_abs_error,
+                std::abs(
+                    partitioned_decoded.at(index) -
+                    direct_decoded.at(index)));
         }
         if (!std::isfinite(max_abs_error) ||
             max_abs_error > kSemanticRegressionLimit)
@@ -608,6 +846,14 @@ int main()
                 "execution: " +
                 std::to_string(staged_direct_max_abs_error));
         }
+        if (!std::isfinite(partitioned_direct_max_abs_error) ||
+            partitioned_direct_max_abs_error > kRuntimeDirectTolerance)
+        {
+            throw std::runtime_error(
+                "Partitioned degree-22 EvalMod differs from monolithic GPU "
+                "execution: " +
+                std::to_string(partitioned_direct_max_abs_error));
+        }
 
         std::cout << "[PASS] RuntimePlan native GPU StC-first bootstrap"
                   << " gpu_count=" << requested_gpu_count
@@ -619,6 +865,8 @@ int main()
                   << runtime_direct_max_abs_error
                   << " staged_direct_max_abs_error="
                   << staged_direct_max_abs_error
+                  << " partitioned_direct_max_abs_error="
+                  << partitioned_direct_max_abs_error
                   << " source_semantic_max_abs_error=" << max_abs_error
                   << " regression_limit=" << kSemanticRegressionLimit
                   << '\n';
@@ -626,6 +874,8 @@ int main()
             << "[BENCH] warmup=" << warmup
             << " iterations=" << iterations
             << " gpu_count=" << requested_gpu_count
+            << " c2s_device_limit=" << c2s_device_limit
+            << " eval_mod_device_limit=" << eval_mod_device_limit
             << " direct_gpu_boot_ms=" << direct_gpu_boot_ms
             << " runtime_device_boot_ms=" << runtime_device_boot_ms
             << " runtime_vs_direct_delta_ms="
@@ -654,6 +904,89 @@ int main()
             std::cout << c2s_giant_groups[index];
         }
         std::cout << '\n';
+        std::cout
+            << "[SINGLE_GPU_C2S] prepare_c2s_ms="
+            << direct_prepare_c2s_ms;
+        for (std::size_t layer = 0;
+             layer < direct_c2s_layer_ms.size();
+             ++layer)
+        {
+            std::cout << " layer" << layer << "_ms="
+                      << direct_c2s_layer_ms[layer];
+        }
+        std::cout << '\n';
+        std::cout
+            << "[SINGLE_GPU_EVALMOD] input_preparation_ms="
+            << direct_eval_mod_timing.input_preparation_ms
+            << " basis_generation_ms="
+            << direct_eval_mod_timing.basis_generation_ms
+            << " leaf_evaluation_ms="
+            << direct_eval_mod_timing.leaf_evaluation_ms
+            << " bsgs_combine_ms="
+            << direct_eval_mod_timing.bsgs_combine_ms
+            << " double_angle_ms="
+            << direct_eval_mod_timing.double_angle_ms
+            << " output_alignment_ms="
+            << direct_eval_mod_timing.output_alignment_ms
+            << " total_ms=" << direct_eval_mod_timing.total_ms
+            << '\n';
+        for (const auto &timing : direct_eval_mod_multiply_timings)
+        {
+            std::cout
+                << "[SINGLE_GPU_EVALMOD_MUL] label=" << timing.label
+                << " q_count=" << timing.q_count
+                << " decomposition_count=" << timing.decomposition_count
+                << " is_square=" << (timing.is_square ? 1 : 0)
+                << " gpu_ms=" << timing.gpu_ms
+                << '\n';
+        }
+        if (requested_gpu_count > 1)
+        {
+            const double divisor = static_cast<double>(iterations);
+            std::cout
+                << "[MULTI_GPU_STAGES] prepare_c2s_ms="
+                << multi_gpu_timing_sum.prepare_c2s_ms / divisor
+                << " eval_mod_branches_ms="
+                << multi_gpu_timing_sum.eval_mod_branches_ms / divisor
+                << " imag_result_copy_ms="
+                << multi_gpu_timing_sum.imag_result_copy_ms / divisor
+                << " finalize_ms="
+                << multi_gpu_timing_sum.finalize_ms / divisor
+                << " internal_total_ms="
+                << multi_gpu_timing_sum.total_ms / divisor
+                << " eval_mod_devices="
+                << multi_gpu_timing_sum.eval_mod_device_count
+                << '\n';
+            for (std::size_t layer = 0;
+                 layer < multi_gpu_timing_sum.c2s_layers.size();
+                 ++layer)
+            {
+                const auto &timing = multi_gpu_timing_sum.c2s_layers[layer];
+                std::cout
+                    << "[MULTI_GPU_C2S_LAYER] layer=" << layer
+                    << " active_devices=" << timing.active_device_count
+                    << " fanout_partial_ms="
+                    << timing.fanout_and_partial_compute_ms / divisor
+                    << " qp_reduce_ms="
+                    << timing.qp_reduction_ms / divisor
+                    << " shared_moddown_rescale_ms="
+                    << timing.shared_moddown_rescale_ms / divisor
+                    << " total_ms=" << timing.total_ms / divisor
+                    << '\n';
+            }
+            std::cout
+                << "[MULTI_GPU_HOST_PHASE] prepare_c2s_ms="
+                << host_multi_gpu_timing_sum.prepare_c2s_ms / divisor
+                << " eval_mod_branches_ms="
+                << host_multi_gpu_timing_sum.eval_mod_branches_ms / divisor
+                << " imag_result_copy_ms="
+                << host_multi_gpu_timing_sum.imag_result_copy_ms / divisor
+                << " finalize_ms="
+                << host_multi_gpu_timing_sum.finalize_ms / divisor
+                << " internal_total_ms="
+                << host_multi_gpu_timing_sum.total_ms / divisor
+                << '\n';
+        }
         return 0;
     }
     catch (const std::exception &error)

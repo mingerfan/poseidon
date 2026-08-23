@@ -14,6 +14,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <limits>
 #include <string>
 #include <vector>
 
@@ -109,6 +110,25 @@ struct GpuEvalModPolynomialCombineStep
     double product_aligned_scale = 0.0;
     GpuPlaintextData remainder_scale_plaintext;
     double remainder_aligned_scale = 0.0;
+};
+
+/**
+ * @brief Select one setup-time EvalMod polynomial subtree.
+ *
+ * The normal EvalMod call leaves this unset and executes the entire plan.
+ * A multi-device scheduler can execute a topologically self-contained range
+ * of combine nodes and stop at its polynomial result. Baby-step basis
+ * generation and polynomial leaves remain identical to the full path so the
+ * partial result can be merged without changing CKKS arithmetic metadata.
+ */
+struct GpuEvalModPolynomialPartition
+{
+    std::size_t combine_begin = 0;
+    std::size_t combine_end = std::numeric_limits<std::size_t>::max();
+    std::uint32_t result_node = std::numeric_limits<std::uint32_t>::max();
+    std::size_t basis_step_end = std::numeric_limits<std::size_t>::max();
+    std::size_t leaf_begin = 0;
+    std::size_t leaf_end = std::numeric_limits<std::size_t>::max();
 };
 
 /**
@@ -749,6 +769,24 @@ public:
      */
     void eval_mod_high_precision(
         const GpuCiphertextData &source_ciphertext,
+        const GpuBootstrapData &bootstrap_data,
+        const GpuRelinKeysData &relin_keys,
+        GpuBootstrapWorkspace &workspace,
+        GpuCiphertextData &destination_ciphertext,
+        const GpuEvalModPolynomialPartition *polynomial_partition = nullptr) const;
+
+    /** Multiply the degree-22 root quotient subtree by its T16 basis. */
+    void eval_mod_degree22_root_product(
+        const GpuCiphertextData &source_quotient,
+        const GpuBootstrapData &bootstrap_data,
+        const GpuRelinKeysData &relin_keys,
+        GpuBootstrapWorkspace &workspace,
+        GpuCiphertextData &destination_product) const;
+
+    /** Merge degree-22 root partials and execute final rescale/DA/output align. */
+    void eval_mod_degree22_finish_partials(
+        const GpuCiphertextData &source_product,
+        const GpuCiphertextData &source_remainder,
         const GpuBootstrapData &bootstrap_data,
         const GpuRelinKeysData &relin_keys,
         GpuBootstrapWorkspace &workspace,

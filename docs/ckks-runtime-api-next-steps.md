@@ -6,7 +6,7 @@
 
 - Runtime 固定在 `third_party/ckks-runtime` submodule；打开 `POSEIDON_BUILD_CKKS_RUNTIME_API` 时默认从该目录构建，本地联调可用 `POSEIDON_CKKS_RUNTIME_SOURCE_DIR` 覆盖。不打开该选项时不检查也不构建 Runtime。
 - `PoseidonCpuApi` 支持单进程 Host 执行，也可选通过 MPI 在多进程间执行显式 Transfer。
-- `PoseidonGpuApi` 支持单进程单卡和多卡，使用 RuntimePlan 已分配的设备并执行显式 CUDA 拷贝；每个值仍是位于一张卡上的完整对象，不支持多 shard 算子。
+- `PoseidonGpuApi` 支持单进程单卡和多卡，使用 RuntimePlan 已分配的设备并执行显式 CUDA 拷贝；原生 Boot 已支持 real/imag 双卡调度、四卡 C2S 正确性分片和 degree-22 EvalMod 根分区。每个跨阶段值仍是位于一张卡上的完整对象，不支持 RNS multi-shard 算子。
 - CPU/GPU Api 都支持计划中明确写出的 `decrypt_reencrypt` Host Boot；`PoseidonGpuApi` 还支持预先配置 profile 的原生单卡 GPU Boot。跨进程 GPU 通信尚未实现。
 - Runtime 核心不依赖 Poseidon；Api 实现放在 Poseidon 仓库。
 
@@ -15,7 +15,7 @@
 - GPU 明密文、参数、密钥上传、Evaluator、handlers 和 CUDA kernels 已收敛到独立的 `poseidon_gpu` target。
 - `PoseidonCpuApi` 和 `PoseidonGpuApi` 都直接实现 Runtime Api；旧 mgpu IR/调度/执行系统以及 HEVM/CST frontend 已删除。
 - 同进程 CUDA 拷贝、CPU MPI 通信和 Host `decrypt_reencrypt` Boot 已接入 RuntimePlan 执行路径。
-- `GpuBootstrapProfileBuilder` 可确定性生成并上传当前 degree-22、baby-4、三次二倍角的 StC-first native Boot profile；RuntimePlan 通过 profile id 和静态 Device place 调用优化后的 `GpuEvaluator::bootstrap`。
+- `GpuBootstrapProfileBuilder` 可确定性生成并上传当前 degree-22、baby-4、三次二倍角的 StC-first native Boot profile；RuntimePlan 通过 profile id 和静态 Device place 调用优化后的单卡或多卡调度。四卡安装默认按实测成本选择 C2S 1 卡、EvalMod 2 卡，强制四卡根分区仍可配置。
 - 拷贝由 RuntimePlan 的 Transfer/Replicate 驱动，算子不会在失败后临时搬运数据或切换后端。
 
 原生 Boot 的最小接入方式如下：
@@ -39,9 +39,10 @@ Runtime 的 RMM 初始池默认取当前空闲显存的四分之一（上限 24 
 ## 剩余工作
 
 1. 接入 GPU-aware MPI 或其他跨进程 GPU 传输。
-2. 在多卡机器上补齐真实跨卡 MLP/ResNet 端到端测试和通信性能测试。
-3. 当前已固化 native Boot 的整体性能基线；后续把 StC、ModRaise、C2S、EvalMod 和输出归一化的分段耗时纳入 Runtime artifact。
+2. 在多卡机器上补齐多个独立 bootstrap 的吞吐调度，以及真实跨卡 MLP/ResNet 端到端测试。
+3. 将现有 Boot 内部分段计时进一步汇入 Runtime artifact，而不只由端到端回归程序读取。
 4. 为 65536 Runtime artifacts 生成与其模数链匹配的 native Boot profile；现有 artifact 仍明确使用 `decrypt_reencrypt`。
 5. 继续校验 lazy rescale 数值误差，尤其是完整 MLP 与 CPU/Python 结果的差异。
+6. 若要降低单个 degree-22 Boot 的四卡延迟，实现 RNS/keyswitch 粒度的分布式算子；当前对象级 PCIe 子树拆分受重复基生成和通信下限限制。
 
 未实现的能力在 preflight 直接拒绝，不提供自动降级。
