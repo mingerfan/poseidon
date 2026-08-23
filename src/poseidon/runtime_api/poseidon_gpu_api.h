@@ -19,6 +19,10 @@
 #include <variant>
 #include <vector>
 
+#ifdef POSEIDON_RUNTIME_GPU_NCCL
+#include <mpi.h>
+#endif
+
 namespace poseidon
 {
 class CKKSEncoder;
@@ -42,7 +46,16 @@ namespace communication
 {
 class CudaLocalTransfer;
 class CudaTransferRequest;
+#ifdef POSEIDON_RUNTIME_GPU_NCCL
+class NcclMpiTransport;
+#endif
 } // namespace communication
+
+struct GpuProcessTopology
+{
+    std::vector<int> device_counts;
+    std::vector<int> rank_to_node;
+};
 
 class PoseidonGpuValue
 {
@@ -64,6 +77,8 @@ public:
     const Ciphertext &host_ciphertext() const;
     const gpu::GpuPlaintextData &device_plaintext() const;
     const gpu::GpuCiphertextData &device_ciphertext() const;
+    gpu::GpuPlaintextData &device_plaintext();
+    gpu::GpuCiphertextData &device_ciphertext();
 
 private:
     class ReadyEvent;
@@ -114,14 +129,26 @@ public:
                    std::shared_ptr<const GaloisKeys> galois_keys = {},
                    std::shared_ptr<const PublicKey> boot_public_key = {},
                    std::shared_ptr<const SecretKey> boot_secret_key = {});
+#ifdef POSEIDON_RUNTIME_GPU_NCCL
+    PoseidonGpuApi(std::string context_id, PoseidonContext context,
+                   MPI_Comm control_comm, std::vector<int> cuda_device_ids,
+                   GpuProcessTopology topology,
+                   std::shared_ptr<const RelinKeys> relin_keys = {},
+                   std::shared_ptr<const GaloisKeys> galois_keys = {},
+                   std::shared_ptr<const PublicKey> boot_public_key = {},
+                   std::shared_ptr<const SecretKey> boot_secret_key = {});
+#endif
     ~PoseidonGpuApi();
 
     PoseidonGpuApi(const PoseidonGpuApi &) = delete;
     PoseidonGpuApi &operator=(const PoseidonGpuApi &) = delete;
 
     std::string name() const;
+    int mpi_rank() const noexcept;
+    int mpi_world_size() const noexcept;
     int local_device_count() const noexcept;
     int cuda_device_id(int logical_device_index) const;
+    int nccl_rank(int logical_device_index) const;
     Value encode_plaintext(const fhegpu::ValueDesc &output_desc,
                            const std::vector<double> &slots);
     Value compute(const fhegpu::ComputeOp &op, const std::vector<Value> &inputs);
@@ -144,6 +171,11 @@ private:
                                     const char *where) const;
     DeviceState &device_state(int logical_device_index);
     const DeviceState &device_state(int logical_device_index) const;
+#ifdef POSEIDON_RUNTIME_GPU_NCCL
+    int nccl_rank_for_place(const fhegpu::Place &place) const;
+    CommHandle communicate_distributed(const fhegpu::CommAction &action,
+                                       const std::vector<Value> &local_inputs);
+#endif
     void retain_in_flight(const std::vector<Value> &values,
                           std::vector<std::shared_ptr<void>> resources = {});
     void synchronize_device(int cuda_device_id) const;
@@ -168,6 +200,13 @@ private:
     std::shared_ptr<const RelinKeys> relin_keys_;
     std::shared_ptr<const GaloisKeys> galois_keys_;
     std::optional<int> max_rescale_levels_per_op_;
+#ifdef POSEIDON_RUNTIME_GPU_NCCL
+    std::unique_ptr<communication::NcclMpiTransport> nccl_transport_;
+#endif
+    int mpi_rank_ = 0;
+    int mpi_world_size_ = 1;
+    std::vector<int> device_counts_;
+    std::vector<int> rank_to_node_;
     std::vector<std::shared_ptr<void>> in_flight_resources_;
     std::mutex in_flight_mutex_;
 };

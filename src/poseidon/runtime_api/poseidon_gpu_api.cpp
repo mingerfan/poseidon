@@ -13,12 +13,16 @@
 #include "poseidon/key/relinkeys.h"
 #include "poseidon/runtime_api/communication/cuda_local_transfer.h"
 #include "poseidon/runtime_api/communication/gpu_object_copy.h"
+#ifdef POSEIDON_RUNTIME_GPU_NCCL
+#include "poseidon/runtime_api/communication/nccl_mpi_transport.h"
+#endif
 #include "poseidon/runtime_api/rotation_key_basis.h"
 
 #include <algorithm>
 #include <cmath>
 #include <complex>
 #include <cstdint>
+#include <cstring>
 #include <limits>
 #include <map>
 #include <mutex>
@@ -42,6 +46,60 @@ namespace
 {
 
 constexpr std::size_t kInitialDevicePoolSize = 24ULL << 30;
+
+#ifdef POSEIDON_RUNTIME_GPU_NCCL
+void check_mpi_status(int status, const char *what)
+{
+    if (status != MPI_SUCCESS)
+    {
+        char message[MPI_MAX_ERROR_STRING] = {};
+        int length = 0;
+        (void)MPI_Error_string(status, message, &length);
+        throw std::runtime_error(std::string(what) + ": " +
+                                 std::string(message, static_cast<std::size_t>(length)));
+    }
+}
+
+void require_same_mpi_string(MPI_Comm communicator, int world_size,
+                             std::string_view value, const char *what)
+{
+    if (value.size() > static_cast<std::size_t>(std::numeric_limits<int>::max()))
+    {
+        throw std::overflow_error(std::string(what) + " is too large for MPI_Allgather");
+    }
+    const int length = static_cast<int>(value.size());
+    std::vector<int> lengths(static_cast<std::size_t>(world_size));
+    check_mpi_status(MPI_Allgather(&length, 1, MPI_INT, lengths.data(), 1, MPI_INT,
+                                   communicator),
+                     "MPI_Allgather string length");
+    for (int remote_length : lengths)
+    {
+        if (remote_length != length)
+        {
+            throw std::runtime_error(std::string(what) + " length differs across MPI ranks");
+        }
+    }
+    if (length == 0)
+    {
+        return;
+    }
+    std::vector<char> gathered(static_cast<std::size_t>(world_size) *
+                               static_cast<std::size_t>(length));
+    check_mpi_status(MPI_Allgather(value.data(), length, MPI_CHAR, gathered.data(),
+                                   length, MPI_CHAR, communicator),
+                     "MPI_Allgather string");
+    for (int rank = 0; rank < world_size; ++rank)
+    {
+        const char *remote = gathered.data() +
+                             static_cast<std::size_t>(rank) *
+                                 static_cast<std::size_t>(length);
+        if (!std::equal(value.begin(), value.end(), remote))
+        {
+            throw std::runtime_error(std::string(what) + " differs across MPI ranks");
+        }
+    }
+}
+#endif
 
 class DeviceMemoryPool
 {
@@ -126,17 +184,22 @@ double exact_scale(int scale_log2)
     return result;
 }
 
-void require_host_place(const fhegpu::Place &place, const char *where)
+void require_host_place(const fhegpu::Place &place, const char *where,
+                        int local_rank = 0)
 {
-    if (place.kind != fhegpu::PlaceKind::Host || place.rank != 0 || place.index != 0)
+    if (place.kind != fhegpu::PlaceKind::Host || place.rank != local_rank ||
+        place.index != 0)
     {
-        throw std::invalid_argument(std::string(where) + " requires Host(rank=0,index=0)");
+        throw std::invalid_argument(std::string(where) + " requires Host(rank=" +
+                                    std::to_string(local_rank) + ",index=0)");
     }
 }
 
-void require_device_place(const fhegpu::Place &place, const char *where)
+void require_device_place(const fhegpu::Place &place, const char *where,
+                          int local_rank = 0)
 {
-    if (place.kind != fhegpu::PlaceKind::Device || place.rank != 0 || place.index < 0)
+    if (place.kind != fhegpu::PlaceKind::Device || place.rank != local_rank ||
+        place.index < 0)
     {
         throw std::invalid_argument(std::string(where) + " requires a local Device Place");
     }
@@ -489,6 +552,171 @@ void require_full_poly(const gpu::GpuRNSPoly &poly, std::size_t component,
     }
 }
 
+#ifdef POSEIDON_RUNTIME_GPU_NCCL
+struct GpuWireHeader
+{
+    std::uint32_t magic = 0x50474431U; // PGD1
+    std::uint32_t version = 1;
+    std::uint32_t kind = 0; // 1 plaintext, 2 ciphertext
+    std::uint32_t reserved = 0;
+    std::uint64_t degree = 0;
+    std::uint64_t q_count = 0;
+    std::uint64_t p_count = 0;
+    std::uint64_t component_count = 0;
+    std::uint64_t bytes = 0;
+    parms_id_type parms_id{};
+    double scale = 1.0;
+    std::uint64_t correction_factor = 1;
+    std::uint8_t is_ntt_form = 0;
+    std::uint8_t padding[7]{};
+};
+
+static_assert(std::is_trivially_copyable_v<GpuWireHeader>);
+
+GpuWireHeader make_wire_header(const gpu::GpuPlaintextData &source)
+{
+    if (source.fields_.empty() || source.fields_.front().device_id < 0)
+    {
+        throw std::invalid_argument("NCCL plaintext source has no GPU field");
+    }
+    require_single_full_shard(source, 1, source.fields_.front().device_id,
+                               "NCCL plaintext source");
+    require_full_poly(source.poly_, 0, source.meta.degree, source.meta.q_count,
+                      source.meta.p_count, "NCCL plaintext source");
+    GpuWireHeader header;
+    header.kind = 1;
+    header.degree = source.meta.degree;
+    header.q_count = source.meta.q_count;
+    header.p_count = source.meta.p_count;
+    header.component_count = 1;
+    header.bytes = checked_mul_size(source.fields_.front().size(),
+                                    sizeof(gpu::GpuWord),
+                                    "NCCL plaintext wire size overflow");
+    header.parms_id = source.meta.parms_id;
+    header.scale = source.meta.scale;
+    header.is_ntt_form = source.meta.is_ntt_form ? 1 : 0;
+    return header;
+}
+
+GpuWireHeader make_wire_header(const gpu::GpuCiphertextData &source)
+{
+    if (source.fields_.empty() || source.fields_.front().device_id < 0)
+    {
+        throw std::invalid_argument("NCCL ciphertext source has no GPU field");
+    }
+    require_single_full_shard(source, source.meta.component_count,
+                               source.fields_.front().device_id,
+                               "NCCL ciphertext source");
+    for (std::size_t component = 0; component < source.polys_.size(); ++component)
+    {
+        require_full_poly(source.polys_[component], component, source.meta.degree,
+                          source.meta.q_count, source.meta.p_count,
+                          "NCCL ciphertext source");
+    }
+    GpuWireHeader header;
+    header.kind = 2;
+    header.degree = source.meta.degree;
+    header.q_count = source.meta.q_count;
+    header.p_count = source.meta.p_count;
+    header.component_count = source.meta.component_count;
+    header.bytes = checked_mul_size(source.fields_.front().size(),
+                                    sizeof(gpu::GpuWord),
+                                    "NCCL ciphertext wire size overflow");
+    header.parms_id = source.meta.parms_id;
+    header.scale = source.meta.scale;
+    header.correction_factor = source.meta.correction_factor;
+    header.is_ntt_form = source.meta.is_ntt_form ? 1 : 0;
+    return header;
+}
+
+void validate_wire_header(const GpuWireHeader &header,
+                          const PoseidonContext &context)
+{
+    if (header.magic != 0x50474431U || header.version != 1 ||
+        (header.kind != 1 && header.kind != 2) || header.degree == 0 ||
+        header.q_count == 0 || header.component_count == 0 ||
+        header.bytes == 0)
+    {
+        throw std::runtime_error("NCCL wire header is invalid");
+    }
+    if (!std::isfinite(header.scale) || header.scale <= 0.0)
+    {
+        throw std::runtime_error("NCCL wire header scale is invalid");
+    }
+    const auto context_data = context.crt_context()->get_context_data(header.parms_id);
+    if (context_data == nullptr ||
+        context.parameters_literal()->degree() != header.degree ||
+        context_data->parms().q().size() != header.q_count || header.p_count != 0)
+    {
+        throw std::runtime_error("NCCL wire header does not match PoseidonContext");
+    }
+    const std::size_t words = checked_mul_size(
+        checked_mul_size(static_cast<std::size_t>(header.degree),
+                         static_cast<std::size_t>(header.q_count),
+                         "NCCL wire word count overflow"),
+        static_cast<std::size_t>(header.component_count),
+        "NCCL wire word count overflow");
+    if (header.bytes != checked_mul_size(words, sizeof(gpu::GpuWord),
+                                         "NCCL wire byte count overflow"))
+    {
+        throw std::runtime_error("NCCL wire header byte count mismatch");
+    }
+}
+
+gpu::GpuPlaintextData allocate_wire_plaintext(const GpuWireHeader &header,
+                                               int device,
+                                               const PoseidonContext &context)
+{
+    validate_wire_header(header, context);
+    if (header.kind != 1)
+    {
+        throw std::invalid_argument("NCCL wire header is not plaintext");
+    }
+    auto result = gpu::GpuPlaintextData::allocate_single_device(
+        header.degree, header.q_count, device, header.p_count);
+    result.meta.parms_id = header.parms_id;
+    result.meta.scale = header.scale;
+    result.meta.is_ntt_form = header.is_ntt_form != 0;
+    return result;
+}
+
+gpu::GpuCiphertextData allocate_wire_ciphertext(const GpuWireHeader &header,
+                                                 int device,
+                                                 const PoseidonContext &context)
+{
+    validate_wire_header(header, context);
+    if (header.kind != 2)
+    {
+        throw std::invalid_argument("NCCL wire header is not ciphertext");
+    }
+    auto result = gpu::GpuCiphertextData::allocate_single_device(
+        header.degree, header.q_count, header.component_count, device,
+        header.p_count);
+    result.meta.parms_id = header.parms_id;
+    result.meta.scale = header.scale;
+    result.meta.correction_factor = header.correction_factor;
+    result.meta.is_ntt_form = header.is_ntt_form != 0;
+    return result;
+}
+
+int mpi_tag_for(MPI_Comm communicator, fhegpu::TransferId transfer_id,
+                std::size_t slot)
+{
+    int *tag_upper_bound = nullptr;
+    int attribute_present = 0;
+    if (MPI_Comm_get_attr(communicator, MPI_TAG_UB, &tag_upper_bound,
+                          &attribute_present) != MPI_SUCCESS ||
+        !attribute_present || tag_upper_bound == nullptr || *tag_upper_bound < 4)
+    {
+        throw std::runtime_error("MPI communicator has no usable MPI_TAG_UB");
+    }
+    const std::uint64_t bound = static_cast<std::uint64_t>(*tag_upper_bound - 1);
+    const std::uint64_t mixed = transfer_id * 1315423911ULL +
+                                static_cast<std::uint64_t>(slot) * 2654435761ULL;
+    return static_cast<int>(mixed % bound) + 1;
+}
+#endif
+
 } // namespace
 
 struct PoseidonGpuApi::DeviceState
@@ -618,6 +846,11 @@ struct PoseidonGpuApi::CommHandle::State
     std::vector<std::optional<Value>> outputs;
     std::vector<DeferredOutput> deferred_outputs;
     std::vector<std::optional<communication::CudaTransferRequest>> requests;
+#ifdef POSEIDON_RUNTIME_GPU_NCCL
+    std::vector<communication::NcclMpiTransport::Request> nccl_requests;
+    std::vector<std::shared_ptr<GpuWireHeader>> wire_headers;
+    std::vector<MPI_Request> mpi_requests;
+#endif
     bool waited = false;
 };
 
@@ -725,6 +958,26 @@ const gpu::GpuCiphertextData &PoseidonGpuValue::device_ciphertext() const
     return **value;
 }
 
+gpu::GpuPlaintextData &PoseidonGpuValue::device_plaintext()
+{
+    auto *value = std::get_if<std::shared_ptr<gpu::GpuPlaintextData>>(&storage_);
+    if (value == nullptr || *value == nullptr)
+    {
+        throw std::invalid_argument("Poseidon GPU Api value is not a Device plaintext");
+    }
+    return **value;
+}
+
+gpu::GpuCiphertextData &PoseidonGpuValue::device_ciphertext()
+{
+    auto *value = std::get_if<std::shared_ptr<gpu::GpuCiphertextData>>(&storage_);
+    if (value == nullptr || *value == nullptr)
+    {
+        throw std::invalid_argument("Poseidon GPU Api value is not a Device ciphertext");
+    }
+    return **value;
+}
+
 PoseidonGpuApi::PoseidonGpuApi(std::string context_id, PoseidonContext context,
                                int cuda_device_id,
                                std::shared_ptr<const RelinKeys> relin_keys,
@@ -746,6 +999,8 @@ PoseidonGpuApi::PoseidonGpuApi(std::string context_id, PoseidonContext context,
     : context_id_(std::move(context_id)), context_(std::move(context)),
       relin_keys_(std::move(relin_keys)), galois_keys_(std::move(galois_keys))
 {
+    device_counts_ = {static_cast<int>(cuda_device_ids.size())};
+    rank_to_node_ = {0};
     if (context_id_.empty())
     {
         throw std::invalid_argument("Poseidon GPU Api context id is empty");
@@ -834,6 +1089,56 @@ PoseidonGpuApi::PoseidonGpuApi(std::string context_id, PoseidonContext context,
         std::make_unique<communication::CudaLocalTransfer>(cuda_device_ids);
 }
 
+#ifdef POSEIDON_RUNTIME_GPU_NCCL
+PoseidonGpuApi::PoseidonGpuApi(
+    std::string context_id, PoseidonContext context, MPI_Comm control_comm,
+    std::vector<int> cuda_device_ids, GpuProcessTopology topology,
+    std::shared_ptr<const RelinKeys> relin_keys,
+    std::shared_ptr<const GaloisKeys> galois_keys,
+    std::shared_ptr<const PublicKey> boot_public_key,
+    std::shared_ptr<const SecretKey> boot_secret_key)
+    : PoseidonGpuApi(std::move(context_id), std::move(context),
+                     std::move(cuda_device_ids), std::move(relin_keys),
+                     std::move(galois_keys), std::move(boot_public_key),
+                     std::move(boot_secret_key))
+{
+    if (topology.device_counts.empty())
+    {
+        throw std::invalid_argument(
+            "Poseidon GPU distributed topology has no device counts");
+    }
+    if (!topology.rank_to_node.empty() &&
+        topology.rank_to_node.size() != topology.device_counts.size())
+    {
+        throw std::invalid_argument(
+            "Poseidon GPU distributed topology rank_to_node length mismatch");
+    }
+
+    std::vector<int> local_cuda_device_ids;
+    local_cuda_device_ids.reserve(devices_.size());
+    for (const auto &device : devices_)
+    {
+        local_cuda_device_ids.push_back(device->cuda_device_id);
+    }
+    nccl_transport_ = std::make_unique<communication::NcclMpiTransport>(
+        communication::NcclProcessTopology{
+            control_comm, std::move(local_cuda_device_ids),
+            topology.device_counts});
+    mpi_rank_ = nccl_transport_->mpi_rank();
+    mpi_world_size_ = nccl_transport_->mpi_world_size();
+    device_counts_ = std::move(topology.device_counts);
+    rank_to_node_ = std::move(topology.rank_to_node);
+    if (rank_to_node_.empty())
+    {
+        rank_to_node_.resize(device_counts_.size());
+        for (std::size_t index = 0; index < rank_to_node_.size(); ++index)
+        {
+            rank_to_node_[index] = static_cast<int>(index);
+        }
+    }
+}
+#endif
+
 PoseidonGpuApi::~PoseidonGpuApi()
 {
     for (const auto &device : devices_)
@@ -848,6 +1153,16 @@ std::string PoseidonGpuApi::name() const
     return "PoseidonGpuApi";
 }
 
+int PoseidonGpuApi::mpi_rank() const noexcept
+{
+    return mpi_rank_;
+}
+
+int PoseidonGpuApi::mpi_world_size() const noexcept
+{
+    return mpi_world_size_;
+}
+
 int PoseidonGpuApi::local_device_count() const noexcept
 {
     return static_cast<int>(devices_.size());
@@ -858,10 +1173,54 @@ int PoseidonGpuApi::cuda_device_id(int logical_device_index) const
     return device_state(logical_device_index).cuda_device_id;
 }
 
+int PoseidonGpuApi::nccl_rank(int logical_device_index) const
+{
+#ifdef POSEIDON_RUNTIME_GPU_NCCL
+    if (nccl_transport_ != nullptr)
+    {
+        return nccl_transport_->nccl_rank(logical_device_index);
+    }
+#endif
+    if (logical_device_index < 0 ||
+        logical_device_index >= local_device_count())
+    {
+        throw std::out_of_range("Poseidon GPU logical device index is out of range");
+    }
+    return logical_device_index;
+}
+
+#ifdef POSEIDON_RUNTIME_GPU_NCCL
+int PoseidonGpuApi::nccl_rank_for_place(const fhegpu::Place &place) const
+{
+    if (place.kind != fhegpu::PlaceKind::Device || place.rank < 0 ||
+        place.rank >= mpi_world_size_ || place.index < 0 ||
+        static_cast<std::size_t>(place.rank) >= device_counts_.size() ||
+        place.index >= device_counts_[static_cast<std::size_t>(place.rank)])
+    {
+        throw std::invalid_argument("Poseidon GPU Place has no NCCL rank mapping");
+    }
+    if (place.rank == mpi_rank_)
+    {
+        return nccl_transport_->nccl_rank(place.index);
+    }
+    int offset = 0;
+    for (int rank = 0; rank < place.rank; ++rank)
+    {
+        if (device_counts_[static_cast<std::size_t>(rank)] >
+            std::numeric_limits<int>::max() - offset)
+        {
+            throw std::overflow_error("Poseidon GPU NCCL rank offset overflow");
+        }
+        offset += device_counts_[static_cast<std::size_t>(rank)];
+    }
+    return offset + place.index;
+}
+#endif
+
 PoseidonGpuApi::Value PoseidonGpuApi::encode_plaintext(
     const fhegpu::ValueDesc &output_desc, const std::vector<double> &slots)
 {
-    require_host_place(output_desc.place, "Poseidon GPU Encode");
+    require_host_place(output_desc.place, "Poseidon GPU Encode", mpi_rank_);
     if (output_desc.kind != fhegpu::ValueKind::Plaintext || output_desc.components != 1)
     {
         throw std::invalid_argument("Poseidon GPU Encode output must be a Host plaintext");
@@ -883,7 +1242,7 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
 {
     if (op.kind == fhegpu::ComputeKind::Boot)
     {
-        require_host_place(op.place, "Poseidon GPU decrypt_reencrypt Boot");
+        require_host_place(op.place, "Poseidon GPU decrypt_reencrypt Boot", mpi_rank_);
         const auto attrs = std::get<fhegpu::BootAttrs>(op.attrs);
         if (attrs.implementation != fhegpu::BootImplementation::DecryptReencrypt)
         {
@@ -1070,6 +1429,17 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
 PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_async(
     const fhegpu::CommAction &action, const std::vector<Value> &local_inputs)
 {
+#ifdef POSEIDON_RUNTIME_GPU_NCCL
+    const bool remote_source = !action.sources.empty() &&
+                               action.sources.front().rank != mpi_rank_;
+    const bool remote_destination = std::any_of(
+        action.destinations.begin(), action.destinations.end(),
+        [this](const fhegpu::Place &place) { return place.rank != mpi_rank_; });
+    if (nccl_transport_ != nullptr && (remote_source || remote_destination))
+    {
+        return communicate_distributed(action, local_inputs);
+    }
+#endif
     if (action.inputs.size() != 1 || action.sources.size() != 1 ||
         action.outputs.size() != action.destinations.size() ||
         action.outputs.size() != action.output_types.size() || local_inputs.size() != 1)
@@ -1095,7 +1465,8 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_async(
     retain_in_flight(local_inputs);
     if (source_place.kind == fhegpu::PlaceKind::Host)
     {
-        require_host_place(source_place, "Poseidon GPU communication source");
+            require_host_place(source_place, "Poseidon GPU communication source",
+                               mpi_rank_);
         if (input.place_kind() != fhegpu::PlaceKind::Host)
         {
             throw std::invalid_argument("Poseidon GPU communication expected a Host input");
@@ -1133,7 +1504,8 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_async(
         }
         if (destination.kind == fhegpu::PlaceKind::Host)
         {
-            require_host_place(destination, "Poseidon GPU communication destination");
+            require_host_place(destination,
+                               "Poseidon GPU communication destination", mpi_rank_);
         }
         else
         {
@@ -1264,6 +1636,280 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_async(
     return handle;
 }
 
+#ifdef POSEIDON_RUNTIME_GPU_NCCL
+PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_distributed(
+    const fhegpu::CommAction &action, const std::vector<Value> &local_inputs)
+{
+    if (nccl_transport_ == nullptr)
+    {
+        throw std::logic_error("distributed GPU communication has no NCCL transport");
+    }
+    if (action.inputs.size() != 1 || action.sources.size() != 1 ||
+        action.outputs.size() != action.destinations.size() ||
+        action.outputs.size() != action.output_types.size())
+    {
+        throw std::invalid_argument("distributed GPU communication mapping is invalid");
+    }
+    if (action.kind == fhegpu::CommKind::Transfer && action.outputs.size() != 1)
+    {
+        throw std::invalid_argument("distributed GPU Transfer requires one output");
+    }
+    if (action.kind == fhegpu::CommKind::Replicate && action.outputs.size() < 2)
+    {
+        throw std::invalid_argument("distributed GPU Replicate requires at least two outputs");
+    }
+    if (action.kind != fhegpu::CommKind::Transfer &&
+        action.kind != fhegpu::CommKind::Replicate)
+    {
+        throw std::invalid_argument("distributed GPU communication kind is unknown");
+    }
+
+    const auto &source_place = action.sources.front();
+    const bool source_local = source_place.rank == mpi_rank_;
+    if (local_inputs.size() != (source_local ? 1U : 0U))
+    {
+        throw std::invalid_argument(
+            "distributed GPU communication local input role is invalid");
+    }
+    if (source_place.rank < 0 || source_place.rank >= mpi_world_size_)
+    {
+        throw std::invalid_argument("distributed GPU source rank is out of range");
+    }
+    if (source_place.kind != fhegpu::PlaceKind::Device)
+    {
+        throw std::invalid_argument(
+            "distributed GPU communication currently requires a Device source");
+    }
+    if (source_place.index < 0 ||
+        source_place.index >= device_counts_[static_cast<std::size_t>(source_place.rank)])
+    {
+        throw std::invalid_argument("distributed GPU source device index is out of range");
+    }
+
+    for (std::size_t slot = 0; slot < action.destinations.size(); ++slot)
+    {
+        const auto &destination = action.destinations[slot];
+        if (destination.kind != fhegpu::PlaceKind::Device ||
+            destination.rank < 0 || destination.rank >= mpi_world_size_ ||
+            destination.index < 0 ||
+            destination.index >=
+                device_counts_[static_cast<std::size_t>(destination.rank)])
+        {
+            throw std::invalid_argument(
+                "distributed GPU destination must be a valid Device Place");
+        }
+        if (destination == source_place)
+        {
+            throw std::invalid_argument(
+                "distributed GPU communication destination equals source Place");
+        }
+        if (std::find(action.destinations.begin(), action.destinations.begin() +
+                          static_cast<std::ptrdiff_t>(slot),
+                      destination) !=
+            action.destinations.begin() + static_cast<std::ptrdiff_t>(slot))
+        {
+            throw std::invalid_argument(
+                "distributed GPU communication destination is duplicated");
+        }
+    }
+
+    const Value *input = source_local ? &local_inputs.front() : nullptr;
+    if (source_local)
+    {
+        if (input->place_kind() != fhegpu::PlaceKind::Device ||
+            std::any_of(action.output_types.begin(), action.output_types.end(),
+                        [input](fhegpu::ValueKind kind) {
+                            return kind != input->kind();
+                        }))
+        {
+            throw std::invalid_argument(
+                "distributed GPU source value kind/place is invalid");
+        }
+        const auto &source_device =
+            device_state(source_place, "distributed GPU source");
+        if (value_cuda_device_id(*input, "distributed GPU source value") !=
+            source_device.cuda_device_id)
+        {
+            throw std::invalid_argument(
+                "distributed GPU source value is on the wrong CUDA device");
+        }
+        retain_in_flight(local_inputs);
+    }
+
+    CommHandle handle;
+    handle.state_ = std::make_unique<CommHandle::State>();
+    auto &state = *handle.state_;
+    state.outputs.resize(action.outputs.size());
+    state.requests.resize(action.outputs.size());
+    state.wire_headers.reserve(action.outputs.size());
+    state.mpi_requests.reserve(action.outputs.size());
+
+    bool participates_in_nccl = false;
+    if (source_local)
+    {
+        participates_in_nccl = std::any_of(
+            action.destinations.begin(), action.destinations.end(),
+            [this](const fhegpu::Place &place) { return place.rank != mpi_rank_; });
+    }
+    else
+    {
+        participates_in_nccl = std::any_of(
+            action.destinations.begin(), action.destinations.end(),
+            [this](const fhegpu::Place &place) { return place.rank == mpi_rank_; });
+    }
+    if (participates_in_nccl)
+    {
+        nccl_transport_->group_start();
+    }
+
+    try
+    {
+        for (std::size_t slot = 0; slot < action.destinations.size(); ++slot)
+        {
+            const auto &destination = action.destinations[slot];
+            if (source_local && destination.rank == mpi_rank_)
+            {
+                const auto requested_route = cuda_transfer_route(action.hint);
+                const auto &source_device =
+                    device_state(source_place, "distributed GPU source");
+                const auto &destination_device =
+                    device_state(destination, "distributed GPU destination");
+                const cudaEvent_t source_ready =
+                    input->ready_ != nullptr ? input->ready_->event() : nullptr;
+                if (input->kind() == fhegpu::ValueKind::Plaintext)
+                {
+                    gpu::GpuPlaintextData output;
+                    const auto copies = communication::prepare_full_object_copy(
+                        input->device_plaintext(), output,
+                        destination_device.cuda_device_id);
+                    state.requests[slot].emplace(cuda_transfer_->copy_async(
+                        copies.front(), requested_route, source_ready));
+                    state.outputs[slot].emplace(
+                        Value::from_device_plaintext(std::move(output)));
+                }
+                else
+                {
+                    gpu::GpuCiphertextData output;
+                    const auto copies = communication::prepare_full_object_copy(
+                        input->device_ciphertext(), output,
+                        destination_device.cuda_device_id);
+                    state.requests[slot].emplace(cuda_transfer_->copy_async(
+                        copies.front(), requested_route, source_ready));
+                    state.outputs[slot].emplace(
+                        Value::from_device_ciphertext(std::move(output)));
+                }
+                static_cast<void>(source_device);
+                continue;
+            }
+            if (!source_local && destination.rank != mpi_rank_)
+            {
+                continue;
+            }
+
+            const int source_nccl_rank = nccl_rank_for_place(source_place);
+            const int destination_nccl_rank = nccl_rank_for_place(destination);
+            const int tag = mpi_tag_for(
+                nccl_transport_->control_comm(), action.id, slot);
+
+            if (source_local)
+            {
+                GpuWireHeader header = input->kind() == fhegpu::ValueKind::Plaintext
+                                           ? make_wire_header(input->device_plaintext())
+                                           : make_wire_header(input->device_ciphertext());
+                if (header.kind !=
+                    (action.output_types[slot] == fhegpu::ValueKind::Plaintext ? 1U : 2U))
+                {
+                    throw std::invalid_argument(
+                        "distributed GPU output kind does not match source value");
+                }
+                auto header_storage = std::make_shared<GpuWireHeader>(header);
+                MPI_Request header_request = MPI_REQUEST_NULL;
+                check_mpi_status(
+                    MPI_Isend(header_storage.get(), static_cast<int>(sizeof(*header_storage)),
+                              MPI_BYTE, destination.rank, tag,
+                              nccl_transport_->control_comm(), &header_request),
+                    "MPI_Isend GPU wire header");
+                state.wire_headers.push_back(std::move(header_storage));
+                state.mpi_requests.push_back(header_request);
+
+                const void *source_buffer = input->kind() == fhegpu::ValueKind::Plaintext
+                                                 ? static_cast<const void *>(
+                                                       input->device_plaintext().fields_.front().data())
+                                                 : static_cast<const void *>(
+                                                       input->device_ciphertext().fields_.front().data());
+                const std::size_t bytes = header.bytes;
+                state.nccl_requests.push_back(nccl_transport_->send_async(
+                    source_place.index, destination_nccl_rank, source_buffer, bytes,
+                    input->ready_ != nullptr ? input->ready_->event() : nullptr));
+            }
+            else
+            {
+                GpuWireHeader header{};
+                check_mpi_status(
+                    MPI_Recv(&header, static_cast<int>(sizeof(header)), MPI_BYTE,
+                             source_place.rank, tag, nccl_transport_->control_comm(),
+                             MPI_STATUS_IGNORE),
+                    "MPI_Recv GPU wire header");
+                const std::uint32_t expected_kind =
+                    action.output_types[slot] == fhegpu::ValueKind::Plaintext ? 1U : 2U;
+                if (header.kind != expected_kind)
+                {
+                    throw std::runtime_error(
+                        "distributed GPU wire header kind does not match output descriptor");
+                }
+                const int destination_cuda_device =
+                    device_state(destination, "distributed GPU destination")
+                        .cuda_device_id;
+                if (header.kind == 1)
+                {
+                    auto output = allocate_wire_plaintext(
+                        header, destination_cuda_device, context_);
+                    state.outputs[slot].emplace(
+                        Value::from_device_plaintext(std::move(output)));
+                    auto &device_output = state.outputs[slot]->device_plaintext();
+                    state.nccl_requests.push_back(nccl_transport_->recv_async(
+                        destination.index, source_nccl_rank,
+                        device_output.fields_.front().data(), header.bytes));
+                }
+                else
+                {
+                    auto output = allocate_wire_ciphertext(
+                        header, destination_cuda_device, context_);
+                    state.outputs[slot].emplace(
+                        Value::from_device_ciphertext(std::move(output)));
+                    auto &device_output = state.outputs[slot]->device_ciphertext();
+                    state.nccl_requests.push_back(nccl_transport_->recv_async(
+                        destination.index, source_nccl_rank,
+                        device_output.fields_.front().data(), header.bytes));
+                }
+            }
+        }
+        if (participates_in_nccl)
+        {
+            nccl_transport_->group_end();
+            for (auto &request : state.nccl_requests)
+            {
+                nccl_transport_->record_event(request);
+            }
+        }
+    }
+    catch (...)
+    {
+        if (participates_in_nccl)
+        {
+            try
+            {
+                nccl_transport_->group_end();
+            }
+            catch (...)
+            {}
+        }
+        throw;
+    }
+    return handle;
+}
+#endif
+
 std::vector<PoseidonGpuApi::Value> PoseidonGpuApi::wait(CommHandle &handle)
 {
     if (!handle.state_)
@@ -1279,11 +1925,26 @@ std::vector<PoseidonGpuApi::Value> PoseidonGpuApi::wait(CommHandle &handle)
     {
         if (!request)
         {
-            throw std::logic_error(
-                "Poseidon GPU communication has no transfer request");
+            continue;
         }
         request->wait();
     }
+#ifdef POSEIDON_RUNTIME_GPU_NCCL
+    if (nccl_transport_ != nullptr)
+    {
+        for (auto &request : state.nccl_requests)
+        {
+            nccl_transport_->wait(request);
+        }
+        if (!state.mpi_requests.empty())
+        {
+            check_mpi_status(
+                MPI_Waitall(static_cast<int>(state.mpi_requests.size()),
+                            state.mpi_requests.data(), MPI_STATUSES_IGNORE),
+                "MPI_Waitall GPU wire headers");
+        }
+    }
+#endif
     for (const auto &deferred : state.deferred_outputs)
     {
         std::visit(
@@ -1319,7 +1980,7 @@ std::vector<PoseidonGpuApi::Value> PoseidonGpuApi::wait(CommHandle &handle)
     {
         if (!output)
         {
-            throw std::logic_error("Poseidon GPU communication output is unavailable");
+            continue;
         }
         outputs.push_back(std::move(*output));
         output.reset();
@@ -1331,6 +1992,11 @@ std::vector<PoseidonGpuApi::Value> PoseidonGpuApi::wait(CommHandle &handle)
     }
     state.waited = true;
     state.requests.clear();
+#ifdef POSEIDON_RUNTIME_GPU_NCCL
+    state.nccl_requests.clear();
+    state.mpi_requests.clear();
+    state.wire_headers.clear();
+#endif
     state.deferred_outputs.clear();
     return outputs;
 }
@@ -1364,7 +2030,6 @@ void PoseidonGpuApi::preflight(std::string_view plan_source_sha256,
                                const fhegpu::OperatorSpec &operator_spec,
                                const fhegpu::PlanRequirements &requirements)
 {
-    static_cast<void>(skip_artifact_digest_checks);
     if (plan_source_sha256.size() != 71 || plan_source_sha256.substr(0, 7) != "sha256:")
     {
         throw std::invalid_argument("invalid RuntimePlan source SHA-256");
@@ -1373,17 +2038,45 @@ void PoseidonGpuApi::preflight(std::string_view plan_source_sha256,
     {
         throw std::invalid_argument("Poseidon GPU Api target is unsupported");
     }
-    if (target.world_size != 1)
+    if (target.world_size != mpi_world_size_)
     {
         throw std::invalid_argument(
-            "Poseidon GPU Api currently supports one local process");
+            "Poseidon GPU Api target world size does not match MPI world size");
     }
-    if (target.device_counts.size() != 1 ||
-        target.device_counts.front() != local_device_count())
+    if (target.device_counts.size() !=
+            static_cast<std::size_t>(mpi_world_size_) ||
+        target.device_counts[static_cast<std::size_t>(mpi_rank_)] !=
+            local_device_count())
     {
         throw std::invalid_argument(
-            "Poseidon GPU Api target device count does not match configured CUDA devices");
+            "Poseidon GPU Api target device count does not match this MPI rank");
     }
+
+#ifdef POSEIDON_RUNTIME_GPU_NCCL
+    if (nccl_transport_ != nullptr)
+    {
+        const int local_skip = skip_artifact_digest_checks ? 1 : 0;
+        std::vector<int> skip_values(static_cast<std::size_t>(mpi_world_size_));
+        check_mpi_status(MPI_Allgather(&local_skip, 1, MPI_INT, skip_values.data(),
+                                       1, MPI_INT, nccl_transport_->control_comm()),
+                         "MPI_Allgather skip_artifact_digest_checks");
+        if (!std::all_of(skip_values.begin(), skip_values.end(),
+                         [local_skip](int value) { return value == local_skip; }))
+        {
+            throw std::runtime_error(
+                "Poseidon GPU skip_artifact_digest_checks differs across MPI ranks");
+        }
+        if (!skip_artifact_digest_checks)
+        {
+            require_same_mpi_string(nccl_transport_->control_comm(), mpi_world_size_,
+                                    plan_source_sha256, "RuntimePlan source digest");
+        }
+        require_same_mpi_string(nccl_transport_->control_comm(), mpi_world_size_,
+                                context_id_, "Poseidon GPU context id");
+    }
+#else
+    static_cast<void>(skip_artifact_digest_checks);
+#endif
 
     const auto parameters = context_.parameters_literal();
     std::vector<int> modulus_bits;
@@ -1462,7 +2155,7 @@ void PoseidonGpuApi::preflight(std::string_view plan_source_sha256,
     {
         if (key.kind == fhegpu::KeyKind::Secret)
         {
-            require_host_place(key.place, "Poseidon GPU SecretKey");
+        require_host_place(key.place, "Poseidon GPU SecretKey", mpi_rank_);
             if (!boot_decryptor_)
             {
                 throw std::runtime_error("Poseidon GPU Api lacks decrypt_reencrypt Boot keys");
@@ -1515,8 +2208,17 @@ void PoseidonGpuApi::preflight(std::string_view plan_source_sha256,
     synchronize_all_devices();
 }
 
-[[noreturn]] void PoseidonGpuApi::abort_all(int, const std::string &reason)
+[[noreturn]] void PoseidonGpuApi::abort_all(int exit_code, const std::string &reason)
 {
+#ifdef POSEIDON_RUNTIME_GPU_NCCL
+    if (nccl_transport_ != nullptr)
+    {
+        nccl_transport_->abort();
+        (void)MPI_Abort(nccl_transport_->control_comm(), exit_code);
+    }
+#else
+    static_cast<void>(exit_code);
+#endif
     throw std::runtime_error(reason);
 }
 
@@ -1537,7 +2239,7 @@ void PoseidonGpuApi::validate_value(const Value &value,
 
     if (expected.place.kind == fhegpu::PlaceKind::Host)
     {
-        require_host_place(expected.place, "Poseidon GPU Host value");
+        require_host_place(expected.place, "Poseidon GPU Host value", mpi_rank_);
         if (expected.kind == fhegpu::ValueKind::Plaintext)
         {
             const auto &plain = value.host_plaintext();
@@ -1639,14 +2341,14 @@ void PoseidonGpuApi::validate_value(const Value &value,
 PoseidonGpuApi::DeviceState &PoseidonGpuApi::device_state(
     const fhegpu::Place &place, const char *where)
 {
-    require_device_place(place, where);
+    require_device_place(place, where, mpi_rank_);
     return device_state(place.index);
 }
 
 const PoseidonGpuApi::DeviceState &PoseidonGpuApi::device_state(
     const fhegpu::Place &place, const char *where) const
 {
-    require_device_place(place, where);
+    require_device_place(place, where, mpi_rank_);
     return device_state(place.index);
 }
 

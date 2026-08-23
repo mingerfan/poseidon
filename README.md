@@ -33,7 +33,25 @@ ctest --test-dir build-runtime-cpu -R poseidon_runtime_cpu_api_tests --output-on
 `POSEIDON_CKKS_RUNTIME_SOURCE_DIR` can still point at another Runtime checkout
 for local development. CPU MPI and CUDA test paths are controlled by
 `POSEIDON_BUILD_CKKS_RUNTIME_MPI` and
-`POSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS`.
+`POSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS`. The experimental MPI/NCCL GPU backend
+is enabled separately with `POSEIDON_BUILD_CKKS_RUNTIME_GPU_NCCL`; it requires
+an MPI implementation, `nccl.h`, and `libnccl`.
+
+The backend uses MPI for process control and NCCL bootstrap, while GPU payloads
+use NCCL. `Place.rank` remains the MPI rank and `Place.index` is the local GPU
+index. A raw transport smoke test can be built without running the ordinary
+GPU API tests:
+
+```bash
+cmake -S . -B build-runtime-nccl \
+  -DPOSEIDON_BUILD_CKKS_RUNTIME_API=ON \
+  -DPOSEIDON_BUILD_CKKS_RUNTIME_TESTS=ON \
+  -DPOSEIDON_BUILD_CKKS_RUNTIME_GPU_NCCL=ON \
+  -DPOSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS=OFF
+cmake --build build-runtime-nccl --target poseidon_nccl_mpi_smoke
+mpiexec -n 4 build-runtime-nccl/bin/poseidon_nccl_mpi_smoke \
+  --device-counts 1x1x1x1
+```
 
 ## Nsight Systems GPU Kernel Gap Analysis
 

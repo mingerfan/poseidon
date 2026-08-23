@@ -40,6 +40,30 @@ target_link_libraries(poseidon_runtime_gpu_api
 )
 target_compile_features(poseidon_runtime_gpu_api PUBLIC cxx_std_17)
 
+if(POSEIDON_BUILD_CKKS_RUNTIME_GPU_NCCL)
+    find_package(MPI REQUIRED COMPONENTS CXX)
+    find_path(POSEIDON_NCCL_INCLUDE_DIR nccl.h
+        HINTS ENV NCCL_ROOT ENV CUDA_HOME
+        PATH_SUFFIXES include)
+    find_library(POSEIDON_NCCL_LIBRARY NAMES nccl
+        HINTS ENV NCCL_ROOT ENV CUDA_HOME
+        PATH_SUFFIXES lib lib64 lib/x86_64-linux-gnu)
+    if(NOT POSEIDON_NCCL_INCLUDE_DIR OR NOT POSEIDON_NCCL_LIBRARY)
+        message(FATAL_ERROR
+            "POSEIDON_BUILD_CKKS_RUNTIME_GPU_NCCL requires nccl.h and libnccl")
+    endif()
+    target_sources(poseidon_runtime_gpu_api PRIVATE
+        communication/nccl_mpi_transport.cpp
+    )
+    target_include_directories(poseidon_runtime_gpu_api PUBLIC
+        ${POSEIDON_NCCL_INCLUDE_DIR})
+    target_link_libraries(poseidon_runtime_gpu_api PUBLIC
+        MPI::MPI_CXX
+        ${POSEIDON_NCCL_LIBRARY})
+    target_compile_definitions(poseidon_runtime_gpu_api PUBLIC
+        POSEIDON_RUNTIME_GPU_NCCL=1)
+endif()
+
 if(POSEIDON_BUILD_CKKS_RUNTIME_TESTS)
     add_executable(poseidon_runtime_cpu_api_tests
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/runtime_api/poseidon_cpu_api_test.cpp
@@ -78,6 +102,27 @@ if(POSEIDON_BUILD_CKKS_RUNTIME_TESTS)
                 ${MPIEXEC_POSTFLAGS}
         )
     endif()
+endif()
+
+if(POSEIDON_BUILD_CKKS_RUNTIME_GPU_NCCL AND
+   POSEIDON_BUILD_CKKS_RUNTIME_TESTS)
+    add_executable(poseidon_nccl_mpi_smoke
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/runtime_api/nccl_mpi_smoke.cpp
+    )
+    target_link_libraries(poseidon_nccl_mpi_smoke PRIVATE
+        poseidon_runtime_gpu_api)
+    add_test(NAME poseidon_nccl_mpi_smoke
+        COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} 4
+                ${MPIEXEC_PREFLAGS}
+                $<TARGET_FILE:poseidon_nccl_mpi_smoke>
+                --device-counts 1x1x1x1
+                ${MPIEXEC_POSTFLAGS})
+
+    add_executable(poseidon_gpu_mpi_transfer_test
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/runtime_api/poseidon_gpu_mpi_transfer_test.cpp
+    )
+    target_link_libraries(poseidon_gpu_mpi_transfer_test PRIVATE
+        poseidon_runtime_gpu_api)
 endif()
 
 if(POSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS)

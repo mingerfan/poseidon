@@ -311,6 +311,10 @@ if(POSEIDON_BUILD_CKKS_RUNTIME_API)
         "Enable MPI mode in PoseidonCpuApi" OFF)
     message(STATUS
         "POSEIDON_BUILD_CKKS_RUNTIME_MPI: ${POSEIDON_BUILD_CKKS_RUNTIME_MPI}")
+    option(POSEIDON_BUILD_CKKS_RUNTIME_GPU_NCCL
+        "Enable the optional MPI/NCCL GPU communication backend" OFF)
+    message(STATUS
+        "POSEIDON_BUILD_CKKS_RUNTIME_GPU_NCCL: ${POSEIDON_BUILD_CKKS_RUNTIME_GPU_NCCL}")
     if(POSEIDON_BUILD_CKKS_RUNTIME_TESTS)
         enable_testing()
     endif()
