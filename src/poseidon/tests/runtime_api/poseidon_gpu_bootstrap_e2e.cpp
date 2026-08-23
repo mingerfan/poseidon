@@ -14,6 +14,7 @@
 #include <cuda_runtime_api.h>
 
 #include <algorithm>
+#include <chrono>
 #include <cmath>
 #include <complex>
 #include <cstdint>
@@ -177,7 +178,8 @@ fhegpu::CommAction transfer(
 
 fhegpu::LoadedRuntimePlan make_plan(
     const fhegpu::LoadedOperatorSpec &loaded_spec,
-    const fhegpu::BootProfile &profile)
+    const fhegpu::BootProfile &profile,
+    bool return_to_host)
 {
     const auto host = host_place();
     const auto device = device_place();
@@ -189,7 +191,7 @@ fhegpu::LoadedRuntimePlan make_plan(
     const int input_level = profile.input_level_min;
 
     fhegpu::RuntimePlan plan;
-    plan.plan_id = 1;
+    plan.plan_id = return_to_host ? 1 : 2;
     plan.target = make_target(loaded_spec);
     plan.values = {
         {0, fhegpu::ValueKind::Ciphertext, host, kContextId,
@@ -197,9 +199,6 @@ fhegpu::LoadedRuntimePlan make_plan(
         {1, fhegpu::ValueKind::Ciphertext, device, kContextId,
          input_level, kLogScale, true, 2},
         {2, fhegpu::ValueKind::Ciphertext, device, kContextId,
-         profile.output_level, profile.output_scale_log2, true,
-         profile.output_components},
-        {3, fhegpu::ValueKind::Ciphertext, host, kContextId,
          profile.output_level, profile.output_scale_log2, true,
          profile.output_components},
     };
@@ -220,11 +219,27 @@ fhegpu::LoadedRuntimePlan make_plan(
         profile.profile_id,
         fhegpu::BootImplementation::Native};
     plan.execution = {{1, std::move(boot)}};
-    plan.finalization = {
-        {2, transfer(1, 2, 3, device, host)},
-    };
-    plan.final_outputs = {3};
+    if (return_to_host)
+    {
+        plan.values.push_back(
+            {3, fhegpu::ValueKind::Ciphertext, host, kContextId,
+             profile.output_level, profile.output_scale_log2, true,
+             profile.output_components});
+        plan.finalization = {
+            {2, transfer(1, 2, 3, device, host)},
+        };
+        plan.final_outputs = {3};
+    }
+    else
+    {
+        plan.final_outputs = {2};
+    }
     return {std::move(plan), kPlanSha};
+}
+
+double milliseconds(std::uint64_t nanoseconds)
+{
+    return static_cast<double>(nanoseconds) / 1.0e6;
 }
 
 std::vector<std::complex<double>> make_message(std::size_t slot_count)
@@ -256,6 +271,15 @@ int main()
     {
         const std::size_t degree = env_size_or(
             "POSEIDON_RUNTIME_BOOTSTRAP_DEGREE", 65536);
+        const std::size_t warmup = env_size_or(
+            "POSEIDON_RUNTIME_BOOTSTRAP_WARMUP", 2);
+        const std::size_t iterations = env_size_or(
+            "POSEIDON_RUNTIME_BOOTSTRAP_ITERATIONS", 5);
+        if (iterations == 0)
+        {
+            throw std::invalid_argument(
+                "POSEIDON_RUNTIME_BOOTSTRAP_ITERATIONS must be nonzero");
+        }
         auto context = make_context(degree);
         poseidon::KeyGenerator key_generator(context);
         poseidon::PublicKey public_key;
@@ -272,7 +296,10 @@ int main()
         const auto boot_profile =
             poseidon::runtime_api::make_native_boot_profile(profile);
         const auto loaded_spec = make_operator_spec(context, boot_profile);
-        const auto loaded_plan = make_plan(loaded_spec, boot_profile);
+        const auto device_plan = make_plan(
+            loaded_spec, boot_profile, /*return_to_host=*/false);
+        const auto host_plan = make_plan(
+            loaded_spec, boot_profile, /*return_to_host=*/true);
 
         const auto message = make_message(
             std::size_t{1} << context.parameters_literal()->log_slots());
@@ -288,6 +315,7 @@ int main()
         ciphertext.scale() = std::ldexp(1.0, kLogScale);
 
         std::vector<std::complex<double>> direct_decoded;
+        double direct_gpu_boot_ms = 0.0;
         {
             poseidon::gpu::GpuParameterData gpu_parameters(
                 context, kCudaDevice);
@@ -296,13 +324,34 @@ int main()
                 ciphertext, kCudaDevice);
             poseidon::gpu::GpuBootstrapWorkspace workspace;
             poseidon::gpu::GpuCiphertextData gpu_output;
-            gpu_evaluator.bootstrap(
-                gpu_input,
-                profile.bootstrap_data,
-                *profile.relin_keys,
-                *profile.galois_keys,
-                workspace,
-                gpu_output);
+            auto run_direct_boot = [&]() {
+                gpu_evaluator.bootstrap(
+                    gpu_input,
+                    profile.bootstrap_data,
+                    *profile.relin_keys,
+                    *profile.galois_keys,
+                    workspace,
+                    gpu_output);
+            };
+            for (std::size_t index = 0; index < warmup; ++index)
+            {
+                run_direct_boot();
+            }
+            poseidon::gpu::gpu_check_cuda(
+                cudaDeviceSynchronize(), "cudaDeviceSynchronize");
+            const auto start = std::chrono::steady_clock::now();
+            for (std::size_t index = 0; index < iterations; ++index)
+            {
+                run_direct_boot();
+            }
+            poseidon::gpu::gpu_check_cuda(
+                cudaDeviceSynchronize(), "cudaDeviceSynchronize");
+            const auto elapsed =
+                std::chrono::duration_cast<std::chrono::microseconds>(
+                    std::chrono::steady_clock::now() - start);
+            direct_gpu_boot_ms =
+                static_cast<double>(elapsed.count()) /
+                1000.0 / static_cast<double>(iterations);
             poseidon::Ciphertext direct_output;
             poseidon::gpu::GpuUploader::download_ciphertext(
                 gpu_output, direct_output, context);
@@ -319,13 +368,56 @@ int main()
         std::unordered_map<fhegpu::ValueId, PoseidonGpuValue> inputs;
         inputs.emplace(
             0, PoseidonGpuValue::from_host_ciphertext(std::move(ciphertext)));
-        const auto artifact = runtime.run(loaded_plan, resources, inputs);
-
-        const auto &output = artifact.values.at(3).value.host_ciphertext();
-        poseidon::Plaintext output_plaintext;
-        decryptor.decrypt(output, output_plaintext);
         std::vector<std::complex<double>> decoded;
-        encoder.decode(output_plaintext, decoded);
+
+        for (std::size_t index = 0; index < warmup; ++index)
+        {
+            static_cast<void>(
+                runtime.run(device_plan, resources, inputs));
+        }
+        double runtime_device_boot_ms = 0.0;
+        for (std::size_t index = 0; index < iterations; ++index)
+        {
+            const auto artifact = runtime.run(device_plan, resources, inputs);
+            runtime_device_boot_ms += milliseconds(
+                artifact.timing.online_execution_nanoseconds);
+        }
+        runtime_device_boot_ms /= static_cast<double>(iterations);
+
+        for (std::size_t index = 0; index < warmup; ++index)
+        {
+            static_cast<void>(runtime.run(host_plan, resources, inputs));
+        }
+        double host_setup_ms = 0.0;
+        double host_h2d_ms = 0.0;
+        double runtime_boot_d2h_ms = 0.0;
+        for (std::size_t index = 0; index < iterations; ++index)
+        {
+            const auto artifact = runtime.run(host_plan, resources, inputs);
+            host_setup_ms += milliseconds(
+                artifact.timing.setup_nanoseconds);
+            host_h2d_ms += milliseconds(
+                artifact.timing.initialization_nanoseconds);
+            runtime_boot_d2h_ms += milliseconds(
+                artifact.timing.online_execution_nanoseconds);
+            if (index + 1 == iterations)
+            {
+                const auto &output =
+                    artifact.values.at(3).value.host_ciphertext();
+                poseidon::Plaintext output_plaintext;
+                decryptor.decrypt(output, output_plaintext);
+                encoder.decode(output_plaintext, decoded);
+            }
+        }
+        host_setup_ms /= static_cast<double>(iterations);
+        host_h2d_ms /= static_cast<double>(iterations);
+        runtime_boot_d2h_ms /= static_cast<double>(iterations);
+        const double runtime_plan_ms =
+            host_setup_ms + host_h2d_ms + runtime_boot_d2h_ms;
+        const double runtime_vs_direct_delta_ms =
+            runtime_device_boot_ms - direct_gpu_boot_ms;
+        const double runtime_d2h_increment_ms =
+            runtime_boot_d2h_ms - runtime_device_boot_ms;
 
         double max_abs_error = 0.0;
         double runtime_direct_max_abs_error = 0.0;
@@ -364,6 +456,19 @@ int main()
                   << " source_semantic_max_abs_error=" << max_abs_error
                   << " regression_limit=" << kSemanticRegressionLimit
                   << '\n';
+        std::cout
+            << "[BENCH] warmup=" << warmup
+            << " iterations=" << iterations
+            << " direct_gpu_boot_ms=" << direct_gpu_boot_ms
+            << " runtime_device_boot_ms=" << runtime_device_boot_ms
+            << " runtime_vs_direct_delta_ms="
+            << runtime_vs_direct_delta_ms
+            << " runtime_d2h_increment_ms=" << runtime_d2h_increment_ms
+            << " runtime_boot_d2h_ms=" << runtime_boot_d2h_ms
+            << " runtime_h2d_ms=" << host_h2d_ms
+            << " runtime_setup_ms=" << host_setup_ms
+            << " runtime_plan_ms=" << runtime_plan_ms
+            << '\n';
         return 0;
     }
     catch (const std::exception &error)

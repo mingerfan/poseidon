@@ -4304,6 +4304,18 @@ void GpuEvaluator::bootstrap(
             : bootstrap_data.linear_transform_mode;
     const bool use_double_hoist =
         linear_transform_mode == GpuLinearTransformMode::DoubleHoistBsgs;
+    if (use_double_hoist)
+    {
+        if (bootstrap_data.double_hoist_baby_tile == 0)
+        {
+            throw std::invalid_argument(
+                "GpuEvaluator::bootstrap: double-hoist baby tile is zero");
+        }
+        workspace.coeff_to_slot_double_hoist.baby_tile_size =
+            bootstrap_data.double_hoist_baby_tile;
+        workspace.slot_to_coeff_double_hoist.baby_tile_size =
+            bootstrap_data.double_hoist_baby_tile;
+    }
     if (linear_transform_mode ==
         GpuLinearTransformMode::SingleHoistBsgs)
     {

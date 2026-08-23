@@ -47,6 +47,7 @@ struct GpuBootstrapProfileConfig
     std::uint32_t c2s_direct_layer_threshold = 3;
     std::uint32_t s2c_log_bsgs_ratio = 1;
     bool project_real = false;
+    std::size_t double_hoist_baby_tile = 15;
     GpuLinearTransformMode linear_transform_mode =
         GpuLinearTransformMode::DoubleHoistBsgs;
 };

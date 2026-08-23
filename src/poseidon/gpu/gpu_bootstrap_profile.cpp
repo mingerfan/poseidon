@@ -259,6 +259,7 @@ void validate_config(
         config.eval_mod_generation_degree < config.eval_mod_sine_degree ||
         config.eval_mod_log_split == 0 || config.eval_mod_log_split >= 31 ||
         config.logical_rescale_count == 0 ||
+        config.double_hoist_baby_tile == 0 ||
         config.linear_transform_mode == GpuLinearTransformMode::SingleHoistBsgs)
     {
         throw std::invalid_argument("GPU bootstrap profile configuration is invalid");
@@ -533,6 +534,8 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build(
         bootstrap_data.schedule = GpuBootstrapSchedule::StCFirst;
         bootstrap_data.linear_transform_mode = config.linear_transform_mode;
         bootstrap_data.allow_environment_linear_transform_override = false;
+        bootstrap_data.double_hoist_baby_tile =
+            config.double_hoist_baby_tile;
         bootstrap_data.q0_parms_id =
             context.crt_context()->parms_id_map().at(q0_level);
         bootstrap_data.q0_over_message_ratio = q0_over_message_ratio;
@@ -746,6 +749,7 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build(
     GpuBootstrapData bootstrap_data;
     bootstrap_data.linear_transform_mode = config.linear_transform_mode;
     bootstrap_data.allow_environment_linear_transform_override = false;
+    bootstrap_data.double_hoist_baby_tile = config.double_hoist_baby_tile;
     bootstrap_data.q0_parms_id = context.crt_context()->parms_id_map().at(q0_level);
     bootstrap_data.q0_over_message_ratio = q0_over_message_ratio;
     bootstrap_data.raised_scale_override = raised_scale;

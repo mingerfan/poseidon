@@ -136,6 +136,7 @@ struct GpuBootstrapData
     GpuLinearTransformMode linear_transform_mode =
         GpuLinearTransformMode::ClassicBsgs;
     bool allow_environment_linear_transform_override = true;
+    std::size_t double_hoist_baby_tile = 4;
 
     parms_id_type q0_parms_id{};
     double q0_over_message_ratio = 0.0;
