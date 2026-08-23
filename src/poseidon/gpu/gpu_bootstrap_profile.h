@@ -14,6 +14,8 @@ namespace poseidon
 
 class KeyGenerator;
 class PoseidonContext;
+class RelinKeys;
+class GaloisKeys;
 
 namespace gpu
 {
@@ -70,6 +72,13 @@ struct GpuBootstrapProfile
     std::shared_ptr<const GpuGaloisKeysData> galois_keys;
 };
 
+/** CPU evaluation keys shared when one profile is uploaded to many GPUs. */
+struct GpuBootstrapProfileCpuKeys
+{
+    std::shared_ptr<const RelinKeys> relin_keys;
+    std::shared_ptr<const GaloisKeys> galois_keys;
+};
+
 /**
  * @brief Build all CPU plans/keys and upload one immutable GPU profile.
  *
@@ -83,7 +92,9 @@ public:
         const PoseidonContext &context,
         KeyGenerator &key_generator,
         int cuda_device_id,
-        const GpuBootstrapProfileConfig &config = {});
+        const GpuBootstrapProfileConfig &config = {},
+        GpuBootstrapProfileCpuKeys *generated_cpu_keys = nullptr,
+        const GpuBootstrapProfileCpuKeys *reused_cpu_keys = nullptr);
 };
 
 } // namespace gpu

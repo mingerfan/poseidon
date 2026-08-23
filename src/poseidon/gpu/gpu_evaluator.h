@@ -658,6 +658,44 @@ public:
         GpuCiphertextData &destination_ciphertext) const;
 
     /**
+     * @brief Execute the StC-first prefix through the raw post-raise C2S DFT.
+     *
+     * The returned ciphertext precedes the conjugation-based real/imaginary
+     * split. Keeping this boundary explicit lets a multi-device plan copy one
+     * ciphertext and extract the two independent EvalMod branches in parallel.
+     */
+    void bootstrap_stc_first_transform(
+        const GpuCiphertextData &source_ciphertext,
+        const GpuBootstrapData &bootstrap_data,
+        const GpuGaloisKeysData &galois_keys,
+        GpuBootstrapWorkspace &workspace,
+        GpuCiphertextData &destination_ciphertext) const;
+
+    /** Extract the real EvalMod input from a raw C2S DFT ciphertext. */
+    void bootstrap_extract_real(
+        const GpuCiphertextData &source_ciphertext,
+        const GpuBootstrapData &bootstrap_data,
+        const GpuGaloisKeysData &galois_keys,
+        GpuBootstrapWorkspace &workspace,
+        GpuCiphertextData &destination_ciphertext) const;
+
+    /** Extract the imaginary EvalMod input from a raw C2S DFT ciphertext. */
+    void bootstrap_extract_imag(
+        const GpuCiphertextData &source_ciphertext,
+        const GpuBootstrapData &bootstrap_data,
+        const GpuGaloisKeysData &galois_keys,
+        GpuBootstrapWorkspace &workspace,
+        GpuCiphertextData &destination_ciphertext) const;
+
+    /** Combine evaluated real/imaginary branches and normalize the output. */
+    void bootstrap_stc_first_finalize(
+        const GpuCiphertextData &source_real,
+        const GpuCiphertextData &source_imag,
+        const GpuBootstrapData &bootstrap_data,
+        GpuBootstrapWorkspace &workspace,
+        GpuCiphertextData &destination_ciphertext) const;
+
+    /**
      * @brief Evaluate the setup-time high-precision EvalMod plan on GPU.
      *
      * This is public so callers can benchmark and validate the EvalMod stage
@@ -673,6 +711,11 @@ public:
         GpuCiphertextData &destination_ciphertext) const;
 
 private:
+    void normalize_bootstrap_output_scale(
+        GpuCiphertextData &output,
+        const GpuBootstrapData &bootstrap_data,
+        GpuBootstrapWorkspace &workspace) const;
+
     const GpuParameterData &params_;
 
     GpuElementwiseHandler elementwise_handler_;

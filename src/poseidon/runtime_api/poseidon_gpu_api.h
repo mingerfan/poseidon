@@ -18,6 +18,7 @@
 #include <string_view>
 #include <variant>
 #include <vector>
+#include <unordered_map>
 
 namespace poseidon
 {
@@ -157,6 +158,19 @@ public:
         int logical_device_index,
         gpu::GpuBootstrapProfile profile);
 
+    /**
+     * @brief Compile one native Boot profile for multi-device execution.
+     *
+     * The first device owns the RuntimePlan input/output. With two devices,
+     * the raw C2S result is copied to the second device and the real/imaginary
+     * EvalMod branches execute concurrently before final reduction on the
+     * first device. The same native profile must already be installed on each
+     * listed device.
+     */
+    void configure_multi_gpu_bootstrap(
+        std::string operator_profile,
+        std::vector<int> logical_device_indices);
+
     std::string name() const;
     int local_device_count() const noexcept;
     int cuda_device_id(int logical_device_index) const;
@@ -176,6 +190,10 @@ public:
 
 private:
     struct DeviceState;
+    struct MultiGpuBootstrapPlan
+    {
+        std::vector<int> logical_device_indices;
+    };
 
     DeviceState &device_state(const fhegpu::Place &place, const char *where);
     const DeviceState &device_state(const fhegpu::Place &place,
@@ -184,6 +202,7 @@ private:
     const DeviceState &device_state(int logical_device_index) const;
     void retain_in_flight(const std::vector<Value> &values,
                           std::vector<std::shared_ptr<void>> resources = {});
+    void release_completed_in_flight();
     void synchronize_device(int cuda_device_id) const;
     void synchronize_all_devices() const;
     std::size_t q_count_for_level(int level) const;
@@ -208,6 +227,8 @@ private:
     std::optional<int> max_rescale_levels_per_op_;
     std::vector<std::shared_ptr<void>> in_flight_resources_;
     std::mutex in_flight_mutex_;
+    std::unordered_map<std::string, MultiGpuBootstrapPlan>
+        multi_gpu_bootstrap_by_profile_;
 };
 
 } // namespace runtime_api

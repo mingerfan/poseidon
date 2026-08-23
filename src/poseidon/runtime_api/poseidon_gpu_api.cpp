@@ -19,6 +19,7 @@
 #include <complex>
 #include <cstdlib>
 #include <cstdint>
+#include <future>
 #include <limits>
 #include <map>
 #include <mutex>
@@ -1013,6 +1014,46 @@ void PoseidonGpuApi::configure_native_bootstrap(
         std::move(profile.galois_keys));
 }
 
+void PoseidonGpuApi::configure_multi_gpu_bootstrap(
+    std::string operator_profile,
+    std::vector<int> logical_device_indices)
+{
+    if (operator_profile.empty())
+    {
+        throw std::invalid_argument(
+            "Poseidon multi-GPU Boot profile id is empty");
+    }
+    if (logical_device_indices.size() != 2)
+    {
+        throw std::invalid_argument(
+            "Poseidon multi-GPU Boot currently requires exactly two devices");
+    }
+    if (logical_device_indices.front() == logical_device_indices.back())
+    {
+        throw std::invalid_argument(
+            "Poseidon multi-GPU Boot devices must be distinct");
+    }
+    for (const int logical_device_index : logical_device_indices)
+    {
+        const auto &device = device_state(logical_device_index);
+        if (device.native_bootstrap_by_profile.find(operator_profile) ==
+            device.native_bootstrap_by_profile.end())
+        {
+            throw std::invalid_argument(
+                "Poseidon multi-GPU Boot profile is missing on logical device " +
+                std::to_string(logical_device_index));
+        }
+    }
+    const bool inserted = multi_gpu_bootstrap_by_profile_.emplace(
+        std::move(operator_profile),
+        MultiGpuBootstrapPlan{std::move(logical_device_indices)}).second;
+    if (!inserted)
+    {
+        throw std::invalid_argument(
+            "Poseidon multi-GPU Boot profile is already configured");
+    }
+}
+
 std::string PoseidonGpuApi::name() const
 {
     return "PoseidonGpuApi";
@@ -1084,13 +1125,140 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
 
             gpu::GpuCiphertextData output;
             auto &native = *resources->second;
-            device.evaluator->bootstrap(
-                require_ciphertext(inputs, 0),
-                native.bootstrap_data,
-                *native.relin_keys,
-                *native.galois_keys,
-                native.workspace,
-                output);
+            const auto multi_plan =
+                multi_gpu_bootstrap_by_profile_.find(attrs.operator_profile);
+            if (multi_plan == multi_gpu_bootstrap_by_profile_.end())
+            {
+                device.evaluator->bootstrap(
+                    require_ciphertext(inputs, 0),
+                    native.bootstrap_data,
+                    *native.relin_keys,
+                    *native.galois_keys,
+                    native.workspace,
+                    output);
+            }
+            else
+            {
+                const auto &logical_devices =
+                    multi_plan->second.logical_device_indices;
+                if (logical_devices.size() != 2 ||
+                    logical_devices.front() != op.place.index)
+                {
+                    throw std::runtime_error(
+                        "Poseidon two-GPU Boot must execute on its coordinator device");
+                }
+                auto &secondary = device_state(logical_devices.back());
+                const auto secondary_resources =
+                    secondary.native_bootstrap_by_profile.find(
+                        attrs.operator_profile);
+                if (secondary_resources ==
+                    secondary.native_bootstrap_by_profile.end())
+                {
+                    throw std::runtime_error(
+                        "Poseidon two-GPU Boot secondary profile is unavailable");
+                }
+                auto &secondary_native = *secondary_resources->second;
+
+                gpu::GpuCiphertextData c2s_dft_result;
+                device.evaluator->bootstrap_stc_first_transform(
+                    require_ciphertext(inputs, 0),
+                    native.bootstrap_data,
+                    *native.galois_keys,
+                    native.workspace,
+                    c2s_dft_result);
+                gpu::gpu_check_cuda(
+                    cudaStreamSynchronize(gpu::gpu_execution_stream()),
+                    "cudaStreamSynchronize two-GPU Boot prefix");
+
+                gpu::GpuCiphertextData secondary_c2s_dft_result;
+                const auto prefix_copies =
+                    communication::prepare_full_object_copy(
+                        c2s_dft_result,
+                        secondary_c2s_dft_result,
+                        secondary.cuda_device_id);
+                if (prefix_copies.size() != 1)
+                {
+                    throw std::logic_error(
+                        "Poseidon two-GPU Boot prefix copy is not contiguous");
+                }
+                auto prefix_transfer = cuda_transfer_->copy_async(
+                    prefix_copies.front(),
+                    communication::CudaTransferRoute::Auto);
+
+                auto imag_future = std::async(
+                    std::launch::async,
+                    [&, remote_input = std::move(secondary_c2s_dft_result),
+                     transfer = std::move(prefix_transfer)]() mutable {
+                        transfer.wait();
+                        gpu::gpu_check_cuda(
+                            cudaSetDevice(secondary.cuda_device_id),
+                            "cudaSetDevice two-GPU Boot imaginary branch");
+                        gpu::GpuCiphertextData imag_input;
+                        gpu::GpuCiphertextData imag_output;
+                        secondary.evaluator->bootstrap_extract_imag(
+                            remote_input,
+                            secondary_native.bootstrap_data,
+                            *secondary_native.galois_keys,
+                            secondary_native.workspace,
+                            imag_input);
+                        secondary.evaluator->eval_mod_high_precision(
+                            imag_input,
+                            secondary_native.bootstrap_data,
+                            *secondary_native.relin_keys,
+                            secondary_native.workspace,
+                            imag_output);
+                        gpu::gpu_check_cuda(
+                            cudaStreamSynchronize(gpu::gpu_execution_stream()),
+                            "cudaStreamSynchronize two-GPU Boot imaginary branch");
+                        return imag_output;
+                    });
+
+                gpu::gpu_check_cuda(
+                    cudaSetDevice(device.cuda_device_id),
+                    "cudaSetDevice two-GPU Boot real branch");
+                gpu::GpuCiphertextData real_input;
+                gpu::GpuCiphertextData real_output;
+                device.evaluator->bootstrap_extract_real(
+                    c2s_dft_result,
+                    native.bootstrap_data,
+                    *native.galois_keys,
+                    native.workspace,
+                    real_input);
+                device.evaluator->eval_mod_high_precision(
+                    real_input,
+                    native.bootstrap_data,
+                    *native.relin_keys,
+                    native.workspace,
+                    real_output);
+                gpu::gpu_check_cuda(
+                    cudaStreamSynchronize(gpu::gpu_execution_stream()),
+                    "cudaStreamSynchronize two-GPU Boot real branch");
+
+                auto secondary_imag_output = imag_future.get();
+                gpu::GpuCiphertextData local_imag_output;
+                const auto result_copies =
+                    communication::prepare_full_object_copy(
+                        secondary_imag_output,
+                        local_imag_output,
+                        device.cuda_device_id);
+                if (result_copies.size() != 1)
+                {
+                    throw std::logic_error(
+                        "Poseidon two-GPU Boot result copy is not contiguous");
+                }
+                cuda_transfer_->copy_sync(
+                    result_copies.front(),
+                    communication::CudaTransferRoute::Auto);
+                gpu::gpu_check_cuda(
+                    cudaSetDevice(device.cuda_device_id),
+                    "cudaSetDevice two-GPU Boot finalize");
+                device.evaluator->bootstrap_stc_first_finalize(
+                    real_output,
+                    local_imag_output,
+                    native.bootstrap_data,
+                    native.workspace,
+                    output);
+            }
             if (output.meta.q_count != q_count_for_level(attrs.target_level) ||
                 output.meta.component_count !=
                     static_cast<std::size_t>(attrs.target_components) ||
@@ -1566,20 +1734,28 @@ void PoseidonGpuApi::synchronize(Value &value)
         if (value.ready_ != nullptr)
         {
             value.ready_->wait();
-            return;
         }
-        const int value_device = value_cuda_device_id(value, "Poseidon GPU synchronize");
-        const auto configured =
-            std::find_if(devices_.begin(), devices_.end(), [value_device](const auto &device) {
-                return device->cuda_device_id == value_device;
-            });
-        if (configured == devices_.end())
+        else
         {
-            throw std::invalid_argument(
-                "Poseidon GPU synchronize value is not on a configured CUDA device");
+            const int value_device =
+                value_cuda_device_id(value, "Poseidon GPU synchronize");
+            const auto configured =
+                std::find_if(
+                    devices_.begin(),
+                    devices_.end(),
+                    [value_device](const auto &device) {
+                        return device->cuda_device_id == value_device;
+                    });
+            if (configured == devices_.end())
+            {
+                throw std::invalid_argument(
+                    "Poseidon GPU synchronize value is not on a configured CUDA device");
+            }
+            synchronize_device(value_device);
         }
-        synchronize_device(value_device);
     }
+    synchronize_all_devices();
+    release_completed_in_flight();
 }
 
 void PoseidonGpuApi::preflight(std::string_view plan_source_sha256,
@@ -1910,6 +2086,12 @@ void PoseidonGpuApi::retain_in_flight(
     {
         in_flight_resources_.push_back(std::move(resource));
     }
+}
+
+void PoseidonGpuApi::release_completed_in_flight()
+{
+    std::lock_guard<std::mutex> lock(in_flight_mutex_);
+    in_flight_resources_.clear();
 }
 
 void PoseidonGpuApi::synchronize_device(int cuda_device_id) const

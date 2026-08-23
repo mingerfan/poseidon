@@ -307,8 +307,22 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build(
     const PoseidonContext &context,
     KeyGenerator &key_generator,
     int cuda_device_id,
-    const GpuBootstrapProfileConfig &config)
+    const GpuBootstrapProfileConfig &config,
+    GpuBootstrapProfileCpuKeys *generated_cpu_keys,
+    const GpuBootstrapProfileCpuKeys *reused_cpu_keys)
 {
+    if (generated_cpu_keys != nullptr && reused_cpu_keys != nullptr)
+    {
+        throw std::invalid_argument(
+            "GPU bootstrap cannot generate and reuse CPU keys simultaneously");
+    }
+    if (reused_cpu_keys != nullptr &&
+        (reused_cpu_keys->relin_keys == nullptr ||
+         reused_cpu_keys->galois_keys == nullptr))
+    {
+        throw std::invalid_argument(
+            "GPU bootstrap reused CPU key bundle is incomplete");
+    }
     validate_config(context, cuda_device_id, config);
     gpu_check_cuda(cudaSetDevice(cuda_device_id), "cudaSetDevice");
 
@@ -412,11 +426,20 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build(
         eval_mod_poly.set_level_start(
             static_cast<std::uint32_t>(c2s_output_q_count - 1));
 
-        RelinKeys cpu_relin_keys;
-        key_generator.create_relin_keys(cpu_relin_keys);
+        std::shared_ptr<const RelinKeys> cpu_relin_keys;
+        if (reused_cpu_keys != nullptr)
+        {
+            cpu_relin_keys = reused_cpu_keys->relin_keys;
+        }
+        else
+        {
+            auto generated = std::make_shared<RelinKeys>();
+            key_generator.create_relin_keys(*generated);
+            cpu_relin_keys = std::move(generated);
+        }
         auto relin_keys = std::make_shared<GpuRelinKeysData>(
             GpuUploader::upload_relin_keys(
-                cpu_relin_keys, cuda_device_id));
+                *cpu_relin_keys, cuda_device_id));
 
         GpuEvalModUploadOptions eval_mod_options;
         eval_mod_options.dynamic_rescale = true;
@@ -484,14 +507,23 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build(
                 "GPU StC-first EvalMod output is absent from the context");
         }
 
-        auto cpu_galois_keys = make_galois_keys(
-            context, key_generator, coeff_to_slot, slot_to_coeff);
+        std::shared_ptr<const GaloisKeys> cpu_galois_keys;
+        if (reused_cpu_keys != nullptr)
+        {
+            cpu_galois_keys = reused_cpu_keys->galois_keys;
+        }
+        else
+        {
+            cpu_galois_keys = std::make_shared<GaloisKeys>(
+                make_galois_keys(
+                    context, key_generator, coeff_to_slot, slot_to_coeff));
+        }
         auto uploaded_galois_keys = config.linear_transform_mode ==
                 GpuLinearTransformMode::DoubleHoistBsgs
             ? GpuUploader::upload_double_hoist_galois_keys(
-                  cpu_galois_keys, cuda_device_id)
+                  *cpu_galois_keys, cuda_device_id)
             : GpuUploader::upload_galois_keys(
-                  cpu_galois_keys, cuda_device_id);
+                  *cpu_galois_keys, cuda_device_id);
         const auto stc_key_q_counts = required_dft_key_q_counts(
             config.stc_input_q_count,
             slot_to_coeff,
@@ -505,6 +537,11 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build(
             merge_q_counts(stc_key_q_counts, c2s_key_q_counts));
         auto galois_keys = std::make_shared<GpuGaloisKeysData>(
             std::move(uploaded_galois_keys));
+        if (generated_cpu_keys != nullptr)
+        {
+            generated_cpu_keys->relin_keys = cpu_relin_keys;
+            generated_cpu_keys->galois_keys = cpu_galois_keys;
+        }
 
         Plaintext minus_i;
         encoder.encode(
@@ -616,10 +653,19 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build(
     eval_mod_poly.set_level_start(
         static_cast<std::uint32_t>(c2s_output_q_count - 1));
 
-    RelinKeys cpu_relin_keys;
-    key_generator.create_relin_keys(cpu_relin_keys);
+    std::shared_ptr<const RelinKeys> cpu_relin_keys;
+    if (reused_cpu_keys != nullptr)
+    {
+        cpu_relin_keys = reused_cpu_keys->relin_keys;
+    }
+    else
+    {
+        auto generated = std::make_shared<RelinKeys>();
+        key_generator.create_relin_keys(*generated);
+        cpu_relin_keys = std::move(generated);
+    }
     auto relin_keys = std::make_shared<GpuRelinKeysData>(
-        GpuUploader::upload_relin_keys(cpu_relin_keys, cuda_device_id));
+        GpuUploader::upload_relin_keys(*cpu_relin_keys, cuda_device_id));
 
     GpuEvalModUploadOptions eval_mod_options;
     eval_mod_options.dynamic_rescale = true;
@@ -713,14 +759,23 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build(
     const std::size_t output_q_count =
         eval_mod.output_q_count - s2c_consumed;
 
-    auto cpu_galois_keys = make_galois_keys(
-        context, key_generator, coeff_to_slot, slot_to_coeff);
+    std::shared_ptr<const GaloisKeys> cpu_galois_keys;
+    if (reused_cpu_keys != nullptr)
+    {
+        cpu_galois_keys = reused_cpu_keys->galois_keys;
+    }
+    else
+    {
+        cpu_galois_keys = std::make_shared<GaloisKeys>(
+            make_galois_keys(
+                context, key_generator, coeff_to_slot, slot_to_coeff));
+    }
     auto uploaded_galois_keys = config.linear_transform_mode ==
             GpuLinearTransformMode::DoubleHoistBsgs
         ? GpuUploader::upload_double_hoist_galois_keys(
-              cpu_galois_keys, cuda_device_id)
+              *cpu_galois_keys, cuda_device_id)
         : GpuUploader::upload_galois_keys(
-              cpu_galois_keys, cuda_device_id);
+              *cpu_galois_keys, cuda_device_id);
     const auto c2s_key_q_counts = required_dft_key_q_counts(
         full_q_count, coeff_to_slot, /*include_post_dft_conjugation=*/true);
     const auto s2c_key_q_counts = required_dft_key_q_counts(
@@ -732,6 +787,11 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build(
         merge_q_counts(c2s_key_q_counts, s2c_key_q_counts));
     auto galois_keys = std::make_shared<GpuGaloisKeysData>(
         std::move(uploaded_galois_keys));
+    if (generated_cpu_keys != nullptr)
+    {
+        generated_cpu_keys->relin_keys = cpu_relin_keys;
+        generated_cpu_keys->galois_keys = cpu_galois_keys;
+    }
 
     Plaintext minus_i;
     encoder.encode(

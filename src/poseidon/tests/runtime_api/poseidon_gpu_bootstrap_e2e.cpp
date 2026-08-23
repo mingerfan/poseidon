@@ -143,12 +143,14 @@ fhegpu::LoadedOperatorSpec make_operator_spec(
     return {std::move(spec), kOperatorSpecSha};
 }
 
-fhegpu::TargetConfig make_target(const fhegpu::LoadedOperatorSpec &loaded_spec)
+fhegpu::TargetConfig make_target(
+    const fhegpu::LoadedOperatorSpec &loaded_spec,
+    int local_device_count)
 {
     fhegpu::TargetConfig target;
     target.target_id = loaded_spec.spec.target_id;
     target.world_size = 1;
-    target.device_counts = {1};
+    target.device_counts = {local_device_count};
     target.capability_version = 1;
     target.operator_spec = {
         loaded_spec.spec.id,
@@ -179,6 +181,7 @@ fhegpu::CommAction transfer(
 fhegpu::LoadedRuntimePlan make_plan(
     const fhegpu::LoadedOperatorSpec &loaded_spec,
     const fhegpu::BootProfile &profile,
+    int local_device_count,
     bool return_to_host)
 {
     const auto host = host_place();
@@ -192,7 +195,7 @@ fhegpu::LoadedRuntimePlan make_plan(
 
     fhegpu::RuntimePlan plan;
     plan.plan_id = return_to_host ? 1 : 2;
-    plan.target = make_target(loaded_spec);
+    plan.target = make_target(loaded_spec, local_device_count);
     plan.values = {
         {0, fhegpu::ValueKind::Ciphertext, host, kContextId,
          input_level, kLogScale, true, 2},
@@ -258,11 +261,20 @@ std::vector<std::complex<double>> make_message(std::size_t slot_count)
 
 int main()
 {
+    const std::size_t requested_gpu_count = env_size_or(
+        "POSEIDON_RUNTIME_BOOTSTRAP_GPU_COUNT", 1);
+    if (requested_gpu_count != 1 && requested_gpu_count != 2)
+    {
+        std::cerr << "[FAIL] POSEIDON_RUNTIME_BOOTSTRAP_GPU_COUNT must be 1 or 2\n";
+        return 1;
+    }
     int device_count = 0;
     const cudaError_t cuda_status = cudaGetDeviceCount(&device_count);
-    if (cuda_status != cudaSuccess || device_count <= kCudaDevice)
+    if (cuda_status != cudaSuccess ||
+        device_count < static_cast<int>(requested_gpu_count))
     {
-        std::cerr << "[SKIP] Runtime native bootstrap requires CUDA device 0: "
+        std::cerr << "[SKIP] Runtime native bootstrap requires "
+                  << requested_gpu_count << " CUDA device(s): "
                   << cudaGetErrorString(cuda_status) << '\n';
         return kSkip;
     }
@@ -290,16 +302,45 @@ int main()
         auto cpu_evaluator = poseidon::PoseidonFactory::get_instance()
             ->create_ckks_evaluator(context);
 
-        PoseidonGpuApi api(kContextId, context, kCudaDevice);
+        std::vector<int> cuda_device_ids;
+        cuda_device_ids.reserve(requested_gpu_count);
+        for (std::size_t index = 0; index < requested_gpu_count; ++index)
+        {
+            cuda_device_ids.push_back(static_cast<int>(index));
+        }
+        PoseidonGpuApi api(kContextId, context, cuda_device_ids);
+        poseidon::gpu::GpuBootstrapProfileCpuKeys shared_cpu_keys;
         auto profile = poseidon::gpu::GpuBootstrapProfileBuilder::build(
-            context, key_generator, kCudaDevice);
+            context,
+            key_generator,
+            kCudaDevice,
+            {},
+            requested_gpu_count == 2 ? &shared_cpu_keys : nullptr);
+        std::optional<poseidon::gpu::GpuBootstrapProfile> secondary_profile;
+        if (requested_gpu_count == 2)
+        {
+            secondary_profile.emplace(
+                poseidon::gpu::GpuBootstrapProfileBuilder::build(
+                    context,
+                    key_generator,
+                    /*cuda_device_id=*/1,
+                    {},
+                    nullptr,
+                    &shared_cpu_keys));
+        }
         const auto boot_profile =
             poseidon::runtime_api::make_native_boot_profile(profile);
         const auto loaded_spec = make_operator_spec(context, boot_profile);
         const auto device_plan = make_plan(
-            loaded_spec, boot_profile, /*return_to_host=*/false);
+            loaded_spec,
+            boot_profile,
+            static_cast<int>(requested_gpu_count),
+            /*return_to_host=*/false);
         const auto host_plan = make_plan(
-            loaded_spec, boot_profile, /*return_to_host=*/true);
+            loaded_spec,
+            boot_profile,
+            static_cast<int>(requested_gpu_count),
+            /*return_to_host=*/true);
 
         const auto message = make_message(
             std::size_t{1} << context.parameters_literal()->log_slots());
@@ -315,6 +356,13 @@ int main()
         ciphertext.scale() = std::ldexp(1.0, kLogScale);
 
         std::vector<std::complex<double>> direct_decoded;
+        std::vector<std::complex<double>> staged_decoded;
+        int staged_raw_level = 0;
+        double staged_raw_scale_log2 = 0.0;
+        int staged_branch_level = 0;
+        double staged_branch_scale_log2 = 0.0;
+        int staged_eval_mod_level = 0;
+        double staged_eval_mod_scale_log2 = 0.0;
         double direct_gpu_boot_ms = 0.0;
         {
             poseidon::gpu::GpuParameterData gpu_parameters(
@@ -358,11 +406,85 @@ int main()
             poseidon::Plaintext direct_plaintext;
             decryptor.decrypt(direct_output, direct_plaintext);
             encoder.decode(direct_plaintext, direct_decoded);
+
+            poseidon::gpu::GpuBootstrapWorkspace staged_workspace;
+            poseidon::gpu::GpuCiphertextData staged_raw;
+            poseidon::gpu::GpuCiphertextData staged_real;
+            poseidon::gpu::GpuCiphertextData staged_imag;
+            poseidon::gpu::GpuCiphertextData staged_eval_real;
+            poseidon::gpu::GpuCiphertextData staged_eval_imag;
+            poseidon::gpu::GpuCiphertextData staged_output;
+            gpu_evaluator.bootstrap_stc_first_transform(
+                gpu_input,
+                profile.bootstrap_data,
+                *profile.galois_keys,
+                staged_workspace,
+                staged_raw);
+            staged_raw_level = static_cast<int>(
+                context.crt_context()
+                    ->get_context_data(staged_raw.meta.parms_id)
+                    ->level());
+            staged_raw_scale_log2 = std::log2(staged_raw.meta.scale);
+            gpu_evaluator.bootstrap_extract_real(
+                staged_raw,
+                profile.bootstrap_data,
+                *profile.galois_keys,
+                staged_workspace,
+                staged_real);
+            gpu_evaluator.bootstrap_extract_imag(
+                staged_raw,
+                profile.bootstrap_data,
+                *profile.galois_keys,
+                staged_workspace,
+                staged_imag);
+            staged_branch_level = static_cast<int>(
+                context.crt_context()
+                    ->get_context_data(staged_real.meta.parms_id)
+                    ->level());
+            staged_branch_scale_log2 = std::log2(staged_real.meta.scale);
+            gpu_evaluator.eval_mod_high_precision(
+                staged_real,
+                profile.bootstrap_data,
+                *profile.relin_keys,
+                staged_workspace,
+                staged_eval_real);
+            gpu_evaluator.eval_mod_high_precision(
+                staged_imag,
+                profile.bootstrap_data,
+                *profile.relin_keys,
+                staged_workspace,
+                staged_eval_imag);
+            staged_eval_mod_level = static_cast<int>(
+                context.crt_context()
+                    ->get_context_data(staged_eval_real.meta.parms_id)
+                    ->level());
+            staged_eval_mod_scale_log2 =
+                std::log2(staged_eval_real.meta.scale);
+            gpu_evaluator.bootstrap_stc_first_finalize(
+                staged_eval_real,
+                staged_eval_imag,
+                profile.bootstrap_data,
+                staged_workspace,
+                staged_output);
+            poseidon::Ciphertext staged_host_output;
+            poseidon::gpu::GpuUploader::download_ciphertext(
+                staged_output, staged_host_output, context);
+            poseidon::Plaintext staged_plaintext;
+            decryptor.decrypt(staged_host_output, staged_plaintext);
+            encoder.decode(staged_plaintext, staged_decoded);
         }
 
         api.configure_native_bootstrap(0, std::move(profile));
+        if (secondary_profile)
+        {
+            api.configure_native_bootstrap(
+                1, std::move(*secondary_profile));
+            api.configure_multi_gpu_bootstrap(
+                boot_profile.profile_id, {0, 1});
+        }
 
-        fhegpu::SequentialRuntime<PoseidonGpuApi> runtime(0, 1, 1, api);
+        fhegpu::SequentialRuntime<PoseidonGpuApi> runtime(
+            0, 1, static_cast<int>(requested_gpu_count), api);
         const fhegpu::RuntimeResources resources{
             loaded_spec, std::nullopt, false};
         std::unordered_map<fhegpu::ValueId, PoseidonGpuValue> inputs;
@@ -421,6 +543,7 @@ int main()
 
         double max_abs_error = 0.0;
         double runtime_direct_max_abs_error = 0.0;
+        double staged_direct_max_abs_error = 0.0;
         for (std::size_t index = 0; index < message.size(); ++index)
         {
             max_abs_error = std::max(
@@ -428,6 +551,9 @@ int main()
             runtime_direct_max_abs_error = std::max(
                 runtime_direct_max_abs_error,
                 std::abs(decoded.at(index) - direct_decoded.at(index)));
+            staged_direct_max_abs_error = std::max(
+                staged_direct_max_abs_error,
+                std::abs(staged_decoded.at(index) - direct_decoded.at(index)));
         }
         if (!std::isfinite(max_abs_error) ||
             max_abs_error > kSemanticRegressionLimit)
@@ -445,20 +571,32 @@ int main()
                 "execution: " +
                 std::to_string(runtime_direct_max_abs_error));
         }
+        if (!std::isfinite(staged_direct_max_abs_error) ||
+            staged_direct_max_abs_error > kRuntimeDirectTolerance)
+        {
+            throw std::runtime_error(
+                "Staged StC-first bootstrap differs from monolithic GPU "
+                "execution: " +
+                std::to_string(staged_direct_max_abs_error));
+        }
 
         std::cout << "[PASS] RuntimePlan native GPU StC-first bootstrap"
+                  << " gpu_count=" << requested_gpu_count
                   << " degree=" << degree
                   << " input_level=" << boot_profile.input_level_min
                   << " output_level=" << boot_profile.output_level
                   << " output_scale_log2=" << boot_profile.output_scale_log2
                   << " runtime_direct_max_abs_error="
                   << runtime_direct_max_abs_error
+                  << " staged_direct_max_abs_error="
+                  << staged_direct_max_abs_error
                   << " source_semantic_max_abs_error=" << max_abs_error
                   << " regression_limit=" << kSemanticRegressionLimit
                   << '\n';
         std::cout
             << "[BENCH] warmup=" << warmup
             << " iterations=" << iterations
+            << " gpu_count=" << requested_gpu_count
             << " direct_gpu_boot_ms=" << direct_gpu_boot_ms
             << " runtime_device_boot_ms=" << runtime_device_boot_ms
             << " runtime_vs_direct_delta_ms="
@@ -468,6 +606,14 @@ int main()
             << " runtime_h2d_ms=" << host_h2d_ms
             << " runtime_setup_ms=" << host_setup_ms
             << " runtime_plan_ms=" << runtime_plan_ms
+            << '\n';
+        std::cout
+            << "[STAGES] raw_level=" << staged_raw_level
+            << " raw_scale_log2=" << staged_raw_scale_log2
+            << " branch_level=" << staged_branch_level
+            << " branch_scale_log2=" << staged_branch_scale_log2
+            << " eval_mod_level=" << staged_eval_mod_level
+            << " eval_mod_scale_log2=" << staged_eval_mod_scale_log2
             << '\n';
         return 0;
     }
