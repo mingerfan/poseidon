@@ -3287,8 +3287,18 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
     const GpuGaloisKeysData &galois_keys,
     std::uint32_t rescale_count,
     GpuDoubleHoistWorkspace &workspace,
-    GpuCiphertextData &destination_ciphertext) const
+    GpuCiphertextData &destination_ciphertext,
+    GpuQPCiphertextBuffer *destination_partial_qp,
+    GpuCiphertextMeta *destination_partial_meta) const
 {
+    const bool produce_partial_qp = destination_partial_qp != nullptr;
+    if (produce_partial_qp != (destination_partial_meta != nullptr) ||
+        (produce_partial_qp && rescale_count != 0))
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist: "
+            "invalid partial-QP output request");
+    }
     validate_ntt_ciphertext_input(
         "GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist",
         source_ciphertext,
@@ -3693,6 +3703,13 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
          * run the generic identity path, which would ModDown, lift back to QP,
          * and ModDown a second time only to satisfy the outer BSGS pipeline.
          */
+        if (produce_partial_qp)
+        {
+            *destination_partial_qp =
+                std::move(workspace.group_accumulators);
+            *destination_partial_meta = product_meta;
+            return;
+        }
         keyswitch_handler_.moddown_qp_ciphertext_to_q(
             workspace.group_accumulators,
             0,
@@ -4004,6 +4021,38 @@ void GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist(
             "outer accumulator is empty");
     }
 
+    if (produce_partial_qp)
+    {
+        if (!grouped_outer_moddown)
+        {
+            throw std::invalid_argument(
+                "GpuEvaluator::multiply_by_diag_matrix_bsgs_double_hoist: "
+                "partial QP requires inverse-pre-rotated Galois keys");
+        }
+        if (!direct_giant_accumulate)
+        {
+            workspace.outer_accumulator.ensure_capacity(
+                source_shard0.device_id,
+                degree,
+                q_count,
+                p_count,
+                1);
+            kernel::launch_double_hoist_reduce_qp_groups(
+                workspace.outer_accumulator.q_component(0, 0),
+                workspace.outer_accumulator.q_component(0, 1),
+                workspace.outer_accumulator.p_component(0, 0),
+                workspace.outer_accumulator.p_component(0, 1),
+                workspace.group_accumulators.q.data(),
+                workspace.group_accumulators.p.data(),
+                group_count,
+                *parameter_shard,
+                degree);
+        }
+        *destination_partial_qp = std::move(workspace.outer_accumulator);
+        *destination_partial_meta = product_meta;
+        return;
+    }
+
     if (direct_giant_accumulate)
     {
         keyswitch_handler_.moddown_qp_ciphertext_to_q(
@@ -4192,6 +4241,163 @@ void GpuEvaluator::dft_double_hoist(
     destination_ciphertext = std::move(current);
 }
 
+void GpuEvaluator::dft_double_hoist_layer(
+    const GpuCiphertextData &source_ciphertext,
+    const GpuLinearMatrixGroupQP &matrix_group,
+    std::size_t layer_index,
+    const GpuGaloisKeysData &galois_keys,
+    GpuDoubleHoistWorkspace &workspace,
+    GpuCiphertextData &destination_ciphertext) const
+{
+    if (layer_index >= matrix_group.data().size())
+    {
+        throw std::out_of_range(
+            "GpuEvaluator::dft_double_hoist_layer: layer index is out of range");
+    }
+    const bool dynamic_rescale = matrix_group.rescale_min_scale() > 0.0;
+    if (dynamic_rescale &&
+        matrix_group.rescale_counts().size() != matrix_group.data().size())
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::dft_double_hoist_layer: dynamic rescale plan size mismatch");
+    }
+
+    const auto &matrix = matrix_group.data()[layer_index];
+    GpuCiphertextData product;
+    multiply_by_diag_matrix_bsgs_double_hoist(
+        source_ciphertext,
+        matrix,
+        galois_keys,
+        dynamic_rescale ? 0 : std::max(matrix_group.step(), std::uint32_t{1}),
+        workspace,
+        dynamic_rescale ? product : destination_ciphertext);
+    if (dynamic_rescale)
+    {
+        rescale_dynamic(
+            product,
+            destination_ciphertext,
+            matrix_group.rescale_min_scale());
+    }
+}
+
+void GpuEvaluator::dft_double_hoist_layer_partial_qp(
+    const GpuCiphertextData &source_ciphertext,
+    const GpuLinearMatrixGroupQP &matrix_group,
+    std::size_t layer_index,
+    const GpuGaloisKeysData &galois_keys,
+    GpuDoubleHoistWorkspace &workspace,
+    GpuQPCiphertextBuffer &destination_partial_qp,
+    GpuCiphertextMeta &destination_partial_meta) const
+{
+    if (layer_index >= matrix_group.data().size())
+    {
+        throw std::out_of_range(
+            "GpuEvaluator::dft_double_hoist_layer_partial_qp: layer index is out of range");
+    }
+    GpuCiphertextData unused;
+    multiply_by_diag_matrix_bsgs_double_hoist(
+        source_ciphertext,
+        matrix_group.data()[layer_index],
+        galois_keys,
+        0,
+        workspace,
+        unused,
+        &destination_partial_qp,
+        &destination_partial_meta);
+}
+
+void GpuEvaluator::add_double_hoist_partial_qp_inplace(
+    GpuQPCiphertextBuffer &destination,
+    const GpuQPCiphertextBuffer &source,
+    const GpuCiphertextMeta &meta) const
+{
+    if (destination.batch_count != 1 || source.batch_count != 1 ||
+        destination.device_id != source.device_id ||
+        destination.degree != source.degree ||
+        destination.q_count != source.q_count ||
+        destination.p_count != source.p_count ||
+        destination.q_count != meta.q_count ||
+        destination.degree != meta.degree || destination.p_count == 0)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::add_double_hoist_partial_qp_inplace: shape mismatch");
+    }
+    const auto &level_info = params_.get_level(meta.parms_id);
+    const GpuParameterShard *parameter_shard = nullptr;
+    for (const auto &candidate : level_info.shards)
+    {
+        if (candidate.device_id == destination.device_id &&
+            candidate.hybrid_base_q_count == destination.q_count &&
+            candidate.hybrid_base_p_count == destination.p_count)
+        {
+            parameter_shard = &candidate;
+            break;
+        }
+    }
+    if (parameter_shard == nullptr)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::add_double_hoist_partial_qp_inplace: parameter shard is absent");
+    }
+    kernel::launch_double_hoist_add_qp_inplace(
+        destination.q.data(),
+        destination.p.data(),
+        source.q.data(),
+        source.p.data(),
+        *parameter_shard,
+        destination.degree);
+}
+
+void GpuEvaluator::finalize_dft_double_hoist_layer_partial_qp(
+    GpuQPCiphertextBuffer &source_partial_qp,
+    const GpuCiphertextMeta &source_partial_meta,
+    const GpuLinearMatrixGroupQP &matrix_group,
+    std::size_t layer_index,
+    GpuDoubleHoistWorkspace &workspace,
+    GpuCiphertextData &destination_ciphertext) const
+{
+    if (layer_index >= matrix_group.data().size() ||
+        source_partial_qp.batch_count != 1 ||
+        source_partial_qp.degree != source_partial_meta.degree ||
+        source_partial_qp.q_count != source_partial_meta.q_count ||
+        source_partial_qp.p_count == 0)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::finalize_dft_double_hoist_layer_partial_qp: invalid input");
+    }
+    const auto &level_info = params_.get_level(source_partial_meta.parms_id);
+    keyswitch_handler_.moddown_qp_ciphertext_to_q(
+        source_partial_qp,
+        0,
+        workspace.result_q,
+        source_partial_meta,
+        level_info,
+        workspace.keyswitch);
+
+    const bool dynamic_rescale = matrix_group.rescale_min_scale() > 0.0;
+    if (dynamic_rescale)
+    {
+        if (matrix_group.rescale_counts().size() !=
+            matrix_group.data().size())
+        {
+            throw std::invalid_argument(
+                "GpuEvaluator::finalize_dft_double_hoist_layer_partial_qp: "
+                "dynamic rescale plan size mismatch");
+        }
+        rescale_dynamic(
+            workspace.result_q,
+            destination_ciphertext,
+            matrix_group.rescale_min_scale());
+    }
+    else
+    {
+        rescale_many(
+            workspace.result_q,
+            destination_ciphertext,
+            std::max(matrix_group.step(), std::uint32_t{1}));
+    }
+}
+
 void GpuEvaluator::coeff_to_slot(
     const GpuCiphertextData &source_ciphertext,
     const GpuLinearMatrixGroup &matrix_group,
@@ -4315,7 +4521,7 @@ void GpuEvaluator::normalize_bootstrap_output_scale(
     }
 }
 
-void GpuEvaluator::bootstrap_stc_first_transform(
+void GpuEvaluator::bootstrap_stc_first_prepare_c2s(
     const GpuCiphertextData &source_ciphertext,
     const GpuBootstrapData &bootstrap_data,
     const GpuGaloisKeysData &galois_keys,
@@ -4325,18 +4531,18 @@ void GpuEvaluator::bootstrap_stc_first_transform(
     if (bootstrap_data.schedule != GpuBootstrapSchedule::StCFirst)
     {
         throw std::invalid_argument(
-            "GpuEvaluator::bootstrap_stc_first_transform: profile is not StC-first");
+            "GpuEvaluator::bootstrap_stc_first_prepare_c2s: profile is not StC-first");
     }
     if (bootstrap_data.project_real)
     {
         throw std::invalid_argument(
-            "GpuEvaluator::bootstrap_stc_first_transform: project_real is unsupported");
+            "GpuEvaluator::bootstrap_stc_first_prepare_c2s: project_real is unsupported");
     }
     if (!(bootstrap_data.q0_over_message_ratio > 0.0) ||
         !std::isfinite(bootstrap_data.q0_over_message_ratio))
     {
         throw std::invalid_argument(
-            "GpuEvaluator::bootstrap_stc_first_transform: invalid q0/message ratio");
+            "GpuEvaluator::bootstrap_stc_first_prepare_c2s: invalid q0/message ratio");
     }
 
     const auto linear_transform_mode =
@@ -4349,14 +4555,14 @@ void GpuEvaluator::bootstrap_stc_first_transform(
     if (linear_transform_mode == GpuLinearTransformMode::SingleHoistBsgs)
     {
         throw std::invalid_argument(
-            "GpuEvaluator::bootstrap_stc_first_transform: single_hoist is unsupported");
+            "GpuEvaluator::bootstrap_stc_first_prepare_c2s: single_hoist is unsupported");
     }
     if (use_double_hoist)
     {
         if (bootstrap_data.double_hoist_baby_tile == 0)
         {
             throw std::invalid_argument(
-                "GpuEvaluator::bootstrap_stc_first_transform: double-hoist baby tile is zero");
+                "GpuEvaluator::bootstrap_stc_first_prepare_c2s: double-hoist baby tile is zero");
         }
         workspace.coeff_to_slot_double_hoist.baby_tile_size =
             bootstrap_data.double_hoist_baby_tile;
@@ -4371,10 +4577,10 @@ void GpuEvaluator::bootstrap_stc_first_transform(
           bootstrap_data.slot_to_coeff_matrix_qp.data().empty())))
     {
         throw std::invalid_argument(
-            "GpuEvaluator::bootstrap_stc_first_transform: empty linear transform");
+            "GpuEvaluator::bootstrap_stc_first_prepare_c2s: empty linear transform");
     }
 
-    NvtxRange prefix_range("bootstrap_stc_first_transform");
+    NvtxRange prefix_range("bootstrap_stc_first_prepare_c2s");
     {
         NvtxRange range("StC");
         if (use_double_hoist)
@@ -4396,7 +4602,7 @@ void GpuEvaluator::bootstrap_stc_first_transform(
         }
     }
 
-    const GpuCiphertextData *raised_for_c2s = &workspace.raised;
+    GpuCiphertextData *raised_for_c2s = &workspace.raised;
     {
         NvtxRange range("ModRaise");
         bootstrap_prepare_modraise_input(
@@ -4438,25 +4644,46 @@ void GpuEvaluator::bootstrap_stc_first_transform(
         }
     }
 
+    destination_ciphertext = std::move(*raised_for_c2s);
+}
+
+void GpuEvaluator::bootstrap_stc_first_transform(
+    const GpuCiphertextData &source_ciphertext,
+    const GpuBootstrapData &bootstrap_data,
+    const GpuGaloisKeysData &galois_keys,
+    GpuBootstrapWorkspace &workspace,
+    GpuCiphertextData &destination_ciphertext) const
+{
+    GpuCiphertextData raised_for_c2s;
+    bootstrap_stc_first_prepare_c2s(
+        source_ciphertext,
+        bootstrap_data,
+        galois_keys,
+        workspace,
+        raised_for_c2s);
+
+    const auto linear_transform_mode =
+        bootstrap_data.allow_environment_linear_transform_override
+            ? gpu_linear_transform_mode_from_environment(
+                  bootstrap_data.linear_transform_mode)
+            : bootstrap_data.linear_transform_mode;
+    NvtxRange range("CtS raw DFT");
+    if (linear_transform_mode == GpuLinearTransformMode::DoubleHoistBsgs)
     {
-        NvtxRange range("CtS raw DFT");
-        if (use_double_hoist)
-        {
-            dft_double_hoist(
-                *raised_for_c2s,
-                bootstrap_data.coeff_to_slot_matrix_qp,
-                galois_keys,
-                workspace.coeff_to_slot_double_hoist,
-                destination_ciphertext);
-        }
-        else
-        {
-            dft(
-                *raised_for_c2s,
-                bootstrap_data.coeff_to_slot_matrix,
-                galois_keys,
-                destination_ciphertext);
-        }
+        dft_double_hoist(
+            raised_for_c2s,
+            bootstrap_data.coeff_to_slot_matrix_qp,
+            galois_keys,
+            workspace.coeff_to_slot_double_hoist,
+            destination_ciphertext);
+    }
+    else
+    {
+        dft(
+            raised_for_c2s,
+            bootstrap_data.coeff_to_slot_matrix,
+            galois_keys,
+            destination_ciphertext);
     }
 }
 

@@ -1450,6 +1450,104 @@ GpuLinearMatrixGroupQP GpuUploader::upload_linear_matrix_group_qp(
     return result;
 }
 
+void GpuUploader::restrict_double_hoist_giant_groups(
+    GpuMatrixPlainQP &matrix,
+    std::size_t group_begin,
+    std::size_t group_end)
+{
+    const auto &source = matrix.plan;
+    const std::size_t group_count = source.giant_steps.size();
+    if (group_begin >= group_end || group_end > group_count)
+    {
+        throw std::invalid_argument(
+            "GpuUploader::restrict_double_hoist_giant_groups: invalid group range");
+    }
+    if (source.n2 != group_count || source.terms.empty() ||
+        source.group_term_offsets.size() != group_count + 1 ||
+        source.diagonal_q_ptrs.size() != source.terms.size() ||
+        source.diagonal_p_ptrs.size() != source.terms.size() ||
+        source.diagonal_periods.size() != source.terms.size() ||
+        source.term_baby_indices.size() != source.terms.size())
+    {
+        throw std::invalid_argument(
+            "GpuUploader::restrict_double_hoist_giant_groups: incomplete source plan");
+    }
+
+    const int device_id = source.diagonal_q_ptrs.device_id();
+    std::vector<const GpuWord *> source_q_ptrs(source.terms.size());
+    std::vector<const GpuWord *> source_p_ptrs(source.terms.size());
+    std::vector<std::uint32_t> source_periods(source.terms.size());
+    std::vector<std::uint32_t> source_baby_indices(source.terms.size());
+    source.diagonal_q_ptrs.copy_to_host(
+        source_q_ptrs.data(), source_q_ptrs.size());
+    source.diagonal_p_ptrs.copy_to_host(
+        source_p_ptrs.data(), source_p_ptrs.size());
+    source.diagonal_periods.copy_to_host(
+        source_periods.data(), source_periods.size());
+    source.term_baby_indices.copy_to_host(
+        source_baby_indices.data(), source_baby_indices.size());
+
+    GpuDoubleHoistMatrixPlan restricted;
+    restricted.log_slots = source.log_slots;
+    restricted.n1 = source.n1;
+    restricted.rescale_count = source.rescale_count;
+    restricted.baby_steps = source.baby_steps;
+    restricted.compressed_plaintexts = source.compressed_plaintexts;
+    restricted.giant_steps.reserve(group_end - group_begin);
+    restricted.group_term_offsets.reserve(group_end - group_begin + 1);
+    restricted.group_term_offsets.push_back(0);
+
+    std::vector<const GpuWord *> q_ptrs;
+    std::vector<const GpuWord *> p_ptrs;
+    std::vector<std::uint32_t> periods;
+    std::vector<std::uint32_t> baby_indices;
+    for (std::size_t group = group_begin; group < group_end; ++group)
+    {
+        const std::uint32_t restricted_group =
+            static_cast<std::uint32_t>(restricted.giant_steps.size());
+        restricted.giant_steps.push_back(source.giant_steps[group]);
+        const std::size_t term_begin = source.group_term_offsets[group];
+        const std::size_t term_end = source.group_term_offsets[group + 1];
+        if (term_begin >= term_end || term_end > source.terms.size())
+        {
+            throw std::invalid_argument(
+                "GpuUploader::restrict_double_hoist_giant_groups: invalid term range");
+        }
+        for (std::size_t term = term_begin; term < term_end; ++term)
+        {
+            const std::uint32_t restricted_term =
+                static_cast<std::uint32_t>(restricted.terms.size());
+            const std::uint32_t baby_index = source_baby_indices[term];
+            q_ptrs.push_back(source_q_ptrs[term]);
+            p_ptrs.push_back(source_p_ptrs[term]);
+            periods.push_back(source_periods[term]);
+            baby_indices.push_back(baby_index);
+            restricted.terms.push_back(GpuDoubleHoistTerm{
+                restricted_group, baby_index, restricted_term});
+        }
+        restricted.group_term_offsets.push_back(
+            static_cast<std::uint32_t>(restricted.terms.size()));
+    }
+    restricted.n2 =
+        static_cast<std::uint32_t>(restricted.giant_steps.size());
+
+    restricted.diagonal_q_ptrs.allocate(q_ptrs.size(), device_id);
+    restricted.diagonal_p_ptrs.allocate(p_ptrs.size(), device_id);
+    restricted.diagonal_periods.allocate(periods.size(), device_id);
+    restricted.term_baby_indices.allocate(baby_indices.size(), device_id);
+    restricted.group_term_offsets_device.allocate(
+        restricted.group_term_offsets.size(), device_id);
+    restricted.diagonal_q_ptrs.copy_from_host(q_ptrs.data(), q_ptrs.size());
+    restricted.diagonal_p_ptrs.copy_from_host(p_ptrs.data(), p_ptrs.size());
+    restricted.diagonal_periods.copy_from_host(periods.data(), periods.size());
+    restricted.term_baby_indices.copy_from_host(
+        baby_indices.data(), baby_indices.size());
+    restricted.group_term_offsets_device.copy_from_host(
+        restricted.group_term_offsets.data(),
+        restricted.group_term_offsets.size());
+    matrix.plan = std::move(restricted);
+}
+
 GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
     const EvalModPoly &eval_mod_poly,
     const CKKSEncoder &encoder,

@@ -19,8 +19,10 @@
 #include <complex>
 #include <cstdint>
 #include <cstdlib>
+#include <iomanip>
 #include <iostream>
 #include <optional>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
@@ -245,6 +247,13 @@ double milliseconds(std::uint64_t nanoseconds)
     return static_cast<double>(nanoseconds) / 1.0e6;
 }
 
+std::string precise_double(double value)
+{
+    std::ostringstream stream;
+    stream << std::setprecision(17) << value;
+    return stream.str();
+}
+
 std::vector<std::complex<double>> make_message(std::size_t slot_count)
 {
     std::vector<std::complex<double>> result(slot_count);
@@ -263,9 +272,11 @@ int main()
 {
     const std::size_t requested_gpu_count = env_size_or(
         "POSEIDON_RUNTIME_BOOTSTRAP_GPU_COUNT", 1);
-    if (requested_gpu_count != 1 && requested_gpu_count != 2)
+    if (requested_gpu_count != 1 && requested_gpu_count != 2 &&
+        requested_gpu_count != 4)
     {
-        std::cerr << "[FAIL] POSEIDON_RUNTIME_BOOTSTRAP_GPU_COUNT must be 1 or 2\n";
+        std::cerr
+            << "[FAIL] POSEIDON_RUNTIME_BOOTSTRAP_GPU_COUNT must be 1, 2, or 4\n";
         return 1;
     }
     int device_count = 0;
@@ -315,18 +326,28 @@ int main()
             key_generator,
             kCudaDevice,
             {},
-            requested_gpu_count == 2 ? &shared_cpu_keys : nullptr);
-        std::optional<poseidon::gpu::GpuBootstrapProfile> secondary_profile;
-        if (requested_gpu_count == 2)
+            requested_gpu_count > 1 ? &shared_cpu_keys : nullptr);
+        std::vector<poseidon::gpu::GpuBootstrapProfile> secondary_profiles;
+        secondary_profiles.reserve(
+            requested_gpu_count > 0 ? requested_gpu_count - 1 : 0);
+        for (std::size_t device_index = 1;
+             device_index < requested_gpu_count;
+             ++device_index)
         {
-            secondary_profile.emplace(
+            secondary_profiles.push_back(
                 poseidon::gpu::GpuBootstrapProfileBuilder::build(
                     context,
                     key_generator,
-                    /*cuda_device_id=*/1,
+                    static_cast<int>(device_index),
                     {},
                     nullptr,
                     &shared_cpu_keys));
+        }
+        std::vector<std::size_t> c2s_giant_groups;
+        for (const auto &matrix :
+             profile.bootstrap_data.coeff_to_slot_matrix_qp.data())
+        {
+            c2s_giant_groups.push_back(matrix.plan.giant_steps.size());
         }
         const auto boot_profile =
             poseidon::runtime_api::make_native_boot_profile(profile);
@@ -475,12 +496,18 @@ int main()
         }
 
         api.configure_native_bootstrap(0, std::move(profile));
-        if (secondary_profile)
+        for (std::size_t device_index = 1;
+             device_index < requested_gpu_count;
+             ++device_index)
         {
             api.configure_native_bootstrap(
-                1, std::move(*secondary_profile));
+                static_cast<int>(device_index),
+                std::move(secondary_profiles[device_index - 1]));
+        }
+        if (requested_gpu_count > 1)
+        {
             api.configure_multi_gpu_bootstrap(
-                boot_profile.profile_id, {0, 1});
+                boot_profile.profile_id, cuda_device_ids);
         }
 
         fhegpu::SequentialRuntime<PoseidonGpuApi> runtime(
@@ -569,7 +596,9 @@ int main()
             throw std::runtime_error(
                 "Runtime StC-first bootstrap differs from direct GPU "
                 "execution: " +
-                std::to_string(runtime_direct_max_abs_error));
+                std::to_string(runtime_direct_max_abs_error) +
+                " (high_precision=" +
+                precise_double(runtime_direct_max_abs_error) + ")");
         }
         if (!std::isfinite(staged_direct_max_abs_error) ||
             staged_direct_max_abs_error > kRuntimeDirectTolerance)
@@ -615,6 +644,16 @@ int main()
             << " eval_mod_level=" << staged_eval_mod_level
             << " eval_mod_scale_log2=" << staged_eval_mod_scale_log2
             << '\n';
+        std::cout << "[STAGES] c2s_giant_groups=";
+        for (std::size_t index = 0; index < c2s_giant_groups.size(); ++index)
+        {
+            if (index != 0)
+            {
+                std::cout << ',';
+            }
+            std::cout << c2s_giant_groups[index];
+        }
+        std::cout << '\n';
         return 0;
     }
     catch (const std::exception &error)

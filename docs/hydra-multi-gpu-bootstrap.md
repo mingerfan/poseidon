@@ -42,12 +42,35 @@ H2D/D2H 和设备分配时间异常增长。
 - 源消息最大误差：`6.78437`，与单卡一致。
 
 测试入口是 `poseidon_runtime_gpu_bootstrap_e2e`。通过
-`POSEIDON_RUNTIME_BOOTSTRAP_GPU_COUNT=1|2` 选择单卡或两卡；默认执行 2 次预热
+`POSEIDON_RUNTIME_BOOTSTRAP_GPU_COUNT=1|2|4` 选择单卡、两卡或四卡；默认执行 2 次预热
 和 5 次计时。
 
-## 四卡版本的下一步
+## 四卡正确性版本
 
-两卡版本只利用了两个独立 EvalMod 分支。四卡版本将进一步拆分 double-hoist
-DFT：每张卡重复 baby-step，按 giant group 分配局部矩阵乘，随后使用显式二叉树
-加法归约。是否拆分每一层由实测计算与通信代价决定；giant group 太少的层继续
-保留单卡执行。
+四卡版本进一步拆分 post-ModRaise C2S double-hoist DFT。每张卡重复完整 baby-step，
+按连续 giant-group 区间计算局部矩阵乘；每层局部结果按 `4 -> 2 -> 1` 二叉树归约，
+GPU0 的归约结果作为下一层输入。C2S 完成后仍由 GPU0/GPU1 并行执行 real/imag
+EvalMod，GPU2/GPU3 在首个正确性版本中不参与 EvalMod。
+
+不能让每张卡独立完成 outer ModDown/rescale 后再归约 Q 密文。该顺序在首次测试中
+产生了 `1.1525631740552091e-7` 的单卡/四卡逐槽差异，略高于严格的 `1e-7`
+回归阈值。当前实现让每张卡停在 outer QP accumulator，跨卡同时归约 Q、P，随后
+只在 GPU0 执行一次共享 ModDown 和该层 rescale。这既恢复了单卡运算顺序，也把
+最终差异降为严格的 `0`。
+
+在四张 V100、`N=65536`、无预热、单次执行的正确性运行中：
+
+- C2S 四层 giant-group 数为 `4,4,1,1`；前两层使用四卡，后两层自然退化为单卡。
+- 四卡与单卡逐槽最大差异为 `0`，staged/monolithic 差异也为 `0`。
+- 源消息最大误差为 `6.78437`，输出 level 为 `11`，scale 为精确 `2^45`。
+- 冷态 Device-final Boot 为 `203.361 ms`；同一进程后续一次 Boot+D2H 为
+  `99.1505 ms`。这组数据只验证冷热差异，不能作为最终性能结论。
+
+## 四卡性能版本的下一步
+
+正确性基线会保留 QP 统一归并。性能阶段首先加入 StC、ModRaise、每层 C2S 的
+broadcast/partial/reduce/shared-ModDown、两个 EvalMod 分支和 finalize 的独立计时，
+然后依据计算/通信比选择需要分卡的 C2S 层。需要重点消除每层临时 `std::async`
+线程、硬 stream synchronize、重复设备分配，并复用跨卡传输缓冲区。由于本机
+四张 V100 的可见拓扑为 PCIe `PIX` 而不是 NVLink，QP 归并增加的 P-side 流量也
+必须纳入分片收益模型。

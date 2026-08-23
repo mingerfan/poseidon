@@ -131,6 +131,27 @@ void launch_double_hoist_reduce_p_groups(
     const GpuParameterShard &parameter_shard,
     std::size_t degree);
 
+/** Reduce a batch of QP ciphertext groups into one QP ciphertext. */
+void launch_double_hoist_reduce_qp_groups(
+    GpuWord *destination_q0,
+    GpuWord *destination_q1,
+    GpuWord *destination_p0,
+    GpuWord *destination_p1,
+    const GpuWord *group_q,
+    const GpuWord *group_p,
+    std::size_t group_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
+/** Add one single-batch QP ciphertext into another in place. */
+void launch_double_hoist_add_qp_inplace(
+    GpuWord *destination_q,
+    GpuWord *destination_p,
+    const GpuWord *source_q,
+    const GpuWord *source_p,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
 void launch_double_hoist_qp_plain_mul_accumulate_groups(
     GpuWord *group_q,
     GpuWord *group_p,

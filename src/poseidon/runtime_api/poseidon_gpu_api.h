@@ -161,10 +161,10 @@ public:
     /**
      * @brief Compile one native Boot profile for multi-device execution.
      *
-     * The first device owns the RuntimePlan input/output. With two devices,
-     * the raw C2S result is copied to the second device and the real/imaginary
-     * EvalMod branches execute concurrently before final reduction on the
-     * first device. The same native profile must already be installed on each
+     * The first device owns the RuntimePlan input/output. Two devices split
+     * the real/imaginary EvalMod branches. Four devices additionally shard
+     * each C2S double-hoist giant-step layer and tree-reduce its partial
+     * results. The same native profile must already be installed on every
      * listed device.
      */
     void configure_multi_gpu_bootstrap(
@@ -193,6 +193,7 @@ private:
     struct MultiGpuBootstrapPlan
     {
         std::vector<int> logical_device_indices;
+        std::vector<std::size_t> c2s_active_device_counts;
     };
 
     DeviceState &device_state(const fhegpu::Place &place, const char *where);

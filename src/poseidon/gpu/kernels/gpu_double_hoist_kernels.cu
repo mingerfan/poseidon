@@ -595,6 +595,26 @@ __global__ void reduce_qp_groups_kernel(
     destination[tid] = accumulator;
 }
 
+__global__ void add_qp_inplace_kernel(
+    GpuWord *destination,
+    const GpuWord *source,
+    const GpuWord *moduli,
+    std::size_t limb_count,
+    std::size_t degree)
+{
+    const std::size_t tid = blockIdx.x * blockDim.x + threadIdx.x;
+    const std::size_t component_words = limb_count * degree;
+    const std::size_t total = 2 * component_words;
+    if (tid >= total)
+    {
+        return;
+    }
+    const std::size_t in_component = tid % component_words;
+    const std::size_t limb = in_component / degree;
+    destination[tid] = add_mod(
+        destination[tid], source[tid], moduli[limb]);
+}
+
 __global__ void add_lifted_galois_c0_kernel(
     GpuWord *destination_q0,
     const GpuWord *source_q0,
@@ -1750,6 +1770,90 @@ void launch_double_hoist_reduce_p_groups(
         group_p,
         parameter_shard.rns_primes.data() + q_count,
         group_count,
+        p_count,
+        degree);
+    gpu_check_cuda(cudaGetLastError(), name);
+}
+
+void launch_double_hoist_reduce_qp_groups(
+    GpuWord *destination_q0,
+    GpuWord *destination_q1,
+    GpuWord *destination_p0,
+    GpuWord *destination_p1,
+    const GpuWord *group_q,
+    const GpuWord *group_p,
+    std::size_t group_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    const char *name = "launch_double_hoist_reduce_qp_groups";
+    validate_parameter_shard(parameter_shard, degree, name);
+    if (destination_q0 == nullptr || destination_q1 == nullptr ||
+        destination_p0 == nullptr || destination_p1 == nullptr ||
+        group_q == nullptr || group_p == nullptr || group_count == 0)
+    {
+        throw std::invalid_argument(std::string(name) + ": invalid argument");
+    }
+    gpu_check_cuda(cudaSetDevice(parameter_shard.device_id), name);
+    constexpr int block_size = 256;
+    const std::size_t q_count = parameter_shard.hybrid_base_q_count;
+    const std::size_t p_count = parameter_shard.hybrid_base_p_count;
+    const int q_grid = static_cast<int>(
+        (2 * q_count * degree + block_size - 1) / block_size);
+    reduce_qp_groups_kernel<<<q_grid, block_size>>>(
+        destination_q0,
+        group_q,
+        parameter_shard.rns_primes.data(),
+        group_count,
+        q_count,
+        degree);
+    gpu_check_cuda(cudaGetLastError(), name);
+    const int p_grid = static_cast<int>(
+        (2 * p_count * degree + block_size - 1) / block_size);
+    reduce_qp_groups_kernel<<<p_grid, block_size>>>(
+        destination_p0,
+        group_p,
+        parameter_shard.rns_primes.data() + q_count,
+        group_count,
+        p_count,
+        degree);
+    gpu_check_cuda(cudaGetLastError(), name);
+}
+
+void launch_double_hoist_add_qp_inplace(
+    GpuWord *destination_q,
+    GpuWord *destination_p,
+    const GpuWord *source_q,
+    const GpuWord *source_p,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    const char *name = "launch_double_hoist_add_qp_inplace";
+    validate_parameter_shard(parameter_shard, degree, name);
+    if (destination_q == nullptr || destination_p == nullptr ||
+        source_q == nullptr || source_p == nullptr)
+    {
+        throw std::invalid_argument(std::string(name) + ": invalid argument");
+    }
+    gpu_check_cuda(cudaSetDevice(parameter_shard.device_id), name);
+    constexpr int block_size = 256;
+    const std::size_t q_count = parameter_shard.hybrid_base_q_count;
+    const std::size_t p_count = parameter_shard.hybrid_base_p_count;
+    const int q_grid = static_cast<int>(
+        (2 * q_count * degree + block_size - 1) / block_size);
+    add_qp_inplace_kernel<<<q_grid, block_size>>>(
+        destination_q,
+        source_q,
+        parameter_shard.rns_primes.data(),
+        q_count,
+        degree);
+    gpu_check_cuda(cudaGetLastError(), name);
+    const int p_grid = static_cast<int>(
+        (2 * p_count * degree + block_size - 1) / block_size);
+    add_qp_inplace_kernel<<<p_grid, block_size>>>(
+        destination_p,
+        source_p,
+        parameter_shard.rns_primes.data() + q_count,
         p_count,
         degree);
     gpu_check_cuda(cudaGetLastError(), name);

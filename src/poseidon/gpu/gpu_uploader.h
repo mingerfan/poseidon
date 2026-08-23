@@ -139,6 +139,16 @@ public:
         bool compress_plaintexts = false);
 
     /**
+     * Keep a contiguous subset of double-hoist giant groups in one uploaded
+     * matrix. Baby steps remain complete so every device can reproduce the
+     * shared Hydra baby-step phase locally.
+     */
+    static void restrict_double_hoist_giant_groups(
+        GpuMatrixPlainQP &matrix,
+        std::size_t group_begin,
+        std::size_t group_end);
+
+    /**
      * @brief Generate and upload the fixed high-precision EvalMod BSGS plan.
      *
      * Polynomial splitting, level simulation, plaintext encoding and all

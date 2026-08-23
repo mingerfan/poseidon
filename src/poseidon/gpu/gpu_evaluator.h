@@ -575,7 +575,9 @@ public:
         const GpuGaloisKeysData &galois_keys,
         std::uint32_t rescale_count,
         GpuDoubleHoistWorkspace &workspace,
-        GpuCiphertextData &destination_ciphertext) const;
+        GpuCiphertextData &destination_ciphertext,
+        GpuQPCiphertextBuffer *destination_partial_qp = nullptr,
+        GpuCiphertextMeta *destination_partial_meta = nullptr) const;
 
     /**
      * @brief Apply a pre-uploaded DFT linear matrix group.
@@ -590,6 +592,40 @@ public:
         const GpuCiphertextData &source_ciphertext,
         const GpuLinearMatrixGroupQP &matrix_group,
         const GpuGaloisKeysData &galois_keys,
+        GpuDoubleHoistWorkspace &workspace,
+        GpuCiphertextData &destination_ciphertext) const;
+
+    /** Execute one uploaded double-hoist DFT matrix layer. */
+    void dft_double_hoist_layer(
+        const GpuCiphertextData &source_ciphertext,
+        const GpuLinearMatrixGroupQP &matrix_group,
+        std::size_t layer_index,
+        const GpuGaloisKeysData &galois_keys,
+        GpuDoubleHoistWorkspace &workspace,
+        GpuCiphertextData &destination_ciphertext) const;
+
+    /** Execute one DFT layer through its QP outer accumulator. */
+    void dft_double_hoist_layer_partial_qp(
+        const GpuCiphertextData &source_ciphertext,
+        const GpuLinearMatrixGroupQP &matrix_group,
+        std::size_t layer_index,
+        const GpuGaloisKeysData &galois_keys,
+        GpuDoubleHoistWorkspace &workspace,
+        GpuQPCiphertextBuffer &destination_partial_qp,
+        GpuCiphertextMeta &destination_partial_meta) const;
+
+    /** Add a remote QP partial into a local partial before ModDown. */
+    void add_double_hoist_partial_qp_inplace(
+        GpuQPCiphertextBuffer &destination,
+        const GpuQPCiphertextBuffer &source,
+        const GpuCiphertextMeta &meta) const;
+
+    /** Apply one shared ModDown and layer rescale after QP reduction. */
+    void finalize_dft_double_hoist_layer_partial_qp(
+        GpuQPCiphertextBuffer &source_partial_qp,
+        const GpuCiphertextMeta &source_partial_meta,
+        const GpuLinearMatrixGroupQP &matrix_group,
+        std::size_t layer_index,
         GpuDoubleHoistWorkspace &workspace,
         GpuCiphertextData &destination_ciphertext) const;
 
@@ -665,6 +701,14 @@ public:
      * ciphertext and extract the two independent EvalMod branches in parallel.
      */
     void bootstrap_stc_first_transform(
+        const GpuCiphertextData &source_ciphertext,
+        const GpuBootstrapData &bootstrap_data,
+        const GpuGaloisKeysData &galois_keys,
+        GpuBootstrapWorkspace &workspace,
+        GpuCiphertextData &destination_ciphertext) const;
+
+    /** Execute the StC-first prefix through ModRaise, before the C2S DFT. */
+    void bootstrap_stc_first_prepare_c2s(
         const GpuCiphertextData &source_ciphertext,
         const GpuBootstrapData &bootstrap_data,
         const GpuGaloisKeysData &galois_keys,
