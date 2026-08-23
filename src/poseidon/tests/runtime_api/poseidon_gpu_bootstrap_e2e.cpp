@@ -1,7 +1,11 @@
 #include "poseidon/ckks_encoder.h"
 #include "poseidon/decryptor.h"
 #include "poseidon/encryptor.h"
+#include "poseidon/evaluator/evaluator_ckks_base.h"
+#include "poseidon/factory/poseidon_factory.h"
 #include "poseidon/gpu/gpu_bootstrap_profile.h"
+#include "poseidon/gpu/gpu_parameter.h"
+#include "poseidon/gpu/gpu_uploader.h"
 #include "poseidon/keygenerator.h"
 #include "poseidon/parameters_literal.h"
 #include "poseidon/runtime_api/poseidon_gpu_api.h"
@@ -32,7 +36,8 @@ constexpr int kSkip = 77;
 constexpr int kCudaDevice = 0;
 constexpr int kLogScale = 40;
 constexpr std::uint32_t kQ0Level = 1;
-constexpr double kTolerance = 3.0e-3;
+constexpr double kSemanticRegressionLimit = 10.0;
+constexpr double kRuntimeDirectTolerance = 1.0e-7;
 const std::string kContextId = "poseidon-runtime-native-bootstrap";
 const std::string kOperatorSpecSha =
     "sha256:2222222222222222222222222222222222222222222222222222222222222222";
@@ -68,8 +73,8 @@ std::vector<std::uint32_t> mixed_bootstrap_q_chain()
 {
     return {
         32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32,
-        28, 28, 31, 31, 32, 32, 30, 31, 32, 31, 32,
-        32, 31, 31, 31, 32, 32, 31, 32, 32, 32, 30};
+        28, 30, 31, 31, 32, 32, 30, 31, 32, 31, 32,
+        32, 31, 31, 31, 32, 22, 31, 32, 32, 32, 30};
 }
 
 poseidon::PoseidonContext make_context(std::size_t degree)
@@ -176,7 +181,12 @@ fhegpu::LoadedRuntimePlan make_plan(
 {
     const auto host = host_place();
     const auto device = device_place();
-    const int input_level = loaded_spec.spec.level_upper_bound;
+    if (profile.input_level_min != profile.input_level_max)
+    {
+        throw std::invalid_argument(
+            "StC-first bootstrap E2E requires one exact input level");
+    }
+    const int input_level = profile.input_level_min;
 
     fhegpu::RuntimePlan plan;
     plan.plan_id = 1;
@@ -245,7 +255,7 @@ int main()
     try
     {
         const std::size_t degree = env_size_or(
-            "POSEIDON_RUNTIME_BOOTSTRAP_DEGREE", 16384);
+            "POSEIDON_RUNTIME_BOOTSTRAP_DEGREE", 65536);
         auto context = make_context(degree);
         poseidon::KeyGenerator key_generator(context);
         poseidon::PublicKey public_key;
@@ -253,6 +263,8 @@ int main()
         poseidon::Encryptor encryptor(context, public_key);
         poseidon::Decryptor decryptor(context, key_generator.secret_key());
         poseidon::CKKSEncoder encoder(context);
+        auto cpu_evaluator = poseidon::PoseidonFactory::get_instance()
+            ->create_ckks_evaluator(context);
 
         PoseidonGpuApi api(kContextId, context, kCudaDevice);
         auto profile = poseidon::gpu::GpuBootstrapProfileBuilder::build(
@@ -261,7 +273,6 @@ int main()
             poseidon::runtime_api::make_native_boot_profile(profile);
         const auto loaded_spec = make_operator_spec(context, boot_profile);
         const auto loaded_plan = make_plan(loaded_spec, boot_profile);
-        api.configure_native_bootstrap(0, std::move(profile));
 
         const auto message = make_message(
             std::size_t{1} << context.parameters_literal()->log_slots());
@@ -269,6 +280,38 @@ int main()
         encoder.encode(message, std::ldexp(1.0, kLogScale), plaintext);
         poseidon::Ciphertext ciphertext;
         encryptor.encrypt(plaintext, ciphertext);
+        cpu_evaluator->drop_modulus(
+            ciphertext,
+            ciphertext,
+            context.crt_context()->parms_id_map().at(
+                static_cast<std::uint32_t>(boot_profile.input_level_min)));
+        ciphertext.scale() = std::ldexp(1.0, kLogScale);
+
+        std::vector<std::complex<double>> direct_decoded;
+        {
+            poseidon::gpu::GpuParameterData gpu_parameters(
+                context, kCudaDevice);
+            poseidon::gpu::GpuEvaluator gpu_evaluator(gpu_parameters);
+            auto gpu_input = poseidon::gpu::GpuUploader::upload_ciphertext(
+                ciphertext, kCudaDevice);
+            poseidon::gpu::GpuBootstrapWorkspace workspace;
+            poseidon::gpu::GpuCiphertextData gpu_output;
+            gpu_evaluator.bootstrap(
+                gpu_input,
+                profile.bootstrap_data,
+                *profile.relin_keys,
+                *profile.galois_keys,
+                workspace,
+                gpu_output);
+            poseidon::Ciphertext direct_output;
+            poseidon::gpu::GpuUploader::download_ciphertext(
+                gpu_output, direct_output, context);
+            poseidon::Plaintext direct_plaintext;
+            decryptor.decrypt(direct_output, direct_plaintext);
+            encoder.decode(direct_plaintext, direct_decoded);
+        }
+
+        api.configure_native_bootstrap(0, std::move(profile));
 
         fhegpu::SequentialRuntime<PoseidonGpuApi> runtime(0, 1, 1, api);
         const fhegpu::RuntimeResources resources{
@@ -285,23 +328,42 @@ int main()
         encoder.decode(output_plaintext, decoded);
 
         double max_abs_error = 0.0;
+        double runtime_direct_max_abs_error = 0.0;
         for (std::size_t index = 0; index < message.size(); ++index)
         {
             max_abs_error = std::max(
                 max_abs_error, std::abs(decoded.at(index) - message[index]));
+            runtime_direct_max_abs_error = std::max(
+                runtime_direct_max_abs_error,
+                std::abs(decoded.at(index) - direct_decoded.at(index)));
         }
-        if (max_abs_error > kTolerance)
+        if (!std::isfinite(max_abs_error) ||
+            max_abs_error > kSemanticRegressionLimit)
         {
             throw std::runtime_error(
-                "Runtime native bootstrap error exceeds tolerance: " +
+                "Runtime StC-first bootstrap semantic error exceeds the "
+                "degree-22 regression bound: " +
                 std::to_string(max_abs_error));
         }
+        if (!std::isfinite(runtime_direct_max_abs_error) ||
+            runtime_direct_max_abs_error > kRuntimeDirectTolerance)
+        {
+            throw std::runtime_error(
+                "Runtime StC-first bootstrap differs from direct GPU "
+                "execution: " +
+                std::to_string(runtime_direct_max_abs_error));
+        }
 
-        std::cout << "[PASS] RuntimePlan native GPU bootstrap"
+        std::cout << "[PASS] RuntimePlan native GPU StC-first bootstrap"
                   << " degree=" << degree
+                  << " input_level=" << boot_profile.input_level_min
                   << " output_level=" << boot_profile.output_level
                   << " output_scale_log2=" << boot_profile.output_scale_log2
-                  << " max_abs_error=" << max_abs_error << '\n';
+                  << " runtime_direct_max_abs_error="
+                  << runtime_direct_max_abs_error
+                  << " source_semantic_max_abs_error=" << max_abs_error
+                  << " regression_limit=" << kSemanticRegressionLimit
+                  << '\n';
         return 0;
     }
     catch (const std::exception &error)

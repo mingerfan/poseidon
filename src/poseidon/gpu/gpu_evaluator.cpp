@@ -4339,6 +4339,178 @@ void GpuEvaluator::bootstrap(
         throw std::invalid_argument("GpuEvaluator::bootstrap: invalid q0/message ratio");
     }
 
+    auto normalize_output_scale = [&](GpuCiphertextData &output) {
+        if (!bootstrap_data.output_scale_normalization_plaintext.empty())
+        {
+            if (!(bootstrap_data.output_scale_override > 0.0) ||
+                !std::isfinite(bootstrap_data.output_scale_override))
+            {
+                throw std::invalid_argument(
+                    "GpuEvaluator::bootstrap: invalid normalized output scale");
+            }
+            multiply_plain(
+                output,
+                bootstrap_data.output_scale_normalization_plaintext,
+                workspace.scratch3);
+            rescale(workspace.scratch3, workspace.scratch4);
+            output = std::move(workspace.scratch4);
+        }
+        if (bootstrap_data.output_scale_override > 0.0)
+        {
+            output.meta.scale = bootstrap_data.output_scale_override;
+        }
+    };
+
+    if (bootstrap_data.schedule == GpuBootstrapSchedule::StCFirst)
+    {
+        if (bootstrap_data.project_real)
+        {
+            throw std::invalid_argument(
+                "GpuEvaluator::bootstrap: StC-first does not support project_real");
+        }
+
+        NvtxRange bootstrap_range("bootstrap_stc_first_once");
+        {
+            NvtxRange range("StC");
+            if (use_double_hoist)
+            {
+                dft_double_hoist(
+                    source_ciphertext,
+                    bootstrap_data.slot_to_coeff_matrix_qp,
+                    galois_keys,
+                    workspace.slot_to_coeff_double_hoist,
+                    workspace.scratch0);
+            }
+            else
+            {
+                dft(
+                    source_ciphertext,
+                    bootstrap_data.slot_to_coeff_matrix,
+                    galois_keys,
+                    workspace.scratch0);
+            }
+        }
+
+        const GpuCiphertextData *raised_for_c2s = &workspace.raised;
+        {
+            NvtxRange range("ModRaise");
+            bootstrap_prepare_modraise_input(
+                workspace.scratch0,
+                workspace.modraise_input,
+                bootstrap_data.q0_parms_id,
+                bootstrap_data.q0_over_message_ratio);
+            raise_modulus(workspace.modraise_input, workspace.raised);
+
+            if (bootstrap_data.post_raise_c2s_input_scale > 0.0)
+            {
+                workspace.raised.meta.scale =
+                    bootstrap_data.post_raise_c2s_input_scale;
+            }
+            else if (bootstrap_data.raised_scale_override > 0.0)
+            {
+                workspace.raised.meta.scale =
+                    bootstrap_data.raised_scale_override;
+            }
+
+            if (bootstrap_data.post_raise_integer_multiplier > 1)
+            {
+                multiply_scalar(
+                    workspace.raised,
+                    bootstrap_data.post_raise_integer_multiplier,
+                    workspace.raised_scaled);
+                workspace.raised_scaled.meta.scale =
+                    workspace.raised.meta.scale *
+                    bootstrap_data.post_raise_scale_multiplier;
+                raised_for_c2s = &workspace.raised_scaled;
+            }
+            else if (!bootstrap_data.post_raise_plaintext.empty())
+            {
+                multiply_plain(
+                    workspace.raised,
+                    bootstrap_data.post_raise_plaintext,
+                    workspace.raised_scaled);
+                raised_for_c2s = &workspace.raised_scaled;
+            }
+        }
+
+        {
+            NvtxRange range("CtS");
+            if (use_double_hoist)
+            {
+                coeff_to_slot_double_hoist(
+                    *raised_for_c2s,
+                    bootstrap_data.coeff_to_slot_matrix_qp,
+                    bootstrap_data.minus_i_plaintext,
+                    galois_keys,
+                    workspace.coeff_to_slot_double_hoist,
+                    workspace.coeff_to_slot_real,
+                    workspace.coeff_to_slot_imag);
+            }
+            else
+            {
+                coeff_to_slot(
+                    *raised_for_c2s,
+                    bootstrap_data.coeff_to_slot_matrix,
+                    bootstrap_data.minus_i_plaintext,
+                    galois_keys,
+                    workspace.coeff_to_slot_real,
+                    workspace.coeff_to_slot_imag);
+            }
+        }
+
+        {
+            NvtxRange range("EvalMod");
+            eval_mod_high_precision(
+                workspace.coeff_to_slot_real,
+                bootstrap_data,
+                relin_keys,
+                workspace,
+                workspace.eval_mod_real);
+            eval_mod_high_precision(
+                workspace.coeff_to_slot_imag,
+                bootstrap_data,
+                relin_keys,
+                workspace,
+                workspace.eval_mod_imag);
+
+            multiply_plain(
+                workspace.eval_mod_imag,
+                bootstrap_data.plus_i_plaintext,
+                workspace.scratch0);
+            add(
+                workspace.eval_mod_real,
+                workspace.scratch0,
+                workspace.scratch1);
+        }
+
+        if (bootstrap_data.output_ratio == 0)
+        {
+            throw std::invalid_argument(
+                "GpuEvaluator::bootstrap: invalid output ratio");
+        }
+        if (bootstrap_data.output_ratio > 1)
+        {
+            NvtxRange range("Output normalize");
+            multiply_scalar(
+                workspace.scratch1,
+                bootstrap_data.output_ratio,
+                workspace.scratch2);
+            destination_ciphertext = std::move(workspace.scratch2);
+        }
+        else
+        {
+            destination_ciphertext = std::move(workspace.scratch1);
+        }
+        normalize_output_scale(destination_ciphertext);
+        return;
+    }
+
+    if (bootstrap_data.schedule != GpuBootstrapSchedule::Standard)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::bootstrap: unknown bootstrap schedule");
+    }
+
     NvtxRange bootstrap_range("bootstrap_once");
     const GpuCiphertextData *raised_for_c2s = &workspace.raised;
     {
@@ -4488,6 +4660,7 @@ void GpuEvaluator::bootstrap(
             workspace.scratch0);
         destination_ciphertext = std::move(workspace.scratch0);
     }
+    normalize_output_scale(destination_ciphertext);
 }
 
 void GpuEvaluator::eval_mod_high_precision(

@@ -22,6 +22,12 @@ namespace poseidon
 namespace gpu
 {
 
+enum class GpuBootstrapSchedule : std::uint8_t
+{
+    Standard = 0,
+    StCFirst = 1,
+};
+
 enum class GpuEvalModPolynomialBasis : std::uint8_t
 {
     Monomial = 0,
@@ -126,6 +132,7 @@ std::vector<GpuEvalModBasisStep> make_gpu_eval_mod_basis_plan(
  */
 struct GpuBootstrapData
 {
+    GpuBootstrapSchedule schedule = GpuBootstrapSchedule::Standard;
     GpuLinearTransformMode linear_transform_mode =
         GpuLinearTransformMode::ClassicBsgs;
     bool allow_environment_linear_transform_override = true;
@@ -134,6 +141,8 @@ struct GpuBootstrapData
     double q0_over_message_ratio = 0.0;
 
     double raised_scale_override = 0.0;
+    /* Logical scale assigned to the raised StC output before post-raise C2S. */
+    double post_raise_c2s_input_scale = 0.0;
     std::uint64_t post_raise_integer_multiplier = 1;
     double post_raise_scale_multiplier = 1.0;
     GpuPlaintextData post_raise_plaintext;
@@ -253,6 +262,15 @@ struct GpuBootstrapData
     bool project_real = false;
     std::uint32_t output_ratio = 1;
     double slot_to_coeff_output_scale = 0.0;
+
+    /*
+     * Optional exact Runtime scale normalization. The uploaded plaintext is
+     * selected so multiply_plain + one rescale preserves the decoded value;
+     * output_scale_override then records the exact integer-log2 scale promised
+     * by RuntimePlan.
+     */
+    GpuPlaintextData output_scale_normalization_plaintext;
+    double output_scale_override = 0.0;
 };
 
 /**
@@ -625,8 +643,9 @@ public:
     /**
      * @brief CKKS bootstrapping scheduler using GPU-resident precomputed data.
      *
-     * This stitches together the already implemented GPU stages:
-     * prepare/ModRaise -> CoeffToSlot -> EvalMod -> SlotToCoeff.
+     * This stitches together the already implemented GPU stages. The profile
+     * selects either the standard ModRaise-first schedule or the optimized
+     * StC-first schedule used by the current degree-22 bootstrap path.
      * EvalMod uses the setup-time static GPU plan stored in GpuBootstrapData.
      */
     void bootstrap(

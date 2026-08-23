@@ -26,7 +26,10 @@ namespace gpu
  */
 struct GpuBootstrapProfileConfig
 {
-    std::string profile_id = "poseidon-gpu-degree22-da3";
+    std::string profile_id = "poseidon-gpu-degree22-da3-stc-first";
+    GpuBootstrapSchedule schedule = GpuBootstrapSchedule::StCFirst;
+    std::uint32_t stc_input_q_count = 6;
+    double stc_scaling = 1.0;
     std::uint32_t bootstrap_ratio = 32;
     std::uint32_t eval_mod_log_scale = 45;
     std::uint32_t eval_mod_double_angle = 3;
@@ -40,8 +43,8 @@ struct GpuBootstrapProfileConfig
     bool eval_mod_virtual_degree_bound = true;
     std::uint32_t logical_rescale_count = 1;
     std::uint32_t c2s_log_bsgs_ratio = 1;
-    std::vector<std::uint32_t> c2s_layer_groups;
-    std::uint32_t c2s_direct_layer_threshold = 0;
+    std::vector<std::uint32_t> c2s_layer_groups{5, 4, 3, 3};
+    std::uint32_t c2s_direct_layer_threshold = 3;
     std::uint32_t s2c_log_bsgs_ratio = 1;
     bool project_real = false;
     GpuLinearTransformMode linear_transform_mode =

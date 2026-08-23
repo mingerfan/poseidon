@@ -283,6 +283,20 @@ void validate_config(
         throw std::invalid_argument(
             "GPU bootstrap context has an invalid Q/P modulus chain");
     }
+    if (config.schedule != GpuBootstrapSchedule::Standard &&
+        config.schedule != GpuBootstrapSchedule::StCFirst)
+    {
+        throw std::invalid_argument("GPU bootstrap schedule is invalid");
+    }
+    if (config.schedule == GpuBootstrapSchedule::StCFirst &&
+        (config.stc_input_q_count <= parameters->q0_level() ||
+         config.stc_input_q_count > parameters->q().size() ||
+         !(config.stc_scaling > 0.0) || !std::isfinite(config.stc_scaling) ||
+         config.project_real))
+    {
+        throw std::invalid_argument(
+            "GPU StC-first bootstrap profile configuration is invalid");
+    }
     log2_power_of_two(config.bootstrap_ratio, "GPU bootstrap ratio");
 }
 
@@ -338,6 +352,244 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build(
     const double s2c_scaling =
         parameters->scale() /
         (eval_mod_poly.scaling_factor() / eval_mod_poly.message_ratio());
+    const double q0_over_message_ratio = std::exp2(std::round(std::log2(
+        context.crt_context()->q0() /
+        static_cast<double>(config.bootstrap_ratio))));
+
+    if (config.schedule == GpuBootstrapSchedule::StCFirst)
+    {
+        auto slot_to_coeff = make_slot_to_coeff_matrix_group(
+            context,
+            encoder,
+            config.stc_input_q_count - 1,
+            config.stc_scaling,
+            config,
+            parameters->scale(),
+            eval_mod_scale);
+        const std::size_t stc_consumed = consumed_q_count(slot_to_coeff);
+        if (stc_consumed >= config.stc_input_q_count ||
+            config.stc_input_q_count - stc_consumed !=
+                static_cast<std::size_t>(q0_level) + 1)
+        {
+            throw std::invalid_argument(
+                "GPU StC-first matrix must finish at the ModRaise base level");
+        }
+
+        const double ideal_input_factor =
+            1.0 /
+            (eval_mod_poly.k() * eval_mod_poly.sc_fac() *
+             eval_mod_poly.q_diff() *
+             static_cast<double>(config.bootstrap_ratio));
+        const double raised_c2s_scale =
+            q0_over_message_ratio * c2s_scaling / ideal_input_factor;
+        if (!(raised_c2s_scale > 0.0) || !std::isfinite(raised_c2s_scale))
+        {
+            throw std::runtime_error(
+                "GPU StC-first raised C2S scale is invalid");
+        }
+
+        auto coeff_to_slot = make_coeff_to_slot_matrix_group(
+            context,
+            encoder,
+            c2s_scaling,
+            config,
+            eval_mod_scale,
+            eval_mod_scale);
+        const std::size_t c2s_consumed = consumed_q_count(coeff_to_slot);
+        if (c2s_consumed >= full_q_count)
+        {
+            throw std::invalid_argument(
+                "GPU StC-first CoeffToSlot consumes the complete modulus chain");
+        }
+        const std::size_t c2s_output_q_count =
+            full_q_count - c2s_consumed;
+        const auto c2s_output_parms_id =
+            context.crt_context()->parms_id_map().at(
+                static_cast<std::uint32_t>(c2s_output_q_count - 1));
+        const double c2s_output_scale = planned_dft_output_scale(
+            context, raised_c2s_scale, coeff_to_slot);
+        eval_mod_poly.set_level_start(
+            static_cast<std::uint32_t>(c2s_output_q_count - 1));
+
+        RelinKeys cpu_relin_keys;
+        key_generator.create_relin_keys(cpu_relin_keys);
+        auto relin_keys = std::make_shared<GpuRelinKeysData>(
+            GpuUploader::upload_relin_keys(
+                cpu_relin_keys, cuda_device_id));
+
+        GpuEvalModUploadOptions eval_mod_options;
+        eval_mod_options.dynamic_rescale = true;
+        eval_mod_options.polynomial_log_split = config.eval_mod_log_split;
+        eval_mod_options.flat_bsgs_b8 = false;
+        eval_mod_options.virtual_degree_bound =
+            config.eval_mod_virtual_degree_bound;
+        eval_mod_options.lead_leaf_resplit = false;
+        auto eval_mod = GpuUploader::upload_eval_mod_high_precision(
+            eval_mod_poly,
+            encoder,
+            c2s_output_parms_id,
+            cuda_device_id,
+            relin_keys.get(),
+            parms_id_zero,
+            config.logical_rescale_count,
+            nullptr,
+            /*include_input_offset=*/true,
+            std::numeric_limits<std::uint32_t>::max(),
+            std::numeric_limits<double>::quiet_NaN(),
+            std::numeric_limits<double>::quiet_NaN(),
+            /*fuse_leaf_terms_before_rescale=*/true,
+            c2s_output_scale,
+            /*metadata_only=*/false,
+            eval_mod_options);
+
+        if (config.eval_mod_sine_degree == 22 &&
+            config.eval_mod_log_split == 2 &&
+            config.eval_mod_virtual_degree_bound)
+        {
+            std::vector<std::uint32_t> basis_degrees;
+            basis_degrees.reserve(eval_mod.basis_steps.size());
+            bool materialized_degree_bound = false;
+            for (const auto &step : eval_mod.basis_steps)
+            {
+                basis_degrees.push_back(step.output_degree);
+                materialized_degree_bound |= step.output_degree == 32;
+            }
+            const std::vector<std::uint32_t> expected_basis{2, 3, 4, 8, 16};
+            if (eval_mod.polynomial_degree != 22 ||
+                eval_mod.polynomial_log_split != 2 ||
+                basis_degrees != expected_basis ||
+                eval_mod.polynomial_blocks.size() != 6 ||
+                eval_mod.polynomial_combine_steps.size() != 5 ||
+                materialized_degree_bound)
+            {
+                throw std::runtime_error(
+                    "GPU StC-first degree-22 baby-4 plan invariant failed");
+            }
+        }
+        if (eval_mod.output_q_count <= 1 ||
+            eval_mod.output_q_count >= c2s_output_q_count)
+        {
+            throw std::runtime_error(
+                "GPU StC-first EvalMod produced an invalid output level");
+        }
+        const auto eval_mod_context =
+            context.crt_context()->get_context_data(
+                eval_mod.output_parms_id);
+        if (!eval_mod_context ||
+            eval_mod_context->coeff_modulus().size() !=
+                eval_mod.output_q_count)
+        {
+            throw std::runtime_error(
+                "GPU StC-first EvalMod output is absent from the context");
+        }
+
+        auto cpu_galois_keys = make_galois_keys(
+            context, key_generator, coeff_to_slot, slot_to_coeff);
+        auto uploaded_galois_keys = config.linear_transform_mode ==
+                GpuLinearTransformMode::DoubleHoistBsgs
+            ? GpuUploader::upload_double_hoist_galois_keys(
+                  cpu_galois_keys, cuda_device_id)
+            : GpuUploader::upload_galois_keys(
+                  cpu_galois_keys, cuda_device_id);
+        const auto stc_key_q_counts = required_dft_key_q_counts(
+            config.stc_input_q_count,
+            slot_to_coeff,
+            /*include_post_dft_conjugation=*/false);
+        const auto c2s_key_q_counts = required_dft_key_q_counts(
+            full_q_count,
+            coeff_to_slot,
+            /*include_post_dft_conjugation=*/true);
+        GpuUploader::prepare_key_views_for_q_counts(
+            uploaded_galois_keys,
+            merge_q_counts(stc_key_q_counts, c2s_key_q_counts));
+        auto galois_keys = std::make_shared<GpuGaloisKeysData>(
+            std::move(uploaded_galois_keys));
+
+        Plaintext minus_i;
+        encoder.encode(
+            std::complex<double>(0.0, -1.0),
+            c2s_output_parms_id,
+            1.0,
+            minus_i);
+        Plaintext plus_i;
+        encoder.encode(
+            std::complex<double>(0.0, 1.0),
+            eval_mod.output_parms_id,
+            1.0,
+            plus_i);
+
+        const double output_normalization_value =
+            static_cast<double>(
+                eval_mod_context->coeff_modulus().back().value()) /
+            eval_mod.output_scale;
+        Plaintext output_scale_normalization;
+        encoder.encode(
+            output_normalization_value,
+            eval_mod.output_parms_id,
+            eval_mod_scale,
+            output_scale_normalization);
+
+        GpuBootstrapData bootstrap_data;
+        bootstrap_data.schedule = GpuBootstrapSchedule::StCFirst;
+        bootstrap_data.linear_transform_mode = config.linear_transform_mode;
+        bootstrap_data.allow_environment_linear_transform_override = false;
+        bootstrap_data.q0_parms_id =
+            context.crt_context()->parms_id_map().at(q0_level);
+        bootstrap_data.q0_over_message_ratio = q0_over_message_ratio;
+        bootstrap_data.post_raise_c2s_input_scale = raised_c2s_scale;
+        bootstrap_data.project_real = false;
+        bootstrap_data.output_ratio = config.bootstrap_ratio;
+        bootstrap_data.output_scale_override = eval_mod_scale;
+        if (config.linear_transform_mode ==
+            GpuLinearTransformMode::DoubleHoistBsgs)
+        {
+            bootstrap_data.coeff_to_slot_matrix_qp =
+                GpuUploader::upload_linear_matrix_group_qp(
+                    coeff_to_slot,
+                    context,
+                    cuda_device_id,
+                    std::max(coeff_to_slot.step(), std::uint32_t{1}));
+            bootstrap_data.slot_to_coeff_matrix_qp =
+                GpuUploader::upload_linear_matrix_group_qp(
+                    slot_to_coeff,
+                    context,
+                    cuda_device_id,
+                    std::max(slot_to_coeff.step(), std::uint32_t{1}));
+        }
+        else
+        {
+            bootstrap_data.coeff_to_slot_matrix =
+                GpuUploader::upload_linear_matrix_group(
+                    coeff_to_slot, cuda_device_id);
+            bootstrap_data.slot_to_coeff_matrix =
+                GpuUploader::upload_linear_matrix_group(
+                    slot_to_coeff, cuda_device_id);
+        }
+        bootstrap_data.minus_i_plaintext =
+            GpuUploader::upload_plaintext(minus_i, cuda_device_id);
+        bootstrap_data.plus_i_plaintext =
+            GpuUploader::upload_plaintext(plus_i, cuda_device_id);
+        bootstrap_data.output_scale_normalization_plaintext =
+            GpuUploader::upload_plaintext(
+                output_scale_normalization, cuda_device_id);
+        bootstrap_data.eval_mod = std::move(eval_mod);
+
+        GpuBootstrapProfile result;
+        result.profile_id = config.profile_id;
+        result.cuda_device_id = cuda_device_id;
+        result.input_level_min =
+            static_cast<int>(config.stc_input_q_count - 1);
+        result.input_level_max = result.input_level_min;
+        result.output_level = static_cast<int>(
+            bootstrap_data.eval_mod.output_q_count - 2);
+        result.output_scale_log2 =
+            static_cast<int>(config.eval_mod_log_scale);
+        result.bootstrap_data = std::move(bootstrap_data);
+        result.relin_keys = std::move(relin_keys);
+        result.galois_keys = std::move(galois_keys);
+        return result;
+    }
+
     const double raised_scale = eval_mod_scale;
 
     auto coeff_to_slot = make_coeff_to_slot_matrix_group(
@@ -495,9 +747,7 @@ GpuBootstrapProfile GpuBootstrapProfileBuilder::build(
     bootstrap_data.linear_transform_mode = config.linear_transform_mode;
     bootstrap_data.allow_environment_linear_transform_override = false;
     bootstrap_data.q0_parms_id = context.crt_context()->parms_id_map().at(q0_level);
-    bootstrap_data.q0_over_message_ratio = std::exp2(std::round(std::log2(
-        context.crt_context()->q0() /
-        static_cast<double>(config.bootstrap_ratio))));
+    bootstrap_data.q0_over_message_ratio = q0_over_message_ratio;
     bootstrap_data.raised_scale_override = raised_scale;
     bootstrap_data.slot_to_coeff_input_scale = s2c_input_scale;
     bootstrap_data.project_real = config.project_real;
