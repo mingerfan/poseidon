@@ -36,6 +36,7 @@
 #include <variant>
 
 #include <cuda_runtime_api.h>
+#include <rmm/cuda_device.hpp>
 #include <rmm/mr/device/cuda_memory_resource.hpp>
 #include <rmm/mr/device/per_device_resource.hpp>
 #include <rmm/mr/device/pool_memory_resource.hpp>
@@ -45,7 +46,15 @@ namespace poseidon::runtime_api
 namespace
 {
 
-constexpr std::size_t kInitialDevicePoolSize = 24ULL << 30;
+constexpr std::size_t kPreferredInitialDevicePoolSize = 24ULL << 30;
+constexpr int kInitialDevicePoolFreeMemoryPercent = 75;
+
+std::size_t initial_device_pool_size()
+{
+    return std::min(kPreferredInitialDevicePoolSize,
+                    rmm::percent_of_free_device_memory(
+                        kInitialDevicePoolFreeMemoryPercent));
+}
 
 #ifdef POSEIDON_RUNTIME_GPU_NCCL
 void check_mpi_status(int status, const char *what)
@@ -112,7 +121,7 @@ public:
         upstream_ = std::make_unique<rmm::mr::cuda_memory_resource>();
         pool_ = std::make_unique<
             rmm::mr::pool_memory_resource<rmm::mr::cuda_memory_resource>>(
-            upstream_.get(), kInitialDevicePoolSize);
+            upstream_.get(), initial_device_pool_size());
         rmm::mr::set_per_device_resource(
             rmm::cuda_device_id{cuda_device_id_}, pool_.get());
     }
