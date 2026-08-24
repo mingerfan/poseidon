@@ -20,7 +20,9 @@ V1 copies complete single-device objects. Multi-field and partial-shard values
 are rejected. Every movement must come from an explicit RuntimePlan Transfer or
 Replicate action.
 
-The first distributed GPU path supports complete Device-to-Device objects across
-MPI ranks. It exchanges a compact object header over MPI, allocates the
-destination object locally, and moves the field payload with NCCL. Host values
-whose source and destination ranks differ remain outside this initial backend.
+The distributed GPU path supports complete Device-to-Device objects across MPI
+ranks. It exchanges a compact object header over MPI, allocates the destination
+object locally, and moves the field payload with NCCL. A Host source may also
+target a Device on another rank: the source rank uploads the object to its
+logical device 0 and uses that device as NCCL staging. Cross-rank Device-to-Host
+and Host-to-Host actions remain unsupported.
