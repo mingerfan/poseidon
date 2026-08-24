@@ -47,7 +47,14 @@ struct GpuBootstrapProfileConfig
     std::uint32_t c2s_log_bsgs_ratio = 1;
     std::vector<std::uint32_t> c2s_layer_groups{5, 4, 3, 3};
     std::uint32_t c2s_direct_layer_threshold = 3;
+    /*
+     * Optional per-layer BSGS baby widths. Multi-device Hydra profiles use
+     * smaller baby widths to expose more independent giant-step groups.
+     * Empty vectors preserve the existing single-device heuristic.
+     */
+    std::vector<std::uint32_t> c2s_bsgs_n1_overrides;
     std::uint32_t s2c_log_bsgs_ratio = 1;
+    std::vector<std::uint32_t> s2c_bsgs_n1_overrides;
     bool project_real = false;
     std::size_t double_hoist_baby_tile = 15;
     GpuLinearTransformMode linear_transform_mode =

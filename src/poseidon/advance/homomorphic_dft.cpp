@@ -1,5 +1,8 @@
 #include "homomorphic_dft.h"
 
+#include <cstdlib>
+#include <iostream>
+
 namespace poseidon
 {
 HomomorphicDFTMatrixLiteral::HomomorphicDFTMatrixLiteral(LinearType type, uint32_t log_n,
@@ -8,13 +11,15 @@ HomomorphicDFTMatrixLiteral::HomomorphicDFTMatrixLiteral(LinearType type, uint32
                                                          bool repack_imag_to_real, double scaling,
                                                          bool bit_reversed, uint32_t log_bsgs_ratio,
                                                          vector<uint32_t> layer_groups,
-                                                         uint32_t direct_layer_threshold)
+                                                         uint32_t direct_layer_threshold,
+                                                         vector<uint32_t> bsgs_n1_overrides)
 
     : type_(type), log_n_(log_n), log_slots_(log_slots), level_start_(level_start),
       levels_(std::move(levels)), repack_imag_to_real_(repack_imag_to_real), scaling_(scaling),
       bit_reversed_(bit_reversed), log_bsgs_ratio_(log_bsgs_ratio),
       layer_groups_(std::move(layer_groups)),
-      direct_layer_threshold_(direct_layer_threshold)
+      direct_layer_threshold_(direct_layer_threshold),
+      bsgs_n1_overrides_(std::move(bsgs_n1_overrides))
 {
     if (!layer_groups_.empty())
     {
@@ -41,6 +46,41 @@ HomomorphicDFTMatrixLiteral::HomomorphicDFTMatrixLiteral(LinearType type, uint32
             invalid_argument_error,
             "direct DFT layer threshold requires explicit layer groups");
     }
+    if (!bsgs_n1_overrides_.empty())
+    {
+        if (bsgs_n1_overrides_.size() != levels_.size())
+        {
+            POSEIDON_THROW(
+                invalid_argument_error,
+                "DFT BSGS n1 overrides must match level count");
+        }
+        const uint32_t slots = 1U << log_slots_;
+        for (const auto n1 : bsgs_n1_overrides_)
+        {
+            if (n1 == 0)
+            {
+                continue;
+            }
+            if (n1 > slots || (n1 & (n1 - 1)) != 0)
+            {
+                POSEIDON_THROW(
+                    invalid_argument_error,
+                    "DFT BSGS n1 override must be a power of two no greater than slots");
+            }
+        }
+    }
+}
+
+uint32_t HomomorphicDFTMatrixLiteral::bsgs_n1_for_stage(std::size_t stage) const
+{
+    if (!bsgs_n1_overrides_.empty() && bsgs_n1_overrides_.at(stage) != 0)
+    {
+        return bsgs_n1_overrides_[stage];
+    }
+    return !layer_groups_.empty() &&
+                   layer_groups_.at(stage) <= direct_layer_threshold_
+        ? (1U << log_slots_)
+        : 0;
 }
 
 LinearType HomomorphicDFTMatrixLiteral::get_type() const { return type_; }
@@ -91,10 +131,7 @@ void HomomorphicDFTMatrixLiteral::create(LinearMatrixGroup &mat_group, CKKSEncod
 
         gen_linear_transform_bsgs(mat_group.data()[i], mat_group.rot_index(), encoder, x[i], leveld,
                                   modulus_group, log_bsgs_ratio_, log_slots_,
-                                  !layer_groups_.empty() &&
-                                          layer_groups_[i] <= direct_layer_threshold_
-                                      ? (1U << log_slots_)
-                                      : 0);
+                                  bsgs_n1_for_stage(static_cast<std::size_t>(i)));
         leveld = leveld - step;
     }
 }
@@ -121,6 +158,28 @@ void HomomorphicDFTMatrixLiteral::create_dynamic(
     }
     const auto &modulus = context_data->parms().q();
     auto matrices = gen_matrices();
+
+    if (std::getenv("POSEIDON_GPU_PRINT_DFT_BSGS_SWEEP") != nullptr)
+    {
+        const int slots = 1 << log_slots_;
+        for (std::size_t stage = 0; stage < matrices.size(); ++stage)
+        {
+            std::cerr << "[DFT_BSGS_SWEEP] type="
+                      << (type_ == encode ? "C2S" : "S2C")
+                      << " stage=" << stage
+                      << " diagonals=" << matrices[stage].size();
+            for (int n1 = 1; n1 <= slots; n1 <<= 1)
+            {
+                const auto [index, unused_giant_steps, baby_steps] =
+                    bsgs_index(matrices[stage], slots, n1);
+                (void)unused_giant_steps;
+                std::cerr << " n1=" << n1
+                          << ":bs=" << baby_steps.size()
+                          << ":gs=" << index.size();
+            }
+            std::cerr << '\n';
+        }
+    }
 
     std::size_t q_count = static_cast<std::size_t>(level_start_) + 1;
     if (q_count == 0 || q_count > modulus.size())
@@ -217,10 +276,7 @@ void HomomorphicDFTMatrixLiteral::create_dynamic(
             plaintext_scale,
             log_bsgs_ratio_,
             log_slots_,
-            !layer_groups_.empty() &&
-                    layer_groups_[stage] <= direct_layer_threshold_
-                ? (1U << log_slots_)
-                : 0);
+            bsgs_n1_for_stage(stage));
         q_count -= rescale_counts[stage];
     }
 }

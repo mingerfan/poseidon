@@ -129,6 +129,15 @@ struct GpuEvalModPolynomialPartition
     std::size_t basis_step_end = std::numeric_limits<std::size_t>::max();
     std::size_t leaf_begin = 0;
     std::size_t leaf_end = std::numeric_limits<std::size_t>::max();
+    /*
+     * Hydra mapping may build disjoint basis ranges on different devices.
+     * A reused range assumes T1 and every dependency needed by the selected
+     * steps have already been installed in workspace.eval_mod_basis.
+     * These fields follow the legacy aggregate fields to preserve callers.
+     */
+    std::size_t basis_step_begin = 0;
+    bool reuse_prepared_basis = false;
+    bool basis_only = false;
 };
 
 /**
@@ -732,6 +741,19 @@ public:
         const GpuCiphertextData &source_ciphertext,
         const GpuBootstrapData &bootstrap_data,
         const GpuGaloisKeysData &galois_keys,
+        GpuBootstrapWorkspace &workspace,
+        GpuCiphertextData &destination_ciphertext) const;
+
+    /**
+     * @brief Continue a staged StC-first bootstrap after a distributed S2C.
+     *
+     * Keeping ModRaise separate lets the Runtime map every S2C DFT layer to
+     * Hydra giant-step workers before returning the reduced ciphertext to the
+     * coordinator for the inherently global modulus raise.
+     */
+    void bootstrap_stc_first_modraise_from_s2c(
+        const GpuCiphertextData &s2c_result,
+        const GpuBootstrapData &bootstrap_data,
         GpuBootstrapWorkspace &workspace,
         GpuCiphertextData &destination_ciphertext) const;
 

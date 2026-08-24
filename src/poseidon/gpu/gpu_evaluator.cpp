@@ -4602,49 +4602,70 @@ void GpuEvaluator::bootstrap_stc_first_prepare_c2s(
         }
     }
 
-    GpuCiphertextData *raised_for_c2s = &workspace.raised;
+    bootstrap_stc_first_modraise_from_s2c(
+        workspace.scratch0,
+        bootstrap_data,
+        workspace,
+        destination_ciphertext);
+}
+
+void GpuEvaluator::bootstrap_stc_first_modraise_from_s2c(
+    const GpuCiphertextData &s2c_result,
+    const GpuBootstrapData &bootstrap_data,
+    GpuBootstrapWorkspace &workspace,
+    GpuCiphertextData &destination_ciphertext) const
+{
+    if (bootstrap_data.schedule != GpuBootstrapSchedule::StCFirst ||
+        bootstrap_data.project_real ||
+        !(bootstrap_data.q0_over_message_ratio > 0.0) ||
+        !std::isfinite(bootstrap_data.q0_over_message_ratio))
     {
-        NvtxRange range("ModRaise");
-        bootstrap_prepare_modraise_input(
-            workspace.scratch0,
-            workspace.modraise_input,
-            bootstrap_data.q0_parms_id,
-            bootstrap_data.q0_over_message_ratio);
-        raise_modulus(workspace.modraise_input, workspace.raised);
-
-        if (bootstrap_data.post_raise_c2s_input_scale > 0.0)
-        {
-            workspace.raised.meta.scale =
-                bootstrap_data.post_raise_c2s_input_scale;
-        }
-        else if (bootstrap_data.raised_scale_override > 0.0)
-        {
-            workspace.raised.meta.scale =
-                bootstrap_data.raised_scale_override;
-        }
-
-        if (bootstrap_data.post_raise_integer_multiplier > 1)
-        {
-            multiply_scalar(
-                workspace.raised,
-                bootstrap_data.post_raise_integer_multiplier,
-                workspace.raised_scaled);
-            workspace.raised_scaled.meta.scale =
-                workspace.raised.meta.scale *
-                bootstrap_data.post_raise_scale_multiplier;
-            raised_for_c2s = &workspace.raised_scaled;
-        }
-        else if (!bootstrap_data.post_raise_plaintext.empty())
-        {
-            multiply_plain(
-                workspace.raised,
-                bootstrap_data.post_raise_plaintext,
-                workspace.raised_scaled);
-            raised_for_c2s = &workspace.raised_scaled;
-        }
+        throw std::invalid_argument(
+            "GpuEvaluator::bootstrap_stc_first_modraise_from_s2c: invalid StC-first profile");
     }
 
-    destination_ciphertext = std::move(*raised_for_c2s);
+    NvtxRange range("ModRaise");
+    bootstrap_prepare_modraise_input(
+        s2c_result,
+        workspace.modraise_input,
+        bootstrap_data.q0_parms_id,
+        bootstrap_data.q0_over_message_ratio);
+    raise_modulus(workspace.modraise_input, workspace.raised);
+
+    if (bootstrap_data.post_raise_c2s_input_scale > 0.0)
+    {
+        workspace.raised.meta.scale =
+            bootstrap_data.post_raise_c2s_input_scale;
+    }
+    else if (bootstrap_data.raised_scale_override > 0.0)
+    {
+        workspace.raised.meta.scale =
+            bootstrap_data.raised_scale_override;
+    }
+
+    if (bootstrap_data.post_raise_integer_multiplier > 1)
+    {
+        multiply_scalar(
+            workspace.raised,
+            bootstrap_data.post_raise_integer_multiplier,
+            workspace.raised_scaled);
+        workspace.raised_scaled.meta.scale =
+            workspace.raised.meta.scale *
+            bootstrap_data.post_raise_scale_multiplier;
+        destination_ciphertext = std::move(workspace.raised_scaled);
+    }
+    else if (!bootstrap_data.post_raise_plaintext.empty())
+    {
+        multiply_plain(
+            workspace.raised,
+            bootstrap_data.post_raise_plaintext,
+            workspace.raised_scaled);
+        destination_ciphertext = std::move(workspace.raised_scaled);
+    }
+    else
+    {
+        destination_ciphertext = std::move(workspace.raised);
+    }
 }
 
 void GpuEvaluator::bootstrap_stc_first_transform(
@@ -5114,11 +5135,20 @@ void GpuEvaluator::eval_mod_high_precision(
     const std::uint32_t polynomial_result_node = partitioned_polynomial
         ? polynomial_partition->result_node
         : bootstrap_data.eval_mod.polynomial_result_node;
+    const std::size_t basis_step_begin = partitioned_polynomial
+        ? std::min(
+              polynomial_partition->basis_step_begin,
+              basis_steps.size())
+        : 0;
     const std::size_t basis_step_end = partitioned_polynomial
         ? std::min(
               polynomial_partition->basis_step_end,
               basis_steps.size())
         : basis_steps.size();
+    const bool reuse_prepared_basis = partitioned_polynomial &&
+        polynomial_partition->reuse_prepared_basis;
+    const bool basis_only = partitioned_polynomial &&
+        polynomial_partition->basis_only;
     const std::size_t leaf_begin = partitioned_polynomial
         ? polynomial_partition->leaf_begin
         : 0;
@@ -5155,11 +5185,12 @@ void GpuEvaluator::eval_mod_high_precision(
         (polynomial_blocks.empty() ||
          combine_begin > combine_end ||
          combine_end > polynomial_combine_steps.size() ||
+         basis_step_begin > basis_step_end ||
          basis_step_end > basis_steps.size() ||
          leaf_begin > leaf_end ||
          leaf_end > polynomial_blocks.size() ||
-         polynomial_result_node ==
-             std::numeric_limits<std::uint32_t>::max()))
+         (!basis_only && polynomial_result_node ==
+             std::numeric_limits<std::uint32_t>::max())))
     {
         throw std::invalid_argument(
             "GpuEvaluator::eval_mod_high_precision: invalid polynomial partition");
@@ -5678,7 +5709,16 @@ void GpuEvaluator::eval_mod_high_precision(
     {
         workspace.eval_mod_basis.resize(required_basis_slots);
     }
-    if (d2d_free_dataflow)
+    if (reuse_prepared_basis)
+    {
+        if (workspace.eval_mod_basis[1].empty())
+        {
+            throw std::invalid_argument(
+                "GpuEvaluator::eval_mod_high_precision: reused T1 basis is unavailable");
+        }
+        x = &workspace.eval_mod_basis[1];
+    }
+    else if (d2d_free_dataflow)
     {
         NvtxRange range("EvalMod input preparation");
         copy_ciphertext_data(
@@ -5849,7 +5889,7 @@ void GpuEvaluator::eval_mod_high_precision(
 
     {
         NvtxRange range("EvalMod Chebyshev basis generation");
-        for (std::size_t basis_step_index = 0;
+        for (std::size_t basis_step_index = basis_step_begin;
              basis_step_index < basis_step_end;
              ++basis_step_index)
         {
@@ -6157,6 +6197,17 @@ void GpuEvaluator::eval_mod_high_precision(
         }
     }
     stage_recorder.record(2);
+
+    if (basis_only)
+    {
+        destination_ciphertext = GpuCiphertextData{};
+        stage_recorder.record(3);
+        stage_recorder.record(4);
+        stage_recorder.record(5);
+        stage_recorder.finish(workspace.eval_mod_stage_timing);
+        multiply_recorder.finish(workspace.eval_mod_multiply_timings);
+        return;
+    }
 
     std::function<bool(
         const std::vector<GpuEvalModPolynomialTerm> &,

@@ -58,6 +58,9 @@ struct MultiGpuBootstrapTiming
 {
     std::size_t gpu_count = 0;
     std::size_t eval_mod_device_count = 0;
+    std::vector<MultiGpuBootstrapLayerTiming> s2c_layers;
+    double modraise_ms = 0.0;
+    /* Legacy aggregate retained for existing result readers. */
     double prepare_c2s_ms = 0.0;
     std::vector<MultiGpuBootstrapLayerTiming> c2s_layers;
     double eval_mod_branches_ms = 0.0;
@@ -193,7 +196,8 @@ public:
         std::string operator_profile,
         std::vector<int> logical_device_indices,
         std::size_t c2s_device_limit = 0,
-        std::size_t eval_mod_device_limit = 0);
+        std::size_t eval_mod_device_limit = 0,
+        std::size_t s2c_device_limit = 0);
 
     std::optional<MultiGpuBootstrapTiming>
     last_multi_gpu_bootstrap_timing(
@@ -221,6 +225,7 @@ private:
     struct MultiGpuBootstrapPlan
     {
         std::vector<int> logical_device_indices;
+        std::vector<std::size_t> s2c_active_device_counts;
         std::vector<std::size_t> c2s_active_device_counts;
         std::size_t eval_mod_device_count = 2;
     };

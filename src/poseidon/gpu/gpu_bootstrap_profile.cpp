@@ -65,7 +65,8 @@ LinearMatrixGroup make_coeff_to_slot_matrix_group(
         /*bit_reversed=*/false,
         config.c2s_log_bsgs_ratio,
         config.c2s_layer_groups,
-        config.c2s_direct_layer_threshold);
+        config.c2s_direct_layer_threshold,
+        config.c2s_bsgs_n1_overrides);
 
     LinearMatrixGroup result;
     literal.create_dynamic(
@@ -97,7 +98,10 @@ LinearMatrixGroup make_slot_to_coeff_matrix_group(
         /*repack_imag_to_real=*/true,
         scaling,
         /*bit_reversed=*/false,
-        config.s2c_log_bsgs_ratio);
+        config.s2c_log_bsgs_ratio,
+        {},
+        0,
+        config.s2c_bsgs_n1_overrides);
 
     LinearMatrixGroup result;
     literal.create_dynamic(

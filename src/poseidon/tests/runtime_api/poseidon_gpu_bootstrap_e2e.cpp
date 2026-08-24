@@ -269,6 +269,14 @@ void accumulate_multi_gpu_timing(
     {
         sum.gpu_count = sample.gpu_count;
         sum.eval_mod_device_count = sample.eval_mod_device_count;
+        sum.s2c_layers.resize(sample.s2c_layers.size());
+        for (std::size_t layer = 0;
+             layer < sample.s2c_layers.size();
+             ++layer)
+        {
+            sum.s2c_layers[layer].active_device_count =
+                sample.s2c_layers[layer].active_device_count;
+        }
         sum.c2s_layers.resize(sample.c2s_layers.size());
         for (std::size_t layer = 0;
              layer < sample.c2s_layers.size();
@@ -280,27 +288,35 @@ void accumulate_multi_gpu_timing(
     }
     if (sum.gpu_count != sample.gpu_count ||
         sum.eval_mod_device_count != sample.eval_mod_device_count ||
+        sum.s2c_layers.size() != sample.s2c_layers.size() ||
         sum.c2s_layers.size() != sample.c2s_layers.size())
     {
         throw std::runtime_error(
             "multi-GPU bootstrap timing shape changed between iterations");
     }
     sum.prepare_c2s_ms += sample.prepare_c2s_ms;
+    sum.modraise_ms += sample.modraise_ms;
     sum.eval_mod_branches_ms += sample.eval_mod_branches_ms;
     sum.imag_result_copy_ms += sample.imag_result_copy_ms;
     sum.finalize_ms += sample.finalize_ms;
     sum.total_ms += sample.total_ms;
-    for (std::size_t layer = 0; layer < sample.c2s_layers.size(); ++layer)
-    {
-        auto &destination = sum.c2s_layers[layer];
-        const auto &source = sample.c2s_layers[layer];
-        destination.fanout_and_partial_compute_ms +=
-            source.fanout_and_partial_compute_ms;
-        destination.qp_reduction_ms += source.qp_reduction_ms;
-        destination.shared_moddown_rescale_ms +=
-            source.shared_moddown_rescale_ms;
-        destination.total_ms += source.total_ms;
-    }
+    const auto accumulate_layers = [](
+        std::vector<poseidon::runtime_api::MultiGpuBootstrapLayerTiming> &destination_layers,
+        const std::vector<poseidon::runtime_api::MultiGpuBootstrapLayerTiming> &source_layers) {
+        for (std::size_t layer = 0; layer < source_layers.size(); ++layer)
+        {
+            auto &destination = destination_layers[layer];
+            const auto &source = source_layers[layer];
+            destination.fanout_and_partial_compute_ms +=
+                source.fanout_and_partial_compute_ms;
+            destination.qp_reduction_ms += source.qp_reduction_ms;
+            destination.shared_moddown_rescale_ms +=
+                source.shared_moddown_rescale_ms;
+            destination.total_ms += source.total_ms;
+        }
+    };
+    accumulate_layers(sum.s2c_layers, sample.s2c_layers);
+    accumulate_layers(sum.c2s_layers, sample.c2s_layers);
 }
 
 std::vector<std::complex<double>> make_message(std::size_t slot_count)
@@ -323,10 +339,13 @@ int main()
         "POSEIDON_RUNTIME_BOOTSTRAP_GPU_COUNT", 1);
     const std::size_t c2s_device_limit = env_size_or(
         "POSEIDON_RUNTIME_BOOTSTRAP_C2S_DEVICE_LIMIT",
-        1);
+        requested_gpu_count);
+    const std::size_t s2c_device_limit = env_size_or(
+        "POSEIDON_RUNTIME_BOOTSTRAP_S2C_DEVICE_LIMIT",
+        requested_gpu_count);
     const std::size_t eval_mod_device_limit = env_size_or(
         "POSEIDON_RUNTIME_BOOTSTRAP_EVALMOD_DEVICE_LIMIT",
-        std::min(requested_gpu_count, std::size_t{2}));
+        requested_gpu_count);
     if (requested_gpu_count != 1 && requested_gpu_count != 2 &&
         requested_gpu_count != 4)
     {
@@ -338,6 +357,12 @@ int main()
     {
         std::cerr
             << "[FAIL] POSEIDON_RUNTIME_BOOTSTRAP_C2S_DEVICE_LIMIT must be in [1, gpu_count]\n";
+        return 1;
+    }
+    if (s2c_device_limit == 0 || s2c_device_limit > requested_gpu_count)
+    {
+        std::cerr
+            << "[FAIL] POSEIDON_RUNTIME_BOOTSTRAP_S2C_DEVICE_LIMIT must be in [1, gpu_count]\n";
         return 1;
     }
     if (requested_gpu_count > 1 &&
@@ -389,12 +414,32 @@ int main()
             cuda_device_ids.push_back(static_cast<int>(index));
         }
         PoseidonGpuApi api(kContextId, context, cuda_device_ids);
+        poseidon::gpu::GpuBootstrapProfileConfig profile_config;
+        if (requested_gpu_count > 1)
+        {
+            /*
+             * Hydra Table V reduces BS as compute nodes grow.  Eight/four
+             * giant groups keep each two/four-GPU worker at no more than four
+             * local groups, preserving the fused QP path while exposing all
+             * DFT layers to the scheduler.
+             */
+            if (requested_gpu_count == 2)
+            {
+                profile_config.c2s_bsgs_n1_overrides = {4096, 256, 16, 2};
+                profile_config.s2c_bsgs_n1_overrides = {8, 256, 4096};
+            }
+            else
+            {
+                profile_config.c2s_bsgs_n1_overrides = {2048, 128, 8, 1};
+                profile_config.s2c_bsgs_n1_overrides = {4, 128, 2048};
+            }
+        }
         poseidon::gpu::GpuBootstrapProfileCpuKeys shared_cpu_keys;
         auto profile = poseidon::gpu::GpuBootstrapProfileBuilder::build(
             context,
             key_generator,
             kCudaDevice,
-            {},
+            profile_config,
             requested_gpu_count > 1 ? &shared_cpu_keys : nullptr);
         std::vector<poseidon::gpu::GpuBootstrapProfile> secondary_profiles;
         secondary_profiles.reserve(
@@ -408,11 +453,17 @@ int main()
                     context,
                     key_generator,
                     static_cast<int>(device_index),
-                    {},
+                    profile_config,
                     nullptr,
                     &shared_cpu_keys));
         }
         std::vector<std::size_t> c2s_giant_groups;
+        std::vector<std::size_t> s2c_giant_groups;
+        for (const auto &matrix :
+             profile.bootstrap_data.slot_to_coeff_matrix_qp.data())
+        {
+            s2c_giant_groups.push_back(matrix.plan.giant_steps.size());
+        }
         for (const auto &matrix :
              profile.bootstrap_data.coeff_to_slot_matrix_qp.data())
         {
@@ -712,7 +763,8 @@ int main()
                 boot_profile.profile_id,
                 cuda_device_ids,
                 c2s_device_limit,
-                eval_mod_device_limit);
+                eval_mod_device_limit,
+                s2c_device_limit);
         }
 
         fhegpu::SequentialRuntime<PoseidonGpuApi> runtime(
@@ -874,6 +926,7 @@ int main()
             << "[BENCH] warmup=" << warmup
             << " iterations=" << iterations
             << " gpu_count=" << requested_gpu_count
+            << " s2c_device_limit=" << s2c_device_limit
             << " c2s_device_limit=" << c2s_device_limit
             << " eval_mod_device_limit=" << eval_mod_device_limit
             << " direct_gpu_boot_ms=" << direct_gpu_boot_ms
@@ -902,6 +955,16 @@ int main()
                 std::cout << ',';
             }
             std::cout << c2s_giant_groups[index];
+        }
+        std::cout << '\n';
+        std::cout << "[STAGES] s2c_giant_groups=";
+        for (std::size_t index = 0; index < s2c_giant_groups.size(); ++index)
+        {
+            if (index != 0)
+            {
+                std::cout << ',';
+            }
+            std::cout << s2c_giant_groups[index];
         }
         std::cout << '\n';
         std::cout
@@ -946,6 +1009,8 @@ int main()
             std::cout
                 << "[MULTI_GPU_STAGES] prepare_c2s_ms="
                 << multi_gpu_timing_sum.prepare_c2s_ms / divisor
+                << " modraise_ms="
+                << multi_gpu_timing_sum.modraise_ms / divisor
                 << " eval_mod_branches_ms="
                 << multi_gpu_timing_sum.eval_mod_branches_ms / divisor
                 << " imag_result_copy_ms="
@@ -957,6 +1022,23 @@ int main()
                 << " eval_mod_devices="
                 << multi_gpu_timing_sum.eval_mod_device_count
                 << '\n';
+            for (std::size_t layer = 0;
+                 layer < multi_gpu_timing_sum.s2c_layers.size();
+                 ++layer)
+            {
+                const auto &timing = multi_gpu_timing_sum.s2c_layers[layer];
+                std::cout
+                    << "[MULTI_GPU_S2C_LAYER] layer=" << layer
+                    << " active_devices=" << timing.active_device_count
+                    << " fanout_partial_ms="
+                    << timing.fanout_and_partial_compute_ms / divisor
+                    << " qp_reduce_ms="
+                    << timing.qp_reduction_ms / divisor
+                    << " shared_moddown_rescale_ms="
+                    << timing.shared_moddown_rescale_ms / divisor
+                    << " total_ms=" << timing.total_ms / divisor
+                    << '\n';
+            }
             for (std::size_t layer = 0;
                  layer < multi_gpu_timing_sum.c2s_layers.size();
                  ++layer)

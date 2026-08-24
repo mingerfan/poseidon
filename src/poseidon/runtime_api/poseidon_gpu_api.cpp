@@ -1069,7 +1069,8 @@ void PoseidonGpuApi::configure_multi_gpu_bootstrap(
     std::string operator_profile,
     std::vector<int> logical_device_indices,
     std::size_t c2s_device_limit,
-    std::size_t eval_mod_device_limit)
+    std::size_t eval_mod_device_limit,
+    std::size_t s2c_device_limit)
 {
     if (operator_profile.empty())
     {
@@ -1098,6 +1099,15 @@ void PoseidonGpuApi::configure_multi_gpu_bootstrap(
         throw std::invalid_argument(
             "Poseidon multi-GPU Boot C2S device limit exceeds device count");
     }
+    if (s2c_device_limit == 0)
+    {
+        s2c_device_limit = c2s_device_limit;
+    }
+    if (s2c_device_limit > logical_device_indices.size())
+    {
+        throw std::invalid_argument(
+            "Poseidon multi-GPU Boot S2C device limit exceeds device count");
+    }
     if (eval_mod_device_limit == 0)
     {
         eval_mod_device_limit = std::min(
@@ -1124,7 +1134,6 @@ void PoseidonGpuApi::configure_multi_gpu_bootstrap(
     MultiGpuBootstrapPlan plan;
     plan.logical_device_indices = logical_device_indices;
     plan.eval_mod_device_count = eval_mod_device_limit;
-    if (logical_device_indices.size() == 4)
     {
         auto &coordinator = device_state(logical_device_indices.front());
         auto &coordinator_native =
@@ -1136,7 +1145,7 @@ void PoseidonGpuApi::configure_multi_gpu_bootstrap(
             coordinator_data.allow_environment_linear_transform_override)
         {
             throw std::invalid_argument(
-                "Poseidon four-GPU Boot requires a fixed StC-first double-hoist profile");
+                "Poseidon multi-GPU Boot requires a fixed StC-first double-hoist profile");
         }
         if (eval_mod_device_limit == 4 &&
             (coordinator_data.eval_mod.polynomial_degree != 22 ||
@@ -1149,60 +1158,81 @@ void PoseidonGpuApi::configure_multi_gpu_bootstrap(
             throw std::invalid_argument(
                 "Poseidon four-GPU EvalMod root partition requires the degree-22 baby-4 Chebyshev plan");
         }
-        const std::size_t layer_count =
-            coordinator_data.coeff_to_slot_matrix_qp.data().size();
-        if (layer_count == 0)
-        {
-            throw std::invalid_argument(
-                "Poseidon four-GPU Boot has no C2S layers");
-        }
-        plan.c2s_active_device_counts.reserve(layer_count);
-        for (std::size_t layer = 0; layer < layer_count; ++layer)
-        {
-            const std::size_t group_count = coordinator_data
-                .coeff_to_slot_matrix_qp.data()[layer].plan.giant_steps.size();
-            if (group_count == 0)
-            {
-                throw std::invalid_argument(
-                    "Poseidon four-GPU Boot has an empty C2S giant-step layer");
-            }
-            const std::size_t active_count =
-                std::min(c2s_device_limit, group_count);
-            plan.c2s_active_device_counts.push_back(active_count);
 
-            for (std::size_t device_offset = 0;
-                 device_offset < logical_device_indices.size();
-                 ++device_offset)
-            {
-                auto &current = device_state(
-                    logical_device_indices[device_offset]);
-                auto &native =
-                    *current.native_bootstrap_by_profile.at(operator_profile);
-                auto &matrices =
-                    native.bootstrap_data.coeff_to_slot_matrix_qp.data();
-                if (matrices.size() != layer_count ||
-                    matrices[layer].plan.giant_steps.size() != group_count)
+        auto configure_dft_shards =
+            [&](bool coeff_to_slot,
+                std::size_t device_limit,
+                std::vector<std::size_t> &active_counts) {
+                const auto &coordinator_matrices = coeff_to_slot
+                    ? coordinator_data.coeff_to_slot_matrix_qp.data()
+                    : coordinator_data.slot_to_coeff_matrix_qp.data();
+                if (coordinator_matrices.empty())
                 {
                     throw std::invalid_argument(
-                        "Poseidon four-GPU Boot profiles have different C2S plans");
+                        coeff_to_slot
+                            ? "Poseidon multi-GPU Boot has no C2S layers"
+                            : "Poseidon multi-GPU Boot has no S2C layers");
                 }
-                if (device_offset >= active_count)
+                const std::size_t layer_count = coordinator_matrices.size();
+                active_counts.reserve(layer_count);
+                for (std::size_t layer = 0; layer < layer_count; ++layer)
                 {
-                    continue;
+                    const std::size_t group_count = coordinator_matrices[layer]
+                        .plan.giant_steps.size();
+                    if (group_count == 0)
+                    {
+                        throw std::invalid_argument(
+                            "Poseidon multi-GPU Boot has an empty DFT giant-step layer");
+                    }
+                    const std::size_t active_count =
+                        std::min(device_limit, group_count);
+                    active_counts.push_back(active_count);
+
+                    for (std::size_t device_offset = 0;
+                         device_offset < logical_device_indices.size();
+                         ++device_offset)
+                    {
+                        auto &current = device_state(
+                            logical_device_indices[device_offset]);
+                        auto &native = *current.native_bootstrap_by_profile.at(
+                            operator_profile);
+                        auto &matrices = coeff_to_slot
+                            ? native.bootstrap_data.coeff_to_slot_matrix_qp.data()
+                            : native.bootstrap_data.slot_to_coeff_matrix_qp.data();
+                        if (matrices.size() != layer_count ||
+                            matrices[layer].plan.giant_steps.size() != group_count)
+                        {
+                            throw std::invalid_argument(
+                                "Poseidon multi-GPU Boot profiles have different DFT plans");
+                        }
+                        if (device_offset >= active_count)
+                        {
+                            continue;
+                        }
+                        const std::size_t groups_per_device =
+                            group_count / active_count;
+                        const std::size_t remainder =
+                            group_count % active_count;
+                        const std::size_t group_begin =
+                            device_offset * groups_per_device +
+                            std::min(device_offset, remainder);
+                        const std::size_t group_end =
+                            group_begin + groups_per_device +
+                            (device_offset < remainder ? 1 : 0);
+                        gpu::GpuUploader::restrict_double_hoist_giant_groups(
+                            matrices[layer], group_begin, group_end);
+                    }
                 }
-                const std::size_t groups_per_device =
-                    group_count / active_count;
-                const std::size_t remainder = group_count % active_count;
-                const std::size_t group_begin =
-                    device_offset * groups_per_device +
-                    std::min(device_offset, remainder);
-                const std::size_t group_end =
-                    group_begin + groups_per_device +
-                    (device_offset < remainder ? 1 : 0);
-                gpu::GpuUploader::restrict_double_hoist_giant_groups(
-                    matrices[layer], group_begin, group_end);
-            }
-        }
+            };
+
+        configure_dft_shards(
+            false,
+            s2c_device_limit,
+            plan.s2c_active_device_counts);
+        configure_dft_shards(
+            true,
+            c2s_device_limit,
+            plan.c2s_active_device_counts);
     }
     const bool inserted = multi_gpu_bootstrap_by_profile_.emplace(
         std::move(operator_profile),
@@ -1341,7 +1371,361 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
                     std::chrono::steady_clock::now();
 
                 gpu::GpuCiphertextData c2s_dft_result;
-                if (logical_devices.size() == 2)
+                const auto run_hydra_dft =
+                    [&](const gpu::GpuCiphertextData &source,
+                        bool coeff_to_slot,
+                        const std::vector<std::size_t> &active_counts,
+                        std::vector<MultiGpuBootstrapLayerTiming> &timings) {
+                        const auto &coordinator_matrices = coeff_to_slot
+                            ? native.bootstrap_data.coeff_to_slot_matrix_qp
+                            : native.bootstrap_data.slot_to_coeff_matrix_qp;
+                        auto &coordinator_workspace = coeff_to_slot
+                            ? native.workspace.coeff_to_slot_double_hoist
+                            : native.workspace.slot_to_coeff_double_hoist;
+                        if (active_counts.size() !=
+                            coordinator_matrices.data().size())
+                        {
+                            throw std::logic_error(
+                                "Poseidon Hydra DFT plan is incomplete");
+                        }
+
+                        const gpu::GpuCiphertextData *layer_input = &source;
+                        gpu::GpuCiphertextData current;
+                        for (std::size_t layer = 0;
+                             layer < active_counts.size();
+                             ++layer)
+                        {
+                            const std::size_t active_count =
+                                active_counts[layer];
+                            if (active_count == 0 ||
+                                active_count > logical_devices.size())
+                            {
+                                throw std::logic_error(
+                                    "Poseidon Hydra DFT active-device count is invalid");
+                            }
+                            MultiGpuBootstrapLayerTiming layer_timing;
+                            layer_timing.active_device_count = active_count;
+                            const auto layer_start =
+                                std::chrono::steady_clock::now();
+                            gpu::GpuCiphertextData next;
+
+                            if (active_count == 1)
+                            {
+                                gpu::gpu_check_cuda(
+                                    cudaSetDevice(device.cuda_device_id),
+                                    "cudaSetDevice Hydra single-device DFT layer");
+                                device.evaluator->dft_double_hoist_layer(
+                                    *layer_input,
+                                    coordinator_matrices,
+                                    layer,
+                                    *native.galois_keys,
+                                    coordinator_workspace,
+                                    next);
+                                gpu::gpu_check_cuda(
+                                    cudaStreamSynchronize(
+                                        gpu::gpu_execution_stream()),
+                                    "cudaStreamSynchronize Hydra single-device DFT layer");
+                                const auto layer_end =
+                                    std::chrono::steady_clock::now();
+                                layer_timing.fanout_and_partial_compute_ms =
+                                    elapsed_milliseconds(
+                                        layer_start, layer_end);
+                                layer_timing.total_ms =
+                                    layer_timing.fanout_and_partial_compute_ms;
+                                timings.push_back(layer_timing);
+                                current = std::move(next);
+                                layer_input = &current;
+                                continue;
+                            }
+
+                            std::vector<gpu::GpuCiphertextData> remote_inputs(
+                                active_count - 1);
+                            std::vector<communication::CudaTransferRequest>
+                                input_transfers;
+                            input_transfers.reserve(remote_inputs.size());
+                            for (std::size_t offset = 1;
+                                 offset < active_count;
+                                 ++offset)
+                            {
+                                auto &remote =
+                                    device_state(logical_devices[offset]);
+                                const auto copies =
+                                    communication::prepare_full_object_copy(
+                                        *layer_input,
+                                        remote_inputs[offset - 1],
+                                        remote.cuda_device_id);
+                                if (copies.size() != 1)
+                                {
+                                    throw std::logic_error(
+                                        "Poseidon Hydra DFT input copy is not contiguous");
+                                }
+                                input_transfers.push_back(
+                                    cuda_transfer_->copy_async(
+                                        copies.front(),
+                                        communication::CudaTransferRoute::Auto));
+                            }
+
+                            using PartialQpResult = std::pair<
+                                gpu::GpuQPCiphertextBuffer,
+                                gpu::GpuCiphertextMeta>;
+                            std::vector<std::future<PartialQpResult>>
+                                compute_futures;
+                            compute_futures.reserve(active_count - 1);
+                            for (std::size_t offset = 1;
+                                 offset < active_count;
+                                 ++offset)
+                            {
+                                auto &remote =
+                                    device_state(logical_devices[offset]);
+                                auto &remote_native =
+                                    *remote.native_bootstrap_by_profile.at(
+                                        attrs.operator_profile);
+                                auto *remote_ptr = &remote;
+                                auto *remote_native_ptr = &remote_native;
+                                compute_futures.push_back(std::async(
+                                    std::launch::async,
+                                    [remote_ptr,
+                                     remote_native_ptr,
+                                     coeff_to_slot,
+                                     layer,
+                                     remote_input = std::move(
+                                         remote_inputs[offset - 1]),
+                                     transfer = std::move(
+                                         input_transfers[offset - 1])]() mutable {
+                                        transfer.wait();
+                                        gpu::gpu_check_cuda(
+                                            cudaSetDevice(
+                                                remote_ptr->cuda_device_id),
+                                            "cudaSetDevice Hydra DFT worker");
+                                        auto &matrices = coeff_to_slot
+                                            ? remote_native_ptr->bootstrap_data
+                                                  .coeff_to_slot_matrix_qp
+                                            : remote_native_ptr->bootstrap_data
+                                                  .slot_to_coeff_matrix_qp;
+                                        auto &workspace = coeff_to_slot
+                                            ? remote_native_ptr->workspace
+                                                  .coeff_to_slot_double_hoist
+                                            : remote_native_ptr->workspace
+                                                  .slot_to_coeff_double_hoist;
+                                        gpu::GpuQPCiphertextBuffer partial;
+                                        gpu::GpuCiphertextMeta partial_meta;
+                                        remote_ptr->evaluator
+                                            ->dft_double_hoist_layer_partial_qp(
+                                                remote_input,
+                                                matrices,
+                                                layer,
+                                                *remote_native_ptr->galois_keys,
+                                                workspace,
+                                                partial,
+                                                partial_meta);
+                                        gpu::gpu_check_cuda(
+                                            cudaStreamSynchronize(
+                                                gpu::gpu_execution_stream()),
+                                            "cudaStreamSynchronize Hydra DFT worker");
+                                        return PartialQpResult{
+                                            std::move(partial), partial_meta};
+                                    }));
+                            }
+
+                            std::vector<gpu::GpuQPCiphertextBuffer> partials(
+                                active_count);
+                            std::vector<gpu::GpuCiphertextMeta> partial_metas(
+                                active_count);
+                            gpu::gpu_check_cuda(
+                                cudaSetDevice(device.cuda_device_id),
+                                "cudaSetDevice Hydra DFT coordinator");
+                            device.evaluator
+                                ->dft_double_hoist_layer_partial_qp(
+                                    *layer_input,
+                                    coordinator_matrices,
+                                    layer,
+                                    *native.galois_keys,
+                                    coordinator_workspace,
+                                    partials.front(),
+                                    partial_metas.front());
+                            gpu::gpu_check_cuda(
+                                cudaStreamSynchronize(
+                                    gpu::gpu_execution_stream()),
+                                "cudaStreamSynchronize Hydra DFT coordinator");
+                            const auto reduce_partial =
+                                [&](std::size_t destination_offset,
+                                    std::size_t source_offset) {
+                                    return std::async(
+                                        std::launch::async,
+                                        [&, destination_offset, source_offset]() {
+                                            auto &destination_device =
+                                                device_state(logical_devices[
+                                                    destination_offset]);
+                                            gpu::GpuQPCiphertextBuffer copied;
+                                            const auto copies =
+                                                prepare_qp_partial_copy(
+                                                    partials[source_offset],
+                                                    copied,
+                                                    destination_device
+                                                        .cuda_device_id);
+                                            if (copies.size() != 2)
+                                            {
+                                                throw std::logic_error(
+                                                    "Poseidon Hydra DFT tree copy is incomplete");
+                                            }
+                                            cuda_transfer_->copy_sync(
+                                                copies,
+                                                communication::CudaTransferRoute::Auto);
+                                            gpu::gpu_check_cuda(
+                                                cudaSetDevice(
+                                                    destination_device
+                                                        .cuda_device_id),
+                                                "cudaSetDevice Hydra DFT reduction");
+                                            destination_device.evaluator
+                                                ->add_double_hoist_partial_qp_inplace(
+                                                    partials[destination_offset],
+                                                    copied,
+                                                    partial_metas[
+                                                        destination_offset]);
+                                            gpu::gpu_check_cuda(
+                                                cudaStreamSynchronize(
+                                                    gpu::gpu_execution_stream()),
+                                                "cudaStreamSynchronize Hydra DFT reduction");
+                                        });
+                                };
+                            std::vector<std::future<void>>
+                                first_level_reductions;
+                            for (std::size_t offset = 1;
+                                 offset < active_count;
+                                 ++offset)
+                            {
+                                auto partial =
+                                    compute_futures[offset - 1].get();
+                                partials[offset] = std::move(partial.first);
+                                partial_metas[offset] = partial.second;
+                                if (partial_metas[offset].parms_id !=
+                                        partial_metas.front().parms_id ||
+                                    partial_metas[offset].scale !=
+                                        partial_metas.front().scale)
+                                {
+                                    throw std::logic_error(
+                                        "Poseidon Hydra DFT partial metadata differs");
+                                }
+                                /*
+                                 * Hydra SAC/CAR scheduling: as soon as an odd
+                                 * worker finishes, immediately send and reduce
+                                 * its pair.  Pair 0/1 can therefore communicate
+                                 * while GPUs 2/3 are still computing.
+                                 */
+                                if ((offset & 1U) != 0)
+                                {
+                                    first_level_reductions.push_back(
+                                        reduce_partial(offset - 1, offset));
+                                }
+                            }
+                            const auto partial_end =
+                                std::chrono::steady_clock::now();
+                            layer_timing.fanout_and_partial_compute_ms =
+                                elapsed_milliseconds(
+                                    layer_start, partial_end);
+
+                            const auto reduction_start = partial_end;
+                            for (auto &reduction : first_level_reductions)
+                            {
+                                reduction.get();
+                            }
+                            for (std::size_t stride = 2;
+                                 stride < active_count;
+                                 stride *= 2)
+                            {
+                                std::vector<std::future<void>> reductions;
+                                for (std::size_t destination_offset = 0;
+                                     destination_offset < active_count;
+                                     destination_offset += 2 * stride)
+                                {
+                                    const std::size_t source_offset =
+                                        destination_offset + stride;
+                                    if (source_offset >= active_count)
+                                    {
+                                        continue;
+                                    }
+                                    reductions.push_back(
+                                        reduce_partial(
+                                            destination_offset,
+                                            source_offset));
+                                }
+                                for (auto &reduction : reductions)
+                                {
+                                    reduction.get();
+                                }
+                            }
+                            const auto reduction_end =
+                                std::chrono::steady_clock::now();
+                            layer_timing.qp_reduction_ms =
+                                elapsed_milliseconds(
+                                    reduction_start, reduction_end);
+
+                            gpu::gpu_check_cuda(
+                                cudaSetDevice(device.cuda_device_id),
+                                "cudaSetDevice Hydra DFT shared ModDown");
+                            device.evaluator
+                                ->finalize_dft_double_hoist_layer_partial_qp(
+                                    partials.front(),
+                                    partial_metas.front(),
+                                    coordinator_matrices,
+                                    layer,
+                                    coordinator_workspace,
+                                    next);
+                            gpu::gpu_check_cuda(
+                                cudaStreamSynchronize(
+                                    gpu::gpu_execution_stream()),
+                                "cudaStreamSynchronize Hydra DFT shared ModDown");
+                            const auto layer_end =
+                                std::chrono::steady_clock::now();
+                            layer_timing.shared_moddown_rescale_ms =
+                                elapsed_milliseconds(
+                                    reduction_end, layer_end);
+                            layer_timing.total_ms = elapsed_milliseconds(
+                                layer_start, layer_end);
+                            timings.push_back(layer_timing);
+                            current = std::move(next);
+                            layer_input = &current;
+                        }
+                        return current;
+                    };
+
+                if (!multi_plan->second.s2c_active_device_counts.empty())
+                {
+                    native.workspace.slot_to_coeff_double_hoist.baby_tile_size =
+                        native.bootstrap_data.double_hoist_baby_tile;
+                    native.workspace.coeff_to_slot_double_hoist.baby_tile_size =
+                        native.bootstrap_data.double_hoist_baby_tile;
+                    auto s2c_result = run_hydra_dft(
+                        require_ciphertext(inputs, 0),
+                        false,
+                        multi_plan->second.s2c_active_device_counts,
+                        bootstrap_timing.s2c_layers);
+                    const auto modraise_start =
+                        std::chrono::steady_clock::now();
+                    gpu::GpuCiphertextData raised_for_c2s;
+                    device.evaluator->bootstrap_stc_first_modraise_from_s2c(
+                        s2c_result,
+                        native.bootstrap_data,
+                        native.workspace,
+                        raised_for_c2s);
+                    gpu::gpu_check_cuda(
+                        cudaStreamSynchronize(gpu::gpu_execution_stream()),
+                        "cudaStreamSynchronize Hydra ModRaise");
+                    bootstrap_timing.modraise_ms = elapsed_milliseconds(
+                        modraise_start, std::chrono::steady_clock::now());
+                    for (const auto &layer : bootstrap_timing.s2c_layers)
+                    {
+                        bootstrap_timing.prepare_c2s_ms += layer.total_ms;
+                    }
+                    bootstrap_timing.prepare_c2s_ms +=
+                        bootstrap_timing.modraise_ms;
+                    c2s_dft_result = run_hydra_dft(
+                        raised_for_c2s,
+                        true,
+                        multi_plan->second.c2s_active_device_counts,
+                        bootstrap_timing.c2s_layers);
+                }
+                else if (logical_devices.size() == 2)
                 {
                     const auto prefix_start =
                         std::chrono::steady_clock::now();
@@ -1690,20 +2074,42 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
                                 communication::CudaTransferRoute::Auto,
                                 branch_input_ready);
 
-                        auto helper_future = std::async(
+                        auto helper_input_owner =
+                            std::make_shared<gpu::GpuCiphertextData>(
+                                std::move(helper_input));
+                        auto make_basis_partition = [](
+                            std::size_t begin,
+                            std::size_t end,
+                            bool reuse) {
+                            gpu::GpuEvalModPolynomialPartition partition;
+                            partition.combine_begin = 0;
+                            partition.combine_end = 0;
+                            partition.basis_step_begin = begin;
+                            partition.basis_step_end = end;
+                            partition.reuse_prepared_basis = reuse;
+                            partition.basis_only = true;
+                            partition.leaf_begin = 0;
+                            partition.leaf_end = 0;
+                            return partition;
+                        };
+
+                        /*
+                         * Hydra Fig. 3(a) mapping for degree 22:
+                         * both devices form the inexpensive common T2.  The
+                         * coordinator then forms T3 while the helper forms
+                         * T4 and T8.  Exchanging T3/T8 lets the coordinator
+                         * form T16 and avoids recomputing T3/T4/T8 on both
+                         * devices.  The two transfers sit between independent
+                         * basis/subtree work instead of duplicating four
+                         * ciphertext multiplications.
+                         */
+                        auto helper_basis_future = std::async(
                             std::launch::async,
-                            [&, helper_input = std::move(helper_input),
+                            [&, helper_input_owner,
                              transfer = std::move(helper_input_transfer),
                              source_ready = branch_input_ready,
                              source_device = coordinator.cuda_device_id,
-                             helper_partition =
-                                 gpu::GpuEvalModPolynomialPartition{
-                                     1,
-                                     4,
-                                     helper_combines[3].output_node,
-                                     4,
-                                     2,
-                                     6}]()
+                             make_basis_partition]()
                                 mutable {
                                 transfer.wait();
                                 gpu::gpu_check_cuda(
@@ -1714,10 +2120,132 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
                                     "cudaEventDestroy four-GPU EvalMod input ready");
                                 gpu::gpu_check_cuda(
                                     cudaSetDevice(helper.cuda_device_id),
-                                    "cudaSetDevice four-GPU EvalMod helper");
+                                    "cudaSetDevice four-GPU EvalMod helper basis");
+                                gpu::GpuCiphertextData unused;
+                                auto common_t2 =
+                                    make_basis_partition(0, 1, false);
+                                helper.evaluator->eval_mod_high_precision(
+                                    *helper_input_owner,
+                                    helper_native.bootstrap_data,
+                                    *helper_native.relin_keys,
+                                    helper_native.workspace,
+                                    unused,
+                                    &common_t2);
+                                auto helper_t4_t8 =
+                                    make_basis_partition(2, 4, true);
+                                helper.evaluator->eval_mod_high_precision(
+                                    *helper_input_owner,
+                                    helper_native.bootstrap_data,
+                                    *helper_native.relin_keys,
+                                    helper_native.workspace,
+                                    unused,
+                                    &helper_t4_t8);
+                                gpu::gpu_check_cuda(
+                                    cudaStreamSynchronize(
+                                        gpu::gpu_execution_stream()),
+                                    "cudaStreamSynchronize four-GPU EvalMod helper basis");
+                            });
+
+                        gpu::gpu_check_cuda(
+                            cudaSetDevice(coordinator.cuda_device_id),
+                            "cudaSetDevice four-GPU EvalMod coordinator basis");
+                        gpu::GpuCiphertextData unused;
+                        auto coordinator_t2 =
+                            make_basis_partition(0, 1, false);
+                        coordinator.evaluator->eval_mod_high_precision(
+                            branch_input,
+                            coordinator_native.bootstrap_data,
+                            *coordinator_native.relin_keys,
+                            coordinator_native.workspace,
+                            unused,
+                            &coordinator_t2);
+                        auto coordinator_t3 =
+                            make_basis_partition(1, 2, true);
+                        coordinator.evaluator->eval_mod_high_precision(
+                            branch_input,
+                            coordinator_native.bootstrap_data,
+                            *coordinator_native.relin_keys,
+                            coordinator_native.workspace,
+                            unused,
+                            &coordinator_t3);
+                        gpu::gpu_check_cuda(
+                            cudaStreamSynchronize(
+                                gpu::gpu_execution_stream()),
+                            "cudaStreamSynchronize four-GPU EvalMod coordinator T3");
+                        helper_basis_future.get();
+
+                        auto &coordinator_basis =
+                            coordinator_native.workspace.eval_mod_basis;
+                        auto &helper_basis =
+                            helper_native.workspace.eval_mod_basis;
+                        if (coordinator_basis.size() <= 8 ||
+                            helper_basis.size() <= 8 ||
+                            coordinator_basis[3].empty() ||
+                            helper_basis[4].empty() ||
+                            helper_basis[8].empty())
+                        {
+                            throw std::logic_error(
+                                "Poseidon Hydra EvalMod basis exchange is incomplete");
+                        }
+
+                        const auto t3_copies =
+                            communication::prepare_full_object_copy(
+                                coordinator_basis[3],
+                                helper_basis[3],
+                                helper.cuda_device_id);
+                        const auto t4_copies =
+                            communication::prepare_full_object_copy(
+                                helper_basis[4],
+                                coordinator_basis[4],
+                                coordinator.cuda_device_id);
+                        const auto t8_copies =
+                            communication::prepare_full_object_copy(
+                                helper_basis[8],
+                                coordinator_basis[8],
+                                coordinator.cuda_device_id);
+                        if (t3_copies.size() != 1 ||
+                            t4_copies.size() != 1 ||
+                            t8_copies.size() != 1)
+                        {
+                            throw std::logic_error(
+                                "Poseidon Hydra EvalMod basis copy is not contiguous");
+                        }
+                        auto t3_transfer = cuda_transfer_->copy_async(
+                            t3_copies.front(),
+                            communication::CudaTransferRoute::Auto);
+                        /*
+                         * T4 and T8 form one helper-to-coordinator SAC batch:
+                         * both copies are queued on the same destination
+                         * transfer stream and complete in submission order.
+                         */
+                        auto t4_transfer = cuda_transfer_->copy_async(
+                            t4_copies.front(),
+                            communication::CudaTransferRoute::Auto);
+                        auto t8_transfer = cuda_transfer_->copy_async(
+                            t8_copies.front(),
+                            communication::CudaTransferRoute::Auto);
+
+                        gpu::GpuEvalModPolynomialPartition helper_partition{
+                            1,
+                            4,
+                            helper_combines[3].output_node,
+                            4,
+                            2,
+                            6};
+                        helper_partition.basis_step_begin = 4;
+                        helper_partition.reuse_prepared_basis = true;
+                        auto helper_future = std::async(
+                            std::launch::async,
+                            [&, helper_input_owner,
+                             transfer = std::move(t3_transfer),
+                             helper_partition]() mutable {
+                                transfer.wait();
+                                gpu::gpu_check_cuda(
+                                    cudaSetDevice(helper.cuda_device_id),
+                                    "cudaSetDevice four-GPU EvalMod helper subtree");
                                 gpu::GpuCiphertextData remainder;
                                 helper.evaluator->eval_mod_high_precision(
-                                    helper_input,
+                                    *helper_input_owner,
                                     helper_native.bootstrap_data,
                                     *helper_native.relin_keys,
                                     helper_native.workspace,
@@ -1725,22 +2253,35 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
                                     &helper_partition);
                                 gpu::gpu_check_cuda(
                                     cudaStreamSynchronize(
-                                    gpu::gpu_execution_stream()),
-                                    "cudaStreamSynchronize four-GPU EvalMod helper");
+                                        gpu::gpu_execution_stream()),
+                                    "cudaStreamSynchronize four-GPU EvalMod helper subtree");
                                 return remainder;
                             });
 
+                        t4_transfer.wait();
+                        t8_transfer.wait();
                         gpu::gpu_check_cuda(
                             cudaSetDevice(coordinator.cuda_device_id),
-                            "cudaSetDevice four-GPU EvalMod coordinator");
-                        const gpu::GpuEvalModPolynomialPartition
-                            quotient_partition{
-                                0,
-                                1,
-                                coordinator_combines.front().output_node,
-                                5,
-                                0,
-                                2};
+                            "cudaSetDevice four-GPU EvalMod coordinator T16");
+                        auto coordinator_t16 =
+                            make_basis_partition(4, 5, true);
+                        coordinator.evaluator->eval_mod_high_precision(
+                            branch_input,
+                            coordinator_native.bootstrap_data,
+                            *coordinator_native.relin_keys,
+                            coordinator_native.workspace,
+                            unused,
+                            &coordinator_t16);
+
+                        gpu::GpuEvalModPolynomialPartition quotient_partition{
+                            0,
+                            1,
+                            coordinator_combines.front().output_node,
+                            5,
+                            0,
+                            2};
+                        quotient_partition.basis_step_begin = 5;
+                        quotient_partition.reuse_prepared_basis = true;
                         gpu::GpuCiphertextData quotient;
                         gpu::GpuCiphertextData product;
                         coordinator.evaluator->eval_mod_high_precision(
