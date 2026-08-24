@@ -48,6 +48,36 @@ std::vector<int> parse_counts(const std::string &encoded)
     return result;
 }
 
+std::vector<int> parse_rank_to_node(const std::string &encoded)
+{
+    std::vector<int> result;
+    std::size_t begin = 0;
+    while (begin <= encoded.size())
+    {
+        const std::size_t end = encoded.find('x', begin);
+        const std::string token = encoded.substr(
+            begin, end == std::string::npos ? std::string::npos : end - begin);
+        if (token.empty())
+        {
+            throw std::invalid_argument("rank-to-node contains an empty entry");
+        }
+        std::size_t consumed = 0;
+        const int value = std::stoi(token, &consumed);
+        if (consumed != token.size() || value < 0)
+        {
+            throw std::invalid_argument(
+                "rank-to-node entries must be nonnegative integers");
+        }
+        result.push_back(value);
+        if (end == std::string::npos)
+        {
+            break;
+        }
+        begin = end + 1;
+    }
+    return result;
+}
+
 void check_cuda(cudaError_t status, const char *what)
 {
     if (status != cudaSuccess)
@@ -85,12 +115,24 @@ int main(int argc, char **argv)
     try
     {
         std::string counts_text;
-        for (int index = 1; index + 1 < argc; ++index)
+        std::string rank_to_node_text;
+        for (int index = 1; index < argc; ++index)
         {
-            if (std::string(argv[index]) == "--device-counts")
+            const std::string argument = argv[index];
+            if (argument == "--device-counts" && index + 1 < argc)
             {
                 counts_text = argv[index + 1];
                 ++index;
+            }
+            else if (argument == "--rank-to-node" && index + 1 < argc)
+            {
+                rank_to_node_text = argv[index + 1];
+                ++index;
+            }
+            else
+            {
+                throw std::invalid_argument(
+                    "usage: --device-counts 1x4 [--rank-to-node 0x1]");
             }
         }
         if (counts_text.empty())
@@ -103,25 +145,44 @@ int main(int argc, char **argv)
             throw std::invalid_argument(
                 "transfer test requires at least two MPI ranks and matching device-counts");
         }
+        std::vector<int> rank_to_node;
+        if (!rank_to_node_text.empty())
+        {
+            rank_to_node = parse_rank_to_node(rank_to_node_text);
+        }
+        if (!rank_to_node.empty() &&
+            static_cast<int>(rank_to_node.size()) != world)
+        {
+            throw std::invalid_argument(
+                "rank-to-node length must match MPI world size");
+        }
 
         MPI_Comm local_comm = MPI_COMM_NULL;
         MPI_Comm_split_type(MPI_COMM_WORLD, MPI_COMM_TYPE_SHARED, 0,
                             MPI_INFO_NULL, &local_comm);
         int local_rank = 0;
         MPI_Comm_rank(local_comm, &local_rank);
+        int local_device_offset = 0;
+        const int local_device_count = counts[rank];
+        MPI_Exscan(&local_device_count, &local_device_offset, 1, MPI_INT,
+                   MPI_SUM, local_comm);
+        if (local_rank == 0)
+        {
+            local_device_offset = 0;
+        }
         MPI_Comm_free(&local_comm);
 
         std::vector<int> local_devices(static_cast<std::size_t>(counts[rank]));
         for (int index = 0; index < counts[rank]; ++index)
         {
             local_devices[static_cast<std::size_t>(index)] =
-                local_rank * counts[rank] + index;
+                local_device_offset + index;
         }
 
         const auto context = make_context();
         poseidon::runtime_api::GpuProcessTopology topology;
         topology.device_counts = counts;
-        topology.rank_to_node.assign(static_cast<std::size_t>(world), 0);
+        topology.rank_to_node = rank_to_node;
         poseidon::runtime_api::PoseidonGpuApi api(
             "poseidon-gpu-mpi-transfer-test", context, MPI_COMM_WORLD,
             local_devices, topology);
@@ -243,7 +304,12 @@ int main(int argc, char **argv)
         if (rank == 0)
         {
             std::cout << "Poseidon GPU MPI transfer passed: world=" << world
-                      << " device_counts=" << counts_text << '\n';
+                      << " device_counts=" << counts_text;
+            if (!rank_to_node_text.empty())
+            {
+                std::cout << " rank_to_node=" << rank_to_node_text;
+            }
+            std::cout << '\n';
         }
     }
     catch (const std::exception &error)

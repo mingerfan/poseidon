@@ -123,6 +123,13 @@ if(POSEIDON_BUILD_CKKS_RUNTIME_GPU_NCCL AND
     )
     target_link_libraries(poseidon_gpu_mpi_transfer_test PRIVATE
         poseidon_runtime_gpu_api)
+
+    add_executable(poseidon_gpu_mpi_plan_e2e
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/runtime_api/poseidon_gpu_mpi_plan_e2e.cpp
+    )
+    target_link_libraries(poseidon_gpu_mpi_plan_e2e PRIVATE
+        poseidon_runtime_gpu_api
+        ckks_runtime::plan_json)
 endif()
 
 if(POSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS)

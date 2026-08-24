@@ -53,6 +53,26 @@ mpiexec -n 4 build-runtime-nccl/bin/poseidon_nccl_mpi_smoke \
   --device-counts 1x1x1x1
 ```
 
+Generate and run the small compiler-to-runtime MPI GPU smoke plan with one MPI
+process managing one GPU on the first node and one process managing four GPUs
+on the second node:
+
+```bash
+python3 scripts/generate_mpi_gpu_smoke_plan.py \
+  --output-dir build-runtime-nccl/mpi-gpu-smoke
+cmake --build build-runtime-nccl --target poseidon_gpu_mpi_plan_e2e
+mpiexec --host node0:1,node1:1 \
+  build-runtime-nccl/bin/poseidon_gpu_mpi_plan_e2e \
+  build-runtime-nccl/mpi-gpu-smoke/mpi-gpu-smoke.mpi_gpu_fanout.runtime-plan.json \
+  build-runtime-nccl/mpi-gpu-smoke/operator-spec.json \
+  build-runtime-nccl/mpi-gpu-smoke/report.json \
+  --rank-to-node 0x1
+```
+
+The generator checks that Dacapo placement uses all five GPUs, exercises an
+ordered V2 communication rule, emits cross-rank Device transfers, and does not
+request an unsupported remote transfer direction.
+
 ## Nsight Systems GPU Kernel Gap Analysis
 
 After collecting one or more Nsight Systems reports, compare actual GPU kernel
