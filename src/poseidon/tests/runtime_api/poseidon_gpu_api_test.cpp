@@ -288,7 +288,36 @@ PoseidonGpuValue transfer_value(PoseidonGpuApi &api, fhegpu::TransferId id,
                                 const fhegpu::Place &source,
                                 const fhegpu::Place &destination)
 {
-    auto handle = api.communicate_async(transfer_action(id, kind, source, destination), {input});
+    if (kind != fhegpu::ValueKind::Ciphertext)
+    {
+        throw std::invalid_argument(
+            "test transfer descriptor helper supports ciphertext only");
+    }
+    int level = 0;
+    int scale_log2 = 0;
+    bool ntt = true;
+    int components = 2;
+    if (input.place_kind() == fhegpu::PlaceKind::Host)
+    {
+        const auto &cipher = input.host_ciphertext();
+        level = static_cast<int>(cipher.level());
+        scale_log2 = static_cast<int>(std::llround(std::log2(cipher.scale())));
+        ntt = cipher.is_ntt_form();
+        components = static_cast<int>(cipher.size());
+    }
+    else
+    {
+        const auto &cipher = input.device_ciphertext();
+        level = static_cast<int>(cipher.meta.q_count - 1);
+        scale_log2 =
+            static_cast<int>(std::llround(std::log2(cipher.meta.scale)));
+        ntt = cipher.meta.is_ntt_form;
+        components = static_cast<int>(cipher.meta.component_count);
+    }
+    const fhegpu::ValueDesc output_desc{
+        1, kind, destination, kContextId, level, scale_log2, ntt, components};
+    auto handle = api.communicate_async(
+        transfer_action(id, kind, source, destination), {input}, {output_desc});
     auto outputs = api.wait(handle);
     require(outputs.size() == 1, "Transfer returned the wrong output count");
     require_rejected([&] { (void)api.wait(handle); }, "already waited");

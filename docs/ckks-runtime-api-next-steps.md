@@ -16,6 +16,7 @@
 - `PoseidonCpuApi` 和 `PoseidonGpuApi` 都直接实现 Runtime Api；旧 mgpu IR/调度/执行系统以及 HEVM/CST frontend 已删除。
 - 同进程 CUDA 拷贝、CPU MPI 通信、MPI/NCCL bootstrap、跨 rank Host-to-Device staging 和 Host `decrypt_reencrypt` Boot 已接入 RuntimePlan 执行路径。
 - 拷贝由 RuntimePlan 的 Transfer/Replicate 驱动，算子不会在失败后临时搬运数据或切换后端。
+- 多 rank `PerDeviceWorkers` 使用 rank 主线程顺序协调跨 rank NCCL，device worker 负责本地计算和同 rank CUDA copy；initialization 仍顺序执行。
 
 ## 剩余工作
 

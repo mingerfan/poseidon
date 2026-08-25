@@ -41,6 +41,44 @@ def write_json(path: Path, value: object) -> None:
 
 
 def make_communication_profile(rank_to_node: list[int]) -> dict:
+    rules = []
+    if len(rank_to_node) > 1:
+        rules = [
+            {
+                "id": "rank0-device0-to-rank1-device0",
+                "from": {"kind": "device", "rank": 0, "device": 0},
+                "to": {"kind": "device", "rank": 1, "device": 0},
+                "direction": "both",
+                "transport": "nccl",
+                "cost": {
+                    "startup_latency_us": 4,
+                    "max_rate_bytes_per_us": 80000,
+                    "saturation_bytes": 524288,
+                },
+            },
+            {
+                "id": "node0-to-node1-fallback",
+                "from": {
+                    "kind": "device",
+                    "node": rank_to_node[0],
+                    "rank": "*",
+                    "device": "*",
+                },
+                "to": {
+                    "kind": "device",
+                    "node": rank_to_node[1],
+                    "rank": "*",
+                    "device": "*",
+                },
+                "direction": "both",
+                "transport": "nccl",
+                "cost": {
+                    "startup_latency_us": 20,
+                    "max_rate_bytes_per_us": 20000,
+                    "saturation_bytes": 1048576,
+                },
+            },
+        ]
     return {
         "format_version": 2,
         "coefficient_bytes": 4,
@@ -62,42 +100,7 @@ def make_communication_profile(rank_to_node: list[int]) -> dict:
                 "saturation_bytes": 1048576,
             },
         },
-        "rules": [
-            {
-                "id": "rank0-device0-to-rank1-device0",
-                "from": {"kind": "device", "rank": 0, "device": 0},
-                "to": {"kind": "device", "rank": 1, "device": 0},
-                "direction": "both",
-                "transport": "nccl",
-                "cost": {
-                    "startup_latency_us": 4,
-                    "max_rate_bytes_per_us": 80000,
-                    "saturation_bytes": 524288,
-                },
-            },
-            {
-                "id": "node0-to-node1-fallback",
-                "from": {
-                    "kind": "device",
-                    "node": 0,
-                    "rank": "*",
-                    "device": "*",
-                },
-                "to": {
-                    "kind": "device",
-                    "node": 1,
-                    "rank": "*",
-                    "device": "*",
-                },
-                "direction": "both",
-                "transport": "nccl",
-                "cost": {
-                    "startup_latency_us": 20,
-                    "max_rate_bytes_per_us": 20000,
-                    "saturation_bytes": 1048576,
-                },
-            },
-        ],
+        "rules": rules,
     }
 
 
@@ -153,6 +156,7 @@ def validate_plan(plan: dict, device_counts: list[int]) -> dict:
     cross_rank = []
     cross_rank_device = []
     cross_rank_host_uploads = []
+    local_device_transfers = []
     exact_pair = []
     for item in instructions:
         if item.get("kind") not in ("transfer", "replicate"):
@@ -161,6 +165,10 @@ def validate_plan(plan: dict, device_counts: list[int]) -> dict:
         for index, destination in enumerate(destinations):
             source = source_place(item, index)
             if source["rank"] == destination["rank"]:
+                if (source["kind"] == "device" and
+                        destination["kind"] == "device" and
+                        source.get("index") != destination.get("index")):
+                    local_device_transfers.append((source, destination))
                 continue
             cross_rank.append((source, destination))
             if source["kind"] == "host" and destination["kind"] == "device":
@@ -177,17 +185,20 @@ def validate_plan(plan: dict, device_counts: list[int]) -> dict:
             }
             if endpoints == {(0, 0), (1, 0)}:
                 exact_pair.append((source, destination))
-    if not cross_rank_device:
+    if len(device_counts) > 1 and not cross_rank_device:
         raise RuntimeError("generated plan contains no cross-rank Device transfer")
-    if not exact_pair:
+    if len(device_counts) > 1 and not exact_pair:
         raise RuntimeError(
             "generated plan never exercises the first exact communication rule"
         )
+    if len(device_counts) == 1 and device_counts[0] > 1 and not local_device_transfers:
+        raise RuntimeError("generated plan contains no same-rank Device transfer")
     return {
         "compute_places": sorted(compute_places),
         "cross_rank_transfers": len(cross_rank),
         "cross_rank_device_transfers": len(cross_rank_device),
         "cross_rank_host_uploads": len(cross_rank_host_uploads),
+        "local_device_transfers": len(local_device_transfers),
         "exact_rule_transfers": len(exact_pair),
     }
 

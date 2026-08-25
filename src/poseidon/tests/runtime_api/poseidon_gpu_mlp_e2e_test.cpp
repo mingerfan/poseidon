@@ -292,10 +292,10 @@ void require_device_memory_lower_bound(
 }
 
 PoseidonGpuValue download(PoseidonGpuApi &api, fhegpu::ValueId id,
-                          const fhegpu::Place &source,
+                          const fhegpu::ValueDesc &source_desc,
                           const PoseidonGpuValue &value)
 {
-    if (source.kind == fhegpu::PlaceKind::Host)
+    if (source_desc.place.kind == fhegpu::PlaceKind::Host)
     {
         return value;
     }
@@ -305,10 +305,13 @@ PoseidonGpuValue download(PoseidonGpuApi &api, fhegpu::ValueId id,
     action.hint = fhegpu::CommHint::PointToPoint;
     action.inputs = {id};
     action.outputs = {id + 1};
-    action.sources = {source};
+    action.sources = {source_desc.place};
     action.destinations = {{fhegpu::PlaceKind::Host, 0, 0}};
     action.output_types = {fhegpu::ValueKind::Ciphertext};
-    auto handle = api.communicate_async(action, {value});
+    auto output_desc = source_desc;
+    output_desc.id = id + 1;
+    output_desc.place = action.destinations.front();
+    auto handle = api.communicate_async(action, {value}, {output_desc});
     auto outputs = api.wait(handle);
     if (outputs.size() != 1)
     {
@@ -534,7 +537,7 @@ int main(int argc, char **argv)
         const fhegpu::ValueId output_id = plan.final_outputs.front();
         const auto &output_desc = find_value(plan, output_id);
         auto host_output = download(
-            api, output_id, output_desc.place, artifact.values.at(output_id).value);
+            api, output_id, output_desc, artifact.values.at(output_id).value);
         poseidon::Decryptor decryptor(context, *secret_key);
         poseidon::Plaintext output_plain;
         decryptor.decrypt(host_output.host_ciphertext(), output_plain);

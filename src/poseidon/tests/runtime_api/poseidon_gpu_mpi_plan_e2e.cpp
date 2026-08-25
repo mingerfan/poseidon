@@ -240,7 +240,7 @@ void broadcast_secret_key(const poseidon::PoseidonContext &context,
 }
 
 PoseidonGpuValue download(PoseidonGpuApi &api, fhegpu::ValueId id,
-                          const fhegpu::Place &source,
+                          const fhegpu::ValueDesc &source_desc,
                           const PoseidonGpuValue &value)
 {
     fhegpu::CommAction action;
@@ -249,10 +249,13 @@ PoseidonGpuValue download(PoseidonGpuApi &api, fhegpu::ValueId id,
     action.hint = fhegpu::CommHint::PointToPoint;
     action.inputs = {id};
     action.outputs = {id + 1};
-    action.sources = {source};
-    action.destinations = {{fhegpu::PlaceKind::Host, source.rank, 0}};
+    action.sources = {source_desc.place};
+    action.destinations = {{fhegpu::PlaceKind::Host, source_desc.place.rank, 0}};
     action.output_types = {fhegpu::ValueKind::Ciphertext};
-    auto handle = api.communicate_async(action, {value});
+    auto output_desc = source_desc;
+    output_desc.id = id + 1;
+    output_desc.place = action.destinations.front();
+    auto handle = api.communicate_async(action, {value}, {output_desc});
     auto outputs = api.wait(handle);
     if (outputs.size() != 1)
     {
@@ -268,6 +271,7 @@ struct PlanStats
     std::size_t cross_rank_transfers = 0;
     std::size_t cross_rank_device_transfers = 0;
     std::size_t cross_rank_host_uploads = 0;
+    std::size_t local_device_transfers = 0;
     std::set<std::pair<int, int>> compute_places;
 };
 
@@ -308,6 +312,12 @@ PlanStats validate_smoke_plan(const fhegpu::RuntimePlan &plan)
                 const auto &source = communication->sources.front();
                 if (source.rank == destination.rank)
                 {
+                    if (source.kind == fhegpu::PlaceKind::Device &&
+                        destination.kind == fhegpu::PlaceKind::Device &&
+                        source.index != destination.index)
+                    {
+                        ++stats.local_device_transfers;
+                    }
                     continue;
                 }
                 ++stats.cross_rank_transfers;
@@ -339,9 +349,12 @@ PlanStats validate_smoke_plan(const fhegpu::RuntimePlan &plan)
             expected_places.emplace(static_cast<int>(rank), device);
         }
     }
+    const bool communication_coverage =
+        plan.target.world_size > 1
+            ? stats.cross_rank_device_transfers > 0
+            : expected_places.size() == 1 || stats.local_device_transfers > 0;
     if (stats.negates != 10 || stats.adds != 9 ||
-        stats.cross_rank_device_transfers == 0 ||
-        stats.compute_places != expected_places)
+        !communication_coverage || stats.compute_places != expected_places)
     {
         throw std::runtime_error(
             "MPI GPU smoke plan does not exercise the expected distributed graph");
@@ -507,7 +520,9 @@ int main(int argc, char **argv)
         }
 
         fhegpu::SequentialRuntime<PoseidonGpuApi> runtime(
-            rank, world_size, local_device_count, api);
+            rank, world_size, local_device_count, api,
+            fhegpu::DeviceExecutionMode::PerDeviceWorkers,
+            static_cast<std::size_t>(local_device_count));
         const fhegpu::RuntimeResources resources{loaded_spec, std::nullopt, false};
         const auto artifact = runtime.run(loaded_plan, resources, inputs);
 
@@ -524,7 +539,7 @@ int main(int argc, char **argv)
             if (final_desc.place.kind == fhegpu::PlaceKind::Device)
             {
                 downloaded.emplace(
-                    download(api, final_id, final_desc.place, artifact_value));
+                    download(api, final_id, final_desc, artifact_value));
                 host_value = &*downloaded;
             }
             else if (final_desc.place.kind != fhegpu::PlaceKind::Host)
@@ -572,6 +587,7 @@ int main(int argc, char **argv)
                 {"passed", all_passed != 0},
                 {"expression", "-10*x"},
                 {"world_size", world_size},
+                {"execution_mode", "per_device_workers"},
                 {"device_counts", plan.target.device_counts},
                 {"rank_to_node", rank_to_node},
                 {"plan_sha256", loaded_plan.source_sha256},
@@ -582,6 +598,7 @@ int main(int argc, char **argv)
                 {"cross_rank_device_transfers",
                  stats.cross_rank_device_transfers},
                 {"cross_rank_host_uploads", stats.cross_rank_host_uploads},
+                {"local_device_transfers", stats.local_device_transfers},
                 {"max_abs_error", max_abs_error},
                 {"max_imaginary", max_imaginary},
                 {"tolerance", kTolerance},

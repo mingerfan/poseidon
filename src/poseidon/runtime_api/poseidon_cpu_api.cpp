@@ -607,8 +607,14 @@ PoseidonCpuApi::Value PoseidonCpuApi::compute(const fhegpu::ComputeOp &op,
 }
 
 PoseidonCpuApi::CommHandle PoseidonCpuApi::communicate_async(
-    const fhegpu::CommAction &action, const std::vector<Value> &local_inputs)
+    const fhegpu::CommAction &action, const std::vector<Value> &local_inputs,
+    const std::vector<fhegpu::ValueDesc> &output_descs)
 {
+    if (output_descs.size() != action.outputs.size())
+    {
+        throw std::invalid_argument(
+            "Poseidon CPU communication output descriptor count mismatch");
+    }
 #if defined(POSEIDON_RUNTIME_CPU_MPI)
     if (mpi_ != nullptr)
     {
@@ -661,6 +667,14 @@ PoseidonCpuApi::CommHandle PoseidonCpuApi::communicate_async(
         for (std::size_t slot = 0; slot < action.destinations.size(); ++slot)
         {
             const auto &destination = action.destinations[slot];
+            const auto &output_desc = output_descs[slot];
+            if (output_desc.id != action.outputs[slot] ||
+                output_desc.kind != action.output_types[slot] ||
+                output_desc.place != destination)
+            {
+                throw std::invalid_argument(
+                    "Poseidon CPU output ValueDesc does not match CommAction");
+            }
             if (destination.kind != fhegpu::PlaceKind::Host || destination.index != 0 ||
                 destination.rank < 0 || destination.rank >= world_size_ ||
                 destination.rank == source.rank)
@@ -706,6 +720,7 @@ PoseidonCpuApi::CommHandle PoseidonCpuApi::communicate_async(
 #else
     static_cast<void>(action);
     static_cast<void>(local_inputs);
+    static_cast<void>(output_descs);
 #endif
     throw std::runtime_error("Poseidon CPU Api does not support communication");
 }

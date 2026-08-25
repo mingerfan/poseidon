@@ -153,7 +153,8 @@ public:
                            const std::vector<double> &slots);
     Value compute(const fhegpu::ComputeOp &op, const std::vector<Value> &inputs);
     CommHandle communicate_async(const fhegpu::CommAction &action,
-                                 const std::vector<Value> &local_inputs);
+                                 const std::vector<Value> &local_inputs,
+                                 const std::vector<fhegpu::ValueDesc> &output_descs);
     std::vector<Value> wait(CommHandle &handle);
     void synchronize(Value &value);
     void preflight(std::string_view plan_source_sha256, bool skip_artifact_digest_checks,
@@ -174,7 +175,8 @@ private:
 #ifdef POSEIDON_RUNTIME_GPU_NCCL
     int nccl_rank_for_place(const fhegpu::Place &place) const;
     CommHandle communicate_distributed(const fhegpu::CommAction &action,
-                                       const std::vector<Value> &local_inputs);
+                                       const std::vector<Value> &local_inputs,
+                                       const std::vector<fhegpu::ValueDesc> &output_descs);
 #endif
     void retain_in_flight(const std::vector<Value> &values,
                           std::vector<std::shared_ptr<void>> resources = {});
