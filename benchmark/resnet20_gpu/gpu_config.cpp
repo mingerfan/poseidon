@@ -1,7 +1,9 @@
 #include "gpu_config.h"
 
 #include <algorithm>
+#include <cstdlib>
 #include <stdexcept>
+#include <string>
 
 namespace poseidon::benchmark::resnet20_gpu::core
 {
@@ -14,6 +16,32 @@ std::vector<std::uint32_t> verified_bootstrap_tail()
         32, 32, 32, 32, 32, 32, 32, 32, 32, 32,
         28, 28, 31, 31, 32, 32, 30, 31, 32, 31, 32,
         32, 31, 31, 31, 32, 32, 31, 32, 32, 32, 30};
+}
+
+std::uint32_t configured_dnum()
+{
+    const char *raw = std::getenv("POSEIDON_GPU_RESNET20_DNUM");
+    if (raw == nullptr)
+    {
+        return 2;
+    }
+
+    try
+    {
+        const std::string text(raw);
+        std::size_t parsed = 0;
+        const auto value = std::stoul(text, &parsed, 10);
+        if (parsed != text.size() || value == 0 || value > 36)
+        {
+            throw std::invalid_argument("out of range");
+        }
+        return static_cast<std::uint32_t>(value);
+    }
+    catch (const std::exception &)
+    {
+        throw std::invalid_argument(
+            "POSEIDON_GPU_RESNET20_DNUM must be an integer in [1, 36]");
+    }
 }
 
 }  // namespace
@@ -107,6 +135,7 @@ void GpuConfig::validate() const
 GpuConfig make_gpu_config()
 {
     GpuConfig config;
+    config.dnum = configured_dnum();
 
     // q[0..1] is the centered q0 base. The next 32 entries reproduce the
     // verified Q34 high-precision bootstrap chain. Application-only 32-bit

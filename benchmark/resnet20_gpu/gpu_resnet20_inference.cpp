@@ -32,6 +32,38 @@ constexpr int kImageChannels = 3;
 constexpr int kClassCount = 10;
 constexpr int kFinalChannels = 64;
 
+const std::vector<int> &resnet20_direct_rotation_steps()
+{
+    // Exhaustive logical rotations recorded from the complete fixed ResNet20
+    // topology. Keep these keys ready before the first network operation.
+    static const std::vector<int> steps{
+        1, 2, 4, 8, 12, 16, 20, 24, 28, 31, 32, 33, 56, 62, 64, 66, 84,
+        124, 128, 132, 256, 384, 512, 640, 768, 896, 959, 960, 990, 991,
+        1008, 1023, 1024, 1036, 1064, 1092, 1952, 1982, 1983, 2016, 2044,
+        2047, 2048, 2072, 2078, 2100, 3007, 3024, 3040, 3052, 3070, 3071,
+        3072, 3080, 3108, 4031, 4032, 4062, 4063, 4095, 4096, 5023, 5024,
+        5054, 5055, 5087, 5118, 5119, 5120, 6047, 6078, 6079, 6111, 6112,
+        6142, 6143, 7071, 7102, 7103, 7135, 7166, 7167, 7168, 8095, 8126,
+        8127, 8159, 8190, 8191, 8192, 9149, 9183, 9184, 9213, 9215, 9216,
+        10173, 10207, 10208, 10237, 10239, 11197, 11231, 11232, 11261,
+        11263, 11264, 12221, 12255, 12256, 12285, 12287, 12288, 13214,
+        13216, 13246, 13278, 13279, 13280, 13310, 13311, 13312, 14238,
+        14240, 14270, 14302, 14303, 14304, 14334, 14335, 15262, 15264,
+        15294, 15326, 15327, 15328, 15358, 15359, 15360, 16286, 16288,
+        16318, 16350, 16351, 16352, 16382, 16383, 16384, 17311, 17375,
+        17408, 18335, 18399, 18432, 19359, 19423, 19456, 20383, 20447,
+        20480, 21405, 21406, 21437, 21469, 21470, 21471, 21501, 21504,
+        22429, 22430, 22461, 22493, 22494, 22495, 22525, 22528, 23453,
+        23454, 23485, 23517, 23518, 23519, 23549, 23552, 24477, 24478,
+        24509, 24541, 24542, 24543, 24573, 24576, 25501, 25565, 25568,
+        25600, 26525, 26589, 26592, 26624, 27549, 27613, 27616, 27648,
+        28573, 28637, 28640, 28672, 29600, 29632, 29664, 29696, 30624,
+        30656, 30688, 30720, 31648, 31680, 31712, 31743, 31744, 31774,
+        32636, 32640, 32644, 32672, 32702, 32704, 32706, 32735, 32736,
+        32737, 32764, 32766, 32767};
+    return steps;
+}
+
 using GpuCkksRuntime = shared_gpu::GpuCkksRuntime;
 using GpuMultiplexedTensor = shared_gpu::GpuMultiplexedTensor;
 
@@ -631,30 +663,38 @@ GpuResNet20Result run_gpu_resnet20_preloaded(
 {
     GpuCkksRuntime runtime(config);
     runtime.initialize_bootstrap();
+    runtime.initialize_direct_rotation_keys(
+        resnet20_direct_rotation_steps());
+    runtime.synchronize();
     runtime.enable_full_device_cache();
-    std::cout << "[GPU ResNet20] preparing device-resident input/model cache\n";
-    const auto prepared_result = run_gpu_resnet20_impl(
+    std::cout << "[GPU ResNet20] all rotation keys ready; preparing "
+                 "device-resident input/model cache\n";
+    const auto direct_prepared_result = run_gpu_resnet20_impl(
         image_id, topology, weights, topology.blocks.size(), runtime,
         /*enable_validation=*/false, /*measure_gpu_only=*/false);
     runtime.synchronize();
+
     std::cout << "[GPU ResNet20] preparation complete; starting GPU-only pass\n";
     auto measured_result = run_gpu_resnet20_impl(
         image_id, topology, weights, topology.blocks.size(), runtime,
         /*enable_validation=*/false, /*measure_gpu_only=*/true);
     double replay_logit_error = 0.0;
-    if (prepared_result.logits.size() != measured_result.logits.size())
+    if (direct_prepared_result.logits.size() != measured_result.logits.size())
     {
         throw std::runtime_error("preloaded replay logit shape mismatch");
     }
-    for (std::size_t index = 0; index < prepared_result.logits.size(); ++index)
+    for (std::size_t index = 0;
+         index < direct_prepared_result.logits.size(); ++index)
     {
         replay_logit_error = std::max(
             replay_logit_error,
-            std::abs(prepared_result.logits[index] - measured_result.logits[index]));
+            std::abs(direct_prepared_result.logits[index] -
+                     measured_result.logits[index]));
     }
     std::cout << "[GPU ResNet20] preloaded_replay_max_logit_error="
               << replay_logit_error << '\n';
-    if (prepared_result.predicted_label != measured_result.predicted_label ||
+    if (direct_prepared_result.predicted_label !=
+            measured_result.predicted_label ||
         !std::isfinite(replay_logit_error) || replay_logit_error > 1.0e-8)
     {
         throw std::runtime_error("preloaded GPU replay verification failed");

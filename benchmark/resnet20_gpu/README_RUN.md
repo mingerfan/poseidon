@@ -217,6 +217,7 @@ CUDA_VISIBLE_DEVICES=2 ./run.sh --head-check 0
 | `POSEIDON_GPU_RESNET20_BUILD_DIR` | `./build` | 设置构建目录 |
 | `POSEIDON_GPU_RESNET20_OUTPUT_DIR` | `./output` | 设置日志目录 |
 | `POSEIDON_GPU_RESNET20_LOG_FILE` | 自动生成 | 指定单次运行日志文件 |
+| `POSEIDON_GPU_RESNET20_DNUM` | `2` | 设置 HYBRID key switching 的分解数量 |
 | `CMAKE_BIN` | PATH 中的 `cmake` | 指定 CMake 程序 |
 
 例如，使用独立构建目录进行一次全新验证：

@@ -73,18 +73,29 @@ CUDA_VISIBLE_DEVICES=2 POSEIDON_NTT_ALGO=fourstep \
   ./run.sh --gpu-only 0
 ```
 
-This performs one untimed preparation pass, synchronizes the device, and times
-an identical second pass from the encrypted stem through encrypted FC output.
+At startup this generates one direct Galois key for each of the 235 rotations
+required by the fixed complete ResNet20 topology. All keys are generated and
+uploaded before the first network operation. It then performs one untimed pass
+to populate the device-resident input/model cache. The final pass measures the
+encrypted stem through encrypted FC output.
 Final D2H transfer, decryption and prediction checking are outside the reported
 `gpu_only_preloaded_elapsed_seconds` interval.
 
-On physical GPU 2, the final transfer-free Nsight capture reports `18.943 s`
-wall time, of which GPU kernels account for `18.360 s`. The captured interval
-contains zero H2D and zero D2H copies; only device-to-device workspace copies
-and device memset operations remain. A separate run without profiler overhead
-reported `22.859 s` on the same card (GPU clock/load varies between runs).
-Preparation and measured passes produce identical logits
-(`preloaded_replay_max_logit_error=0`) and both predict class `3`.
+The current ResNet20 topology has 235 distinct steps and 1,831 logical rotation
+calls. Power-of-two composition requires 8,181 GPU
+key switches per inference; direct keys reduce this to 1,831 (77.6% fewer).
+With the checked-in Q36/P18/dnum=2 configuration, a physical 32-GiB GPU 2 run
+reported `8.93909 s`, predicted class `3`, and reproduced the direct-key warmup
+logits exactly (`preloaded_replay_max_logit_error=0`). An earlier validation
+run comparing direct and composed rotation paths produced the same prediction.
+The matching power-of-two-key image-0 run took `15.4695 s`, so this measurement
+is 1.73x as fast (42.2% lower GPU-only wall time).
+
+The tradeoff is initialization time and memory: generating 235 full-chain keys
+is outside the measured interval and peak device use observed during setup was
+about 30.0 GiB on a 32-GiB card. The timed interval keeps the input ciphertext,
+encoded model operands, bootstrap constants, and direct rotation keys resident
+on the GPU; it does not transfer rotation keys between CPU and GPU.
 
 The optional final argument limits execution to a prefix of the nine
 BasicBlocks. `--infer 0 0` checks the encrypted stem, and `--infer 0 1` runs

@@ -318,6 +318,8 @@ public:
     std::unordered_map<std::string, gpu::GpuPlaintextData> plaintext_cache;
     std::unordered_map<std::string, gpu::GpuCiphertextData> ciphertext_cache;
     std::unique_ptr<gpu::GpuCiphertextData> encrypted_one_cache;
+    std::set<int> direct_rotation_steps;
+    bool use_direct_rotation_keys = false;
     bool full_device_cache = false;
 };
 
@@ -882,6 +884,17 @@ GpuCkksRuntime::DeviceCiphertext GpuCkksRuntime::rotate_composed(
         return drop_to_q_count(source, source.meta.q_count);
     }
 
+    const int direct_step = static_cast<int>(remaining);
+    if (impl_->use_direct_rotation_keys)
+    {
+        if (impl_->direct_rotation_steps.count(direct_step) == 0)
+        {
+            throw std::logic_error(
+                "direct rotation key is missing for the requested step");
+        }
+        return rotate(source, direct_step);
+    }
+
     std::unique_ptr<DeviceCiphertext> current;
     for (int bit = 1; remaining != 0; bit <<= 1)
     {
@@ -902,8 +915,51 @@ GpuCkksRuntime::DeviceCiphertext GpuCkksRuntime::rotate_composed(
     return std::move(*current);
 }
 
+void GpuCkksRuntime::initialize_direct_rotation_keys(
+    const std::vector<int> &rotation_steps)
+{
+    if (rotation_steps.empty())
+    {
+        throw std::logic_error(
+            "direct rotation step list must not be empty");
+    }
+
+    impl_->direct_rotation_steps.clear();
+    const auto slots = static_cast<long long>(slot_count());
+    for (const int step : rotation_steps)
+    {
+        long long normalized = static_cast<long long>(step) % slots;
+        if (normalized < 0)
+        {
+            normalized += slots;
+        }
+        if (normalized == 0)
+        {
+            throw std::invalid_argument(
+                "direct rotation step list contains a zero rotation");
+        }
+        impl_->direct_rotation_steps.insert(static_cast<int>(normalized));
+    }
+
+    const std::vector<int> steps(
+        impl_->direct_rotation_steps.begin(),
+        impl_->direct_rotation_steps.end());
+    std::cout << "[GPU ResNet20] generating direct rotation keys before "
+                 "inference count=" << steps.size() << '\n';
+    initialize_evaluation_keys(steps);
+    impl_->use_direct_rotation_keys = true;
+    std::cout << "[GPU ResNet20] direct rotation keys ready steps=";
+    for (std::size_t index = 0; index < steps.size(); ++index)
+    {
+        std::cout << (index == 0 ? "" : ",") << steps[index];
+    }
+    std::cout << '\n';
+}
+
 void GpuCkksRuntime::initialize_inference_evaluation_keys()
 {
+    impl_->direct_rotation_steps.clear();
+    impl_->use_direct_rotation_keys = false;
     std::vector<int> steps;
     for (std::size_t step = 1; step < slot_count(); step <<= 1)
     {

@@ -29,10 +29,9 @@ GpuResNet20Result run_gpu_resnet20(std::size_t image_id,
                                    const ResNet20Weights &weights,
                                    std::size_t max_blocks = 9);
 
-// Performs an untimed preparation pass that leaves input ciphertexts and all
-// model plaintexts resident on the GPU, then measures an identical second
-// pass from the stem through the encrypted FC output. Final decryption is
-// deliberately outside the measured interval.
+// Generates every required direct Galois key before any network operation,
+// then performs one untimed cache warmup. The measured pass runs from the stem
+// through the encrypted FC output; final decryption is outside the interval.
 GpuResNet20Result run_gpu_resnet20_preloaded(
     std::size_t image_id,
     const ResNet20GpuConfig &config,

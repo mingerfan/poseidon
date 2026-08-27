@@ -107,6 +107,10 @@ public:
     DeviceCiphertext rotate_composed(
         const DeviceCiphertext &source,
         long long step) const;
+    // Generate and upload one direct Galois key for every supplied logical
+    // rotation. Subsequent rotate_composed calls use one key switch each.
+    void initialize_direct_rotation_keys(
+        const std::vector<int> &rotation_steps);
     void initialize_inference_evaluation_keys();
     // Backward-compatible model-specific spelling.
     void initialize_all_evaluation_keys();
