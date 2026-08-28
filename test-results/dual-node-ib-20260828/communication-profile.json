@@ -1,0 +1,55 @@
+{
+  "format_version": 2,
+  "coefficient_bytes": 4,
+  "topology": {
+    "rank_to_node": [0, 1]
+  },
+  "links": {
+    "host_device": {
+      "startup_latency_us": 8,
+      "max_rate_bytes_per_us": 12000,
+      "saturation_bytes": 1048576
+    },
+    "intra_rank": {
+      "startup_latency_us": 2,
+      "max_rate_bytes_per_us": 100000,
+      "saturation_bytes": 1048576
+    }
+  },
+  "rules": [
+    {
+      "id": "dual-node-ib",
+      "from": {"node": 0, "rank": "*", "device": "*"},
+      "to": {"node": 1, "rank": "*", "device": "*"},
+      "direction": "both",
+      "transport": "nccl",
+      "cost": {
+        "startup_latency_us": 4,
+        "max_rate_bytes_per_us": 47850,
+        "saturation_bytes": 16777216,
+        "rate_points": [
+          {"payload_bytes": 32768, "rate_bytes_per_us": 340},
+          {"payload_bytes": 65536, "rate_bytes_per_us": 700},
+          {"payload_bytes": 131072, "rate_bytes_per_us": 1070},
+          {"payload_bytes": 262144, "rate_bytes_per_us": 3450},
+          {"payload_bytes": 524288, "rate_bytes_per_us": 6750},
+          {"payload_bytes": 1048576, "rate_bytes_per_us": 12390},
+          {"payload_bytes": 2097152, "rate_bytes_per_us": 20700},
+          {"payload_bytes": 4194304, "rate_bytes_per_us": 28080},
+          {"payload_bytes": 8388608, "rate_bytes_per_us": 33780},
+          {"payload_bytes": 16777216, "rate_bytes_per_us": 37960},
+          {"payload_bytes": 33554432, "rate_bytes_per_us": 40590},
+          {"payload_bytes": 67108864, "rate_bytes_per_us": 42460},
+          {"payload_bytes": 134217728, "rate_bytes_per_us": 44290},
+          {"payload_bytes": 268435456, "rate_bytes_per_us": 45240},
+          {"payload_bytes": 536870912, "rate_bytes_per_us": 46200},
+          {"payload_bytes": 1073741824, "rate_bytes_per_us": 46200},
+          {"payload_bytes": 2147483648, "rate_bytes_per_us": 47040},
+          {"payload_bytes": 4294967296, "rate_bytes_per_us": 47340},
+          {"payload_bytes": 8589934592, "rate_bytes_per_us": 47750},
+          {"payload_bytes": 17179869184, "rate_bytes_per_us": 47850}
+        ]
+      }
+    }
+  ]
+}
