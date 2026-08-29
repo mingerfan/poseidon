@@ -73,6 +73,21 @@ The generator checks that Dacapo placement uses all five GPUs, exercises an
 ordered V2 communication rule, emits cross-rank Device transfers, and does not
 request an unsupported remote transfer direction.
 
+For timing an arbitrary multi-rank GPU RuntimePlan (including the MLP and
+1999-operation probe plans), build the generic runner:
+
+```bash
+cmake --build build-runtime-nccl --target poseidon_gpu_mpi_runtime_e2e
+mpiexec --host node0:1,node1:1 \
+  build-runtime-nccl/bin/poseidon_gpu_mpi_runtime_e2e \
+  PLAN OPERATOR_SPEC BUNDLE_DIR REPORT \
+  --rank-to-node 0x1 --warmups 1 --iterations 3
+```
+
+Use `BUNDLE_DIR=-` for plans without a plaintext bundle. The runner reports
+the maximum online execution time across ranks per iteration; it does not
+apply the fanout smoke graph's fixed `10 negate + 9 add_cc` numerical check.
+
 ## Nsight Systems GPU Kernel Gap Analysis
 
 After collecting one or more Nsight Systems reports, compare actual GPU kernel
