@@ -193,7 +193,7 @@ CUDA_VISIBLE_DEVICES=2 POSEIDON_NTT_ALGO=fourstep \
 5. 对第二次相同推理计时；
 6. 在计时结束后传回、解密并检查结果。
 
-网络所需的 113 把应用直连旋转密钥全部在步骤 2 生成并上传；Bootstrap 的
+网络所需的 109 把应用直连旋转密钥全部在步骤 2 生成并上传；Bootstrap 的
 39 个 DFT 旋转步长使用独立密钥。卷积、Pool 和 FC 的同源多旋转会共享一次
 HYBRID 分解，不在计算过程中临时生成或组合旋转密钥。
 
@@ -295,7 +295,12 @@ CUDA_VISIBLE_DEVICES=2 POSEIDON_NTT_ALGO=fourstep ./run.sh --gpu-only 0
 不会超出 level 预算。Global Pool 使用二叉归约和 4x4 BSGS 压紧，FC 使用
 单密文 BSGS，10 个 logits 位于同一密文的前 10 个 slot。
 
-卡 2 的完整 image-0 验证结果为 `8.15625 s`，预测类别为 `3`，两遍 logits
+Stem 会把27个 im2col patch 各自复制到16个输出通道 page，用27次打包 PMult
+和一次统一 rescale 同时计算所有输出通道；旧路径需要432次标量
+PMult-rescale和15次输出旋转。卡 2 的预加载 Stem 时间从 `238 ms` 降到
+`11 ms`。
+
+卡 2 的完整 image-0 验证结果为 `7.89794 s`，预测类别为 `3`，两遍 logits
 完全一致（`preloaded_replay_max_logit_error=0`）。
 
 ## 11. 最短运行流程

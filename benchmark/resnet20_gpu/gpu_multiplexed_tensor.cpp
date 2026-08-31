@@ -240,58 +240,27 @@ GpuMultiplexedTensor encrypted_stem_conv2d_bn(
 
     const int pad_h = kernel_h / 2;
     const int pad_w = kernel_w / 2;
-    std::vector<GpuCkksRuntime::DeviceCiphertext> patches;
-    patches.reserve(static_cast<std::size_t>(input_channels * kernel_h * kernel_w));
-    for (int input_channel = 0; input_channel < input_channels; ++input_channel)
-    {
-        for (int kh = 0; kh < kernel_h; ++kh)
-        {
-            for (int kw = 0; kw < kernel_w; ++kw)
-            {
-                std::vector<double> slots(runtime.slot_count(), 0.0);
-                for (int output_row = 0; output_row < output_h; ++output_row)
-                {
-                    for (int output_col = 0; output_col < output_w; ++output_col)
-                    {
-                        const int input_row = output_row * stride + kh - pad_h;
-                        const int input_col = output_col * stride + kw - pad_w;
-                        if (input_row < 0 || input_row >= input_h || input_col < 0 ||
-                            input_col >= input_w)
-                        {
-                            continue;
-                        }
-                        const auto input_index =
-                            (static_cast<std::size_t>(input_channel) * input_h +
-                             input_row) *
-                                input_w +
-                            input_col;
-                        slots[static_cast<std::size_t>(output_row) * output_w +
-                              output_col] = image_chw[input_index];
-                    }
-                }
-                patches.push_back(runtime.encrypt(slots));
-            }
-        }
-    }
-
     auto output =
         make_shape(output_h, output_w, out_channels, /*k=*/1, runtime.slot_count());
     for (std::size_t output_pack = 0; output_pack < output.packs.size(); ++output_pack)
     {
-        std::unique_ptr<GpuCkksRuntime::DeviceCiphertext> pack_sum;
-        for (const int output_channel : channels_for_pack(output, output_pack))
+        const auto output_channels = channels_for_pack(output, output_pack);
+        std::unique_ptr<GpuCkksRuntime::DeviceCiphertext> pack_sum_high;
+        for (int input_channel = 0; input_channel < input_channels; ++input_channel)
         {
-            std::unique_ptr<GpuCkksRuntime::DeviceCiphertext> channel_sum;
-            for (int input_channel = 0; input_channel < input_channels; ++input_channel)
+            for (int kh = 0; kh < kernel_h; ++kh)
             {
-                for (int kh = 0; kh < kernel_h; ++kh)
+                for (int kw = 0; kw < kernel_w; ++kw)
                 {
-                    for (int kw = 0; kw < kernel_w; ++kw)
+                    // Replicate this im2col patch directly into every output
+                    // channel page. One SIMD plaintext carries a different
+                    // folded Conv+BN weight per page, so one PMult evaluates
+                    // all output channels in this ciphertext pack.
+                    std::vector<double> patch_slots(runtime.slot_count(), 0.0);
+                    std::vector<double> compact_weight(runtime.slot_count(), 0.0);
+                    bool nonzero = false;
+                    for (const int output_channel : output_channels)
                     {
-                        const auto patch_index =
-                            (static_cast<std::size_t>(input_channel) * kernel_h + kh) *
-                                kernel_w +
-                            kw;
                         const auto weight_index =
                             ((static_cast<std::size_t>(output_channel) *
                                   input_channels +
@@ -302,46 +271,64 @@ GpuMultiplexedTensor encrypted_stem_conv2d_bn(
                             kw;
                         const double coefficient =
                             weights[weight_index] * bn_scale[output_channel];
-                        if (coefficient == 0.0)
+                        for (int output_row = 0; output_row < output_h;
+                             ++output_row)
                         {
-                            continue;
+                            for (int output_col = 0; output_col < output_w;
+                                 ++output_col)
+                            {
+                                const int input_row =
+                                    output_row * stride + kh - pad_h;
+                                const int input_col =
+                                    output_col * stride + kw - pad_w;
+                                if (input_row < 0 || input_row >= input_h ||
+                                    input_col < 0 || input_col >= input_w)
+                                {
+                                    continue;
+                                }
+                                const auto input_index =
+                                    (static_cast<std::size_t>(input_channel) *
+                                         input_h +
+                                     input_row) *
+                                        input_w +
+                                    input_col;
+                                const auto slot = output.slot_index(
+                                    output_channel, output_row, output_col);
+                                patch_slots[slot] = image_chw[input_index];
+                                compact_weight[slot] = coefficient;
+                                nonzero = nonzero || coefficient != 0.0;
+                            }
                         }
-                        auto term = runtime.multiply_plain_scalar_rescale(
-                            patches[patch_index], coefficient);
-                        if (channel_sum)
-                        {
-                            *channel_sum = runtime.add(*channel_sum, term);
-                        }
-                        else
-                        {
-                            channel_sum =
-                                std::make_unique<GpuCkksRuntime::DeviceCiphertext>(
-                                    std::move(term));
-                        }
+                    }
+                    if (!nonzero)
+                    {
+                        continue;
+                    }
+                    auto patch = runtime.encrypt(patch_slots);
+                    const double plain_scale = runtime.last_modulus_value(patch);
+                    if (pack_sum_high)
+                    {
+                        runtime.multiply_plain_accumulate(
+                            patch, compact_weight, plain_scale, *pack_sum_high);
+                    }
+                    else
+                    {
+                        pack_sum_high =
+                            std::make_unique<GpuCkksRuntime::DeviceCiphertext>(
+                                runtime.multiply_plain(
+                                    patch, compact_weight, plain_scale));
                     }
                 }
             }
-            if (!channel_sum)
-            {
-                throw std::runtime_error("GPU stem produced an empty output channel");
-            }
-            const long long shift = output_channel_shift(output, output_channel);
-            if (shift != 0)
-            {
-                *channel_sum = runtime.rotate_composed(*channel_sum, shift);
-            }
-            if (pack_sum)
-            {
-                *pack_sum = runtime.add(*pack_sum, *channel_sum);
-            }
-            else
-            {
-                pack_sum = std::move(channel_sum);
-            }
         }
+        if (!pack_sum_high)
+        {
+            throw std::runtime_error("GPU stem produced an empty output pack");
+        }
+        auto pack_sum = runtime.rescale(*pack_sum_high, 1);
 
         std::vector<double> bias_slots(output.slot_count, 0.0);
-        for (const int output_channel : channels_for_pack(output, output_pack))
+        for (const int output_channel : output_channels)
         {
             for (int row = 0; row < output.h; ++row)
             {
@@ -352,7 +339,7 @@ GpuMultiplexedTensor encrypted_stem_conv2d_bn(
                 }
             }
         }
-        output.packs[output_pack] = runtime.add_plain(*pack_sum, bias_slots);
+        output.packs[output_pack] = runtime.add_plain(pack_sum, bias_slots);
     }
     return output;
 }

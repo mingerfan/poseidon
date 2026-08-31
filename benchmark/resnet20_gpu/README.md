@@ -51,6 +51,13 @@ three column and three row tree reductions, followed by a 4-by-4 BSGS channel
 compaction. The `64x10` FC is evaluated as one BSGS matrix-vector product and
 returns all ten logits in slots 0 through 9 of one ciphertext.
 
+The plaintext-input stem places each of its 27 im2col patches directly in all
+16 output-channel pages before encryption. A single SIMD plaintext carries the
+16 folded Conv+BN weights for that patch. The 27 products are accumulated at
+the product scale and rescaled once, replacing 432 scalar PMult-rescale pairs
+and 15 output-placement rotations with 27 packed PMults, one rescale, and no
+rotation while retaining a Q35, `2^40` output.
+
 ## CKKS modulus and scale profile
 
 The GPU implementation follows the current CPU logical profile: application
@@ -94,7 +101,7 @@ CUDA_VISIBLE_DEVICES=2 POSEIDON_NTT_ALGO=fourstep \
   ./run.sh --gpu-only 0
 ```
 
-At startup this generates one direct Galois key for each of the 113 distinct
+At startup this generates one direct Galois key for each of the 109 distinct
 application rotation steps required by the fixed complete ResNet20 topology.
 All keys are generated and
 uploaded before the first network operation. It then performs one untimed pass
@@ -103,8 +110,8 @@ encrypted stem through encrypted FC output.
 Final D2H transfer, decryption and prediction checking are outside the reported
 `gpu_only_preloaded_elapsed_seconds` interval.
 
-The optimized topology uses 113 distinct direct application rotation steps and
-1,273 application rotation key switches per inference. Compared with the
+The optimized topology uses 109 distinct direct application rotation steps and
+1,258 application rotation key switches per inference. Compared with the
 preceding implementation, convolution output BSGS removes 452 rotations,
 pooling tree/BSGS removes 62, and FC BSGS removes 44. Direct keys keep every
 remaining application rotation to one key switch; convolution replica,
@@ -113,16 +120,17 @@ their decomposition through hoisting. Bootstrap owns a separate set of 39 DFT
 rotation steps.
 
 With the checked-in Q36/P18/dnum=2 configuration, a physical 32-GiB GPU 2 run
-reported `8.15625 s`, predicted class `3`, and reproduced the direct-key warmup
+reported `7.89794 s`, predicted class `3`, and reproduced the direct-key warmup
 logits exactly (`preloaded_replay_max_logit_error=0`). The pre-optimization
-matched-card result was `8.77687 s`, so the complete change is about 7.1%
-faster. In the final timed pass regular 3x3 convolutions take roughly
-`57-62 ms`, transition convolutions `80-95 ms`, global pooling `15 ms`, and FC
-`18 ms`; Bootstrap remains the dominant cost.
+matched-card result was `8.77687 s`, so the complete change is about 10.0%
+faster. The packed lazy stem fell from `238 ms` to `11 ms`. In the final timed
+pass regular 3x3 convolutions take roughly `57-64 ms`, transition convolutions
+`80-95 ms`, global pooling `15 ms`, and FC `17 ms`; Bootstrap remains the
+dominant cost.
 
-The tradeoff is initialization time and memory: generating 113 full-chain
+The tradeoff is initialization time and memory: generating 109 full-chain
 application keys is outside the measured interval. The old 235-key setup had
-about 30.0 GiB peak device use on a 32-GiB card; removing 122 obsolete keys
+about 30.0 GiB peak device use on a 32-GiB card; removing 126 obsolete keys
 reduces the current key footprint, although the exact peak depends on allocator
 state. The timed interval keeps the input ciphertext, encoded model operands,
 bootstrap constants, and direct rotation keys resident on the GPU; it does not
