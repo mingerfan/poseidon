@@ -30,6 +30,15 @@ is encrypted/uploaded once and cloned on the GPU. Batch-normalization scales
 are folded into convolution weights, so cached selectors are reusable across
 layers with the same packed shape.
 
+Convolution, Option-A downsampling, average pooling and global average pooling
+use lazy rescaling: plaintext products at the same level are accumulated by
+Poseidon's fused GPU `multiply_plain_accumulate` kernel, and the completed
+stage is rescaled once. The second, preloaded pass reuses the encoded operands
+from device memory, so these fused loops do not encode or upload plaintexts.
+The logical level schedule is unchanged. For example, a regular layer-1
+replicated convolution reduces plaintext-product rescale calls from 88
+(`8 groups x 9 kernels + 16 selectors`) to 9 (`8 groups + 1 output pack`).
+
 ## CKKS modulus and scale profile
 
 The GPU implementation follows the current CPU logical profile: application
@@ -85,11 +94,15 @@ The current ResNet20 topology has 235 distinct steps and 1,831 logical rotation
 calls. Power-of-two composition requires 8,181 GPU
 key switches per inference; direct keys reduce this to 1,831 (77.6% fewer).
 With the checked-in Q36/P18/dnum=2 configuration, a physical 32-GiB GPU 2 run
-reported `8.93909 s`, predicted class `3`, and reproduced the direct-key warmup
+with lazy plaintext accumulation reported `8.77687 s`, predicted class `3`,
+and reproduced the direct-key warmup
 logits exactly (`preloaded_replay_max_logit_error=0`). An earlier validation
 run comparing direct and composed rotation paths produced the same prediction.
-The matching power-of-two-key image-0 run took `15.4695 s`, so this measurement
-is 1.73x as fast (42.2% lower GPU-only wall time).
+The preceding direct-key implementation reported `8.86537 s`; this single
+matched-card measurement is 1.0% lower overall. Individual regular 3x3
+convolutions fell from roughly `92-132 ms` to `62-110 ms`, while Bootstrap
+remains the dominant cost. The matching power-of-two-key image-0 run took
+`15.4695 s`.
 
 The tradeoff is initialization time and memory: generating 235 full-chain keys
 is outside the measured interval and peak device use observed during setup was

@@ -484,9 +484,60 @@ GpuCkksRuntime::DeviceCiphertext GpuCkksRuntime::multiply_plain(
     const std::vector<double> &plain_slots,
     double plain_scale) const
 {
+    if (impl_->full_device_cache)
+    {
+        const auto key = vector_cache_key("multiply_lazy", plain_slots) +
+                         ":q=" + std::to_string(source.meta.q_count) +
+                         ":s=" + std::to_string(double_bits(plain_scale));
+        auto found = impl_->plaintext_cache.find(key);
+        if (found == impl_->plaintext_cache.end())
+        {
+            auto uploaded = encode_and_upload_plain(
+                source, plain_slots, plain_scale);
+            found = impl_->plaintext_cache.emplace(
+                key, std::move(uploaded)).first;
+        }
+        return multiply_plain_preencoded(source, found->second);
+    }
     auto device_plaintext = encode_and_upload_plain(
         source, plain_slots, plain_scale);
     return multiply_plain_preencoded(source, device_plaintext);
+}
+
+void GpuCkksRuntime::multiply_plain_accumulate(
+    const DeviceCiphertext &source,
+    const std::vector<double> &plain_slots,
+    double plain_scale,
+    DeviceCiphertext &destination) const
+{
+    if (!(plain_scale > 0.0) || !std::isfinite(plain_scale))
+    {
+        throw std::invalid_argument(
+            "multiply_plain_accumulate requires a positive finite scale");
+    }
+
+    if (impl_->full_device_cache)
+    {
+        const auto key = vector_cache_key("multiply_lazy", plain_slots) +
+                         ":q=" + std::to_string(source.meta.q_count) +
+                         ":s=" + std::to_string(double_bits(plain_scale));
+        auto found = impl_->plaintext_cache.find(key);
+        if (found == impl_->plaintext_cache.end())
+        {
+            auto uploaded = encode_and_upload_plain(
+                source, plain_slots, plain_scale);
+            found = impl_->plaintext_cache.emplace(
+                key, std::move(uploaded)).first;
+        }
+        impl_->gpu_evaluator.multiply_plain_accumulate(
+            source, found->second, destination);
+        return;
+    }
+
+    auto plaintext = encode_and_upload_plain(
+        source, plain_slots, plain_scale);
+    impl_->gpu_evaluator.multiply_plain_accumulate(
+        source, plaintext, destination);
 }
 
 GpuCkksRuntime::DevicePlaintext GpuCkksRuntime::encode_and_upload_plain(

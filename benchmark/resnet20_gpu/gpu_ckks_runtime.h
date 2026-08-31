@@ -50,6 +50,13 @@ public:
         const DeviceCiphertext &source,
         const std::vector<double> &plain_slots,
         double plain_scale) const;
+    // Fused GPU kernel for a lazy-rescale dot product. The destination must
+    // already contain a product at source.scale * plain_scale.
+    void multiply_plain_accumulate(
+        const DeviceCiphertext &source,
+        const std::vector<double> &plain_slots,
+        double plain_scale,
+        DeviceCiphertext &destination) const;
     // Split plaintext preparation from evaluation so a fixed encoded
     // diagonal can be reused by several ciphertexts without repeating CPU
     // CKKS encoding and Host-to-Device transfer.

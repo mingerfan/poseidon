@@ -138,16 +138,6 @@ long long output_channel_shift(const GpuMultiplexedTensor &output, int output_ch
            static_cast<long long>(row_offset) * output.w * output.k - col_offset;
 }
 
-std::string selector_cache_key(
-    const GpuMultiplexedTensor &output, int output_channel)
-{
-    return "conv_selector:" + std::to_string(output.h) + 'x' +
-           std::to_string(output.w) + 'x' + std::to_string(output.c) +
-           ":k=" + std::to_string(output.k) +
-           ":pages=" + std::to_string(output.pages_per_cipher) +
-           ":channel=" + std::to_string(output_channel);
-}
-
 }  // namespace
 
 std::size_t GpuMultiplexedTensor::slot_index(int channel, int row, int col) const
@@ -511,7 +501,8 @@ GpuMultiplexedTensor conv2d_bn(const GpuMultiplexedTensor &input, int out_channe
         const std::size_t output_groups = ceil_div(
             static_cast<std::size_t>(out_channels), input_replicas);
         std::cout << "[GPU multiplexed conv] input_replicas=" << input_replicas
-                  << " output_groups=" << output_groups << '\n';
+                  << " output_groups=" << output_groups
+                  << " lazy_plain_accumulate=on\n";
         std::unique_ptr<GpuCkksRuntime::DeviceCiphertext> pack_sum;
         for (std::size_t group = 0; group < output_groups; ++group)
         {
@@ -580,17 +571,19 @@ GpuMultiplexedTensor conv2d_bn(const GpuMultiplexedTensor &input, int out_channe
                     {
                         continue;
                     }
-                    auto weighted = runtime.multiply_plain_rescale(
-                        *spatial, compact_weight);
+                    const double plain_scale =
+                        runtime.last_modulus_value(*spatial);
                     if (group_sum)
                     {
-                        *group_sum = runtime.add_aligned(*group_sum, weighted);
+                        runtime.multiply_plain_accumulate(
+                            *spatial, compact_weight, plain_scale, *group_sum);
                     }
                     else
                     {
                         group_sum =
                             std::make_unique<GpuCkksRuntime::DeviceCiphertext>(
-                                std::move(weighted));
+                                runtime.multiply_plain(
+                                    *spatial, compact_weight, plain_scale));
                     }
                 }
             }
@@ -602,6 +595,9 @@ GpuMultiplexedTensor conv2d_bn(const GpuMultiplexedTensor &input, int out_channe
 
             auto folded = sum_local_channels_to_base(
                 *group_sum, input, 0, runtime);
+            // Keep all kernel products and channel folds at the product scale,
+            // then consume one q prime for the completed output group.
+            folded = runtime.rescale(folded, 1);
             for (std::size_t replica = 0; replica < input_replicas; ++replica)
             {
                 const std::size_t output_channel =
@@ -630,19 +626,19 @@ GpuMultiplexedTensor conv2d_bn(const GpuMultiplexedTensor &input, int out_channe
                             1.0;
                     }
                 }
-                auto channel_sum = runtime.multiply_plain_rescale_cached(
-                    selected, selector,
-                    selector_cache_key(
-                        output, static_cast<int>(output_channel)));
+                const double selector_scale =
+                    runtime.last_modulus_value(selected);
                 if (pack_sum)
                 {
-                    *pack_sum = runtime.add_aligned(*pack_sum, channel_sum);
+                    runtime.multiply_plain_accumulate(
+                        selected, selector, selector_scale, *pack_sum);
                 }
                 else
                 {
                     pack_sum =
                         std::make_unique<GpuCkksRuntime::DeviceCiphertext>(
-                            std::move(channel_sum));
+                            runtime.multiply_plain(
+                                selected, selector, selector_scale));
                 }
             }
         }
@@ -651,6 +647,7 @@ GpuMultiplexedTensor conv2d_bn(const GpuMultiplexedTensor &input, int out_channe
             throw std::runtime_error(
                 "GPU replicated convolution produced an empty output pack");
         }
+        *pack_sum = runtime.rescale(*pack_sum, 1);
         std::vector<double> bias_slots(output.slot_count, 0.0);
         for (int output_channel = 0; output_channel < out_channels;
              ++output_channel)
@@ -761,18 +758,20 @@ GpuMultiplexedTensor conv2d_bn(const GpuMultiplexedTensor &input, int out_channe
                         {
                             continue;
                         }
-                        auto weighted =
-                            runtime.multiply_plain_rescale(*spatial, compact_weight);
+                        const double plain_scale =
+                            runtime.last_modulus_value(*spatial);
                         if (input_pack_sum)
                         {
-                            *input_pack_sum =
-                                runtime.add_aligned(*input_pack_sum, weighted);
+                            runtime.multiply_plain_accumulate(
+                                *spatial, compact_weight, plain_scale,
+                                *input_pack_sum);
                         }
                         else
                         {
                             input_pack_sum =
                                 std::make_unique<GpuCkksRuntime::DeviceCiphertext>(
-                                    std::move(weighted));
+                                    runtime.multiply_plain(
+                                        *spatial, compact_weight, plain_scale));
                         }
                     }
                 }
@@ -789,8 +788,8 @@ GpuMultiplexedTensor conv2d_bn(const GpuMultiplexedTensor &input, int out_channe
                 }
                 if (folded_channel_sum)
                 {
-                    *folded_channel_sum =
-                        runtime.add_aligned(*folded_channel_sum, folded);
+                    *folded_channel_sum = runtime.add(
+                        *folded_channel_sum, folded);
                 }
                 else
                 {
@@ -804,6 +803,9 @@ GpuMultiplexedTensor conv2d_bn(const GpuMultiplexedTensor &input, int out_channe
                 throw std::runtime_error(
                     "GPU convolution produced an empty output channel");
             }
+            // All kernel and input-pack terms now share one product-scale
+            // accumulator. Rescale once before output-channel placement.
+            *folded_channel_sum = runtime.rescale(*folded_channel_sum, 1);
             std::vector<double> selector(output.slot_count, 0.0);
             for (int oh = 0; oh < output.h; ++oh)
             {
@@ -812,23 +814,25 @@ GpuMultiplexedTensor conv2d_bn(const GpuMultiplexedTensor &input, int out_channe
                     selector[output.slot_index(output_channel, oh, ow)] = 1.0;
                 }
             }
-            auto channel_sum = runtime.multiply_plain_rescale_cached(
-                *folded_channel_sum, selector,
-                selector_cache_key(output, output_channel));
+            const double selector_scale =
+                runtime.last_modulus_value(*folded_channel_sum);
             if (pack_sum)
             {
-                *pack_sum = runtime.add_aligned(*pack_sum, channel_sum);
+                runtime.multiply_plain_accumulate(
+                    *folded_channel_sum, selector, selector_scale, *pack_sum);
             }
             else
             {
                 pack_sum = std::make_unique<GpuCkksRuntime::DeviceCiphertext>(
-                    std::move(channel_sum));
+                    runtime.multiply_plain(
+                        *folded_channel_sum, selector, selector_scale));
             }
         }
         if (!pack_sum)
         {
             throw std::runtime_error("GPU convolution produced an empty output pack");
         }
+        *pack_sum = runtime.rescale(*pack_sum, 1);
         std::vector<double> bias_slots(output.slot_count, 0.0);
         for (const int output_channel : channels_for_pack(output, output_pack))
         {
@@ -926,15 +930,18 @@ GpuMultiplexedTensor average_pool2d_stride2(const GpuMultiplexedTensor &input,
                             runtime.rotate_composed(*source, rotation_step));
                         source = rotated.get();
                     }
-                    auto term = runtime.multiply_plain_rescale(*source, mask);
+                    const double plain_scale =
+                        runtime.last_modulus_value(*source);
                     if (sum)
                     {
-                        *sum = runtime.add(*sum, term);
+                        runtime.multiply_plain_accumulate(
+                            *source, mask, plain_scale, *sum);
                     }
                     else
                     {
                         sum = std::make_unique<GpuCkksRuntime::DeviceCiphertext>(
-                            std::move(term));
+                            runtime.multiply_plain(
+                                *source, mask, plain_scale));
                     }
                 }
             }
@@ -943,6 +950,7 @@ GpuMultiplexedTensor average_pool2d_stride2(const GpuMultiplexedTensor &input,
         {
             throw std::runtime_error("GPU average pool produced an empty output pack");
         }
+        *sum = runtime.rescale(*sum, 1);
         std::vector<double> average(output.slot_count, 1.0 / 9.0);
         output.packs[output_pack] = runtime.multiply_plain_rescale(*sum, average);
     }
@@ -1013,15 +1021,18 @@ GpuMultiplexedTensor downsample_shortcut(const GpuMultiplexedTensor &input,
                     runtime.rotate_composed(source_pack, rotation_step));
                 source = rotated.get();
             }
-            auto term = runtime.multiply_plain_rescale(*source, mask);
+            const double plain_scale =
+                runtime.last_modulus_value(*source);
             if (sum)
             {
-                *sum = runtime.add_aligned(*sum, term);
+                runtime.multiply_plain_accumulate(
+                    *source, mask, plain_scale, *sum);
             }
             else
             {
                 sum =
-                    std::make_unique<GpuCkksRuntime::DeviceCiphertext>(std::move(term));
+                    std::make_unique<GpuCkksRuntime::DeviceCiphertext>(
+                        runtime.multiply_plain(*source, mask, plain_scale));
             }
         }
         if (!sum)
@@ -1032,11 +1043,15 @@ GpuMultiplexedTensor downsample_shortcut(const GpuMultiplexedTensor &input,
             // residual layout. Materialize those packs at the same level and
             // scale as the populated packs.
             std::vector<double> zero_mask(output.slot_count, 0.0);
-            output.packs[output_pack] =
-                runtime.multiply_plain_rescale(input.packs.front(), zero_mask);
+            const double plain_scale =
+                runtime.last_modulus_value(input.packs.front());
+            output.packs[output_pack] = runtime.rescale(
+                runtime.multiply_plain(
+                    input.packs.front(), zero_mask, plain_scale),
+                1);
             continue;
         }
-        output.packs[output_pack] = std::move(*sum);
+        output.packs[output_pack] = runtime.rescale(*sum, 1);
     }
     return output;
 }
@@ -1070,17 +1085,22 @@ GpuCkksRuntime::DeviceCiphertext global_average_pool(const GpuMultiplexedTensor 
         {
             auto rotated =
                 runtime.rotate_composed(pack, static_cast<long long>(col) * input.k);
-            auto term = runtime.multiply_plain_rescale(rotated, column_mask);
+            const double plain_scale =
+                runtime.last_modulus_value(rotated);
             if (column_sum)
             {
-                *column_sum = runtime.add(*column_sum, term);
+                runtime.multiply_plain_accumulate(
+                    rotated, column_mask, plain_scale, *column_sum);
             }
             else
             {
                 column_sum =
-                    std::make_unique<GpuCkksRuntime::DeviceCiphertext>(std::move(term));
+                    std::make_unique<GpuCkksRuntime::DeviceCiphertext>(
+                        runtime.multiply_plain(
+                            rotated, column_mask, plain_scale));
             }
         }
+        *column_sum = runtime.rescale(*column_sum, 1);
 
         std::unique_ptr<GpuCkksRuntime::DeviceCiphertext> spatial_sum;
         const int packed_width = input.w * input.k;
@@ -1088,18 +1108,22 @@ GpuCkksRuntime::DeviceCiphertext global_average_pool(const GpuMultiplexedTensor 
         {
             auto rotated = runtime.rotate_composed(
                 *column_sum, static_cast<long long>(row) * input.k * packed_width);
-            auto term = runtime.multiply_plain_rescale(rotated, row_mask);
+            const double plain_scale =
+                runtime.last_modulus_value(rotated);
             if (spatial_sum)
             {
-                *spatial_sum = runtime.add(*spatial_sum, term);
+                runtime.multiply_plain_accumulate(
+                    rotated, row_mask, plain_scale, *spatial_sum);
             }
             else
             {
                 spatial_sum =
-                    std::make_unique<GpuCkksRuntime::DeviceCiphertext>(std::move(term));
+                    std::make_unique<GpuCkksRuntime::DeviceCiphertext>(
+                        runtime.multiply_plain(
+                            rotated, row_mask, plain_scale));
             }
         }
-        spatial_sums.push_back(std::move(*spatial_sum));
+        spatial_sums.push_back(runtime.rescale(*spatial_sum, 1));
     }
 
     std::unique_ptr<GpuCkksRuntime::DeviceCiphertext> compacted;
@@ -1113,17 +1137,23 @@ GpuCkksRuntime::DeviceCiphertext global_average_pool(const GpuMultiplexedTensor 
             static_cast<long long>(source_slot) - static_cast<long long>(target_slot));
         std::vector<double> target_mask(input.slot_count, 0.0);
         target_mask[target_slot] = 1.0;
-        auto term = runtime.multiply_plain_rescale(rotated, target_mask);
+        const double plain_scale =
+            runtime.last_modulus_value(rotated);
         if (compacted)
         {
-            *compacted = runtime.add(*compacted, term);
+            runtime.multiply_plain_accumulate(
+                rotated, target_mask, plain_scale, *compacted);
         }
         else
         {
             compacted =
-                std::make_unique<GpuCkksRuntime::DeviceCiphertext>(std::move(term));
+                std::make_unique<GpuCkksRuntime::DeviceCiphertext>(
+                    runtime.multiply_plain(
+                        rotated, target_mask, plain_scale));
         }
     }
+
+    *compacted = runtime.rescale(*compacted, 1);
 
     std::vector<double> factor(
         input.slot_count, output_scale_factor / static_cast<double>(input.h * input.w));

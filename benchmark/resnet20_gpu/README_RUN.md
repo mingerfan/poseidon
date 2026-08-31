@@ -275,6 +275,13 @@ CUDA_VISIBLE_DEVICES=2 POSEIDON_NTT_ALGO=fourstep ./run.sh --gpu-only 0
 需要观察准备完成后的执行性能时，以 `--gpu-only` 输出的
 `gpu_only_preloaded_elapsed_seconds` 为准。
 
+当前卷积、Option-A shortcut、平均池化和全局池化使用 GPU 融合明文乘累加：
+同一阶段的乘积先保持在高 scale，由 `multiply_plain_accumulate` CUDA 内核直接
+累加，阶段结束后只做一次 rescale。预热后的第二遍会直接复用 GPU 上的编码明文，
+不会在计时区间重复做 CKKS 编码或明文 H2D 上传；模数 level 消耗与优化前一致。
+卡 2 的完整 image-0 验证结果为 `8.77687 s`，预测类别为 `3`，两遍 logits
+完全一致（`preloaded_replay_max_logit_error=0`）。
+
 ## 11. 最短运行流程
 
 ```bash
