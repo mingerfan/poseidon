@@ -703,14 +703,24 @@ GpuCkksRuntime::DeviceCiphertext GpuCkksRuntime::multiply_plain_scalar_rescale(
 double GpuCkksRuntime::last_modulus_value(
     const DeviceCiphertext &source) const
 {
+    return modulus_value_from_end(source, 0);
+}
+
+double GpuCkksRuntime::modulus_value_from_end(
+    const DeviceCiphertext &source,
+    std::size_t reverse_index) const
+{
     const auto context_data =
         impl_->context.crt_context()->get_context_data(source.meta.parms_id);
-    if (!context_data || context_data->coeff_modulus().empty())
+    if (!context_data ||
+        context_data->coeff_modulus().size() <= reverse_index)
     {
         throw std::invalid_argument(
-            "last_modulus_value received an unknown or empty modulus level");
+            "modulus_value_from_end received an unavailable modulus prime");
     }
-    return static_cast<double>(context_data->coeff_modulus().back().value());
+    const auto &moduli = context_data->coeff_modulus();
+    return static_cast<double>(
+        moduli[moduli.size() - reverse_index - 1].value());
 }
 
 void GpuCkksRuntime::initialize_evaluation_keys(

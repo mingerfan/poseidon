@@ -287,21 +287,25 @@ CUDA_VISIBLE_DEVICES=2 POSEIDON_NTT_ALGO=fourstep ./run.sh --gpu-only 0
 需要观察准备完成后的执行性能时，以 `--gpu-only` 输出的
 `gpu_only_preloaded_elapsed_seconds` 为准。
 
-当前卷积、Option-A shortcut、平均池化和全局池化使用 GPU 融合明文乘累加：
-同一阶段的乘积先保持在高 scale，由 `multiply_plain_accumulate` CUDA 内核直接
-累加，阶段结束后只做一次 rescale。预热后的第二遍会直接复用 GPU 上的编码明文，
-不会在计时区间重复做 CKKS 编码或明文 H2D 上传。卷积输出放置采用 BSGS，
-为共享 support mask 多消耗一个物理 Q prime，但每个卷积后紧接 Bootstrap，
-不会超出 level 预算。Global Pool 使用二叉归约和 4x4 BSGS 压紧，FC 使用
-单密文 BSGS，10 个 logits 位于同一密文的前 10 个 slot。
+当前卷积、Option-A shortcut、平均池化和全局池化使用 GPU 融合明文乘累加。
+预热后的第二遍会直接复用 GPU 上的编码明文，不会在计时区间重复做 CKKS
+编码或明文 H2D 上传。block 卷积会把 kernel 累加、BSGS giant 放置和 support
+mask 都延后到所有输出组融合完成，再连续 rescale 两个物理 Q prime；随后
+BSGS baby selector 再统一 rescale 一次。因此普通卷积由10次降至3次，两个
+transition 卷积由18次降至3次，18个 block 卷积合计由196次降至54次，减少
+72.4%。它仍然消耗3个物理 Q prime，输出 level 和原实现相同，不改变后续
+Bootstrap 的预算。Global Pool 使用二叉归约和 4x4 BSGS 压紧，FC 使用单密文
+BSGS，10 个 logits 位于同一密文的前10个 slot。
 
 Stem 会把27个 im2col patch 各自复制到16个输出通道 page，用27次打包 PMult
 和一次统一 rescale 同时计算所有输出通道；旧路径需要432次标量
 PMult-rescale和15次输出旋转。卡 2 的预加载 Stem 时间从 `238 ms` 降到
 `11 ms`。
 
-卡 2 的完整 image-0 验证结果为 `7.89794 s`，预测类别为 `3`，两遍 logits
-完全一致（`preloaded_replay_max_logit_error=0`）。
+卡2的延后 rescale 版本 GPU-only 结果为 `7.91179 s`，预测类别为 `3`，两遍
+logits 完全一致（`preloaded_replay_max_logit_error=0`）。原版本在同卡上的
+波动范围为 `7.89794--7.94257 s`，所以时间基本持平。完整逐层验证的最终
+`max_logit_error=0.019248`，没有出现精度退化。
 
 ## 11. 最短运行流程
 

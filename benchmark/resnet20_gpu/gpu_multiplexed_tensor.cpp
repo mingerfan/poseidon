@@ -521,6 +521,13 @@ GpuMultiplexedTensor conv2d_bn(const GpuMultiplexedTensor &input, int out_channe
                 output_channel_shift(output, static_cast<int>(replica)) -
                 output_channel_shift(output, 0));
         }
+        // Keep all groups at the kernel-product scale through giant placement
+        // and support masking. Kernel weights use q_last and support masks use
+        // q_next. After all groups have been fused, two ordinary single-prime
+        // rescales restore 2^40. This preserves full mask precision and avoids
+        // one rescale per output group.
+        const double support_scale =
+            runtime.modulus_value_from_end(input.packs.front(), 1);
         std::unique_ptr<GpuCkksRuntime::DeviceCiphertext> aligned_groups_high;
         for (std::size_t group = 0; group < output_groups; ++group)
         {
@@ -613,9 +620,6 @@ GpuMultiplexedTensor conv2d_bn(const GpuMultiplexedTensor &input, int out_channe
 
             auto folded = sum_local_channels_to_base(
                 *group_sum, input, 0, runtime);
-            // Keep all kernel products and channel folds at the product scale,
-            // then consume one q prime for the completed output group.
-            folded = runtime.rescale(folded, 1);
             const int first_output_channel =
                 static_cast<int>(group * input_replicas);
             const long long giant_step = normalize_step(
@@ -661,8 +665,6 @@ GpuMultiplexedTensor conv2d_bn(const GpuMultiplexedTensor &input, int out_channe
                     }
                 }
             }
-            const double support_scale =
-                runtime.last_modulus_value(giant_aligned);
             if (aligned_groups_high)
             {
                 runtime.multiply_plain_accumulate(
@@ -683,6 +685,7 @@ GpuMultiplexedTensor conv2d_bn(const GpuMultiplexedTensor &input, int out_channe
                 "GPU replicated convolution produced no aligned output groups");
         }
         auto aligned_groups = runtime.rescale(*aligned_groups_high, 1);
+        aligned_groups = runtime.rescale(aligned_groups, 1);
         auto baby_rotations = runtime.rotate_many_composed(
             aligned_groups, output_baby_steps);
         std::unique_ptr<GpuCkksRuntime::DeviceCiphertext> pack_sum;

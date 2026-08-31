@@ -36,15 +36,18 @@ layers with the same packed shape.
 
 Convolution, Option-A downsampling, average pooling and global average pooling
 use lazy rescaling: plaintext products at the same level are accumulated by
-Poseidon's fused GPU `multiply_plain_accumulate` kernel, and the completed
-stage is rescaled once. The second, preloaded pass reuses the encoded operands
-from device memory, so these fused loops do not encode or upload plaintexts.
-For example, the lazy accumulation path reduced a regular layer-1 replicated
-convolution from 88 plaintext-product rescale calls to 9. Output-placement
-BSGS adds one shared support-mask rescale (10 total) and deliberately consumes
-one additional physical Q prime, while reducing expensive output-placement
-rotations from 15 to 8. Every convolution is immediately followed by a
-bootstrap, so the resulting Q5 output remains within the verified level budget.
+Poseidon's fused GPU `multiply_plain_accumulate` kernel. The second, preloaded
+pass reuses the encoded operands from device memory, so these fused loops do
+not encode or upload plaintexts. In block convolutions, kernel accumulation,
+giant-step placement and support masking now remain at product scale until all
+output groups have been fused. Two sequential single-prime rescales restore
+the application scale, then BSGS baby-step selection uses one final rescale.
+Thus every ordinary and transition block convolution performs three rescale
+calls, instead of 10 and 18 respectively. Across all 18 block convolutions the
+count falls from 196 to 54 (72.4%) while retaining full-precision masks. The
+path still consumes three physical Q primes and produces the same Q5 output
+(Q4 for the first block convolution), so the established level budget is
+unchanged.
 
 The encrypted head is also rotation-optimized. Global average pooling uses
 three column and three row tree reductions, followed by a 4-by-4 BSGS channel
@@ -119,9 +122,13 @@ spatial, output-baby, global-pool-baby, and FC-baby batches additionally share
 their decomposition through hoisting. Bootstrap owns a separate set of 39 DFT
 rotation steps.
 
-With the checked-in Q36/P18/dnum=2 configuration, a physical 32-GiB GPU 2 run
-reported `7.89794 s`, predicted class `3`, and reproduced the direct-key warmup
-logits exactly (`preloaded_replay_max_logit_error=0`). The pre-optimization
+With the checked-in Q36/P18/dnum=2 configuration and delayed block-convolution
+rescaling, a physical 32-GiB GPU 2 run reported `7.91179 s`, predicted class
+`3`, and reproduced the direct-key warmup logits exactly
+(`preloaded_replay_max_logit_error=0`). The preceding implementation varied
+from `7.89794 s` to `7.94257 s` on the same card, so the new result is within
+normal run-to-run variation despite removing 72.4% of block-convolution
+rescale calls. The pre-optimization
 matched-card result was `8.77687 s`, so the complete change is about 10.0%
 faster. The packed lazy stem fell from `238 ms` to `11 ms`. In the final timed
 pass regular 3x3 convolutions take roughly `57-64 ms`, transition convolutions
@@ -161,11 +168,13 @@ benchmark directory is relocated relative to Poseidon.
 
 ## V100 performance
 
-For image 0 on a 32 GiB V100, full block-by-block validation now completes in
-`198.451 s`: plaintext and GPU predictions are both class `3`, and the final
-maximum logit error is `4.1754e-4`. The same validation took `236.869 s` before
-the device-resident plaintext cache, so the cache removes `38.418 s` (`16.22%`)
-without changing the encrypted network.
+For image 0 on a 32 GiB V100, the current delayed-rescale implementation passed
+full block-by-block validation in `127.488 s`: plaintext and GPU predictions
+are both class `3`, and the final maximum logit error is `0.019248`. The exact
+preceding BSGS/FC implementation produced `0.0228399`, so delayed rescaling did
+not degrade the current network's numerical result. Validation includes CPU/GPU
+synchronization, decryption and plaintext reference work and is therefore not
+a performance measurement; use `--gpu-only` for encrypted inference timing.
 
 Nsight Systems runs on physical GPU 2 show the same effect under profiler
 overhead: elapsed time falls from `240.382 s` to `205.029 s`. Host-to-device

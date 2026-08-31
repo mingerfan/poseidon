@@ -77,6 +77,11 @@ public:
     // Exact value of the last active q prime. Useful for lazy plaintext
     // products that are accumulated before a single rescale.
     double last_modulus_value(const DeviceCiphertext &source) const;
+    // Exact active q prime counted from the end. reverse_index=0 is the last
+    // prime and reverse_index=1 is the next prime removed by rescaling.
+    double modulus_value_from_end(
+        const DeviceCiphertext &source,
+        std::size_t reverse_index) const;
 
     // Evaluation keys are generated and uploaded only when nonlinear or
     // rotation operations are needed, keeping linear-only startup lightweight.
