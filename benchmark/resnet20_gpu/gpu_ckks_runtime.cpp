@@ -319,6 +319,7 @@ public:
     std::unordered_map<std::string, gpu::GpuCiphertextData> ciphertext_cache;
     std::unique_ptr<gpu::GpuCiphertextData> encrypted_one_cache;
     std::set<int> direct_rotation_steps;
+    mutable gpu::GpuDoubleHoistWorkspace rotate_many_workspace;
     bool use_direct_rotation_keys = false;
     bool full_device_cache = false;
 };
@@ -964,6 +965,74 @@ GpuCkksRuntime::DeviceCiphertext GpuCkksRuntime::rotate_composed(
         remaining -= bit;
     }
     return std::move(*current);
+}
+
+std::vector<GpuCkksRuntime::DeviceCiphertext>
+GpuCkksRuntime::rotate_many_composed(
+    const DeviceCiphertext &source,
+    const std::vector<long long> &steps) const
+{
+    std::vector<DeviceCiphertext> result(steps.size());
+    if (steps.empty())
+    {
+        return result;
+    }
+    if (!impl_->use_direct_rotation_keys)
+    {
+        for (std::size_t index = 0; index < steps.size(); ++index)
+        {
+            result[index] = rotate_composed(source, steps[index]);
+        }
+        return result;
+    }
+
+    const long long slots = static_cast<long long>(slot_count());
+    std::vector<int> direct_steps;
+    std::vector<std::size_t> direct_indices;
+    direct_steps.reserve(steps.size());
+    direct_indices.reserve(steps.size());
+    for (std::size_t index = 0; index < steps.size(); ++index)
+    {
+        long long normalized = steps[index] % slots;
+        if (normalized < 0)
+        {
+            normalized += slots;
+        }
+        if (normalized == 0)
+        {
+            result[index] = drop_to_q_count(source, source.meta.q_count);
+            continue;
+        }
+        const int direct_step = static_cast<int>(normalized);
+        if (impl_->direct_rotation_steps.count(direct_step) == 0)
+        {
+            throw std::logic_error(
+                "direct rotation key is missing for a hoisted rotation");
+        }
+        direct_steps.push_back(direct_step);
+        direct_indices.push_back(index);
+    }
+
+    if (!direct_steps.empty())
+    {
+        if (!impl_->gpu_galois_keys)
+        {
+            throw std::logic_error(
+                "hoisted direct rotations require inference Galois keys");
+        }
+        std::vector<DeviceCiphertext> direct_results;
+        impl_->gpu_evaluator.rotate_many_hoisted(
+            source,
+            direct_steps,
+            *impl_->gpu_galois_keys,
+            impl_->rotate_many_workspace,
+            direct_results);
+        for (std::size_t index = 0; index < direct_results.size(); ++index)
+        {
+            result[direct_indices[index]] = std::move(direct_results[index]);
+        }
+    }
+    return result;
 }
 
 void GpuCkksRuntime::initialize_direct_rotation_keys(

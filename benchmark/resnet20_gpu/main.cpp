@@ -93,6 +93,41 @@ void run_shortcut_check(const shared_gpu::GpuConfig &config)
     }
 }
 
+void run_hoist_check(const shared_gpu::GpuConfig &config)
+{
+    shared_gpu::GpuCkksRuntime runtime(config);
+    const std::vector<int> steps{1, 3, 7, 31};
+    runtime.initialize_direct_rotation_keys(steps);
+    std::vector<double> input(runtime.slot_count());
+    for (std::size_t slot = 0; slot < input.size(); ++slot)
+    {
+        input[slot] =
+            static_cast<double>(static_cast<int>(slot % 257) - 128) / 4096.0;
+    }
+    auto encrypted = runtime.encrypt(input);
+    encrypted = runtime.drop_to_q_count(encrypted, 8);
+    std::vector<long long> batch_steps(steps.begin(), steps.end());
+    auto batched = runtime.rotate_many_composed(encrypted, batch_steps);
+    double max_error = 0.0;
+    for (std::size_t index = 0; index < steps.size(); ++index)
+    {
+        const auto reference = runtime.decrypt(
+            runtime.rotate(encrypted, steps[index]));
+        const auto actual = runtime.decrypt(batched[index]);
+        for (std::size_t slot = 0; slot < actual.size(); ++slot)
+        {
+            max_error = std::max(
+                max_error,
+                std::abs(actual[slot].real() - reference[slot].real()));
+        }
+    }
+    std::cout << "GPU ResNet20 hoisted rotate max_error=" << max_error << '\n';
+    if (max_error > 1.0e-5)
+    {
+        throw std::runtime_error("GPU ResNet20 hoisted rotate check failed");
+    }
+}
+
 void print_elapsed(std::chrono::steady_clock::duration elapsed)
 {
     const auto elapsed_ms =
@@ -131,6 +166,10 @@ int main(int argc, char **argv)
         else if (argc == 2 && std::string(argv[1]) == "--shortcut-check")
         {
             run_shortcut_check(config);
+        }
+        else if (argc == 2 && std::string(argv[1]) == "--hoist-check")
+        {
+            run_hoist_check(config);
         }
         else if (argc == 2 && std::string(argv[1]) == "--topology-check")
         {
@@ -199,7 +238,7 @@ int main(int argc, char **argv)
         {
             throw std::invalid_argument(
                 "usage: poseidon_gpu_resnet20 "
-                "[--smoke|--shortcut-check|--topology-check|--weights-check|"
+                "[--smoke|--shortcut-check|--hoist-check|--topology-check|--weights-check|"
                 "--head-check IMAGE_ID|--infer IMAGE_ID [MAX_BLOCKS]|"
                 "--gpu-only IMAGE_ID]");
         }

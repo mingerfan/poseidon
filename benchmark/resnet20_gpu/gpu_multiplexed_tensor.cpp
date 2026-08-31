@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <map>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -468,11 +469,17 @@ GpuMultiplexedTensor conv2d_bn(const GpuMultiplexedTensor &input, int out_channe
         const std::size_t input_span = active_input_pages * input.page_size;
         auto replicated = runtime.drop_to_q_count(
             input.packs.front(), input.packs.front().meta.q_count);
+        std::vector<long long> replica_steps;
+        replica_steps.reserve(input_replicas - 1);
         for (std::size_t replica = 1; replica < input_replicas; ++replica)
         {
-            auto copy = runtime.rotate_composed(
-                input.packs.front(),
+            replica_steps.push_back(
                 -static_cast<long long>(replica * input_span));
+        }
+        auto replica_copies = runtime.rotate_many_composed(
+            input.packs.front(), replica_steps);
+        for (auto &copy : replica_copies)
+        {
             replicated = runtime.add(replicated, copy);
         }
 
@@ -480,6 +487,8 @@ GpuMultiplexedTensor conv2d_bn(const GpuMultiplexedTensor &input, int out_channe
             static_cast<std::size_t>(kernel_h * kernel_w);
         std::vector<std::unique_ptr<GpuCkksRuntime::DeviceCiphertext>>
             rotated_inputs(kernel_count);
+        std::vector<std::size_t> spatial_indices;
+        std::vector<long long> spatial_steps;
         for (int kh = 0; kh < kernel_h; ++kh)
         {
             for (int kw = 0; kw < kernel_w; ++kw)
@@ -490,20 +499,42 @@ GpuMultiplexedTensor conv2d_bn(const GpuMultiplexedTensor &input, int out_channe
                     static_cast<long long>(input.k) * (kw - pad_w);
                 if (spatial_step != 0)
                 {
-                    rotated_inputs[static_cast<std::size_t>(
-                        kh * kernel_w + kw)] =
-                        std::make_unique<GpuCkksRuntime::DeviceCiphertext>(
-                            runtime.rotate_composed(replicated, spatial_step));
+                    spatial_indices.push_back(static_cast<std::size_t>(
+                        kh * kernel_w + kw));
+                    spatial_steps.push_back(spatial_step);
                 }
             }
+        }
+        auto spatial_rotations = runtime.rotate_many_composed(
+            replicated, spatial_steps);
+        for (std::size_t index = 0; index < spatial_rotations.size(); ++index)
+        {
+            rotated_inputs[spatial_indices[index]] =
+                std::make_unique<GpuCkksRuntime::DeviceCiphertext>(
+                    std::move(spatial_rotations[index]));
         }
 
         const std::size_t output_groups = ceil_div(
             static_cast<std::size_t>(out_channels), input_replicas);
         std::cout << "[GPU multiplexed conv] input_replicas=" << input_replicas
                   << " output_groups=" << output_groups
-                  << " lazy_plain_accumulate=on\n";
-        std::unique_ptr<GpuCkksRuntime::DeviceCiphertext> pack_sum;
+                  << " lazy_plain_accumulate=on output_bsgs=on\n";
+        const long long slot_modulus =
+            static_cast<long long>(output.slot_count);
+        const auto normalize_step = [slot_modulus](long long step)
+        {
+            step %= slot_modulus;
+            return step < 0 ? step + slot_modulus : step;
+        };
+        std::vector<long long> output_baby_steps(input_replicas, 0);
+        for (std::size_t replica = 0; replica < input_replicas; ++replica)
+        {
+            output_baby_steps[replica] = normalize_step(
+                static_cast<long long>(replica * input_span) +
+                output_channel_shift(output, static_cast<int>(replica)) -
+                output_channel_shift(output, 0));
+        }
+        std::unique_ptr<GpuCkksRuntime::DeviceCiphertext> aligned_groups_high;
         for (std::size_t group = 0; group < output_groups; ++group)
         {
             std::unique_ptr<GpuCkksRuntime::DeviceCiphertext> group_sum;
@@ -598,6 +629,19 @@ GpuMultiplexedTensor conv2d_bn(const GpuMultiplexedTensor &input, int out_channe
             // Keep all kernel products and channel folds at the product scale,
             // then consume one q prime for the completed output group.
             folded = runtime.rescale(folded, 1);
+            const int first_output_channel =
+                static_cast<int>(group * input_replicas);
+            const long long giant_step = normalize_step(
+                output_channel_shift(output, first_output_channel) -
+                output_channel_shift(output, 0));
+            auto giant_aligned = runtime.drop_to_q_count(
+                folded, folded.meta.q_count);
+            if (giant_step != 0)
+            {
+                giant_aligned = runtime.rotate_composed(
+                    giant_aligned, giant_step);
+            }
+            std::vector<double> support_mask(output.slot_count, 0.0);
             for (std::size_t replica = 0; replica < input_replicas; ++replica)
             {
                 const std::size_t output_channel =
@@ -606,46 +650,89 @@ GpuMultiplexedTensor conv2d_bn(const GpuMultiplexedTensor &input, int out_channe
                 {
                     continue;
                 }
-                auto selected = runtime.drop_to_q_count(
-                    folded, folded.meta.q_count);
-                const long long shift =
+                const long long direct_step = normalize_step(
                     static_cast<long long>(replica * input_span) +
                     output_channel_shift(
-                        output, static_cast<int>(output_channel));
-                if (shift != 0)
+                        output, static_cast<int>(output_channel)));
+                if (direct_step != normalize_step(
+                        giant_step + output_baby_steps[replica]))
                 {
-                    selected = runtime.rotate_composed(selected, shift);
+                    throw std::logic_error(
+                        "GPU convolution output placement is not BSGS separable");
                 }
-                std::vector<double> selector(output.slot_count, 0.0);
+                for (int oh = 0; oh < output.h; ++oh)
+                {
+                    for (int ow = 0; ow < output.w; ++ow)
+                    {
+                        const std::size_t support_slot =
+                            (output.slot_index(
+                                 static_cast<int>(output_channel), oh, ow) +
+                             static_cast<std::size_t>(
+                                 output_baby_steps[replica])) %
+                            output.slot_count;
+                        support_mask[support_slot] = 1.0;
+                    }
+                }
+            }
+            const double support_scale =
+                runtime.last_modulus_value(giant_aligned);
+            if (aligned_groups_high)
+            {
+                runtime.multiply_plain_accumulate(
+                    giant_aligned, support_mask, support_scale,
+                    *aligned_groups_high);
+            }
+            else
+            {
+                aligned_groups_high =
+                    std::make_unique<GpuCkksRuntime::DeviceCiphertext>(
+                        runtime.multiply_plain(
+                            giant_aligned, support_mask, support_scale));
+            }
+        }
+        if (!aligned_groups_high)
+        {
+            throw std::runtime_error(
+                "GPU replicated convolution produced no aligned output groups");
+        }
+        auto aligned_groups = runtime.rescale(*aligned_groups_high, 1);
+        auto baby_rotations = runtime.rotate_many_composed(
+            aligned_groups, output_baby_steps);
+        std::unique_ptr<GpuCkksRuntime::DeviceCiphertext> pack_sum;
+        for (std::size_t replica = 0; replica < input_replicas; ++replica)
+        {
+            std::vector<double> selector(output.slot_count, 0.0);
+            for (std::size_t group = 0; group < output_groups; ++group)
+            {
+                const std::size_t output_channel =
+                    group * input_replicas + replica;
+                if (output_channel >= static_cast<std::size_t>(out_channels))
+                {
+                    continue;
+                }
                 for (int oh = 0; oh < output.h; ++oh)
                 {
                     for (int ow = 0; ow < output.w; ++ow)
                     {
                         selector[output.slot_index(
-                            static_cast<int>(output_channel), oh, ow)] =
-                            1.0;
+                            static_cast<int>(output_channel), oh, ow)] = 1.0;
                     }
                 }
-                const double selector_scale =
-                    runtime.last_modulus_value(selected);
-                if (pack_sum)
-                {
-                    runtime.multiply_plain_accumulate(
-                        selected, selector, selector_scale, *pack_sum);
-                }
-                else
-                {
-                    pack_sum =
-                        std::make_unique<GpuCkksRuntime::DeviceCiphertext>(
-                            runtime.multiply_plain(
-                                selected, selector, selector_scale));
-                }
             }
-        }
-        if (!pack_sum)
-        {
-            throw std::runtime_error(
-                "GPU replicated convolution produced an empty output pack");
+            const double selector_scale =
+                runtime.last_modulus_value(baby_rotations[replica]);
+            if (pack_sum)
+            {
+                runtime.multiply_plain_accumulate(
+                    baby_rotations[replica], selector, selector_scale,
+                    *pack_sum);
+            }
+            else
+            {
+                pack_sum = std::make_unique<GpuCkksRuntime::DeviceCiphertext>(
+                    runtime.multiply_plain(
+                        baby_rotations[replica], selector, selector_scale));
+            }
         }
         *pack_sum = runtime.rescale(*pack_sum, 1);
         std::vector<double> bias_slots(output.slot_count, 0.0);
@@ -1080,87 +1167,125 @@ GpuCkksRuntime::DeviceCiphertext global_average_pool(const GpuMultiplexedTensor 
     spatial_sums.reserve(input.packs.size());
     for (const auto &pack : input.packs)
     {
-        std::unique_ptr<GpuCkksRuntime::DeviceCiphertext> column_sum;
-        for (int col = 0; col < input.w; ++col)
-        {
-            auto rotated =
-                runtime.rotate_composed(pack, static_cast<long long>(col) * input.k);
-            const double plain_scale =
-                runtime.last_modulus_value(rotated);
-            if (column_sum)
-            {
-                runtime.multiply_plain_accumulate(
-                    rotated, column_mask, plain_scale, *column_sum);
-            }
-            else
-            {
-                column_sum =
-                    std::make_unique<GpuCkksRuntime::DeviceCiphertext>(
-                        runtime.multiply_plain(
-                            rotated, column_mask, plain_scale));
-            }
-        }
-        *column_sum = runtime.rescale(*column_sum, 1);
-
-        std::unique_ptr<GpuCkksRuntime::DeviceCiphertext> spatial_sum;
-        const int packed_width = input.w * input.k;
-        for (int row = 0; row < input.h; ++row)
+        auto column_accumulator = runtime.drop_to_q_count(
+            pack, pack.meta.q_count);
+        for (int step = 1; step < input.w; step <<= 1)
         {
             auto rotated = runtime.rotate_composed(
-                *column_sum, static_cast<long long>(row) * input.k * packed_width);
-            const double plain_scale =
-                runtime.last_modulus_value(rotated);
-            if (spatial_sum)
-            {
-                runtime.multiply_plain_accumulate(
-                    rotated, row_mask, plain_scale, *spatial_sum);
-            }
-            else
-            {
-                spatial_sum =
-                    std::make_unique<GpuCkksRuntime::DeviceCiphertext>(
-                        runtime.multiply_plain(
-                            rotated, row_mask, plain_scale));
-            }
+                column_accumulator,
+                static_cast<long long>(step) * input.k);
+            column_accumulator = runtime.add(column_accumulator, rotated);
         }
-        spatial_sums.push_back(runtime.rescale(*spatial_sum, 1));
+        auto column_sum = runtime.multiply_plain_rescale(
+            column_accumulator, column_mask);
+
+        auto spatial_accumulator = runtime.drop_to_q_count(
+            column_sum, column_sum.meta.q_count);
+        const int packed_width = input.w * input.k;
+        for (int step = 1; step < input.h; step <<= 1)
+        {
+            auto rotated = runtime.rotate_composed(
+                spatial_accumulator,
+                static_cast<long long>(step) * input.k * packed_width);
+            spatial_accumulator = runtime.add(spatial_accumulator, rotated);
+        }
+        spatial_sums.push_back(runtime.multiply_plain_rescale(
+            spatial_accumulator, row_mask));
     }
 
     std::unique_ptr<GpuCkksRuntime::DeviceCiphertext> compacted;
-    for (int channel = 0; channel < input.c; ++channel)
+    if (input.packs.size() == 1 && input.h == 8 && input.w == 8 &&
+        input.c == 64 && input.k == 4)
     {
-        const auto pack = input.pack_index(channel);
-        const auto source_slot = input.slot_index(channel, 0, 0);
-        const auto target_slot = static_cast<std::size_t>(channel);
-        auto rotated = runtime.rotate_composed(
-            spatial_sums[pack],
-            static_cast<long long>(source_slot) - static_cast<long long>(target_slot));
-        std::vector<double> target_mask(input.slot_count, 0.0);
-        target_mask[target_slot] = 1.0;
-        const double plain_scale =
-            runtime.last_modulus_value(rotated);
-        if (compacted)
+        // The 64 channel locations form a 4x4 BSGS grid. The four baby
+        // rotations select rows within one page; four giant rotations place
+        // the pages. This replaces 60 per-channel rotations with six.
+        const std::vector<long long> baby_steps{0, 28, 56, 84};
+        const std::vector<long long> giant_steps{0, 1008, 2016, 3024};
+        auto baby_rotations = runtime.rotate_many_composed(
+            spatial_sums.front(), baby_steps);
+        for (std::size_t page = 0; page < giant_steps.size(); ++page)
         {
-            runtime.multiply_plain_accumulate(
-                rotated, target_mask, plain_scale, *compacted);
-        }
-        else
-        {
-            compacted =
-                std::make_unique<GpuCkksRuntime::DeviceCiphertext>(
-                    runtime.multiply_plain(
-                        rotated, target_mask, plain_scale));
+            std::unique_ptr<GpuCkksRuntime::DeviceCiphertext> inner;
+            for (std::size_t row = 0; row < baby_steps.size(); ++row)
+            {
+                std::vector<double> adjusted_mask(input.slot_count, 0.0);
+                for (int column = 0; column < 4; ++column)
+                {
+                    const std::size_t channel = page * 16 + row * 4 + column;
+                    const std::size_t adjusted_slot =
+                        (channel + static_cast<std::size_t>(giant_steps[page])) %
+                        input.slot_count;
+                    adjusted_mask[adjusted_slot] = 1.0;
+                }
+                const double plain_scale =
+                    runtime.last_modulus_value(baby_rotations[row]);
+                if (inner)
+                {
+                    runtime.multiply_plain_accumulate(
+                        baby_rotations[row], adjusted_mask, plain_scale, *inner);
+                }
+                else
+                {
+                    inner = std::make_unique<GpuCkksRuntime::DeviceCiphertext>(
+                        runtime.multiply_plain(
+                            baby_rotations[row], adjusted_mask, plain_scale));
+                }
+            }
+            auto placed = runtime.rescale(*inner, 1);
+            if (giant_steps[page] != 0)
+            {
+                placed = runtime.rotate_composed(placed, giant_steps[page]);
+            }
+            if (compacted)
+            {
+                *compacted = runtime.add(*compacted, placed);
+            }
+            else
+            {
+                compacted = std::make_unique<GpuCkksRuntime::DeviceCiphertext>(
+                    std::move(placed));
+            }
         }
     }
-
-    *compacted = runtime.rescale(*compacted, 1);
+    else
+    {
+        std::unique_ptr<GpuCkksRuntime::DeviceCiphertext> high_compacted;
+        for (int channel = 0; channel < input.c; ++channel)
+        {
+            const auto pack = input.pack_index(channel);
+            const auto source_slot = input.slot_index(channel, 0, 0);
+            const auto target_slot = static_cast<std::size_t>(channel);
+            auto rotated = runtime.rotate_composed(
+                spatial_sums[pack],
+                static_cast<long long>(source_slot) -
+                    static_cast<long long>(target_slot));
+            std::vector<double> target_mask(input.slot_count, 0.0);
+            target_mask[target_slot] = 1.0;
+            const double plain_scale = runtime.last_modulus_value(rotated);
+            if (high_compacted)
+            {
+                runtime.multiply_plain_accumulate(
+                    rotated, target_mask, plain_scale, *high_compacted);
+            }
+            else
+            {
+                high_compacted =
+                    std::make_unique<GpuCkksRuntime::DeviceCiphertext>(
+                        runtime.multiply_plain(
+                            rotated, target_mask, plain_scale));
+            }
+        }
+        compacted = std::make_unique<GpuCkksRuntime::DeviceCiphertext>(
+            runtime.rescale(*high_compacted, 1));
+    }
 
     std::vector<double> factor(
         input.slot_count, output_scale_factor / static_cast<double>(input.h * input.w));
     return runtime.multiply_plain_rescale(*compacted, factor);
 }
 
-std::vector<GpuCkksRuntime::DeviceCiphertext> fully_connected(
+GpuCkksRuntime::DeviceCiphertext fully_connected(
     const GpuCkksRuntime::DeviceCiphertext &features, int feature_count,
     const std::vector<double> &matrix, const std::vector<double> &bias, int class_count,
     const GpuCkksRuntime &runtime)
@@ -1172,27 +1297,76 @@ std::vector<GpuCkksRuntime::DeviceCiphertext> fully_connected(
     {
         throw std::invalid_argument("GPU fully-connected parameter mismatch");
     }
-    std::vector<GpuCkksRuntime::DeviceCiphertext> result;
-    result.reserve(class_count);
+    constexpr int baby_step_count = 8;
+    const int slot_mask = static_cast<int>(runtime.slot_count() - 1);
+    std::map<int, std::map<int, std::vector<double>>> diagonal_groups;
     for (int output = 0; output < class_count; ++output)
     {
-        std::vector<double> weight_slots(runtime.slot_count(), 0.0);
         for (int feature = 0; feature < feature_count; ++feature)
         {
-            weight_slots[feature] =
+            const int diagonal = (feature - output) & slot_mask;
+            const int baby = diagonal & (baby_step_count - 1);
+            const int giant = diagonal - baby;
+            auto &adjusted = diagonal_groups[giant][baby];
+            if (adjusted.empty())
+            {
+                adjusted.assign(runtime.slot_count(), 0.0);
+            }
+            adjusted[(static_cast<std::size_t>(output) + giant) %
+                     runtime.slot_count()] =
                 matrix[static_cast<std::size_t>(output) * feature_count + feature];
         }
-        auto sum = runtime.multiply_plain_rescale(features, weight_slots);
-        for (int step = 1; step < feature_count; step <<= 1)
-        {
-            auto rotated = runtime.rotate_composed(sum, step);
-            sum = runtime.add(sum, rotated);
-        }
-        std::vector<double> bias_slots(runtime.slot_count(), 0.0);
-        bias_slots[0] = bias[output];
-        result.push_back(runtime.add_plain(sum, bias_slots));
     }
-    return result;
+
+    std::vector<long long> baby_steps;
+    baby_steps.reserve(baby_step_count);
+    for (int step = 0; step < baby_step_count; ++step)
+    {
+        baby_steps.push_back(step);
+    }
+    auto baby_rotations = runtime.rotate_many_composed(features, baby_steps);
+
+    std::unique_ptr<GpuCkksRuntime::DeviceCiphertext> result;
+    for (auto &[giant, baby_group] : diagonal_groups)
+    {
+        std::unique_ptr<GpuCkksRuntime::DeviceCiphertext> inner;
+        for (auto &[baby, adjusted_weights] : baby_group)
+        {
+            const double plain_scale =
+                runtime.last_modulus_value(baby_rotations[baby]);
+            if (inner)
+            {
+                runtime.multiply_plain_accumulate(
+                    baby_rotations[baby], adjusted_weights, plain_scale, *inner);
+            }
+            else
+            {
+                inner = std::make_unique<GpuCkksRuntime::DeviceCiphertext>(
+                    runtime.multiply_plain(
+                        baby_rotations[baby], adjusted_weights, plain_scale));
+            }
+        }
+        auto placed = runtime.rescale(*inner, 1);
+        if (giant != 0)
+        {
+            placed = runtime.rotate_composed(placed, giant);
+        }
+        if (result)
+        {
+            *result = runtime.add(*result, placed);
+        }
+        else
+        {
+            result = std::make_unique<GpuCkksRuntime::DeviceCiphertext>(
+                std::move(placed));
+        }
+    }
+    std::vector<double> bias_slots(runtime.slot_count(), 0.0);
+    for (int output = 0; output < class_count; ++output)
+    {
+        bias_slots[output] = bias[output];
+    }
+    return runtime.add_plain(*result, bias_slots);
 }
 
 }  // namespace poseidon::benchmark::resnet20_gpu::core

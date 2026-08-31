@@ -2753,6 +2753,114 @@ void GpuEvaluator::rotate(
     destination_ciphertext = std::move(result);
 }
 
+void GpuEvaluator::rotate_many_hoisted(
+    const GpuCiphertextData &source_ciphertext,
+    const std::vector<int> &steps,
+    const GpuGaloisKeysData &galois_keys,
+    GpuDoubleHoistWorkspace &workspace,
+    std::vector<GpuCiphertextData> &destination_ciphertexts) const
+{
+    validate_ntt_ciphertext_input(
+        "GpuEvaluator::rotate_many_hoisted",
+        source_ciphertext,
+        true);
+    if (source_ciphertext.size() != 2 ||
+        source_ciphertext.meta.p_count != 0 ||
+        source_ciphertext.polys_.at(0).shards.size() != 1)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::rotate_many_hoisted: requires one-shard, size-2, Q-only input");
+    }
+    if (steps.empty())
+    {
+        destination_ciphertexts.clear();
+        return;
+    }
+    if (galois_keys.empty())
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::rotate_many_hoisted: empty Galois keys");
+    }
+
+    const auto &level_info =
+        params_.get_level(source_ciphertext.meta.parms_id);
+    const auto source_view = source_ciphertext.make_const_view();
+    const auto &source0 = source_view.polys[0].shards.front();
+    const auto &source1 = source_view.polys[1].shards.front();
+    const GpuParameterShard *parameter_shard = nullptr;
+    for (const auto &candidate : level_info.shards)
+    {
+        if (candidate.device_id == source0.device_id &&
+            candidate.hybrid_base_q_count == source_ciphertext.meta.q_count)
+        {
+            parameter_shard = &candidate;
+            break;
+        }
+    }
+    if (parameter_shard == nullptr ||
+        parameter_shard->hybrid_base_p_count == 0)
+    {
+        throw std::invalid_argument(
+            "GpuEvaluator::rotate_many_hoisted: HYBRID parameter shard is absent");
+    }
+
+    workspace.outer_accumulator.ensure_capacity(
+        source0.device_id,
+        source_ciphertext.meta.degree,
+        source_ciphertext.meta.q_count,
+        parameter_shard->hybrid_base_p_count,
+        steps.size());
+    keyswitch_handler_.hoist_decompose_modup_ntt(
+        source_view.polys[1],
+        level_info,
+        workspace.source_hoist,
+        workspace.keyswitch);
+    const auto key_view =
+        galois_keys.make_const_view(source_ciphertext.meta.q_count);
+
+    for (std::size_t index = 0; index < steps.size(); ++index)
+    {
+        if (steps[index] == 0)
+        {
+            throw std::invalid_argument(
+                "GpuEvaluator::rotate_many_hoisted: zero step is not supported");
+        }
+        const std::uint32_t galois_elt =
+            galois_elt_from_rotation_step(
+                source_ciphertext.meta.degree, steps[index]);
+        const std::size_t key_index = galois_key_index(galois_elt);
+        keyswitch_handler_.keyswitch_multsum_no_moddown(
+            workspace.source_hoist,
+            galois_elt,
+            key_view,
+            galois_keys,
+            key_index,
+            workspace.outer_accumulator,
+            index,
+            true,
+            level_info,
+            workspace.keyswitch);
+        kernel::launch_double_hoist_add_lifted_galois_c0(
+            workspace.outer_accumulator.q_component(index, 0),
+            source0.ptr,
+            galois_elt,
+            *parameter_shard,
+            source_ciphertext.meta.degree);
+    }
+
+    destination_ciphertexts.resize(steps.size());
+    for (std::size_t index = 0; index < steps.size(); ++index)
+    {
+        keyswitch_handler_.moddown_qp_ciphertext_to_q(
+            workspace.outer_accumulator,
+            index,
+            destination_ciphertexts[index],
+            source_ciphertext.meta,
+            level_info,
+            workspace.keyswitch);
+    }
+}
+
 void GpuEvaluator::conjugate(
     const GpuCiphertextData &source_ciphertext,
     const GpuGaloisKeysData &galois_keys,

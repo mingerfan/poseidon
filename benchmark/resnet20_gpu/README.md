@@ -23,7 +23,11 @@ ciphertext pack instead of inheriting ImageNet's fixed two-page layout. Spatial
 convolution rotations are cached once per input pack and kernel position. The
 unused CIFAR pages are filled with 2/4/8 Trident-style input replicas, allowing
 one compact plaintext product to evaluate several output channels at once.
-Power-of-two page reductions use a logarithmic rotation tree. Encoded
+Rotations of the same ciphertext are evaluated as a batch with one shared
+HYBRID decomposition (hoisting). Output-channel placement is split into
+group-level giant steps and replica-level baby steps; disjoint support masks
+make this BSGS placement exact for the CIFAR packing. Power-of-two page
+reductions use a logarithmic rotation tree. Encoded
 convolution selectors and repeated scalar plaintexts are cached in device
 memory by modulus level, and the encrypted-one input used by polynomial ReLU
 is encrypted/uploaded once and cloned on the GPU. Batch-normalization scales
@@ -35,9 +39,17 @@ use lazy rescaling: plaintext products at the same level are accumulated by
 Poseidon's fused GPU `multiply_plain_accumulate` kernel, and the completed
 stage is rescaled once. The second, preloaded pass reuses the encoded operands
 from device memory, so these fused loops do not encode or upload plaintexts.
-The logical level schedule is unchanged. For example, a regular layer-1
-replicated convolution reduces plaintext-product rescale calls from 88
-(`8 groups x 9 kernels + 16 selectors`) to 9 (`8 groups + 1 output pack`).
+For example, the lazy accumulation path reduced a regular layer-1 replicated
+convolution from 88 plaintext-product rescale calls to 9. Output-placement
+BSGS adds one shared support-mask rescale (10 total) and deliberately consumes
+one additional physical Q prime, while reducing expensive output-placement
+rotations from 15 to 8. Every convolution is immediately followed by a
+bootstrap, so the resulting Q5 output remains within the verified level budget.
+
+The encrypted head is also rotation-optimized. Global average pooling uses
+three column and three row tree reductions, followed by a 4-by-4 BSGS channel
+compaction. The `64x10` FC is evaluated as one BSGS matrix-vector product and
+returns all ten logits in slots 0 through 9 of one ciphertext.
 
 ## CKKS modulus and scale profile
 
@@ -82,33 +94,39 @@ CUDA_VISIBLE_DEVICES=2 POSEIDON_NTT_ALGO=fourstep \
   ./run.sh --gpu-only 0
 ```
 
-At startup this generates one direct Galois key for each of the 235 rotations
-required by the fixed complete ResNet20 topology. All keys are generated and
+At startup this generates one direct Galois key for each of the 113 distinct
+application rotation steps required by the fixed complete ResNet20 topology.
+All keys are generated and
 uploaded before the first network operation. It then performs one untimed pass
 to populate the device-resident input/model cache. The final pass measures the
 encrypted stem through encrypted FC output.
 Final D2H transfer, decryption and prediction checking are outside the reported
 `gpu_only_preloaded_elapsed_seconds` interval.
 
-The current ResNet20 topology has 235 distinct steps and 1,831 logical rotation
-calls. Power-of-two composition requires 8,181 GPU
-key switches per inference; direct keys reduce this to 1,831 (77.6% fewer).
-With the checked-in Q36/P18/dnum=2 configuration, a physical 32-GiB GPU 2 run
-with lazy plaintext accumulation reported `8.77687 s`, predicted class `3`,
-and reproduced the direct-key warmup
-logits exactly (`preloaded_replay_max_logit_error=0`). An earlier validation
-run comparing direct and composed rotation paths produced the same prediction.
-The preceding direct-key implementation reported `8.86537 s`; this single
-matched-card measurement is 1.0% lower overall. Individual regular 3x3
-convolutions fell from roughly `92-132 ms` to `62-110 ms`, while Bootstrap
-remains the dominant cost. The matching power-of-two-key image-0 run took
-`15.4695 s`.
+The optimized topology uses 113 distinct direct application rotation steps and
+1,273 application rotation key switches per inference. Compared with the
+preceding implementation, convolution output BSGS removes 452 rotations,
+pooling tree/BSGS removes 62, and FC BSGS removes 44. Direct keys keep every
+remaining application rotation to one key switch; convolution replica,
+spatial, output-baby, global-pool-baby, and FC-baby batches additionally share
+their decomposition through hoisting. Bootstrap owns a separate set of 39 DFT
+rotation steps.
 
-The tradeoff is initialization time and memory: generating 235 full-chain keys
-is outside the measured interval and peak device use observed during setup was
-about 30.0 GiB on a 32-GiB card. The timed interval keeps the input ciphertext,
-encoded model operands, bootstrap constants, and direct rotation keys resident
-on the GPU; it does not transfer rotation keys between CPU and GPU.
+With the checked-in Q36/P18/dnum=2 configuration, a physical 32-GiB GPU 2 run
+reported `8.15625 s`, predicted class `3`, and reproduced the direct-key warmup
+logits exactly (`preloaded_replay_max_logit_error=0`). The pre-optimization
+matched-card result was `8.77687 s`, so the complete change is about 7.1%
+faster. In the final timed pass regular 3x3 convolutions take roughly
+`57-62 ms`, transition convolutions `80-95 ms`, global pooling `15 ms`, and FC
+`18 ms`; Bootstrap remains the dominant cost.
+
+The tradeoff is initialization time and memory: generating 113 full-chain
+application keys is outside the measured interval. The old 235-key setup had
+about 30.0 GiB peak device use on a 32-GiB card; removing 122 obsolete keys
+reduces the current key footprint, although the exact peak depends on allocator
+state. The timed interval keeps the input ciphertext, encoded model operands,
+bootstrap constants, and direct rotation keys resident on the GPU; it does not
+transfer rotation keys between CPU and GPU.
 
 The optional final argument limits execution to a prefix of the nine
 BasicBlocks. `--infer 0 0` checks the encrypted stem, and `--infer 0 1` runs

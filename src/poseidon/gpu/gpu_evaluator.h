@@ -514,6 +514,20 @@ public:
         GpuCiphertextData &destination_ciphertext) const;
 
     /**
+     * @brief Rotate one ciphertext by several direct steps with one shared
+     * HYBRID decomposition/ModUp of c1.
+     *
+     * Every step must be nonzero and have a direct Galois key. Results retain
+     * the input level and scale in the same order as @p steps.
+     */
+    void rotate_many_hoisted(
+        const GpuCiphertextData &source_ciphertext,
+        const std::vector<int> &steps,
+        const GpuGaloisKeysData &galois_keys,
+        GpuDoubleHoistWorkspace &workspace,
+        std::vector<GpuCiphertextData> &destination_ciphertexts) const;
+
+    /**
      * @brief Conjugate ciphertext.
      *
      * First CKKS implementation:

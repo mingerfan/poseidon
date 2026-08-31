@@ -114,6 +114,12 @@ public:
     DeviceCiphertext rotate_composed(
         const DeviceCiphertext &source,
         long long step) const;
+    // Uses one shared HYBRID decomposition for several direct rotations when
+    // direct keys are active. Falls back to the normal composed path in
+    // validation modes that only generated power-of-two keys.
+    std::vector<DeviceCiphertext> rotate_many_composed(
+        const DeviceCiphertext &source,
+        const std::vector<long long> &steps) const;
     // Generate and upload one direct Galois key for every supplied logical
     // rotation. Subsequent rotate_composed calls use one key switch each.
     void initialize_direct_rotation_keys(

@@ -73,9 +73,9 @@ GpuCkksRuntime::DeviceCiphertext global_average_pool(const GpuMultiplexedTensor 
                                                      double output_scale_factor,
                                                      const GpuCkksRuntime &runtime);
 
-// Matrix order is [class][feature]. Each output ciphertext stores its logit
-// in slot zero, matching the Trident head representation.
-std::vector<GpuCkksRuntime::DeviceCiphertext> fully_connected(
+// Matrix order is [class][feature]. BSGS packs all class logits into slots
+// [0, class_count) of one ciphertext.
+GpuCkksRuntime::DeviceCiphertext fully_connected(
     const GpuCkksRuntime::DeviceCiphertext &features, int feature_count,
     const std::vector<double> &matrix, const std::vector<double> &bias, int class_count,
     const GpuCkksRuntime &runtime);

@@ -89,6 +89,14 @@ CUDA_VISIBLE_DEVICES=2 ./run.sh --smoke
 CUDA_VISIBLE_DEVICES=2 ./run.sh --shortcut-check
 ```
 
+批量 Hoist 旋转可单独与普通直连旋转比较：
+
+```bash
+CUDA_VISIBLE_DEVICES=2 ./run.sh --hoist-check
+```
+
+成功时 `hoisted rotate max_error` 应小于 `1e-5`。
+
 首次构建会编译 Poseidon、RMM 和 GPU 源码，耗时会比后续增量构建长。
 
 ## 5. 模数链和 scale
@@ -185,6 +193,10 @@ CUDA_VISIBLE_DEVICES=2 POSEIDON_NTT_ALGO=fourstep \
 5. 对第二次相同推理计时；
 6. 在计时结束后传回、解密并检查结果。
 
+网络所需的 113 把应用直连旋转密钥全部在步骤 2 生成并上传；Bootstrap 的
+39 个 DFT 旋转步长使用独立密钥。卷积、Pool 和 FC 的同源多旋转会共享一次
+HYBRID 分解，不在计算过程中临时生成或组合旋转密钥。
+
 重点查看输出：
 
 ```text
@@ -278,8 +290,12 @@ CUDA_VISIBLE_DEVICES=2 POSEIDON_NTT_ALGO=fourstep ./run.sh --gpu-only 0
 当前卷积、Option-A shortcut、平均池化和全局池化使用 GPU 融合明文乘累加：
 同一阶段的乘积先保持在高 scale，由 `multiply_plain_accumulate` CUDA 内核直接
 累加，阶段结束后只做一次 rescale。预热后的第二遍会直接复用 GPU 上的编码明文，
-不会在计时区间重复做 CKKS 编码或明文 H2D 上传；模数 level 消耗与优化前一致。
-卡 2 的完整 image-0 验证结果为 `8.77687 s`，预测类别为 `3`，两遍 logits
+不会在计时区间重复做 CKKS 编码或明文 H2D 上传。卷积输出放置采用 BSGS，
+为共享 support mask 多消耗一个物理 Q prime，但每个卷积后紧接 Bootstrap，
+不会超出 level 预算。Global Pool 使用二叉归约和 4x4 BSGS 压紧，FC 使用
+单密文 BSGS，10 个 logits 位于同一密文的前 10 个 slot。
+
+卡 2 的完整 image-0 验证结果为 `8.15625 s`，预测类别为 `3`，两遍 logits
 完全一致（`preloaded_replay_max_logit_error=0`）。
 
 ## 11. 最短运行流程
