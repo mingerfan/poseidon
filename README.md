@@ -88,6 +88,23 @@ Use `BUNDLE_DIR=-` for plans without a plaintext bundle. The runner reports
 the maximum online execution time across ranks per iteration; it does not
 apply the fanout smoke graph's fixed `10 negate + 9 add_cc` numerical check.
 
+For a single-process run, use `--local` instead of `--rank-to-node`:
+
+```bash
+build-runtime-nccl/bin/poseidon_gpu_mpi_runtime_e2e \
+  PLAN OPERATOR_SPEC BUNDLE_DIR REPORT \
+  --local --warmups 1 --iterations 3
+```
+
+Local mode does not call `MPI_Init_thread` and uses the non-MPI GPU API, so it
+does not create an NCCL communicator. A one-rank MPI launch also selects the
+non-MPI GPU API, although MPI initialization and finalization remain visible.
+
+For a compact Nsight Systems trace, use `--warmups 0 --iterations 1`; retain
+`--warmups 1 --iterations 3` for stable timing measurements. The runner emits
+`setup`, `warmup`, and `online.iteration.N` NVTX ranges so these scopes can be
+selected directly in the timeline.
+
 ## Nsight Systems GPU Kernel Gap Analysis
 
 After collecting one or more Nsight Systems reports, compare actual GPU kernel

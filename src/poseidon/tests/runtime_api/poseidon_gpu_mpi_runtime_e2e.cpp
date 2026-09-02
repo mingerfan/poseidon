@@ -10,6 +10,7 @@
 
 #include <mpi.h>
 #include <nlohmann/json.hpp>
+#include <nvtx3/nvToolsExt.h>
 
 #include <algorithm>
 #include <chrono>
@@ -41,6 +42,51 @@ using poseidon::runtime_api::test::local_cuda_devices;
 using poseidon::runtime_api::test::make_context;
 using poseidon::runtime_api::test::parse_rank_to_node;
 using poseidon::runtime_api::test::require_same_topology;
+
+constexpr const char *kUsage =
+    "usage: poseidon_gpu_mpi_runtime_e2e PLAN OPERATOR_SPEC BUNDLE_DIR REPORT "
+    "(--local | --rank-to-node 0x1) [--warmups N] [--iterations N]";
+
+class NvtxRange
+{
+public:
+    explicit NvtxRange(const char *name)
+    {
+        nvtxRangePushA(name);
+    }
+
+    ~NvtxRange()
+    {
+        end();
+    }
+
+    NvtxRange(const NvtxRange &) = delete;
+    NvtxRange &operator=(const NvtxRange &) = delete;
+
+    void end() noexcept
+    {
+        if (active_)
+        {
+            nvtxRangePop();
+            active_ = false;
+        }
+    }
+
+private:
+    bool active_ = true;
+};
+
+struct RunnerOptions
+{
+    std::filesystem::path plan_path;
+    std::filesystem::path spec_path;
+    std::string bundle_text;
+    std::filesystem::path report_path;
+    bool local = false;
+    std::vector<int> rank_to_node;
+    std::size_t warmups = 0;
+    std::size_t iterations = 1;
+};
 
 void write_report(const std::filesystem::path &path, const Json &report)
 {
@@ -145,6 +191,90 @@ std::size_t parse_positive(const char *text, const char *name,
     return static_cast<std::size_t>(parsed);
 }
 
+bool requests_local_mode(int argc, char **argv)
+{
+    return std::any_of(argv + std::min(argc, 5), argv + argc,
+                       [](const char *argument) {
+                           return std::string(argument) == "--local";
+                       });
+}
+
+RunnerOptions parse_options(int argc, char **argv)
+{
+    if (argc < 5)
+    {
+        throw std::invalid_argument(kUsage);
+    }
+
+    RunnerOptions options;
+    options.plan_path = argv[1];
+    options.spec_path = argv[2];
+    options.bundle_text = argv[3];
+    options.report_path = argv[4];
+    bool saw_local = false;
+    bool saw_rank_to_node = false;
+    for (int index = 5; index < argc; ++index)
+    {
+        const std::string option(argv[index]);
+        if (option == "--local")
+        {
+            if (saw_local)
+            {
+                throw std::invalid_argument("--local may be specified only once");
+            }
+            saw_local = true;
+            options.local = true;
+            continue;
+        }
+        if (option == "--rank-to-node")
+        {
+            if (saw_rank_to_node)
+            {
+                throw std::invalid_argument(
+                    "--rank-to-node may be specified only once");
+            }
+            if (++index >= argc)
+            {
+                throw std::invalid_argument(
+                    "--rank-to-node requires an argument");
+            }
+            saw_rank_to_node = true;
+            options.rank_to_node = parse_rank_to_node(argv[index]);
+            continue;
+        }
+        if (option == "--warmups" || option == "--iterations")
+        {
+            if (++index >= argc)
+            {
+                throw std::invalid_argument(option + " requires an argument");
+            }
+            const std::size_t parsed =
+                parse_positive(argv[index], option.c_str(), true);
+            if (option == "--warmups")
+            {
+                options.warmups = parsed;
+            }
+            else
+            {
+                options.iterations = parsed;
+            }
+            continue;
+        }
+        throw std::invalid_argument("unknown option: " + option);
+    }
+
+    if (options.local == saw_rank_to_node)
+    {
+        throw std::invalid_argument(
+            "specify exactly one of --local and --rank-to-node");
+    }
+    if (options.iterations == 0)
+    {
+        throw std::invalid_argument("--iterations must be positive");
+    }
+    return options;
+}
+
 Json timing_json(const std::vector<double> &critical_online_seconds)
 {
     if (critical_online_seconds.empty())
@@ -167,80 +297,45 @@ Json timing_json(const std::vector<double> &critical_online_seconds)
 
 int main(int argc, char **argv)
 {
-    int provided = MPI_THREAD_SINGLE;
-    if (MPI_Init_thread(&argc, &argv, MPI_THREAD_FUNNELED, &provided) !=
-        MPI_SUCCESS)
-    {
-        return 2;
-    }
-
+    const bool local_mode = requests_local_mode(argc, argv);
+    bool mpi_initialized = false;
     int rank = 0;
     int world_size = 1;
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+    if (!local_mode)
+    {
+        int provided = MPI_THREAD_SINGLE;
+        if (MPI_Init_thread(&argc, &argv, MPI_THREAD_FUNNELED, &provided) !=
+            MPI_SUCCESS)
+        {
+            return 2;
+        }
+        mpi_initialized = true;
+        MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+        MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+    }
+
     int exit_code = 0;
 
     try
     {
-        if (argc < 7)
-        {
-            throw std::invalid_argument(
-                "usage: poseidon_gpu_mpi_runtime_e2e PLAN OPERATOR_SPEC "
-                "BUNDLE_DIR REPORT --rank-to-node 0x0 "
-                "[--warmups N] [--iterations N]");
-        }
-        const std::filesystem::path plan_path = argv[1];
-        const std::filesystem::path spec_path = argv[2];
-        const std::string bundle_text = argv[3];
-        const std::filesystem::path report_path = argv[4];
-        if (std::string(argv[5]) != "--rank-to-node")
-        {
-            throw std::invalid_argument(
-                "the --rank-to-node option is required");
-        }
-        const std::vector<int> rank_to_node = parse_rank_to_node(argv[6]);
+        const RunnerOptions options = parse_options(argc, argv);
+        std::vector<int> rank_to_node =
+            options.local ? std::vector<int>{0} : options.rank_to_node;
         if (static_cast<int>(rank_to_node.size()) != world_size)
         {
             throw std::invalid_argument(
-                "rank-to-node length must match MPI world size");
+                "rank-to-node length must match the runtime world size");
         }
-        require_same_topology(rank_to_node, world_size);
-
-        std::size_t warmups = 0;
-        std::size_t iterations = 1;
-        for (int index = 7; index < argc; ++index)
+        if (world_size > 1)
         {
-            const std::string option(argv[index]);
-            if ((option == "--warmups" || option == "--iterations") &&
-                index + 1 < argc)
-            {
-                const std::size_t parsed =
-                    parse_positive(argv[++index], option.c_str(), true);
-                if (option == "--warmups")
-                {
-                    warmups = parsed;
-                }
-                else
-                {
-                    iterations = parsed;
-                }
-                continue;
-            }
-            throw std::invalid_argument("unknown option: " + option);
-        }
-        if (iterations == 0)
-        {
-            throw std::invalid_argument("--iterations must be positive");
-        }
-        if (iterations > static_cast<std::size_t>(INT_MAX))
-        {
-            throw std::invalid_argument("--iterations is too large");
+            require_same_topology(rank_to_node, world_size);
         }
 
+        NvtxRange setup_range("setup");
         const auto loaded_plan =
-            fhegpu::RuntimePlanJsonReader::read_file(plan_path.string());
+            fhegpu::RuntimePlanJsonReader::read_file(options.plan_path.string());
         const auto loaded_spec =
-            fhegpu::OperatorSpecReader::read_file(spec_path.string());
+            fhegpu::OperatorSpecReader::read_file(options.spec_path.string());
         const auto &plan = loaded_plan.plan;
         if (plan.target.world_size != world_size ||
             plan.target.device_counts.size() !=
@@ -264,7 +359,10 @@ int main(int argc, char **argv)
             poseidon::KeyGenerator owner(context);
             *secret_key = owner.secret_key();
         }
-        broadcast_secret_key(context, *secret_key, rank);
+        if (world_size > 1)
+        {
+            broadcast_secret_key(context, *secret_key, rank);
+        }
         poseidon::KeyGenerator key_generator(context, *secret_key);
         auto public_key = std::make_shared<poseidon::PublicKey>();
         auto relin_keys = std::make_shared<poseidon::RelinKeys>();
@@ -308,17 +406,38 @@ int main(int argc, char **argv)
 
         const int local_device_count =
             plan.target.device_counts[static_cast<std::size_t>(rank)];
-        const auto cuda_devices =
-            local_cuda_devices(MPI_COMM_WORLD, local_device_count);
-        poseidon::runtime_api::GpuProcessTopology topology;
-        topology.device_counts = plan.target.device_counts;
-        topology.rank_to_node = rank_to_node;
-        PoseidonGpuApi api(loaded_spec.spec.context_id, context, MPI_COMM_WORLD,
-                           cuda_devices, std::move(topology), relin_keys,
-                           galois_keys, public_key, secret_key);
-        if (api.mpi_rank() != rank || api.mpi_world_size() != world_size)
+        std::vector<int> cuda_devices(
+            static_cast<std::size_t>(local_device_count));
+        if (world_size == 1)
         {
-            throw std::runtime_error("Poseidon GPU MPI identity mismatch");
+            std::iota(cuda_devices.begin(), cuda_devices.end(), 0);
+        }
+        else
+        {
+            cuda_devices =
+                local_cuda_devices(MPI_COMM_WORLD, local_device_count);
+        }
+
+        std::unique_ptr<PoseidonGpuApi> api;
+        if (world_size == 1)
+        {
+            api = std::make_unique<PoseidonGpuApi>(
+                loaded_spec.spec.context_id, context, cuda_devices, relin_keys,
+                galois_keys, public_key, secret_key);
+        }
+        else
+        {
+            poseidon::runtime_api::GpuProcessTopology topology;
+            topology.device_counts = plan.target.device_counts;
+            topology.rank_to_node = rank_to_node;
+            api = std::make_unique<PoseidonGpuApi>(
+                loaded_spec.spec.context_id, context, MPI_COMM_WORLD,
+                cuda_devices, std::move(topology), relin_keys, galois_keys,
+                public_key, secret_key);
+        }
+        if (api->mpi_rank() != rank || api->mpi_world_size() != world_size)
+        {
+            throw std::runtime_error("Poseidon GPU runtime identity mismatch");
         }
 
         const fhegpu::ValueId input_id = plan.external_inputs.front();
@@ -350,9 +469,9 @@ int main(int argc, char **argv)
         }
 
         std::optional<std::filesystem::path> bundle_dir;
-        if (bundle_text != "-")
+        if (options.bundle_text != "-")
         {
-            bundle_dir = std::filesystem::path(bundle_text);
+            bundle_dir = std::filesystem::path(options.bundle_text);
         }
         else if (plan.plaintext_bundle)
         {
@@ -360,23 +479,39 @@ int main(int argc, char **argv)
                 "BUNDLE_DIR must name the plaintext bundle for this plan");
         }
         fhegpu::SequentialRuntime<PoseidonGpuApi> runtime(
-            rank, world_size, local_device_count, api,
+            rank, world_size, local_device_count, *api,
             fhegpu::DeviceExecutionMode::PerDeviceWorkers,
             static_cast<std::size_t>(local_device_count));
         const fhegpu::RuntimeResources resources{
             loaded_spec, std::move(bundle_dir), false};
+        setup_range.end();
 
-        for (std::size_t index = 0; index < warmups; ++index)
+        if (options.warmups > 0)
         {
-            check_mpi(MPI_Barrier(MPI_COMM_WORLD), "MPI_Barrier warmup");
-            (void)runtime.run(loaded_plan, resources, inputs);
+            NvtxRange warmup_range("warmup");
+            for (std::size_t index = 0; index < options.warmups; ++index)
+            {
+                if (world_size > 1)
+                {
+                    check_mpi(MPI_Barrier(MPI_COMM_WORLD),
+                              "MPI_Barrier warmup");
+                }
+                (void)runtime.run(loaded_plan, resources, inputs);
+            }
         }
 
         std::vector<double> local_online_seconds;
-        local_online_seconds.reserve(iterations);
-        for (std::size_t index = 0; index < iterations; ++index)
+        local_online_seconds.reserve(options.iterations);
+        for (std::size_t index = 0; index < options.iterations; ++index)
         {
-            check_mpi(MPI_Barrier(MPI_COMM_WORLD), "MPI_Barrier iteration");
+            if (world_size > 1)
+            {
+                check_mpi(MPI_Barrier(MPI_COMM_WORLD),
+                          "MPI_Barrier iteration");
+            }
+            const std::string range_name =
+                "online.iteration." + std::to_string(index + 1);
+            NvtxRange iteration_range(range_name.c_str());
             const auto artifact = runtime.run(loaded_plan, resources, inputs);
             local_online_seconds.push_back(
                 static_cast<double>(artifact.timing.online_execution_nanoseconds) *
@@ -384,28 +519,40 @@ int main(int argc, char **argv)
         }
 
         std::vector<double> gathered;
-        if (rank == 0)
+        if (world_size == 1)
         {
-            gathered.resize(static_cast<std::size_t>(world_size) * iterations);
+            gathered = local_online_seconds;
         }
-        check_mpi(MPI_Gather(
-                      local_online_seconds.data(), static_cast<int>(iterations),
-                      MPI_DOUBLE, rank == 0 ? gathered.data() : nullptr,
-                      static_cast<int>(iterations), MPI_DOUBLE, 0,
-                      MPI_COMM_WORLD),
-                  "MPI_Gather online timings");
+        else
+        {
+            if (rank == 0)
+            {
+                gathered.resize(static_cast<std::size_t>(world_size) *
+                                options.iterations);
+            }
+            check_mpi(MPI_Gather(
+                          local_online_seconds.data(),
+                          static_cast<int>(options.iterations), MPI_DOUBLE,
+                          rank == 0 ? gathered.data() : nullptr,
+                          static_cast<int>(options.iterations), MPI_DOUBLE, 0,
+                          MPI_COMM_WORLD),
+                      "MPI_Gather online timings");
+        }
 
         if (rank == 0)
         {
-            std::vector<double> critical_online_seconds(iterations, 0.0);
-            for (std::size_t iteration = 0; iteration < iterations; ++iteration)
+            std::vector<double> critical_online_seconds(
+                options.iterations, 0.0);
+            for (std::size_t iteration = 0;
+                 iteration < options.iterations; ++iteration)
             {
                 for (int remote_rank = 0; remote_rank < world_size;
                      ++remote_rank)
                 {
                     critical_online_seconds[iteration] = std::max(
                         critical_online_seconds[iteration],
-                        gathered[static_cast<std::size_t>(remote_rank) * iterations +
+                        gathered[static_cast<std::size_t>(remote_rank) *
+                                     options.iterations +
                                  iteration]);
                 }
             }
@@ -413,14 +560,17 @@ int main(int argc, char **argv)
                 {"format_version", 1},
                 {"passed", true},
                 {"runner", "poseidon_gpu_mpi_runtime_e2e"},
+                {"execution_mode", options.local ? "local" : "mpi"},
+                {"mpi_initialized", mpi_initialized},
+                {"nccl_transport_enabled", world_size > 1},
                 {"runtime_scope", "online_execution_only"},
                 {"plan_sha256", loaded_plan.source_sha256},
                 {"operator_spec_sha256", loaded_spec.source_sha256},
                 {"world_size", world_size},
                 {"device_counts", plan.target.device_counts},
                 {"rank_to_node", rank_to_node},
-                {"warmups", warmups},
-                {"iterations", iterations},
+                {"warmups", options.warmups},
+                {"iterations", options.iterations},
                 {"plan_stats",
                  {{"compute_instructions", stats.compute_instructions},
                   {"initialization_compute", stats.initialization_compute},
@@ -438,27 +588,35 @@ int main(int argc, char **argv)
                    stats.cross_rank_device_communication}}},
                 {"online_timing", timing_json(critical_online_seconds)},
             };
-            write_report(report_path, report);
+            write_report(options.report_path, report);
             const double average =
                 report.at("online_timing").at("average_seconds").get<double>();
             std::cout << "PASS runner=poseidon_gpu_mpi_runtime_e2e"
                       << " world=" << world_size
+                      << " mode=" << (options.local ? "local" : "mpi")
                       << " device_counts="
                       << encode_x_list(plan.target.device_counts)
                       << " online_average_seconds=" << average
                       << " cross_rank_communication="
                       << stats.cross_rank_communication << '\n'
-                      << "report=" << report_path.string() << '\n';
+                      << "report=" << options.report_path.string() << '\n';
         }
     }
     catch (const std::exception &error)
     {
-        std::cerr << "[rank " << rank << "] MPI GPU RuntimePlan failed: "
-                  << error.what() << '\n';
-        MPI_Abort(MPI_COMM_WORLD, 1);
+        std::cerr << (local_mode ? "[local]" :
+                         "[rank " + std::to_string(rank) + "]")
+                  << " GPU RuntimePlan failed: " << error.what() << '\n';
+        if (mpi_initialized && world_size > 1)
+        {
+            MPI_Abort(MPI_COMM_WORLD, 1);
+        }
         exit_code = 1;
     }
 
-    MPI_Finalize();
+    if (mpi_initialized)
+    {
+        MPI_Finalize();
+    }
     return exit_code;
 }
