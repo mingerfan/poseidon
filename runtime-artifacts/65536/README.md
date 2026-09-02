@@ -1,15 +1,19 @@
 # 65536 CPU、4 GPU 和 8 GPU Runtime 负载
 
-这个目录可以随 Poseidon 仓库一起打包。它包含六份 RuntimePlan：
+这个目录可以随 Poseidon 仓库一起打包。它包含八份 RuntimePlan：
 
 - `plans/cpu/mlp.runtime-plan.json`：单进程 CPU MLP。
 - `plans/cpu/probe.runtime-plan.json`：单进程 CPU 高并行 probe 的等价串行计划。
 - `plans/gpu/mlp-4gpu.runtime-plan.json`：编译器生成的单进程 4 GPU MLP。
-- `plans/gpu/probe-4gpu.runtime-plan.json`：4 GPU 交错计算和环形 P2P 通信 probe。
+- `plans/gpu/probe-1gpu-1999.runtime-plan.json`：单 GPU、1999 条计算指令的基线 probe。
+- `plans/gpu/probe-4gpu.runtime-plan.json`：1999 条计算指令的 4 GPU probe；每卡
+  固定两条链，逐卡计算数为 500、500、500、499。
 - `plans/gpu/mlp-8gpu.runtime-plan.json`：编译器生成的单进程 8 GPU MLP。
 - `plans/gpu/probe-8gpu.runtime-plan.json`：8 GPU 交错计算和环形 P2P 通信 probe。
+- `plans/gpu/probe-8gpu-strong.runtime-plan.json`：与旧 4 GPU probe 工作量对应的
+  8 GPU 强扩展实验计划。
 
-四份计划共用 `fixture/`。MLP 使用 `plaintext-bundle/` 中的模型常量；probe
+八份计划共用 `fixture/`。MLP 使用 `plaintext-bundle/` 中的模型常量；probe
 没有明文常量，但运行入口仍传入这个目录，以保持命令格式一致。
 
 ## 构建
