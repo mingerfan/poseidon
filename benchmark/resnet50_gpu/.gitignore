@@ -1,0 +1,11 @@
+/build/
+/output/*
+!/output/.gitkeep
+*.log
+*.sqlite
+*.sqlite3
+*.nsys-rep
+*.qdrep
+rmm_log.txt
+tmp/
+cache/
