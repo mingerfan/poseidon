@@ -5,6 +5,7 @@ set -euo pipefail
 usage() {
     echo "Usage: $0 OUTPUT_DIR [BUILD_DIR]" >&2
     echo "  BUILD_DIR defaults to build-runtime-gpu-api-release." >&2
+    echo "  The archive root is renamed to poseidon-offline-gpu-runtime-TIMESTAMP." >&2
 }
 
 if [[ $# -lt 1 || $# -gt 2 ]]; then
@@ -19,10 +20,11 @@ if [[ "${build_dir}" != /* ]]; then
     build_dir="${repo_root}/${build_dir}"
 fi
 timestamp=$(date +%Y%m%d-%H%M%S)
-package_name="poseidon-${timestamp}"
+package_name="poseidon-offline-gpu-runtime-${timestamp}"
 staging_root=$(mktemp -d "${TMPDIR:-/tmp}/poseidon-package.XXXXXX")
 staging_dir="${staging_root}/${package_name}"
 archive_path="${output_dir}/${package_name}.tar.zst"
+checksum_path="${archive_path}.sha256"
 
 cleanup() {
     rm -rf -- "${staging_root}"
@@ -44,10 +46,34 @@ copy_repo_path() {
 }
 
 required_source_files=(
+    "CMakeLists.txt"
     "cmake/FindGMP.cmake"
+    "cmake/PoseidonConfig.cmake.in"
+    "cmake/PoseidonMacros.cmake"
+    "third_party/cpm/cpm/CPM_0.40.0.cmake"
+    "third_party/ckks-runtime/CMakeLists.txt"
+    "third_party/rmm/rapids_config.cmake"
     "third_party/rmm/cmake/thirdparty/get_spdlog.cmake"
     "third_party/rmm/cmake/thirdparty/get_cccl.cmake"
     "third_party/rmm/cmake/thirdparty/get_nvtx.cmake"
+)
+
+required_runtime_files=(
+    "runtime-artifacts/65536/README.md"
+    "runtime-artifacts/65536/plans/cpu/mlp.runtime-plan.json"
+    "runtime-artifacts/65536/plans/cpu/probe.runtime-plan.json"
+    "runtime-artifacts/65536/plans/gpu/mlp-1gpu.runtime-plan.json"
+    "runtime-artifacts/65536/plans/gpu/mlp-4gpu.runtime-plan.json"
+    "runtime-artifacts/65536/plans/gpu/mlp-4x4.runtime-plan.json"
+    "runtime-artifacts/65536/plans/gpu/mlp-8gpu.runtime-plan.json"
+    "runtime-artifacts/65536/plans/gpu/probe-1gpu-1999.runtime-plan.json"
+    "runtime-artifacts/65536/plans/gpu/probe-4gpu.runtime-plan.json"
+    "runtime-artifacts/65536/plans/gpu/probe-4x4.runtime-plan.json"
+    "runtime-artifacts/65536/plans/gpu/probe-8gpu-strong.runtime-plan.json"
+    "runtime-artifacts/65536/plans/gpu/probe-8gpu.runtime-plan.json"
+    "runtime-artifacts/65536/plaintext-bundle/manifest.json"
+    "runtime-artifacts/65536/profiles/cpu-operator-spec.json"
+    "runtime-artifacts/65536/profiles/gpu-operator-spec.json"
 )
 
 for relative_path in "${required_source_files[@]}"; do
@@ -62,18 +88,21 @@ fi
 mkdir -p "${staging_dir}"
 rsync -a \
     --exclude='/.git/' \
+    --exclude='/third_party/ckks-runtime/.git' \
+    --exclude='/third_party/ckks-runtime/third_party/dacapo/.git' \
     --exclude='/.agents/' \
     --exclude='/.codex/' \
     --exclude='/.venv/' \
     --exclude='/.vscode/' \
     --exclude='/build*/' \
     --exclude='/test-results/' \
-    --exclude='/scripts/' \
     --exclude='/thirdparty/' \
     --exclude='/third_party/cpm/cccl/' \
     --exclude='/third_party/cpm/fmt/' \
     --exclude='/third_party/cpm/nvtx3/' \
-    --exclude='/third_party/ckks-runtime/third_party/dacapo/' \
+    --exclude='/third_party/ckks-runtime/third_party/dacapo/.venv/' \
+    --exclude='/third_party/ckks-runtime/third_party/dacapo/build/' \
+    --exclude='/third_party/ckks-runtime/third_party/dacapo/review_artifacts/' \
     --exclude='__pycache__/' \
     --exclude='*.pyc' \
     --exclude='*.nsys-rep' \
@@ -82,9 +111,8 @@ rsync -a \
     --exclude='*.sqlite-wal' \
     "${repo_root}/" "${staging_dir}/"
 
-copy_repo_path "scripts/package_offline_gpu_runtime.sh"
-
 asset_root="third_party/ckks-runtime/third_party/dacapo/review_artifacts/mlp/65536"
+copy_repo_path "${asset_root}/1x1-current"
 copy_repo_path "${asset_root}/1x4-current"
 copy_repo_path "${asset_root}/1x8"
 copy_repo_path "${asset_root}/profiles"
@@ -102,10 +130,55 @@ rsync -a \
 for relative_path in "${required_source_files[@]}"; do
     require_file "${staging_dir}/${relative_path}"
 done
+for relative_path in "${required_runtime_files[@]}"; do
+    require_file "${staging_dir}/${relative_path}"
+done
 require_file "${staging_dir}/${asset_root}/1x4-current/mlp.optimized._hecate_MLP.runtime-plan.json"
+require_file "${staging_dir}/${asset_root}/1x1-current/mlp.optimized._hecate_MLP.runtime-plan.json"
+require_file "${staging_dir}/${asset_root}/1x1-current/mlp.optimized._hecate_MLP.bundle/manifest.json"
 require_file "${staging_dir}/${asset_root}/1x4-current/mlp.optimized._hecate_MLP.bundle/manifest.json"
 require_file "${staging_dir}/${asset_root}/1x8/input.json"
 require_file "${staging_dir}/${asset_root}/profiles/operator-spec.json"
+
+cmake_input_count=0
+while IFS= read -r -d '' relative_path; do
+    relative_path=${relative_path#./}
+    require_file "${staging_dir}/${relative_path}"
+    cmake_input_count=$((cmake_input_count + 1))
+done < <(
+    cd "${repo_root}"
+    find . \
+        -path './.git' -prune -o \
+        -path './.agents' -prune -o \
+        -path './.codex' -prune -o \
+        -path './.venv' -prune -o \
+        -path './.vscode' -prune -o \
+        -path './build*' -prune -o \
+        -path './test-results' -prune -o \
+        -path './thirdparty' -prune -o \
+        -path './third_party/ckks-runtime/third_party/dacapo/.venv' -prune -o \
+        -path './third_party/ckks-runtime/third_party/dacapo/build' -prune -o \
+        -path './third_party/ckks-runtime/third_party/dacapo/review_artifacts' -prune -o \
+        -type f \( -name CMakeLists.txt -o -name '*.cmake' -o -name '*.cmake.in' \) \
+        -print0
+)
+echo "Validated ${cmake_input_count} CMake input files in the staging tree."
+
+configure_check_dir="${staging_root}/configure-check"
+cmake -S "${staging_dir}" -B "${configure_check_dir}" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DFETCHCONTENT_FULLY_DISCONNECTED=ON \
+    -DPOSEIDON_BUILD_DEPS=OFF \
+    -DPOSEIDON_USE_ZLIB=OFF \
+    -DPOSEIDON_USE_ZSTD=OFF \
+    -DPOSEIDON_USE_MSGSL=OFF \
+    -DPOSEIDON_BUILD_EXAMPLES=OFF \
+    -DPOSEIDON_BUILD_CKKS_RUNTIME_API=ON \
+    -DPOSEIDON_BUILD_CKKS_RUNTIME_TESTS=ON \
+    -DPOSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS=ON \
+    -DPOSEIDON_BUILD_CKKS_RUNTIME_GPU_NCCL=OFF
+cmake --build "${configure_check_dir}" --parallel \
+    --target poseidon_runtime_gpu_mlp_e2e
 
 (
     cd "${staging_dir}"
@@ -115,8 +188,8 @@ require_file "${staging_dir}/${asset_root}/profiles/operator-spec.json"
 )
 
 mkdir -p "${output_dir}"
-if [[ -e "${archive_path}" ]]; then
-    echo "Refusing to overwrite existing archive: ${archive_path}" >&2
+if [[ -e "${archive_path}" || -e "${checksum_path}" ]]; then
+    echo "Refusing to overwrite existing archive or checksum: ${archive_path}" >&2
     exit 1
 fi
 
@@ -130,5 +203,7 @@ if grep -Eq '(^|/)(test-results|__pycache__)(/|$)|\.nsys-rep$|\.sqlite(-shm|-wal
     exit 1
 fi
 
-sha256sum "${archive_path}"
+(cd "${output_dir}" && sha256sum "$(basename "${archive_path}")" \
+    >"$(basename "${checksum_path}")")
+cat "${checksum_path}"
 du -h "${archive_path}"

@@ -10,6 +10,9 @@ binary="$build_dir/bin/poseidon_runtime_gpu_mlp_e2e"
 device_count=${1:-}
 workload=${2:-}
 case "$device_count" in
+    1)
+        default_devices=0
+        ;;
     4)
         default_devices=0,1,2,3
         ;;
@@ -17,14 +20,14 @@ case "$device_count" in
         default_devices=0,1,2,3,4,5,6,7
         ;;
     *)
-        echo "usage: $0 4|8 mlp|probe [REPORT_JSON]" >&2
+        echo "usage: $0 1|4|8 mlp|probe [REPORT_JSON]" >&2
         exit 2
         ;;
 esac
 case "$workload" in
     mlp|probe) ;;
     *)
-        echo "usage: $0 4|8 mlp|probe [REPORT_JSON]" >&2
+        echo "usage: $0 1|4|8 mlp|probe [REPORT_JSON]" >&2
         exit 2
         ;;
 esac
@@ -44,9 +47,14 @@ export CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES:-$default_devices}
 export POSEIDON_RUNTIME_DEVICE_WORKERS=$device_count
 export POSEIDON_GPU_MLP_ALLOW_NO_BOOT=1
 
+plan="$artifact_dir/plans/gpu/${workload}-${device_count}gpu.runtime-plan.json"
+if [[ "$device_count" == 1 && "$workload" == probe ]]; then
+    plan="$artifact_dir/plans/gpu/probe-1gpu-1999.runtime-plan.json"
+fi
+
 set +e
 "$binary" \
-    "$artifact_dir/plans/gpu/${workload}-${device_count}gpu.runtime-plan.json" \
+    "$plan" \
     "$artifact_dir/profiles/gpu-operator-spec.json" \
     "$artifact_dir/plaintext-bundle" \
     "$artifact_dir/fixture/input.json" \
