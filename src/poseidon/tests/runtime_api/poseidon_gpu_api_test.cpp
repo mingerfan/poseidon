@@ -699,6 +699,14 @@ void test_preflight_rejections(PoseidonGpuApi &api,
     require_rejected([&] { static_cast<void>(api.cuda_device_id(1)); },
                      "logical device index");
 
+    fhegpu::PlanRequirements remote_requirements;
+    remote_requirements.keys = {
+        {fhegpu::KeyKind::Galois,
+         {fhegpu::PlaceKind::Device, 1, 0}, 1, std::nullopt},
+    };
+    api.preflight(kPlanSha, false, target, loaded_spec.spec,
+                  remote_requirements);
+
     auto placeholder = loaded_spec.spec;
     placeholder.status = "placeholder";
     require_rejected(

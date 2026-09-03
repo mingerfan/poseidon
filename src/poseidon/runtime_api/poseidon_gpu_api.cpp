@@ -2269,9 +2269,13 @@ void PoseidonGpuApi::preflight(std::string_view plan_source_sha256,
 
     for (const auto &key : requirements.keys)
     {
+        if (key.place.rank != mpi_rank_)
+        {
+            continue;
+        }
         if (key.kind == fhegpu::KeyKind::Secret)
         {
-        require_host_place(key.place, "Poseidon GPU SecretKey", mpi_rank_);
+            require_host_place(key.place, "Poseidon GPU SecretKey", mpi_rank_);
             if (!boot_decryptor_)
             {
                 throw std::runtime_error("Poseidon GPU Api lacks decrypt_reencrypt Boot keys");
