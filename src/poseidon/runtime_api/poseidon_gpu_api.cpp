@@ -671,6 +671,36 @@ public:
         return ready;
     }
 
+    static std::shared_ptr<ReadyEvent> transfer(
+        std::shared_ptr<communication::CudaTransferRequest> request)
+    {
+        if (!request)
+        {
+            throw std::invalid_argument(
+                "Poseidon GPU transfer ready event requires a request");
+        }
+        auto ready = std::shared_ptr<ReadyEvent>(
+            new ReadyEvent(request->completion_device()));
+        ready->transfer_request_ = std::move(request);
+        return ready;
+    }
+
+#ifdef POSEIDON_RUNTIME_GPU_NCCL
+    static std::shared_ptr<ReadyEvent> nccl(
+        std::shared_ptr<communication::NcclMpiTransport::Request> request)
+    {
+        if (!request)
+        {
+            throw std::invalid_argument(
+                "Poseidon GPU NCCL ready event requires a request");
+        }
+        auto ready = std::shared_ptr<ReadyEvent>(
+            new ReadyEvent(request->completion_device()));
+        ready->nccl_request_ = std::move(request);
+        return ready;
+    }
+#endif
+
     ReadyEvent(const ReadyEvent &) = delete;
     ReadyEvent &operator=(const ReadyEvent &) = delete;
 
@@ -685,11 +715,22 @@ public:
 
     void wait()
     {
+        std::lock_guard<std::mutex> lock(wait_mutex_);
         if (waited_)
         {
             return;
         }
-        if (!recorded_)
+        if (transfer_request_)
+        {
+            transfer_request_->wait();
+        }
+#ifdef POSEIDON_RUNTIME_GPU_NCCL
+        else if (nccl_request_)
+        {
+            nccl_request_->wait();
+        }
+#endif
+        else if (!recorded_)
         {
             throw std::logic_error("Poseidon GPU ready event was not recorded");
         }
@@ -703,6 +744,16 @@ public:
 
     cudaEvent_t event() const
     {
+        if (transfer_request_)
+        {
+            return transfer_request_->completion_event();
+        }
+#ifdef POSEIDON_RUNTIME_GPU_NCCL
+        if (nccl_request_)
+        {
+            return nccl_request_->completion_event();
+        }
+#endif
         if (!recorded_ || event_ == nullptr)
         {
             throw std::logic_error("Poseidon GPU ready event was not recorded");
@@ -712,7 +763,11 @@ public:
 
     void wait_on_execution_stream(int cuda_device_id) const
     {
-        if (cuda_device_id_ == cuda_device_id &&
+        if (!transfer_request_
+#ifdef POSEIDON_RUNTIME_GPU_NCCL
+            && !nccl_request_
+#endif
+            && cuda_device_id_ == cuda_device_id &&
             producer_thread_ == std::this_thread::get_id())
         {
             return;
@@ -733,6 +788,11 @@ private:
     cudaEvent_t event_ = nullptr;
     bool recorded_ = false;
     bool waited_ = false;
+    std::shared_ptr<communication::CudaTransferRequest> transfer_request_;
+#ifdef POSEIDON_RUNTIME_GPU_NCCL
+    std::shared_ptr<communication::NcclMpiTransport::Request> nccl_request_;
+#endif
+    std::mutex wait_mutex_;
     std::thread::id producer_thread_;
 };
 
@@ -757,11 +817,14 @@ struct PoseidonGpuApi::CommHandle::State
     // Requests must be destroyed before the buffers they read or write.
     std::vector<std::optional<Value>> outputs;
     std::vector<DeferredOutput> deferred_outputs;
-    std::vector<std::optional<communication::CudaTransferRequest>> requests;
+    std::vector<std::shared_ptr<communication::CudaTransferRequest>> requests;
 #ifdef POSEIDON_RUNTIME_GPU_NCCL
     std::optional<Value> source_staging;
-    std::optional<communication::CudaTransferRequest> source_staging_request;
-    std::vector<communication::NcclMpiTransport::Request> nccl_requests;
+    std::shared_ptr<communication::CudaTransferRequest> source_staging_request;
+    std::vector<std::shared_ptr<communication::NcclMpiTransport::Request>>
+        nccl_requests;
+    std::vector<std::shared_ptr<communication::NcclMpiTransport::Request>>
+        nccl_output_requests;
 #endif
     bool waited = false;
 };
@@ -1464,8 +1527,9 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_async(
                 std::shared_ptr<communication::PinnedHostBuffer> staging;
                 auto output = prepare_plaintext_upload(
                     input.host_plaintext(), destination_cuda_device, staging);
-                state.requests[slot].emplace(
-                    cuda_transfer.copy_host_to_device_async(
+                state.requests[slot] =
+                    std::make_shared<communication::CudaTransferRequest>(
+                        cuda_transfer.copy_host_to_device_async(
                         staging, output.fields_.front().data(), staging->size(),
                         destination_cuda_device));
                 state.outputs[slot].emplace(
@@ -1476,8 +1540,9 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_async(
                 std::shared_ptr<communication::PinnedHostBuffer> staging;
                 auto output = prepare_ciphertext_upload(
                     input.host_ciphertext(), destination_cuda_device, staging);
-                state.requests[slot].emplace(
-                    cuda_transfer.copy_host_to_device_async(
+                state.requests[slot] =
+                    std::make_shared<communication::CudaTransferRequest>(
+                        cuda_transfer.copy_host_to_device_async(
                         staging, output.fields_.front().data(), staging->size(),
                         destination_cuda_device));
                 state.outputs[slot].emplace(
@@ -1496,8 +1561,9 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_async(
                     "GPU plaintext download byte size overflow");
                 auto staging =
                     std::make_shared<communication::PinnedHostBuffer>(bytes);
-                state.requests[slot].emplace(
-                    cuda_transfer.copy_device_to_host_async(
+                state.requests[slot] =
+                    std::make_shared<communication::CudaTransferRequest>(
+                        cuda_transfer.copy_device_to_host_async(
                         source.fields_.front().data(),
                         source.fields_.front().device_id, staging, bytes,
                         source_ready));
@@ -1513,8 +1579,9 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_async(
                     "GPU ciphertext download byte size overflow");
                 auto staging =
                     std::make_shared<communication::PinnedHostBuffer>(bytes);
-                state.requests[slot].emplace(
-                    cuda_transfer.copy_device_to_host_async(
+                state.requests[slot] =
+                    std::make_shared<communication::CudaTransferRequest>(
+                        cuda_transfer.copy_device_to_host_async(
                         source.fields_.front().data(),
                         source.fields_.front().device_id, staging, bytes,
                         source_ready));
@@ -1538,8 +1605,10 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_async(
                 throw std::logic_error(
                     "GPU plaintext Transfer produced multiple buffer copies");
             }
-            state.requests[slot].emplace(cuda_transfer.copy_async(
-                copies.front(), requested_route, source_ready));
+            state.requests[slot] =
+                std::make_shared<communication::CudaTransferRequest>(
+                    cuda_transfer.copy_async(
+                        copies.front(), requested_route, source_ready));
             state.outputs[slot].emplace(
                 Value::from_device_plaintext(std::move(output)));
         }
@@ -1553,8 +1622,10 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_async(
                 throw std::logic_error(
                     "GPU ciphertext Transfer produced multiple buffer copies");
             }
-            state.requests[slot].emplace(cuda_transfer.copy_async(
-                copies.front(), requested_route, source_ready));
+            state.requests[slot] =
+                std::make_shared<communication::CudaTransferRequest>(
+                    cuda_transfer.copy_async(
+                        copies.front(), requested_route, source_ready));
             state.outputs[slot].emplace(
                 Value::from_device_ciphertext(std::move(output)));
         }
@@ -1676,6 +1747,7 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_distributed(
     auto &state = *handle.state_;
     state.outputs.resize(action.outputs.size());
     state.requests.resize(action.outputs.size());
+    state.nccl_output_requests.resize(action.outputs.size());
 
     fhegpu::Place wire_source_place = source_place;
     const Value *wire_input = input;
@@ -1696,8 +1768,9 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_distributed(
             {
                 auto staged = prepare_plaintext_upload(
                     input->host_plaintext(), staging_cuda_device, staging);
-                state.source_staging_request.emplace(
-                    cuda_transfer_->copy_host_to_device_async(
+                state.source_staging_request =
+                    std::make_shared<communication::CudaTransferRequest>(
+                        cuda_transfer_->copy_host_to_device_async(
                         staging, staged.fields_.front().data(), staging->size(),
                         staging_cuda_device));
                 state.source_staging.emplace(
@@ -1707,8 +1780,9 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_distributed(
             {
                 auto staged = prepare_ciphertext_upload(
                     input->host_ciphertext(), staging_cuda_device, staging);
-                state.source_staging_request.emplace(
-                    cuda_transfer_->copy_host_to_device_async(
+                state.source_staging_request =
+                    std::make_shared<communication::CudaTransferRequest>(
+                        cuda_transfer_->copy_host_to_device_async(
                         staging, staged.fields_.front().data(), staging->size(),
                         staging_cuda_device));
                 state.source_staging.emplace(
@@ -1760,8 +1834,9 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_distributed(
                         auto output = prepare_plaintext_upload(
                             input->host_plaintext(),
                             destination_device.cuda_device_id, staging);
-                        state.requests[slot].emplace(
-                            cuda_transfer_->copy_host_to_device_async(
+                        state.requests[slot] =
+                            std::make_shared<communication::CudaTransferRequest>(
+                                cuda_transfer_->copy_host_to_device_async(
                                 staging, output.fields_.front().data(),
                                 staging->size(),
                                 destination_device.cuda_device_id));
@@ -1773,8 +1848,9 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_distributed(
                         auto output = prepare_ciphertext_upload(
                             input->host_ciphertext(),
                             destination_device.cuda_device_id, staging);
-                        state.requests[slot].emplace(
-                            cuda_transfer_->copy_host_to_device_async(
+                        state.requests[slot] =
+                            std::make_shared<communication::CudaTransferRequest>(
+                                cuda_transfer_->copy_host_to_device_async(
                                 staging, output.fields_.front().data(),
                                 staging->size(),
                                 destination_device.cuda_device_id));
@@ -1794,8 +1870,10 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_distributed(
                     const auto copies = communication::prepare_full_object_copy(
                         input->device_plaintext(), output,
                         destination_device.cuda_device_id);
-                    state.requests[slot].emplace(cuda_transfer_->copy_async(
-                        copies.front(), requested_route, source_ready));
+                    state.requests[slot] =
+                        std::make_shared<communication::CudaTransferRequest>(
+                            cuda_transfer_->copy_async(
+                                copies.front(), requested_route, source_ready));
                     state.outputs[slot].emplace(
                         Value::from_device_plaintext(std::move(output)));
                 }
@@ -1805,8 +1883,10 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_distributed(
                     const auto copies = communication::prepare_full_object_copy(
                         input->device_ciphertext(), output,
                         destination_device.cuda_device_id);
-                    state.requests[slot].emplace(cuda_transfer_->copy_async(
-                        copies.front(), requested_route, source_ready));
+                    state.requests[slot] =
+                        std::make_shared<communication::CudaTransferRequest>(
+                            cuda_transfer_->copy_async(
+                                copies.front(), requested_route, source_ready));
                     state.outputs[slot].emplace(
                         Value::from_device_ciphertext(std::move(output)));
                 }
@@ -1836,9 +1916,11 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_distributed(
                               wire_input->device_plaintext().fields_.front().data())
                         : static_cast<const void *>(
                               wire_input->device_ciphertext().fields_.front().data());
-                state.nccl_requests.push_back(nccl_transport_->send_async(
-                    wire_source_place.index, destination_nccl_rank,
-                    source_buffer, layout.bytes, wire_source_ready));
+                state.nccl_requests.push_back(
+                    std::make_shared<communication::NcclMpiTransport::Request>(
+                        nccl_transport_->send_async(
+                            wire_source_place.index, destination_nccl_rank,
+                            source_buffer, layout.bytes, wire_source_ready)));
             }
             else
             {
@@ -1850,16 +1932,24 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_distributed(
                 if (output_desc.kind == fhegpu::ValueKind::Plaintext)
                 {
                     auto &device_output = state.outputs[slot]->device_plaintext();
-                    state.nccl_requests.push_back(nccl_transport_->recv_async(
-                        destination.index, source_nccl_rank,
-                        device_output.fields_.front().data(), layout.bytes));
+                    auto request = std::make_shared<
+                        communication::NcclMpiTransport::Request>(
+                        nccl_transport_->recv_async(
+                            destination.index, source_nccl_rank,
+                            device_output.fields_.front().data(), layout.bytes));
+                    state.nccl_output_requests[slot] = request;
+                    state.nccl_requests.push_back(std::move(request));
                 }
                 else
                 {
                     auto &device_output = state.outputs[slot]->device_ciphertext();
-                    state.nccl_requests.push_back(nccl_transport_->recv_async(
-                        destination.index, source_nccl_rank,
-                        device_output.fields_.front().data(), layout.bytes));
+                    auto request = std::make_shared<
+                        communication::NcclMpiTransport::Request>(
+                        nccl_transport_->recv_async(
+                            destination.index, source_nccl_rank,
+                            device_output.fields_.front().data(), layout.bytes));
+                    state.nccl_output_requests[slot] = request;
+                    state.nccl_requests.push_back(std::move(request));
                 }
             }
         }
@@ -1868,7 +1958,7 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_distributed(
             nccl_transport_->group_end();
             for (auto &request : state.nccl_requests)
             {
-                nccl_transport_->record_event(request);
+                nccl_transport_->record_event(*request);
             }
         }
     }
@@ -1889,6 +1979,54 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_distributed(
 }
 #endif
 
+std::vector<std::optional<PoseidonGpuApi::Value>>
+PoseidonGpuApi::posted_outputs(CommHandle &handle)
+{
+    if (!handle.state_)
+    {
+        throw std::runtime_error("Poseidon GPU communication handle is empty");
+    }
+    auto &state = *handle.state_;
+    if (state.waited)
+    {
+        throw std::runtime_error(
+            "Poseidon GPU communication outputs requested after wait");
+    }
+
+    std::vector<std::optional<Value>> result(state.outputs.size());
+    for (std::size_t slot = 0; slot < state.outputs.size(); ++slot)
+    {
+        auto &output = state.outputs[slot];
+        if (!output)
+        {
+            continue;
+        }
+        if (!output->ready_)
+        {
+            if (state.requests[slot])
+            {
+                output->ready_ = PoseidonGpuValue::ReadyEvent::transfer(
+                    state.requests[slot]);
+            }
+#ifdef POSEIDON_RUNTIME_GPU_NCCL
+            else if (slot < state.nccl_output_requests.size() &&
+                     state.nccl_output_requests[slot])
+            {
+                output->ready_ = PoseidonGpuValue::ReadyEvent::nccl(
+                    state.nccl_output_requests[slot]);
+            }
+#endif
+            else
+            {
+                throw std::logic_error(
+                    "Poseidon GPU posted output has no completion request");
+            }
+        }
+        result[slot].emplace(*output);
+    }
+    return result;
+}
+
 std::vector<PoseidonGpuApi::Value> PoseidonGpuApi::wait(CommHandle &handle)
 {
     if (!handle.state_)
@@ -1900,6 +2038,7 @@ std::vector<PoseidonGpuApi::Value> PoseidonGpuApi::wait(CommHandle &handle)
     {
         throw std::runtime_error("Poseidon GPU communication handle was already waited");
     }
+    static_cast<void>(posted_outputs(handle));
     for (auto &request : state.requests)
     {
         if (!request)
@@ -1917,7 +2056,7 @@ std::vector<PoseidonGpuApi::Value> PoseidonGpuApi::wait(CommHandle &handle)
         }
         for (auto &request : state.nccl_requests)
         {
-            nccl_transport_->wait(request);
+            request->wait();
         }
     }
 #endif
@@ -1970,6 +2109,7 @@ std::vector<PoseidonGpuApi::Value> PoseidonGpuApi::wait(CommHandle &handle)
     state.requests.clear();
 #ifdef POSEIDON_RUNTIME_GPU_NCCL
     state.nccl_requests.clear();
+    state.nccl_output_requests.clear();
     state.source_staging_request.reset();
     state.source_staging.reset();
 #endif

@@ -40,6 +40,11 @@ public:
         Request &operator=(Request &&) noexcept;
 
         bool valid() const noexcept;
+        /** Recorded on the NCCL stream after this request. */
+        cudaEvent_t completion_event() const;
+        int completion_device() const;
+        /** Host completion wait used for errors, Host access, and final drain. */
+        void wait();
 
     private:
         struct State;

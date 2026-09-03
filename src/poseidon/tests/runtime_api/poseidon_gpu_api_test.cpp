@@ -14,15 +14,19 @@
 #include <rmm/mr/device/pool_memory_resource.hpp>
 
 #include <algorithm>
+#include <chrono>
 #include <cmath>
 #include <complex>
+#include <condition_variable>
 #include <functional>
 #include <iostream>
 #include <limits>
 #include <memory>
+#include <mutex>
 #include <optional>
 #include <stdexcept>
 #include <string>
+#include <thread>
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -42,6 +46,69 @@ const std::string kPlanSha =
     "sha256:1111111111111111111111111111111111111111111111111111111111111111";
 
 int tests_run = 0;
+
+struct CudaHostGate
+{
+    std::mutex mutex;
+    std::condition_variable condition;
+    bool entered = false;
+    bool release = false;
+    bool post_finished = false;
+    bool watchdog_released = false;
+};
+
+void CUDART_CB wait_for_cuda_host_gate(void *opaque)
+{
+    auto &gate = *static_cast<CudaHostGate *>(opaque);
+    std::unique_lock<std::mutex> lock(gate.mutex);
+    gate.entered = true;
+    gate.condition.notify_all();
+    gate.condition.wait(lock, [&] { return gate.release; });
+}
+
+class CudaGateWatchdog
+{
+public:
+    explicit CudaGateWatchdog(CudaHostGate &gate)
+        : gate_(gate), thread_([this] {
+              std::unique_lock<std::mutex> lock(gate_.mutex);
+              if (!gate_.condition.wait_for(
+                      lock, std::chrono::seconds(2),
+                      [&] { return gate_.post_finished; }))
+              {
+                  gate_.watchdog_released = true;
+              }
+              gate_.release = true;
+              gate_.condition.notify_all();
+          })
+    {}
+
+    ~CudaGateWatchdog()
+    {
+        {
+            std::lock_guard<std::mutex> lock(gate_.mutex);
+            gate_.release = true;
+            gate_.condition.notify_all();
+        }
+        if (thread_.joinable())
+        {
+            thread_.join();
+        }
+    }
+
+    bool finish_post()
+    {
+        std::lock_guard<std::mutex> lock(gate_.mutex);
+        const bool returned_before_release = !gate_.release;
+        gate_.post_finished = true;
+        gate_.condition.notify_all();
+        return returned_before_release && !gate_.watchdog_released;
+    }
+
+private:
+    CudaHostGate &gate_;
+    std::thread thread_;
+};
 
 void require(bool condition, const std::string &message)
 {
@@ -322,6 +389,87 @@ PoseidonGpuValue transfer_value(PoseidonGpuApi &api, fhegpu::TransferId id,
     require(outputs.size() == 1, "Transfer returned the wrong output count");
     require_rejected([&] { (void)api.wait(handle); }, "already waited");
     return std::move(outputs.front());
+}
+
+void test_transfer_posts_completion_event(
+    const poseidon::PoseidonContext &context,
+    poseidon::KeyGenerator &key_generator)
+{
+    PoseidonGpuApi api(kContextId, context, kDeviceId);
+    poseidon::PublicKey public_key;
+    key_generator.create_public_key(public_key);
+    poseidon::Encryptor encryptor(context, public_key);
+    poseidon::CKKSEncoder encoder(context);
+
+    poseidon::Plaintext plain;
+    const std::vector<double> values{1.0, -2.0, 3.0, 4.0};
+    encoder.encode(values,
+                   std::ldexp(1.0, kDefaultScaleLog2), plain);
+    poseidon::Ciphertext cipher;
+    encryptor.encrypt(plain, cipher);
+    const int level = static_cast<int>(cipher.level());
+    const int components = static_cast<int>(cipher.size());
+    const fhegpu::ValueDesc output_desc{
+        1, fhegpu::ValueKind::Ciphertext, device_place(), kContextId,
+        level, kDefaultScaleLog2, cipher.is_ntt_form(), components};
+
+    auto warmup_device = transfer_value(
+        api, 39, PoseidonGpuValue::from_host_ciphertext(cipher),
+        fhegpu::ValueKind::Ciphertext, host_place(), device_place());
+    fhegpu::ComputeOp negate;
+    negate.kind = fhegpu::ComputeKind::Negate;
+    negate.inputs = {1};
+    negate.output = 2;
+    negate.place = device_place();
+    auto warmup = api.compute(negate, {warmup_device});
+    api.synchronize(warmup);
+
+    CudaHostGate gate;
+    require(cudaSetDevice(kDeviceId) == cudaSuccess,
+            "failed to select CUDA device for asynchronous upload test");
+    require(cudaLaunchHostFunc(
+                cudaStreamPerThread, wait_for_cuda_host_gate, &gate) ==
+                cudaSuccess,
+            "failed to enqueue CUDA upload gate");
+    {
+        std::unique_lock<std::mutex> lock(gate.mutex);
+        require(gate.condition.wait_for(
+                    lock, std::chrono::seconds(5),
+                    [&] { return gate.entered; }),
+                "CUDA upload gate did not start");
+    }
+
+    CudaGateWatchdog watchdog(gate);
+    auto handle = api.communicate_async(
+        transfer_action(40, fhegpu::ValueKind::Ciphertext, host_place(),
+                        device_place()),
+        {PoseidonGpuValue::from_host_ciphertext(std::move(cipher))},
+        {output_desc});
+    auto posted = api.posted_outputs(handle);
+    require(posted.size() == 1 && posted.front().has_value(),
+            "H2D transfer did not publish its device output");
+
+    auto consumed = api.compute(negate, {*posted.front()});
+    require(watchdog.finish_post(),
+            "posted H2D output or consumer compute waited for CUDA completion");
+    api.synchronize(consumed);
+
+    auto completed = api.wait(handle);
+    require(completed.size() == 1,
+            "completed H2D transfer returned the wrong output count");
+
+    const fhegpu::ValueDesc host_desc{
+        1, fhegpu::ValueKind::Ciphertext, host_place(), kContextId,
+        level, kDefaultScaleLog2, true, components};
+    auto download = api.communicate_async(
+        transfer_action(41, fhegpu::ValueKind::Ciphertext, device_place(),
+                        host_place()),
+        {consumed}, {host_desc});
+    auto host_posted = api.posted_outputs(download);
+    require(host_posted.size() == 1 && !host_posted.front(),
+            "D2H transfer published Host data before completion");
+    require(api.wait(download).size() == 1,
+            "completed D2H transfer returned the wrong output count");
 }
 
 
@@ -1178,6 +1326,10 @@ int main()
         const auto loaded_spec = make_operator_spec(context);
         run_test("selected Galois-key upload",
                  [&] { test_selected_galois_key_upload(context, *galois_keys); });
+        run_test("GPU transfer publishes completion events",
+                 [&] {
+                     test_transfer_posts_completion_event(context, key_generator);
+                 });
         run_test("device mapping rejects invalid CUDA device lists",
                  [&] { test_device_mapping_rejections(context, device_count); });
         {

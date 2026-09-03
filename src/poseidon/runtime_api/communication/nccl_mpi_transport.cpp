@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cstdint>
 #include <limits>
+#include <mutex>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -16,6 +17,9 @@ struct NcclMpiTransport::Request::State
     int cuda_device_id = 0;
     cudaStream_t stream = nullptr;
     ncclComm_t communicator = nullptr;
+    std::vector<cudaEvent_t> dependency_events;
+    std::mutex wait_mutex;
+    bool waited = false;
 };
 
 struct NcclMpiTransport::DeviceComm
@@ -39,11 +43,22 @@ NcclMpiTransport::Request::~Request()
     }
     try
     {
+        (void)cudaSetDevice(state_->cuda_device_id);
         if (state_->completion_event != nullptr)
         {
-            (void)cudaSetDevice(state_->cuda_device_id);
-            (void)cudaEventSynchronize(state_->completion_event);
+            if (!state_->waited)
+            {
+                (void)cudaEventSynchronize(state_->completion_event);
+            }
             (void)cudaEventDestroy(state_->completion_event);
+        }
+        else if (state_->stream != nullptr)
+        {
+            (void)cudaStreamSynchronize(state_->stream);
+        }
+        for (cudaEvent_t event : state_->dependency_events)
+        {
+            (void)cudaEventDestroy(event);
         }
     }
     catch (...)
@@ -58,6 +73,53 @@ NcclMpiTransport::Request &NcclMpiTransport::Request::operator=(
 bool NcclMpiTransport::Request::valid() const noexcept
 {
     return state_ != nullptr;
+}
+
+cudaEvent_t NcclMpiTransport::Request::completion_event() const
+{
+    if (!state_ || state_->completion_event == nullptr)
+    {
+        throw std::logic_error("NCCL request completion event is not recorded");
+    }
+    return state_->completion_event;
+}
+
+int NcclMpiTransport::Request::completion_device() const
+{
+    if (!state_ || state_->completion_event == nullptr)
+    {
+        throw std::logic_error("NCCL request completion event is not recorded");
+    }
+    return state_->cuda_device_id;
+}
+
+void NcclMpiTransport::Request::wait()
+{
+    if (!state_)
+    {
+        throw std::invalid_argument("NCCL request is empty");
+    }
+    std::lock_guard<std::mutex> lock(state_->wait_mutex);
+    if (state_->waited)
+    {
+        return;
+    }
+    if (state_->completion_event == nullptr)
+    {
+        throw std::logic_error(
+            "NCCL request completion event was not recorded after group_end");
+    }
+    NcclMpiTransport::check_cuda(
+        cudaSetDevice(state_->cuda_device_id), "cudaSetDevice NCCL wait");
+    NcclMpiTransport::check_cuda(
+        cudaEventSynchronize(state_->completion_event),
+        "cudaEventSynchronize NCCL request");
+    ncclResult_t asynchronous = ncclSuccess;
+    NcclMpiTransport::check_nccl(
+        ncclCommGetAsyncError(state_->communicator, &asynchronous),
+        "ncclCommGetAsyncError");
+    NcclMpiTransport::check_nccl(asynchronous, "NCCL asynchronous request");
+    state_->waited = true;
 }
 
 void NcclMpiTransport::check_nccl(ncclResult_t status, const char *what)
@@ -383,13 +445,33 @@ NcclMpiTransport::Request NcclMpiTransport::recv_async(
     }
     DeviceComm &state = device_comm(local_device_index);
     check_cuda(cudaSetDevice(state.cuda_device_id), "cudaSetDevice NCCL receive");
-    check_nccl(ncclRecv(device_buffer, bytes / sizeof(std::uint32_t), ncclUint32,
-                        peer_nccl_rank, state.communicator, state.stream),
-               "ncclRecv");
     auto request = std::make_unique<Request::State>();
     request->cuda_device_id = state.cuda_device_id;
     request->stream = state.stream;
     request->communicator = state.communicator;
+    cudaEvent_t allocation_ready = nullptr;
+    try
+    {
+        check_cuda(cudaEventCreateWithFlags(
+                       &allocation_ready, cudaEventDisableTiming),
+                   "cudaEventCreateWithFlags NCCL receive allocation");
+        check_cuda(cudaEventRecord(allocation_ready, cudaStreamPerThread),
+                   "cudaEventRecord NCCL receive allocation");
+        check_cuda(cudaStreamWaitEvent(state.stream, allocation_ready, 0),
+                   "cudaStreamWaitEvent NCCL receive allocation");
+        check_nccl(ncclRecv(device_buffer, bytes / sizeof(std::uint32_t), ncclUint32,
+                            peer_nccl_rank, state.communicator, state.stream),
+                   "ncclRecv");
+        request->dependency_events.push_back(allocation_ready);
+    }
+    catch (...)
+    {
+        if (allocation_ready != nullptr)
+        {
+            (void)cudaEventDestroy(allocation_ready);
+        }
+        throw;
+    }
     return Request(std::move(request));
 }
 
@@ -414,27 +496,7 @@ void NcclMpiTransport::record_event(Request &request)
 
 void NcclMpiTransport::wait(Request &request)
 {
-    if (!request.state_)
-    {
-        throw std::invalid_argument("NCCL request is empty");
-    }
-    Request::State &state = *request.state_;
-    if (state.completion_event == nullptr)
-    {
-        throw std::logic_error(
-            "NCCL request completion event was not recorded after group_end");
-    }
-    check_cuda(cudaSetDevice(state.cuda_device_id), "cudaSetDevice NCCL wait");
-    check_cuda(cudaEventSynchronize(state.completion_event),
-               "cudaEventSynchronize NCCL request");
-    ncclResult_t asynchronous = ncclSuccess;
-    check_nccl(ncclCommGetAsyncError(state.communicator, &asynchronous),
-               "ncclCommGetAsyncError");
-    check_nccl(asynchronous, "NCCL asynchronous request");
-    check_cuda(cudaEventDestroy(state.completion_event),
-               "cudaEventDestroy NCCL request");
-    state.completion_event = nullptr;
-    request.state_.reset();
+    request.wait();
 }
 
 void NcclMpiTransport::abort()

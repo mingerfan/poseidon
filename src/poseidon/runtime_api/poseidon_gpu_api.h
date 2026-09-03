@@ -100,6 +100,8 @@ class PoseidonGpuApi
 {
 public:
     using Value = PoseidonGpuValue;
+    // Run cross-rank actions on one ordered issuer thread per MPI rank.
+    static constexpr bool background_communication_issuer = true;
 
     struct CommHandle
     {
@@ -155,6 +157,8 @@ public:
     CommHandle communicate_async(const fhegpu::CommAction &action,
                                  const std::vector<Value> &local_inputs,
                                  const std::vector<fhegpu::ValueDesc> &output_descs);
+    // One slot per action output. Present values carry their CUDA dependency.
+    std::vector<std::optional<Value>> posted_outputs(CommHandle &handle);
     std::vector<Value> wait(CommHandle &handle);
     void synchronize(Value &value);
     void preflight(std::string_view plan_source_sha256, bool skip_artifact_digest_checks,

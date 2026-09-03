@@ -269,6 +269,13 @@ int main(int argc, char **argv)
             "poseidon-gpu-mpi-transfer-test",
             static_cast<int>(q_count - 1), 30, true, 2};
         auto handle = api.communicate_async(action, local_inputs, {output_desc});
+        auto posted = api.posted_outputs(handle);
+        if (posted.size() != 1 ||
+            posted.front().has_value() != (rank == 1))
+        {
+            throw std::runtime_error(
+                "NCCL receive output was not published before wait");
+        }
         auto outputs = api.wait(handle);
 
         if (rank == 1)

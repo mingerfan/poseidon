@@ -6,6 +6,7 @@
 #include <cuda_runtime_api.h>
 
 #include <algorithm>
+#include <mutex>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -194,6 +195,7 @@ struct CudaTransferRequest::State
     std::vector<Event> events;
     Event completion;
     std::shared_ptr<PinnedHostBuffer> staging;
+    std::mutex wait_mutex;
     bool completion_recorded = false;
     bool waited = false;
 };
@@ -318,6 +320,7 @@ void CudaTransferRequest::wait()
     {
         throw std::logic_error("CUDA transfer request has no completion event");
     }
+    std::lock_guard<std::mutex> lock(state_->wait_mutex);
     if (state_->waited)
     {
         return;

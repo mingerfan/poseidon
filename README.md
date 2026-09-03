@@ -100,6 +100,12 @@ Local mode does not call `MPI_Init_thread` and uses the non-MPI GPU API, so it
 does not create an NCCL communicator. A one-rank MPI launch also selects the
 non-MPI GPU API, although MPI initialization and finalization remain visible.
 
+GPU communication publishes Device outputs after submission, with CUDA events
+carried by the values. Consumers wait on those events in their own streams, so
+ordinary copy/NCCL dependencies do not block a CPU worker. Cross-rank actions
+use one ordered communication issuer thread per MPI rank; same-rank copies stay
+on device workers.
+
 For a compact Nsight Systems trace, use `--warmups 0 --iterations 1`; retain
 `--warmups 1 --iterations 3` for stable timing measurements. The runner emits
 `setup`, `warmup`, and `online.iteration.N` NVTX ranges so these scopes can be
