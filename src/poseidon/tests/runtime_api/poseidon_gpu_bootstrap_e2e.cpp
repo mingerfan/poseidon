@@ -276,6 +276,11 @@ int main()
         {
             profile.bootstrap_data.slot_to_coeff_output_scale = 0.0;
         }
+        if (const char *raw =
+                std::getenv("POSEIDON_RUNTIME_BOOTSTRAP_OUTPUT_SCALE_LOG2"))
+        {
+            profile.output_scale_log2 = std::stoi(raw);
+        }
         const auto boot_profile =
             poseidon::runtime_api::make_native_boot_profile(profile);
         const auto loaded_spec = make_operator_spec(context, boot_profile);
