@@ -300,6 +300,18 @@ int main()
         }
         if (max_abs_error > kTolerance)
         {
+            std::cerr << "[INFO] output size=" << output.size()
+                      << " scale=" << output.scale()
+                      << " q_count=" << output.coeff_modulus_size() << '\n';
+            const std::size_t sample_count =
+                std::min<std::size_t>(4, message.size());
+            for (std::size_t index = 0; index < sample_count; ++index)
+            {
+                std::cerr << "[INFO] sample[" << index << "] expected="
+                          << message[index] << " actual=" << decoded[index]
+                          << " error="
+                          << std::abs(decoded[index] - message[index]) << '\n';
+            }
             throw std::runtime_error(
                 "Runtime native bootstrap error exceeds tolerance: " +
                 std::to_string(max_abs_error));
