@@ -37,12 +37,13 @@ if(NOT TARGET rmm::rmm)
 endif()
 
 add_library(poseidon_gpu STATIC
+    gpu_bootstrap_profile.cpp
     gpu_ciphertext.cpp
+    gpu_double_hoist.cpp
     gpu_key.cpp
     gpu_memory.cpp
     gpu_parameter.cpp
     gpu_plaintext.cpp
-    gpu_stream_wait_trace.cpp
     gpu_uploader.cpp
     gpu_evaluator.cpp
     gpu_elementwise_handler.cpp
@@ -50,6 +51,7 @@ add_library(poseidon_gpu STATIC
     gpu_modswitch_handler.cpp
     gpu_ntt_handler.cpp
     gpu_tensor_core_gemm.cu
+    kernels/gpu_double_hoist_kernels.cu
     kernels/gpu_elementwise_kernels.cu
     kernels/gpu_keyswitch_kernels.cu
     kernels/gpu_ntt_kernels.cu
@@ -66,8 +68,6 @@ target_link_libraries(poseidon_gpu
         poseidon_shared
         CUDA::cudart
         rmm::rmm
-    PRIVATE
-        ckks_runtime::core
 )
 target_compile_features(poseidon_gpu PUBLIC cxx_std_17)
 target_compile_options(poseidon_gpu

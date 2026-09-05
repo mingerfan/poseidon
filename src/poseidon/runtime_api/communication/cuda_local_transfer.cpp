@@ -1,7 +1,6 @@
 #include "poseidon/runtime_api/communication/cuda_local_transfer.h"
 
 #include "poseidon/gpu/gpu_memory.h"
-#include "poseidon/gpu/gpu_stream_wait_trace.h"
 
 #include <cuda_runtime_api.h>
 
@@ -490,10 +489,8 @@ CudaTransferRequest CudaLocalTransfer::copy_async(
         state.retain_stream(request.source_device, source_stream);
         if (source_ready != nullptr)
         {
-            gpu::gpu_stream_wait_event(
-                source_stream, source_ready, request.source_device,
-                "gpu.stream_wait.transfer_source_ready",
-                "CUDA transfer cudaStreamWaitEvent source");
+            check_cuda(cudaStreamWaitEvent(source_stream, source_ready, 0),
+                       "CUDA transfer cudaStreamWaitEvent source");
         }
         check_cuda(cudaMemcpyAsync(state.staging->data(), request.source, request.bytes,
                                    cudaMemcpyDeviceToHost, source_stream),
@@ -511,14 +508,10 @@ CudaTransferRequest CudaLocalTransfer::copy_async(
         state.events.push_back({request.destination_device, destination_ready});
         check_cuda(cudaSetDevice(request.destination_device),
                    "CUDA transfer cudaSetDevice destination");
-        gpu::gpu_stream_wait_event(
-            destination_stream, destination_ready, request.destination_device,
-            "gpu.stream_wait.transfer_destination_ready",
-            "CUDA transfer cudaStreamWaitEvent destination ready");
-        gpu::gpu_stream_wait_event(
-            destination_stream, staged, request.destination_device,
-            "gpu.stream_wait.transfer_host_staging",
-            "CUDA transfer cudaStreamWaitEvent destination");
+        check_cuda(cudaStreamWaitEvent(destination_stream, destination_ready, 0),
+                   "CUDA transfer cudaStreamWaitEvent destination ready");
+        check_cuda(cudaStreamWaitEvent(destination_stream, staged, 0),
+                   "CUDA transfer cudaStreamWaitEvent destination");
         check_cuda(cudaMemcpyAsync(request.destination, state.staging->data(),
                                    request.bytes, cudaMemcpyHostToDevice,
                                    destination_stream),
@@ -536,16 +529,12 @@ CudaTransferRequest CudaLocalTransfer::copy_async(
     const cudaEvent_t destination_ready =
         record_execution_ready(request.destination_device);
     state.events.push_back({request.destination_device, destination_ready});
-    gpu::gpu_stream_wait_event(
-        stream, destination_ready, request.destination_device,
-        "gpu.stream_wait.transfer_destination_ready",
-        "CUDA transfer cudaStreamWaitEvent destination ready");
+    check_cuda(cudaStreamWaitEvent(stream, destination_ready, 0),
+               "CUDA transfer cudaStreamWaitEvent destination ready");
     if (source_ready != nullptr)
     {
-        gpu::gpu_stream_wait_event(
-            stream, source_ready, request.destination_device,
-            "gpu.stream_wait.transfer_source_ready",
-            "CUDA transfer cudaStreamWaitEvent");
+        check_cuda(cudaStreamWaitEvent(stream, source_ready, 0),
+                   "CUDA transfer cudaStreamWaitEvent");
     }
     if (route == CudaTransferRoute::SameDevice)
     {
@@ -592,10 +581,8 @@ CudaTransferRequest CudaLocalTransfer::copy_host_to_device_async(
     state.retain_stream(destination_device, stream);
     const cudaEvent_t destination_ready = record_execution_ready(destination_device);
     state.events.push_back({destination_device, destination_ready});
-    gpu::gpu_stream_wait_event(
-        stream, destination_ready, destination_device,
-        "gpu.stream_wait.transfer_destination_ready",
-        "CUDA transfer cudaStreamWaitEvent destination ready");
+    check_cuda(cudaStreamWaitEvent(stream, destination_ready, 0),
+               "CUDA transfer cudaStreamWaitEvent destination ready");
     check_cuda(cudaMemcpyAsync(destination, source->data(), bytes,
                                cudaMemcpyHostToDevice, stream),
                "CUDA transfer cudaMemcpyAsync Host to device");
@@ -625,10 +612,8 @@ CudaTransferRequest CudaLocalTransfer::copy_device_to_host_async(
     state.retain_stream(source_device, stream);
     if (source_ready != nullptr)
     {
-        gpu::gpu_stream_wait_event(
-            stream, source_ready, source_device,
-            "gpu.stream_wait.transfer_source_ready",
-            "CUDA transfer cudaStreamWaitEvent device to Host");
+        check_cuda(cudaStreamWaitEvent(stream, source_ready, 0),
+                   "CUDA transfer cudaStreamWaitEvent device to Host");
     }
     check_cuda(cudaMemcpyAsync(destination->data(), source, bytes,
                                cudaMemcpyDeviceToHost, stream),

@@ -3,8 +3,12 @@
 #include "poseidon/gpu/gpu_ciphertext.h"
 #include "poseidon/gpu/gpu_plaintext.h"
 #include "poseidon/gpu/gpu_key.h"
+#include "poseidon/gpu/gpu_linear_transform.h"
+#include "poseidon/gpu/gpu_evaluator.h"
 
-#include <cstdint>
+#include <cstddef>
+#include <limits>
+#include <optional>
 #include <vector>
 
 namespace poseidon
@@ -15,9 +19,30 @@ class Plaintext;
 class PoseidonContext;
 class RelinKeys;
 class GaloisKeys;
+class MatrixPlain;
+class LinearMatrixGroup;
+class CKKSEncoder;
+class EvalModPoly;
+class Polynomial;
 
 namespace gpu
 {
+
+/**
+ * @brief Explicit setup policy for a generated GPU EvalMod plan.
+ *
+ * Unset fields retain the legacy environment-controlled behavior. Runtime
+ * profile builders set every field so an artifact is independent of process
+ * environment.
+ */
+struct GpuEvalModUploadOptions
+{
+    std::optional<bool> dynamic_rescale;
+    std::optional<std::uint32_t> polynomial_log_split;
+    std::optional<bool> flat_bsgs_b8;
+    std::optional<bool> virtual_degree_bound;
+    std::optional<bool> lead_leaf_resplit;
+};
 
 /**
  * @brief CPU/GPU conversion helper.
@@ -86,6 +111,66 @@ public:
         const PoseidonContext &context);
 
     /**
+     * @brief Upload one CPU pre-generated diagonal matrix.
+     *
+     * This copies MatrixPlain::plain_vec plaintext diagonals to GPU. Matrix
+     * generation and CPU encoding are intentionally outside the GPU timed path.
+     */
+    static GpuMatrixPlain upload_matrix_plain(
+        const MatrixPlain &src,
+        int device_id);
+
+    /**
+     * @brief Upload one CPU pre-generated linear-matrix group.
+     */
+    static GpuLinearMatrixGroup upload_linear_matrix_group(
+        const LinearMatrixGroup &src,
+        int device_id);
+
+    /**
+     * Upload a linear matrix group with exact Q->P extended diagonals and a
+     * compact immutable BSGS plan for double hoisting.
+     */
+    static GpuLinearMatrixGroupQP upload_linear_matrix_group_qp(
+        const LinearMatrixGroup &src,
+        const PoseidonContext &context,
+        int device_id,
+        std::uint32_t rescale_count = 1,
+        bool compress_plaintexts = false);
+
+    /**
+     * @brief Generate and upload the fixed high-precision EvalMod BSGS plan.
+     *
+     * Polynomial splitting, level simulation, plaintext encoding and all
+     * host-to-device transfers are setup work. No ciphertext evaluation is
+     * performed here. When relin_keys is non-null, all zero-copy key levels
+     * required by the generated plan are validated during setup. An optional
+     * expected_output_parms_id records the output level observed from the CPU
+     * high-precision evaluator; the GPU finishes with a parallel Q-prefix
+     * drop when its static plan naturally retains more limbs.
+     */
+    static GpuBootstrapData::EvalModData upload_eval_mod_high_precision(
+        const EvalModPoly &eval_mod_poly,
+        const CKKSEncoder &encoder,
+        parms_id_type input_parms_id,
+        int device_id,
+        GpuRelinKeysData *relin_keys = nullptr,
+        parms_id_type expected_output_parms_id = parms_id_zero,
+        std::uint32_t logical_rescale_count = 1,
+        const Polynomial *polynomial_override = nullptr,
+        bool include_input_offset = true,
+        std::uint32_t double_angle_override =
+            std::numeric_limits<std::uint32_t>::max(),
+        double double_angle_base_override =
+            std::numeric_limits<double>::quiet_NaN(),
+        double polynomial_output_scale_override =
+            std::numeric_limits<double>::quiet_NaN(),
+        bool fuse_leaf_terms_before_rescale = true,
+        double input_scale = 0.0,
+        bool metadata_only = false,
+        const GpuEvalModUploadOptions &options = {});
+
+    /**
      * @brief Upload CPU relinearization keys to GPU.
      *
      * - Preserve key-switching key layout;
@@ -95,6 +180,13 @@ public:
         const RelinKeys &src,
         int device_id);
 
+    /**
+     * @brief Upload relinearization keys and validate a runtime Q-prefix view.
+     *
+     * The owning allocation keeps the full [Q_storage | P] layout required by
+     * the optimized key-switch path. Runtime operations select q_count through
+     * a zero-copy view instead of compacting the key allocation.
+     */
     static GpuRelinKeysData upload_relin_keys(
         const RelinKeys &src,
         int device_id,
@@ -115,11 +207,33 @@ public:
         int device_id,
         std::size_t q_count);
 
+    /**
+     * @brief Upload only the requested rotations and validate a Q-prefix view.
+     */
     static GpuGaloisKeysData upload_galois_keys(
         const GaloisKeys &src,
         int device_id,
         std::size_t q_count,
         const std::vector<std::uint32_t> &galois_elts);
+
+    /**
+     * Upload and inverse-pre-rotate every non-empty Galois key. Runtime
+     * double-hoist KeyMult can then permute two outputs instead of all digits.
+     */
+    static GpuGaloisKeysData upload_double_hoist_galois_keys(
+        const GaloisKeys &src,
+        int device_id);
+
+    /**
+     * @brief Validate setup-time zero-copy views over one [Q_storage | P] key.
+     *
+     * No device allocation or device-to-device copy is performed. At runtime
+     * KeySwitch reads the active Q prefix and addresses P through its fixed
+     * offset in the original full-level key allocation.
+     */
+    static void prepare_key_views_for_q_counts(
+        const GpuEvaluationKeyData &keys,
+        const std::vector<std::size_t> &q_counts);
 };
 
 }  // namespace gpu

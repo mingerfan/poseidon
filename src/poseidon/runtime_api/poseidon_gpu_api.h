@@ -35,12 +35,17 @@ class SecretKey;
 
 namespace gpu
 {
+struct GpuBootstrapData;
+struct GpuBootstrapProfile;
 class GpuEvaluator;
 class GpuParameterData;
 } // namespace gpu
 
 namespace runtime_api
 {
+
+fhegpu::BootProfile make_native_boot_profile(
+    const gpu::GpuBootstrapProfile &profile);
 
 namespace communication
 {
@@ -144,6 +149,39 @@ public:
 
     PoseidonGpuApi(const PoseidonGpuApi &) = delete;
     PoseidonGpuApi &operator=(const PoseidonGpuApi &) = delete;
+
+    /**
+     * @brief Install one fully uploaded native-bootstrap profile on a device.
+     *
+     * Bootstrap constants and keys remain full single-device objects. The
+     * RuntimePlan selects the profile and device; this method performs no
+     * placement or cross-device movement.
+     */
+    void configure_native_bootstrap(
+        std::string operator_profile,
+        int logical_device_index,
+        gpu::GpuBootstrapData bootstrap_data,
+        gpu::GpuRelinKeysData relin_keys,
+        gpu::GpuGaloisKeysData galois_keys);
+
+    /**
+     * @brief Install a profile while sharing immutable evaluation keys.
+     *
+     * Shared keys must belong to the selected CUDA device. This overload
+     * avoids duplicating large key allocations when one device exposes
+     * several native-bootstrap profiles.
+     */
+    void configure_native_bootstrap(
+        std::string operator_profile,
+        int logical_device_index,
+        gpu::GpuBootstrapData bootstrap_data,
+        std::shared_ptr<const gpu::GpuRelinKeysData> relin_keys,
+        std::shared_ptr<const gpu::GpuGaloisKeysData> galois_keys);
+
+    /** Install the complete result returned by GpuBootstrapProfileBuilder. */
+    void configure_native_bootstrap(
+        int logical_device_index,
+        gpu::GpuBootstrapProfile profile);
 
     std::string name() const;
     int mpi_rank() const noexcept;

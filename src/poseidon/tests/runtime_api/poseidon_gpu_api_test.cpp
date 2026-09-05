@@ -691,6 +691,16 @@ void test_device_mapping_rejections(const poseidon::PoseidonContext &context,
 void test_preflight_rejections(PoseidonGpuApi &api,
                                const fhegpu::LoadedOperatorSpec &loaded_spec)
 {
+    require_rejected(
+        [&] {
+            api.configure_native_bootstrap(
+                "missing-native-boot-keys", 0,
+                poseidon::gpu::GpuBootstrapData{},
+                std::shared_ptr<const poseidon::gpu::GpuRelinKeysData>{},
+                std::shared_ptr<const poseidon::gpu::GpuGaloisKeysData>{});
+        },
+        "evaluation keys");
+
     const auto target = make_target(loaded_spec);
     const fhegpu::PlanRequirements valid_requirements{
         {fhegpu::RequiredCapability::Encode, fhegpu::RequiredCapability::Transfer,
@@ -732,6 +742,28 @@ void test_preflight_rejections(PoseidonGpuApi &api,
             api.preflight(kPlanSha, false, target, unsupported_boot, valid_requirements);
         },
         "Boot profiles");
+
+    auto native_boot = loaded_spec.spec;
+    native_boot.operators.at(fhegpu::ComputeKind::Boot).supported = true;
+    fhegpu::BootProfile native_profile;
+    native_profile.profile_id = "unconfigured-native-boot";
+    native_profile.implementation = fhegpu::BootImplementation::Native;
+    native_profile.input_level_min = native_boot.level_lower_bound;
+    native_profile.input_level_max = native_boot.level_upper_bound;
+    native_profile.input_components = 2;
+    native_profile.output_level = native_boot.level_upper_bound;
+    native_profile.output_scale_log2 = native_boot.default_scale_log2;
+    native_profile.output_components = 2;
+    native_boot.boot_profiles = {std::move(native_profile)};
+    api.preflight(kPlanSha, false, target, native_boot, valid_requirements);
+    const fhegpu::PlanRequirements native_boot_requirement{
+        {fhegpu::RequiredCapability::BootNative}, {}};
+    require_rejected(
+        [&] {
+            api.preflight(kPlanSha, false, target, native_boot,
+                          native_boot_requirement);
+        },
+        "boot_native");
 
     const fhegpu::PlanRequirements host_compute{
         {fhegpu::RequiredCapability::HostCompute}, {}};

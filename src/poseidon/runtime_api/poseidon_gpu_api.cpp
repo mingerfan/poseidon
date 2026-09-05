@@ -1,13 +1,12 @@
 #include "poseidon/runtime_api/poseidon_gpu_api.h"
-#include "runtime/thread_trace.hpp"
 
 #include "poseidon/ckks_encoder.h"
 #include "poseidon/decryptor.h"
 #include "poseidon/encryptor.h"
+#include "poseidon/gpu/gpu_bootstrap_profile.h"
 #include "poseidon/gpu/gpu_evaluator.h"
 #include "poseidon/gpu/gpu_memory.h"
 #include "poseidon/gpu/gpu_parameter.h"
-#include "poseidon/gpu/gpu_stream_wait_trace.h"
 #include "poseidon/gpu/gpu_uploader.h"
 #include "poseidon/key/galoiskeys.h"
 #include "poseidon/key/relinkeys.h"
@@ -21,6 +20,7 @@
 #include <algorithm>
 #include <cmath>
 #include <complex>
+#include <cstdlib>
 #include <cstdint>
 #include <cstring>
 #include <limits>
@@ -43,6 +43,33 @@
 
 namespace poseidon::runtime_api
 {
+
+fhegpu::BootProfile make_native_boot_profile(
+    const gpu::GpuBootstrapProfile &profile)
+{
+    if (profile.profile_id.empty() ||
+        profile.input_level_min < 0 ||
+        profile.input_level_min > profile.input_level_max ||
+        profile.input_components <= 0 || profile.output_level < 0 ||
+        profile.output_scale_log2 <= 0 || profile.output_components <= 0)
+    {
+        throw std::invalid_argument(
+            "Poseidon GPU native Boot profile metadata is invalid");
+    }
+    fhegpu::BootProfile result;
+    result.profile_id = profile.profile_id;
+    result.implementation = fhegpu::BootImplementation::Native;
+    result.input_level_min = profile.input_level_min;
+    result.input_level_max = profile.input_level_max;
+    result.input_components = profile.input_components;
+    result.output_level = profile.output_level;
+    result.output_scale_log2 = profile.output_scale_log2;
+    result.output_components = profile.output_components;
+    result.needs_secret_key = false;
+    result.needs_host_compute = false;
+    return result;
+}
+
 namespace
 {
 
@@ -160,8 +187,7 @@ std::shared_ptr<DeviceMemoryPool> acquire_device_memory_pool(int cuda_device_id)
     static std::unordered_map<int, std::weak_ptr<DeviceMemoryPool>> pools;
 
     gpu::gpu_check_cuda(cudaSetDevice(cuda_device_id), "cudaSetDevice");
-    fhegpu::ThreadTraceLockGuard lock(
-        mutex, "gpu.device_memory_pool_registry");
+    std::lock_guard<std::mutex> lock(mutex);
     const auto existing = pools.find(cuda_device_id);
     if (existing != pools.end())
     {
@@ -633,6 +659,23 @@ PoseidonGpuValue allocate_descriptor_value(const fhegpu::ValueDesc &desc,
 
 struct PoseidonGpuApi::DeviceState
 {
+    struct NativeBootstrapState
+    {
+        NativeBootstrapState(
+            gpu::GpuBootstrapData bootstrap_data,
+            std::shared_ptr<const gpu::GpuRelinKeysData> relin_keys,
+            std::shared_ptr<const gpu::GpuGaloisKeysData> galois_keys)
+            : bootstrap_data(std::move(bootstrap_data)),
+              relin_keys(std::move(relin_keys)),
+              galois_keys(std::move(galois_keys))
+        {}
+
+        gpu::GpuBootstrapData bootstrap_data;
+        std::shared_ptr<const gpu::GpuRelinKeysData> relin_keys;
+        std::shared_ptr<const gpu::GpuGaloisKeysData> galois_keys;
+        gpu::GpuBootstrapWorkspace workspace;
+    };
+
     int cuda_device_id = 0;
     std::shared_ptr<DeviceMemoryPool> memory_pool;
     std::unique_ptr<gpu::GpuParameterData> gpu_parameters;
@@ -643,6 +686,8 @@ struct PoseidonGpuApi::DeviceState
         galois_keys_by_q_count;
     std::unordered_map<std::size_t, std::set<std::uint32_t>>
         galois_elements_by_q_count;
+    std::unordered_map<std::string, std::unique_ptr<NativeBootstrapState>>
+        native_bootstrap_by_profile;
 };
 
 class PoseidonGpuValue::ReadyEvent
@@ -772,9 +817,8 @@ public:
         {
             return;
         }
-        gpu::gpu_stream_wait_event(
-            gpu::gpu_execution_stream(), event(), cuda_device_id,
-            "gpu.stream_wait.compute_input",
+        gpu::gpu_check_cuda(
+            cudaStreamWaitEvent(gpu::gpu_execution_stream(), event(), 0),
             "cudaStreamWaitEvent compute input");
     }
 
@@ -1123,6 +1167,79 @@ PoseidonGpuApi::~PoseidonGpuApi()
     }
 }
 
+void PoseidonGpuApi::configure_native_bootstrap(
+    std::string operator_profile,
+    int logical_device_index,
+    gpu::GpuBootstrapData bootstrap_data,
+    gpu::GpuRelinKeysData relin_keys,
+    gpu::GpuGaloisKeysData galois_keys)
+{
+    if (relin_keys.empty() || galois_keys.empty())
+    {
+        throw std::invalid_argument(
+            "Poseidon GPU native Boot requires uploaded evaluation keys");
+    }
+
+    configure_native_bootstrap(
+        std::move(operator_profile),
+        logical_device_index,
+        std::move(bootstrap_data),
+        std::make_shared<const gpu::GpuRelinKeysData>(std::move(relin_keys)),
+        std::make_shared<const gpu::GpuGaloisKeysData>(std::move(galois_keys)));
+}
+
+void PoseidonGpuApi::configure_native_bootstrap(
+    std::string operator_profile,
+    int logical_device_index,
+    gpu::GpuBootstrapData bootstrap_data,
+    std::shared_ptr<const gpu::GpuRelinKeysData> relin_keys,
+    std::shared_ptr<const gpu::GpuGaloisKeysData> galois_keys)
+{
+    if (operator_profile.empty())
+    {
+        throw std::invalid_argument(
+            "Poseidon GPU native Boot profile id is empty");
+    }
+    if (relin_keys == nullptr || galois_keys == nullptr ||
+        relin_keys->empty() || galois_keys->empty())
+    {
+        throw std::invalid_argument(
+            "Poseidon GPU native Boot requires uploaded evaluation keys");
+    }
+
+    auto &device = device_state(logical_device_index);
+    gpu::gpu_check_cuda(cudaSetDevice(device.cuda_device_id), "cudaSetDevice");
+    auto state = std::make_unique<DeviceState::NativeBootstrapState>(
+        std::move(bootstrap_data),
+        std::move(relin_keys),
+        std::move(galois_keys));
+    const bool inserted = device.native_bootstrap_by_profile.emplace(
+        std::move(operator_profile), std::move(state)).second;
+    if (!inserted)
+    {
+        throw std::invalid_argument(
+            "Poseidon GPU native Boot profile is already configured");
+    }
+}
+
+void PoseidonGpuApi::configure_native_bootstrap(
+    int logical_device_index,
+    gpu::GpuBootstrapProfile profile)
+{
+    const auto &device = device_state(logical_device_index);
+    if (profile.cuda_device_id != device.cuda_device_id)
+    {
+        throw std::invalid_argument(
+            "Poseidon GPU native Boot profile belongs to a different CUDA device");
+    }
+    configure_native_bootstrap(
+        std::move(profile.profile_id),
+        logical_device_index,
+        std::move(profile.bootstrap_data),
+        std::move(profile.relin_keys),
+        std::move(profile.galois_keys));
+}
+
 std::string PoseidonGpuApi::name() const
 {
     return "PoseidonGpuApi";
@@ -1217,11 +1334,65 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
 {
     if (op.kind == fhegpu::ComputeKind::Boot)
     {
-        require_host_place(op.place, "Poseidon GPU decrypt_reencrypt Boot", mpi_rank_);
         const auto attrs = std::get<fhegpu::BootAttrs>(op.attrs);
+        if (attrs.implementation == fhegpu::BootImplementation::Native)
+        {
+            auto &device = device_state(op.place, "Poseidon GPU native Boot");
+            if (inputs.size() != 1)
+            {
+                throw std::invalid_argument(
+                    "Poseidon GPU native Boot requires one ciphertext input");
+            }
+            if (value_cuda_device_id(inputs.front(), "Poseidon GPU native Boot input") !=
+                device.cuda_device_id)
+            {
+                throw std::invalid_argument(
+                    "Poseidon GPU native Boot input is not on the operation CUDA device");
+            }
+            const auto resources =
+                device.native_bootstrap_by_profile.find(attrs.operator_profile);
+            if (resources == device.native_bootstrap_by_profile.end())
+            {
+                throw std::runtime_error(
+                    "Poseidon GPU native Boot profile is not configured: " +
+                    attrs.operator_profile);
+            }
+            if (inputs.front().ready_ != nullptr)
+            {
+                inputs.front().ready_->wait_on_execution_stream(
+                    device.cuda_device_id);
+            }
+
+            gpu::GpuCiphertextData output;
+            auto &native = *resources->second;
+            device.evaluator->bootstrap(
+                require_ciphertext(inputs, 0),
+                native.bootstrap_data,
+                *native.relin_keys,
+                *native.galois_keys,
+                native.workspace,
+                output);
+            if (output.meta.q_count != q_count_for_level(attrs.target_level) ||
+                output.meta.component_count !=
+                    static_cast<std::size_t>(attrs.target_components) ||
+                output.meta.scale != exact_scale(attrs.target_scale_log2))
+            {
+                throw std::runtime_error(
+                    "Poseidon GPU native Boot output does not match RuntimePlan metadata");
+            }
+
+            auto result = Value::from_device_ciphertext(std::move(output));
+            result.ready_ = PoseidonGpuValue::ReadyEvent::record(
+                device.cuda_device_id);
+            retain_in_flight(inputs);
+            retain_in_flight({result});
+            return result;
+        }
+
+        require_host_place(op.place, "Poseidon GPU decrypt_reencrypt Boot", mpi_rank_);
         if (attrs.implementation != fhegpu::BootImplementation::DecryptReencrypt)
         {
-            throw std::runtime_error("Poseidon GPU native Boot is not implemented");
+            throw std::runtime_error("Poseidon GPU Boot implementation is unsupported");
         }
         if (!boot_encryptor_ || !boot_decryptor_)
         {
@@ -2229,15 +2400,13 @@ void PoseidonGpuApi::preflight(std::string_view plan_source_sha256,
         throw std::invalid_argument(
             "Poseidon GPU OperatorSpec Boot support does not match Boot profiles");
     }
-    for (const auto &profile : operator_spec.boot_profiles)
+    bool has_configured_native_bootstrap = false;
+    for (const auto &device : devices_)
     {
-        if (profile.implementation != fhegpu::BootImplementation::DecryptReencrypt)
-        {
-            throw std::invalid_argument(
-                "Poseidon GPU Api supports only decrypt_reencrypt Boot profiles");
-        }
+        has_configured_native_bootstrap =
+            has_configured_native_bootstrap ||
+            !device->native_bootstrap_by_profile.empty();
     }
-
     const auto rescale = operator_spec.operators.find(fhegpu::ComputeKind::Rescale);
     if (rescale == operator_spec.operators.end() || !rescale->second.supported ||
         !rescale->second.max_levels_per_op || *rescale->second.max_levels_per_op < 4)
@@ -2252,11 +2421,14 @@ void PoseidonGpuApi::preflight(std::string_view plan_source_sha256,
         const bool local = capability == fhegpu::RequiredCapability::Encode ||
                            capability == fhegpu::RequiredCapability::Transfer ||
                            capability == fhegpu::RequiredCapability::Replicate;
+        const bool native_boot = has_configured_native_bootstrap &&
+                                 capability ==
+                                     fhegpu::RequiredCapability::BootNative;
         const bool boot = boot_encryptor_ != nullptr && boot_decryptor_ != nullptr &&
                           (capability == fhegpu::RequiredCapability::HostCompute ||
                            capability ==
                                fhegpu::RequiredCapability::BootDecryptReencrypt);
-        if (!local && !boot)
+        if (!local && !native_boot && !boot)
         {
             throw std::runtime_error("Poseidon GPU Api lacks required capability: " +
                                      fhegpu::to_string(capability));
@@ -2502,8 +2674,7 @@ void PoseidonGpuApi::retain_in_flight(
             },
             value.storage_);
     }
-    fhegpu::ThreadTraceLockGuard lock(
-        in_flight_mutex_, "gpu.in_flight_resources");
+    std::lock_guard<std::mutex> lock(in_flight_mutex_);
     for (auto &resource : resources)
     {
         in_flight_resources_.push_back(std::move(resource));
