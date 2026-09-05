@@ -73,14 +73,57 @@ fhegpu::BootProfile make_native_boot_profile(
 namespace
 {
 
-constexpr std::size_t kPreferredInitialDevicePoolSize = 24ULL << 30;
-constexpr int kInitialDevicePoolFreeMemoryPercent = 75;
+constexpr std::size_t kMaximumInitialDevicePoolSize = 24ULL << 30;
+constexpr std::size_t kMinimumInitialDevicePoolSize = 64ULL << 20;
 
 std::size_t initial_device_pool_size()
 {
-    return std::min(kPreferredInitialDevicePoolSize,
-                    rmm::percent_of_free_device_memory(
-                        kInitialDevicePoolFreeMemoryPercent));
+    std::size_t free_bytes = 0;
+    std::size_t total_bytes = 0;
+    gpu::gpu_check_cuda(
+        cudaMemGetInfo(&free_bytes, &total_bytes), "cudaMemGetInfo");
+    (void)total_bytes;
+    if (free_bytes < kMinimumInitialDevicePoolSize)
+    {
+        throw std::runtime_error(
+            "Poseidon GPU Runtime has insufficient free device memory");
+    }
+
+    const char *configured =
+        std::getenv("POSEIDON_GPU_RUNTIME_INITIAL_POOL_MB");
+    if (configured != nullptr && *configured != '\0')
+    {
+        std::size_t consumed = 0;
+        const std::string text(configured);
+        unsigned long long megabytes = 0;
+        try
+        {
+            megabytes = std::stoull(text, &consumed, 10);
+        }
+        catch (const std::exception &)
+        {
+            throw std::invalid_argument(
+                "POSEIDON_GPU_RUNTIME_INITIAL_POOL_MB must be an integer");
+        }
+        if (consumed != text.size() || megabytes == 0 ||
+            megabytes >
+                std::numeric_limits<std::size_t>::max() / (1ULL << 20))
+        {
+            throw std::invalid_argument(
+                "POSEIDON_GPU_RUNTIME_INITIAL_POOL_MB is out of range");
+        }
+        const std::size_t requested =
+            static_cast<std::size_t>(megabytes) << 20;
+        if (requested > free_bytes - free_bytes / 10)
+        {
+            throw std::invalid_argument(
+                "POSEIDON_GPU_RUNTIME_INITIAL_POOL_MB leaves insufficient "
+                "device-memory headroom");
+        }
+        return requested;
+    }
+
+    return std::min(kMaximumInitialDevicePoolSize, free_bytes / 4);
 }
 
 #ifdef POSEIDON_RUNTIME_GPU_NCCL
