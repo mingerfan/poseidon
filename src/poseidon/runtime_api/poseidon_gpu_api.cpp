@@ -1421,7 +1421,11 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
                 output.meta.scale != exact_scale(attrs.target_scale_log2))
             {
                 throw std::runtime_error(
-                    "Poseidon GPU native Boot output does not match RuntimePlan metadata");
+                    "Poseidon GPU native Boot output does not match RuntimePlan metadata "
+                    "(actual q_count=" + std::to_string(output.meta.q_count) +
+                    ", components=" +
+                    std::to_string(output.meta.component_count) +
+                    ", scale=" + std::to_string(output.meta.scale) + ")");
             }
 
             auto result = Value::from_device_ciphertext(std::move(output));
