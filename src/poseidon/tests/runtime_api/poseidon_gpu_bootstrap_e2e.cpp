@@ -265,6 +265,17 @@ int main()
         }
         auto profile = poseidon::gpu::GpuBootstrapProfileBuilder::build(
             context, key_generator, kCudaDevice, profile_config);
+        if (const char *raw =
+                std::getenv("POSEIDON_RUNTIME_BOOTSTRAP_OUTPUT_RATIO"))
+        {
+            profile.bootstrap_data.output_ratio =
+                static_cast<std::uint32_t>(std::stoul(raw));
+        }
+        if (std::getenv("POSEIDON_RUNTIME_BOOTSTRAP_SKIP_OUTPUT_SCALE") !=
+            nullptr)
+        {
+            profile.bootstrap_data.slot_to_coeff_output_scale = 0.0;
+        }
         const auto boot_profile =
             poseidon::runtime_api::make_native_boot_profile(profile);
         const auto loaded_spec = make_operator_spec(context, boot_profile);
