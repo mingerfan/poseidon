@@ -1425,7 +1425,13 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
                     "(actual q_count=" + std::to_string(output.meta.q_count) +
                     ", components=" +
                     std::to_string(output.meta.component_count) +
-                    ", scale=" + std::to_string(output.meta.scale) + ")");
+                    ", scale=" + std::to_string(output.meta.scale) +
+                    "; expected q_count=" +
+                    std::to_string(q_count_for_level(attrs.target_level)) +
+                    ", components=" +
+                    std::to_string(attrs.target_components) +
+                    ", scale=" +
+                    std::to_string(exact_scale(attrs.target_scale_log2)) + ")");
             }
 
             auto result = Value::from_device_ciphertext(std::move(output));
