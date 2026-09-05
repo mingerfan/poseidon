@@ -255,8 +255,16 @@ int main()
         poseidon::CKKSEncoder encoder(context);
 
         PoseidonGpuApi api(kContextId, context, kCudaDevice);
+        poseidon::gpu::GpuBootstrapProfileConfig profile_config;
+        const char *linear_mode =
+            std::getenv("POSEIDON_RUNTIME_BOOTSTRAP_LINEAR_MODE");
+        if (linear_mode != nullptr && std::string(linear_mode) == "classic")
+        {
+            profile_config.linear_transform_mode =
+                poseidon::gpu::GpuLinearTransformMode::ClassicBsgs;
+        }
         auto profile = poseidon::gpu::GpuBootstrapProfileBuilder::build(
-            context, key_generator, kCudaDevice);
+            context, key_generator, kCudaDevice, profile_config);
         const auto boot_profile =
             poseidon::runtime_api::make_native_boot_profile(profile);
         const auto loaded_spec = make_operator_spec(context, boot_profile);
