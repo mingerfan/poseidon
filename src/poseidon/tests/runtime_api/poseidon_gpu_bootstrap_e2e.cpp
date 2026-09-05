@@ -277,6 +277,12 @@ int main()
             profile.bootstrap_data.slot_to_coeff_output_scale = 0.0;
         }
         if (const char *raw =
+                std::getenv("POSEIDON_RUNTIME_BOOTSTRAP_OUTPUT_SCALE"))
+        {
+            profile.bootstrap_data.slot_to_coeff_output_scale =
+                std::stod(raw);
+        }
+        if (const char *raw =
                 std::getenv("POSEIDON_RUNTIME_BOOTSTRAP_OUTPUT_SCALE_LOG2"))
         {
             profile.output_scale_log2 = std::stoi(raw);
