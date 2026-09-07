@@ -14,6 +14,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <functional>
 #include <string>
 #include <vector>
 
@@ -324,6 +325,35 @@ struct GpuBootstrapWorkspace
 };
 
 /**
+ * @brief Optional level-aware KeySwitch routing used by a scoped caller.
+ *
+ * Returning true means the callback completed the operation. Returning false
+ * keeps the evaluator's normal parameter/key path. This lets a bootstrap
+ * scheduler select a smaller P basis for low-Q rotations and
+ * relinearizations without changing elementwise arithmetic or ciphertext
+ * ownership.
+ *
+ * The dispatch object is non-owning and must outlive the operation for which
+ * it is installed.
+ */
+struct GpuKeySwitchDispatch
+{
+    std::function<bool(
+        const GpuCiphertextData &,
+        int,
+        GpuCiphertextData &)> rotate;
+    std::function<bool(
+        const GpuCiphertextData &,
+        GpuCiphertextData &)> conjugate;
+    std::function<bool(
+        const GpuCiphertextData &,
+        GpuCiphertextData &)> relinearize;
+    std::function<bool(
+        const GpuCiphertextData &,
+        GpuCiphertextData &)> relinearize_rescale_x2;
+};
+
+/**
  * @brief Top-level GPU evaluator.
  *
  * This class is the highest-level GPU homomorphic operation interface.
@@ -345,6 +375,10 @@ class GpuEvaluator
 {
 public:
     explicit GpuEvaluator(const GpuParameterData &params);
+
+    /** Install or clear a caller-owned, scoped KeySwitch dispatcher. */
+    void set_keyswitch_dispatch(
+        const GpuKeySwitchDispatch *dispatch) const noexcept;
 
     void add(
         const GpuCiphertextData &left_ciphertext,
@@ -669,6 +703,8 @@ public:
 
 private:
     const GpuParameterData &params_;
+
+    mutable const GpuKeySwitchDispatch *keyswitch_dispatch_ = nullptr;
 
     GpuElementwiseHandler elementwise_handler_;
     GpuKeySwitchHandler keyswitch_handler_;

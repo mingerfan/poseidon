@@ -34,6 +34,12 @@ is encrypted/uploaded once and cloned on the GPU. Batch-normalization scales
 are folded into convolution weights, so cached selectors are reusable across
 layers with the same packed shape.
 
+Application KeySwitch has an opt-in fixed-dnum route for H100 experiments.
+`POSEIDON_APPLICATION_KEYSWITCH_P_MODE=fixed_dnum` selects a smaller P prefix
+at each active Q level while targeting the configured dnum. It applies to
+convolution rotations and to high-Q ReLU relinearization; the existing
+single-digit P=Q route remains the default.
+
 Convolution, Option-A downsampling, average pooling and global average pooling
 use lazy rescaling: plaintext products at the same level are accumulated by
 Poseidon's fused GPU `multiply_plain_accumulate` kernel. The second, preloaded
@@ -135,11 +141,14 @@ pass regular 3x3 convolutions take roughly `57-64 ms`, transition convolutions
 `80-95 ms`, global pooling `15 ms`, and FC `17 ms`; Bootstrap remains the
 dominant cost.
 
-The tradeoff is initialization time and memory: generating 109 full-chain
-application keys is outside the measured interval. The old 235-key setup had
-about 30.0 GiB peak device use on a 32-GiB card; removing 126 obsolete keys
-reduces the current key footprint, although the exact peak depends on allocator
-state. The timed interval keeps the input ciphertext, encoded model operands,
+The tradeoff is initialization time and memory. The 109 distinct application
+steps are now materialized only at the Q levels where they are used: Q3/Q4/Q5/
+Q6/Q7/Q8 require 9/7/4/16/23/80 keys respectively, or 139 level-specific keys
+instead of 654. Key generation remains outside the measured interval. The old
+235-key setup had about 30.0 GiB peak device use on a 32-GiB card; removing
+obsolete and wrong-level keys reduces the current key footprint, although the
+exact peak depends on allocator state. The timed interval keeps the input
+ciphertext, encoded model operands,
 bootstrap constants, and direct rotation keys resident on the GPU; it does not
 transfer rotation keys between CPU and GPU.
 

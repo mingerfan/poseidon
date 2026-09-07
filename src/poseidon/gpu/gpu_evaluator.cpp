@@ -774,6 +774,12 @@ GpuEvaluator::GpuEvaluator(const GpuParameterData &params)
       modswitch_handler_(params)
 {}
 
+void GpuEvaluator::set_keyswitch_dispatch(
+    const GpuKeySwitchDispatch *dispatch) const noexcept
+{
+    keyswitch_dispatch_ = dispatch;
+}
+
 void GpuEvaluator::add(
     const GpuCiphertextData &left_ciphertext,
     const GpuCiphertextData &right_ciphertext,
@@ -2401,6 +2407,13 @@ void GpuEvaluator::relinearize(
             "GpuEvaluator::relinearize: input ciphertext p limbs are not supported");
     }
 
+    if (keyswitch_dispatch_ && keyswitch_dispatch_->relinearize &&
+        keyswitch_dispatch_->relinearize(
+            source_ciphertext, destination_ciphertext))
+    {
+        return;
+    }
+
     const int device_id = source_ciphertext.fields_.at(0).device_id;
     const auto &reference_layout = source_ciphertext.polys_.at(0);
     if (!all_components_use_layout(source_ciphertext, reference_layout))
@@ -2476,6 +2489,14 @@ void GpuEvaluator::relinearize_rescale_x2_hybrid(
     {
         throw std::invalid_argument(
             "GpuEvaluator::relinearize_rescale_x2_hybrid: unsupported ciphertext shape");
+    }
+
+    if (keyswitch_dispatch_ &&
+        keyswitch_dispatch_->relinearize_rescale_x2 &&
+        keyswitch_dispatch_->relinearize_rescale_x2(
+            source_ciphertext, destination_ciphertext))
+    {
+        return;
     }
 
     const int device_id = source_ciphertext.fields_.at(0).device_id;
@@ -2603,6 +2624,13 @@ void GpuEvaluator::rotate(
     {
         throw std::invalid_argument(
             "GpuEvaluator::rotate: first implementation requires one full shard");
+    }
+
+    if (step != 0 && keyswitch_dispatch_ && keyswitch_dispatch_->rotate &&
+        keyswitch_dispatch_->rotate(
+            source_ciphertext, step, destination_ciphertext))
+    {
+        return;
     }
 
     const int device_id = source_ciphertext.fields_.at(0).device_id;
@@ -2884,6 +2912,12 @@ void GpuEvaluator::conjugate(
     {
         throw std::invalid_argument(
             "GpuEvaluator::conjugate: first implementation requires one full shard");
+    }
+    if (keyswitch_dispatch_ && keyswitch_dispatch_->conjugate &&
+        keyswitch_dispatch_->conjugate(
+            source_ciphertext, destination_ciphertext))
+    {
+        return;
     }
     if (galois_keys.empty())
     {
@@ -4070,7 +4104,20 @@ void GpuEvaluator::bootstrap(
 
     if (bootstrap_data.project_real)
     {
-        conjugate(destination_ciphertext, galois_keys, workspace.scratch0);
+        if (use_double_hoist &&
+            galois_keys.meta.galois_format ==
+                GpuGaloisKeyFormat::InversePreRotated)
+        {
+            conjugate_pre_rotated(
+                destination_ciphertext,
+                galois_keys,
+                workspace.slot_to_coeff_double_hoist,
+                workspace.scratch0);
+        }
+        else
+        {
+            conjugate(destination_ciphertext, galois_keys, workspace.scratch0);
+        }
         add(destination_ciphertext, workspace.scratch0, workspace.scratch1);
         destination_ciphertext = std::move(workspace.scratch1);
     }

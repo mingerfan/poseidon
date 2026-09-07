@@ -1230,7 +1230,9 @@ __global__ void hybrid_modup_qp_p9_row_tiled8_kernel(
     std::size_t decomp_limb_begin,
     std::size_t base_q_size,
     std::size_t base_p_size,
-    std::size_t degree)
+    std::size_t degree,
+    std::size_t modup_q_stride,
+    std::size_t modup_p_stride)
 {
     static_assert(
         FixedSourceLimbCount >= 1 && FixedSourceLimbCount <= 9,
@@ -1241,6 +1243,12 @@ __global__ void hybrid_modup_qp_p9_row_tiled8_kernel(
     constexpr std::size_t kBlockThreads =
         kCoefficientTile * kTargetRows;
     __shared__ GpuWord weighted_source[kSourcePlanes][kCoefficientTile];
+
+    const std::size_t digit_offset = blockIdx.z;
+    decomp_index += digit_offset;
+    decomp_limb_begin += digit_offset * base_p_size;
+    modup_q += digit_offset * modup_q_stride;
+    modup_p += digit_offset * modup_p_stride;
 
     const std::size_t lane = threadIdx.x;
     const std::size_t row = threadIdx.y;
@@ -3737,7 +3745,9 @@ void launch_hybrid_modup_decomposition_row_tiled8(
                 decomp_limb_begin,                                        \
                 base_q_size,                                              \
                 base_p_size,                                              \
-                degree)
+                degree,                                                   \
+                base_q_size * degree,                                     \
+                base_p_size * degree)
 
         switch (decomp_limb_count)
         {
@@ -3774,6 +3784,112 @@ void launch_hybrid_modup_decomposition_row_tiled8(
     gpu_check_cuda(
         cudaGetLastError(),
         "launch_hybrid_modup_decomposition_row_tiled8 kernel launch");
+}
+
+void launch_hybrid_modup_decomposition_row_tiled8_all_digits_p9(
+    GpuWord *modup_q,
+    GpuWord *modup_p,
+    const GpuWord *source_coeff_q,
+    std::size_t digit_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree)
+{
+    validate_hybrid_tables(
+        "launch_hybrid_modup_decomposition_row_tiled8_all_digits_p9",
+        parameter_shard,
+        degree);
+    const std::size_t base_q_size = parameter_shard.hybrid_base_q_count;
+    const std::size_t base_p_size = parameter_shard.hybrid_base_p_count;
+    const std::size_t expected_digit_count =
+        (base_q_size + base_p_size - 1) / base_p_size;
+    if (base_p_size != 9 || modup_q == nullptr || modup_p == nullptr ||
+        source_coeff_q == nullptr || digit_count == 0 ||
+        digit_count != expected_digit_count ||
+        digit_count > parameter_shard.hybrid_decomp_count)
+    {
+        throw std::invalid_argument(
+            "launch_hybrid_modup_decomposition_row_tiled8_all_digits_p9: invalid parameters");
+    }
+
+    gpu_check_cuda(
+        cudaSetDevice(parameter_shard.device_id),
+        "launch_hybrid_modup_decomposition_row_tiled8_all_digits_p9 cudaSetDevice");
+    constexpr unsigned int kCoefficientTile = 32;
+    constexpr unsigned int kTargetRows = 8;
+    const dim3 block_size(kCoefficientTile, kTargetRows);
+    const std::size_t q_stride = base_q_size * degree;
+    const std::size_t p_stride = base_p_size * degree;
+
+    const auto launch_group =
+        [&](std::size_t first_digit,
+            std::size_t group_digit_count,
+            std::size_t decomposition_width)
+        {
+            if (group_digit_count == 0)
+            {
+                return;
+            }
+            const std::size_t active_limb_count =
+                base_q_size - decomposition_width + base_p_size;
+            const dim3 grid_size(
+                static_cast<unsigned int>(
+                    ((degree >> 1) + kCoefficientTile - 1) /
+                    kCoefficientTile),
+                static_cast<unsigned int>(
+                    (active_limb_count + kTargetRows - 1) / kTargetRows),
+                static_cast<unsigned int>(group_digit_count));
+            GpuWord *group_q = modup_q + first_digit * q_stride;
+            GpuWord *group_p = modup_p + first_digit * p_stride;
+
+#define POSEIDON_LAUNCH_P9_MODUP_ROW_TILED8_ALL_DIGITS(FIXED_COUNT)       \
+    hybrid_modup_qp_p9_row_tiled8_kernel<FIXED_COUNT>                    \
+        <<<grid_size, block_size>>>(                                     \
+            group_q,                                                     \
+            group_p,                                                     \
+            source_coeff_q,                                              \
+            parameter_shard.rns_primes.data(),                           \
+            parameter_shard.rns_modulus_constants.data(),                \
+            parameter_shard.hybrid_q_conv_matrix_offsets.data(),         \
+            parameter_shard.hybrid_q_conv_matrices.data(),                \
+            parameter_shard.hybrid_p_conv_matrix_offsets.data(),         \
+            parameter_shard.hybrid_p_conv_matrices.data(),                \
+            parameter_shard.hybrid_qi_inv_punctured.data(),              \
+            first_digit,                                                 \
+            first_digit * base_p_size,                                   \
+            base_q_size,                                                 \
+            base_p_size,                                                 \
+            degree,                                                      \
+            q_stride,                                                    \
+            p_stride)
+
+            switch (decomposition_width)
+            {
+            case 1: POSEIDON_LAUNCH_P9_MODUP_ROW_TILED8_ALL_DIGITS(1); break;
+            case 2: POSEIDON_LAUNCH_P9_MODUP_ROW_TILED8_ALL_DIGITS(2); break;
+            case 3: POSEIDON_LAUNCH_P9_MODUP_ROW_TILED8_ALL_DIGITS(3); break;
+            case 4: POSEIDON_LAUNCH_P9_MODUP_ROW_TILED8_ALL_DIGITS(4); break;
+            case 5: POSEIDON_LAUNCH_P9_MODUP_ROW_TILED8_ALL_DIGITS(5); break;
+            case 6: POSEIDON_LAUNCH_P9_MODUP_ROW_TILED8_ALL_DIGITS(6); break;
+            case 7: POSEIDON_LAUNCH_P9_MODUP_ROW_TILED8_ALL_DIGITS(7); break;
+            case 8: POSEIDON_LAUNCH_P9_MODUP_ROW_TILED8_ALL_DIGITS(8); break;
+            case 9: POSEIDON_LAUNCH_P9_MODUP_ROW_TILED8_ALL_DIGITS(9); break;
+            default:
+                throw std::logic_error(
+                    "launch_hybrid_modup_decomposition_row_tiled8_all_digits_p9: invalid decomposition width");
+            }
+#undef POSEIDON_LAUNCH_P9_MODUP_ROW_TILED8_ALL_DIGITS
+            gpu_check_cuda(
+                cudaGetLastError(),
+                "launch_hybrid_modup_decomposition_row_tiled8_all_digits_p9 kernel launch");
+        };
+
+    const std::size_t full_digit_count = base_q_size / base_p_size;
+    const std::size_t tail_width = base_q_size % base_p_size;
+    launch_group(0, full_digit_count, base_p_size);
+    if (tail_width != 0)
+    {
+        launch_group(full_digit_count, 1, tail_width);
+    }
 }
 
 #if 0

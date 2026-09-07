@@ -59,6 +59,16 @@ void launch_forward_ntt_qp_active_fourstep_65536(
     std::size_t degree,
     bool phase1_ready = false);
 
+void launch_forward_ntt_qp_active_fourstep_all_digits_65536(
+    GpuWord *destination_q,
+    GpuWord *destination_p,
+    const GpuWord *source_q,
+    const GpuWord *source_p,
+    const GpuWord *source_ntt_q,
+    std::size_t digit_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
 void launch_hybrid_modup_p9_forward_ntt_qp_active_phase1_fourstep_65536(
     GpuWord *destination_q,
     GpuWord *destination_p,

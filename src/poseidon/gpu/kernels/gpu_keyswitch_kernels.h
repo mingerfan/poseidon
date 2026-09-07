@@ -65,6 +65,14 @@ void launch_hybrid_modup_decomposition_row_tiled8(
     const GpuParameterShard &parameter_shard,
     std::size_t degree);
 
+void launch_hybrid_modup_decomposition_row_tiled8_all_digits_p9(
+    GpuWord *modup_q,
+    GpuWord *modup_p,
+    const GpuWord *source_coeff_q,
+    std::size_t digit_count,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree);
+
 /**
  * Forward NTT only the Q limbs outside the decomposition block and all P
  * limbs. Q limbs inside the block are already copied from the NTT source.

@@ -29,6 +29,16 @@ GpuResNet20Result run_gpu_resnet20(std::size_t image_id,
                                    const ResNet20Weights &weights,
                                    std::size_t max_blocks = 9);
 
+// Correctness-oriented staged run using the exact per-Q direct-key plan.
+// Unlike the preloaded benchmark, it executes once and may stop after a
+// prefix of the BasicBlocks.
+GpuResNet20Result run_gpu_resnet20_direct(
+    std::size_t image_id,
+    const ResNet20GpuConfig &config,
+    const ResNet20Topology &topology,
+    const ResNet20Weights &weights,
+    std::size_t max_blocks = 9);
+
 // Generates every required direct Galois key before any network operation,
 // then performs one untimed cache warmup. The measured pass runs from the stem
 // through the encrypted FC output; final decryption is outside the interval.

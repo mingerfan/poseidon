@@ -7,6 +7,7 @@
 
 #include <complex>
 #include <cstdint>
+#include <map>
 #include <memory>
 #include <string>
 #include <vector>
@@ -22,6 +23,14 @@ class GpuCkksRuntime
 public:
     using DeviceCiphertext = gpu::GpuCiphertextData;
     using DevicePlaintext = gpu::GpuPlaintextData;
+
+    struct ApplicationKeySwitchShape
+    {
+        std::size_t q_count = 0;
+        std::size_t p_count = 0;
+        std::size_t effective_dnum = 0;
+        bool level_aware = false;
+    };
 
     explicit GpuCkksRuntime(const GpuConfig &config, int device_id = 0);
     ~GpuCkksRuntime();
@@ -127,8 +136,27 @@ public:
         const std::vector<long long> &steps) const;
     // Generate and upload one direct Galois key for every supplied logical
     // rotation. Subsequent rotate_composed calls use one key switch each.
+    // An optional active-level list enables level-aware Galois and
+    // relinearization keys. The default single_digit mode uses P=Q at low Q;
+    // fixed_dnum mode uses a per-level P sized for config.dnum. Callers must
+    // list every Q level used by application rotations. Relinearization-only
+    // fixed-dnum contexts are materialized lazily during the untimed warmup.
     void initialize_direct_rotation_keys(
-        const std::vector<int> &rotation_steps);
+        const std::vector<int> &rotation_steps,
+        const std::vector<std::size_t> &level_aware_q_counts = {});
+    // Preferred application setup: generate only the rotation keys that are
+    // actually used at each ciphertext Q level.
+    void initialize_direct_rotation_keys(
+        const std::map<std::size_t, std::vector<int>> &rotation_steps_by_q);
+    // Reports the route selected by POSEIDON_APPLICATION_KEYSWITCH_P_MODE.
+    // In fixed_dnum mode P is reduced per level to target config.dnum while
+    // retaining at least two P primes so Poseidon stays on the HYBRID path.
+    ApplicationKeySwitchShape application_keyswitch_shape(
+        std::size_t q_count) const;
+    // Prints the distinct logical application rotations observed at each Q
+    // level when POSEIDON_TRACE_ROTATION_STEPS=1. Bootstrap-internal
+    // rotations bypass this wrapper and are intentionally excluded.
+    void print_rotation_step_trace() const;
     void initialize_inference_evaluation_keys();
     // Backward-compatible model-specific spelling.
     void initialize_all_evaluation_keys();

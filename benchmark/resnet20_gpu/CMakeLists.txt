@@ -86,4 +86,9 @@ target_compile_options(poseidon_gpu_resnet20 PRIVATE
     $<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>)
 target_compile_definitions(poseidon_gpu_resnet20 PRIVATE
     POSEIDON_GPU_RESNET20_SOURCE_DIR="${CMAKE_CURRENT_LIST_DIR}")
-set_target_properties(poseidon_gpu_resnet20 PROPERTIES CUDA_ARCHITECTURES 70)
+# Inherit CMAKE_CUDA_ARCHITECTURES from the configure command.  run.sh keeps
+# sm_70 as the default for the local V100s, while an H100 build can now select
+# sm_90 with CMAKE_CUDA_ARCHITECTURES=90 instead of being silently forced back
+# to Volta code generation here.
+set_target_properties(poseidon_gpu_resnet20 PROPERTIES
+    CUDA_ARCHITECTURES "${CMAKE_CUDA_ARCHITECTURES}")

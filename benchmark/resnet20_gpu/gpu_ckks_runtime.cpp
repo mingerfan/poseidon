@@ -20,11 +20,13 @@
 #include <rmm/mr/device/per_device_resource.hpp>
 #include <rmm/mr/device/pool_memory_resource.hpp>
 
+#include <algorithm>
 #include <cmath>
 #include <cstring>
 #include <cstdlib>
 #include <cstdint>
 #include <limits>
+#include <map>
 #include <mutex>
 #include <numeric>
 #include <optional>
@@ -87,15 +89,111 @@ void check_cuda(cudaError_t status, const char *operation)
     }
 }
 
+bool environment_flag_enabled(const char *name)
+{
+    const char *raw = std::getenv(name);
+    if (raw == nullptr || *raw == '\0')
+    {
+        return false;
+    }
+    const std::string value(raw);
+    return value != "0" && value != "OFF" && value != "off" &&
+           value != "false" && value != "FALSE";
+}
+
+enum class ApplicationKeySwitchPMode
+{
+    single_digit,
+    fixed_dnum,
+};
+
+ApplicationKeySwitchPMode configured_application_keyswitch_p_mode()
+{
+    const char *raw = std::getenv("POSEIDON_APPLICATION_KEYSWITCH_P_MODE");
+    if (raw == nullptr || *raw == '\0' || std::string(raw) == "single_digit")
+    {
+        return ApplicationKeySwitchPMode::single_digit;
+    }
+    const std::string value(raw);
+    if (value == "fixed_dnum" || value == "fixed-dnum")
+    {
+        return ApplicationKeySwitchPMode::fixed_dnum;
+    }
+    throw std::invalid_argument(
+        "POSEIDON_APPLICATION_KEYSWITCH_P_MODE must be single_digit or fixed_dnum");
+}
+
+const char *application_keyswitch_p_mode_name(ApplicationKeySwitchPMode mode)
+{
+    return mode == ApplicationKeySwitchPMode::fixed_dnum
+        ? "fixed_dnum"
+        : "single_digit";
+}
+
+std::size_t fixed_dnum_p_count(
+    std::size_t q_count,
+    std::size_t target_dnum)
+{
+    if (q_count < 2 || target_dnum == 0)
+    {
+        throw std::invalid_argument("fixed-dnum KeySwitch shape is invalid");
+    }
+    // Poseidon selects its BV implementation when P has one prime. Keep two
+    // primes as the smallest basis accepted by the GPU HYBRID implementation.
+    return std::max<std::size_t>(
+        2, (q_count + target_dnum - 1) / target_dnum);
+}
+
+std::optional<std::size_t> configured_rmm_pool_limit()
+{
+    const char *raw = std::getenv("POSEIDON_GPU_MAX_POOL_MB");
+    if (raw == nullptr || *raw == '\0')
+    {
+        return std::nullopt;
+    }
+    try
+    {
+        const std::string text(raw);
+        std::size_t parsed = 0;
+        const auto value_mb = std::stoull(text, &parsed, 10);
+        if (parsed != text.size())
+        {
+            throw std::invalid_argument("trailing characters");
+        }
+        if (value_mb == 0)
+        {
+            return std::nullopt;
+        }
+        constexpr std::size_t mib = 1024 * 1024;
+        if (value_mb > std::numeric_limits<std::size_t>::max() / mib)
+        {
+            throw std::out_of_range("pool limit overflow");
+        }
+        return static_cast<std::size_t>(value_mb) * mib;
+    }
+    catch (const std::exception &)
+    {
+        throw std::invalid_argument(
+            "POSEIDON_GPU_MAX_POOL_MB must be a non-negative integer");
+    }
+}
+
 class RmmPoolScope
 {
 public:
     explicit RmmPoolScope(int device_id)
-        : device_id_(device_id), pool_(&upstream_, 1 << 20, std::nullopt)
+        : device_id_(device_id),
+          maximum_pool_size_(configured_rmm_pool_limit()),
+          pool_(&upstream_, 1 << 20, maximum_pool_size_)
     {
         check_cuda(cudaSetDevice(device_id_), "cudaSetDevice");
         previous_ = rmm::mr::get_current_device_resource();
         rmm::mr::set_current_device_resource(&pool_);
+        if (maximum_pool_size_)
+        {
+            std::cout << "[GPU memory] RMM pool hard limit="
+                      << *maximum_pool_size_ / (1024 * 1024) << " MiB\n";
+        }
     }
 
     RmmPoolScope(const RmmPoolScope &) = delete;
@@ -115,6 +213,7 @@ public:
 private:
     int device_id_;
     rmm::mr::cuda_memory_resource upstream_;
+    std::optional<std::size_t> maximum_pool_size_;
     rmm::mr::pool_memory_resource<rmm::mr::cuda_memory_resource> pool_;
     rmm::mr::device_memory_resource *previous_ = nullptr;
 };
@@ -136,6 +235,121 @@ ParametersLiteral make_parameters(const GpuConfig &config)
     parameters.set_log_modulus(config.log_q, config.log_p);
     return parameters;
 }
+
+ParametersLiteral make_level_keyswitch_parameters(
+    const ParametersLiteral &global_parameters,
+    std::size_t q_count,
+    std::size_t p_count)
+{
+    if (q_count < 2 || q_count > global_parameters.q().size() ||
+        p_count < 2 || p_count > q_count ||
+        p_count > global_parameters.p().size())
+    {
+        throw std::invalid_argument(
+            "level-aware key switching requires 2 <= P <= Q and P <= global P");
+    }
+
+    ParametersLiteral parameters = global_parameters;
+    const std::vector<Modulus> q(
+        global_parameters.q().begin(),
+        global_parameters.q().begin() + static_cast<std::ptrdiff_t>(q_count));
+    const std::vector<Modulus> p(
+        global_parameters.p().begin(),
+        global_parameters.p().begin() + static_cast<std::ptrdiff_t>(p_count));
+    parameters.set_modulus(q, p);
+    return parameters;
+}
+
+SecretKey make_level_keyswitch_secret_key(
+    const KeyGenerator &global_keygen,
+    const ParametersLiteral &global_parameters,
+    const PoseidonContext &level_context,
+    std::size_t q_count,
+    std::size_t p_count)
+{
+    const std::size_t degree = global_parameters.degree();
+    const std::size_t global_q_count = global_parameters.q().size();
+    const std::size_t global_p_count = global_parameters.p().size();
+    const auto &source = global_keygen.secret_key().data();
+    const std::size_t expected_source_words =
+        degree * (global_q_count + global_p_count);
+    if (source.coeff_count() != expected_source_words)
+    {
+        throw std::logic_error(
+            "global secret-key storage does not match the Q/P parameter shape");
+    }
+
+    SecretKey result;
+    const std::size_t target_words = degree * (q_count + p_count);
+    result.data().resize(
+        level_context,
+        level_context.crt_context()->key_parms_id(),
+        target_words);
+
+    // The level context reuses the same Q and P prime prefixes. Copying
+    // their NTT residues preserves the exact ternary secret polynomial while
+    // rebinding it to the level-specific Q_q union P_q key context.
+    std::copy_n(source.data(), degree * q_count, result.data().data());
+    std::copy_n(
+        source.data() + degree * global_q_count,
+        degree * p_count,
+        result.data().data() + degree * q_count);
+    return result;
+}
+
+class LevelAwareKeySwitchRuntime
+{
+public:
+    LevelAwareKeySwitchRuntime(
+        const ParametersLiteral &global_parameters,
+        const KeyGenerator &global_keygen,
+        std::size_t q_count,
+        std::size_t p_count,
+        const std::vector<int> &rotation_steps,
+        int device_id,
+        bool create_relinearization_key = true)
+        : q_count(q_count),
+          p_count(p_count),
+          effective_dnum((q_count + p_count - 1) / p_count),
+          parameters(make_level_keyswitch_parameters(
+              global_parameters, q_count, p_count)),
+          context(parameters)
+    {
+        auto compatible_secret = make_level_keyswitch_secret_key(
+            global_keygen, global_parameters, context, q_count, p_count);
+        KeyGenerator level_keygen(context, compatible_secret);
+
+        gpu_parameters =
+            std::make_unique<gpu::GpuParameterData>(context, device_id);
+        gpu_evaluator =
+            std::make_unique<gpu::GpuEvaluator>(*gpu_parameters);
+        if (create_relinearization_key)
+        {
+            RelinKeys host_relin_keys;
+            level_keygen.create_relin_keys(host_relin_keys);
+            gpu_relin_keys = gpu::GpuUploader::upload_relin_keys(
+                host_relin_keys, device_id);
+        }
+        if (!rotation_steps.empty())
+        {
+            GaloisKeys host_galois_keys;
+            level_keygen.create_galois_keys(rotation_steps, host_galois_keys);
+            gpu_galois_keys = gpu::GpuUploader::upload_galois_keys(
+                host_galois_keys, device_id);
+        }
+    }
+
+    std::size_t q_count;
+    std::size_t p_count;
+    std::size_t effective_dnum;
+    ParametersLiteral parameters;
+    PoseidonContext context;
+    std::unique_ptr<gpu::GpuParameterData> gpu_parameters;
+    std::unique_ptr<gpu::GpuEvaluator> gpu_evaluator;
+    gpu::GpuRelinKeysData gpu_relin_keys;
+    gpu::GpuGaloisKeysData gpu_galois_keys;
+    mutable gpu::GpuDoubleHoistWorkspace rotate_many_workspace;
+};
 
 LinearMatrixGroup make_dynamic_dft_group(
     const PoseidonContext &context,
@@ -269,6 +483,62 @@ std::vector<std::size_t> required_dft_key_q_counts(
     return result;
 }
 
+using BootstrapRotationRequirements =
+    std::map<std::size_t, std::set<int>>;
+
+void add_matrix_rotation_requirements(
+    const MatrixPlain &matrix,
+    std::set<int> &steps)
+{
+    const auto [index, unused_giant_steps, baby_steps] = poseidon::bsgs_index(
+        matrix.plain_vec,
+        1 << matrix.log_slots,
+        static_cast<int>(matrix.n1));
+    (void)unused_giant_steps;
+    for (const int step : baby_steps)
+    {
+        if (step != 0)
+        {
+            steps.insert(step);
+        }
+    }
+    for (const auto &entry : index)
+    {
+        if (entry.first != 0)
+        {
+            steps.insert(entry.first);
+        }
+    }
+}
+
+std::size_t add_dft_rotation_requirements(
+    std::size_t input_q_count,
+    const LinearMatrixGroup &group,
+    bool conjugate_output,
+    BootstrapRotationRequirements &requirements)
+{
+    const auto counts = dft_rescale_counts(group);
+    std::size_t current_q_count = input_q_count;
+    for (std::size_t stage = 0; stage < group.data().size(); ++stage)
+    {
+        add_matrix_rotation_requirements(
+            group.data()[stage], requirements[current_q_count]);
+        if (counts[stage] == 0 || counts[stage] >= current_q_count)
+        {
+            throw std::invalid_argument(
+                "GPU bootstrap DFT consumes its modulus chain");
+        }
+        current_q_count -= counts[stage];
+    }
+    if (conjugate_output)
+    {
+        // Poseidon uses step zero when asking KeyGenerator for the
+        // conjugation Galois element.
+        requirements[current_q_count].insert(0);
+    }
+    return current_q_count;
+}
+
 }  // namespace
 
 class GpuCkksRuntime::Impl
@@ -286,7 +556,9 @@ public:
           config(config),
           application_scale(std::ldexp(1.0, config.application_log_scale)),
           application_parms_id(
-              gpu_parameters.get_level_by_q_count(config.application_q_count()).parms_id)
+              gpu_parameters.get_level_by_q_count(config.application_q_count()).parms_id),
+          trace_rotation_steps(
+              environment_flag_enabled("POSEIDON_TRACE_ROTATION_STEPS"))
     {
         keygen.create_public_key(public_key);
         encryptor = std::make_unique<Encryptor>(
@@ -319,9 +591,24 @@ public:
     std::unordered_map<std::string, gpu::GpuCiphertextData> ciphertext_cache;
     std::unique_ptr<gpu::GpuCiphertextData> encrypted_one_cache;
     std::set<int> direct_rotation_steps;
+    std::map<std::size_t, std::set<int>> direct_rotation_steps_by_q;
     mutable gpu::GpuDoubleHoistWorkspace rotate_many_workspace;
+    // Several active Q levels can share a fixed-dnum key generated at the
+    // largest Q using the same P prefix (for example Q29..Q32 share Q32/P8).
+    std::unordered_map<
+        std::size_t,
+        std::shared_ptr<LevelAwareKeySwitchRuntime>> level_keyswitch_runtimes;
+    std::unordered_map<
+        std::size_t,
+        std::unique_ptr<LevelAwareKeySwitchRuntime>>
+        bootstrap_level_keyswitch_runtimes;
     bool use_direct_rotation_keys = false;
+    bool level_aware_application_keyswitch_enabled = false;
+    ApplicationKeySwitchPMode application_keyswitch_p_mode =
+        ApplicationKeySwitchPMode::single_digit;
     bool full_device_cache = false;
+    bool trace_rotation_steps = false;
+    mutable std::map<std::size_t, std::set<int>> observed_rotation_steps_by_q;
 };
 
 GpuCkksRuntime::GpuCkksRuntime(const GpuConfig &config, int device_id)
@@ -917,9 +1204,42 @@ GpuCkksRuntime::DeviceCiphertext GpuCkksRuntime::rotate(
     const DeviceCiphertext &source,
     int step) const
 {
+    const auto level_runtime = impl_->level_keyswitch_runtimes.find(
+        source.meta.q_count);
+    if (impl_->use_direct_rotation_keys &&
+        level_runtime != impl_->level_keyswitch_runtimes.end())
+    {
+        const auto planned = impl_->direct_rotation_steps_by_q.find(
+            source.meta.q_count);
+        long long normalized = static_cast<long long>(step) %
+                               static_cast<long long>(slot_count());
+        if (normalized < 0)
+        {
+            normalized += static_cast<long long>(slot_count());
+        }
+        if (planned == impl_->direct_rotation_steps_by_q.end() ||
+            planned->second.count(static_cast<int>(normalized)) == 0)
+        {
+            throw std::logic_error(
+                "direct rotation key is missing at the ciphertext Q level");
+        }
+        DeviceCiphertext result;
+        level_runtime->second->gpu_evaluator->rotate(
+            source,
+            step,
+            level_runtime->second->gpu_galois_keys,
+            result);
+        return result;
+    }
+
     const gpu::GpuGaloisKeysData *keys = impl_->gpu_galois_keys
         ? impl_->gpu_galois_keys.get()
         : impl_->gpu_bootstrap_galois_keys.get();
+    if (impl_->use_direct_rotation_keys && !impl_->gpu_galois_keys)
+    {
+        throw std::logic_error(
+            "direct rotation keys were not prepared for this q level");
+    }
     if (!keys)
     {
         throw std::logic_error(
@@ -947,12 +1267,20 @@ GpuCkksRuntime::DeviceCiphertext GpuCkksRuntime::rotate_composed(
     }
 
     const int direct_step = static_cast<int>(remaining);
+    if (impl_->trace_rotation_steps)
+    {
+        impl_->observed_rotation_steps_by_q[source.meta.q_count].insert(
+            direct_step);
+    }
     if (impl_->use_direct_rotation_keys)
     {
-        if (impl_->direct_rotation_steps.count(direct_step) == 0)
+        const auto planned = impl_->direct_rotation_steps_by_q.find(
+            source.meta.q_count);
+        if (planned == impl_->direct_rotation_steps_by_q.end() ||
+            planned->second.count(direct_step) == 0)
         {
             throw std::logic_error(
-                "direct rotation key is missing for the requested step");
+                "direct rotation key is missing for the requested Q/step");
         }
         return rotate(source, direct_step);
     }
@@ -1014,10 +1342,18 @@ GpuCkksRuntime::rotate_many_composed(
             continue;
         }
         const int direct_step = static_cast<int>(normalized);
-        if (impl_->direct_rotation_steps.count(direct_step) == 0)
+        if (impl_->trace_rotation_steps)
+        {
+            impl_->observed_rotation_steps_by_q[source.meta.q_count].insert(
+                direct_step);
+        }
+        const auto planned = impl_->direct_rotation_steps_by_q.find(
+            source.meta.q_count);
+        if (planned == impl_->direct_rotation_steps_by_q.end() ||
+            planned->second.count(direct_step) == 0)
         {
             throw std::logic_error(
-                "direct rotation key is missing for a hoisted rotation");
+                "direct rotation key is missing for a hoisted Q/step");
         }
         direct_steps.push_back(direct_step);
         direct_indices.push_back(index);
@@ -1025,18 +1361,32 @@ GpuCkksRuntime::rotate_many_composed(
 
     if (!direct_steps.empty())
     {
-        if (!impl_->gpu_galois_keys)
-        {
-            throw std::logic_error(
-                "hoisted direct rotations require inference Galois keys");
-        }
         std::vector<DeviceCiphertext> direct_results;
-        impl_->gpu_evaluator.rotate_many_hoisted(
-            source,
-            direct_steps,
-            *impl_->gpu_galois_keys,
-            impl_->rotate_many_workspace,
-            direct_results);
+        const auto level_runtime = impl_->level_keyswitch_runtimes.find(
+            source.meta.q_count);
+        if (level_runtime != impl_->level_keyswitch_runtimes.end())
+        {
+            level_runtime->second->gpu_evaluator->rotate_many_hoisted(
+                source,
+                direct_steps,
+                level_runtime->second->gpu_galois_keys,
+                level_runtime->second->rotate_many_workspace,
+                direct_results);
+        }
+        else
+        {
+            if (!impl_->gpu_galois_keys)
+            {
+                throw std::logic_error(
+                    "direct rotation keys were not prepared for this q level");
+            }
+            impl_->gpu_evaluator.rotate_many_hoisted(
+                source,
+                direct_steps,
+                *impl_->gpu_galois_keys,
+                impl_->rotate_many_workspace,
+                direct_results);
+        }
         for (std::size_t index = 0; index < direct_results.size(); ++index)
         {
             result[direct_indices[index]] = std::move(direct_results[index]);
@@ -1045,8 +1395,57 @@ GpuCkksRuntime::rotate_many_composed(
     return result;
 }
 
+GpuCkksRuntime::ApplicationKeySwitchShape
+GpuCkksRuntime::application_keyswitch_shape(std::size_t q_count) const
+{
+    if (q_count < 2 || q_count > impl_->parameters.q().size())
+    {
+        throw std::invalid_argument(
+            "application KeySwitch q_count is outside the global Q chain");
+    }
+
+    const std::size_t global_p_count = impl_->parameters.p().size();
+    ApplicationKeySwitchShape result;
+    result.q_count = q_count;
+    result.p_count = global_p_count;
+    result.effective_dnum =
+        (q_count + global_p_count - 1) / global_p_count;
+
+    if (!impl_->level_aware_application_keyswitch_enabled)
+    {
+        return result;
+    }
+
+    if (impl_->application_keyswitch_p_mode ==
+        ApplicationKeySwitchPMode::single_digit)
+    {
+        if (q_count <= global_p_count)
+        {
+            result.p_count = q_count;
+            result.effective_dnum = 1;
+            result.level_aware = true;
+        }
+        return result;
+    }
+
+    const std::size_t p_count = fixed_dnum_p_count(
+        q_count, impl_->config.dnum);
+    if (p_count > global_p_count)
+    {
+        throw std::logic_error(
+            "fixed-dnum application P exceeds the global P prefix");
+    }
+    result.p_count = p_count;
+    result.effective_dnum = (q_count + p_count - 1) / p_count;
+    // When the selected P is already the global P, the global key material
+    // has exactly the requested decomposition and avoids a duplicate context.
+    result.level_aware = p_count < global_p_count;
+    return result;
+}
+
 void GpuCkksRuntime::initialize_direct_rotation_keys(
-    const std::vector<int> &rotation_steps)
+    const std::vector<int> &rotation_steps,
+    const std::vector<std::size_t> &level_aware_q_counts)
 {
     if (rotation_steps.empty())
     {
@@ -1054,29 +1453,148 @@ void GpuCkksRuntime::initialize_direct_rotation_keys(
             "direct rotation step list must not be empty");
     }
 
-    impl_->direct_rotation_steps.clear();
-    const auto slots = static_cast<long long>(slot_count());
-    for (const int step : rotation_steps)
+    std::vector<std::size_t> q_counts = level_aware_q_counts;
+    if (q_counts.empty())
     {
-        long long normalized = static_cast<long long>(step) % slots;
-        if (normalized < 0)
-        {
-            normalized += slots;
-        }
-        if (normalized == 0)
+        q_counts.push_back(impl_->config.application_q_count());
+    }
+    std::map<std::size_t, std::vector<int>> rotation_steps_by_q;
+    for (const std::size_t q_count : q_counts)
+    {
+        rotation_steps_by_q.emplace(q_count, rotation_steps);
+    }
+    initialize_direct_rotation_keys(rotation_steps_by_q);
+}
+
+void GpuCkksRuntime::initialize_direct_rotation_keys(
+    const std::map<std::size_t, std::vector<int>> &rotation_steps_by_q)
+{
+    if (rotation_steps_by_q.empty())
+    {
+        throw std::logic_error(
+            "direct rotation level plan must not be empty");
+    }
+
+    impl_->direct_rotation_steps.clear();
+    impl_->direct_rotation_steps_by_q.clear();
+    const auto slots = static_cast<long long>(slot_count());
+    for (const auto &[q_count, requested_steps] : rotation_steps_by_q)
+    {
+        if (q_count < 2 || q_count > impl_->parameters.q().size())
         {
             throw std::invalid_argument(
-                "direct rotation step list contains a zero rotation");
+                "direct rotation q_count is outside the global Q chain");
         }
-        impl_->direct_rotation_steps.insert(static_cast<int>(normalized));
+        auto &level_steps = impl_->direct_rotation_steps_by_q[q_count];
+        for (const int step : requested_steps)
+        {
+            long long normalized = static_cast<long long>(step) % slots;
+            if (normalized < 0)
+            {
+                normalized += slots;
+            }
+            if (normalized == 0)
+            {
+                throw std::invalid_argument(
+                    "direct rotation level plan contains a zero rotation");
+            }
+            level_steps.insert(static_cast<int>(normalized));
+            impl_->direct_rotation_steps.insert(static_cast<int>(normalized));
+        }
+        if (level_steps.empty())
+        {
+            throw std::invalid_argument(
+                "direct rotation level plan contains an empty level");
+        }
     }
 
     const std::vector<int> steps(
         impl_->direct_rotation_steps.begin(),
         impl_->direct_rotation_steps.end());
     std::cout << "[GPU ResNet20] generating direct rotation keys before "
-                 "inference count=" << steps.size() << '\n';
-    initialize_evaluation_keys(steps);
+                 "inference union_count=" << steps.size() << '\n';
+
+    // Direct rotations and application-level relinearization share the
+    // level-aware contexts below so their P basis follows the actual
+    // ciphertext level instead of retaining every global P.
+    initialize_evaluation_keys();
+    impl_->level_keyswitch_runtimes.clear();
+    impl_->gpu_galois_keys.reset();
+
+    const char *level_aware_env =
+        std::getenv("POSEIDON_LEVEL_AWARE_ROTATION_P");
+    const bool level_aware_enabled =
+        level_aware_env == nullptr || std::string(level_aware_env) != "0";
+    impl_->level_aware_application_keyswitch_enabled = level_aware_enabled;
+    impl_->application_keyswitch_p_mode =
+        configured_application_keyswitch_p_mode();
+    if (!level_aware_enabled)
+    {
+        std::cout << "[GPU ResNet20] level-aware rotation P disabled; "
+                     "using global key-switch basis\n";
+    }
+    else
+    {
+        std::cout << "[GPU ResNet20] application KeySwitch P mode="
+                  << application_keyswitch_p_mode_name(
+                         impl_->application_keyswitch_p_mode)
+                  << " target_dnum=" << impl_->config.dnum << '\n';
+    }
+
+    bool needs_global_rotation_keys = !level_aware_enabled;
+    std::set<int> global_steps;
+    for (const auto &[q_count, level_step_set] :
+         impl_->direct_rotation_steps_by_q)
+    {
+        const std::vector<int> level_steps(
+            level_step_set.begin(), level_step_set.end());
+        const auto shape = application_keyswitch_shape(q_count);
+        if (!shape.level_aware)
+        {
+            needs_global_rotation_keys = true;
+            global_steps.insert(level_step_set.begin(), level_step_set.end());
+            std::cout << "[GPU ResNet20] direct rotation level q=" << q_count
+                      << " keys=" << level_steps.size()
+                      << " uses global p=" << shape.p_count
+                      << " effective_dnum=" << shape.effective_dnum
+                      << '\n';
+            continue;
+        }
+
+        auto level_runtime = std::make_shared<LevelAwareKeySwitchRuntime>(
+            impl_->parameters,
+            impl_->keygen,
+            q_count,
+            shape.p_count,
+            level_steps,
+            impl_->device_id);
+        const auto primary_parms_id = impl_->context.crt_context()
+            ->parms_id_map().at(static_cast<std::uint32_t>(q_count - 1));
+        const auto level_parms_id = level_runtime->context.crt_context()
+            ->parms_id_map().at(static_cast<std::uint32_t>(q_count - 1));
+        if (primary_parms_id != level_parms_id)
+        {
+            throw std::logic_error(
+                "level-aware rotation Q context is incompatible with ciphertext");
+        }
+        std::cout << "[GPU ResNet20] application keyswitch level q=" << q_count
+                  << " p=" << level_runtime->p_count
+                  << " target_dnum=" << impl_->config.dnum
+                  << " effective_dnum=" << level_runtime->effective_dnum
+                  << " keys=" << level_steps.size() << '\n';
+        impl_->level_keyswitch_runtimes.emplace(
+            q_count, std::move(level_runtime));
+    }
+
+    if (needs_global_rotation_keys)
+    {
+        const std::vector<int> uploaded_global_steps(
+            global_steps.empty() ? impl_->direct_rotation_steps.begin()
+                                 : global_steps.begin(),
+            global_steps.empty() ? impl_->direct_rotation_steps.end()
+                                 : global_steps.end());
+        initialize_evaluation_keys(uploaded_global_steps);
+    }
     impl_->use_direct_rotation_keys = true;
     std::cout << "[GPU ResNet20] direct rotation keys ready steps=";
     for (std::size_t index = 0; index < steps.size(); ++index)
@@ -1086,10 +1604,40 @@ void GpuCkksRuntime::initialize_direct_rotation_keys(
     std::cout << '\n';
 }
 
+void GpuCkksRuntime::print_rotation_step_trace() const
+{
+    if (!impl_->trace_rotation_steps)
+    {
+        return;
+    }
+    std::set<int> union_steps;
+    std::size_t total_level_keys = 0;
+    for (const auto &[q_count, steps] : impl_->observed_rotation_steps_by_q)
+    {
+        total_level_keys += steps.size();
+        union_steps.insert(steps.begin(), steps.end());
+        std::cout << "[GPU rotation plan] q=" << q_count
+                  << " count=" << steps.size() << " steps=";
+        std::size_t index = 0;
+        for (const int step : steps)
+        {
+            std::cout << (index++ == 0 ? "" : ",") << step;
+        }
+        std::cout << '\n';
+    }
+    std::cout << "[GPU rotation plan] levels="
+              << impl_->observed_rotation_steps_by_q.size()
+              << " total_level_keys=" << total_level_keys
+              << " union_keys=" << union_steps.size() << '\n';
+}
+
 void GpuCkksRuntime::initialize_inference_evaluation_keys()
 {
     impl_->direct_rotation_steps.clear();
+    impl_->direct_rotation_steps_by_q.clear();
+    impl_->level_keyswitch_runtimes.clear();
     impl_->use_direct_rotation_keys = false;
+    impl_->level_aware_application_keyswitch_enabled = false;
     std::vector<int> steps;
     for (std::size_t step = 1; step < slot_count(); step <<= 1)
     {
@@ -1114,6 +1662,7 @@ void GpuCkksRuntime::initialize_bootstrap()
         impl_->context,
         static_cast<std::size_t>(impl_->config.q0_level + 1),
         impl_->config.bootstrap_q_count);
+    impl_->bootstrap_level_keyswitch_runtimes.clear();
     if (::setenv("POSEIDON_BOOTSTRAP_EVALMOD_DYNAMIC_RESCALE", "1", 1) != 0)
     {
         throw std::runtime_error("failed to enable GPU bootstrap dynamic rescale");
@@ -1218,10 +1767,23 @@ void GpuCkksRuntime::initialize_bootstrap()
         s2c_minimum_scale,
         evalmod_scale / raw_s2c_output_scale);
 
+    const auto linear_transform_mode =
+        gpu::gpu_linear_transform_mode_from_environment(
+            gpu::GpuLinearTransformMode::ClassicBsgs);
+    if (linear_transform_mode == gpu::GpuLinearTransformMode::SingleHoistBsgs)
+    {
+        throw std::invalid_argument(
+            "GPU ResNet20 Bootstrap supports classic or double_hoist mode");
+    }
+
     auto host_galois_keys = make_bootstrap_galois_keys(
         impl_->context, impl_->keygen, coeff_to_slot, slot_to_coeff);
-    auto uploaded_galois = gpu::GpuUploader::upload_galois_keys(
-        host_galois_keys, impl_->device_id);
+    auto uploaded_galois =
+        linear_transform_mode == gpu::GpuLinearTransformMode::DoubleHoistBsgs
+            ? gpu::GpuUploader::upload_double_hoist_galois_keys(
+                  host_galois_keys, impl_->device_id)
+            : gpu::GpuUploader::upload_galois_keys(
+                  host_galois_keys, impl_->device_id);
     impl_->gpu_bootstrap_galois_keys =
         std::make_unique<gpu::GpuGaloisKeysData>(std::move(uploaded_galois));
     auto key_q_counts = required_dft_key_q_counts(
@@ -1236,6 +1798,103 @@ void GpuCkksRuntime::initialize_bootstrap()
         key_q_counts.end());
     gpu::GpuUploader::prepare_key_views_for_q_counts(
         *impl_->gpu_bootstrap_galois_keys, key_q_counts);
+
+    const char *level_aware_bootstrap_env =
+        std::getenv("POSEIDON_LEVEL_AWARE_BOOTSTRAP_P");
+    const bool level_aware_bootstrap_enabled =
+        level_aware_bootstrap_env == nullptr ||
+        std::string(level_aware_bootstrap_env) != "0";
+    if (level_aware_bootstrap_enabled)
+    {
+        BootstrapRotationRequirements rotation_requirements;
+        const std::size_t c2s_final_q_count =
+            add_dft_rotation_requirements(
+                impl_->config.bootstrap_q_count,
+                coeff_to_slot,
+                /*conjugate_output=*/true,
+                rotation_requirements);
+        if (c2s_final_q_count != c2s_output_q_count)
+        {
+            throw std::logic_error(
+                "GPU bootstrap C2S KeySwitch level plan is inconsistent");
+        }
+        const std::size_t s2c_final_q_count =
+            add_dft_rotation_requirements(
+                evalmod_data.output_q_count,
+                slot_to_coeff,
+                /*conjugate_output=*/false,
+                rotation_requirements);
+        // project_real performs one final conjugation after SlotToCoeff.
+        rotation_requirements[s2c_final_q_count].insert(0);
+
+        std::set<std::size_t> relinearization_q_counts(
+            evalmod_data.required_relin_q_counts.begin(),
+            evalmod_data.required_relin_q_counts.end());
+        std::set<std::size_t> candidate_q_counts =
+            relinearization_q_counts;
+        for (const auto &entry : rotation_requirements)
+        {
+            candidate_q_counts.insert(entry.first);
+        }
+
+        const std::size_t global_p_count = impl_->parameters.p().size();
+        for (const std::size_t q_count : candidate_q_counts)
+        {
+            // A separate context helps only after Q has fallen below the
+            // global P width. At higher levels the configured global HYBRID
+            // decomposition remains the intended path.
+            if (q_count < 2 || q_count >= global_p_count)
+            {
+                continue;
+            }
+
+            std::vector<int> rotation_steps;
+            const auto rotation_iter = rotation_requirements.find(q_count);
+            if (rotation_iter != rotation_requirements.end())
+            {
+                rotation_steps.assign(
+                    rotation_iter->second.begin(),
+                    rotation_iter->second.end());
+            }
+            const bool needs_relinearization =
+                relinearization_q_counts.count(q_count) != 0;
+            if (rotation_steps.empty() && !needs_relinearization)
+            {
+                continue;
+            }
+
+            auto level_runtime =
+                std::make_unique<LevelAwareKeySwitchRuntime>(
+                    impl_->parameters,
+                    impl_->keygen,
+                    q_count,
+                    q_count,
+                    rotation_steps,
+                    impl_->device_id,
+                    needs_relinearization);
+            const auto primary_parms_id = impl_->context.crt_context()
+                ->parms_id_map().at(static_cast<std::uint32_t>(q_count - 1));
+            const auto level_parms_id = level_runtime->context.crt_context()
+                ->parms_id_map().at(static_cast<std::uint32_t>(q_count - 1));
+            if (primary_parms_id != level_parms_id)
+            {
+                throw std::logic_error(
+                    "level-aware bootstrap Q context is incompatible with ciphertext");
+            }
+            std::cout << "[GPU bootstrap] level-aware keyswitch q="
+                      << q_count << " p=" << q_count
+                      << " dnum=1 rotations=" << rotation_steps.size()
+                      << " relin=" << (needs_relinearization ? 1 : 0)
+                      << '\n';
+            impl_->bootstrap_level_keyswitch_runtimes.emplace(
+                q_count, std::move(level_runtime));
+        }
+    }
+    else
+    {
+        std::cout << "[GPU bootstrap] level-aware P disabled; using global "
+                     "KeySwitch basis\n";
+    }
 
     Plaintext minus_i;
     impl_->encoder.encode(
@@ -1252,7 +1911,7 @@ void GpuCkksRuntime::initialize_bootstrap()
         plus_i);
 
     auto data = std::make_unique<gpu::GpuBootstrapData>();
-    data->linear_transform_mode = gpu::GpuLinearTransformMode::ClassicBsgs;
+    data->linear_transform_mode = linear_transform_mode;
     data->q0_parms_id = impl_->context.crt_context()->parms_id_map().at(
         impl_->config.q0_level);
     data->raised_parms_id = impl_->context.crt_context()->parms_id_map().at(
@@ -1265,12 +1924,30 @@ void GpuCkksRuntime::initialize_bootstrap()
     data->project_real = true;
     data->output_ratio = impl_->config.message_ratio;
     data->slot_to_coeff_output_scale = evalmod_scale;
-    data->coeff_to_slot_matrix =
-        gpu::GpuUploader::upload_linear_matrix_group(
-            coeff_to_slot, impl_->device_id);
-    data->slot_to_coeff_matrix =
-        gpu::GpuUploader::upload_linear_matrix_group(
-            slot_to_coeff, impl_->device_id);
+    if (linear_transform_mode == gpu::GpuLinearTransformMode::DoubleHoistBsgs)
+    {
+        data->coeff_to_slot_matrix_qp =
+            gpu::GpuUploader::upload_linear_matrix_group_qp(
+                coeff_to_slot,
+                impl_->context,
+                impl_->device_id,
+                std::max(coeff_to_slot.step(), std::uint32_t{1}));
+        data->slot_to_coeff_matrix_qp =
+            gpu::GpuUploader::upload_linear_matrix_group_qp(
+                slot_to_coeff,
+                impl_->context,
+                impl_->device_id,
+                std::max(slot_to_coeff.step(), std::uint32_t{1}));
+    }
+    else
+    {
+        data->coeff_to_slot_matrix =
+            gpu::GpuUploader::upload_linear_matrix_group(
+                coeff_to_slot, impl_->device_id);
+        data->slot_to_coeff_matrix =
+            gpu::GpuUploader::upload_linear_matrix_group(
+                slot_to_coeff, impl_->device_id);
+    }
     data->minus_i_plaintext = gpu::GpuUploader::upload_plaintext(
         minus_i, impl_->device_id);
     data->plus_i_plaintext = gpu::GpuUploader::upload_plaintext(
@@ -1278,6 +1955,12 @@ void GpuCkksRuntime::initialize_bootstrap()
     data->eval_mod = std::move(evalmod_data);
     impl_->bootstrap_data = std::move(data);
     impl_->bootstrap_workspace = std::make_unique<gpu::GpuBootstrapWorkspace>();
+    std::cout << "[GPU bootstrap] linear_transform="
+              << (linear_transform_mode ==
+                          gpu::GpuLinearTransformMode::DoubleHoistBsgs
+                      ? "double_hoist"
+                      : "classic")
+              << '\n';
 }
 
 bool GpuCkksRuntime::bootstrap_ready() const noexcept
@@ -1326,6 +2009,96 @@ GpuCkksRuntime::DeviceCiphertext GpuCkksRuntime::bootstrap(
         impl_->context,
         static_cast<std::size_t>(impl_->config.q0_level + 1),
         impl_->config.bootstrap_q_count);
+    gpu::GpuKeySwitchDispatch keyswitch_dispatch;
+    keyswitch_dispatch.rotate =
+        [this](const DeviceCiphertext &input,
+               int step,
+               DeviceCiphertext &output) {
+            const auto found =
+                impl_->bootstrap_level_keyswitch_runtimes.find(
+                    input.meta.q_count);
+            if (found == impl_->bootstrap_level_keyswitch_runtimes.end() ||
+                found->second->gpu_galois_keys.empty())
+            {
+                return false;
+            }
+            found->second->gpu_evaluator->rotate(
+                input, step, found->second->gpu_galois_keys, output);
+            return true;
+        };
+    keyswitch_dispatch.conjugate =
+        [this](const DeviceCiphertext &input, DeviceCiphertext &output) {
+            const auto found =
+                impl_->bootstrap_level_keyswitch_runtimes.find(
+                    input.meta.q_count);
+            if (found == impl_->bootstrap_level_keyswitch_runtimes.end() ||
+                found->second->gpu_galois_keys.empty())
+            {
+                return false;
+            }
+            found->second->gpu_evaluator->conjugate(
+                input, found->second->gpu_galois_keys, output);
+            return true;
+        };
+    keyswitch_dispatch.relinearize =
+        [this](const DeviceCiphertext &input, DeviceCiphertext &output) {
+            const auto found =
+                impl_->bootstrap_level_keyswitch_runtimes.find(
+                    input.meta.q_count);
+            if (found == impl_->bootstrap_level_keyswitch_runtimes.end() ||
+                found->second->gpu_relin_keys.empty())
+            {
+                return false;
+            }
+            found->second->gpu_evaluator->relinearize(
+                input, found->second->gpu_relin_keys, output);
+            return true;
+        };
+    keyswitch_dispatch.relinearize_rescale_x2 =
+        [this](const DeviceCiphertext &input, DeviceCiphertext &output) {
+            const auto found =
+                impl_->bootstrap_level_keyswitch_runtimes.find(
+                    input.meta.q_count);
+            if (found == impl_->bootstrap_level_keyswitch_runtimes.end() ||
+                found->second->gpu_relin_keys.empty())
+            {
+                return false;
+            }
+            found->second->gpu_evaluator->relinearize_rescale_x2_hybrid(
+                input, found->second->gpu_relin_keys, output);
+            return true;
+        };
+
+    class ScopedKeySwitchDispatch
+    {
+    public:
+        ScopedKeySwitchDispatch(
+            const gpu::GpuEvaluator &evaluator,
+            const gpu::GpuKeySwitchDispatch *dispatch)
+            : evaluator_(evaluator)
+        {
+            evaluator_.set_keyswitch_dispatch(dispatch);
+        }
+
+        ~ScopedKeySwitchDispatch()
+        {
+            evaluator_.set_keyswitch_dispatch(nullptr);
+        }
+
+    private:
+        const gpu::GpuEvaluator &evaluator_;
+    };
+
+    const char *level_aware_bootstrap_env =
+        std::getenv("POSEIDON_LEVEL_AWARE_BOOTSTRAP_P");
+    const bool use_level_aware_bootstrap =
+        !impl_->bootstrap_level_keyswitch_runtimes.empty() &&
+        (level_aware_bootstrap_env == nullptr ||
+         std::string(level_aware_bootstrap_env) != "0");
+    ScopedKeySwitchDispatch scoped_dispatch(
+        impl_->gpu_evaluator,
+        use_level_aware_bootstrap ? &keyswitch_dispatch : nullptr);
+
     DeviceCiphertext result;
     impl_->gpu_evaluator.bootstrap(
         source,
@@ -1480,8 +2253,81 @@ GpuCkksRuntime::DeviceCiphertext GpuCkksRuntime::multiply_relinearize_rescale(
     DeviceCiphertext multiplied;
     impl_->gpu_evaluator.multiply(*left_view, *right_view, multiplied);
     DeviceCiphertext relinearized;
-    impl_->gpu_evaluator.relinearize(
-        multiplied, *impl_->gpu_relin_keys, relinearized);
+    auto level_runtime = impl_->level_keyswitch_runtimes.find(
+        target_q_count);
+    if (level_runtime == impl_->level_keyswitch_runtimes.end() &&
+        impl_->level_aware_application_keyswitch_enabled &&
+        impl_->application_keyswitch_p_mode ==
+            ApplicationKeySwitchPMode::fixed_dnum)
+    {
+        const auto shape = application_keyswitch_shape(target_q_count);
+        if (shape.level_aware)
+        {
+            std::shared_ptr<LevelAwareKeySwitchRuntime> runtime;
+            for (const auto &[unused_q_count, candidate] :
+                 impl_->level_keyswitch_runtimes)
+            {
+                (void)unused_q_count;
+                if (candidate->p_count == shape.p_count &&
+                    candidate->q_count >= target_q_count)
+                {
+                    runtime = candidate;
+                    break;
+                }
+            }
+            if (!runtime)
+            {
+                const std::size_t context_q_count = std::min(
+                    impl_->parameters.q().size(),
+                    shape.p_count *
+                        static_cast<std::size_t>(impl_->config.dnum));
+                if (context_q_count < target_q_count)
+                {
+                    throw std::logic_error(
+                        "fixed-dnum relinearization context is too small");
+                }
+                runtime = std::make_shared<LevelAwareKeySwitchRuntime>(
+                    impl_->parameters,
+                    impl_->keygen,
+                    context_q_count,
+                    shape.p_count,
+                    std::vector<int>{},
+                    impl_->device_id,
+                    /*create_relinearization_key=*/true);
+            }
+            const auto primary_parms_id = impl_->context.crt_context()
+                ->parms_id_map().at(
+                    static_cast<std::uint32_t>(target_q_count - 1));
+            const auto level_parms_id = runtime->context.crt_context()
+                ->parms_id_map().at(
+                    static_cast<std::uint32_t>(target_q_count - 1));
+            if (primary_parms_id != level_parms_id)
+            {
+                throw std::logic_error(
+                    "fixed-dnum relinearization Q context is incompatible with ciphertext");
+            }
+            std::cout
+                << "[GPU ResNet20] application relinearize keyswitch level q="
+                << target_q_count << " p=" << runtime->p_count
+                << " target_dnum=" << impl_->config.dnum
+                << " effective_dnum=" << shape.effective_dnum
+                << " shared_context_q=" << runtime->q_count << '\n';
+            level_runtime = impl_->level_keyswitch_runtimes.emplace(
+                target_q_count, std::move(runtime)).first;
+        }
+    }
+    if (level_runtime != impl_->level_keyswitch_runtimes.end())
+    {
+        level_runtime->second->gpu_evaluator->relinearize(
+            multiplied,
+            level_runtime->second->gpu_relin_keys,
+            relinearized);
+    }
+    else
+    {
+        impl_->gpu_evaluator.relinearize(
+            multiplied, *impl_->gpu_relin_keys, relinearized);
+    }
     auto reduced = rescale(
         relinearized,
         impl_->config.cipher_product_rescale_primes);

@@ -7,6 +7,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
+#include <map>
 #include <memory>
 #include <optional>
 #include <stdexcept>
@@ -32,24 +33,35 @@ constexpr int kImageChannels = 3;
 constexpr int kClassCount = 10;
 constexpr int kFinalChannels = 64;
 
-const std::vector<int> &resnet20_direct_rotation_steps()
+const std::map<std::size_t, std::vector<int>> &
+resnet20_direct_rotation_steps_by_q()
 {
-    // Exhaustive logical rotations recorded from the complete fixed ResNet20
-    // topology. Keep these keys ready before the first network operation.
-    static const std::vector<int> steps{
-        1, 2, 3, 4, 5, 6, 7, 8, 16, 24, 28, 31, 32, 33, 40, 48,
-        56, 62, 64, 66, 84, 124, 128, 132, 256, 512, 960, 990, 991,
-        1008, 1024, 1952, 1982, 2016, 2047, 2048, 2078, 3024, 3040,
-        3070, 4032, 4062, 4063, 4095, 4096, 5024, 5054, 5119, 6112,
-        7135, 7168, 8190, 8191, 8192, 9184, 10207, 12285, 12288,
-        15360, 16352, 16382, 16383, 16384, 18432, 20447, 20480, 22528,
-        24542, 24543, 24573,
-        24576, 25568, 25600, 26592, 26624, 27616, 27648, 28637,
-        28640, 28672, 29600, 29632, 29664, 29696, 30624, 30656,
-        30688, 30720, 31648, 31680, 31712, 31743, 31744, 31774,
-        32636, 32640, 32644, 32672, 32702, 32704, 32706, 32735,
-        32736, 32737, 32752, 32760, 32764, 32766, 32767};
-    return steps;
+    // Collected from a complete fixed-topology inference with
+    // POSEIDON_TRACE_ROTATION_STEPS=1. The union remains the original 109
+    // logical steps, but only 139 level-specific keys are needed instead of
+    // materializing all 109 steps independently at each of Q3..Q8.
+    static const std::map<std::size_t, std::vector<int>> plan{
+        {3, {8, 16, 24, 32, 40, 48, 56, 32752, 32760}},
+        {4, {1, 2, 3, 4, 5, 6, 7}},
+        {5, {1008, 2016, 3024, 15360}},
+        {6,
+         {28, 56, 84, 4095, 8190, 8191, 12285, 15360, 16352, 16382,
+          16383, 20447, 24542, 24543, 24573, 28637}},
+        {7,
+         {1, 31, 32, 33, 128, 256, 512, 1024, 2048, 4096, 8192,
+          16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720,
+          32735, 32736, 32737, 32767}},
+        {8,
+         {1, 2, 4, 8, 16, 31, 32, 33, 62, 64, 66, 124, 128, 132,
+          960, 990, 991, 1024, 1952, 1982, 2047, 2048, 2078, 3040,
+          3070, 4032, 4062, 4063, 4096, 5024, 5054, 5119, 6112,
+          7135, 7168, 8191, 8192, 9184, 10207, 12288, 16384, 18432,
+          20480, 22528, 24576, 25568, 25600, 26592, 26624, 27616,
+          27648, 28640, 28672, 29600, 29632, 29664, 29696, 30624,
+          30656, 30688, 30720, 31648, 31680, 31712, 31743, 31744,
+          31774, 32636, 32640, 32644, 32672, 32702, 32704, 32706,
+          32735, 32736, 32737, 32764, 32766, 32767}}};
+    return plan;
 }
 
 using GpuCkksRuntime = shared_gpu::GpuCkksRuntime;
@@ -380,6 +392,41 @@ int argmax(const std::vector<double> &values)
                      values.begin(), std::max_element(values.begin(), values.end())));
 }
 
+void validate_full_result_against_plaintext(
+    std::size_t image_id,
+    const ResNet20Topology &topology,
+    const ResNet20Weights &weights,
+    const std::string &label,
+    GpuResNet20Result &result)
+{
+    const auto validation_image = load_cifar10_image_chw(image_id, kBoundary);
+    const auto plain_features =
+        plain_resnet20_features(validation_image, topology, weights);
+    const auto reference_logits = plain_head_logits(plain_features, weights);
+    if (reference_logits.size() != result.logits.size())
+    {
+        throw std::runtime_error(label + " plaintext logit shape mismatch");
+    }
+
+    result.max_logit_error = 0.0;
+    for (std::size_t index = 0; index < reference_logits.size(); ++index)
+    {
+        result.max_logit_error =
+            std::max(result.max_logit_error,
+                     std::abs(result.logits[index] - reference_logits[index]));
+    }
+    const int plaintext_prediction = argmax(reference_logits);
+    std::cout << "[GPU ResNet20] " << label
+              << " plain_pred=" << plaintext_prediction
+              << " gpu_pred=" << result.predicted_label
+              << " max_logit_error=" << result.max_logit_error << '\n';
+    if (plaintext_prediction != result.predicted_label ||
+        !std::isfinite(result.max_logit_error) || result.max_logit_error > 0.1)
+    {
+        throw std::runtime_error(label + " plaintext-reference verification failed");
+    }
+}
+
 void verify_values(const std::string &label, const std::vector<double> &expected,
                    const std::vector<double> &actual, double tolerance)
 {
@@ -639,9 +686,34 @@ GpuResNet20Result run_gpu_resnet20(std::size_t image_id,
     {
         runtime.initialize_bootstrap();
     }
-    return run_gpu_resnet20_impl(
+    auto result = run_gpu_resnet20_impl(
         image_id, topology, weights, max_blocks, runtime,
         /*enable_validation=*/true, /*measure_gpu_only=*/false);
+    runtime.print_rotation_step_trace();
+    return result;
+}
+
+GpuResNet20Result run_gpu_resnet20_direct(
+    std::size_t image_id,
+    const ResNet20GpuConfig &config,
+    const ResNet20Topology &topology,
+    const ResNet20Weights &weights,
+    std::size_t max_blocks)
+{
+    GpuCkksRuntime runtime(config);
+    runtime.initialize_bootstrap();
+    runtime.initialize_direct_rotation_keys(
+        resnet20_direct_rotation_steps_by_q());
+    runtime.synchronize();
+    auto result = run_gpu_resnet20_impl(
+        image_id, topology, weights, max_blocks, runtime,
+        /*enable_validation=*/true, /*measure_gpu_only=*/false);
+    if (max_blocks == topology.blocks.size())
+    {
+        validate_full_result_against_plaintext(
+            image_id, topology, weights, "direct_full_validation", result);
+    }
+    return result;
 }
 
 GpuResNet20Result run_gpu_resnet20_preloaded(
@@ -653,7 +725,7 @@ GpuResNet20Result run_gpu_resnet20_preloaded(
     GpuCkksRuntime runtime(config);
     runtime.initialize_bootstrap();
     runtime.initialize_direct_rotation_keys(
-        resnet20_direct_rotation_steps());
+        resnet20_direct_rotation_steps_by_q());
     runtime.synchronize();
     runtime.enable_full_device_cache();
     std::cout << "[GPU ResNet20] all rotation keys ready; preparing "
@@ -662,6 +734,7 @@ GpuResNet20Result run_gpu_resnet20_preloaded(
         image_id, topology, weights, topology.blocks.size(), runtime,
         /*enable_validation=*/false, /*measure_gpu_only=*/false);
     runtime.synchronize();
+    runtime.print_rotation_step_trace();
 
     std::cout << "[GPU ResNet20] preparation complete; starting GPU-only pass\n";
     auto measured_result = run_gpu_resnet20_impl(
@@ -687,6 +760,31 @@ GpuResNet20Result run_gpu_resnet20_preloaded(
         !std::isfinite(replay_logit_error) || replay_logit_error > 1.0e-8)
     {
         throw std::runtime_error("preloaded GPU replay verification failed");
+    }
+
+    // The replay check detects nondeterminism but cannot detect a consistently
+    // wrong low-P key switch. Also compare the measured encrypted logits with
+    // the independent plaintext ResNet20 reference outside the timed region.
+    const auto validation_image = load_cifar10_image_chw(image_id, kBoundary);
+    const auto plain_features =
+        plain_resnet20_features(validation_image, topology, weights);
+    const auto reference_logits = plain_head_logits(plain_features, weights);
+    double plaintext_logit_error = 0.0;
+    for (std::size_t index = 0; index < reference_logits.size(); ++index)
+    {
+        plaintext_logit_error = std::max(
+            plaintext_logit_error,
+            std::abs(measured_result.logits[index] - reference_logits[index]));
+    }
+    const int plaintext_prediction = argmax(reference_logits);
+    std::cout << "[GPU ResNet20] preloaded_plain_pred=" << plaintext_prediction
+              << " gpu_pred=" << measured_result.predicted_label
+              << " max_logit_error=" << plaintext_logit_error << '\n';
+    if (plaintext_prediction != measured_result.predicted_label ||
+        !std::isfinite(plaintext_logit_error) || plaintext_logit_error > 0.1)
+    {
+        throw std::runtime_error(
+            "preloaded GPU plaintext-reference verification failed");
     }
     return measured_result;
 }

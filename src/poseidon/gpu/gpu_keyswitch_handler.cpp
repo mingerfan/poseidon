@@ -51,6 +51,8 @@ constexpr const char *kDoubleHoistP9PToQRowTiled8Env =
     "POSEIDON_DOUBLE_HOIST_P9_P_TO_Q_ROW_TILED_8";
 constexpr const char *kDoubleHoistP9QpFourstepEnv =
     "POSEIDON_DOUBLE_HOIST_P9_QP_FOURSTEP";
+constexpr const char *kDoubleHoistP9DigitBatchedEnv =
+    "POSEIDON_DOUBLE_HOIST_P9_DIGIT_BATCHED";
 constexpr const char *kDoubleHoistP9PToQFourstepEnv =
     "POSEIDON_DOUBLE_HOIST_P9_P_TO_Q_FOURSTEP";
 constexpr const char *kP9ModupFourstepPhase1FusedEnv =
@@ -389,6 +391,30 @@ bool use_double_hoist_p9_qp_fourstep(
     if (raw == nullptr || *raw == '\0')
     {
         return true;
+    }
+
+    const std::string value(raw);
+    return value != "0" &&
+           value != "OFF" &&
+           value != "off" &&
+           value != "false" &&
+           value != "FALSE";
+}
+
+bool use_double_hoist_p9_digit_batched(
+    std::size_t degree,
+    std::size_t base_p_size,
+    std::size_t digit_count)
+{
+    if (degree != 65536 || base_p_size != 9 || digit_count < 2)
+    {
+        return false;
+    }
+
+    const char *raw = std::getenv(kDoubleHoistP9DigitBatchedEnv);
+    if (raw == nullptr || *raw == '\0')
+    {
+        return false;
     }
 
     const std::string value(raw);
@@ -2205,6 +2231,49 @@ void GpuKeySwitchHandler::hoist_decompose_modup_ntt(
         source_shard,
         *parameter_shard,
         level_info.degree);
+
+    if (use_double_hoist_p9_qp_fourstep(level_info.degree, p_count) &&
+        use_double_hoist_p9_digit_batched(
+            level_info.degree,
+            p_count,
+            dnum))
+    {
+        NvtxRange digit_batch_range(
+            "double_hoist.decompose.modup_ntt.p9_digit_batched");
+        const std::size_t batched_q_words = dnum * q_words;
+        const std::size_t batched_p_words = dnum * p_words;
+        if (workspace.permuted_digit_q.size() < batched_q_words ||
+            workspace.permuted_digit_q.device_id() != source_shard.device_id)
+        {
+            workspace.permuted_digit_q.allocate(
+                batched_q_words,
+                source_shard.device_id);
+        }
+        if (workspace.permuted_digit_p.size() < batched_p_words ||
+            workspace.permuted_digit_p.device_id() != source_shard.device_id)
+        {
+            workspace.permuted_digit_p.allocate(
+                batched_p_words,
+                source_shard.device_id);
+        }
+        kernel::launch_hybrid_modup_decomposition_row_tiled8_all_digits_p9(
+            workspace.permuted_digit_q.data(),
+            workspace.permuted_digit_p.data(),
+            destination.source_intt_q.data(),
+            dnum,
+            *parameter_shard,
+            level_info.degree);
+        kernel::launch_forward_ntt_qp_active_fourstep_all_digits_65536(
+            destination.digits_q_ntt.data(),
+            destination.digits_p_ntt.data(),
+            workspace.permuted_digit_q.data(),
+            workspace.permuted_digit_p.data(),
+            source_shard.ptr,
+            dnum,
+            *parameter_shard,
+            level_info.degree);
+        return;
+    }
 
     GpuConstPolyShardView intt_q_const;
     intt_q_const.device_id = intt_q.device_id;
