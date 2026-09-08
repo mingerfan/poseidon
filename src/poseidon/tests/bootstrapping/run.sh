@@ -35,7 +35,7 @@ POSEIDON_EVALMOD_LAZY_RELIN="${POSEIDON_EVALMOD_LAZY_RELIN:-1}"
 POSEIDON_EVALMOD_D2D_FREE_DATAFLOW="${POSEIDON_EVALMOD_D2D_FREE_DATAFLOW:-1}"
 POSEIDON_EVALMOD_ZERO_COPY_MODDROP="${POSEIDON_EVALMOD_ZERO_COPY_MODDROP:-1}"
 POSEIDON_EVALMOD_Q_PREFIX_VIEWS="${POSEIDON_EVALMOD_Q_PREFIX_VIEWS:-1}"
-POSEIDON_BOOTSTRAP_PROFILE="${POSEIDON_BOOTSTRAP_PROFILE:-dynamic32}"
+POSEIDON_BOOTSTRAP_PROFILE="${POSEIDON_BOOTSTRAP_PROFILE:-slim22_da3_c2s5433}"
 
 if [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "dynamic32" ||
       "${POSEIDON_BOOTSTRAP_PROFILE}" == "dual30" ||
@@ -267,7 +267,7 @@ if [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim59_da2" ||
       "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_da3_c2s5433" ||
       "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_direct_da3_c2s5433" ]]; then
     echo "[WARN] Named StC-first profile ${POSEIDON_BOOTSTRAP_PROFILE}: degree=${POSEIDON_BOOTSTRAP_EVALMOD_SINE_DEGREE}, double_angle=${POSEIDON_BOOTSTRAP_EVALMOD_DOUBLE_ANGLE}."
-    echo "       dynamic32 remains the production profile; the two StC-first variants are independent paths."
+    echo "       slim22_da3_c2s5433 is the script default; dynamic32 remains available as the production profile."
 fi
 if [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_da3" ||
       "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_da3_c2s5433" ||
