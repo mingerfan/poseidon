@@ -1,0 +1,155 @@
+diff --git a/src/poseidon/gpu/gpu_evaluator.cpp b/src/poseidon/gpu/gpu_evaluator.cpp
+index 63e5ab6..04be757 100644
+--- a/src/poseidon/gpu/gpu_evaluator.cpp
++++ b/src/poseidon/gpu/gpu_evaluator.cpp
+@@ -5758,8 +5758,14 @@ void GpuEvaluator::eval_mod_high_precision(
+             }
+             if (bootstrap_data.eval_mod.dynamic_rescale)
+             {
+-                rescale_dynamic(accumulator, workspace.scratch2, target_scale);
+-                accumulator = std::move(workspace.scratch2);
++                if (bootstrap_data.eval_mod.polynomial_final_rescale_count > 0)
++                {
++                    rescale_many(
++                        accumulator,
++                        workspace.scratch2,
++                        bootstrap_data.eval_mod.polynomial_final_rescale_count);
++                    accumulator = std::move(workspace.scratch2);
++                }
+                 if (bootstrap_data.eval_mod.polynomial_output_scale > 0.0)
+                 {
+                     accumulator.meta.scale =
+@@ -5838,7 +5844,13 @@ void GpuEvaluator::eval_mod_high_precision(
+                           double_angle_plaintext.meta.parms_id))
+                     {
+                         throw std::invalid_argument(
+-                            "GpuEvaluator::eval_mod_high_precision: dynamic double-angle plaintext level mismatch");
++                            "GpuEvaluator::eval_mod_high_precision: dynamic double-angle plaintext level mismatch at step " +
++                            std::to_string(double_angle_index) +
++                            " (cipher q=" +
++                            std::to_string(workspace.scratch3.meta.q_count) +
++                            ", plaintext q=" +
++                            std::to_string(double_angle_plaintext.meta.q_count) +
++                            ")");
+                     }
+                     add_plain(
+                         workspace.scratch3,
+diff --git a/src/poseidon/gpu/gpu_evaluator.h b/src/poseidon/gpu/gpu_evaluator.h
+index f8692a7..7d10992 100644
+--- a/src/poseidon/gpu/gpu_evaluator.h
++++ b/src/poseidon/gpu/gpu_evaluator.h
+@@ -180,6 +180,7 @@ struct GpuBootstrapData
+          * performs one logical rescale; the legacy plan rescales every term.
+          */
+         std::uint32_t polynomial_rescale_count = 1;
++        std::uint32_t polynomial_final_rescale_count = 0;
+         double polynomial_output_scale = 0.0;
+         bool rescale_polynomial_terms_individually = false;
+ 
+diff --git a/src/poseidon/gpu/gpu_uploader.cpp b/src/poseidon/gpu/gpu_uploader.cpp
+index b63b2de..590731a 100644
+--- a/src/poseidon/gpu/gpu_uploader.cpp
++++ b/src/poseidon/gpu/gpu_uploader.cpp
+@@ -1325,6 +1325,7 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
+     {
+         requested_degrees.push_back(combine.basis_degree);
+     }
++    std::uint32_t polynomial_final_rescale_count = 0;
+     if (dynamic_rescale)
+     {
+         requested_degrees.push_back(degree_bound);
+@@ -1697,8 +1698,28 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
+                         node.polynomial,
+                         target_level,
+                         requested_scale);
+-                const std::size_t leaf_q_count =
++                std::size_t leaf_q_count =
+                     static_cast<std::size_t>(leaf_level) + 1;
++                for (std::size_t degree = 1;
++                     degree < node.polynomial.data().size();
++                     ++degree)
++                {
++                    if (!eval_mod_coefficient_is_nonzero(
++                            node.polynomial.data()[degree]))
++                    {
++                        continue;
++                    }
++                    const auto basis_q_iter = basis_q_counts.find(
++                        static_cast<std::uint32_t>(degree));
++                    if (basis_q_iter == basis_q_counts.end())
++                    {
++                        throw std::logic_error(
++                            "GpuUploader::upload_eval_mod_high_precision: missing dynamic leaf basis level");
++                    }
++                    leaf_q_count = std::min(
++                        leaf_q_count,
++                        basis_q_iter->second);
++                }
+                 node_valid[node.node_id] = true;
+                 node_q_counts[node.node_id] = leaf_q_count;
+                 node_scales[node.node_id] = leaf_scale;
+@@ -2013,6 +2034,7 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
+                 root_node.q_count,
+                 root_node.scale,
+                 target_scale);
++        polynomial_final_rescale_count = final_rescale_count;
+         node_q_counts[result.polynomial_result_node] =
+             root_node.q_count - final_rescale_count;
+         node_scales[result.polynomial_result_node] = rescaled_scale(
+@@ -2165,6 +2187,8 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
+         node_q_counts[result.polynomial_result_node];
+     result.polynomial_output_scale =
+         node_scales[result.polynomial_result_node];
++    result.polynomial_final_rescale_count =
++        polynomial_final_rescale_count;
+     if (output_q_count == 0)
+     {
+         throw std::logic_error(
+diff --git a/src/poseidon/tests/bootstrapping/test_gpu_bootstrap_modraise.cpp b/src/poseidon/tests/bootstrapping/test_gpu_bootstrap_modraise.cpp
+index 8799754..d133ac7 100644
+--- a/src/poseidon/tests/bootstrapping/test_gpu_bootstrap_modraise.cpp
++++ b/src/poseidon/tests/bootstrapping/test_gpu_bootstrap_modraise.cpp
+@@ -2717,8 +2717,11 @@ int main()
+                   << "\n";
+         std::cout << "Galois key views = "
+                   << join_q_counts(full_key_q_counts) << "\n";
+-        std::cout << "polynomial degree= "
+-                  << bootstrap_evalmod_polynomial.degree() << "\n";
++        std::cout << "active polynomial degree= "
++                  << (evalmod_dynamic_rescale
++                          ? eval_mod_poly.sine_poly().degree()
++                          : bootstrap_evalmod_polynomial.degree())
++                  << "\n";
+         std::cout << "basis steps       = "
+                   << bootstrap_data.eval_mod.basis_steps.size() << "\n";
+         if (bootstrap_data.eval_mod.dynamic_rescale)
+@@ -3542,6 +3545,29 @@ int main()
+                 evalmod_dynamic_rescale
+                     ? evalmod_output_parms_id
+                     : cpu_evalmod_output_parms_id;
++            if (evalmod_dynamic_rescale)
++            {
++                if (cpu_eval_real.coeff_modulus_size() < evalmod_output_q_count ||
++                    cpu_eval_imag.coeff_modulus_size() < evalmod_output_q_count)
++                {
++                    throw std::runtime_error(
++                        "CPU EvalMod consumed more levels than the experimental GPU schedule");
++                }
++                if (cpu_eval_real.coeff_modulus_size() > evalmod_output_q_count)
++                {
++                    cpu_evaluator->drop_modulus(
++                        cpu_eval_real,
++                        cpu_eval_real,
++                        expected_cpu_evalmod_parms_id);
++                }
++                if (cpu_eval_imag.coeff_modulus_size() > evalmod_output_q_count)
++                {
++                    cpu_evaluator->drop_modulus(
++                        cpu_eval_imag,
++                        cpu_eval_imag,
++                        expected_cpu_evalmod_parms_id);
++                }
++            }
+             if (cpu_eval_real.parms_id() != expected_cpu_evalmod_parms_id ||
+                 cpu_eval_imag.parms_id() != expected_cpu_evalmod_parms_id)
+             {

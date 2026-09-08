@@ -1,0 +1,194 @@
+=== Configure ===
+Using cmake: /opt/conda/envs/apollo/bin/cmake
+cmake version 3.27.1
+
+CMake suite maintained and supported by Kitware (kitware.com/cmake).
+-- CROSS_COMPILE_ARRCH64: OFF
+-- AddressSanitizer disabled.
+-- Build type (CMAKE_BUILD_TYPE): Release
+-- POSEIDON_USE_CXX17: ON
+-- Install Path: /usr/local
+-- POSEIDON_BUILD_DEPS: OFF
+-- POSEIDON_USE_ZLIB: OFF
+-- POSEIDON_USE_ZSTD: OFF
+-- POSEIDON_USE_MSGSL: OFF
+-- POSEIDON_USE_INTEL_HEXL: OFF
+-- POSEIDON_USE_HARDWARE: OFF
+-- POSEIDON_BUILD_EXAMPLES: OFF
+-- POSEIDON_BUILD_BENCH: OFF
+-- POSEIDON_BUILD_MGPU: OFF
+-- POSEIDON_BUILD_MGPU_BENCH: OFF
+-- RMM: using bundled source at /home/liufuyao/Work/poseidon_gpu_evalmod30_da3/src/poseidon/tests/bootstrapping/../../../../third_party/rmm
+-- RMM: RMM_LOGGING_LEVEL = 'OFF'
+-- {fmt} version: 11.0.2
+-- Build type: Release
+-- Build spdlog: 1.14.1
+-- Build type: Release
+-- Configuring done (0.1s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/liufuyao/Work/poseidon_gpu_evalmod30_da3/src/poseidon/tests/bootstrapping/experiments/evalmod_degree30_da3/build
+=== Build ===
+[ 77%] Built target poseidon_shared
+[100%] Built target test_gpu_bootstrap_modraise
+=== Run GPU high-precision bootstrap correctness + timing comparison ===
+Bootstrap profile: dynamic32
+[bootstrap ModRaise test parameters]
+degree          = 65536
+q_count         = 34
+p_count         = 9
+log_q           = 32
+q bit chain     = 32,32,32,32,32,32,32,32,32,32,32,32,28,28,31,31,32,32,30,31,32,31,32,32,31,31,31,32,32,31,32,32,32,30
+log_p           = 32
+log_scale       = 40
+q0_level        = 1
+message_ratio   = 32
+evalmod_scale   = 2^45
+evalmod_degree  = 30
+evalmod_rescale = 1 physical prime(s) per logical step
+evalmod_dynamic = ON
+double_angle    = 3
+evalmod_k       = 16
+tolerance       = 0.002
+c2s_scaling     = 1.21434e-07
+c2s_bsgs_ratio  = 1
+c2s_step        = 1
+c2s_rescale     = dynamic (GS min_scale/2)
+s2c_scaling     = 1
+s2c_bsgs_ratio  = 1
+s2c_step        = 1
+s2c_rescale     = dynamic (GS min_scale/2)
+iterations      = 1
+full_iterations = 1
+full_warmup     = 1
+stage_profile   = 1 iteration(s)
+timing_mode     = GPU-only
+diagnostics     = summary
+nsys_capture    = OFF
+ignore_failure  = NO
+setup_only      = NO
+scale_plan_only = NO
+c2s_only        = NO
+evalmod_only    = NO
+
+[Unified high-precision bootstrap setup]
+Generating CPU matrices/plans/keys and uploading one GPU data set outside timing...
+[phase] create CoeffToSlot matrix group physical_raised_log2_scale=59 logical_input_log2_scale=45 normalization=2^0
+[phase] staged CPU CoeffToSlot setup probe
+[phase] upload GPU EvalMod dynamic/static plan
+[phase] create SlotToCoeff matrix group input_log2_scale=50.1141 evalmod_output_log2_scale=50.1141 normalization=1
+[phase] SlotToCoeff output normalization raw_log2_scale=65.1483 correction=2^-20.1483
+CPU production-library oracle = skipped by POSEIDON_BOOTSTRAP_SKIP_LIBRARY_ORACLE; staged CPU/GPU and source-message checks remain enabled
+c2s matrices     = 3
+s2c matrices     = 3
+rotation keys    = 65536
+linear transform = double_hoist
+Galois key views = 11,13,14,30,32,33,34
+active polynomial degree= 30
+basis steps       = 8
+dynamic min scale = 3.51844e+13
+basis rescale pat = T2:2,T3:1,T4:1,T5:2,T6:2,T7:2,T8:2,T16:2
+double rescale pat= 1,2,2
+BSGS leaf blocks  = 4
+BSGS combines     = 3
+leaf accumulation = fused MAC, one rescale per leaf
+leaf term rescales= 27 -> 4
+double-angle      = 3
+C2S rescale width = 1,1,2 prime(s), total=4
+C2S plaintext scale = 2^45 with GS min_scale/2 dynamic drops
+EvalMod rescale   = 1 prime(s)
+S2C rescale width = 1,2,1 prime(s), total=4
+EvalMod input q   = 30
+EvalMod output q  = 14
+EvalMod out scale = 1.21854e+15
+CPU EvalMod out q = N/A (GPU dynamic setup plan)
+Relin key views   = 16,18,19,21,22,23,25,27,28,30
+GPU setup objects = one C2S matrix group, one S2C matrix group, one Galois-key set
+[phase] staged CPU CoeffToSlot correctness
+[phase] staged GPU CoeffToSlot correctness
+
+[C2S dynamic rescale trace]
+stage=0 q=34->33 input=2^45.000000 plain=2^45.000000 product=2^90.000000 drop=1 output=2^60.000352
+stage=1 q=33->32 input=2^60.000352 plain=2^45.000000 product=2^105.000352 drop=1 output=2^73.004983
+stage=2 q=32->30 input=2^73.004983 plain=2^45.000000 product=2^118.004983 drop=2 output=2^54.014994
+C2S CPU/GPU correct=YES max_error=1.94817e-08 output_q=30 output_scale=2^54.015
+[phase] staged CPU EvalMod correctness
+[phase] staged GPU EvalMod correctness
+EvalMod CPU/GPU correct=YES real_max_error=7.87387e-11 imag_max_error=7.67428e-11 input_q=30 output_q=14 output_scale=2^50.1141
+[phase] staged CPU SlotToCoeff correctness
+  CPU EvalMod real/imag log2(scale) = 49.0684/49.0684, q_count = 14, total modulus bits = 440
+  S2C matrix 0 log2(scale) = 45, q_count = 14
+  S2C matrix 1 log2(scale) = 45, q_count = 13
+  S2C matrix 2 log2(scale) = 45, q_count = 11
+[phase] staged GPU SlotToCoeff correctness
+[phase] full staged CPU bootstrap correctness skipped (dynamic GPU schedule has no fixed-rescale CPU oracle yet)
+[phase] full GPU bootstrap correctness
+
+[bootstrap correctness summary]
+|------------------------------------|------------------------|------------------|-----------|
+| operation                          | comparison             |    max abs error |   correct |
+|------------------------------------|------------------------|------------------|-----------|
+| ModRaise                           | CPU/GPU raw RNS        |     0.000000e+00 |       YES |
+| CoeffToSlot                        | CPU/GPU decoded        |     1.948168e-08 |       YES |
+| EvalMod (real + imag)              | CPU/GPU decoded        |     7.873874e-11 |       YES |
+| SlotToCoeff                        | CPU/GPU decoded        |     9.175700e-03 |        NO |
+| Full bootstrap                     | GPU/source decoded     |     1.901400e-02 |        NO |
+|------------------------------------|------------------------|------------------|-----------|
+
+[GPU EvalMod stage timing: real + imag]
+|--------------------------------|----------------|------------|
+| stage                          |     GPU avg ms |      share |
+|--------------------------------|----------------|------------|
+| input preparation              |          0.229 |       0.4% |
+| Chebyshev basis generation     |         30.488 |      55.0% |
+| fused leaf evaluation          |          7.124 |      12.8% |
+| BSGS tree combine              |         10.724 |      19.3% |
+| double-angle iterations        |          6.765 |      12.2% |
+| output level alignment         |          0.005 |       0.0% |
+|--------------------------------|----------------|------------|
+| CUDA-event active total        |         55.335 |      99.8% |
+| host/allocator/sync gap        |          0.116 |       0.2% |
+| profiled wall total            |         55.451 |     100.0% |
+|--------------------------------|----------------|------------|
+profile iterations=1; real + imag; setup/download excluded
+
+[GPU EvalMod ciphertext multiply + relinearize timing]
+|---------------------------------------|----------|--------|--------|----------------|----------------|
+| node                                  | type     |      Q |   dnum |    avg ms/call |   real+imag ms |
+|---------------------------------------|----------|--------|--------|----------------|----------------|
+| EvalMod.mul.basis.T2=1x1.q30          | square   |     30 |      4 |          1.594 |          3.189 |
+| EvalMod.mul.basis.T3=1x2.q28          | multiply |     28 |      4 |          1.539 |          3.077 |
+| EvalMod.mul.basis.T4=2x2.q28          | square   |     28 |      4 |          1.480 |          2.959 |
+| EvalMod.mul.basis.T5=3x2.q27          | multiply |     27 |      3 |          1.325 |          2.650 |
+| EvalMod.mul.basis.T7=3x4.q27          | multiply |     27 |      3 |          1.320 |          2.640 |
+| EvalMod.mul.basis.T6=3x3.q27          | square   |     27 |      3 |          1.282 |          2.563 |
+| EvalMod.mul.basis.T8=4x4.q27          | square   |     27 |      3 |          1.280 |          2.560 |
+| EvalMod.mul.basis.T16=8x8.q25         | square   |     25 |      3 |          1.208 |          2.417 |
+| EvalMod.mul.combine.0.T8.q22          | multiply |     22 |      3 |          1.079 |          2.158 |
+| EvalMod.mul.combine.2.T16.q21         | multiply |     21 |      3 |          1.041 |          2.082 |
+| EvalMod.mul.combine.1.T8.q21          | multiply |     21 |      3 |          1.036 |          2.072 |
+| EvalMod.mul.double_angle.0.q19        | square   |     19 |      3 |          0.927 |          1.854 |
+| EvalMod.mul.double_angle.1.q18        | square   |     18 |      2 |          0.767 |          1.534 |
+| EvalMod.mul.double_angle.2.q16        | square   |     16 |      2 |          0.710 |          1.420 |
+|---------------------------------------|----------|--------|--------|----------------|----------------|
+Multiply+Relin real+imag total = 33.175; sorted by GPU contribution; CUDA events exclude host launch gaps
+
+[bootstrap timing summary]
+|--------------------------------------------|----------------|----------------|--------------|-------------|
+| operation                                  |     CPU avg ms |     GPU avg ms |      speedup |     correct |
+|--------------------------------------------|----------------|----------------|--------------|-------------|
+| prepare_modraise_input + raise_modulus     |           SKIP |          0.427 |          n/a |         YES |
+| coeff_to_slot                              |           SKIP |         55.091 |          n/a |         YES |
+| eval_mod_high_precision (real + imag)      |           SKIP |         55.171 |          n/a |         YES |
+| slot_to_coeff                              |           SKIP |         20.047 |          n/a |          NO |
+| full_bootstrap_high_precision              |           SKIP |        128.389 |          n/a |          NO |
+|--------------------------------------------|----------------|----------------|--------------|-------------|
+iterations=1, warmup=1
+full/evalmod iterations=1, warmup=1
+parameters: N=65536, Q=34x32-bit, P=9x32-bit, input_scale=2^40
+bootstrap: mode=double_hoist, q0_level=1, message_ratio=32, EvalMod_scale=2^45, degree=30, rescale_width=1, double_angle=3, C2S/S2C_step=1/1
+excluded from timing: matrix generation/upload, Galois key generation/upload, CPU EvalMod level probe, zero-copy key-view validation, constant plaintext encode/upload, EvalMod stage-trace snapshots/download, ciphertext download/compare
+timing order: CPU warmup -> CPU timing; GPU warmup -> GPU timing, independently for every operation
+GPU-only timing mode: set POSEIDON_BOOTSTRAP_GPU_ONLY_TIMING=1 to skip CPU timed benchmarks while keeping CPU setup/probes
+note: GPU rotate/key-switch reads zero-copy Q-prefix/P-tail key views
+
+[WARN] Double-Hoist optimized paths (validated for N=65536, P=9): ModUp-row8=ON, ModDown-P-preweight=ON, ModDown-P-to-Q-row8=FALLBACK, QP-Four-step=ON, P-to-Q-Four-step=ON, KeySwitch-P-to-Q-Four-step=ON, QP-MAC-group-tiled4/8=ON, QP-MAC-component-fused=ON, QP-phase2-MAC-alias/occupancy=ON. Set the corresponding POSEIDON_DOUBLE_HOIST_* or POSEIDON_KEYSWITCH_P9_* variable to 0 for runtime path rollback; phase2-MAC alias/occupancy tuning is a compile-time N=65536 default.
