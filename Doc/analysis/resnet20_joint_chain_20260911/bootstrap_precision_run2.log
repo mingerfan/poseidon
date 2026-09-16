@@ -1,0 +1,35 @@
+BOOTSTRAP_ACCURACY_ONLY N=65536 Q=50 P=25 dnum=2 h=192 degree=59 DA=2 arcsine_degree=0 amplitude=0.05
+FIXTURE coefficients_sha256=c5bd1e4cce6af0630afa3f637bb1c71e81d91d44d00cfa3f9ca6724af61a8ae1 witness_sha256=eaf476ef2707290d7d5895bad2c072b8dc174c3009aa1795a146fa2cfd160bbf
+SECRET h=192 positive=96 negative=96 source=OS_random nonzero=true
+CHECK input_Q6 q=6 log_scale=40 max_abs=1.0829595647836e-06 rms=1.5769834089091e-07 max_imag=7.9336647184895e-07 reference_max_abs=0.05
+PHASE create_DFT_matrices
+ORACLE DFT_pair_inverse max_abs=1.2850554155407e-16 rms=5.2161758103612e-17
+PHASE rotation_keys count=39 estimated_gpu_GiB=2.8564453125
+PHASE S2C
+CHECK S2C_stage1_cumulative q=5 log_scale=53.010295066381 max_abs=5.9331851581549e-05 rms=1.09917591596e-06 max_imag=0.99251097310175 reference_max_abs=1.4392877818638
+CHECK S2C_stage1_local_arithmetic q=5 log_scale=53.010295066381 max_abs=5.7286087073539e-05 rms=6.3807289725972e-07 max_imag=0.99251097310175 reference_max_abs=1.4392878851754
+CHECK S2C_stage2_cumulative q=4 log_scale=66.021521633535 max_abs=6.5586316730467e-05 rms=6.2178844995537e-06 max_imag=31.55700902836 reference_max_abs=44.657056831558
+CHECK S2C_stage2_local_arithmetic q=4 log_scale=66.021521633535 max_abs=7.511189951754e-09 rms=8.5685588258819e-11 max_imag=31.55700902836 reference_max_abs=44.657049733949
+CHECK S2C_stage3_cumulative q=2 log_scale=47.045350653721 max_abs=0.00013369160807296 rms=3.5173666518523e-05 max_imag=521.48400803597 reference_max_abs=737.43389620744
+CHECK S2C_stage3_local_arithmetic q=2 log_scale=47.045350653721 max_abs=6.8501211911398e-10 rms=1.4008977186796e-11 max_imag=521.48400803597 reference_max_abs=737.4338946764
+CHECK prepare_integer3897 q=2 log_scale=58.97349886989 max_abs=1.1368683772162e-13 rms=1.2752798481488e-15 max_imag=521.48400803597 reference_max_abs=737.43389467649
+PHASE ModRaise_complete q=50 physical_log_scale=58.97349886989
+PHASE C2S logical_log_scale=44.97349886989
+CHECK C2S_stage1_cumulative q=49 log_scale=60.021303648587 max_abs=0.024159962358758 rms=0.0064016874535817 max_imag=1190380.7259506 reference_max_abs=1190991.234833
+CHECK C2S_stage1_local_arithmetic q=49 log_scale=60.021303648587 max_abs=0.024159962358758 rms=0.0064016874535817 max_imag=1190380.7259506 reference_max_abs=1190991.234833
+CHECK C2S_stage2_cumulative q=48 log_scale=73.025933964441 max_abs=1.3721673445771e-05 rms=3.9430882987003e-06 max_imag=544.40356414694 reference_max_abs=594.90554854755
+CHECK C2S_stage2_local_arithmetic q=48 log_scale=73.025933964441 max_abs=3.4376575638381e-06 rms=9.4510784689227e-07 max_imag=544.40356414694 reference_max_abs=594.90555377908
+CHECK C2S_stage3_cumulative q=46 log_scale=54.035945568762 max_abs=7.1520972329939e-09 rms=2.3632539908429e-09 max_imag=0.36667401727986 reference_max_abs=0.36723843456574
+CHECK C2S_stage3_local_arithmetic q=46 log_scale=54.035945568762 max_abs=3.2809222459803e-10 rms=1.0120292781715e-10 max_imag=0.36667401727986 reference_max_abs=0.36723843521879
+DOMAIN evalmod_normalized_max=0.73334803455938 slots_outside_unit_interval=0
+ORACLE ideal_modular_sine_vs_original_input max_abs=6.9221032265659 rms=2.9707585126804
+ORACLE degree59_plain_vs_modular_sine max_abs=1.2199455622099e-05 rms=8.9601546013439e-08
+ORACLE degree59_plain_vs_original_input max_abs=6.9221032102406 rms=2.9707585135928
+PHASE EvalMod_fold seed=0.10454988833539 alpha=0.00011947974670084 raw_log_scale=53.030946295324
+CHECK EvalMod_folded_real_arithmetic q=31 log_scale=53.030946295324 max_abs=5.1047694388969e-11 rms=4.5293347196588e-12 max_imag=4.9487895434557e-11 reference_max_abs=1.8647009627978e-05
+CHECK EvalMod_folded_imag_arithmetic q=31 log_scale=53.030946295324 max_abs=6.0040325859543e-11 rms=4.4653178843387e-12 max_imag=5.4530023250751e-11 reference_max_abs=1.8637674359386e-05
+CHECK bootstrap_final_vs_original_input q=31 log_scale=40 max_abs=6.9221031887354 rms=2.9707585175436 max_imag=4.9916887420701 reference_max_abs=0.05
+CHECK bootstrap_final_vs_decrypted_input q=31 log_scale=40 max_abs=6.9221032118199 rms=2.970758518848 max_imag=4.9916887420701 reference_max_abs=0.049999931963924
+CHECK bootstrap_final_vs_degree59_plain q=31 log_scale=40 max_abs=1.6093413677681e-05 rms=1.7099970059106e-06 max_imag=4.9916887420701 reference_max_abs=6.9191403745639
+BOOTSTRAP_RESULT max_abs=6.9221031887354 arithmetic_max=1.6093413677681e-05 target_1e_4=FAIL q=31
+STOP first_failed_boundary=bootstrap no_reencryption=true full_network_tested=false
