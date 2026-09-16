@@ -29,6 +29,13 @@ set(CPM_DOWNLOAD_ALL OFF CACHE BOOL "" FORCE)
 
 add_subdirectory("${POSEIDON_ROOT}" "${CMAKE_BINARY_DIR}/poseidon_build")
 
+add_executable(test_homomorphic_dft_repack
+    test_homomorphic_dft_repack.cpp)
+target_link_libraries(test_homomorphic_dft_repack PRIVATE poseidon_shared)
+add_test(
+    NAME test_homomorphic_dft_repack
+    COMMAND test_homomorphic_dft_repack)
+
 if(POSEIDON_GPU_BOOTSTRAPPING_ENABLE_GPU_TESTS)
     enable_language(CUDA)
     set(CMAKE_CUDA_STANDARD 17)

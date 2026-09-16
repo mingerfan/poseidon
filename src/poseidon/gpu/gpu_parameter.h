@@ -240,6 +240,19 @@ public:
     explicit GpuParameterData(const PoseidonContext &context, int device_id = 0);
 
     /**
+     * @brief Build only the requested q-only modulus-chain levels.
+     *
+     * This is intended for exact-level application KeySwitch runtimes.  It
+     * keeps the context and evaluation keys unchanged, while avoiding GPU
+     * NTT/RNS tables for chain levels that the runtime can never consume.
+     * active_q_counts must be non-empty and contain unique q limb counts.
+     */
+    GpuParameterData(
+        const PoseidonContext &context,
+        int device_id,
+        const std::vector<std::size_t> &active_q_counts);
+
+    /**
      * @brief Build GPU-side parameter tables from PoseidonContext.
      *
      * TODO:
@@ -251,6 +264,11 @@ public:
      * - build per-device/per-limb GpuParameterShard objects.
      */
     void build_from_poseidon_context(const PoseidonContext &context, int device_id);
+
+    void build_from_poseidon_context(
+        const PoseidonContext &context,
+        int device_id,
+        const std::vector<std::size_t> &active_q_counts);
 
     /**
      * @brief Query level information by parms_id.
@@ -289,6 +307,11 @@ public:
     const GpuLevelInfo &get_first_q_level() const;
 
     bool empty() const;
+
+    std::size_t level_count() const noexcept
+    {
+        return levels_.size();
+    }
 
 private:
     std::vector<GpuLevelInfo> levels_;

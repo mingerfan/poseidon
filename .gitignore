@@ -9,6 +9,8 @@ build*/
 .claude/
 compile_commands.json
 stubs/
+__pycache__/
+*.py[cod]
 Doc/*.pdf
 
 # Generated bootstrap benchmark and Nsight Systems results.
