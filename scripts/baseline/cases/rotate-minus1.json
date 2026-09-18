@@ -1,0 +1,19 @@
+{
+  "schema": 2,
+  "id": "rotate-minus1",
+  "input_shape": [
+    4
+  ],
+  "constants": {},
+  "nodes": [
+    {
+      "id": "rotated",
+      "op": "rotate",
+      "inputs": [
+        "x"
+      ],
+      "step": -1
+    }
+  ],
+  "output": "rotated"
+}

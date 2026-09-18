@@ -1,0 +1,38 @@
+{
+  "schema": 2,
+  "id": "broadcast-sub-scalar",
+  "input_shape": [
+    4
+  ],
+  "constants": {
+    "weight": [
+      [
+        0.5,
+        -0.25,
+        0.125,
+        0.75
+      ]
+    ],
+    "offset": 0.375
+  },
+  "nodes": [
+    {
+      "id": "dot",
+      "op": "linear",
+      "inputs": [
+        "x"
+      ],
+      "weight": "weight",
+      "bias": null
+    },
+    {
+      "id": "out",
+      "op": "subtract",
+      "inputs": [
+        "dot",
+        "offset"
+      ]
+    }
+  ],
+  "output": "out"
+}

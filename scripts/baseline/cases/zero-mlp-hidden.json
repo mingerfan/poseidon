@@ -1,0 +1,60 @@
+{
+  "schema": 2,
+  "input_shape": [
+    4
+  ],
+  "id": "zero-mlp-hidden",
+  "constants": {
+    "w1": [
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        0
+      ]
+    ],
+    "w2": [
+      [
+        0.75,
+        -0.5
+      ]
+    ],
+    "b": [
+      0.125
+    ]
+  },
+  "nodes": [
+    {
+      "id": "hidden",
+      "op": "linear",
+      "inputs": [
+        "x"
+      ],
+      "weight": "w1",
+      "bias": null
+    },
+    {
+      "id": "square",
+      "op": "square",
+      "inputs": [
+        "hidden"
+      ]
+    },
+    {
+      "id": "out",
+      "op": "linear",
+      "inputs": [
+        "square"
+      ],
+      "weight": "w2",
+      "bias": "b"
+    }
+  ],
+  "output": "out"
+}

@@ -1,0 +1,23 @@
+{
+  "schema": 2,
+  "input_shape": [
+    4
+  ],
+  "id": "zero-multiply",
+  "constants": {
+    "w": [
+      0
+    ]
+  },
+  "nodes": [
+    {
+      "id": "out",
+      "op": "multiply",
+      "inputs": [
+        "x",
+        "w"
+      ]
+    }
+  ],
+  "output": "out"
+}

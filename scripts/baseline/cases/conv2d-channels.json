@@ -1,0 +1,55 @@
+{
+  "schema": 2,
+  "id": "conv2d-channels",
+  "input_shape": [
+    2,
+    1,
+    2
+  ],
+  "constants": {
+    "w": [
+      [
+        [
+          [
+            0.3
+          ]
+        ],
+        [
+          [
+            -0.7
+          ]
+        ]
+      ]
+    ],
+    "b": [
+      0.2
+    ]
+  },
+  "nodes": [
+    {
+      "id": "spatial",
+      "op": "conv2d",
+      "inputs": [
+        "x"
+      ],
+      "weight": "w",
+      "bias": "b",
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "out",
+      "op": "flatten",
+      "inputs": [
+        "spatial"
+      ]
+    }
+  ],
+  "output": "out"
+}

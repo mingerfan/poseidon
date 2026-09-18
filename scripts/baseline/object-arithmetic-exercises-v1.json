@@ -1,0 +1,99 @@
+{
+  "oa-broadcast": {
+    "schema": 2,
+    "id": "oa-broadcast",
+    "family": "affine",
+    "required_features": [
+      "binary.Mult",
+      "rank_broadcast"
+    ],
+    "instruction": "Use a (2,1) or larger column object array and a public row array to produce genuinely expanded rank-2 broadcast output. Use the broadcast results in the returned model output. All required operations must affect output; no dead padding. Public constants may be referenced or derived. Keep the supplied model unchanged."
+  },
+  "oa-inplace-multiply-alias": {
+    "schema": 2,
+    "id": "oa-inplace-multiply-alias",
+    "family": "affine",
+    "required_features": [
+      "inplace.Mult"
+    ],
+    "instruction": "Use whole-object-array *= and an alias to the same array. The returned result must depend on the alias observing the update; rebinding to a fresh array must change the output. All required operations must affect output; no dead padding. Public constants may be referenced or derived. Keep the supplied model unchanged."
+  },
+  "oa-overlap-add": {
+    "schema": 2,
+    "id": "oa-overlap-add",
+    "family": "affine",
+    "required_features": [
+      "inplace.Add",
+      "overlap"
+    ],
+    "instruction": "Use slice += with overlapping left and right object-array views and nonidentical initial cells. Use the updated overlapping cells in the output. All required operations must affect output; no dead padding. Public constants may be referenced or derived. Keep the supplied model unchanged."
+  },
+  "oa-empty-subtract": {
+    "schema": 2,
+    "id": "oa-empty-subtract",
+    "family": "affine",
+    "required_features": [
+      "inplace.Sub",
+      "empty_left"
+    ],
+    "instruction": "Initialize an object array with Empty(), subtract ciphertext expressions via array -=, and use its resulting cells. Empty minus Expr is Expr, not negative Expr. All required operations must affect output; no dead padding. Public constants may be referenced or derived. Keep the supplied model unchanged."
+  },
+  "oa-cipher-product": {
+    "schema": 2,
+    "id": "oa-cipher-product",
+    "family": "quadratic",
+    "required_features": [
+      "binary.Mult",
+      "cipher_pair"
+    ],
+    "instruction": "Multiply two object arrays holding ciphertext expressions (not just scalar Expr multiplication) and use the product for the quadratic model. All required operations must affect output; no dead padding. Public constants may be referenced or derived. Keep the supplied model unchanged."
+  },
+  "oa-zero-dimension": {
+    "schema": 2,
+    "id": "oa-zero-dimension",
+    "family": "affine",
+    "required_features": [
+      "binary.Add",
+      "zero_dim"
+    ],
+    "instruction": "Use a zero-dimensional object ndarray binary addition to obtain a scalar Expr. Use that scalar in the returned encrypted output. All required operations must affect output; no dead padding. Public constants may be referenced or derived. Keep the supplied model unchanged."
+  },
+  "oa-inplace-subtract-alias": {
+    "schema": 2,
+    "id": "oa-inplace-subtract-alias",
+    "family": "affine",
+    "required_features": [
+      "inplace.Sub"
+    ],
+    "instruction": "Use whole-array -= and a shared alias. Output must depend on the alias observing the update; replacing augmented assignment by a new-array binding must change output. All required operations must affect output; no dead padding. Public constants may be referenced or derived. Keep the supplied model unchanged."
+  },
+  "oa-inplace-add-alias": {
+    "schema": 2,
+    "id": "oa-inplace-add-alias",
+    "family": "affine",
+    "required_features": [
+      "inplace.Add"
+    ],
+    "instruction": "Use whole-array += and a shared alias. Output must depend on the alias observing the update; replacing augmented assignment by a new-array binding must change output. All required operations must affect output; no dead padding. Public constants may be referenced or derived. Keep the supplied model unchanged."
+  },
+  "oa-overlap-multiply": {
+    "schema": 2,
+    "id": "oa-overlap-multiply",
+    "family": "quadratic",
+    "required_features": [
+      "inplace.Mult",
+      "overlap"
+    ],
+    "instruction": "Use slice *= with overlapping ciphertext object-array views and nonidentical initial cells; use changed cells to implement the quadratic model. All required operations must affect output; no dead padding. Public constants may be referenced or derived. Keep the supplied model unchanged."
+  },
+  "oa-overlap-subtract": {
+    "schema": 2,
+    "id": "oa-overlap-subtract",
+    "family": "affine",
+    "required_features": [
+      "inplace.Sub",
+      "overlap"
+    ],
+    "instruction": "Use slice -= with overlapping left and right object-array views and nonidentical initial cells; use updated cells in the output. All required operations must affect output; no dead padding. Public constants may be referenced or derived. Keep the supplied model unchanged."
+  }
+}

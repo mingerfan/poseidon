@@ -1,0 +1,56 @@
+{
+  "schema": 2,
+  "id": "conv2d-dilation2",
+  "input_shape": [
+    1,
+    1,
+    4
+  ],
+  "constants": {
+    "w": [
+      [
+        [
+          [
+            0.5,
+            -0.25
+          ]
+        ]
+      ]
+    ],
+    "b": [
+      0.125
+    ]
+  },
+  "nodes": [
+    {
+      "id": "spatial",
+      "op": "conv2d",
+      "inputs": [
+        "x"
+      ],
+      "weight": "w",
+      "bias": "b",
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ],
+      "dilation": [
+        1,
+        2
+      ],
+      "groups": 1
+    },
+    {
+      "id": "out",
+      "op": "flatten",
+      "inputs": [
+        "spatial"
+      ]
+    }
+  ],
+  "output": "out"
+}

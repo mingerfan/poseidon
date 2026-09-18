@@ -1,0 +1,16 @@
+{
+  "schema": 2,
+  "id": "user-subneg-linear",
+  "input_shape": [4],
+  "constants": {
+    "offset": [0.125, -0.25, 0.5, 0.75],
+    "weight": [[0.5, -0.25, 0.125, 0.75], [-0.5, 0.25, 0.5, -0.125]],
+    "bias": [0.125, -0.25]
+  },
+  "nodes": [
+    {"id": "centered", "op": "subtract", "inputs": ["x", "offset"]},
+    {"id": "negative", "op": "negate", "inputs": ["centered"]},
+    {"id": "logits", "op": "linear", "inputs": ["negative"], "weight": "weight", "bias": "bias"}
+  ],
+  "output": "logits"
+}

@@ -1,0 +1,76 @@
+{
+  "schema": 2,
+  "id": "concat-spatial",
+  "input_shape": [
+    1,
+    4
+  ],
+  "constants": {
+    "a": [
+      [
+        [
+          1
+        ]
+      ]
+    ],
+    "b": [
+      [
+        [
+          2
+        ]
+      ]
+    ],
+    "bias": [
+      0.25
+    ]
+  },
+  "nodes": [
+    {
+      "id": "a1",
+      "op": "conv1d",
+      "inputs": [
+        "x"
+      ],
+      "weight": "a",
+      "bias": null,
+      "stride": [
+        2
+      ],
+      "padding": [
+        0
+      ]
+    },
+    {
+      "id": "b1",
+      "op": "conv1d",
+      "inputs": [
+        "x"
+      ],
+      "weight": "b",
+      "bias": "bias",
+      "stride": [
+        2
+      ],
+      "padding": [
+        0
+      ]
+    },
+    {
+      "id": "c",
+      "op": "concat",
+      "inputs": [
+        "a1",
+        "b1"
+      ],
+      "axis": 1
+    },
+    {
+      "id": "out",
+      "op": "flatten",
+      "inputs": [
+        "c"
+      ]
+    }
+  ],
+  "output": "out"
+}

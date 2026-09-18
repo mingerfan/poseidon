@@ -1,0 +1,23 @@
+{
+  "schema": 2,
+  "id": "broadcast-sub-one",
+  "input_shape": [
+    4
+  ],
+  "constants": {
+    "offset": [
+      0.375
+    ]
+  },
+  "nodes": [
+    {
+      "id": "out",
+      "op": "subtract",
+      "inputs": [
+        "x",
+        "offset"
+      ]
+    }
+  ],
+  "output": "out"
+}

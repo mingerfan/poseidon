@@ -1,0 +1,321 @@
+{
+ "pn-array-view": {
+  "spec": {
+   "id": "pn-array-view",
+   "required_features": [
+    "array.view_inplace"
+   ],
+   "instruction": "Use a distinct shared-memory object-array view and apply a name-target ndarray +=, -= or *= through it; the changed shared storage must affect output. A copy is not a view."
+  },
+  "model": {
+   "schema": 5,
+   "id": "exercise-pn-array-view",
+   "input_shape": [
+    2,
+    3,
+    5
+   ],
+   "constants": {
+    "gain": [
+     [
+      [
+       -0.5
+      ],
+      [
+       0.25
+      ],
+      [
+       -0.5
+      ]
+     ]
+    ],
+    "bias": 0.0625
+   },
+   "nodes": [
+    {
+     "id": "scaled",
+     "op": "multiply",
+     "inputs": [
+      "x",
+      "gain"
+     ]
+    },
+    {
+     "id": "out",
+     "op": "add",
+     "inputs": [
+      "scaled",
+      "bias"
+     ]
+    }
+   ],
+   "output": "out"
+  }
+ },
+ "pn-loop": {
+  "spec": {
+   "id": "pn-loop",
+   "required_features": [
+    "loop.augmented"
+   ],
+   "instruction": "Use a public range loop with at least two executed iterations, performing scalar Expr augmented arithmetic whose results affect output."
+  },
+  "model": {
+   "schema": 5,
+   "id": "exercise-pn-loop",
+   "input_shape": [
+    2,
+    2,
+    4,
+    8
+   ],
+   "constants": {},
+   "nodes": [
+    {
+     "id": "square1",
+     "op": "square",
+     "inputs": [
+      "x"
+     ]
+    },
+    {
+     "id": "out",
+     "op": "square",
+     "inputs": [
+      "square1"
+     ]
+    }
+   ],
+   "output": "out"
+  }
+ },
+ "pn-star": {
+  "spec": {
+   "id": "pn-star",
+   "required_features": [
+    "star.arguments"
+   ],
+   "instruction": "Use a starred positional helper call with at least two Expr arguments, each of which affects the final output."
+  },
+  "model": {
+   "schema": 5,
+   "id": "exercise-pn-star",
+   "input_shape": [
+    2,
+    8
+   ],
+   "constants": {
+    "weight": [
+     [
+      -0.09375,
+      -0.0625,
+      -0.03125,
+      0,
+      0.03125,
+      0.0625,
+      0.09375,
+      0.125
+     ],
+     [
+      -0.03125,
+      0.03125,
+      0.09375,
+      0.15625,
+      -0.125,
+      -0.0625,
+      0,
+      0.0625
+     ],
+     [
+      0.03125,
+      0.125,
+      -0.125,
+      -0.03125,
+      0.0625,
+      0.15625,
+      -0.09375,
+      0
+     ]
+    ],
+    "bias": [
+     0.015625,
+     0.03125,
+     0.046875
+    ]
+   },
+   "nodes": [
+    {
+     "id": "projected",
+     "op": "linear",
+     "inputs": [
+      "x"
+     ],
+     "weight": "weight",
+     "bias": "bias"
+    }
+   ],
+   "output": "projected"
+  }
+ },
+ "pn-matrix": {
+  "spec": {
+   "id": "pn-matrix",
+   "required_features": [
+    "return.matrix"
+   ],
+   "instruction": "Return a matrix object array with at least two cells from a reachable decorated helper; at least two returned cells must affect output."
+  },
+  "model": {
+   "schema": 5,
+   "id": "exercise-pn-matrix",
+   "input_shape": [
+    2,
+    1,
+    8,
+    16
+   ],
+   "constants": {
+    "weight": [
+     [
+      [
+       [
+        -0.15625,
+        -0.0625,
+        0.03125
+       ],
+       [
+        0.125,
+        -0.125,
+        -0.03125
+       ],
+       [
+        0.0625,
+        0.15625,
+        -0.09375
+       ]
+      ]
+     ]
+    ],
+    "bias": [
+     0.015625
+    ]
+   },
+   "nodes": [
+    {
+     "id": "out",
+     "op": "conv2d",
+     "inputs": [
+      "x"
+     ],
+     "weight": "weight",
+     "bias": "bias",
+     "stride": [
+      4,
+      4
+     ],
+     "padding": [
+      1,
+      1
+     ],
+     "groups": 1,
+     "dilation": [
+      1,
+      1
+     ]
+    }
+   ],
+   "output": "out"
+  }
+ },
+ "pn-zero-item": {
+  "spec": {
+   "id": "pn-zero-item",
+   "required_features": [
+    "item.zero"
+   ],
+   "instruction": "Extract a zero-dimensional object array using item(); the extracted Expr must affect output."
+  },
+  "model": {
+   "schema": 5,
+   "id": "exercise-pn-zero-item",
+   "input_shape": [
+    2,
+    2,
+    4,
+    4
+   ],
+   "constants": {
+    "gain": [
+     [
+      [
+       [
+        -0.5
+       ]
+      ],
+      [
+       [
+        0.25
+       ]
+      ]
+     ]
+    ],
+    "bias": 0.0625
+   },
+   "nodes": [
+    {
+     "id": "scaled",
+     "op": "multiply",
+     "inputs": [
+      "x",
+      "gain"
+     ]
+    },
+    {
+     "id": "out",
+     "op": "add",
+     "inputs": [
+      "scaled",
+      "bias"
+     ]
+    }
+   ],
+   "output": "out"
+  }
+ },
+ "pn-scalar": {
+  "spec": {
+   "id": "pn-scalar",
+   "required_features": [
+    "scalar.augmented"
+   ],
+   "instruction": "Use scalar Expr name-target augmented arithmetic whose result affects output, retaining original input aliases according to native semantics."
+  },
+  "model": {
+   "schema": 5,
+   "id": "exercise-pn-scalar",
+   "input_shape": [
+    2,
+    3
+   ],
+   "constants": {},
+   "nodes": [
+    {
+     "id": "square",
+     "op": "square",
+     "inputs": [
+      "x"
+     ]
+    },
+    {
+     "id": "out",
+     "op": "add",
+     "inputs": [
+      "square",
+      "x"
+     ]
+    }
+   ],
+   "output": "out"
+  }
+ }
+}

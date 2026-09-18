@@ -1,0 +1,79 @@
+{
+  "schema": 2,
+  "id": "concat-three",
+  "input_shape": [
+    4
+  ],
+  "constants": {
+    "a": [
+      [
+        1,
+        0,
+        0,
+        0
+      ]
+    ],
+    "b": [
+      [
+        0,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        0
+      ]
+    ],
+    "c": [
+      [
+        0,
+        0,
+        0,
+        1
+      ]
+    ]
+  },
+  "nodes": [
+    {
+      "id": "a1",
+      "op": "linear",
+      "inputs": [
+        "x"
+      ],
+      "weight": "a",
+      "bias": null
+    },
+    {
+      "id": "b1",
+      "op": "linear",
+      "inputs": [
+        "x"
+      ],
+      "weight": "b",
+      "bias": null
+    },
+    {
+      "id": "c1",
+      "op": "linear",
+      "inputs": [
+        "x"
+      ],
+      "weight": "c",
+      "bias": null
+    },
+    {
+      "id": "out",
+      "op": "concat",
+      "inputs": [
+        "a1",
+        "b1",
+        "c1"
+      ],
+      "axis": -1
+    }
+  ],
+  "output": "out"
+}

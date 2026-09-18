@@ -19,3 +19,14 @@ profiles/
 *.qdrep
 *.qdstrm
 *workspace
+
+# Local credentials and editor backups; only the empty example is trackable.
+.env
+.env.*
+!.env.example
+*.env.local*
+
+# Regenerable Python bytecode and local test caches.
+__pycache__/
+*.py[cod]
+.pytest_cache/

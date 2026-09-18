@@ -1,0 +1,12 @@
+{
+  "schema": 3,
+  "id": "custom-quad-merge",
+  "inputs": [{"name": "a", "shape": [4]}, {"name": "b", "shape": [4]}, {"name": "c", "shape": [4]}, {"name": "d", "shape": [4]}],
+  "constants": {},
+  "nodes": [
+    {"id": "first", "op": "add", "inputs": ["a", "b"]},
+    {"id": "second", "op": "add", "inputs": ["c", "d"]},
+    {"id": "out", "op": "subtract", "inputs": ["first", "second"]}
+  ],
+  "output": "out"
+}

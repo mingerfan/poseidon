@@ -1,0 +1,58 @@
+{
+  "schema": 2,
+  "id": "construction-genpoly3",
+  "input_shape": [
+    4
+  ],
+  "constants": {
+    "cubic": [
+      2
+    ],
+    "linear": [
+      -1.25
+    ]
+  },
+  "nodes": [
+    {
+      "id": "square",
+      "op": "multiply",
+      "inputs": [
+        "x",
+        "x"
+      ]
+    },
+    {
+      "id": "cube",
+      "op": "multiply",
+      "inputs": [
+        "square",
+        "x"
+      ]
+    },
+    {
+      "id": "high",
+      "op": "multiply",
+      "inputs": [
+        "cube",
+        "cubic"
+      ]
+    },
+    {
+      "id": "low",
+      "op": "multiply",
+      "inputs": [
+        "x",
+        "linear"
+      ]
+    },
+    {
+      "id": "odd",
+      "op": "add",
+      "inputs": [
+        "high",
+        "low"
+      ]
+    }
+  ],
+  "output": "odd"
+}

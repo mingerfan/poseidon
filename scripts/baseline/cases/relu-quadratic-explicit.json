@@ -1,0 +1,12 @@
+{
+  "schema": 2,
+  "id": "relu-quadratic-explicit",
+  "input_shape": [4],
+  "constants": {"half": 0.5},
+  "nodes": [
+    {"id": "squared", "op": "square", "inputs": ["x"]},
+    {"id": "sum", "op": "add", "inputs": ["x", "squared"]},
+    {"id": "out", "op": "multiply", "inputs": ["sum", "half"]}
+  ],
+  "output": "out"
+}

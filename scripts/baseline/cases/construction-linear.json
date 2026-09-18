@@ -1,0 +1,8 @@
+{
+  "schema": 2,
+  "id": "construction-linear",
+  "input_shape": [4],
+  "constants": {"weight": [[0.5, -0.25, 0.125, 0.75], [-0.375, 0.25, 0.5, -0.125]]},
+  "nodes": [{"id": "out", "op": "linear", "inputs": ["x"], "weight": "weight", "bias": null}],
+  "output": "out"
+}

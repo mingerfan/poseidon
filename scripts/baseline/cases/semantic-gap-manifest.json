@@ -1,0 +1,224 @@
+{
+  "schema": 1,
+  "cases": [
+    {
+      "schema": 3,
+      "id": "custom-triple-merge",
+      "inputs": [
+        {
+          "name": "first",
+          "shape": [
+            4
+          ]
+        },
+        {
+          "name": "second",
+          "shape": [
+            4
+          ]
+        },
+        {
+          "name": "skip",
+          "shape": [
+            4
+          ]
+        }
+      ],
+      "constants": {},
+      "nodes": [
+        {
+          "id": "sum",
+          "op": "add",
+          "inputs": [
+            "first",
+            "second"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "subtract",
+          "inputs": [
+            "sum",
+            "skip"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 3,
+      "id": "custom-quad-merge",
+      "inputs": [
+        {
+          "name": "a",
+          "shape": [
+            4
+          ]
+        },
+        {
+          "name": "b",
+          "shape": [
+            4
+          ]
+        },
+        {
+          "name": "c",
+          "shape": [
+            4
+          ]
+        },
+        {
+          "name": "d",
+          "shape": [
+            4
+          ]
+        }
+      ],
+      "constants": {},
+      "nodes": [
+        {
+          "id": "first",
+          "op": "add",
+          "inputs": [
+            "a",
+            "b"
+          ]
+        },
+        {
+          "id": "second",
+          "op": "add",
+          "inputs": [
+            "c",
+            "d"
+          ]
+        },
+        {
+          "id": "out",
+          "op": "subtract",
+          "inputs": [
+            "first",
+            "second"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "user-subneg-linear",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "offset": [
+          0.125,
+          -0.25,
+          0.5,
+          0.75
+        ],
+        "weight": [
+          [
+            0.5,
+            -0.25,
+            0.125,
+            0.75
+          ],
+          [
+            -0.5,
+            0.25,
+            0.5,
+            -0.125
+          ]
+        ],
+        "bias": [
+          0.125,
+          -0.25
+        ]
+      },
+      "nodes": [
+        {
+          "id": "centered",
+          "op": "subtract",
+          "inputs": [
+            "x",
+            "offset"
+          ]
+        },
+        {
+          "id": "negative",
+          "op": "negate",
+          "inputs": [
+            "centered"
+          ]
+        },
+        {
+          "id": "logits",
+          "op": "linear",
+          "inputs": [
+            "negative"
+          ],
+          "weight": "weight",
+          "bias": "bias"
+        }
+      ],
+      "output": "logits"
+    },
+    {
+      "schema": 2,
+      "id": "rotate-minus1",
+      "input_shape": [
+        4
+      ],
+      "constants": {},
+      "nodes": [
+        {
+          "id": "rotated",
+          "op": "rotate",
+          "inputs": [
+            "x"
+          ],
+          "step": -1
+        }
+      ],
+      "output": "rotated"
+    },
+    {
+      "schema": 2,
+      "id": "rotate-minus2",
+      "input_shape": [
+        4
+      ],
+      "constants": {},
+      "nodes": [
+        {
+          "id": "rotated",
+          "op": "rotate",
+          "inputs": [
+            "x"
+          ],
+          "step": -2
+        }
+      ],
+      "output": "rotated"
+    },
+    {
+      "schema": 2,
+      "id": "rotate-minus3",
+      "input_shape": [
+        4
+      ],
+      "constants": {},
+      "nodes": [
+        {
+          "id": "rotated",
+          "op": "rotate",
+          "inputs": [
+            "x"
+          ],
+          "step": -3
+        }
+      ],
+      "output": "rotated"
+    }
+  ]
+}

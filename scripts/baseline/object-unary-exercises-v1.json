@@ -1,0 +1,88 @@
+{
+  "ou-neg": {
+    "schema": 4,
+    "id": "ou-neg",
+    "family": "affine",
+    "required_features": [
+      "operator.USub",
+      "cipher_cells"
+    ],
+    "instruction": "Use - on a nonempty object array containing ciphertext Expr cells. All required operations must execute and affect returned output; no dead or unused padding. Keep the supplied model, constants, packing and security unchanged."
+  },
+  "ou-zero": {
+    "schema": 4,
+    "id": "ou-zero",
+    "family": "affine",
+    "required_features": [
+      "operator.USub",
+      "cipher_cells",
+      "zero_dim"
+    ],
+    "instruction": "Use unary minus on a rank-zero object array holding a ciphertext; consume its scalar Expr result. All required operations must execute and affect returned output; no dead or unused padding. Keep the supplied model, constants, packing and security unchanged."
+  },
+  "ou-view": {
+    "schema": 4,
+    "id": "ou-view",
+    "family": "affine",
+    "required_features": [
+      "operator.USub",
+      "cipher_cells",
+      "input_view",
+      "fresh.USub"
+    ],
+    "instruction": "Assign a negated object-array view to a new local name, with the unary operand itself a local variable. Use the original/view after the operation so that replacing fresh negation with an in-place negation and aliased result changes the returned model. All required operations must execute and affect returned output; no dead or unused padding. Keep the supplied model, constants, packing and security unchanged."
+  },
+  "ou-positive": {
+    "schema": 4,
+    "id": "ou-positive",
+    "family": "affine",
+    "required_features": [
+      "operator.UAdd",
+      "public_cells",
+      "fresh.UAdd"
+    ],
+    "instruction": "Assign +public_object_array to a new local name using a local variable operand. Mutate the source later and use the copied result so that returning an alias instead changes model output. All required operations must execute and affect returned output; no dead or unused padding. Keep the supplied model, constants, packing and security unchanged."
+  },
+  "ou-negative-call": {
+    "schema": 4,
+    "id": "ou-negative-call",
+    "family": "affine",
+    "required_features": [
+      "call.USub",
+      "cipher_cells"
+    ],
+    "instruction": "Use np.negative on an explicit object array containing cipher Expr cells. All required operations must execute and affect returned output; no dead or unused padding. Keep the supplied model, constants, packing and security unchanged."
+  },
+  "ou-positive-call": {
+    "schema": 4,
+    "id": "ou-positive-call",
+    "family": "affine",
+    "required_features": [
+      "call.UAdd",
+      "public_cells"
+    ],
+    "instruction": "Use np.positive on a public numeric object array; its result must affect the output. All required operations must execute and affect returned output; no dead or unused padding. Keep the supplied model, constants, packing and security unchanged."
+  },
+  "ou-plain": {
+    "schema": 4,
+    "id": "ou-plain",
+    "family": "affine",
+    "required_features": [
+      "operator.USub",
+      "plain_cells"
+    ],
+    "instruction": "Use unary minus on an object array holding a constructed Plain (for example from Empty plus a public number), retaining symbolic Plain typing; use the result as a ciphertext operand. Original public constant arrays are numeric data, not constructed Plain cells. All required operations must execute and affect returned output; no dead or unused padding. Keep the supplied model, constants, packing and security unchanged."
+  },
+  "ou-mixed": {
+    "schema": 4,
+    "id": "ou-mixed",
+    "family": "affine",
+    "required_features": [
+      "operator.USub",
+      "cipher_cells",
+      "public_cells",
+      "boolean_cells"
+    ],
+    "instruction": "Apply unary minus to one object array containing ciphertext, public real and boolean cells; use the resulting values in output construction. All required operations must execute and affect returned output; no dead or unused padding. Keep the supplied model, constants, packing and security unchanged."
+  }
+}

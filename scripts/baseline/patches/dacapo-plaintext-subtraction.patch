@@ -1,0 +1,38 @@
+diff --git a/tools/frontend.cpp b/tools/frontend.cpp
+index 92dc9b8..c14bc0d 100644
+--- a/tools/frontend.cpp
++++ b/tools/frontend.cpp
+@@ -180,8 +180,9 @@ valueID createBinary(Context *ctxt, size_t opcode, valueID lhs, valueID rhs,
+   auto location =
+       mlir::FileLineColLoc::get(builder.getStringAttr(filename), line, 0);
+ 
+-  auto &&srcl = valueMap[lhs];
+-  auto &&srcr = valueMap[rhs];
++  // Copy Value handles: appending the intermediate below may grow valueMap.
++  auto srcl = valueMap[lhs];
++  auto srcr = valueMap[rhs];
+ 
+   switch (opcode) {
+   case 6: {
+@@ -190,7 +191,20 @@ valueID createBinary(Context *ctxt, size_t opcode, valueID lhs, valueID rhs,
+     break;
+   }
+   case 7: {
+-    auto neg = builder.create<hecate::earth::NegateOp>(location, srcr);
++    // NegateOp has a ciphertext result. A public constant must be negated
++    // before construction instead of emitting an ill-typed plaintext NegateOp.
++    mlir::Value neg;
++    if (auto constant = srcr.getDefiningOp<hecate::earth::ConstantOp>()) {
++      if (auto dense = mlir::dyn_cast<mlir::DenseFPElementsAttr>(constant.getValue())) {
++        llvm::SmallVector<double, 4> values;
++        for (auto value : dense.getValues<llvm::APFloat>())
++          values.push_back(-value.convertToDouble());
++        neg = builder.create<hecate::earth::ConstantOp>(
++            location, llvm::ArrayRef<double>(values));
++      }
++    }
++    if (!neg)
++      neg = builder.create<hecate::earth::NegateOp>(location, srcr);
+     valueMap.push_back(neg);
+     auto res = builder.create<hecate::earth::AddOp>(location, srcl, neg);
+     valueMap.push_back(res);

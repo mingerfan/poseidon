@@ -1,0 +1,55 @@
+{
+  "schema": 2,
+  "id": "conv2d-valid",
+  "input_shape": [
+    1,
+    2,
+    2
+  ],
+  "constants": {
+    "w": [
+      [
+        [
+          [
+            0.5,
+            -0.25
+          ],
+          [
+            0.75,
+            0.125
+          ]
+        ]
+      ]
+    ],
+    "b": [
+      0.1
+    ]
+  },
+  "nodes": [
+    {
+      "id": "spatial",
+      "op": "conv2d",
+      "inputs": [
+        "x"
+      ],
+      "weight": "w",
+      "bias": "b",
+      "stride": [
+        1,
+        1
+      ],
+      "padding": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "out",
+      "op": "flatten",
+      "inputs": [
+        "spatial"
+      ]
+    }
+  ],
+  "output": "out"
+}

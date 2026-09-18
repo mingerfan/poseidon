@@ -1,0 +1,125 @@
+{
+  "schema": 3,
+  "id": "concat-axis0",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        2,
+        2
+      ]
+    },
+    {
+      "name": "y",
+      "shape": [
+        2,
+        2
+      ]
+    }
+  ],
+  "constants": {
+    "eye": [
+      [
+        1,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        1
+      ]
+    ],
+    "w": [
+      [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        -1,
+        0
+      ]
+    ]
+  },
+  "nodes": [
+    {
+      "id": "yf",
+      "op": "flatten",
+      "inputs": [
+        "y"
+      ]
+    },
+    {
+      "id": "ys",
+      "op": "linear",
+      "inputs": [
+        "yf"
+      ],
+      "weight": "eye",
+      "bias": null
+    },
+    {
+      "id": "ym",
+      "op": "reshape",
+      "inputs": [
+        "ys"
+      ],
+      "shape": [
+        2,
+        2
+      ]
+    },
+    {
+      "id": "c",
+      "op": "concat",
+      "inputs": [
+        "x",
+        "ym"
+      ],
+      "axis": 0
+    },
+    {
+      "id": "f",
+      "op": "flatten",
+      "inputs": [
+        "c"
+      ]
+    },
+    {
+      "id": "out",
+      "op": "linear",
+      "inputs": [
+        "f"
+      ],
+      "weight": "w",
+      "bias": null
+    }
+  ],
+  "output": "out"
+}

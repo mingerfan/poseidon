@@ -1,0 +1,8 @@
+{
+  "schema": 3,
+  "id": "custom-dual-subtract",
+  "inputs": [{"name": "left", "shape": [4]}, {"name": "right", "shape": [4]}],
+  "constants": {},
+  "nodes": [{"id": "difference", "op": "subtract", "inputs": ["left", "right"]}],
+  "output": "difference"
+}

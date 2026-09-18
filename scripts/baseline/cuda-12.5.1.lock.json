@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "release": "12.5.1",
+  "source": "https://developer.download.nvidia.com/compute/cuda/redist/redistrib_12.5.1.json",
+  "download_limit_bytes": 104857600,
+  "reservation_bytes": 1073741824,
+  "components": [
+    {
+      "name": "cuda_nvcc",
+      "version": "12.5.82",
+      "bytes": 51687876,
+      "sha256": "ded05fe3c8d075c6c1bf892005d3c50bde3eceaa049b879fcdff6158e068e3be",
+      "url": "https://developer.download.nvidia.com/compute/cuda/redist/cuda_nvcc/linux-x86_64/cuda_nvcc-linux-x86_64-12.5.82-archive.tar.xz"
+    },
+    {
+      "name": "cuda_cudart",
+      "version": "12.5.82",
+      "bytes": 1106276,
+      "sha256": "2e92179494712a41e9ba979ac81909cccbc7cbbadac9c3e0fd217fd410270df5",
+      "url": "https://developer.download.nvidia.com/compute/cuda/redist/cuda_cudart/linux-x86_64/cuda_cudart-linux-x86_64-12.5.82-archive.tar.xz"
+    },
+    {
+      "name": "cuda_cccl",
+      "version": "12.5.39",
+      "bytes": 1200412,
+      "sha256": "837c4e27939478ffa3d2ad18f9a109b83c05afbe891769732c5c615e53081fc1",
+      "url": "https://developer.download.nvidia.com/compute/cuda/redist/cuda_cccl/linux-x86_64/cuda_cccl-linux-x86_64-12.5.39-archive.tar.xz"
+    },
+    {
+      "name": "cuda_cuobjdump",
+      "version": "12.5.39",
+      "bytes": 217844,
+      "sha256": "aaeb67ca9d9e4a024d8e7974c89c194abe75997b71aedfbf137a5755fe6b3bff",
+      "url": "https://developer.download.nvidia.com/compute/cuda/redist/cuda_cuobjdump/linux-x86_64/cuda_cuobjdump-linux-x86_64-12.5.39-archive.tar.xz"
+    }
+  ]
+}

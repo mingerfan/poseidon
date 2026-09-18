@@ -1,0 +1,42 @@
+{
+  "schema": 2,
+  "id": "exercise-nf-forward",
+  "input_shape": [
+    4
+  ],
+  "constants": {
+    "weight": [
+      0.5
+    ],
+    "bias": [
+      0.375
+    ]
+  },
+  "nodes": [
+    {
+      "id": "scaled",
+      "op": "multiply",
+      "inputs": [
+        "x",
+        "weight"
+      ]
+    },
+    {
+      "id": "merged",
+      "op": "add",
+      "inputs": [
+        "scaled",
+        "x"
+      ]
+    },
+    {
+      "id": "out",
+      "op": "add",
+      "inputs": [
+        "merged",
+        "bias"
+      ]
+    }
+  ],
+  "output": "out"
+}

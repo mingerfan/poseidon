@@ -1,0 +1,36 @@
+{
+  "schema": 2,
+  "id": "avg1d-pad-exclude",
+  "input_shape": [
+    1,
+    4
+  ],
+  "constants": {},
+  "nodes": [
+    {
+      "id": "spatial",
+      "op": "avg_pool1d",
+      "inputs": [
+        "x"
+      ],
+      "kernel": [
+        3
+      ],
+      "stride": [
+        2
+      ],
+      "padding": [
+        1
+      ],
+      "count_include_pad": false
+    },
+    {
+      "id": "out",
+      "op": "flatten",
+      "inputs": [
+        "spatial"
+      ]
+    }
+  ],
+  "output": "out"
+}

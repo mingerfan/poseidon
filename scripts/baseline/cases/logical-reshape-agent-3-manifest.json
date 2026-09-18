@@ -1,0 +1,242 @@
+{
+  "schema": 1,
+  "cases": [
+    {
+      "schema": 2,
+      "id": "reshape-bn",
+      "input_shape": [
+        4
+      ],
+      "constants": {
+        "mean": [
+          0.5,
+          -0.25
+        ],
+        "variance": [
+          0.75,
+          3.75
+        ],
+        "gamma": [
+          -1,
+          4
+        ],
+        "beta": [
+          0.125,
+          0.375
+        ]
+      },
+      "nodes": [
+        {
+          "id": "shaped",
+          "op": "reshape",
+          "inputs": [
+            "x"
+          ],
+          "shape": [
+            1,
+            2,
+            -1
+          ]
+        },
+        {
+          "id": "normalized",
+          "op": "batch_norm",
+          "inputs": [
+            "shaped"
+          ],
+          "running_mean": "mean",
+          "running_var": "variance",
+          "weight": "gamma",
+          "bias": "beta",
+          "eps": 0.25
+        },
+        {
+          "id": "out",
+          "op": "flatten",
+          "inputs": [
+            "normalized"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "reshape-conv1-bn",
+      "input_shape": [
+        1,
+        4
+      ],
+      "constants": {
+        "mean": [
+          0.5,
+          -0.25
+        ],
+        "variance": [
+          0.75,
+          3.75
+        ],
+        "gamma": [
+          -1,
+          4
+        ],
+        "beta": [
+          0.125,
+          0.375
+        ],
+        "kernel": [
+          [
+            [
+              1
+            ]
+          ],
+          [
+            [
+              2
+            ]
+          ]
+        ],
+        "conv_bias": [
+          0.25,
+          -0.125
+        ]
+      },
+      "nodes": [
+        {
+          "id": "convolved",
+          "op": "conv1d",
+          "inputs": [
+            "x"
+          ],
+          "weight": "kernel",
+          "bias": "conv_bias",
+          "stride": [
+            2
+          ],
+          "padding": [
+            0
+          ]
+        },
+        {
+          "id": "shaped",
+          "op": "reshape",
+          "inputs": [
+            "convolved"
+          ],
+          "shape": [
+            1,
+            2,
+            -1
+          ]
+        },
+        {
+          "id": "normalized",
+          "op": "batch_norm",
+          "inputs": [
+            "shaped"
+          ],
+          "running_mean": "mean",
+          "running_var": "variance",
+          "weight": "gamma",
+          "bias": "beta",
+          "eps": 0.25
+        },
+        {
+          "id": "out",
+          "op": "flatten",
+          "inputs": [
+            "normalized"
+          ]
+        }
+      ],
+      "output": "out"
+    },
+    {
+      "schema": 2,
+      "id": "reshape-conv2-bn",
+      "input_shape": [
+        1,
+        2,
+        2
+      ],
+      "constants": {
+        "mean": [
+          0.5
+        ],
+        "variance": [
+          0.75
+        ],
+        "gamma": [
+          -1
+        ],
+        "beta": [
+          0.125
+        ],
+        "kernel": [
+          [
+            [
+              [
+                0.5
+              ]
+            ]
+          ]
+        ],
+        "conv_bias": [
+          0.25
+        ]
+      },
+      "nodes": [
+        {
+          "id": "convolved",
+          "op": "conv2d",
+          "inputs": [
+            "x"
+          ],
+          "weight": "kernel",
+          "bias": "conv_bias",
+          "stride": [
+            1,
+            1
+          ],
+          "padding": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "shaped",
+          "op": "reshape",
+          "inputs": [
+            "convolved"
+          ],
+          "shape": [
+            1,
+            1,
+            2,
+            2
+          ]
+        },
+        {
+          "id": "normalized",
+          "op": "batch_norm",
+          "inputs": [
+            "shaped"
+          ],
+          "running_mean": "mean",
+          "running_var": "variance",
+          "weight": "gamma",
+          "bias": "beta",
+          "eps": 0.25
+        },
+        {
+          "id": "out",
+          "op": "flatten",
+          "inputs": [
+            "normalized"
+          ]
+        }
+      ],
+      "output": "out"
+    }
+  ]
+}

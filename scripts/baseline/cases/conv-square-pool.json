@@ -1,0 +1,70 @@
+{
+  "schema": 2,
+  "id": "conv-square-pool",
+  "input_shape": [
+    1,
+    4
+  ],
+  "constants": {
+    "w": [
+      [
+        [
+          0.25,
+          -0.5
+        ]
+      ]
+    ],
+    "b": [
+      0.125
+    ]
+  },
+  "nodes": [
+    {
+      "id": "conv",
+      "op": "conv1d",
+      "inputs": [
+        "x"
+      ],
+      "weight": "w",
+      "bias": "b",
+      "stride": [
+        1
+      ],
+      "padding": [
+        0
+      ]
+    },
+    {
+      "id": "activated",
+      "op": "square",
+      "inputs": [
+        "conv"
+      ]
+    },
+    {
+      "id": "spatial",
+      "op": "avg_pool1d",
+      "inputs": [
+        "activated"
+      ],
+      "kernel": [
+        2
+      ],
+      "stride": [
+        1
+      ],
+      "padding": [
+        0
+      ],
+      "count_include_pad": false
+    },
+    {
+      "id": "out",
+      "op": "flatten",
+      "inputs": [
+        "spatial"
+      ]
+    }
+  ],
+  "output": "out"
+}

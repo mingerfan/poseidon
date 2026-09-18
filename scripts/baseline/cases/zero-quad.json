@@ -1,0 +1,82 @@
+{
+  "schema": 3,
+  "id": "zero-quad",
+  "inputs": [
+    {
+      "name": "a",
+      "shape": [
+        4
+      ]
+    },
+    {
+      "name": "b",
+      "shape": [
+        4
+      ]
+    },
+    {
+      "name": "c",
+      "shape": [
+        4
+      ]
+    },
+    {
+      "name": "d",
+      "shape": [
+        4
+      ]
+    }
+  ],
+  "constants": {
+    "w": [
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0.5,
+        -0.25,
+        0.125,
+        0.75
+      ]
+    ]
+  },
+  "nodes": [
+    {
+      "id": "ab",
+      "op": "add",
+      "inputs": [
+        "a",
+        "b"
+      ]
+    },
+    {
+      "id": "cd",
+      "op": "add",
+      "inputs": [
+        "c",
+        "d"
+      ]
+    },
+    {
+      "id": "sum",
+      "op": "add",
+      "inputs": [
+        "ab",
+        "cd"
+      ]
+    },
+    {
+      "id": "out",
+      "op": "linear",
+      "inputs": [
+        "sum"
+      ],
+      "weight": "w",
+      "bias": null
+    }
+  ],
+  "output": "out"
+}

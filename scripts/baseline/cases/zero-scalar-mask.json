@@ -1,0 +1,14 @@
+{
+  "schema": 2,
+  "id": "zero-scalar-mask",
+  "input_shape": [4],
+  "constants": {
+    "w": [[1, 0, 0, 0], [0, 1, 0, 0]],
+    "mask": [0, -0.5]
+  },
+  "nodes": [
+    {"id": "linear", "op": "linear", "inputs": ["x"], "weight": "w", "bias": null},
+    {"id": "masked", "op": "multiply", "inputs": ["linear", "mask"]}
+  ],
+  "output": "masked"
+}

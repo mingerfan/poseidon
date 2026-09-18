@@ -1,0 +1,713 @@
+{
+ "schema": 1,
+ "cases": [
+  {
+   "schema": 5,
+   "id": "pc-bn-rank2",
+   "input_shape": [
+    3,
+    5
+   ],
+   "constants": {
+    "mean": [
+     -0.125,
+     0,
+     0.125,
+     0.25,
+     0.375
+    ],
+    "variance": [
+     0.5,
+     0.75,
+     1,
+     1.25,
+     1.5
+    ],
+    "gamma": [
+     0.5,
+     -0.75,
+     0.5,
+     -0.75,
+     0.5
+    ],
+    "beta": [
+     0.03125,
+     0.0625,
+     0.09375,
+     0.125,
+     0.15625
+    ]
+   },
+   "nodes": [
+    {
+     "id": "normalized",
+     "op": "batch_norm",
+     "inputs": [
+      "x"
+     ],
+     "running_mean": "mean",
+     "running_var": "variance",
+     "weight": "gamma",
+     "bias": "beta",
+     "eps": 0.125
+    }
+   ],
+   "output": "normalized"
+  },
+  {
+   "schema": 5,
+   "id": "pc-bn-rank3",
+   "input_shape": [
+    2,
+    3,
+    5
+   ],
+   "constants": {
+    "mean": [
+     -0.125,
+     0,
+     0.125
+    ],
+    "variance": [
+     0.5,
+     0.75,
+     1
+    ],
+    "gamma": [
+     0.5,
+     -0.75,
+     0.5
+    ],
+    "beta": [
+     0.03125,
+     0.0625,
+     0.09375
+    ]
+   },
+   "nodes": [
+    {
+     "id": "normalized",
+     "op": "batch_norm",
+     "inputs": [
+      "x"
+     ],
+     "running_mean": "mean",
+     "running_var": "variance",
+     "weight": "gamma",
+     "bias": "beta",
+     "eps": 0.125
+    }
+   ],
+   "output": "normalized"
+  },
+  {
+   "schema": 5,
+   "id": "pc-bn-rank4",
+   "input_shape": [
+    2,
+    2,
+    4,
+    8
+   ],
+   "constants": {
+    "mean": [
+     -0.125,
+     0
+    ],
+    "variance": [
+     0.5,
+     0.75
+    ],
+    "gamma": [
+     0.5,
+     -0.75
+    ],
+    "beta": [
+     0.03125,
+     0.0625
+    ]
+   },
+   "nodes": [
+    {
+     "id": "normalized",
+     "op": "batch_norm",
+     "inputs": [
+      "x"
+     ],
+     "running_mean": "mean",
+     "running_var": "variance",
+     "weight": "gamma",
+     "bias": "beta",
+     "eps": 0.125
+    }
+   ],
+   "output": "normalized"
+  },
+  {
+   "schema": 5,
+   "id": "pc-bn-max256",
+   "input_shape": [
+    2,
+    4,
+    4,
+    8
+   ],
+   "constants": {
+    "mean": [
+     -0.125,
+     0,
+     0.125,
+     0.25
+    ],
+    "variance": [
+     0.5,
+     0.75,
+     1,
+     1.25
+    ],
+    "gamma": [
+     0.5,
+     -0.75,
+     0.5,
+     -0.75
+    ],
+    "beta": [
+     0.03125,
+     0.0625,
+     0.09375,
+     0.125
+    ]
+   },
+   "nodes": [
+    {
+     "id": "normalized",
+     "op": "batch_norm",
+     "inputs": [
+      "x"
+     ],
+     "running_mean": "mean",
+     "running_var": "variance",
+     "weight": "gamma",
+     "bias": "beta",
+     "eps": 0.125
+    }
+   ],
+   "output": "normalized"
+  },
+  {
+   "schema": 5,
+   "id": "pc-bn-no-affine",
+   "input_shape": [
+    2,
+    3,
+    3
+   ],
+   "constants": {
+    "mean": [
+     -0.125,
+     0,
+     0.125
+    ],
+    "variance": [
+     0.5,
+     0.75,
+     1
+    ]
+   },
+   "nodes": [
+    {
+     "id": "normalized",
+     "op": "batch_norm",
+     "inputs": [
+      "x"
+     ],
+     "running_mean": "mean",
+     "running_var": "variance",
+     "weight": null,
+     "bias": null,
+     "eps": 0.125
+    }
+   ],
+   "output": "normalized"
+  },
+  {
+   "schema": 5,
+   "id": "pc-bn-zero-gamma",
+   "input_shape": [
+    2,
+    3,
+    5
+   ],
+   "constants": {
+    "mean": [
+     -0.125,
+     0,
+     0.125
+    ],
+    "variance": [
+     0.5,
+     0.75,
+     1
+    ],
+    "gamma": [
+     0,
+     0,
+     0
+    ],
+    "beta": [
+     0.03125,
+     0.0625,
+     0.09375
+    ]
+   },
+   "nodes": [
+    {
+     "id": "normalized",
+     "op": "batch_norm",
+     "inputs": [
+      "x"
+     ],
+     "running_mean": "mean",
+     "running_var": "variance",
+     "weight": "gamma",
+     "bias": "beta",
+     "eps": 0.125
+    }
+   ],
+   "output": "normalized"
+  },
+  {
+   "schema": 5,
+   "id": "pc-conv-bn",
+   "input_shape": [
+    2,
+    1,
+    4,
+    4
+   ],
+   "constants": {
+    "weight": [
+     [
+      [
+       [
+        -0.15625,
+        -0.0625
+       ],
+       [
+        0.03125,
+        0.125
+       ]
+      ]
+     ],
+     [
+      [
+       [
+        -0.125,
+        -0.03125
+       ],
+       [
+        0.0625,
+        0.15625
+       ]
+      ]
+     ]
+    ],
+    "bias": [
+     0.015625,
+     0.03125
+    ],
+    "mean": [
+     -0.125,
+     0
+    ],
+    "variance": [
+     0.5,
+     0.75
+    ],
+    "gamma": [
+     0,
+     -0.75
+    ],
+    "beta": [
+     0.03125,
+     0.0625
+    ]
+   },
+   "nodes": [
+    {
+     "id": "out",
+     "op": "conv2d",
+     "inputs": [
+      "x"
+     ],
+     "weight": "weight",
+     "bias": "bias",
+     "stride": [
+      2,
+      2
+     ],
+     "padding": [
+      0,
+      0
+     ],
+     "groups": 1,
+     "dilation": [
+      1,
+      1
+     ]
+    },
+    {
+     "id": "normalized",
+     "op": "batch_norm",
+     "inputs": [
+      "out"
+     ],
+     "running_mean": "mean",
+     "running_var": "variance",
+     "weight": "gamma",
+     "bias": "beta",
+     "eps": 0.125
+    }
+   ],
+   "output": "normalized"
+  },
+  {
+   "schema": 5,
+   "id": "pc-bn-conv-max256",
+   "input_shape": [
+    2,
+    1,
+    8,
+    16
+   ],
+   "constants": {
+    "weight": [
+     [
+      [
+       [
+        -0.15625,
+        -0.0625,
+        0.03125
+       ],
+       [
+        0.125,
+        -0.125,
+        -0.03125
+       ],
+       [
+        0.0625,
+        0.15625,
+        -0.09375
+       ]
+      ]
+     ]
+    ],
+    "bias": [
+     0.015625
+    ],
+    "mean": [
+     -0.125
+    ],
+    "variance": [
+     0.5
+    ],
+    "gamma": [
+     0.5
+    ],
+    "beta": [
+     0.03125
+    ]
+   },
+   "nodes": [
+    {
+     "id": "normalized",
+     "op": "batch_norm",
+     "inputs": [
+      "x"
+     ],
+     "running_mean": "mean",
+     "running_var": "variance",
+     "weight": "gamma",
+     "bias": "beta",
+     "eps": 0.125
+    },
+    {
+     "id": "out",
+     "op": "conv2d",
+     "inputs": [
+      "normalized"
+     ],
+     "weight": "weight",
+     "bias": "bias",
+     "stride": [
+      4,
+      4
+     ],
+     "padding": [
+      1,
+      1
+     ],
+     "groups": 1,
+     "dilation": [
+      1,
+      1
+     ]
+    }
+   ],
+   "output": "out"
+  },
+  {
+   "schema": 5,
+   "id": "pc-concat-packed-negative-axis",
+   "input_shape": [
+    2,
+    3
+   ],
+   "constants": {},
+   "nodes": [
+    {
+     "id": "negative",
+     "op": "negate",
+     "inputs": [
+      "x"
+     ]
+    },
+    {
+     "id": "out",
+     "op": "concat",
+     "inputs": [
+      "x",
+      "negative"
+     ],
+     "axis": -1
+    }
+   ],
+   "output": "out"
+  },
+  {
+   "schema": 5,
+   "id": "pc-concat-conv-channels",
+   "input_shape": [
+    2,
+    1,
+    4,
+    4
+   ],
+   "constants": {
+    "weight": [
+     [
+      [
+       [
+        -0.15625,
+        -0.0625
+       ],
+       [
+        0.03125,
+        0.125
+       ]
+      ]
+     ]
+    ],
+    "bias": [
+     0.015625
+    ]
+   },
+   "nodes": [
+    {
+     "id": "out",
+     "op": "conv2d",
+     "inputs": [
+      "x"
+     ],
+     "weight": "weight",
+     "bias": "bias",
+     "stride": [
+      2,
+      2
+     ],
+     "padding": [
+      0,
+      0
+     ],
+     "groups": 1,
+     "dilation": [
+      1,
+      1
+     ]
+    },
+    {
+     "id": "negative",
+     "op": "negate",
+     "inputs": [
+      "out"
+     ]
+    },
+    {
+     "id": "joined",
+     "op": "concat",
+     "inputs": [
+      "negative",
+      "out"
+     ],
+     "axis": 1
+    }
+   ],
+   "output": "joined"
+  },
+  {
+   "schema": 5,
+   "id": "pc-concat-mixed-layout",
+   "input_shape": [
+    2,
+    4
+   ],
+   "constants": {
+    "weight": [
+     [
+      0.03125,
+      0.0625,
+      0.09375,
+      0.125
+     ],
+     [
+      0.0625,
+      0.09375,
+      0.125,
+      0.03125
+     ],
+     [
+      0.09375,
+      0.125,
+      0.03125,
+      0.0625
+     ],
+     [
+      0.125,
+      0.03125,
+      0.0625,
+      0.09375
+     ]
+    ],
+    "bias": [
+     0.125,
+     -0.0625,
+     0.03125,
+     -0.125
+    ]
+   },
+   "nodes": [
+    {
+     "id": "projected",
+     "op": "linear",
+     "inputs": [
+      "x"
+     ],
+     "weight": "weight",
+     "bias": "bias"
+    },
+    {
+     "id": "out",
+     "op": "concat",
+     "inputs": [
+      "projected",
+      "x"
+     ],
+     "axis": 0
+    }
+   ],
+   "output": "out"
+  },
+  {
+   "schema": 5,
+   "id": "pc-bn-concat-linear",
+   "input_shape": [
+    2,
+    3
+   ],
+   "constants": {
+    "mean": [
+     -0.125,
+     0,
+     0.125
+    ],
+    "variance": [
+     0.5,
+     0.75,
+     1
+    ],
+    "gamma": [
+     0.5,
+     -0.75,
+     0.5
+    ],
+    "beta": [
+     0.03125,
+     0.0625,
+     0.09375
+    ],
+    "weight": [
+     [
+      0.03125,
+      -0.0625,
+      0.09375,
+      -0.125,
+      0.15625,
+      -0.1875
+     ],
+     [
+      0.25,
+      0.25,
+      0.25,
+      -0.125,
+      -0.125,
+      -0.125
+     ]
+    ],
+    "bias": [
+     0.125,
+     -0.0625
+    ]
+   },
+   "nodes": [
+    {
+     "id": "normalized",
+     "op": "batch_norm",
+     "inputs": [
+      "x"
+     ],
+     "running_mean": "mean",
+     "running_var": "variance",
+     "weight": "gamma",
+     "bias": "beta",
+     "eps": 0.125
+    },
+    {
+     "id": "negative",
+     "op": "negate",
+     "inputs": [
+      "normalized"
+     ]
+    },
+    {
+     "id": "joined",
+     "op": "concat",
+     "inputs": [
+      "normalized",
+      "negative"
+     ],
+     "axis": 1
+    },
+    {
+     "id": "out",
+     "op": "linear",
+     "inputs": [
+      "joined"
+     ],
+     "weight": "weight",
+     "bias": "bias"
+    }
+   ],
+   "output": "out"
+  }
+ ]
+}

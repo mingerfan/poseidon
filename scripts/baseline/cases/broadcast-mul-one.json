@@ -1,0 +1,23 @@
+{
+  "schema": 2,
+  "id": "broadcast-mul-one",
+  "input_shape": [
+    4
+  ],
+  "constants": {
+    "weight": [
+      -0.5
+    ]
+  },
+  "nodes": [
+    {
+      "id": "out",
+      "op": "multiply",
+      "inputs": [
+        "x",
+        "weight"
+      ]
+    }
+  ],
+  "output": "out"
+}
