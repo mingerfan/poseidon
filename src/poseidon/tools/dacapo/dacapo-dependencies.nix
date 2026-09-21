@@ -1,22 +1,30 @@
 # Evaluation defines a plan only. Realizing these packages needs user approval.
 # No <nixpkgs>, channel lookup, fetchTarball or import-from-derivation here.
-{ nixpkgsSource ? null }:
+{ nixpkgsSource ? null, toolchainProfile ? "hecate", platform ? "x86_64-linux" }:
 let
   lock = builtins.fromJSON (builtins.readFile ./dependency-lock.json);
+  platforms = (builtins.fromJSON (builtins.readFile ../../../../scripts/baseline/platform-profiles.json)).platforms;
+  platformConfig = if builtins.hasAttr platform platforms then platforms.${platform}
+    else throw "Unconfigured Poseidon platform";
+  system = platformConfig.system;
+  sdk = builtins.fromJSON (builtins.readFile ./hecate-toolchain-components.json);
+  lean = toolchainProfile == "hecate";
   candidate = if nixpkgsSource == null then lock.nixpkgs.bundled_path else nixpkgsSource;
   source = if builtins.pathExists candidate then builtins.path {
     path = builtins.toPath candidate;
     name = "poseidon-nixpkgs-${lock.nixpkgs.rev}";
     sha256 = lock.nixpkgs.nar_hash;
   } else throw "Pinned nixpkgs source is missing. Use the approved nix-portable environment or provide nixpkgsSource; no automatic download is allowed.";
-  pkgs = import source { inherit (lock) system; config = {}; overlays = []; };
+  pkgs = import source { inherit system; config = {}; overlays = []; };
   # Bound each fixed-output source download as well as the caller's build timeout.
   sourceCurlOptions = [ "--connect-timeout" "10" "--max-time" "600" "--retry" "0" ];
 
-  # Bootstrap Clang itself with the pinned GCC stdenv; Dacapo uses Clang 18.1.2.
-  # One monorepo build guarantees LLVM, MLIR and Clang have the same version.
-  toolchain = pkgs.stdenv.mkDerivation {
-    pname = "poseidon-llvm-mlir-clang";
+  # Hecate reuses the pinned GCC wrapper; the optional full profile builds Clang.
+  # Both profiles use the same content-locked LLVM/MLIR source.
+  toolchain = assert builtins.elem toolchainProfile [ "hecate" "full" ];
+    assert sdk.llvm_version == lock.llvm.version;
+    pkgs.stdenv.mkDerivation ({
+    pname = if lean then "poseidon-llvm-mlir" else "poseidon-llvm-mlir-clang";
     inherit (lock.llvm) version;
     src = pkgs.fetchurl {
       inherit (lock.llvm) url sha256;
@@ -26,15 +34,20 @@ let
     buildInputs = [ pkgs.zlib pkgs.libxml2 ];
     cmakeDir = "../llvm";
     cmakeFlags = [
-      "-DLLVM_ENABLE_PROJECTS=clang;mlir"
-      "-DLLVM_TARGETS_TO_BUILD=X86"
-      "-DLLVM_INSTALL_UTILS=ON"
+      "-DLLVM_ENABLE_PROJECTS=${if lean then "mlir" else "clang;mlir"}"
+      "-DLLVM_TARGETS_TO_BUILD=${pkgs.lib.concatStringsSep ";" platformConfig.llvm_codegen_targets.${toolchainProfile}}"
+      "-DLLVM_INSTALL_UTILS=${if lean then "OFF" else "ON"}"
       "-DLLVM_ENABLE_PIC=ON"
       "-DLLVM_PARALLEL_COMPILE_JOBS=2"
       "-DLLVM_PARALLEL_LINK_JOBS=1"
       "-DLLVM_BUILD_EXAMPLES=OFF"
       "-DLLVM_INCLUDE_BENCHMARKS=OFF"
       "-DMLIR_ENABLE_BINDINGS_PYTHON=OFF"
+    ] ++ pkgs.lib.optionals lean [
+      "-DLLVM_DISTRIBUTION_COMPONENTS=${pkgs.lib.concatStringsSep ";" sdk.components}"
+      "-DLLVM_INCLUDE_TESTS=OFF"
+      "-DMLIR_INCLUDE_TESTS=OFF"
+      "-DMLIR_INSTALL_AGGREGATE_OBJECTS=OFF"
     ];
     enableParallelBuilding = true;
     # Verify the actual installed tools and CMake export locations, not only attrs.
@@ -42,19 +55,33 @@ let
     installCheckPhase = ''
       runHook preInstallCheck
       test "$($out/bin/llvm-config --version)" = '${lock.llvm.version}'
-      $out/bin/mlir-opt --version | grep -F '${lock.llvm.version}'
-      $out/bin/clang --version | grep -F '${lock.llvm.version}'
+      $out/bin/mlir-tblgen --version | grep -F '${lock.llvm.version}'
+      ${pkgs.lib.optionalString (!lean) "$out/bin/clang --version | grep -F '${lock.llvm.version}'"}
       test -f "$out/lib/cmake/llvm/LLVMConfig.cmake"
       test -f "$out/lib/cmake/mlir/MLIRConfig.cmake"
       runHook postInstallCheck
     '';
-    passthru.isClang = true;
-  };
-  clang = pkgs.wrapCCWith {
+    passthru.isClang = !lean;
+  } // pkgs.lib.optionalAttrs lean {
+    # Build and install the declared SDK, not Ninja's monorepo-wide "all" target.
+    # Keep Nix's Ninja hooks: CMake uses their presence to select its generator.
+    ninjaFlags = [ "distribution" ];
+    installTargets = "install-distribution";
+    enableParallelInstalling = false;
+  });
+  clang = assert !lean; pkgs.wrapCCWith {
     cc = toolchain;
     isClang = true;
     libcxx = null;
     gccForLibs = pkgs.stdenv.cc.cc;
+  };
+
+  compiler = if lean then pkgs.stdenv.cc else clang;
+  compilerInfo = {
+    name = if lean then "gcc" else "clang";
+    version = if lean then "13.2.0" else lock.llvm.version;
+    c_binary = if lean then "gcc" else "clang";
+    cxx_binary = if lean then "g++" else "clang++";
   };
 
   # SEAL 4.0 requests GSL major version 3. The snapshot's GSL 4 is incompatible.
@@ -115,17 +142,21 @@ let
     '';
   };
 in {
-  inherit pkgs lock toolchain clang msgsl zstd seal;
+  inherit pkgs lock platformConfig toolchain clang compiler compilerInfo msgsl zstd seal;
   metadata = {
     scope = "dependency_plan_only";
     compiler_build_validated = false;
     encrypted_execution_validated = false;
-    inherit (lock) system limits;
+    inherit system;
+    inherit (lock) limits;
+    platform_id = platform;
+    python_wheel_lock = platformConfig.wheel_lock;
     nixpkgs = { inherit (lock.nixpkgs) rev nar_hash; };
     versions = {
       llvm = toolchain.version;
       mlir = toolchain.version;
-      clang = clang.version;
+      clang = if lean then null else clang.version;
+      gcc = pkgs.stdenv.cc.version;
       seal = seal.version;
       msgsl = msgsl.version;
       zstd = zstd.version;
@@ -135,10 +166,13 @@ in {
       python = pkgs.python310.version;
       bootstrap_gcc = pkgs.stdenv.cc.version;
     };
+    cxx_compiler = compilerInfo;
     toolchain_cmake_flags = toolchain.cmakeFlags;
+    toolchain_profile = toolchainProfile;
+    distribution_components = if lean then sdk.components else [];
     seal_cmake_flags = seal.cmakeFlags;
-    compiler_derivations = [ toolchain.drvPath clang.drvPath seal.drvPath ];
-    compiler_outputs = [ toolchain.outPath clang.outPath seal.outPath ];
+    compiler_derivations = [ toolchain.drvPath compiler.drvPath seal.drvPath ];
+    compiler_outputs = [ toolchain.outPath compiler.outPath seal.outPath ];
     # nix-shell otherwise adds an implicit bashInteractive dependency not covered
     # by nix build shell.nix. Reuse the already-realized stdenv Bash explicitly.
     shell_bash = "${pkgs.bash}/bin/bash";

@@ -1,0 +1,13 @@
+diff --git a/lib/Runtime/CMakeLists.txt b/lib/Runtime/CMakeLists.txt
+--- a/lib/Runtime/CMakeLists.txt
++++ b/lib/Runtime/CMakeLists.txt
+@@ -2,6 +2,9 @@
+ add_library (SEAL_HEVM
+  SHARED
+  SEAL_HEVM.cpp)
++# LLVM's directory flags disable exceptions, but SEAL's public inline API throws.
++# Keep exception support local to the SEAL consumer; compiler passes are unchanged.
++target_compile_options(SEAL_HEVM PRIVATE -fexceptions)
+ target_link_libraries(SEAL_HEVM
+  PUBLIC
+  SEAL::seal

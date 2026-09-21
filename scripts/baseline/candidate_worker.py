@@ -2,6 +2,7 @@
 import json
 import os
 from pathlib import Path
+import resource
 import socket
 import sys
 
@@ -26,6 +27,13 @@ def probe():
         checks["request_read_only"] = False
     except OSError:
         checks["request_read_only"] = True
+    expected_limits = {'AS': (4 * 1024**3, 4 * 1024**3), 'CPU': (150, 155),
+                       'FSIZE': (16 * 1024**2, 16 * 1024**2), 'NOFILE': (128, 128),
+                       'CORE': (0, 0)}
+    measured_limits = {name: resource.getrlimit(getattr(resource, 'RLIMIT_' + name))
+                       for name in expected_limits}
+    checks['resource_limits_applied'] = measured_limits == expected_limits
+    checks['resource_limits'] = measured_limits
     Path("/out/probe.json").write_text(json.dumps(checks, indent=2))
     if not all(checks.values()):
         raise RuntimeError("Sandbox capability probe failed")

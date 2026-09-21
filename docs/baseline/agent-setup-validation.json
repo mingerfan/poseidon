@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "date": "2026-09-21",
+  "scope": "setup entry offline tests and existing ARM source/cache inspection; no provisioning",
+  "source_root": "/home/lhohy/Code/Poseidon",
+  "branch": "lhy-agent-dsl",
+  "head": "534eae4bca450a2d4101abc9abd40d8feb50650f",
+  "platform": "aarch64-linux",
+  "suites": [
+    "test_agent_setup",
+    "test_platform_config",
+    "test_portability",
+    "test_python_stage.PythonWheelLockTests"
+  ],
+  "tests_run": 48,
+  "passed": 48,
+  "failed": 0,
+  "skipped": 0,
+  "seconds": 0.531,
+  "test_evidence_kind": "unit tests include mocked platform and build orchestration plus disposable Git fixtures; not a fresh install",
+  "actual_readonly_checks": {
+    "dacapo_patch_prefix": 11,
+    "expected_patch_count": 11,
+    "existing_cmake_platform_matches": true,
+    "cli_plan_selection": {
+      "auto": "aarch64-linux",
+      "aarch64-linux": "aarch64-linux",
+      "x86_64-linux": "x86_64-linux"
+    },
+    "shell_syntax": "passed",
+    "git_diff_check": "passed"
+  },
+  "earlier_exploratory_suite": {
+    "tests_run": 50,
+    "passed": 45,
+    "failed": 0,
+    "skipped": 5,
+    "skip_reason": "unselected historical Python compiler/adapter artifact tests; not counted as passed; overlaps final suite"
+  },
+  "source_hashes": {
+    "scripts/setup_agent.py": "bc00993b2705f8b70f66b5f778836ef3ead081a66a447eec27a890f2ef9350ec",
+    "scripts/baseline/agent_setup.py": "8d7742e1e3a372d3209cb7fb7100da86855cd5d10f738af4ca1ad72641429b9b",
+    "scripts/baseline/agent-requirements.json": "29c59fa158eb2e12f49e41e63682c3fe3e059e4e10ff5f747e4b5cdd669e9185",
+    "scripts/baseline/build_agent_cpu.sh": "2a67e4be92d36df7f01f9ba3e4a166968dbdb0f0b56eeb504ad43c00d9aa5b65",
+    "scripts/baseline/test_agent_setup.py": "83030cca1cc5a6ab12e0f23d9becf235884ea52e976282a3e36b5fc9b032c5ea",
+    "scripts/baseline/hecate_python_env.py": "f70971e07000ec34d45dc66fb4db3378ce4666e6eacbd6ecb708ef01063412ed"
+  },
+  "test_log_sha256": "0d30a227c48ac12f9ddf33f2b8c81afe302af6f78dc00031b3f586497c7ffade",
+  "fresh_install_validated": false,
+  "downloads_performed": 0,
+  "system_installs": 0,
+  "native_builds": 0,
+  "encrypted_execution_performed": false,
+  "paid_api_calls": 0,
+  "commit_or_push": false
+}

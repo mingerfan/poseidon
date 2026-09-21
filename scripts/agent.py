@@ -49,6 +49,7 @@ def build_command(args, *, host_platform=None):
     if '--inside' in forwarded:
         raise ValueError('--inside is an internal backend option, not a host launcher option')
     script = 'scripts/baseline/' + ENTRIES[args.command]
+    platform_env = ['POSEIDON_PLATFORM=' + args.platform] if args.platform else []
     # Encode all user arguments as data, including whitespace/quotes/metacharacters.
     # The timeout executes INSIDE Linux so an SSH disconnect cannot remove it.
     code = ('import os,sys; os.chdir(sys.argv[1]); '
@@ -57,6 +58,8 @@ def build_command(args, *, host_platform=None):
             '(["POSEIDON_WORK_ROOT="+sys.argv[3]] if sys.argv[3] else []) + '
             '["python3", sys.argv[4]] + sys.argv[5:])')
     command = ['python3', '-c', code, root, str(args.timeout), args.work_root or '', script, *forwarded]
+    if platform_env:
+        command = ['env', *platform_env, *command]
     if backend == 'local':
         return command
     if backend == 'wsl':
@@ -72,6 +75,8 @@ def parse_args(argv=None):
     parser.add_argument('--backend', choices=('auto','local','wsl','ssh'), default='auto')
     parser.add_argument('--backend-root', default=os.environ.get('POSEIDON_BACKEND_ROOT'))
     parser.add_argument('--work-root', default=None, help='Linux work root; otherwise backend environment/home default')
+    parser.add_argument('--platform', choices=('x86_64-linux', 'aarch64-linux'), default=None,
+                        help='Explicit backend architecture; otherwise use the backend environment/default x86')
     parser.add_argument('--wsl-distro', default=os.environ.get('POSEIDON_WSL_DISTRO'),
                         help='Omit to use the configured default WSL distribution')
     parser.add_argument('--ssh-host', default=os.environ.get('POSEIDON_SSH_HOST'))

@@ -3,6 +3,8 @@
 Only trusted manual goldens. No installs/downloads, no bootstrap, no new HEVM
 backend. The venv/Nix shell and subprocess isolation are NOT an Agent sandbox.
 """
+from platform_config import identity, require_python_packages, loaded_libraries
+from hevm_abi import check_elf, require_native_abi
 import argparse
 import ctypes
 import json
@@ -103,6 +105,9 @@ def execute_artifact(directory, keys, selectors, *, rotation_steps=(1, 2), expec
             "Every result ciphertext must have a declared output binding")
     hfd, hpath = sealed_snapshot("validated-hevm", raw)
     cfd, cpath = sealed_snapshot("validated-cst", cst)
+    require_native_abi(BUILD)
+    check_elf(BUILD / "lib/libSEAL_HEVM.so")
+    check_elf(KEY_BUILD / "libseal_golden_metadata.so")
     lib = ctypes.CDLL(str(BUILD / "lib/libSEAL_HEVM.so"))
     ptr, chars, i64, doubles = ctypes.c_void_p, ctypes.c_char_p, ctypes.c_int64, ctypes.POINTER(ctypes.c_double)
     # Match the actual C++ C ABI (stock runner.py incorrectly adds an init bool).
@@ -119,6 +124,7 @@ def execute_artifact(directory, keys, selectors, *, rotation_steps=(1, 2), expec
     observer.verify_galois_file.restype = ctypes.c_int
     required_steps = (i64 * len(gate["rotation_steps"]))(*gate["rotation_steps"])
     if packed:
+        check_elf(KEY_BUILD/'libseal_packed_metadata.so')
         packed_observer=ctypes.CDLL(str(KEY_BUILD/'libseal_packed_metadata.so'))
         packed_observer.verify_packed_galois_file.argtypes=[chars,chars,ctypes.POINTER(i64),ctypes.c_uint64,ctypes.c_uint64]
         packed_observer.verify_packed_galois_file.restype=ctypes.c_int
@@ -180,7 +186,8 @@ def execute_artifact(directory, keys, selectors, *, rotation_steps=(1, 2), expec
         output.append(np.array([slots[i, j] for i, j in selectors], dtype=np.float64))
         observations.append(observation)
     np.save(directory / "decrypted.npy", np.stack(output), allow_pickle=False)
-    evidence = dict(backend="upstream_SEAL_HEVM_CPU", encrypted_execution=True,
+    evidence = dict(platform_identity=identity(), mapped_libraries=loaded_libraries(),
+        backend="upstream_SEAL_HEVM_CPU", encrypted_execution=True,
         rotation_key_check={"actual_key_file_verified": True, "required_steps": gate["rotation_steps"]},
         bootstrap_executed=False, input_batches=len(inputs), ciphertext_metadata=observations,
         encrypted_input_count=expected_inputs,
@@ -197,19 +204,32 @@ def execute_artifact(directory, keys, selectors, *, rotation_steps=(1, 2), expec
     return 0
 
 
-def main():
+def parse_args(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--inside", action="store_true")
     parser.add_argument("--worker", choices=CASES)
     parser.add_argument("--directory", type=Path)
     parser.add_argument("--keys", type=Path)
-    parser.add_argument("--suite", choices=("base", "extended", "all"), default="all")
-    args = parser.parse_args()
+    selection = parser.add_mutually_exclusive_group()
+    selection.add_argument("--suite", choices=("base", "extended", "all"), default="all")
+    selection.add_argument("--case", choices=CASES, help="Run one existing golden without the rest of its suite")
+    return parser.parse_args(argv)
+
+
+def selected_cases(args):
+    if args.case:
+        return (args.case,)
+    return BASE_CASES if args.suite == "base" else EXTENDED_CASES if args.suite == "extended" else CASES
+
+
+def main():
+    args = parse_args()
     require(Path.cwd().resolve() == ROOT, f"Requires cwd {ROOT}")
     if not args.inside:
         require(not args.worker, "Worker requires pinned environment")
+        selection = f"--case {args.case}" if args.case else f"--suite {args.suite}"
         command = (f'LD_LIBRARY_PATH="$HECATE_PYTHON_LIBRARY_PATH" PYTHONDONTWRITEBYTECODE=1 '
-                   f'{shlex.quote(str(VENV / "bin/python"))} {shlex.quote(str(SCRIPT))} --inside --suite {args.suite}')
+                   f'{shlex.quote(str(VENV / "bin/python"))} {shlex.quote(str(SCRIPT))} --inside {selection}')
         return enter_nix(command, seconds=900)
     require(bool(os.environ.get("IN_NIX_SHELL")) and Path(sys.prefix) == VENV, "Requires pinned Nix/venv")
     if args.worker:
@@ -220,7 +240,7 @@ def main():
     import numpy as np
     import torch
     torch.set_num_threads(2)
-    require(torch.__version__ == "2.0.1+cpu" and np.__version__ == "1.25.2", "Unexpected Python dependencies")
+    require_python_packages(torch, np)
     os.umask(0o077)
     result = Path(tempfile.mkdtemp(prefix="seal-cpu-golden-", dir=WORK / "results"))
     print(f"SEAL CPU golden evidence: {result}", flush=True)
@@ -228,8 +248,8 @@ def main():
         PYTHONPATH=str(ROOT / "third_party/dacapo/python/hecate"), PYTHONDONTWRITEBYTECODE="1",
         PYTHONNOUSERSITE="1", OMP_NUM_THREADS="2", OPENBLAS_NUM_THREADS="2")
     require((Path(env["HECATE"]) / "build").resolve() == BUILD, "Missing or unexpected HECATE compatibility link")
-    selected = BASE_CASES if args.suite == "base" else EXTENDED_CASES if args.suite == "extended" else CASES
-    report = dict(status="running", backend="upstream_SEAL_HEVM_CPU", cases=[], suite=args.suite,
+    selected = selected_cases(args)
+    report = dict(platform_identity=identity(), status="running", backend="upstream_SEAL_HEVM_CPU", cases=[], suite="single" if args.case else args.suite,
         selected_cases=list(selected), report_schema=2,
         poseidon_gpu_execution_validated=False, encrypted_execution_validated=False,
         compiler_profile=str(PROFILE), profile_sha256=digest(PROFILE), waterline=WATERLINE,
@@ -269,7 +289,8 @@ def main():
                      "-DCMAKE_BUILD_TYPE=Release", "-DSEAL_DIR=" + os.environ["SEAL_DIR"]]
         report["key_configure_command"] = configure
         require(logged(configure, result / "key-configure.log", env=env) == 0, "Key helper configure failed")
-        require(logged(["cmake", "--build", str(key_build), "-j2"], result / "key-build.log", env=env) == 0,
+        require(logged(["cmake", "--build", str(key_build), "-j2",
+                        "--target", "seal_golden_keys", "seal_golden_metadata"], result / "key-build.log", env=env) == 0,
                 "Key helper build failed")
         report["metadata_observer_sha256"] = digest(key_build / "libseal_golden_metadata.so")
         keys = result / "private-keys"

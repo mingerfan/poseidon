@@ -12,8 +12,10 @@ from hecate_python_env import ROOT, VENV, WORK
 from python_compiler_smoke import BUILD
 from seal_cpu_golden import KEY_BUILD, PROFILE
 from seal_artifact_gate import require
+from workspace_paths import WORK_BASE
+from platform_config import configuration
 
-MODULES = ("workspace_paths.py", "candidate_trace.py", "candidate_contract.py", "candidate_worker.py", "hecate_contract.py", "public_construction.py", "function_construction.py", "lexical_scope.py", "construction_calls.py",
+MODULES = ("hevm_abi.py", "platform_config.py", "platform-profiles.json", "workspace_paths.py", "candidate_trace.py", "candidate_contract.py", "candidate_worker.py", "hecate_contract.py", "public_construction.py", "function_construction.py", "lexical_scope.py", "construction_calls.py",
            "packed_native_exercises.py", "packed-native-exercises-v1.json",
            "public_numeric.py", "public_strings.py", "public_polynomial.py", "object_arrays.py", "construction_exercises.py", "construction-exercises-v1.json", "seal_artifact_gate.py", "seal_cpu_golden.py", "python_compiler_smoke.py",
            "hecate_python_env.py", "continue_dacapo_cpp.py", "spatial_ops.py", "cipher_abi.py", "chunked_input_abi.py", "packed_input_abi.py",
@@ -38,6 +40,7 @@ def command(payload, output, argv, keys=None):
            "--ro-bind", str(BUILD / "lib"), str(BUILD / "lib"),
            "--ro-bind", str(BUILD / "bin/hecate-opt"), "/hecate-opt",
            "--ro-bind", str(PROFILE), "/profile.json",
+           "--ro-bind", str(BUILD / "hevm-abi.json"), str(BUILD / "hevm-abi.json"),
            "--ro-bind", str(KEY_BUILD / "libseal_golden_metadata.so"), str(KEY_BUILD / "libseal_golden_metadata.so")]
     for name in MODULES:
         cmd += ["--ro-bind", str(ROOT / "scripts/baseline" / name), "/app/" + name]
@@ -49,7 +52,7 @@ def command(payload, output, argv, keys=None):
         require(keys.resolve().is_relative_to(WORK / "results") and keys.is_dir(), "Invalid keys directory")
         cmd += ["--ro-bind", str(keys), "/keys"]
     variables = dict(PATH="/nonexistent", LD_LIBRARY_PATH=library, HECATE="/hecate",
-                     POSEIDON_WORK_ROOT=str(WORK), HOME="/nonexistent",
+                     POSEIDON_WORK_ROOT=str(WORK_BASE), POSEIDON_PLATFORM=configuration()['id'], HOME="/nonexistent",
                      PYTHONPATH="/app:/frontend", PYTHONDONTWRITEBYTECODE="1", PYTHONNOUSERSITE="1",
                      OMP_NUM_THREADS="2", OPENBLAS_NUM_THREADS="2", LANG="C.UTF-8")
     for name, value in variables.items():

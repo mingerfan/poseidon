@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "platforms": {
+    "x86_64-linux": {
+      "system": "x86_64-linux",
+      "machine": "x86_64",
+      "machine_aliases": [
+        "x86_64",
+        "amd64"
+      ],
+      "work_subdirectory": "",
+      "python": "3.10.14",
+      "numpy": "1.25.2",
+      "torch": "2.0.1+cpu",
+      "wheel_target": "cp310-linux-x86_64",
+      "wheel_lock": "python-wheels.lock.json",
+      "llvm_codegen_targets": {
+        "hecate": [
+          "X86"
+        ],
+        "full": [
+          "X86"
+        ]
+      },
+      "validation_status": "historical_e2e; current_machine_pending",
+      "nix_portable": {
+        "version": "v012",
+        "url": "https://github.com/DavHau/nix-portable/releases/download/v012/nix-portable-x86_64",
+        "bytes": 68062412,
+        "sha256": "b409c55904c909ac3aeda3fb1253319f86a89ddd1ba31a5dec33d4a06414c72a",
+        "hash_evidence": "Existing verified x86 release download fingerprint; not a publisher signature"
+      }
+    },
+    "aarch64-linux": {
+      "system": "aarch64-linux",
+      "machine": "aarch64",
+      "machine_aliases": [
+        "aarch64",
+        "arm64"
+      ],
+      "work_subdirectory": "platforms/aarch64-linux",
+      "python": "3.10.14",
+      "numpy": "1.25.2",
+      "torch": "2.0.1",
+      "wheel_target": "cp310-linux-aarch64",
+      "wheel_lock": "python-wheels-aarch64.lock.json",
+      "llvm_codegen_targets": {
+        "hecate": [],
+        "full": [
+          "AArch64"
+        ]
+      },
+      "validation_status": "native_cpu_minimal_and_representative_offline_verified; live_provider_unverified",
+      "nix_portable": {
+        "version": "v012",
+        "url": "https://github.com/DavHau/nix-portable/releases/download/v012/nix-portable-aarch64",
+        "bytes": 74671948,
+        "sha256": "af41d8defdb9fa17ee361220ee05a0c758d3e6231384a3f969a314f9133744ea",
+        "hash_evidence": "Full v012 aarch64 release asset downloaded over verified HTTPS; exact 74671948 bytes and complete SHA-256 measured on 2026-09-21. Self-extracting Bash launcher; embedded Nix platform is a separate runtime gate. Local fingerprint, not a publisher signature."
+      }
+    }
+  }
+}

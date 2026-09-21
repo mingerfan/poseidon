@@ -1,0 +1,280 @@
+{
+  "schema": 1,
+  "scope": "ARM64 native SEAL CPU offline subset acceptance",
+  "completed_utc": "2026-09-20T17:45:51Z",
+  "platform": "aarch64-linux",
+  "profile_sha256": "a8d2032b9cdad3ac67175d11126b55472c9139792575894471c2a1d729f5f622",
+  "source_head": "534eae4bca450a2d4101abc9abd40d8feb50650f",
+  "dacapo_head": "4616402710f39df3e5f5bd7930a6c036025aaac3",
+  "source_root": "/home/lhohy/Code/Poseidon",
+  "work_root": "/home/lhohy/poseidon-work/platforms/aarch64-linux",
+  "unit_tests": {
+    "passed": 63,
+    "failed": 0,
+    "skipped": 0,
+    "includes_mocks": true
+  },
+  "native_constant_export_test": {
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "pre_fix_expected_failure": true
+  },
+  "positive_cases": [
+    {
+      "case": "linear-self-test",
+      "passed": true,
+      "compared_values": 8,
+      "mae": 2.2759754879364547e-09,
+      "max_absolute_error": 3.6208599452081103e-09,
+      "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-lbkrjb1g/report.json",
+      "report_sha256": "a853890115059556c20cb12ee4c68bf5ee5f8cc5e2bb901bf96651580616327b"
+    },
+    {
+      "case": "mlp4x4x2",
+      "passed": true,
+      "compared_values": 8,
+      "mae": 3.71207379522287e-08,
+      "max_absolute_error": 1.1502960717280075e-07,
+      "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/seal-cpu-golden-5ht97elh/report.json",
+      "report_sha256": "9f5d6d99a382e2def739477a491964c24fca0f36cd95d4d48f045145bc2053de"
+    },
+    {
+      "case": "exercise-na-transpose",
+      "passed": true,
+      "compared_values": 16,
+      "mae": 4.697736132389108e-09,
+      "max_absolute_error": 1.952968931018262e-08,
+      "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-0hujf2f8/report.json",
+      "report_sha256": "453acbaec318b244ca116fd4e76e50933289397a5905797f7a556c70351c1442"
+    },
+    {
+      "case": "custom-dual-linear",
+      "passed": true,
+      "compared_values": 8,
+      "mae": 8.83496471956128e-09,
+      "max_absolute_error": 2.933740711474897e-08,
+      "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-_rk__wsx/report.json",
+      "report_sha256": "04bc33de2c29e70fce344dafd2092df8007f66884ca8b2ca0b68a75c2a56ae1d"
+    },
+    {
+      "case": "native-packed-0-tensor-affine-native-alias",
+      "passed": true,
+      "compared_values": 120,
+      "mae": 4.607343761789511e-11,
+      "max_absolute_error": 2.5235966094605544e-10,
+      "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-oca_79sm/report.json",
+      "report_sha256": "92014844a42181ccaf5400b48a69860f021e336258d211f7593e776fd47e20b9"
+    },
+    {
+      "case": "native-packed-1-native-packed-loop-rank4",
+      "passed": true,
+      "compared_values": 512,
+      "mae": 1.692079489665014e-10,
+      "max_absolute_error": 2.818641764434915e-09,
+      "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-88u94421/report.json",
+      "report_sha256": "ad3fc022a6a49d37e23d5cd652225107c6a90585abf2674207306e07859f0a2b"
+    },
+    {
+      "case": "native-packed-2-tensor-linear-native-six-output",
+      "passed": true,
+      "compared_values": 24,
+      "mae": 2.2422611655146623e-11,
+      "max_absolute_error": 7.479994401649037e-11,
+      "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-bh08cqez/report.json",
+      "report_sha256": "5a6b0c88a54829ab6c30a969b56b8c4a1b2b3f5387ffbbd85d01e3e79a208abf"
+    },
+    {
+      "case": "native-packed-3-tensor-zero_rows-native-zero",
+      "passed": true,
+      "compared_values": 16,
+      "mae": 4.3270225727129463e-11,
+      "max_absolute_error": 1.0668768646304727e-10,
+      "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-fmuwu5yb/report.json",
+      "report_sha256": "a69de9ae27f9201f6f400d503fa39d66d3c08120b02b698d76b64f79ef4bee65"
+    },
+    {
+      "case": "native-packed-4-ps-max256-batched",
+      "passed": true,
+      "compared_values": 64,
+      "mae": 3.920576501116732e-11,
+      "max_absolute_error": 1.17519549647227e-10,
+      "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-9l_nsbz_/report.json",
+      "report_sha256": "f8d6176b67b2a7cb9736a01429f9f10674eb4edd1f09dca2caa02903455e7d6d"
+    },
+    {
+      "case": "native-packed-5-perm-nonsquare",
+      "passed": true,
+      "compared_values": 24,
+      "mae": 9.436584959709426e-09,
+      "max_absolute_error": 4.3484698009077505e-08,
+      "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-oq4mzztb/report.json",
+      "report_sha256": "e17d301cfb8acecf3aeb3a46ac200449f87ee4ac922b60aa1c3dc24e7077eb9e"
+    },
+    {
+      "case": "chunked-linear-1x7",
+      "passed": true,
+      "compared_values": 8,
+      "mae": 1.580798695611542e-09,
+      "max_absolute_error": 4.8373262478973444e-09,
+      "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/fx-batch-uulvepn6/report.json",
+      "report_sha256": "c5edff2267e50402c1db93c5ede21bfbaa9563aaf4030cbba5a9ba10a9100234"
+    }
+  ],
+  "numerical_negative_controls": [
+    {
+      "case": "linear-scripted-wrong-reduction",
+      "passed": false,
+      "compared_values": 8,
+      "mae": 0.2373058062009502,
+      "max_absolute_error": 0.6736366553456177,
+      "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-lbkrjb1g/report.json",
+      "report_sha256": "a853890115059556c20cb12ee4c68bf5ee5f8cc5e2bb901bf96651580616327b"
+    },
+    {
+      "case": "exercise-na-transpose",
+      "passed": false,
+      "compared_values": 16,
+      "mae": 0.1875000005095783,
+      "max_absolute_error": 0.1875000165377419,
+      "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-p_h6oe_f/report.json",
+      "report_sha256": "e68ea34b0983763fcaadfc62bbbcc81b95e8115c124bfaf3e801ffed0ea88273"
+    },
+    {
+      "case": "custom-dual-subtract",
+      "passed": false,
+      "compared_values": 16,
+      "mae": 1.27518084820463,
+      "max_absolute_error": 4.000000002705629,
+      "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-28bxfio2/report.json",
+      "report_sha256": "8630f20ce3a599f1fa2bcaaab7f8a1900093586c3bcd7eacdb2b0874c1afb779"
+    },
+    {
+      "case": "native-packed-0-tensor-affine-native-alias",
+      "passed": false,
+      "compared_values": 120,
+      "mae": 0.06250000000343718,
+      "max_absolute_error": 0.06250000026812774,
+      "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-y5dut04l/report.json",
+      "report_sha256": "2db7ed43ba4a5999f0ccb7321bbb14601ecc1e3126ac6bf624868fd8be233685"
+    },
+    {
+      "case": "native-packed-2-tensor-linear-native-six-output",
+      "passed": false,
+      "compared_values": 24,
+      "mae": 0.09471272261141132,
+      "max_absolute_error": 0.218750000102865,
+      "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-izbigc3x/report.json",
+      "report_sha256": "7a95f30454781ecc6a30573579ad5ba0bc9bdaa85aea1d5bc89b3e218783faaa"
+    }
+  ],
+  "response_parse_negative_controls": 1,
+  "unique_positive_case_count": 11,
+  "positive_input_groups": 44,
+  "positive_output_values": 808,
+  "max_absolute_error": 1.1502960717280075e-07,
+  "weighted_mae": 9.852036505334457e-10,
+  "sandbox": {
+    "frontend_loaded": true,
+    "private_sentinel_hidden": true,
+    "workspace_hidden": true,
+    "keys_hidden": true,
+    "environment_cleared": true,
+    "network_namespace_changed": true,
+    "pid_namespace_changed": true,
+    "only_loopback_interface": true,
+    "request_read_only": true,
+    "resource_limits_applied": true,
+    "resource_limits": {
+      "AS": [
+        4294967296,
+        4294967296
+      ],
+      "CPU": [
+        150,
+        155
+      ],
+      "FSIZE": [
+        16777216,
+        16777216
+      ],
+      "NOFILE": [
+        128,
+        128
+      ],
+      "CORE": [
+        0,
+        0
+      ]
+    }
+  },
+  "evidence": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-lbkrjb1g/report.json": "a853890115059556c20cb12ee4c68bf5ee5f8cc5e2bb901bf96651580616327b",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/arm-native-array-6unaybg3/report.json": "1a7edd04aa40bd989c5f9e58bc6b1c4d7843131d34cc576d0edb5df3b2584096",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-0hujf2f8/report.json": "453acbaec318b244ca116fd4e76e50933289397a5905797f7a556c70351c1442",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-p_h6oe_f/report.json": "e68ea34b0983763fcaadfc62bbbcc81b95e8115c124bfaf3e801ffed0ea88273",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/arm-schema3-a1rt0pps/report.json": "14638869e1be9db698bfc86f83288151b08131cf657ecdf45f3e56c64452993a",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-_rk__wsx/report.json": "04bc33de2c29e70fce344dafd2092df8007f66884ca8b2ca0b68a75c2a56ae1d",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-28bxfio2/report.json": "8630f20ce3a599f1fa2bcaaab7f8a1900093586c3bcd7eacdb2b0874c1afb779",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/packed-native-goldens-krvr5rwv/report.json": "7b43050500de541ae434b4d82f10b1a7d5233aa7141266cbf1a4e56f5f36bb5e",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-oca_79sm/report.json": "92014844a42181ccaf5400b48a69860f021e336258d211f7593e776fd47e20b9",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-88u94421/report.json": "ad3fc022a6a49d37e23d5cd652225107c6a90585abf2674207306e07859f0a2b",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-bh08cqez/report.json": "5a6b0c88a54829ab6c30a969b56b8c4a1b2b3f5387ffbbd85d01e3e79a208abf",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-fmuwu5yb/report.json": "a69de9ae27f9201f6f400d503fa39d66d3c08120b02b698d76b64f79ef4bee65",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-9l_nsbz_/report.json": "f8d6176b67b2a7cb9736a01429f9f10674eb4edd1f09dca2caa02903455e7d6d",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-oq4mzztb/report.json": "e17d301cfb8acecf3aeb3a46ac200449f87ee4ac922b60aa1c3dc24e7077eb9e",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-y5dut04l/report.json": "2db7ed43ba4a5999f0ccb7321bbb14601ecc1e3126ac6bf624868fd8be233685",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-izbigc3x/report.json": "7a95f30454781ecc6a30573579ad5ba0bc9bdaa85aea1d5bc89b3e218783faaa"
+  },
+  "x86_config_regression": true,
+  "x86_native_e2e_this_machine": false,
+  "paid_calls": 0,
+  "live_agent_generation_validated": false,
+  "poseidon_gpu_validated": false,
+  "formal_equivalence_proved": false,
+  "versions": {
+    "gcc": "13.2.0",
+    "llvm_mlir": "18.1.2",
+    "seal": "4.0.0",
+    "gsl": "3.1.0",
+    "python": "3.10.14",
+    "numpy": "1.25.2",
+    "torch": "2.0.1",
+    "cuda": null,
+    "hip": null
+  },
+  "patch_reproduction": {
+    "scope": "reproduce_patch_bundle_on_pristine_pinned_files",
+    "passed": true,
+    "dacapo_head": "4616402710f39df3e5f5bd7930a6c036025aaac3",
+    "patches": {
+      "dacapo-plaintext-subtraction.patch": "d05b1d57d15932e9e4b09dd07bad2f59949776f26b252cb2296bb0d662322c2c",
+      "dacapo-concat-layout.patch": "a411e758be10d360f057c96ba217e24d9a4f4ecd64d12ee75a1c5b3c9c15ef02",
+      "dacapo-bootstrap-containers.patch": "65778f4bb8435d579edcf8e2d9f077a5614f3e38b9d734d0a35eda2d9a443764",
+      "dacapo-native-function-calls.patch": "99e5eef504ea2fc9fd4572e79a2c0db7ff3e3127ef391f2a7b8a523e6034bfa2",
+      "dacapo-refined-function-input-types.patch": "af175ce740fd93d366ff1f55ce45cd6ebff235d2b80db48325544b5b95e9f6ce",
+      "dacapo-augmented-operand-order.patch": "aa6684514928daad0e2dc052159982bd55b19f009566a292c175624b855db9ad",
+      "dacapo-minimal-mlir-link.patch": "20967fe04e01aef28881dfd1f194e599d4a22a9ce607b47411db78498cd1d44c",
+      "dacapo-unused-mlir-dependencies.patch": "1c3aee382ab7f8888ef63357b6c0fe7772afc0400dd594cc2d9c2ccd09de0ef2",
+      "dacapo-seal-runtime-exceptions.patch": "ba2794a739af7c80facc921f569b1a6b9c53c19d8e45f832ad7bb92722d77731",
+      "dacapo-gcc-qualified-casts.patch": "0842f69d5547760b04539a4dd0598efca474fe0ea30d717fcf282ff2ac3c8788",
+      "dacapo-constant-output-path.patch": "0d8d8ed2691aac9bff04bfcf122705d387a990abd8d00242a212c9681695ad33"
+    },
+    "files": {
+      "lib/Conversion/CKKSCommon/CMakeLists.txt": "b01ad22b1a998c7963726be18727617f4f15ee2ed58c226cc46921e1e96fcb6e",
+      "lib/Conversion/CKKSToCKKS/CMakeLists.txt": "3a04b5dfd2c14f062d84d74b5021c5032753ac7a1790c62300e031afe039b2a2",
+      "lib/Conversion/EarthToCKKS/CMakeLists.txt": "985a317436983042ec2c5b6630c4691ba4b7a36be35fad56d36920e687a3abaf",
+      "lib/Dialect/Earth/Analysis/CandidateAnalysis.cpp": "fff42b75c3ce5718190161bdafd3e9d17388eee7e6bf0d5ce4da6652c9ab7b01",
+      "lib/Dialect/Earth/Analysis/ScaleManagementUnit.cpp": "7908cd386f40daa521aa35e75db3a25de04cde047fe5a91e2bda301d1dc93042",
+      "lib/Dialect/Earth/Transforms/CodeSegmentation.cpp": "a9bbc4117583f34c11cc6ebdcb97a6e13439a227223fed912506807b6c28cdab",
+      "lib/Dialect/Earth/Transforms/Common.cpp": "81803ae945d9e553f98f078db84bf840d21411e03284ab53435566c4ade60ff4",
+      "lib/Dialect/Earth/Transforms/ElideConstant.cpp": "fefe8f8acf07f22ad6405868bc7a84c3f36606375b90edb2375573d09b2104a3",
+      "lib/Runtime/CMakeLists.txt": "381af2167c271d9d5afe6ab2ec726fe12125598a8e48e3ad7a0e39d010749934",
+      "python/hecate/hecate/expr.py": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "python/poly/poly/MPCB.py": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "tools/CMakeLists.txt": "42ef04a80a747f6cc1601489c0913de1bb4174625d7470fab7e0ba684ec896b0",
+      "tools/frontend.cpp": "03e6e069cd47f40e40cf9c77990798e224f5f3a7a19a14c6ce848a75f32cf58d",
+      "tools/optimizer.cpp": "28582fcc5635612c4911adaa5ad6808471e554ca95a1fd966f20363c4cdea0c2"
+    }
+  }
+}

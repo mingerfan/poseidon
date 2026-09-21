@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 import platform
 import sys
+from platform_config import configuration, require_platform
 
 
 def work_root(value=None, *, home=None):
@@ -18,24 +19,21 @@ def work_root(value=None, *, home=None):
 
 
 ROOT = Path(__file__).resolve().parent.parent.parent
-WORK = work_root()
+WORK_BASE = work_root()
+WORK = WORK_BASE / configuration()['work_subdirectory']
 RESULTS = WORK / 'results'
 
 
 def require_linux_backend():
-    """Pinned binaries/wheels are Linux x86_64, not portable Python dependencies."""
-    if sys.platform != 'linux' or platform.machine().lower() not in ('x86_64', 'amd64'):
-        raise RuntimeError(
-            'The pinned Dacapo/SEAL backend requires Linux x86_64. '
-            'Use scripts/agent.py --backend wsl on Windows or --backend ssh '
-            'to an Ubuntu x86_64 host/VM from macOS. ARM64 backend is not validated; '
-            'no unsafe native or unsandboxed fallback is permitted.')
+    """Only explicitly configured, matching Linux architectures may execute."""
+    return require_platform(system=sys.platform, machine=platform.machine())
 
 
 def nix_environment_options():
     # Only non-secret path configuration crosses the pure-shell boundary here.
-    return ['--keep', 'POSEIDON_WORK_ROOT'] if 'POSEIDON_WORK_ROOT' in os.environ else []
+    return [item for name in ('POSEIDON_WORK_ROOT', 'POSEIDON_PLATFORM')
+            if name in os.environ for item in ('--keep', name)]
 
 
 if __name__ == '__main__':
-    print(WORK)
+    print(WORK_BASE if sys.argv[1:] == ['--base'] else WORK)

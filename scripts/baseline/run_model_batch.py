@@ -3,6 +3,7 @@
 First stage reference baseline, NOT Agent inference. No network/install/model API.
 All case failures remain in report denominators and have a diagnostic layer.
 """
+from platform_config import identity, require_python_packages
 import argparse
 from collections import Counter
 import json
@@ -117,7 +118,7 @@ def run_inside(args):
     import torch
     from model_catalog import descriptors, validate_descriptor
     from fx_to_hecate import translate
-    require(torch.__version__ == "2.0.1+cpu" and np.__version__ == "1.25.2", "Unexpected dependencies")
+    require_python_packages(torch, np)
     torch.set_num_threads(2)
     os.umask(0o077)
     result = Path(tempfile.mkdtemp(prefix="fx-batch-", dir=WORK / "results"))
@@ -152,7 +153,7 @@ def run_inside(args):
     env = dict(os.environ, HECATE=str(WORK / "build-dacapo/hecate-python-root"),
                PYTHONPATH=str(ROOT / "third_party/dacapo/python/hecate"), PYTHONDONTWRITEBYTECODE="1",
                PYTHONNOUSERSITE="1", OMP_NUM_THREADS="2", OPENBLAS_NUM_THREADS="2")
-    report = dict(status="running", generator="deterministic-fx-v0", agent_calls=0,
+    report = dict(platform_identity=identity(), status="running", generator="deterministic-fx-v0", agent_calls=0,
                   backend="upstream_SEAL_HEVM_CPU", cases=[], selected_descriptors=candidates,
                   profile_sha256=digest(PROFILE), waterline=WATERLINE,
                   runtime_sha256=digest(BUILD / "lib/libSEAL_HEVM.so"), poseidon_gpu_validated=False,

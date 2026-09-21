@@ -3,6 +3,7 @@
 No provider calls, new backend, bootstrap or installations. Public Agent input
 schema remains unchanged until this prerequisite and its integration tests pass.
 """
+from platform_config import identity, require_python_packages
 import argparse
 import json
 import os
@@ -83,7 +84,7 @@ def main():
     import torch
     from seal_cpu_golden import compare, KEY_BUILD
     torch.set_num_threads(2)
-    require(torch.__version__ == "2.0.1+cpu" and np.__version__ == "1.25.2", "Dependency version mismatch")
+    require_python_packages(torch, np)
     os.umask(0o077)
     root = Path(tempfile.mkdtemp(prefix="multi-input-golden-", dir=WORK / "results"))
     print(f"Multi-input evidence: {root}", flush=True)
@@ -93,7 +94,7 @@ def main():
     selected = [(name, False) for name in ([args.case] if args.case else CASES)]
     if args.case is None:
         selected.append(("ordered_subtract", True))
-    report = dict(status="running", generator="manual_golden", agent_calls=0,
+    report = dict(platform_identity=identity(), status="running", generator="manual_golden", agent_calls=0,
         backend="upstream_SEAL_HEVM_CPU", poseidon_gpu_validated=False, contract=CONTRACT,
         runtime_sha256=digest(BUILD / "lib/libSEAL_HEVM.so"), profile_sha256=digest(PROFILE),
         frontend_sha256=digest(BUILD / "lib/libHecateFrontend.so"), cases=[],

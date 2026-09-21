@@ -4,7 +4,8 @@ import subprocess
 import sys
 import unittest
 from pathlib import Path
-from workspace_paths import ROOT, WORK, RESULTS
+from workspace_paths import ROOT, WORK, RESULTS, nix_environment_options
+from platform_config import configuration, nix_platform_options
 
 import check_dacapo_environment as gate
 
@@ -20,7 +21,7 @@ def evaluate(path, attribute, *extra):
         ["timeout", "-k", "3s", "90s", "bash",
          str(REPO / "scripts/baseline/nix_portable.sh"), "nix", "eval",
          "--offline", "--option", "allow-import-from-derivation", "false",
-         "--json", "--file", str(path), attribute, *extra],
+         "--json", *nix_platform_options(), "--file", str(path), attribute, *extra],
         cwd=REPO, capture_output=True, text=True, timeout=100, check=False,
     )
 
@@ -56,9 +57,16 @@ class OfflineNixPlanTests(unittest.TestCase):
         cls.metadata = json.loads(result.stdout)
 
     def test_exact_toolchain_and_seal(self):
+        self.assertEqual(self.metadata["system"], configuration()["system"])
         versions = self.metadata["versions"]
-        for name in ("llvm", "mlir", "clang"):
+        for name in ("llvm", "mlir"):
             self.assertEqual(versions[name], "18.1.2")
+        self.assertIsNone(versions["clang"])
+        self.assertEqual(versions["gcc"], "13.2.0")
+        self.assertEqual(self.metadata["cxx_compiler"], {
+            "name": "gcc", "version": "13.2.0", "c_binary": "gcc", "cxx_binary": "g++"})
+        self.assertNotIn("clang", self.metadata["distribution_components"])
+        self.assertIn("-DLLVM_ENABLE_PROJECTS=mlir", self.metadata["toolchain_cmake_flags"])
         self.assertEqual(versions["seal"], "4.0.0")
         self.assertEqual(versions["msgsl"], "3.1.0")
 
@@ -89,11 +97,11 @@ class OfflineNixPlanTests(unittest.TestCase):
         result = subprocess.run([
             "timeout", "-k", "3s", "60s", "env",
             f"NIX_BUILD_SHELL={self.metadata['shell_bash']}", "bash",
-            str(REPO / "scripts/baseline/nix_portable.sh"), "nix-shell", "--pure",
+            str(REPO / "scripts/baseline/nix_portable.sh"), "nix-shell", "--pure", *nix_environment_options(),
             "--option", "substitute", "false", "--max-jobs", "0",
             "--option", "builders", "", "--option", "allow-import-from-derivation", "false",
-            str(SHELL), "--run",
-            'test "$CC" = "$NIX_CC/bin/clang" && test "$CXX" = "$NIX_CC/bin/clang++" && llvm-config --version'],
+            *nix_platform_options(), str(SHELL), "--run",
+            'test "$CC" = "$NIX_CC/bin/$HECATE_C_COMPILER_NAME" && test "$CXX" = "$NIX_CC/bin/$HECATE_CXX_COMPILER_NAME" && llvm-config --version'],
             cwd=REPO, capture_output=True, text=True, timeout=70, check=False)
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(result.stdout.strip().splitlines()[-1], "18.1.2")

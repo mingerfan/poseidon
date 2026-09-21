@@ -14,11 +14,11 @@ recipe=src/poseidon/tools/dacapo/dacapo-dependencies.nix
 case "$2" in
   sources) targets=(toolchain.src seal.src); limit=20m ;;
   seal) targets=(seal); limit=45m ;;
-  toolchain) targets=(toolchain clang); limit=12h ;;
+  toolchain) targets=(toolchain compiler.out); limit=12h ;;
   shell) recipe=src/poseidon/tools/dacapo/dacapo-shell.nix; targets=(); limit=12h ;;
   *) printf 'Unknown dependency stage: %s\n' "$2" >&2; exit 2 ;;
 esac
-results="$POSEIDON_WORK_ROOT/results"
+results="$POSEIDON_PLATFORM_WORK_ROOT/results"
 mkdir -p "$results"
 report="$results/dacapo-build-$2-$(date -u +%Y%m%dT%H%M%S)-$$.log"
 printf 'Dependency stage: %s; log: %s\n' "$2" "$report"
@@ -27,7 +27,7 @@ timeout -k 10s "$limit" bash scripts/baseline/nix_portable.sh \
   nix build --option allow-import-from-derivation false \
   --option max-silent-time 600 --max-jobs 1 --cores 2 \
   --no-link --keep-failed --print-out-paths --print-build-logs \
-  --file "$recipe" "${targets[@]}" 2>&1 | tee "$report"
+  --argstr platform "$POSEIDON_PLATFORM" --file "$recipe" "${targets[@]}" 2>&1 | tee "$report"
 pipeline_status=("${PIPESTATUS[@]}")
 status=${pipeline_status[0]}
 if (( status == 0 && pipeline_status[1] != 0 )); then

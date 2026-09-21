@@ -32,8 +32,11 @@ class PortablePathsTests(unittest.TestCase):
             module = checkout/'scripts/baseline/workspace_paths.py'
             module.parent.mkdir(parents=True)
             module.write_bytes(Path(paths.__file__).read_bytes())
+            for name in ('platform_config.py', 'platform-profiles.json'):
+                (module.parent/name).write_bytes((Path(paths.__file__).parent/name).read_bytes())
             work = Path(folder)/'native disk work'
             env = dict(os.environ, POSEIDON_WORK_ROOT=str(work), PYTHONDONTWRITEBYTECODE='1')
+            env.pop('POSEIDON_PLATFORM', None)  # Exercise the retained x86 default.
             code = 'import workspace_paths as p;print(p.ROOT);print(p.WORK)'
             result = subprocess.run([sys.executable,'-B','-c',code],cwd=module.parent,env=env,
                                     capture_output=True,text=True,check=True,timeout=10)
@@ -56,6 +59,7 @@ class PortablePathsTests(unittest.TestCase):
             os.environ['DEEPSEEK_API_KEY'] = 'synthetic-not-a-secret'
             self.assertEqual(paths.nix_environment_options(), ['--keep','POSEIDON_WORK_ROOT'])
 
+    @patch.dict(os.environ, {}, clear=True)
     def test_backend_architecture_is_explicit_not_guessed(self):
         for system, machine in [('win32','AMD64'),('darwin','arm64'),('linux','aarch64')]:
             with patch.object(paths.sys,'platform',system), patch.object(paths.platform,'machine',return_value=machine):

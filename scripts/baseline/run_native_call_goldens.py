@@ -3,6 +3,7 @@
 Trusted manual fixtures only. Reuses stock SEAL_HEVM and tc128 parameters;
 no Agent execution, API, new backend, bootstrap or package installation.
 """
+from platform_config import identity, require_python_packages
 import argparse
 import json
 import os
@@ -24,7 +25,7 @@ def reference(case):
     import numpy as np
     import torch
     torch.set_num_threads(2)
-    require(torch.__version__ == '2.0.1+cpu' and np.__version__ == '1.25.2', 'Pinned packages required')
+    require_python_packages(torch, np)
     x = np.array([[0., 0., 0., 0.], [-.8, .25, .6, -1.],
                   *np.random.default_rng(4201).uniform(-1., 1., (1, 4)), [-1., 1., -1., 1.]], dtype=np.float64)
     y = np.array([[0., 0., 0., 0.], [.2, -.75, .1, .5],
@@ -82,7 +83,7 @@ def main():
     os.umask(0o077)
     out = Path(tempfile.mkdtemp(prefix='seal-cpu-golden-native-calls-', dir=WORK/'results'))
     print('Native calls CPU evidence:', out, flush=True)
-    report = dict(schema=1, status='running', agent_calls=0, backend='upstream_SEAL_HEVM_CPU',
+    report = dict(platform_identity=identity(), schema=1, status='running', agent_calls=0, backend='upstream_SEAL_HEVM_CPU',
         poseidon_gpu_validated=False, bootstrap_executed=False, cases=[],
         probe=str(probe), probe_sha256=digest(probe/'report.json'),
         source_sha256=digest(SOURCE), runner_sha256=digest(Path(__file__)),

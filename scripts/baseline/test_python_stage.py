@@ -17,7 +17,7 @@ class PythonWheelLockTests(unittest.TestCase):
         wheels = validate_lock(self.lock)
         self.assertEqual(len(wheels), 9)
         self.assertLess(sum(w["bytes"] for w in wheels), LIMIT)
-        self.assertEqual(next(w for w in wheels if w["name"] == "torch")["version"], "2.0.1+cpu")
+        self.assertEqual(next(w for w in wheels if w["name"] == "torch")["version"], PINS["torch"])
 
     def test_missing_or_extra_dependency_rejected(self):
         for remove in (True, False):

@@ -3,6 +3,8 @@
 This deliberately does NOT claim Hecate Python/Torch tracing or FHE execution.
 ABI signatures and frontend opcodes come from the pinned tools/frontend.cpp.
 """
+from platform_config import nix_platform_options
+from workspace_paths import nix_environment_options
 import argparse
 import ctypes as ct
 import hashlib
@@ -61,13 +63,13 @@ def main():
         raise SystemExit(f"Requires cwd {ROOT}")
     if not args.inside:
         metadata = subprocess.run(["timeout", "-k", "3s", "90s", *WRAPPER,
-            "nix", "eval", "--offline", "--json", "--file", DEPS, "metadata"],
+            "nix", "eval", "--offline", "--json", *nix_platform_options(), "--file", DEPS, "metadata"],
             capture_output=True, text=True, check=True, timeout=100)
         bash = json.loads(metadata.stdout)["shell_bash"]
         command = ["timeout", "-k", "10s", "5m", "env", f"NIX_BUILD_SHELL={bash}",
-            *WRAPPER, "nix-shell", "--pure", "--option", "substitute", "false",
+            *WRAPPER, "nix-shell", "--pure", *nix_environment_options(), "--option", "substitute", "false",
             "--max-jobs", "0", "--option", "builders", "", "--option",
-            "allow-import-from-derivation", "false", "src/poseidon/tools/dacapo/dacapo-shell.nix",
+            "allow-import-from-derivation", "false", *nix_platform_options(), "src/poseidon/tools/dacapo/dacapo-shell.nix",
             "--run", "python3 scripts/baseline/native_compiler_smoke.py --inside"]
         raise SystemExit(subprocess.run(command, timeout=315).returncode)
     if not os.environ.get("IN_NIX_SHELL"):

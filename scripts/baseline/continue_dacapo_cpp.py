@@ -3,6 +3,7 @@
 This never restarts LLVM, installs Python wheels/CUDA, or runs encrypted code.
 The dependency environment is not a sandbox for untrusted generated programs.
 """
+from platform_config import nix_platform_options
 import argparse
 import hashlib
 import json
@@ -52,7 +53,7 @@ def continue_cpp(run, verify):
     verify()
     raw = run("dependency_metadata", WRAPPER + ["nix", "eval", "--offline",
         "--option", "allow-import-from-derivation", "false", "--json",
-        "--file", DEPS, "metadata"], 120)
+        *nix_platform_options(), "--file", DEPS, "metadata"], 120)
     metadata = json.loads(raw)
     outputs = metadata["compiler_outputs"]
     shell_bash = metadata["shell_bash"]
@@ -66,7 +67,7 @@ def continue_cpp(run, verify):
         str(Path(shell_bash).parents[1])], 90)
     plan = run("remaining_shell_plan", WRAPPER + ["nix", "build", "--dry-run",
         "--option", "allow-import-from-derivation", "false", "--no-link",
-        "--file", SHELL], 180)
+        *nix_platform_options(), "--file", SHELL], 180)
     validate_remaining_plan(plan)
     verify()
     run("realize_shell", ["bash", "scripts/baseline/build_dacapo_dependencies.sh",
@@ -77,7 +78,7 @@ def continue_cpp(run, verify):
     # apply to Nix realization, not the CMake/Ninja command inside the shell.
     run("build_hecate_cpp", ["env", f"NIX_BUILD_SHELL={shell_bash}", *WRAPPER,
         "nix-shell", "--pure", *nix_environment_options(), "--option", "substitute", "false", "--max-jobs", "0",
-        "--option", "builders", "", "--option", "allow-import-from-derivation", "false", SHELL,
+        "--option", "builders", "", "--option", "allow-import-from-derivation", "false", *nix_platform_options(), SHELL,
         "--run", "bash scripts/baseline/build_hecate_cpp.sh"], 10800)
     verify()
 

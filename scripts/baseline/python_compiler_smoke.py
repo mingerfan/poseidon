@@ -4,6 +4,7 @@ Stops before encrypted execution: neither the SEAL_HEVM runtime nor a simulated
 backend is used to manufacture decrypted outputs. Run the installed venv only
 inside the pinned, already realized Nix shell.
 """
+from platform_config import identity, require_python_packages
 import argparse
 import importlib.util
 import json
@@ -77,8 +78,7 @@ def main():
     import numpy as np
     import torch
     torch.set_num_threads(2)
-    if torch.__version__ != "2.0.1+cpu" or np.__version__ != "1.25.2" or torch.version.cuda is not None:
-        raise SystemExit("Unexpected NumPy/Torch environment")
+    require_python_packages(torch, np)
     # Stock expr.py hardcodes $HECATE/build/lib. This derived symlink keeps the
     # upstream submodule and source tree untouched, including paths with spaces.
     compatibility = WORK / "build-dacapo/hecate-python-root"
@@ -95,7 +95,7 @@ def main():
         PYTHONNOUSERSITE="1", PYTHONPATH=str(ROOT / "third_party/dacapo/python/hecate"),
         OMP_NUM_THREADS="2", OPENBLAS_NUM_THREADS="2")
     result = Path(tempfile.mkdtemp(prefix="python-compiler-", dir=WORK / "results"))
-    report = dict(scope="real_hecate_python_trace_compile_adapter_gate", status="running", cases=[],
+    report = dict(platform_identity=identity(), scope="real_hecate_python_trace_compile_adapter_gate", status="running", cases=[],
         python_dsl_tracing_validated=False, encrypted_execution_validated=False,
         compiler_config=str(ROOT / "third_party/dacapo/config.json"),
         parameter_note="Unchanged upstream compiler profile; NOT approved for GPU execution",

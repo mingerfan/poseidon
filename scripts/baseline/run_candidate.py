@@ -3,6 +3,7 @@
 --deepseek makes real service calls; --prepare/--self-test/--replay remain offline.
 Accepts preset schema-1 cases or user-defined schema-2/3 graphs, not arbitrary Python.
 """
+from platform_config import identity, require_python_packages
 import argparse
 import ast
 import json
@@ -83,11 +84,11 @@ def inside(args):
 
     os.umask(0o077)
     torch.set_num_threads(2)
-    require(torch.__version__ == "2.0.1+cpu" and np.__version__ == "1.25.2", "Unexpected pinned dependencies")
+    require_python_packages(torch, np)
     result = Path(tempfile.mkdtemp(prefix="agent-deepseek-" if args.deepseek else "candidate-replay-",
                                    dir=WORK / "results"))
     print(f"Candidate evidence: {result}", flush=True)
-    report = dict(status="running", provider="deepseek_api" if args.deepseek else "scripted_replay", agent_calls=0,
+    report = dict(platform_identity=identity(), status="running", provider="deepseek_api" if args.deepseek else "scripted_replay", agent_calls=0,
                   backend="upstream_SEAL_HEVM_CPU", poseidon_gpu_validated=False, attempts=[],
                   metadata_observer_sha256=digest(KEY_BUILD / 'libseal_golden_metadata.so'),
                   metadata_observer_source_sha256=digest(ROOT / 'scripts/baseline/seal_keys/metadata.cpp'),

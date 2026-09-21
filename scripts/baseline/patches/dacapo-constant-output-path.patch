@@ -1,0 +1,11 @@
+--- a/lib/Dialect/Earth/Transforms/ElideConstant.cpp
++++ b/lib/Dialect/Earth/Transforms/ElideConstant.cpp
+@@ -40,5 +40,5 @@
+-    name = name + (func.getName() + ".cst").str();
+-    llvm::errs() << name << "\n";
+-    std::ofstream of(name, std::ios::binary);
++    const auto outputName = name + (func.getName() + ".cst").str();
++    llvm::errs() << outputName << "\n";
++    std::ofstream of(outputName, std::ios::binary);
+     int64_t a;
+     a = save_data.size();

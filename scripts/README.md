@@ -2,7 +2,15 @@
 
 ## 启动方式
 
-以下命令均在 **Ubuntu x86_64 终端**、项目根目录下运行。需要 Python 3.10 或更新版本、项目固定版本的编译依赖及 Dacapo 子模块。本文只说明 Ubuntu 本地运行。
+以下命令默认在 **Ubuntu x86_64 终端**、项目根目录下运行。需要 Python 3.10 或更新版本、项目固定版本的编译依赖及 Dacapo 子模块。本文只说明 Ubuntu 本地运行。
+
+ARM Ubuntu 使用启动器参数 `--platform aarch64-linux`，或设置 `POSEIDON_PLATFORM=aarch64-linux`。已通过的原生离线 CPU 验收范围及依赖准备见[双平台说明](../docs/baseline/linux-platforms.md)。平台参数不自动安装依赖。
+
+### 首次准备依赖
+
+在 Ubuntu 项目根目录先运行 `python3 -B scripts/setup_agent.py --platform auto --plan`。
+此命令只显示按架构选择的依赖计划；确认预算后才执行下载和构建。
+详细步骤和 requirements 导出见[依赖准备与构建](../docs/baseline/agent-setup.md)。
 
 ### 配置 API key
 

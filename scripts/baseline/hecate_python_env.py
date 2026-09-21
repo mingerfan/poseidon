@@ -1,9 +1,10 @@
 """Hash-locked CPU-only Python stage; no system packages or implicit Nix builds.
 
---plan reads official metadata only. --install-approved downloads <=300 MiB,
+--plan displays the reviewed platform lock without network access. --install-approved downloads <=300 MiB,
 then installs offline into a fresh venv using the already installed Nix Python.
 The venv/Nix shell is NOT a security sandbox for generated programs.
 """
+from platform_config import nix_platform_options, configuration, identity
 import argparse
 from concurrent.futures import ThreadPoolExecutor
 import hashlib
@@ -20,12 +21,13 @@ import zipfile
 from continue_dacapo_cpp import DEPS, ROOT, SHELL, WORK, WRAPPER
 from workspace_paths import require_linux_backend, nix_environment_options
 
-LOCK = ROOT / "src/poseidon/tools/dacapo/python-wheels.lock.json"
+PLATFORM = configuration()
+LOCK = ROOT / "src/poseidon/tools/dacapo" / PLATFORM["wheel_lock"]
 VENV = WORK / "venvs/hecate-2.0.1-cpu"
 CACHE = WORK / "cache/hecate-python-cpu"
 LIMIT = 300 * 1024**2
 RESERVATION = 2 * 1024**3
-PINS = {"numpy": "1.25.2", "torch": "2.0.1+cpu", "filelock": "3.12.2",
+PINS = {"numpy": "1.25.2", "torch": PLATFORM["torch"], "filelock": "3.12.2",
         "Jinja2": "3.1.2", "MarkupSafe": "2.1.3", "mpmath": "1.3.0",
         "networkx": "3.1", "sympy": "1.12", "typing_extensions": "4.7.1"}
 
@@ -49,7 +51,7 @@ def metadata(package):
         filename = item["filename"]
         if (filename.endswith("-py3-none-any.whl") or
             filename.endswith("-py2.py3-none-any.whl") or
-            ("-cp310-cp310-manylinux" in filename and filename.endswith("x86_64.whl"))):
+            ("-cp310-cp310-manylinux" in filename and filename.endswith(PLATFORM["machine"] + ".whl"))):
             candidates.append(item)
     if len(candidates) != 1:
         raise RuntimeError(f"Expected exactly one compatible wheel for {name}: {len(candidates)}")
@@ -58,9 +60,13 @@ def metadata(package):
                 bytes=item["size"], sha256=item["digests"]["sha256"], evidence=url)
 
 
-def validate_lock(lock):
+def validate_lock(lock, *, profile=None):
+    profile = PLATFORM if profile is None else profile
+    pins = dict(PINS, torch=profile["torch"])
+    if lock.get("python") != profile["python"] or lock.get("target") != profile["wheel_target"]:
+        raise ValueError("Wheel lock does not match selected platform/Python")
     wheels = lock["wheels"]
-    if len(wheels) != len(PINS) or {w["name"]: w["version"] for w in wheels} != PINS:
+    if len(wheels) != len(pins) or {w["name"]: w["version"] for w in wheels} != pins:
         raise ValueError("Wheel set differs from approved CPU-only dependency pins")
     if sum(w["bytes"] for w in wheels) > LIMIT - 1024**2:
         raise ValueError("Wheels plus metadata exceed the 300 MiB approval")
@@ -73,6 +79,18 @@ def validate_lock(lock):
             raise ValueError("Unsafe wheel filename")
         if len(wheel["sha256"]) != 64 or any(c not in "0123456789abcdef" for c in wheel["sha256"]):
             raise ValueError("Invalid SHA-256")
+        filename = wheel["filename"]
+        pure = filename.endswith(("-py3-none-any.whl", "-py2.py3-none-any.whl"))
+        tags = filename[:-4].rsplit("-", 3)[-3:]
+        native = (len(tags) == 3 and tags[:2] == ["cp310", "cp310"] and
+                  all(tag in ("linux_" + profile["machine"],
+                              "manylinux2014_" + profile["machine"],
+                              "manylinux_2_17_" + profile["machine"])
+                      for tag in tags[2].split(".")))
+        if not pure and not native:
+            raise ValueError("Wheel architecture or ABI mismatch")
+        if wheel["name"] in ("torch", "numpy", "MarkupSafe") and not native:
+            raise ValueError("Native package requires a platform wheel")
         if wheel["bytes"] <= 0:
             raise ValueError("Invalid wheel size")
     return wheels
@@ -84,12 +102,12 @@ def enter_nix(command, seconds=600, keep_env=()):
         raise ValueError("Only the explicit Agent API key may cross the pure-shell boundary")
     keep = nix_environment_options() + [item for name in keep_env for item in ("--keep", name)]
     raw = subprocess.run(["timeout", "-k", "3s", "90s", *WRAPPER, "nix", "eval",
-        "--offline", "--json", "--file", DEPS, "metadata"],
+        "--offline", "--json", *nix_platform_options(), "--file", DEPS, "metadata"],
         capture_output=True, text=True, check=True, timeout=100)
     bash = json.loads(raw.stdout)["shell_bash"]
     return subprocess.run(["timeout", "-k", "10s", str(seconds), "env", f"NIX_BUILD_SHELL={bash}",
         *WRAPPER, "nix-shell", "--pure", *keep, "--option", "substitute", "false", "--max-jobs", "0",
-        "--option", "builders", "", "--option", "allow-import-from-derivation", "false", SHELL,
+        "--option", "builders", "", "--option", "allow-import-from-derivation", "false", *nix_platform_options(), SHELL,
         "--run", command], timeout=seconds + 15).returncode
 
 
@@ -123,6 +141,7 @@ def download(wheels):
 
 
 def install_inside(wheels):
+    require_linux_backend()
     if not os.environ.get("IN_NIX_SHELL") or sys.version_info[:3] != (3, 10, 14):
         raise RuntimeError("Requires pinned Nix Python 3.10.14")
     if VENV.exists():
@@ -162,6 +181,7 @@ def install_inside(wheels):
 
 
 def verify_existing(wheels, result=None, expanded=None):
+    require_linux_backend()
     if not os.environ.get("IN_NIX_SHELL") or sys.version_info[:3] != (3, 10, 14):
         raise RuntimeError("Requires pinned Nix Python 3.10.14")
     library = os.environ["HECATE_PYTHON_LIBRARY_PATH"]
@@ -188,15 +208,16 @@ def verify_existing(wheels, result=None, expanded=None):
     if versions != expected:
         raise RuntimeError(f"Unexpected installed package versions: {versions}")
     (result / "installed-packages.json").write_text(installed.stdout)
-    probe = subprocess.run([python, "-c", "import json,sys,numpy,torch; "
-        "assert torch.version.cuda is None; assert torch.__version__=='2.0.1+cpu'; "
+    probe = subprocess.run([python, "-c", "import json,sys,numpy,torch; from pathlib import Path; "
+        "assert torch.version.cuda is None; assert getattr(torch.version, 'hip', None) is None; "
+        f"assert torch.__version__=={PLATFORM['torch']!r}; "
         "assert numpy.__version__=='1.25.2'; "
         "print(json.dumps(dict(python=sys.version,numpy=numpy.__version__,torch=torch.__version__,"
-        "cuda=torch.version.cuda,sum=torch.tensor([1.,2.],dtype=torch.float64).sum().item())))"],
+        "cuda=torch.version.cuda,mapped_libraries=sorted({line.split(maxsplit=5)[5] for line in Path('/proc/self/maps').read_text().splitlines() if len(line.split(maxsplit=5))==6 and '.so' in line.split(maxsplit=5)[5]}),sum=torch.tensor([1.,2.],dtype=torch.float64).sum().item())))"],
         env=env, text=True, capture_output=True, timeout=60)
     (result / "import-probe.log").write_text(probe.stdout + probe.stderr)
     probe.check_returncode()
-    report = dict(status="installed", venv=str(VENV), wheel_bytes=sum(w["bytes"] for w in wheels),
+    report = dict(platform_identity=identity(), status="installed", venv=str(VENV), wheel_bytes=sum(w["bytes"] for w in wheels),
                   expanded_wheel_bytes=expanded, lock_sha256=digest(LOCK),
                   versions=json.loads(probe.stdout), library_path=library, python_dsl_tracing_validated=False,
                   encrypted_execution_validated=False)
@@ -217,19 +238,13 @@ def main():
     if Path.cwd().resolve() != ROOT:
         raise SystemExit(f"Requires cwd {ROOT}")
     if args.plan:
-        with ThreadPoolExecutor(max_workers=4) as pool:
-            wheels = list(pool.map(metadata, ((n, v) for n, v in PINS.items() if n != "torch")))
-        wheels.append(dict(name="torch", version="2.0.1+cpu",
-            filename="torch-2.0.1+cpu-cp310-cp310-linux_x86_64.whl",
-            url="https://download-r2.pytorch.org/whl/cpu/torch-2.0.1%2Bcpu-cp310-cp310-linux_x86_64.whl",
-            bytes=195422835, sha256="fec257249ba014c68629a1994b0c6e7356e20e1afc77a87b9941a40e5095285d",
-            evidence="https://download.pytorch.org/whl/cpu/torch/"))
-        lock = dict(schema_version=1, python="3.10.14", target="cp310-linux-x86_64",
-                    bootstrap={"pip": "23.0.1", "setuptools": "65.5.0", "source": "pinned Python ensurepip"},
-                    wheels=wheels)
+        # Display the reviewed lock; refreshing upstream metadata is a separate,
+        # read-only review and must not silently replace platform-specific pins.
+        lock = json.loads(LOCK.read_text())
         validate_lock(lock)
         print(json.dumps(lock, indent=2))
     else:
+        require_linux_backend()
         wheels = validate_lock(json.loads(LOCK.read_text()))
         if args.install_approved:
             download(wheels)

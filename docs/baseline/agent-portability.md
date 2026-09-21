@@ -1,6 +1,6 @@
 # Ubuntu Agent 路径与环境迁移
 
-当前开发和使用说明只面向 Ubuntu x86_64。本文件补充路径、依赖和结果迁移约束；启动命令与接受的输入见 [Agent README](../../scripts/README.md)。
+原 x86 默认行为保留，新增显式 aarch64 配置；ARM 已通过限定范围的原生离线 CPU 验收，见[双平台说明](linux-platforms.md)。本文件补充路径、依赖和结果迁移约束；启动命令与接受的输入见 [Agent README](../../scripts/README.md)。
 
 ## 源码与工作目录
 
@@ -9,6 +9,7 @@
 - 源码、脚本和待提交修改保存在项目 checkout。
 - 可再生依赖、构建和结果默认放在当前用户的 `~/poseidon-work`。
 - 其下使用 `deps`、`build-dacapo`、`build-poseidon`、`venvs`、`cache`、`results`。
+- ARM 在基础 work root 下追加 `platforms/aarch64-linux` 后使用上述分区，避免与原 x86 路径混用。
 - 可通过 `POSEIDON_WORK_ROOT` 或启动器的 `--work-root` 指定另一绝对路径；该选项不自动搬移、下载或安装任何内容。
 - 不接受相对工作目录、文件系统根目录或用户主目录本身作为工作根目录；源码和工作路径可以包含空格。
 
@@ -23,7 +24,7 @@ python3 scripts/agent.py --backend local --work-root '/data/poseidon work' docto
 
 ## 环境与凭据
 
-当前固定依赖是 Linux x86_64 的 LLVM/MLIR 18.1.2、SEAL 4.0.0、隔离 Python 环境及 bubblewrap。架构检查、固定版本、沙箱隔离和完整性检查必须保留。
+当前配置支持 Linux x86_64 和 aarch64，分别锁定启动器与 wheels，使用 LLVM/MLIR 18.1.2、SEAL 4.0.0、隔离 Python 环境及 bubblewrap。架构检查、固定版本、沙箱隔离和完整性检查必须保留。
 
 DeepSeek 密钥保存在项目根目录的单一 `.env` 中，只需 `DEEPSEEK_API_KEY`；不要把路径配置写入 `.env`，不要公开或提交此文件。启动器不读取或复制凭据。
 
@@ -31,7 +32,7 @@ DeepSeek 密钥保存在项目根目录的单一 `.env` 中，只需 `DEEPSEEK_A
 
 迁移到新的 Ubuntu 环境时：
 
-1. 保留当前 Agent 源码、本地修改和固定版本的 Dacapo 子模块；仅 clone 远程仓库可能缺少尚未提交的 Agent 文件。
+1. 保留当前 Agent 源码、本地修改和固定版本的 Dacapo 子模块。Agent 主体已发布在 `lhy-agent-dsl`；本轮未提交的双平台适配仍需单独保存，不能仅依赖重新 clone。
 2. 按固定依赖重新配置环境，不直接复用其他目录或架构的 Python venv、CMake cache 和二进制。
 3. 安装、sudo、子模块初始化及大型下载前先确认版本、位置和规模并取得批准。
 4. `continue_dacapo_cpp.py --approved` 是带历史 checkpoint 门禁的续建操作，不是新 checkout 的通用安装器。
