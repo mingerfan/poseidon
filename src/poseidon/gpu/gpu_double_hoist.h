@@ -19,6 +19,27 @@ enum class GpuLinearTransformMode : std::uint8_t
     ClassicBsgs = 0,
     SingleHoistBsgs = 1,
     DoubleHoistBsgs = 2,
+    /**
+     * Materialize ordinary Q-basis ciphertexts at every BSGS task boundary.
+     *
+     * Unlike DoubleHoistBsgs, this mode never shares lifted-QP state across
+     * rotations or giant groups.  It is intentionally opt-in and provides a
+     * stable task graph that a multi-GPU frontend can lower to Rotate,
+     * MultiplyPlain, Add, and Rescale operations.  A single rotation may still
+     * use a device-local optimized HYBRID KeySwitch internally.
+     */
+    LooseCoupledBsgs = 3,
+    /**
+     * Strict no-hoist baseline.
+     *
+     * Every rotation performs its own ordinary KeySwitch and materializes a
+     * Q-basis ciphertext before the next operation.  No decomposition,
+     * lifted-QP buffer, or QP accumulator may be reused across rotations.
+     * This mode intentionally remains distinct from LooseCoupledBsgs so the
+     * latter may later grow device-local hoist islands without changing the
+     * multi-GPU no-hoist reference baseline.
+     */
+    NoHoistBsgs = 4,
 };
 
 struct GpuDoubleHoistTerm
@@ -251,6 +272,9 @@ struct GpuDoubleHoistWorkspace
 
 GpuLinearTransformMode gpu_linear_transform_mode_from_environment(
     GpuLinearTransformMode fallback);
+
+const char *gpu_linear_transform_mode_name(
+    GpuLinearTransformMode mode) noexcept;
 
 }  // namespace gpu
 }  // namespace poseidon

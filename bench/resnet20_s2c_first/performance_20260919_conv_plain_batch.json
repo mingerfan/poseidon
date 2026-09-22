@@ -1,0 +1,236 @@
+{
+  "date": "2026-09-19",
+  "hardware": {
+    "gpu": "Tesla V100-SXM2-32GB",
+    "cuda_visible_device": 1
+  },
+  "configuration": {
+    "N": 65536,
+    "Q": 50,
+    "P": 25,
+    "input_q": 32,
+    "stem_output_q": 31,
+    "output_q": 4,
+    "dnum": 2,
+    "secret_hamming_weight": 192,
+    "bootstrap_degree": 59,
+    "bootstrap_count": 18,
+    "blocks": 9,
+    "relu_count": 19,
+    "relu_leaf_fusion": true,
+    "conv_plain_batch_default": true,
+    "security_approved": false
+  },
+  "experiment": {
+    "same_binary": true,
+    "same_gpu": true,
+    "same_image": 0,
+    "order": [
+      "off",
+      "on"
+    ],
+    "warmups_per_process": 1,
+    "measured_full_inferences_per_process": 1,
+    "independent_random_keys_and_input_ciphertexts": true,
+    "only_toggled_environment_variable": "POSEIDON_CONV_PLAIN_BATCH",
+    "timing_method_unchanged": true
+  },
+  "optimization": {
+    "scope": "18 block Conv Q9 weight-product sums; stem, masks, BN bias, reductions, rotations, rescale, shortcut, head, ReLU and bootstrap unchanged",
+    "output_groups": 160,
+    "coefficient_terms": 1440,
+    "terms_per_group": 9,
+    "batches_per_group": [
+      4,
+      4,
+      1
+    ],
+    "kernels_before": 1600,
+    "kernels_after": 480,
+    "expected_activities_removed": 1120,
+    "observed_activities_removed": 1120,
+    "conv_resident_plaintexts": 1696,
+    "new_resident_gpu_payload_bytes": 0,
+    "swapping": false
+  },
+  "correctness": {
+    "standalone": {
+      "result": "PASS",
+      "lengths": "1..10",
+      "checks": 65,
+      "exact_residues": 76677120,
+      "rejected_invalid_destinations": 4,
+      "copy_on_write": true,
+      "zero_and_negative_masks": true,
+      "mixed_q_prefixes": true,
+      "alias_safe": true,
+      "capture_and_replay": true
+    },
+    "full_network_preparation": {
+      "result": "PASS",
+      "same_ciphertext_and_plaintexts": true,
+      "exact_checks": 480,
+      "exact_residues": 566231040,
+      "metadata_equal": true
+    },
+    "online": {
+      "exact_checks": 0,
+      "observer_decryptions": 0,
+      "host_transfers": 0,
+      "intermediate_reencryptions": 0,
+      "post_timing_decryptions": 1,
+      "accuracy_threshold_unchanged": 0.1,
+      "image": 0,
+      "prediction": 3
+    },
+    "precision_note": "A/B processes use fresh random keys; logit error differences are not attributed to the fusion. All changed batches are bitwise exact. Prior isolated ReLU intermediate-stage 1e-5 guard failures remain documented and were not relaxed."
+  },
+  "measurements": {
+    "off": {
+      "wall_ms": 6964.143024,
+      "cuda_event_ms": 6968.490234375,
+      "gpu_activity_union_ms": 6866.17797,
+      "host_enqueue_ms": 6949.685289,
+      "activities": 110589,
+      "prepared_free_MiB": 1470.375,
+      "bootstrap_qp_full_MiB": 4108,
+      "bootstrap_qp_compact_MiB": 884.787109375,
+      "bootstrap_qp_compression_ratio": 4.64292478549086,
+      "bootstrap_c2s_baby_tile": 8,
+      "bootstrap_c2s_tile_batches": 3,
+      "relu_materialized_moddrops": 19,
+      "relu_zero_copy_moddrops": 494,
+      "relu_q_prefix_source_views": 1463,
+      "relu_q_prefix_discarded_q_limbs": 1159,
+      "relu_fused_leaf_calls": 266,
+      "relu_fused_leaf_terms": 570,
+      "conv_plain_batch_calls": 0,
+      "conv_plain_batch_terms": 0,
+      "breakdown_sum_ms": 6866.177970000001,
+      "breakdown_overlap_ms": 9.094947017729282e-13,
+      "conv_bn_gpu_ms": 700.0571319999999,
+      "relu_gpu_ms": 1086.736299,
+      "bootstrap_gpu_ms": 5036.934109000001,
+      "shortcut_gpu_ms": 29.614158,
+      "pool_fc_gpu_ms": 12.327515,
+      "residual_copy_gpu_ms": 0.508757,
+      "category_sum_ms": 6866.177970000001,
+      "max_logit_error": 0.01066989665010531,
+      "gpu_prediction": 3
+    },
+    "on": {
+      "wall_ms": 6963.905257,
+      "cuda_event_ms": 6968.47509765625,
+      "gpu_activity_union_ms": 6866.70315,
+      "host_enqueue_ms": 6949.449134,
+      "activities": 109469,
+      "prepared_free_MiB": 1470.375,
+      "bootstrap_qp_full_MiB": 4108,
+      "bootstrap_qp_compact_MiB": 884.787109375,
+      "bootstrap_qp_compression_ratio": 4.64292478549086,
+      "bootstrap_c2s_baby_tile": 8,
+      "bootstrap_c2s_tile_batches": 3,
+      "relu_materialized_moddrops": 19,
+      "relu_zero_copy_moddrops": 494,
+      "relu_q_prefix_source_views": 1463,
+      "relu_q_prefix_discarded_q_limbs": 1159,
+      "relu_fused_leaf_calls": 266,
+      "relu_fused_leaf_terms": 570,
+      "conv_plain_batch_calls": 480,
+      "conv_plain_batch_terms": 1440,
+      "breakdown_sum_ms": 6866.703149999999,
+      "breakdown_overlap_ms": -9.094947017729282e-13,
+      "conv_bn_gpu_ms": 685.580828,
+      "relu_gpu_ms": 1089.305226,
+      "bootstrap_gpu_ms": 5049.259386,
+      "shortcut_gpu_ms": 29.640589,
+      "pool_fc_gpu_ms": 12.406888,
+      "residual_copy_gpu_ms": 0.510233,
+      "category_sum_ms": 6866.70315,
+      "max_logit_error": 0.01325288209056819,
+      "gpu_prediction": 3
+    }
+  },
+  "deltas": {
+    "conv_bn_gpu_ms": {
+      "on_minus_off_ms": -14.476303999999914,
+      "reduction_percent": 2.0678746545503253
+    },
+    "bootstrap_gpu_ms": {
+      "on_minus_off_ms": 12.325276999999005,
+      "reduction_percent": -0.2446979994829828
+    },
+    "relu_gpu_ms": {
+      "on_minus_off_ms": 2.5689270000000306,
+      "reduction_percent": -0.23638917761042147
+    },
+    "gpu_activity_union_ms": {
+      "on_minus_off_ms": 0.525180000000546,
+      "reduction_percent": -0.007648796787604182
+    },
+    "wall_ms": {
+      "on_minus_off_ms": -0.23776699999962148,
+      "reduction_percent": 0.0034141602086606064
+    },
+    "cuda_event_ms": {
+      "on_minus_off_ms": -0.01513671875,
+      "reduction_percent": 0.00021721661709923605
+    }
+  },
+  "conclusion": {
+    "conv_local_reduction_ms": 14.476303999999914,
+    "full_network_gain_established": false,
+    "note": "Single neighboring A/B pair: Conv+BN falls about 2.07%, but Bootstrap/ReLU timing variation offsets it. Full-network wall is effectively unchanged; do not claim a stable end-to-end speedup."
+  },
+  "tests": {
+    "bench": {
+      "passed": 31,
+      "skipped": 0,
+      "includes_prior_relu_evidence": true
+    },
+    "analysis": {
+      "passed": 24,
+      "skipped": 28
+    },
+    "selected_network_metadata": {
+      "passed": 3,
+      "skipped": 2
+    },
+    "core_build": "PASS",
+    "application_build": "PASS",
+    "standalone_build": "PASS",
+    "legacy_runtime_symbol_check": "PASS",
+    "diff_check": "PASS"
+  },
+  "provenance": {
+    "git_head": "410dfbdca6644fc51a5513521027b43b633bd730",
+    "uncommitted_worktree": true,
+    "artifacts_in_tmp": true,
+    "application": {
+      "path": "/tmp/poseidon_resnet20_conv_batch",
+      "sha256": "fbc5479d614e9e3d790dc3a5703f770c2f17a2e1b34d4a78b094439be4fa5bc1"
+    },
+    "standalone": {
+      "path": "/tmp/poseidon_conv_batch_precision",
+      "sha256": "520608e9fd760b4cbd763928be9ad6652a8ff97ff49aedccef7653ff1ca8f842"
+    },
+    "logs": [
+      {
+        "path": "/tmp/poseidon_resnet20_conv_batch_off.log",
+        "sha256": "f9ad6d627558fd0ed109cca8c6ca439728483bbe37ac35bab5cd17c64d52bd92"
+      },
+      {
+        "path": "/tmp/poseidon_resnet20_conv_batch_on.log",
+        "sha256": "390e53d0da20c6a76c167a8283d43727b2259d1b075ff610af2e0910f5c3e9ec"
+      },
+      {
+        "path": "/tmp/poseidon_conv_batch_precision.log",
+        "sha256": "7db3bcac71e35ab6a936913c5a2ed3078e515c60bb2c0739b52bd0752f05a0e8"
+      },
+      {
+        "path": "/tmp/poseidon_conv_batch_metadata.log",
+        "sha256": "121d47c910db7b399ec64ba9442c0ec2bbc3272eaed7acd03f55504ff3551d1f"
+      }
+    ]
+  }
+}

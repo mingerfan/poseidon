@@ -243,8 +243,36 @@ GpuLinearTransformMode gpu_linear_transform_mode_from_environment(
     {
         return GpuLinearTransformMode::DoubleHoistBsgs;
     }
+    if (value == "loose_coupled" || value == "loose_coupled_bsgs")
+    {
+        return GpuLinearTransformMode::LooseCoupledBsgs;
+    }
+    if (value == "no_hoist" || value == "no_hoist_bsgs")
+    {
+        return GpuLinearTransformMode::NoHoistBsgs;
+    }
     throw std::invalid_argument(
-        "POSEIDON_GPU_LINEAR_TRANSFORM_MODE must be classic, single_hoist, or double_hoist");
+        "POSEIDON_GPU_LINEAR_TRANSFORM_MODE must be classic, single_hoist, "
+        "double_hoist, loose_coupled, or no_hoist");
+}
+
+const char *gpu_linear_transform_mode_name(
+    GpuLinearTransformMode mode) noexcept
+{
+    switch (mode)
+    {
+    case GpuLinearTransformMode::ClassicBsgs:
+        return "classic";
+    case GpuLinearTransformMode::SingleHoistBsgs:
+        return "single_hoist";
+    case GpuLinearTransformMode::DoubleHoistBsgs:
+        return "double_hoist";
+    case GpuLinearTransformMode::LooseCoupledBsgs:
+        return "loose_coupled";
+    case GpuLinearTransformMode::NoHoistBsgs:
+        return "no_hoist";
+    }
+    return "unknown";
 }
 
 }  // namespace gpu

@@ -53,6 +53,16 @@ class FixtureTests(unittest.TestCase):
         self.assertEqual(len(self.report['q_bottom_first']),50)
         self.assertEqual(len(self.report['p']),25)
 
+    def test_fused_leaf_inventory_without_term_pruning(self):
+        stages = self.report['relu']['stages']
+        attach_coefficients(stages, self.values)
+        nodes = [node for stage in stages for _, node in leaves(stage['tree'])]
+        terms = [len(node['coefficients']) for node in nodes]
+        self.assertEqual(len(nodes), 14)
+        self.assertEqual(sum(terms), 30)
+        self.assertEqual(sum(count - 1 for count in terms), 16)
+        self.assertEqual(max(terms), 4)
+
 
 if __name__=='__main__':
     unittest.main()

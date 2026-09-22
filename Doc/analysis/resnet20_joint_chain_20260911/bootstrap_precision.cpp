@@ -241,7 +241,7 @@ int main(int argc, char **argv) {
         }
         std::cout<<"PHASE continuous_bootstrap_to_ReLU no_reencryption=true\n";
         Ref ref(input.begin(),input.end()); auto current=replay.drop(result,0); double stage_errors[3];
-        for (int i=0;i<3;++i) current=replay.component(stages[i],current,ref,i+1,stage_errors[i]);
+        for (int i=0;i<3;++i) current=replay.component(stages[i],std::move(current),ref,i+1,stage_errors[i]);
         auto after_relu=replay.tail(result,current,tail_work,tail_drop);
         for (std::size_t i=0;i<ref.size();++i) ref[i]=input[i]*(ref[i]+0.5L);
         const double chain_error=replay.check("bootstrap_then_ReLU_vs_original_plain",after_relu,ref);

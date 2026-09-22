@@ -5,13 +5,13 @@ cd "$repo_dir"
 precision_out=${1:?provide a temporary output binary path}
 precision_source=${2:-relu_precision.cpp}
 case "$precision_source" in
-  relu_precision.cpp|bootstrap_precision.cpp|bootstrap_baseline_precision.cpp|bootstrap_relu_precision.cpp|bootstrap_relu_conv_precision.cpp|bootstrap_block_precision.cpp|bootstrap_network_precision.cpp) ;;
+  relu_precision.cpp|bootstrap_precision.cpp|bootstrap_baseline_precision.cpp|bootstrap_relu_precision.cpp|bootstrap_relu_conv_precision.cpp|bootstrap_block_precision.cpp|bootstrap_network_precision.cpp|conv_plain_batch_precision.cpp) ;;
   *) echo "unsupported precision source" >&2; exit 2 ;;
 esac
 app_dir=/home/liufuyao/Work/poseidon_gpu_other/resnet20-9.3/benchmark/resnet20_gpu
 obj_dir=src/poseidon/tests/bootstrapping/build/CMakeFiles/test_gpu_bootstrap_modraise.dir/home/liufuyao/Work/poseidon_gpu/src/poseidon/gpu
 precision_extra_sources=()
-if [[ "$precision_source" == bootstrap_relu_conv_precision.cpp || "$precision_source" == bootstrap_block_precision.cpp || "$precision_source" == bootstrap_network_precision.cpp ]]; then
+if [[ "$precision_source" == bootstrap_relu_conv_precision.cpp || "$precision_source" == bootstrap_block_precision.cpp || "$precision_source" == bootstrap_network_precision.cpp || "$precision_source" == conv_plain_batch_precision.cpp ]]; then
   precision_extra_sources+=(Doc/analysis/resnet20_joint_chain_20260911/original_conv_reference.cpp)
   precision_extra_sources+=("$app_dir/resnet20_weights.cpp")
 fi

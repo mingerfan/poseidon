@@ -1736,6 +1736,11 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
         requested_degrees,
         flat_bsgs_b8 ? (1U << log_split) : 0U);
 
+    // Dynamic planning may decide that the polynomial root already sits at
+    // the target scale. Persist that exact decision instead of asking the
+    // runtime to derive it again from floating-point scale metadata.
+    std::uint32_t polynomial_final_rescale_count = 0;
+
     std::map<std::uint32_t, std::size_t> basis_q_counts;
     std::map<std::uint32_t, double> basis_scales;
     basis_q_counts.emplace(0, input_q_count);
@@ -2153,8 +2158,32 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
                         node.polynomial,
                         target_level,
                         requested_scale);
-                const std::size_t leaf_q_count =
+                std::size_t leaf_q_count =
                     static_cast<std::size_t>(leaf_level) + 1;
+                // A leaf cannot be evaluated above any non-zero basis term it
+                // consumes. This matters for the degree-30 split, whose leaf
+                // bases can finish at different physical Q levels.
+                for (std::size_t degree = 1;
+                     degree < node.polynomial.data().size();
+                     ++degree)
+                {
+                    if (!eval_mod_coefficient_is_nonzero(
+                            node.polynomial.data()[degree]))
+                    {
+                        continue;
+                    }
+                    const auto basis_q_iter = basis_q_counts.find(
+                        static_cast<std::uint32_t>(degree));
+                    if (basis_q_iter == basis_q_counts.end())
+                    {
+                        throw std::logic_error(
+                            "GpuUploader::upload_eval_mod_high_precision: "
+                            "missing dynamic leaf basis level");
+                    }
+                    leaf_q_count = std::min(
+                        leaf_q_count,
+                        basis_q_iter->second);
+                }
                 node_valid[node.node_id] = true;
                 node_q_counts[node.node_id] = leaf_q_count;
                 node_scales[node.node_id] = leaf_scale;
@@ -2471,6 +2500,7 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
                 root_node.q_count,
                 root_node.scale,
                 target_scale);
+        polynomial_final_rescale_count = final_rescale_count;
         node_q_counts[result.polynomial_result_node] =
             root_node.q_count - final_rescale_count;
         node_scales[result.polynomial_result_node] = rescaled_scale(
@@ -2623,6 +2653,8 @@ GpuBootstrapData::EvalModData GpuUploader::upload_eval_mod_high_precision(
         node_q_counts[result.polynomial_result_node];
     result.polynomial_output_scale =
         node_scales[result.polynomial_result_node];
+    result.polynomial_final_rescale_count =
+        polynomial_final_rescale_count;
     if (output_q_count == 0)
     {
         throw std::logic_error(

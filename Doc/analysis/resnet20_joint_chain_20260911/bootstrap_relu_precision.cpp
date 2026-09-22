@@ -181,7 +181,7 @@ int continue_to_relu(const BaselineContinuation &b,const ReluFixture &f,
     auto current=replay.drop(output,0);double max_local_stage=0,stage_error=0;
     std::cout<<"PHASE continuous_bootstrap40_to_original_ReLU no_reencryption=true\n";
     for(std::size_t i=0;i<f.stages.size();++i){
-        current=replay.component(f.stages[i],current,reference,i+1,stage_error);
+        current=replay.component(f.stages[i],std::move(current),reference,i+1,stage_error);
         for(auto &v:local)v=plain_complex_node(*f.stages[i].tree,v);
         for(auto &v:chain)v=plain_complex_node(*f.stages[i].tree,v);
         max_local_stage=std::max(max_local_stage,replay.check("relu_stage"+std::to_string(i+1)+"_local_arithmetic",current,local));

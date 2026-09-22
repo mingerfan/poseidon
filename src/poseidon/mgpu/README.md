@@ -18,6 +18,72 @@ Subdirectories:
 - `comm/`: object-level GPU communication backends;
 - `configs/`: static execution config templates.
 
+## Opt-in loose-coupled bootstrap transforms
+
+The optimized bootstrap keeps `double_hoist` as its normal linear-transform
+mode. An additional experimental mode is available for building a
+multi-GPU-friendly task graph:
+
+```bash
+POSEIDON_GPU_LINEAR_TRANSFORM_MODE=loose_coupled
+```
+
+This mode does not change the EvalMod polynomial degree, coefficients,
+double-angle count, logical rescale schedule, or the default mode. It changes
+only the BSGS execution form used by CoeffToSlot and SlotToCoeff:
+
+- baby rotations produce ordinary Q-basis ciphertexts;
+- every diagonal plaintext product is an independent task;
+- every giant group reduces to an ordinary Q-basis ciphertext;
+- giant rotations are independent tasks;
+- the final group reduction and rescale remain explicit;
+- no lifted-QP accumulator or hoisted decomposition is shared across task
+  boundaries.
+
+`make_gpu_loose_bsgs_plan()` exposes this device-independent graph, while
+`multiply_by_diag_matrix_bsgs_loose()` is the sequential single-device
+reference executor. The reference executor is deliberately kept separate from
+`double_hoist`, so later multi-GPU lowering can map the graph to existing
+`Rotate`, `MultiplyPlain`, `Add`, and `Rescale` IR operations without changing
+the optimized single-GPU path.
+
+A rotation remains an atomic homomorphic operation. Its internal HYBRID
+KeySwitch may still use a device-local implementation optimization; splitting
+individual NTT/ModUp/key-multiply/ModDown CUDA kernels across GPUs is outside
+the V1 full-ciphertext object model. The loose boundary is therefore the
+materialized Q ciphertext, not an individual CUDA kernel.
+
+The current multi-GPU runtime still treats a bootstrap artifact as a fallback
+barrier. Enabling `loose_coupled` selects and validates the executable
+single-device reference path; a separate frontend-lowering step is still
+needed before these graph nodes are scheduled across devices.
+
+### Strict degree-30 no-hoist baseline
+
+The strict reference mode is selected independently with:
+
+```bash
+POSEIDON_GPU_LINEAR_TRANSFORM_MODE=no_hoist
+```
+
+Unlike a future grouped/local-hoist implementation, this mode is permanently
+defined to perform one ordinary KeySwitch per rotation and to materialize a Q
+ciphertext after every rotation. It currently shares the same executor as
+`loose_coupled`, but has a separate mode identity so adding device-local hoist
+islands to the latter cannot silently change the no-hoist baseline.
+
+The bootstrap test has an opt-in profile that fixes the historical transition
+candidate's EvalMod parameters as well as the transform mode:
+
+```bash
+POSEIDON_BOOTSTRAP_PROFILE=evalmod30_da3_no_hoist \
+  ./src/poseidon/tests/bootstrapping/run.sh
+```
+
+It selects native degree 30, `K=16`, three double-angle iterations, `N=65536`,
+`Q=34`, `P=9`, dynamic rescaling, and strict `no_hoist` CtS/StC. The normal
+optimized profile remains unchanged and continues to select `double_hoist`.
+
 Dacapo/HEVM/CST import code lives outside this core tree under
 `src/poseidon/frontends/dacapo/`. The Dacapo submodule is source-only at
 `third_party/dacapo`; Poseidon does not build Dacapo or MLIR as part of

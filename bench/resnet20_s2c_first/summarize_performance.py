@@ -24,10 +24,81 @@ def summarize(text: str) -> dict[str, float | int]:
     memory = fields(one(lines, "MEMORY "))
     key_preflight = fields(one(lines, "APPLICATION_KEY_PREFLIGHT "))
     keys_ready = fields(one(lines, "APPLICATION_KEYS_READY "))
+    compression = fields(one(lines, "BOOTSTRAP_QP_COMPRESSION "))
     inventory = fields(one(lines, "CONTINUOUS_PREPARED "))
     activity = fields(one(lines, "GPU_ACTIVITY_TIMING "))
+    relu_moddrop = fields(one(lines, "RELU_MODDROP "))
     accuracy = fields(one(lines, "POST_TIMING_ACCURACY "))
     result = fields(one(lines, "CONTINUOUS_TIMING_RESULT "))
+    basis_fusion = result.get("relu_basis_fusion", "false")
+    if basis_fusion not in ("true", "false"):
+        raise ValueError("invalid ReLU basis fusion flag")
+    basis_fused = basis_fusion == "true"
+    if "relu_basis_fusion" in result:
+        for prefix, preparation in (("RELU_BASIS_FUSION_PREPARED ", True),
+                                    ("RELU_BASIS_FUSION ", False)):
+            basis = fields(one(lines, prefix))
+            expected_basis = {
+                "enabled": basis_fusion,
+                "calls": "285" if basis_fused else "0",
+                "constants": "190" if basis_fused else "0",
+                "products": "95" if basis_fused else "0",
+                "exact_checks": "285" if basis_fused and preparation else "0",
+                "exact_residues": "824311808" if basis_fused and preparation else "0",
+                "online_observer": "false", "coefficients_changed": "false",
+                "rescale_changed": "false",
+            }
+            for name, expected in expected_basis.items():
+                if basis.get(name) != expected:
+                    raise ValueError(f"{prefix}{name} differs from {expected!r}")
+    elif any(line.startswith("RELU_BASIS_FUSION") for line in lines):
+        raise ValueError("ReLU basis fusion inventory has no result flag")
+    conv_batch = result.get("conv_plain_batch", "false")
+    if conv_batch not in ("true", "false"):
+        raise ValueError("invalid Conv plain batch flag")
+    batched = conv_batch == "true"
+    if "conv_plain_batch" in result:
+        for prefix, preparation in (("CONV_PLAIN_BATCH_PREPARED ", True),
+                                    ("CONV_PLAIN_BATCH ", False)):
+            batch = fields(one(lines, prefix))
+            expected_batch = {
+                "enabled": conv_batch,
+                "chains": "160" if batched else "0",
+                "terms": "1440" if batched else "0",
+                "calls": "480" if batched else "0",
+                "exact_checks": "480" if batched and preparation else "0",
+                "exact_residues": "566231040" if batched and preparation else "0",
+                "pending": "0", "online_observer": "false",
+                "coefficients_changed": "false", "rescale_changed": "false",
+            }
+            for name, expected in expected_batch.items():
+                if batch.get(name) != expected:
+                    raise ValueError(f"{prefix}{name} differs from {expected!r}")
+    elif any(line.startswith("CONV_PLAIN_BATCH") for line in lines):
+        raise ValueError("Conv plain batch inventory has no result flag")
+    leaf_fusion = result.get("relu_leaf_fusion", "false")
+    if leaf_fusion not in ("true", "false"):
+        raise ValueError("invalid ReLU leaf fusion flag")
+    fused = leaf_fusion == "true"
+    # Historical logs predate this optimization. New logs must report its
+    # complete inventory, for either side of a same-binary A/B comparison.
+    if "relu_leaf_fusion" in result:
+        leaf = fields(one(lines, "RELU_LEAF_FUSION "))
+        expected_leaf = {
+            "enabled": leaf_fusion,
+            "calls": "266" if fused else "0",
+            "terms": "570" if fused else "0",
+            "adds_removed": "304" if fused else "0",
+            "exact_checks": "0",
+            "online_observer": "false",
+            "coefficients_changed": "false",
+            "rescale_changed": "false",
+        }
+        for name, expected in expected_leaf.items():
+            if leaf.get(name) != expected:
+                raise ValueError(f"ReLU leaf fusion {name} differs from {expected!r}")
+    elif any(line.startswith("RELU_LEAF_FUSION ") for line in lines):
+        raise ValueError("ReLU leaf fusion inventory has no result flag")
     breakdown_rows = [fields(line) for line in lines
                       if line.startswith("GPU_ACTIVITY_BREAKDOWN ")]
     category_rows = [fields(line) for line in lines
@@ -51,6 +122,10 @@ def summarize(text: str) -> dict[str, float | int]:
         "accuracy": "PASS",
         "intermediate_reencryptions": "0",
         "swaps": "false",
+        "compressed_qp_plaintexts": "true",
+        "bootstrap_c2s_baby_tile": "8",
+        "relu_zero_copy_moddrop": "true",
+        "relu_q_prefix_views": "true",
         "encrypted_logits_q": "4",
     }
     for name, expected in required.items():
@@ -90,6 +165,15 @@ def summarize(text: str) -> dict[str, float | int]:
             raise ValueError(
                 f"resident application keys {name}={keys_ready.get(name)!r}, "
                 f"expected {expected!r}")
+    if compression.get("enabled") != "true" or compression.get("exact") != "true":
+        raise ValueError("bootstrap QP plaintext compression is not exact and enabled")
+    if compression.get("stc_diagonals") != "158" or compression.get("cts_diagonals") != "158":
+        raise ValueError("bootstrap compressed QP diagonal inventory changed")
+    full_qp_mib = float(compression["full_MiB"])
+    compact_qp_mib = float(compression["compact_MiB"])
+    compression_ratio = float(compression["ratio"])
+    if not (0 < compact_qp_mib < full_qp_mib and compression_ratio > 1):
+        raise ValueError("bootstrap compressed QP storage did not shrink")
     expected_inventory = {
         "inputs": "27",
         "stem_plaintexts": "28",
@@ -97,12 +181,31 @@ def summarize(text: str) -> dict[str, float | int]:
         "shortcut_plaintexts": "48",
         "relu_plaintexts": "46",
         "head_plaintexts": "93",
+        "bootstrap_s2c_baby_tile": "8",
+        "bootstrap_c2s_baby_tile": "8",
+        "bootstrap_c2s_tile_batches": "3",
     }
     for name, expected in expected_inventory.items():
         if inventory.get(name) != expected:
             raise ValueError(f"resident inventory {name}={inventory.get(name)!r}, expected {expected!r}")
     if activity.get("host_transfers") != "0" or activity.get("host_transfer_bytes") != "0":
         raise ValueError("CUPTI activity summary contains a host/device transfer")
+    expected_relu_moddrop = {
+        "zero_copy": "true",
+        "q_prefix_views": "true",
+        "materialized_calls": "19",
+        "inplace_calls": "494",
+        "inplace_discarded_q_limbs": "0",
+        "prefix_multiply_calls": "513",
+        "prefix_multiply_plain_calls": str((95 if fused else 665) - (95 if basis_fused else 0)),
+        "prefix_source_views": "1463",
+        "prefix_discarded_q_limbs": "1159",
+    }
+    for name, expected in expected_relu_moddrop.items():
+        if relu_moddrop.get(name) != expected:
+            raise ValueError(
+                f"ReLU ModDrop {name}={relu_moddrop.get(name)!r}, "
+                f"expected {expected!r}")
     if any(line.startswith(("GPU_ACTIVITY_STAGE ", "TIMING_PREPARED_", "BOOTSTRAP_GPU_TIMING "))
            for line in lines):
         raise ValueError("fragmented/stage-local timing leaked into performance log")
@@ -196,6 +299,23 @@ def summarize(text: str) -> dict[str, float | int]:
         "host_enqueue_ms": enqueue,
         "activities": activities,
         "prepared_free_MiB": float(inventory["free_MiB"]),
+        "bootstrap_qp_full_MiB": full_qp_mib,
+        "bootstrap_qp_compact_MiB": compact_qp_mib,
+        "bootstrap_qp_compression_ratio": compression_ratio,
+        "bootstrap_c2s_baby_tile": int(inventory["bootstrap_c2s_baby_tile"]),
+        "bootstrap_c2s_tile_batches": int(inventory["bootstrap_c2s_tile_batches"]),
+        "relu_materialized_moddrops": int(relu_moddrop["materialized_calls"]),
+        "relu_zero_copy_moddrops": int(relu_moddrop["inplace_calls"]),
+        "relu_q_prefix_source_views": int(relu_moddrop["prefix_source_views"]),
+        "relu_q_prefix_discarded_q_limbs": int(
+            relu_moddrop["prefix_discarded_q_limbs"]),
+        "relu_fused_leaf_calls": 266 if fused else 0,
+        "relu_fused_leaf_terms": 570 if fused else 0,
+        "relu_fused_basis_calls": 285 if basis_fused else 0,
+        "relu_fused_basis_constants": 190 if basis_fused else 0,
+        "relu_fused_basis_products": 95 if basis_fused else 0,
+        "conv_plain_batch_calls": 480 if batched else 0,
+        "conv_plain_batch_terms": 1440 if batched else 0,
         "breakdown_sum_ms": breakdown_sum,
         "breakdown_overlap_ms": breakdown_sum - gpu,
         "conv_bn_gpu_ms": categories["Conv+BN"],

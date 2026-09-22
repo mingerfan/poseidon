@@ -405,6 +405,20 @@ EvalMod real/imag CPU-GPU最大差保持在约`2.43e-11/2.26e-11`，完整CPU-GP
 
 **适用范围与状态。** full-baby tile 15只成为`slim22_da3_c2s5433`与`slim22_direct_da3_c2s5433`两条`[5,4,3,3]`实验路径的脚本默认值；其他profile继续使用tile 4，低层`dnum=1`路径继续使用独立的tile 8覆盖。用户显式设置`POSEIDON_GPU_DOUBLE_HOIST_BABY_TILE`时始终优先。最终验证报告为`profiles/bootstrap22_full_baby15_v100_gpu3_20260821.nsys-rep`，报告及派生文件属于测试产物，不提交仓库。
 
+### 22. 30阶 EvalMod 的 remainder-chain 延迟重线性化
+
+**遗漏原因与优化。** 30阶、baby width 8的原生Chebyshev计划已经使用BSGS，但lazy relinearization的阶数白名单只包含22和58/59，导致3个`Q·T_k+R` combine节点全部立即执行Hybrid KeySwitch。该计划中一个内部节点只被根节点作为remainder使用，且对应边不需要rescale或plaintext scale调整，满足与现有22/59阶实现相同的图结构安全条件。把30阶加入已验证范围后，这个size-3中间结果直接与父节点的size-3乘积相加，再统一重线性化；每个实部/虚部分支的combine relinearization由`3->2`，多项式、密文乘法、模数消耗和scale均不变。quotient边仍禁止传播size-3密文。
+
+**严格同进程A/B。** 测试固定在同一张空闲V100，参数为`N=65536, Q=34, P=9`、30阶原生拟合、baby width 8、`K=16`、3次double-angle和动态rescale。新增的默认关闭诊断开关`POSEIDON_BOOTSTRAP_EVALMOD_LAZY_RELIN_AB=1`在相同输入、密钥、workspace和进程内交替切换eager/lazy路径；20轮、每组2次CUDA-event测量结果为：
+
+- eager relinearization：`49.7338 ms`
+- lazy relinearization：`47.6055 ms`
+- EvalMod减少`2.1283 ms`，提升约`4.28%`（`1.045x`）
+
+完整前置StC自举的独立进程观测为`108.794->106.790 ms`，下降约`2.004 ms`，与EvalMod局部收益方向一致；但两组C2S自身存在约`1.69 ms`跨进程波动，因此只把同进程EvalMod的`2.1283 ms`作为本项的严格归因结果。优化后一次3次测量的完整路径为`106.371 ms`，用于记录当前绝对量级，不作为单变量A/B差值。
+
+**正确性与状态。** 开启后EvalMod仍为`Q:30->14`，输出scale仍为`2^50.1141`。实部/虚部CPU-GPU最大差分别约`1.33e-9/8.53e-11`，最终CPU-GPU最大差约`4.32e-8`；同次输入的最终source error约`9.998e-4`，与eager路径一致。优化已成为满足动态rescale、Chebyshev、degree-30及逐边结构检查时的默认行为；设置`POSEIDON_EVALMOD_LAZY_RELIN=0`可回退。A/B诊断开关默认关闭，不影响普通执行。
+
 ## 3. 累计性能演进
 
 下表用于观察总体趋势，不应被视为完全相同环境下的一组严格单变量实验。nsys 数据包含 profiler 开销，release 数据来自 CUDA event。

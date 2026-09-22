@@ -2407,6 +2407,8 @@ int main()
         const bool compressed_qp_mac_probe =
             env_flag_enabled(
                 "POSEIDON_BOOTSTRAP_COMPRESSED_QP_MAC_PROBE");
+        const bool evalmod_lazy_relin_ab =
+            env_flag_enabled("POSEIDON_BOOTSTRAP_EVALMOD_LAZY_RELIN_AB");
         const bool slim_stc_run_c2s =
             slim_stc_c2s_probe || slim_stc_evalmod_probe ||
             plaintext_compression_probe || compressed_qp_mac_probe ||
@@ -3188,6 +3190,8 @@ int main()
                   << (plaintext_compression_probe ? "YES" : "NO") << "\n";
         std::cout << "compact_qp_mac  = "
                   << (compressed_qp_mac_probe ? "YES" : "NO") << "\n";
+        std::cout << "lazy_relin_ab   = "
+                  << (evalmod_lazy_relin_ab ? "YES" : "NO") << "\n";
         if (slim_stc_first_probe || slim_stc_run_modraise)
         {
             std::cout << "slim_stc_input_q= "
@@ -4958,6 +4962,85 @@ int main()
                         "slim StC-first EvalMod q-count invariant failed");
                 }
 
+                bool slim_lazy_relin_ab_ran = false;
+                double slim_eager_relin_evalmod_ab_ms = 0.0;
+                double slim_lazy_relin_evalmod_ab_ms = 0.0;
+                if (evalmod_lazy_relin_ab)
+                {
+                    const std::size_t ab_rounds = env_size_or(
+                        "POSEIDON_BOOTSTRAP_EVALMOD_LAZY_RELIN_AB_ROUNDS",
+                        10);
+                    const std::size_t ab_batch = env_size_or(
+                        "POSEIDON_BOOTSTRAP_EVALMOD_LAZY_RELIN_AB_BATCH",
+                        2);
+                    if (ab_rounds == 0 || ab_batch == 0)
+                    {
+                        throw std::invalid_argument(
+                            "lazy relinearization A/B rounds and batch must be positive");
+                    }
+
+                    const char *original_raw =
+                        std::getenv("POSEIDON_EVALMOD_LAZY_RELIN");
+                    const bool had_original = original_raw != nullptr;
+                    const std::string original_value =
+                        had_original ? std::string(original_raw) : std::string();
+                    const auto set_lazy_relin_mode = [](bool enabled) {
+                        if (setenv(
+                                "POSEIDON_EVALMOD_LAZY_RELIN",
+                                enabled ? "1" : "0",
+                                1) != 0)
+                        {
+                            throw std::runtime_error(
+                                "failed to set EvalMod lazy relinearization mode");
+                        }
+                    };
+
+                    set_lazy_relin_mode(false);
+                    (void)time_gpu_ms(1, run_gpu_slim_evalmod);
+                    set_lazy_relin_mode(true);
+                    (void)time_gpu_ms(1, run_gpu_slim_evalmod);
+                    for (std::size_t round = 0; round < ab_rounds; ++round)
+                    {
+                        const auto measure_eager = [&]() {
+                            set_lazy_relin_mode(false);
+                            slim_eager_relin_evalmod_ab_ms +=
+                                time_gpu_ms(ab_batch, run_gpu_slim_evalmod);
+                        };
+                        const auto measure_lazy = [&]() {
+                            set_lazy_relin_mode(true);
+                            slim_lazy_relin_evalmod_ab_ms +=
+                                time_gpu_ms(ab_batch, run_gpu_slim_evalmod);
+                        };
+                        if ((round & 1U) == 0)
+                        {
+                            measure_eager();
+                            measure_lazy();
+                        }
+                        else
+                        {
+                            measure_lazy();
+                            measure_eager();
+                        }
+                    }
+                    slim_eager_relin_evalmod_ab_ms /=
+                        static_cast<double>(ab_rounds);
+                    slim_lazy_relin_evalmod_ab_ms /=
+                        static_cast<double>(ab_rounds);
+                    slim_lazy_relin_ab_ran = true;
+
+                    if (had_original)
+                    {
+                        (void)setenv(
+                            "POSEIDON_EVALMOD_LAZY_RELIN",
+                            original_value.c_str(),
+                            1);
+                    }
+                    else
+                    {
+                        (void)unsetenv("POSEIDON_EVALMOD_LAZY_RELIN");
+                    }
+                }
+
                 for (std::size_t index = 0; index < warmup; ++index)
                 {
                     run_gpu_slim_evalmod();
@@ -5088,6 +5171,19 @@ int main()
                     << slim_evalmod_gpu_ms << "\n"
                     << "full slim bootstrap ms = "
                     << slim_full_gpu_ms << "\n";
+                if (slim_lazy_relin_ab_ran)
+                {
+                    std::cout
+                        << "lazy relin A/B eager  = "
+                        << slim_eager_relin_evalmod_ab_ms << " ms\n"
+                        << "lazy relin A/B lazy   = "
+                        << slim_lazy_relin_evalmod_ab_ms << " ms\n"
+                        << "lazy relin A/B speedup= "
+                        << format_speedup(
+                               slim_eager_relin_evalmod_ab_ms,
+                               slim_lazy_relin_evalmod_ab_ms)
+                        << "\n";
+                }
 
                 if (!slim_eval_real_cpu_gpu.equal ||
                     !slim_eval_imag_cpu_gpu.equal ||
@@ -5720,6 +5816,54 @@ int main()
                 device_id);
         bootstrap_data.eval_mod = std::move(gpu_evalmod_data);
 
+        const bool strict_no_hoist_mode =
+            bootstrap_data.linear_transform_mode ==
+            poseidon::gpu::GpuLinearTransformMode::NoHoistBsgs;
+        if (bootstrap_data.linear_transform_mode ==
+                poseidon::gpu::GpuLinearTransformMode::LooseCoupledBsgs ||
+            strict_no_hoist_mode)
+        {
+            const char *plan_tag = strict_no_hoist_mode
+                ? "NO_HOIST_PLAN"
+                : "LOOSE_COUPLED_PLAN";
+            const auto print_loose_plan = [plan_tag](
+                const char *name,
+                const poseidon::gpu::GpuLinearMatrixGroup &group) {
+                std::size_t baby_rotations = 0;
+                std::size_t term_products = 0;
+                std::size_t giant_groups = 0;
+                std::size_t giant_rotations = 0;
+                for (const auto &matrix : group.data())
+                {
+                    const auto plan =
+                        poseidon::gpu::make_gpu_loose_bsgs_plan(matrix);
+                    baby_rotations += static_cast<std::size_t>(std::count_if(
+                        plan.baby_steps.begin(),
+                        plan.baby_steps.end(),
+                        [](int step) { return step != 0; }));
+                    giant_groups += plan.groups.size();
+                    for (const auto &giant : plan.groups)
+                    {
+                        term_products += giant.terms.size();
+                        giant_rotations += giant.giant_step != 0 ? 1U : 0U;
+                    }
+                }
+                std::cout << plan_tag << " transform=" << name
+                          << " matrices=" << group.data().size()
+                          << " baby_rotations=" << baby_rotations
+                          << " term_products=" << term_products
+                          << " giant_groups=" << giant_groups
+                          << " giant_rotations=" << giant_rotations
+                          << " boundary=Q_ciphertext shared_QP=false\n";
+            };
+            print_loose_plan(
+                "coeff_to_slot",
+                bootstrap_data.coeff_to_slot_matrix);
+            print_loose_plan(
+                "slot_to_coeff",
+                bootstrap_data.slot_to_coeff_matrix);
+        }
+
         std::cout << "c2s matrices     = "
                   << c2s_matrix_group.data().size() << "\n";
         std::cout << "s2c matrices     = "
@@ -5727,15 +5871,16 @@ int main()
         std::cout << "rotation keys    = "
                   << full_galois_keys.data().size() << "\n";
         std::cout << "linear transform = "
-                  << (bootstrap_data.linear_transform_mode ==
-                              poseidon::gpu::GpuLinearTransformMode::DoubleHoistBsgs
-                          ? "double_hoist"
-                          : "classic")
+                  << poseidon::gpu::gpu_linear_transform_mode_name(
+                         bootstrap_data.linear_transform_mode)
                   << "\n";
         std::cout << "Galois key views = "
                   << join_q_counts(full_key_q_counts) << "\n";
-        std::cout << "polynomial degree= "
-                  << bootstrap_evalmod_polynomial.degree() << "\n";
+        std::cout << "active polynomial degree= "
+                  << (bootstrap_data.eval_mod.dynamic_rescale
+                          ? bootstrap_data.eval_mod.polynomial_degree
+                          : bootstrap_evalmod_polynomial.degree())
+                  << "\n";
         std::cout << "lazy relin       = "
                   << (env_flag_enabled_or("POSEIDON_EVALMOD_LAZY_RELIN", true)
                           ? "ON"
@@ -6007,6 +6152,16 @@ int main()
         const bool use_double_hoist =
             bootstrap_data.linear_transform_mode ==
             poseidon::gpu::GpuLinearTransformMode::DoubleHoistBsgs;
+        const bool use_loose_coupled =
+            bootstrap_data.linear_transform_mode ==
+                poseidon::gpu::GpuLinearTransformMode::LooseCoupledBsgs ||
+            bootstrap_data.linear_transform_mode ==
+                poseidon::gpu::GpuLinearTransformMode::NoHoistBsgs;
+        const char *q_boundary_mode_tag =
+            bootstrap_data.linear_transform_mode ==
+                    poseidon::gpu::GpuLinearTransformMode::NoHoistBsgs
+                ? "NO_HOIST"
+                : "LOOSE_COUPLED";
         if (use_double_hoist && detailed_diagnostics)
         {
             std::vector<DoubleHoistDiagnosticRow> diagnostic_rows;
@@ -6349,6 +6504,16 @@ int main()
                     real,
                     imag);
             }
+            else if (use_loose_coupled)
+            {
+                gpu_evaluator.coeff_to_slot_loose(
+                    input,
+                    bootstrap_data.coeff_to_slot_matrix,
+                    bootstrap_data.minus_i_plaintext,
+                    gpu_full_galois_keys,
+                    real,
+                    imag);
+            }
             else
             {
                 gpu_evaluator.coeff_to_slot(
@@ -6374,6 +6539,16 @@ int main()
                     bootstrap_data.plus_i_plaintext,
                     gpu_full_galois_keys,
                     bootstrap_workspace.slot_to_coeff_double_hoist,
+                    output);
+            }
+            else if (use_loose_coupled)
+            {
+                gpu_evaluator.slot_to_coeff_loose(
+                    real,
+                    imag,
+                    bootstrap_data.slot_to_coeff_matrix,
+                    bootstrap_data.plus_i_plaintext,
+                    gpu_full_galois_keys,
                     output);
             }
             else
@@ -6406,9 +6581,44 @@ int main()
             gpu_c2s_imag,
             gpu_c2s_imag_download,
             context);
+        if (use_loose_coupled)
+        {
+            poseidon::gpu::GpuCiphertextData classic_real;
+            poseidon::gpu::GpuCiphertextData classic_imag;
+            gpu_evaluator.coeff_to_slot(
+                gpu_full_raised,
+                bootstrap_data.coeff_to_slot_matrix,
+                bootstrap_data.minus_i_plaintext,
+                gpu_full_galois_keys,
+                classic_real,
+                classic_imag);
+            cudaDeviceSynchronize();
+            const auto classic_real_download =
+                download_gpu_ciphertext(classic_real, context);
+            const auto classic_imag_download =
+                download_gpu_ciphertext(classic_imag, context);
+            const auto real_raw = compare_ciphertexts(
+                classic_real_download,
+                gpu_c2s_real_download,
+                8);
+            const auto imag_raw = compare_ciphertexts(
+                classic_imag_download,
+                gpu_c2s_imag_download,
+                8);
+            if (!real_raw.equal || !imag_raw.equal)
+            {
+                std::cerr << "[FAILED] " << q_boundary_mode_tag
+                          << " CoeffToSlot differs "
+                          << "from classic BSGS on the same ciphertext/key\n";
+                return EXIT_FAILURE;
+            }
+            std::cout << q_boundary_mode_tag
+                      << "_EQUIVALENCE transform=coeff_to_slot "
+                      << "raw_equal=true\n";
+        }
         bool c2s_correct = false;
         double c2s_max_error = 0.0;
-        if (use_double_hoist)
+        if (use_double_hoist || use_loose_coupled)
         {
             const auto real_comparison = compare_decrypted_ciphertexts(
                 cpu_c2s_real_raw,
@@ -6519,6 +6729,63 @@ int main()
                       << " (input scale preserved)"
                       << "\n";
         }
+        if (use_loose_coupled)
+        {
+            // Validate the inverse linear transform independently of EvalMod.
+            // The degree-30 experiment can have a separate dynamic EvalMod
+            // level-planning failure; that must not hide a loose-BSGS graph
+            // regression.  Both paths consume the same lowered Q ciphertexts.
+            poseidon::gpu::GpuCiphertextData probe_real;
+            poseidon::gpu::GpuCiphertextData probe_imag;
+            gpu_evaluator.drop_modulus(
+                gpu_c2s_real,
+                probe_real,
+                evalmod_output_parms_id);
+            gpu_evaluator.drop_modulus(
+                gpu_c2s_imag,
+                probe_imag,
+                evalmod_output_parms_id);
+            probe_real.meta.scale = s2c_input_scale;
+            probe_imag.meta.scale = s2c_input_scale;
+
+            poseidon::gpu::GpuCiphertextData loose_probe;
+            poseidon::gpu::GpuCiphertextData classic_probe;
+            gpu_evaluator.slot_to_coeff_loose(
+                probe_real,
+                probe_imag,
+                bootstrap_data.slot_to_coeff_matrix,
+                bootstrap_data.plus_i_plaintext,
+                gpu_full_galois_keys,
+                loose_probe);
+            gpu_evaluator.slot_to_coeff(
+                probe_real,
+                probe_imag,
+                bootstrap_data.slot_to_coeff_matrix,
+                bootstrap_data.plus_i_plaintext,
+                gpu_full_galois_keys,
+                classic_probe);
+            loose_probe.meta.scale = s2c_output_scale;
+            classic_probe.meta.scale = s2c_output_scale;
+            cudaDeviceSynchronize();
+            const auto loose_download =
+                download_gpu_ciphertext(loose_probe, context);
+            const auto classic_download =
+                download_gpu_ciphertext(classic_probe, context);
+            const auto raw = compare_ciphertexts(
+                classic_download,
+                loose_download,
+                8);
+            if (!raw.equal)
+            {
+                std::cerr << "[FAILED] " << q_boundary_mode_tag
+                          << " SlotToCoeff probe differs "
+                          << "from classic BSGS on the same ciphertext/key\n";
+                return EXIT_FAILURE;
+            }
+            std::cout << q_boundary_mode_tag
+                      << "_EQUIVALENCE transform=slot_to_coeff "
+                      << "raw_equal=true evalmod_bypassed=true\n";
+        }
         if (c2s_only)
         {
             std::cout << "\n[OK] Stage 2 dynamic CoeffToSlot passed\n";
@@ -6581,23 +6848,37 @@ int main()
                 evalmod_dynamic_rescale
                     ? evalmod_output_parms_id
                     : cpu_evalmod_output_parms_id;
-            // The experimental flat-b8 GPU circuit has one more
-            // multiplicative level than the balanced CPU Chebyshev tree.
-            // Dropping the CPU oracle to the GPU plan's level preserves the
-            // represented value and allows a decoded-value comparison without
-            // changing the production CPU or default GPU evaluation paths.
-            if (evalmod_dynamic_rescale &&
-                bootstrap_data.eval_mod.polynomial_flat_bsgs &&
-                cpu_eval_real.coeff_modulus_size() > evalmod_output_q_count)
+            // Dynamic GPU schedules can legitimately consume more physical Q
+            // primes than the balanced CPU Chebyshev tree. Normalize only the
+            // CPU oracle level with an exact ModDrop; this does not alter the
+            // represented value or the GPU computation being validated.
+            if (evalmod_dynamic_rescale)
             {
-                cpu_evaluator->drop_modulus(
-                    cpu_eval_real,
-                    cpu_eval_real,
-                    expected_cpu_evalmod_parms_id);
-                cpu_evaluator->drop_modulus(
-                    cpu_eval_imag,
-                    cpu_eval_imag,
-                    expected_cpu_evalmod_parms_id);
+                if (cpu_eval_real.coeff_modulus_size() <
+                        evalmod_output_q_count ||
+                    cpu_eval_imag.coeff_modulus_size() <
+                        evalmod_output_q_count)
+                {
+                    throw std::runtime_error(
+                        "CPU EvalMod consumed more levels than the GPU "
+                        "dynamic setup plan");
+                }
+                if (cpu_eval_real.coeff_modulus_size() >
+                    evalmod_output_q_count)
+                {
+                    cpu_evaluator->drop_modulus(
+                        cpu_eval_real,
+                        cpu_eval_real,
+                        expected_cpu_evalmod_parms_id);
+                }
+                if (cpu_eval_imag.coeff_modulus_size() >
+                    evalmod_output_q_count)
+                {
+                    cpu_evaluator->drop_modulus(
+                        cpu_eval_imag,
+                        cpu_eval_imag,
+                        expected_cpu_evalmod_parms_id);
+                }
             }
             if (cpu_eval_real.parms_id() != expected_cpu_evalmod_parms_id ||
                 cpu_eval_imag.parms_id() != expected_cpu_evalmod_parms_id)
@@ -7348,6 +7629,35 @@ int main()
             gpu_s2c_result,
             gpu_s2c_download,
             context);
+        if (use_loose_coupled)
+        {
+            poseidon::gpu::GpuCiphertextData classic_s2c_result;
+            gpu_evaluator.slot_to_coeff(
+                gpu_eval_real_stable,
+                gpu_eval_imag,
+                bootstrap_data.slot_to_coeff_matrix,
+                bootstrap_data.plus_i_plaintext,
+                gpu_full_galois_keys,
+                classic_s2c_result);
+            classic_s2c_result.meta.scale = s2c_output_scale;
+            cudaDeviceSynchronize();
+            const auto classic_s2c_download =
+                download_gpu_ciphertext(classic_s2c_result, context);
+            const auto s2c_raw = compare_ciphertexts(
+                classic_s2c_download,
+                gpu_s2c_download,
+                8);
+            if (!s2c_raw.equal)
+            {
+                std::cerr << "[FAILED] " << q_boundary_mode_tag
+                          << " SlotToCoeff differs "
+                          << "from classic BSGS on the same ciphertext/key\n";
+                return EXIT_FAILURE;
+            }
+            std::cout << q_boundary_mode_tag
+                      << "_EQUIVALENCE transform=slot_to_coeff "
+                      << "raw_equal=true\n";
+        }
         if (detailed_diagnostics)
         {
             const auto s2c_values = decrypt_decode(
@@ -8288,7 +8598,8 @@ int main()
                 evalmod_double_angle,
                 c2s_step,
                 s2c_step,
-                use_double_hoist ? "double_hoist" : "classic"},
+                poseidon::gpu::gpu_linear_transform_mode_name(
+                    bootstrap_data.linear_transform_mode)},
             iterations,
             warmup,
             full_iterations,
@@ -8365,7 +8676,9 @@ int main()
         }
 
         std::cout
-            << "\n[WARN] EvalMod degree-59 lazy relinearization="
+            << "\n[WARN] EvalMod degree-"
+            << bootstrap_data.eval_mod.polynomial_degree
+            << " lazy relinearization="
             << (env_flag_enabled_or("POSEIDON_EVALMOD_LAZY_RELIN", true)
                     ? "ON"
                     : "OFF")

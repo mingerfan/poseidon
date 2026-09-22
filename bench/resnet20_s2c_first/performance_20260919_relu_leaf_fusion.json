@@ -1,0 +1,289 @@
+{
+  "date": "2026-09-19",
+  "hardware": {
+    "gpu": "Tesla V100-SXM2-32GB",
+    "cuda_visible_device": 1,
+    "cuda_total_mib": 32501.125
+  },
+  "configuration": {
+    "scheme": "CKKS",
+    "N": 65536,
+    "Q": 50,
+    "P": 25,
+    "input_q": 32,
+    "stem_output_q": 31,
+    "dnum": 2,
+    "secret_hamming_weight": 192,
+    "bootstrap_c2s_baby_tile": 8,
+    "relu_zero_copy_moddrop": true,
+    "relu_q_prefix_views": true,
+    "relu_leaf_fusion": true,
+    "relu_degrees": [
+      15,
+      15,
+      27
+    ],
+    "relu_q_in": 31,
+    "relu_q_out": 9,
+    "relu_q_consumed": 22,
+    "security_approved": false
+  },
+  "online_contract": {
+    "blocks": 9,
+    "bootstraps": 18,
+    "relu_calls": 19,
+    "single_continuous_graph": true,
+    "per_stage_sync": false,
+    "observer_decryptions": 0,
+    "post_timing_decryptions": 1,
+    "host_device_transfers": 0,
+    "runtime_swaps": false,
+    "intermediate_reencryptions": 0,
+    "starts_after_input_and_public_material_upload": true,
+    "ends_at_encrypted_logits": true,
+    "encrypted_logits_q": 4
+  },
+  "resident_inventory": {
+    "relu_plaintexts": 46,
+    "pool_initial_gib": 30,
+    "pool_cap_gib": 30,
+    "cuda_free_after_prepared_warmup_mib": 1470.375,
+    "evaluation_key_payload_mib": 1832
+  },
+  "timing_ms": {
+    "end_to_end_wall": 6955.782018,
+    "cuda_event_default_stream_span": 6960.2060546875,
+    "cupti_gpu_activity_union": 6862.368149,
+    "host_enqueue": 6941.374996
+  },
+  "gpu_category_ms": {
+    "Conv+BN": 699.4461680000001,
+    "ReLU": 1087.278247,
+    "Bootstrap": 5033.264063999999,
+    "Shortcut": 29.516579,
+    "Pool+FC": 12.356955,
+    "Residual/copy": 0.506136,
+    "total": 6862.368149
+  },
+  "gpu_breakdown_ms": {
+    "bootstrap.C2S": 1896.086322,
+    "bootstrap.EvalMod": 2734.318389,
+    "bootstrap.ModRaise": 8.320602,
+    "bootstrap.S2C": 342.426527,
+    "bootstrap.prepare": 0.184254,
+    "bootstrap.recombine": 51.92797,
+    "conv_bn": 696.546042,
+    "head": 12.356955,
+    "relu": 1087.278247,
+    "residual.add": 0.353501,
+    "residual.clone": 0.152635,
+    "shortcut": 29.516579,
+    "stem.conv_bn": 2.900126
+  },
+  "activities": 110589,
+  "relu_leaf_fusion": {
+    "calls": 266,
+    "coefficient_terms": 570,
+    "independent_adds_fused": 304,
+    "remaining_independent_plain_multiply_calls": 95,
+    "expected_kernel_activities_removed": 1178,
+    "observed_kernel_activities_removed": 1178,
+    "coefficients_changed": false,
+    "encoding_scales_changed": false,
+    "rescale_changed": false,
+    "relinearization_changed": false,
+    "online_exact_checks": 0
+  },
+  "ab": {
+    "method": "Same binary, same physical GPU, sequential separate processes; only POSEIDON_RELU_LEAF_FUSION=0/1 changed. Fresh OS-random keys/ciphertexts in each process; no claim of bitwise identity across these two network runs.",
+    "warmup_full_graphs_per_process": 1,
+    "measured_full_graphs_per_process": 1,
+    "off": {
+      "timing_ms": {
+        "end_to_end_wall": 6976.971494,
+        "cuda_event_default_stream_span": 6981.32080078125,
+        "cupti_gpu_activity_union": 6884.535043,
+        "host_enqueue": 6962.606147
+      },
+      "gpu_category_ms": {
+        "Conv+BN": 703.9780860000001,
+        "ReLU": 1106.411194,
+        "Bootstrap": 5031.847022000001,
+        "Shortcut": 29.465137,
+        "Pool+FC": 12.322094,
+        "Residual/copy": 0.51151
+      },
+      "activities": 111767,
+      "accuracy": {
+        "result": "PASS",
+        "max_logit_error": 0.007720874299014469,
+        "max_logit_imag": 0.0001007512051492714,
+        "true_label": 3,
+        "plain_prediction": 3,
+        "gpu_prediction": 3
+      }
+    },
+    "on": {
+      "timing_ms": {
+        "end_to_end_wall": 6955.782018,
+        "cuda_event_default_stream_span": 6960.2060546875,
+        "cupti_gpu_activity_union": 6862.368149,
+        "host_enqueue": 6941.374996
+      },
+      "gpu_category_ms": {
+        "Conv+BN": 699.4461680000001,
+        "ReLU": 1087.278247,
+        "Bootstrap": 5033.264063999999,
+        "Shortcut": 29.516579,
+        "Pool+FC": 12.356955,
+        "Residual/copy": 0.506136
+      },
+      "activities": 110589,
+      "accuracy": {
+        "result": "PASS",
+        "max_logit_error": 0.01173730617258695,
+        "max_logit_imag": 0.0001368121986294289,
+        "true_label": 3,
+        "plain_prediction": 3,
+        "gpu_prediction": 3
+      }
+    },
+    "delta_on_minus_off": {
+      "relu_ms": -19.13294700000006,
+      "relu_percent": -1.7292799552062421,
+      "gpu_activity_ms": -22.166893999999957,
+      "gpu_activity_percent": -0.321980988716708,
+      "wall_ms": -21.189476000000468,
+      "wall_percent": -0.30370592768256266
+    },
+    "interpretation": "Modest adjacent A/B observation, not a multi-run confidence interval. ReLU timing and exact activity-count reduction support attribution; unrelated category fluctuations are not claimed as fusion gains."
+  },
+  "accuracy": {
+    "result": "PASS",
+    "max_logit_error": 0.01173730617258695,
+    "max_logit_imag": 0.0001368121986294289,
+    "true_label": 3,
+    "plain_prediction": 3,
+    "gpu_prediction": 3
+  },
+  "isolated_relu_validation": {
+    "api": {
+      "result": "PASS",
+      "term_counts": "1,2,3,4",
+      "zero_and_negative_coefficients": "true",
+      "mixed_q_prefixes": "true",
+      "immutable_inputs": "true",
+      "alias_safe": "true",
+      "rejected": 9,
+      "exact_residues": 27000832
+    },
+    "exact": {
+      "result": "PASS",
+      "leaf_checks": 14,
+      "leaf_residues": 43122688,
+      "full_relu_residues": 1179648,
+      "coefficient_terms": 30,
+      "same_ciphertext": "true",
+      "same_keys": "true",
+      "output_q": 9,
+      "output_log_scale": 39.999999999984
+    },
+    "diagnostic_result": {
+      "precision": "FAIL",
+      "final_output": "PASS",
+      "stage_guard": "FAIL",
+      "he_tolerance": 0.00001,
+      "max_scale_drift_bits": 1.5852208434808e-11,
+      "actual_Q_consumed": 22,
+      "bootstrap_tested": "false",
+      "full_network_tested": "false"
+    },
+    "final_vs_original_polynomial": {
+      "q": 9,
+      "log_scale": 39.999999999984,
+      "max_abs": 0.0000015586188839029,
+      "rms": 1.1422369952759e-7,
+      "max_imag": 0.0000015575191008471,
+      "reference_max_abs": 0.99995271955909
+    },
+    "final_vs_polynomial_of_decrypted_input": {
+      "q": 9,
+      "log_scale": 39.999999999984,
+      "max_abs": 5.8008881477e-9,
+      "rms": 9.3408074709479e-10,
+      "max_imag": 0.0000015575191008471,
+      "reference_max_abs": 0.99995330039849
+    },
+    "stage_errors_vs_noiseless_input": [
+      {
+        "stage": "P15_stage1",
+        "q": 25,
+        "log_scale": 40.1,
+        "max_abs": 0.000058154031475299,
+        "rms": 0.0000016528556153435,
+        "max_imag": 0.000053931192985135,
+        "reference_max_abs": 0.97601915273881
+      },
+      {
+        "stage": "P15_stage2",
+        "q": 19,
+        "log_scale": 43.999999999999,
+        "max_abs": 0.00032598086031581,
+        "rms": 0.0000096222275663626,
+        "max_imag": 0.00030232134856661,
+        "reference_max_abs": 0.91644065566353
+      },
+      {
+        "stage": "P27_stage3",
+        "q": 12,
+        "log_scale": 89.871122387085,
+        "max_abs": 0.00020834592844044,
+        "rms": 0.0000040272984176723,
+        "max_imag": 0.00015282303271346,
+        "reference_max_abs": 0.50005000071736
+      }
+    ],
+    "exit_code": 1,
+    "note": "All 14 leaves and full ReLU are bitwise identical on the SAME ciphertext and keys. Final-output tolerance passes. Existing intermediate 1e-5 stage guard still FAILS, as in historical unfused relu_precision_run1/2/3.log; no threshold was relaxed."
+  },
+  "tests": {
+    "bench_with_gpu_evidence": {
+      "passed": 26,
+      "skipped": 0
+    },
+    "analysis_default": {
+      "passed": 24,
+      "skipped": 28
+    },
+    "network_metadata_selected": {
+      "passed": 3,
+      "skipped": 2
+    }
+  },
+  "artifacts": {
+    "repository_head": "410dfbdca6644fc51a5513521027b43b633bd730",
+    "uncommitted_worktree": true,
+    "network_binary": {
+      "path": "/tmp/poseidon_resnet20_leaf_fusion",
+      "sha256": "666686ef697c3cbbd516caa87994c2cd495216eb0141565cf2c8c013d36aff0d"
+    },
+    "isolated_relu_binary": {
+      "path": "/tmp/poseidon_relu_leaf_fusion",
+      "sha256": "5833c45324b539f396dfbb414c1a8dcace751e747e103309b56ff09e7715f363"
+    },
+    "logs": {
+      "off": {
+        "path": "/tmp/poseidon_resnet20_leaf_fusion_off.log",
+        "sha256": "a7f8fb4805f1d9e5e52af66d5977b988b76e948ef9ebe31823d8394a4a228fb6"
+      },
+      "on": {
+        "path": "/tmp/poseidon_resnet20_leaf_fusion_on.log",
+        "sha256": "681401e126681aad8520ad61363d4b9d487b875a7e2dfc6eddd4a74a316a6844"
+      },
+      "isolated_accuracy": {
+        "path": "/tmp/poseidon_relu_leaf_fusion_accuracy.log",
+        "sha256": "77aa5351da5a16a062dc2d272e741152945a53c4ee42357d7190f26403c804e9"
+      }
+    }
+  }
+}

@@ -39,6 +39,7 @@ POSEIDON_BOOTSTRAP_PROFILE="${POSEIDON_BOOTSTRAP_PROFILE:-slim22_da3_c2s5433}"
 
 if [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "dynamic32" ||
       "${POSEIDON_BOOTSTRAP_PROFILE}" == "dual30" ||
+      "${POSEIDON_BOOTSTRAP_PROFILE}" == "evalmod30_da3_no_hoist" ||
       "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim59_da2" ||
       "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_da3" ||
       "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_da3_c2s5433" ||
@@ -46,7 +47,8 @@ if [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "dynamic32" ||
     # 40-bit normal CKKS scale and 45-bit bootstrap scale over GPU-friendly
     # physical primes. The mixed <=32-bit Q chain and all stage widths are
     # selected by the CPU-compatible min_scale/2 dynamic planner.
-    if [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim59_da2" ||
+    if [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "evalmod30_da3_no_hoist" ||
+          "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim59_da2" ||
           "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_da3" ||
           "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_da3_c2s5433" ||
           "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_direct_da3_c2s5433" ]]; then
@@ -87,7 +89,18 @@ if [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "dynamic32" ||
     export POSEIDON_BOOTSTRAP_ITERATIONS="${POSEIDON_BOOTSTRAP_ITERATIONS:-1}"
     export POSEIDON_BOOTSTRAP_FULL_WARMUP="${POSEIDON_BOOTSTRAP_FULL_WARMUP:-1}"
     export POSEIDON_BOOTSTRAP_FULL_ITERATIONS="${POSEIDON_BOOTSTRAP_FULL_ITERATIONS:-1}"
-    if [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim59_da2" ]]; then
+    if [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "evalmod30_da3_no_hoist" ]]; then
+        # Strict multi-GPU reference baseline: native degree-30 cosine fit,
+        # three double-angle steps, and no cross-rotation hoist/QP reuse.
+        # K=16 is required for the intended 2*K-1 degree-30 interpolation.
+        export POSEIDON_GPU_LINEAR_TRANSFORM_MODE=no_hoist
+        export POSEIDON_BOOTSTRAP_EVALMOD_SINE_DEGREE=30
+        export POSEIDON_BOOTSTRAP_EVALMOD_GENERATION_DEGREE=30
+        unset POSEIDON_BOOTSTRAP_EVALMOD_TRUNCATE_DEGREE
+        unset POSEIDON_BOOTSTRAP_EVALMOD_FIXED_DEGREE_REFIT
+        export POSEIDON_BOOTSTRAP_EVALMOD_DOUBLE_ANGLE=3
+        export POSEIDON_BOOTSTRAP_EVALMOD_K=16
+    elif [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim59_da2" ]]; then
         export POSEIDON_BOOTSTRAP_SLIM_STC_EVALMOD_PROBE=1
         export POSEIDON_BOOTSTRAP_EVALMOD_SINE_DEGREE=59
         export POSEIDON_BOOTSTRAP_EVALMOD_DOUBLE_ANGLE=2
@@ -128,7 +141,7 @@ if [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "dynamic32" ||
     fi
 elif [[ "${POSEIDON_BOOTSTRAP_PROFILE}" != "legacy" ]]; then
     echo "Unknown POSEIDON_BOOTSTRAP_PROFILE=${POSEIDON_BOOTSTRAP_PROFILE}" >&2
-    echo "Supported profiles: dynamic32, dual30, slim59_da2, slim22_da3, slim22_da3_c2s5433, slim22_direct_da3_c2s5433, legacy" >&2
+    echo "Supported profiles: dynamic32, dual30, evalmod30_da3_no_hoist, slim59_da2, slim22_da3, slim22_da3_c2s5433, slim22_direct_da3_c2s5433, legacy" >&2
     exit 2
 fi
 export POSEIDON_KEYSWITCH_FOURSTEP_ALL_NTT
@@ -269,6 +282,11 @@ if [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim59_da2" ||
     echo "[WARN] Named StC-first profile ${POSEIDON_BOOTSTRAP_PROFILE}: degree=${POSEIDON_BOOTSTRAP_EVALMOD_SINE_DEGREE}, double_angle=${POSEIDON_BOOTSTRAP_EVALMOD_DOUBLE_ANGLE}."
     echo "       slim22_da3_c2s5433 is the script default; dynamic32 remains available as the production profile."
 fi
+if [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "evalmod30_da3_no_hoist" ]]; then
+    echo "[WARN] Strict no-hoist degree-30 profile enabled: degree=30, K=16, double_angle=3."
+    echo "       CtS/StC use ordinary per-rotation KeySwitch and materialized Q-ciphertext task boundaries; shared hoisted QP state is forbidden."
+    echo "       This is an opt-in multi-GPU reference path and does not change the default optimized Double-Hoist profile."
+fi
 if [[ "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_da3" ||
       "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_da3_c2s5433" ||
       "${POSEIDON_BOOTSTRAP_PROFILE}" == "slim22_direct_da3_c2s5433" ]]; then
@@ -303,14 +321,27 @@ if [[ "${POSEIDON_BOOTSTRAP_COMPRESSED_QP_MAC_PROBE:-0}" != "0" ]]; then
     echo "[WARN] Experimental compact-QP MAC A/B probe: full and compressed plaintext paths both run."
     echo "       The default bootstrap path is unchanged; Q/P MAC residues and CtS/StC outputs must be bit-exact."
 fi
-echo "[WARN] Double-Hoist QP-MAC defaults: direct accumulator initialization=${POSEIDON_DOUBLE_HOIST_QP_MAC_DIRECT_INIT}, dnum=1 baby tile=${POSEIDON_GPU_DOUBLE_HOIST_DNUM1_BABY_TILE}."
-echo "       Global baby tile=${POSEIDON_GPU_DOUBLE_HOIST_BABY_TILE}; [5,4,3,3] C2S profiles default to full-baby tile 15, while other profiles retain tile 4."
-echo "       Set POSEIDON_DOUBLE_HOIST_QP_MAC_DIRECT_INIT=0 and POSEIDON_GPU_DOUBLE_HOIST_DNUM1_BABY_TILE=0 to restore zero-fill and the global baby-tile setting."
-echo "       dnum=1 baby KeySwitch+c0 fusion=${POSEIDON_DOUBLE_HOIST_FUSED_BABY_KEYSWITCH_C0}; set it to 0 to restore the separate c0 kernel."
-echo "[WARN] Fused baby KeySwitch+plaintext MAC=${POSEIDON_DOUBLE_HOIST_FUSED_BABY_KEYSWITCH_PLAIN_MAC}."
-echo "       Eligible N=65536 inverse-pre-rotated plans bypass materialized baby QP ciphertexts; set it to 0 for the legacy dataflow."
-echo "       Fused baby block size=${POSEIDON_DOUBLE_HOIST_FUSED_BABY_BLOCK_SIZE}; supported A/B values are 64, 128, and 256 threads."
-echo "       N=65536 giant-source batched INTT=${POSEIDON_DOUBLE_HOIST_BATCHED_GIANT_INTT}; set it to 0 to restore per-group INTT launches."
+if [[ "${POSEIDON_GPU_LINEAR_TRANSFORM_MODE:-}" == "no_hoist" ||
+      "${POSEIDON_GPU_LINEAR_TRANSFORM_MODE:-}" == "no_hoist_bsgs" ]]; then
+    echo "[WARN] Strict no-hoist BSGS linear transforms are enabled."
+    echo "       Every rotation performs an independent KeySwitch and returns an ordinary Q ciphertext; no QP state is shared."
+    echo "       The in-process reference executor is sequential until the multi-GPU frontend lowers the exposed task graph."
+elif [[ "${POSEIDON_GPU_LINEAR_TRANSFORM_MODE:-}" == "loose_coupled" ||
+        "${POSEIDON_GPU_LINEAR_TRANSFORM_MODE:-}" == "loose_coupled_bsgs" ]]; then
+    echo "[WARN] Opt-in loose-coupled BSGS linear transforms are enabled."
+    echo "       Every schedulable boundary is an ordinary Q ciphertext; no lifted-QP state is shared across rotations or giant groups."
+    echo "       The in-process reference executor is still sequential until the multi-GPU frontend lowers the exposed task graph."
+fi
+if [[ "${POSEIDON_GPU_LINEAR_TRANSFORM_MODE:-}" == "double_hoist" ]]; then
+    echo "[WARN] Double-Hoist QP-MAC defaults: direct accumulator initialization=${POSEIDON_DOUBLE_HOIST_QP_MAC_DIRECT_INIT}, dnum=1 baby tile=${POSEIDON_GPU_DOUBLE_HOIST_DNUM1_BABY_TILE}."
+    echo "       Global baby tile=${POSEIDON_GPU_DOUBLE_HOIST_BABY_TILE}; [5,4,3,3] C2S profiles default to full-baby tile 15, while other profiles retain tile 4."
+    echo "       Set POSEIDON_DOUBLE_HOIST_QP_MAC_DIRECT_INIT=0 and POSEIDON_GPU_DOUBLE_HOIST_DNUM1_BABY_TILE=0 to restore zero-fill and the global baby-tile setting."
+    echo "       dnum=1 baby KeySwitch+c0 fusion=${POSEIDON_DOUBLE_HOIST_FUSED_BABY_KEYSWITCH_C0}; set it to 0 to restore the separate c0 kernel."
+    echo "[WARN] Fused baby KeySwitch+plaintext MAC=${POSEIDON_DOUBLE_HOIST_FUSED_BABY_KEYSWITCH_PLAIN_MAC}."
+    echo "       Eligible N=65536 inverse-pre-rotated plans bypass materialized baby QP ciphertexts; set it to 0 for the legacy dataflow."
+    echo "       Fused baby block size=${POSEIDON_DOUBLE_HOIST_FUSED_BABY_BLOCK_SIZE}; supported A/B values are 64, 128, and 256 threads."
+    echo "       N=65536 giant-source batched INTT=${POSEIDON_DOUBLE_HOIST_BATCHED_GIANT_INTT}; set it to 0 to restore per-group INTT launches."
+fi
 echo "[WARN] EvalMod D2D-free leaf dataflow=${POSEIDON_EVALMOD_D2D_FREE_DATAFLOW}."
 echo "       Dynamic leaves accumulate up to four basis/plaintext products directly at the target Q prefix; constants and eligible scale corrections update c0 in place."
 echo "       Set POSEIDON_EVALMOD_D2D_FREE_DATAFLOW=0 to restore materialized leaf terms and synchronous D2D copies for A/B testing."

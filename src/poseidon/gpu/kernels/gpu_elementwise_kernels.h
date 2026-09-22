@@ -166,6 +166,17 @@ void launch_multiply_plain_caccumulate_two_components_4(
     const GpuParameterShard &parameter_shard,
     std::size_t degree);
 
+/** Exact modular 2*source - plaintext or 2*source - correction*plaintext. */
+void launch_double_sub_plain_two_components(
+    const GpuPolyShardView &destination0,
+    const GpuPolyShardView &destination1,
+    const GpuConstPolyShardView &source0,
+    const GpuConstPolyShardView &source1,
+    const GpuConstPolyShardView &plaintext,
+    const GpuConstPolyShardView *correction0,
+    const GpuConstPolyShardView *correction1,
+    const GpuParameterShard &parameters);
+
 /**
  * @brief Compute all three output components of a size-2 ciphertext product.
  *

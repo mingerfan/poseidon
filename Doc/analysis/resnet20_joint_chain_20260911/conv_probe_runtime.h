@@ -19,10 +19,17 @@ public:
         GpuDoubleHoistWorkspace *workspace;
     };
     using RotationBackendResolver=std::function<RotationBackend(std::size_t)>;
+    // Prepared Conv-only batching: references existing resident operands;
+    // never postpones a rescale, rotation, mask, or other consumer operation.
+    struct PendingPlainProducts {
+        std::vector<std::shared_ptr<CT>> sources;
+        std::vector<const GpuPlaintextData *> plains;
+    };
     struct DeviceCiphertext {
         gpu::GpuCiphertextMeta meta;
         std::shared_ptr<CT> gpu;
         std::shared_ptr<Values> values;
+        std::shared_ptr<PendingPlainProducts> pending;
     };
     const BaselineMetadata &m;
     GpuEvaluator *eval=nullptr;
@@ -42,6 +49,49 @@ public:
     mutable std::vector<std::shared_ptr<CT>> prepared_inputs;
     mutable std::size_t prepared_plain_index=0,prepared_input_index=0;
     mutable std::unique_ptr<GpuPlaintextData> transient_plain;
+    struct PlainBatchStats {
+        std::size_t chains=0,terms=0,calls=0,exact_checks=0,exact_residues=0,pending_terms=0;
+    };
+    bool plain_batch_enabled=false;
+    mutable PlainBatchStats plain_batch_stats;
+    bool batch_eligible(const DeviceCiphertext &x,double scale) const {
+        return plain_batch_enabled && eval && prepared_mode!=PreparedMode::uncached &&
+            x.meta.q_count==9 &&
+            scale==double(m.ctx.parameters_literal()->q().at(8).value());
+    }
+    void flush_plain_batch(const DeviceCiphertext &destination) const {
+        if(!destination.pending || destination.pending->sources.empty())return;
+        auto &batch=*destination.pending;
+        std::vector<const CT *> sources;
+        for(const auto &source:batch.sources)sources.push_back(source.get());
+        const bool accumulate=!destination.gpu->empty();
+        CT reference;
+        // Mandatory same-ciphertext, same-plaintext exact check during offline
+        // preparation only. Replay performs no downloads or synchronization.
+        if(prepared_mode==PreparedMode::capture) {
+            std::size_t begin=0;
+            if(accumulate)eval->drop_modulus(*destination.gpu,reference,destination.meta.parms_id);
+            else {eval->multiply_plain(*sources[0],*batch.plains[0],reference);begin=1;}
+            for(std::size_t i=begin;i<sources.size();++i)
+                eval->multiply_plain_accumulate(*sources[i],*batch.plains[i],reference);
+        }
+        eval->multiply_plain_sum_q_prefix(sources,batch.plains,*destination.gpu,accumulate);
+        ++plain_batch_stats.calls;
+        if(prepared_mode==PreparedMode::capture) {
+            plain_batch_stats.exact_residues+=require_exact_ciphertexts(
+                m.ctx,*destination.gpu,reference,"Conv plain batch");
+            ++plain_batch_stats.exact_checks;
+        }
+        plain_batch_stats.pending_terms-=sources.size();
+        batch.sources.clear();batch.plains.clear();
+    }
+    void enqueue_plain_product(const DeviceCiphertext &x,const GpuPlaintextData &p,
+        DeviceCiphertext &destination) const {
+        destination.pending->sources.push_back(x.gpu);
+        destination.pending->plains.push_back(&p);
+        ++plain_batch_stats.terms;++plain_batch_stats.pending_terms;
+        if(destination.pending->sources.size()==4)flush_plain_batch(destination);
+    }
     explicit DiagnosticConvRuntime(const BaselineMetadata &metadata,
         GpuEvaluator *e=nullptr,const GpuGaloisKeysData *k=nullptr,
         InputEncryptor encryptor={},RotationBackendResolver resolver={})
@@ -54,24 +104,28 @@ public:
     void begin_prepared_capture() const {
         if(!eval || prepared_mode!=PreparedMode::uncached)
             throw std::logic_error("invalid prepared Conv capture state");
+        if(plain_batch_stats.pending_terms)throw std::logic_error("unflushed Conv products");
+        plain_batch_stats={};
         prepared_plains.clear();prepared_inputs.clear();transient_plain.reset();
         prepared_plain_index=prepared_input_index=0;prepared_mode=PreparedMode::capture;
     }
     void finish_prepared_capture() const {
-        if(prepared_mode!=PreparedMode::capture)
+        if(prepared_mode!=PreparedMode::capture || plain_batch_stats.pending_terms)
             throw std::logic_error("prepared Conv capture is not active");
         prepared_mode=PreparedMode::uncached;
     }
     void begin_prepared_replay() const {
         if(!eval || prepared_mode!=PreparedMode::uncached || prepared_plains.empty())
             throw std::logic_error("prepared Conv cache is unavailable");
+        if(plain_batch_stats.pending_terms)throw std::logic_error("unflushed Conv products");
+        plain_batch_stats={};
         transient_plain.reset();prepared_plain_index=prepared_input_index=0;
         prepared_mode=PreparedMode::replay;
     }
     void finish_prepared_replay() const {
         if(prepared_mode!=PreparedMode::replay ||
             prepared_plain_index!=prepared_plains.size() ||
-            prepared_input_index!=prepared_inputs.size())
+            prepared_input_index!=prepared_inputs.size() || plain_batch_stats.pending_terms)
             throw std::logic_error("prepared Conv replay differs from captured plan");
         prepared_mode=PreparedMode::uncached;
     }
@@ -88,10 +142,11 @@ public:
         if (!eval) throw std::runtime_error("cannot inject GPU input into plaintext probe");
         DeviceCiphertext out;out.meta=x.meta;out.gpu=std::make_shared<CT>(std::move(x));return out;
     }
-    void validate(const DeviceCiphertext &x) const {
+    void validate(const DeviceCiphertext &x,bool materialize=true) const {
         if (bool(x.gpu)!=bool(eval) || bool(x.values)==bool(eval) || !x.meta.q_count ||
             x.meta.parms_id!=id(x.meta.q_count) || !std::isfinite(x.meta.scale) || x.meta.scale<=0)
             throw std::runtime_error("invalid probe ciphertext/mode");
+        if(materialize)flush_plain_batch(x);
     }
     void aligned(const DeviceCiphertext &a,const DeviceCiphertext &b) const {
         validate(a);validate(b);
@@ -141,19 +196,30 @@ public:
     DeviceCiphertext multiply_plain(const DeviceCiphertext &x,const std::vector<double> &v,double s) const {
         validate(x);if(v.size()!=slot_count() || !(s>0) || !std::isfinite(s))throw std::runtime_error("invalid plaintext");
         ++counts["multiply_plain"];
+        if(batch_eligible(x,s)) {
+            DeviceCiphertext out;out.meta=x.meta;out.meta.scale*=s;
+            out.gpu=std::make_shared<CT>();
+            out.pending=std::make_shared<PendingPlainProducts>();
+            ++plain_batch_stats.chains;
+            enqueue_plain_product(x,plain(x,v,s),out);return out;
+        }
         if(eval){CT y;eval->multiply_plain(*x.gpu,plain(x,v,s),y);return device(std::move(y));}
         auto y=host(*x.values,x.meta.q_count,x.meta.scale*s);
         for(std::size_t i=0;i<slot_count();++i)(*y.values)[i]*=v[i];return y;
     }
     void multiply_plain_accumulate(const DeviceCiphertext &x,const std::vector<double> &v,
         double s,DeviceCiphertext &destination) const {
-        validate(x);validate(destination);
+        validate(x);validate(destination,false);
         if(x.meta.q_count!=destination.meta.q_count || v.size()!=slot_count() || !(s>0) ||
             !std::isfinite(s) || std::abs(std::log2(x.meta.scale*s/destination.meta.scale))>1e-8)
             throw std::runtime_error("invalid fused accumulation alignment");
         ++counts["multiply_plain_accumulate"];
         if(eval){
             if(!destination.gpu.unique())destination=drop_to_q_count(destination,destination.meta.q_count);
+            if(destination.pending && batch_eligible(x,s)) {
+                enqueue_plain_product(x,plain(x,v,s),destination);return;
+            }
+            flush_plain_batch(destination);
             eval->multiply_plain_accumulate(*x.gpu,plain(x,v,s),*destination.gpu);
             destination.meta=destination.gpu->meta;
         }else{

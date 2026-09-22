@@ -121,7 +121,7 @@ OwnedActivation relu_existing_q31(const BaselineSession &s,const ReluFixture &fi
     Values local=decoded,chain=reference;
     auto current=s.replay.drop(input,0);double stage_error=0,max_local=0;
     for(std::size_t i=0;i<fixture.stages.size();++i) {
-        current=s.replay.component(fixture.stages[i],current,real_reference,i+1,stage_error);
+        current=s.replay.component(fixture.stages[i],std::move(current),real_reference,i+1,stage_error);
         for(auto &value:local)value=plain_complex_node(*fixture.stages[i].tree,value);
         for(auto &value:chain)value=plain_complex_node(*fixture.stages[i].tree,value);
         max_local=std::max(max_local,s.replay.check(label+".relu_stage"+std::to_string(i+1)+"_local",current,local));
@@ -202,7 +202,7 @@ CT evaluate_relu_no_observer(Replay &replay,const ReluFixture &fixture,const CT 
     Ref unused;double stage_error=0;
     auto current=replay.drop(input,0);
     for(std::size_t index=0;index<fixture.stages.size();++index)
-        current=replay.component(fixture.stages[index],current,unused,index+1,stage_error);
+        current=replay.component(fixture.stages[index],std::move(current),unused,index+1,stage_error);
     auto output=replay.tail(input,current,fixture.tail_work,fixture.tail_drop);
     replay.scale_check(output,40);
     if(output.meta.q_count!=9)throw std::runtime_error("prepared ReLU did not produce Q9");
@@ -289,6 +289,7 @@ struct ContinuousGraphPlans {
 };
 
 class ContinuousBootstrap {
+    static constexpr std::size_t default_c2s_baby_tile=8;
     const BaselineSession &s;
     GpuGaloisKeysData rotations;
     BootstrapOfflineCache cpu;
@@ -300,6 +301,15 @@ class ContinuousBootstrap {
     double alpha=1;
 public:
     explicit ContinuousBootstrap(const BaselineSession &session):s(session) {
+        // The Q50/P25 C2S matrices have eight baby steps per stage.  Keeping
+        // all eight in one tile removes the second Q/P accumulator pass.
+        // Only stage 1 has <=4 giant groups and uses the fused KeySwitch/MAC;
+        // stages 2/3 have eight groups and retain separate KeySwitch and MAC.
+        // QP plaintext compression leaves ample
+        // resident-pool headroom for the larger temporary tile.  The generic
+        // library default remains unchanged; an explicit environment setting
+        // can still override this application-local choice for A/B testing.
+        cts_workspace.baby_tile_size=default_c2s_baby_tile;
         CT metadata_input;metadata_input.meta.q_count=6;
         metadata_input.meta.scale=std::exp2(40);
         prepare_bootstrap_cpu(s.metadata,metadata_input,cpu);
@@ -307,8 +317,33 @@ public:
         const auto nq=s.metadata.ctx.parameters_literal()->q().size();
         GpuUploader::prepare_key_views_for_q_counts(
             rotations,{4,5,6,nq-4,nq-2,nq-1,nq,s.metadata.native_plan.output_q_count});
-        stc=GpuUploader::upload_linear_matrix_group_qp(*cpu.stc_cpu,s.metadata.ctx,0,1);
-        cts=GpuUploader::upload_linear_matrix_group_qp(*cpu.cts_cpu,s.metadata.ctx,0,1);
+        // DFT diagonals have exact power-of-two periods in bit-reversed NTT
+        // order.  Keep only one period per QP limb; the uploader verifies the
+        // reconstructed Q and P residues before this public material can be
+        // used by the online path.
+        stc=GpuUploader::upload_linear_matrix_group_qp(
+            *cpu.stc_cpu,s.metadata.ctx,0,1,true);
+        cts=GpuUploader::upload_linear_matrix_group_qp(
+            *cpu.cts_cpu,s.metadata.ctx,0,1,true);
+        const auto stc_compression=compressed_qp_stats(stc);
+        const auto cts_compression=compressed_qp_stats(cts);
+        if(stc_compression.diagonals!=matrix_plaintext_count(*cpu.stc_cpu) ||
+            cts_compression.diagonals!=matrix_plaintext_count(*cpu.cts_cpu) ||
+            !stc_compression.exact || !cts_compression.exact)
+            throw std::logic_error(
+                "continuous bootstrap QP plaintext compression contract failed");
+        const auto full_words=stc_compression.full_words+cts_compression.full_words;
+        const auto compact_words=
+            stc_compression.compact_words+cts_compression.compact_words;
+        if(!compact_words || compact_words>=full_words)
+            throw std::logic_error(
+                "continuous bootstrap QP plaintexts did not compress");
+        std::cout<<"BOOTSTRAP_QP_COMPRESSION enabled=true exact=true"
+            <<" stc_diagonals="<<stc_compression.diagonals
+            <<" cts_diagonals="<<cts_compression.diagonals
+            <<" full_MiB="<<double(full_words*sizeof(GpuWord))/(1ULL<<20)
+            <<" compact_MiB="<<double(compact_words*sizeof(GpuWord))/(1ULL<<20)
+            <<" ratio="<<double(full_words)/compact_words<<'\n';
         FoldSpec fold(s.metadata);alpha=fold.alpha;data.eval_mod=fold.upload(s.metadata,&s.keys);
         Plaintext host_minus_i,host_plus_i;
         s.metadata.encoder.encode(std::complex<double>(0,-1),s.metadata.c2s_id,1,host_minus_i);
@@ -368,7 +403,55 @@ public:
         return output;
     }
 
+    std::size_t stc_baby_tile_size() const {
+        return stc_workspace.baby_tile_size;
+    }
+    std::size_t c2s_baby_tile_size() const {
+        return cts_workspace.baby_tile_size;
+    }
+    std::size_t c2s_matrix_count() const {
+        return cts_workspace.matrix_counts.size();
+    }
+    std::size_t c2s_tile_batches() const {
+        std::size_t result=0;
+        for(const auto &counts:cts_workspace.matrix_counts)
+            result+=counts.baby_tile_count;
+        return result;
+    }
+
 private:
+    struct QpCompressionStats {
+        std::size_t diagonals=0,full_words=0,compact_words=0;
+        bool exact=true;
+    };
+
+    static QpCompressionStats compressed_qp_stats(
+        const GpuLinearMatrixGroupQP &group) {
+        QpCompressionStats result;
+        for(const auto &matrix:group.data()) {
+            if(!matrix.plain_vec_qp.empty() ||
+                !matrix.plan.compressed_plaintexts ||
+                matrix.plan.terms.size()!=matrix.compressed_plain_vec_qp.size() ||
+                matrix.plan.diagonal_periods.size()!=matrix.plan.terms.size())
+                throw std::logic_error(
+                    "continuous bootstrap compressed QP matrix plan is inconsistent");
+            for(const auto &[diagonal,plain]:matrix.compressed_plain_vec_qp) {
+                (void)diagonal;
+                if(!plain.meta.degree || !plain.meta.p_count || !plain.period ||
+                    plain.period>plain.meta.degree ||
+                    (plain.period&(plain.period-1)) ||
+                    !plain.exact_device_reconstruction)
+                    throw std::logic_error(
+                        "continuous bootstrap compressed QP plaintext is not exact");
+                ++result.diagonals;
+                result.full_words+=plain.full_word_count();
+                result.compact_words+=plain.compact_word_count();
+                result.exact=result.exact&&plain.exact_device_reconstruction;
+            }
+        }
+        return result;
+    }
+
     static std::size_t matrix_plaintext_count(const LinearMatrixGroup &group) {
         std::size_t result=0;
         for(const auto &matrix:group.data())result+=matrix.plain_vec.size();
@@ -543,6 +626,45 @@ class ContinuousNetwork {
     std::vector<std::unique_ptr<Runtime>> conv_runtimes;
     std::vector<std::unique_ptr<Runtime>> shortcut_runtimes;
     bool relu_ready=false;
+    bool conv_plain_batch=true;
+
+    void report_relu_basis_fusion(bool preparation) const {
+        const auto &stats=s.replay.get_moddrop_stats();
+        const bool enabled=s.replay.basis_fusion_enabled();
+        if(stats.fused_basis_calls!=(enabled?285:0) ||
+            stats.fused_basis_constants!=(enabled?190:0) ||
+            stats.fused_basis_products!=(enabled?95:0) ||
+            stats.exact_basis_checks!=(enabled && preparation?285:0) ||
+            stats.exact_basis_residues!=(enabled && preparation?824311808:0))
+            throw std::runtime_error("continuous ReLU basis fusion inventory changed");
+        std::cout<<(preparation?"RELU_BASIS_FUSION_PREPARED":"RELU_BASIS_FUSION")
+            <<" enabled="<<(enabled?"true":"false")<<" calls="<<stats.fused_basis_calls
+            <<" constants="<<stats.fused_basis_constants<<" products="<<stats.fused_basis_products
+            <<" exact_checks="<<stats.exact_basis_checks<<" exact_residues="<<stats.exact_basis_residues
+            <<" online_observer=false coefficients_changed=false rescale_changed=false\n";
+    }
+
+    void report_conv_plain_batch(bool preparation) const {
+        Runtime::PlainBatchStats total;
+        for(const auto &runtime:conv_runtimes) {
+            const auto &stats=runtime->plain_batch_stats;
+            total.chains+=stats.chains;total.terms+=stats.terms;total.calls+=stats.calls;
+            total.exact_checks+=stats.exact_checks;total.exact_residues+=stats.exact_residues;
+            total.pending_terms+=stats.pending_terms;
+        }
+        if(total.chains!=(conv_plain_batch?160:0) ||
+            total.terms!=(conv_plain_batch?1440:0) ||
+            total.calls!=(conv_plain_batch?480:0) || total.pending_terms ||
+            total.exact_checks!=(conv_plain_batch && preparation?480:0) ||
+            total.exact_residues!=(conv_plain_batch && preparation?566231040:0))
+            throw std::runtime_error("continuous Conv plain batch inventory changed");
+        std::cout<<(preparation?"CONV_PLAIN_BATCH_PREPARED":"CONV_PLAIN_BATCH")
+            <<" enabled="<<(conv_plain_batch?"true":"false")
+            <<" chains="<<total.chains<<" terms="<<total.terms<<" calls="<<total.calls
+            <<" exact_checks="<<total.exact_checks<<" exact_residues="<<total.exact_residues
+            <<" pending="<<total.pending_terms
+            <<" online_observer=false coefficients_changed=false rescale_changed=false\n";
+    }
 
     CT execute_relu(const CT &input,bool capture,ActivityTiming *timing) {
         s.replay.release_scratch();
@@ -661,9 +783,17 @@ public:
             return application_keys.rotation_backend(q);
         };
         conv_runtimes.reserve(plans.convolutions.size());
-        for(std::size_t i=0;i<plans.convolutions.size();++i)
+        if(const char *raw=std::getenv("POSEIDON_CONV_PLAIN_BATCH")) {
+            const std::string value(raw);
+            if(value!="0" && value!="1")
+                throw std::invalid_argument("POSEIDON_CONV_PLAIN_BATCH must be 0 or 1");
+            conv_plain_batch=value=="1";
+        }
+        for(std::size_t i=0;i<plans.convolutions.size();++i) {
             conv_runtimes.push_back(std::make_unique<Runtime>(
                 s.metadata,&s.eval,&no_keys,Runtime::InputEncryptor{},rotation_resolver));
+            conv_runtimes.back()->plain_batch_enabled=conv_plain_batch;
+        }
         shortcut_runtimes.resize(fixture.blocks.size());
         for(std::size_t i=0;i<fixture.blocks.size();++i)if(plans.shortcuts[i])
             shortcut_runtimes[i]=std::make_unique<Runtime>(
@@ -681,9 +811,14 @@ public:
     ~ContinuousNetwork() {s.replay.clear_relinearize_callback();}
 
     int run() {
+        s.replay.reset_moddrop_stats();
+        s.replay.set_basis_preparation_checks(true);
         auto warm=execute_graph(true);
+        s.replay.set_basis_preparation_checks(false);
         gpu_check_cuda(cudaDeviceSynchronize(),"continuous prepared warmup");
         warm=CT{};gpu_check_cuda(cudaDeviceSynchronize(),"continuous release warmup output");
+        report_conv_plain_batch(true);
+        report_relu_basis_fusion(true);
         if(stem_runtime->prepared_input_count()!=27 ||
             stem_runtime->prepared_plaintext_count()!=28 ||
             s.replay.plaintext_cache_size()!=46)
@@ -697,11 +832,22 @@ public:
             throw std::runtime_error("continuous public plaintext inventory changed");
         std::size_t free_bytes=0,total_bytes=0;
         gpu_check_cuda(cudaMemGetInfo(&free_bytes,&total_bytes),"continuous prepared memory");
+        const auto c2s_tile_batches=bootstrap->c2s_tile_batches();
+        const char *tile_override=std::getenv("POSEIDON_GPU_DOUBLE_HOIST_BABY_TILE");
+        if((tile_override==nullptr || *tile_override=='\0') &&
+            (bootstrap->c2s_baby_tile_size()!=8 ||
+             bootstrap->c2s_matrix_count()!=3 ||
+             c2s_tile_batches!=3))
+            throw std::runtime_error(
+                "continuous default C2S full-baby tile contract changed");
         std::cout<<"CONTINUOUS_PREPARED inputs=27 stem_plaintexts=28"
             <<" conv_plaintexts="<<conv_plaintexts
             <<" shortcut_plaintexts="<<shortcut_plaintexts
             <<" relu_plaintexts="<<s.replay.plaintext_cache_size()
             <<" head_plaintexts="<<head_runtime->prepared_plaintext_count()
+            <<" bootstrap_s2c_baby_tile="<<bootstrap->stc_baby_tile_size()
+            <<" bootstrap_c2s_baby_tile="<<bootstrap->c2s_baby_tile_size()
+            <<" bootstrap_c2s_tile_batches="<<c2s_tile_batches
             <<" free_MiB="<<double(free_bytes)/(1ULL<<20)<<'\n';
 
         poseidon::benchmark::s2c_first::GpuActivityTiming activity;
@@ -711,6 +857,7 @@ public:
         struct EventCleanup {cudaEvent_t &a,&b;~EventCleanup(){
             if(a)cudaEventDestroy(a);if(b)cudaEventDestroy(b);}} cleanup{start_event,stop_event};
         gpu_check_cuda(cudaDeviceSynchronize(),"continuous timing start sync");
+        s.replay.reset_moddrop_stats();
         activity.begin_continuous();
         gpu_check_cuda(cudaEventRecord(start_event),"continuous record start");
         const auto wall_begin=std::chrono::steady_clock::now();
@@ -722,6 +869,49 @@ public:
         float event_ms=0;gpu_check_cuda(cudaEventElapsedTime(
             &event_ms,start_event,stop_event),"continuous event elapsed");
         auto result=activity.finish();result.print();
+        report_conv_plain_batch(false);
+        report_relu_basis_fusion(false);
+        const auto &moddrop_stats=s.replay.get_moddrop_stats();
+        const bool leaf_fusion=s.replay.leaf_fusion_enabled();
+        const bool basis_fusion=s.replay.basis_fusion_enabled();
+        if(moddrop_stats.fused_leaf_calls!=(leaf_fusion?266:0) ||
+            moddrop_stats.fused_leaf_terms!=(leaf_fusion?570:0) ||
+            moddrop_stats.fused_leaf_adds_removed!=(leaf_fusion?304:0) ||
+            moddrop_stats.exact_leaf_checks!=0 || moddrop_stats.exact_leaf_residues!=0)
+            throw std::runtime_error("continuous ReLU fused leaf inventory changed");
+        if(s.replay.zero_copy_moddrop_enabled() && moddrop_stats.inplace_calls!=494)
+            throw std::runtime_error("continuous ReLU zero-copy ModDrop inventory changed");
+        if(s.replay.q_prefix_views_enabled() &&
+            (moddrop_stats.prefix_multiply_calls!=513 ||
+             moddrop_stats.prefix_multiply_plain_calls!=
+                (leaf_fusion?95:665)-(basis_fusion?95:0) ||
+             moddrop_stats.prefix_source_views!=1463 ||
+             moddrop_stats.prefix_discarded_q_limbs!=1159))
+            throw std::runtime_error("continuous ReLU Q-prefix view inventory changed");
+        if(s.replay.zero_copy_moddrop_enabled() &&
+            s.replay.q_prefix_views_enabled() &&
+            moddrop_stats.materialized_calls!=19)
+            throw std::runtime_error("continuous ReLU materialized ModDrop inventory changed");
+        std::cout<<"RELU_MODDROP zero_copy="
+            <<(s.replay.zero_copy_moddrop_enabled()?"true":"false")
+            <<" q_prefix_views="
+            <<(s.replay.q_prefix_views_enabled()?"true":"false")
+            <<" materialized_calls="<<moddrop_stats.materialized_calls
+            <<" inplace_calls="<<moddrop_stats.inplace_calls
+            <<" inplace_discarded_q_limbs="
+            <<moddrop_stats.inplace_discarded_q_limbs
+            <<" prefix_multiply_calls="<<moddrop_stats.prefix_multiply_calls
+            <<" prefix_multiply_plain_calls="
+            <<moddrop_stats.prefix_multiply_plain_calls
+            <<" prefix_source_views="<<moddrop_stats.prefix_source_views
+            <<" prefix_discarded_q_limbs="
+            <<moddrop_stats.prefix_discarded_q_limbs<<'\n';
+        std::cout<<"RELU_LEAF_FUSION enabled="<<(leaf_fusion?"true":"false")
+            <<" calls="<<moddrop_stats.fused_leaf_calls
+            <<" terms="<<moddrop_stats.fused_leaf_terms
+            <<" adds_removed="<<moddrop_stats.fused_leaf_adds_removed
+            <<" exact_checks="<<moddrop_stats.exact_leaf_checks
+            <<" online_observer=false coefficients_changed=false rescale_changed=false\n";
         const std::map<std::string,int> category_calls{
             {"bootstrap.C2S",18},{"bootstrap.EvalMod",36},
             {"bootstrap.ModRaise",18},{"bootstrap.S2C",18},
@@ -813,6 +1003,15 @@ public:
             <<" post_timing_decryptions=1 accuracy="<<(accuracy_pass?"PASS":"FAIL")
             <<" max_logit_error="<<max_logit_error
             <<" intermediate_reencryptions=0 swaps=false"
+            <<" compressed_qp_plaintexts=true"
+            <<" bootstrap_c2s_baby_tile="<<bootstrap->c2s_baby_tile_size()
+            <<" relu_zero_copy_moddrop="
+            <<(s.replay.zero_copy_moddrop_enabled()?"true":"false")
+            <<" relu_q_prefix_views="
+            <<(s.replay.q_prefix_views_enabled()?"true":"false")
+            <<" relu_leaf_fusion="<<(s.replay.leaf_fusion_enabled()?"true":"false")
+            <<" conv_plain_batch="<<(conv_plain_batch?"true":"false")
+            <<" relu_basis_fusion="<<(basis_fusion?"true":"false")
             <<" encrypted_logits_q="<<logits.meta.q_count
             <<" security_approved=false\n";
         return accuracy_pass?0:1;

@@ -1,0 +1,268 @@
+{
+  "date": "2026-09-19",
+  "hardware": {
+    "gpu": "Tesla V100-SXM2-32GB",
+    "cuda_visible_device": 1
+  },
+  "configuration": {
+    "N": 65536,
+    "Q": 50,
+    "P": 25,
+    "dnum": 2,
+    "input_q": 32,
+    "stem_output_q": 31,
+    "output_q": 4,
+    "secret_hamming_weight": 192,
+    "bootstrap_degree": 59,
+    "bootstrap_count": 18,
+    "blocks": 9,
+    "relu_count": 19,
+    "relu_degrees": [
+      15,
+      15,
+      27
+    ],
+    "relu_q_consumed": 22,
+    "relu_leaf_fusion": true,
+    "conv_plain_batch": true,
+    "relu_basis_fusion_default": true,
+    "security_approved": false
+  },
+  "experiment": {
+    "same_binary": true,
+    "same_gpu": true,
+    "same_image": 0,
+    "order": [
+      "off",
+      "on"
+    ],
+    "warmups_per_process": 1,
+    "measured_full_inferences_per_process": 1,
+    "independent_random_keys_and_input_ciphertexts": true,
+    "only_toggled_environment_variable": "POSEIDON_RELU_BASIS_FUSION",
+    "timing_method_unchanged": true
+  },
+  "optimization": {
+    "scope": "Fuse only post-relinearization Chebyshev corrections: 2*product-encoded_one and 2*product-basis_Q_prefix*encoded_alignment_one; preserve all multiplies, relinearizations, plaintexts and rescale positions.",
+    "basis_calls_per_relu": 15,
+    "constant_corrections_per_relu": 10,
+    "product_corrections_per_relu": 5,
+    "full_network_calls": 285,
+    "constant_calls": 190,
+    "product_calls": 95,
+    "expected_activity_reduction": 760,
+    "observed_activity_reduction": 760,
+    "resident_relu_plaintexts": 46,
+    "new_resident_gpu_payload_bytes": 0,
+    "coefficients_changed": false,
+    "rescale_changed": false,
+    "swapping": false
+  },
+  "correctness": {
+    "api": {
+      "result": "PASS",
+      "checks": 22,
+      "exact_residues": 83755008,
+      "rejected_invalid_inputs": 9,
+      "zero_negative_coefficients": true,
+      "mixed_q_and_scales": true,
+      "source_and_correction_aliases": true,
+      "immutable_inputs": true
+    },
+    "isolated_relu": {
+      "basis_result": "PASS",
+      "basis_checks": 15,
+      "basis_exact_residues": 43384832,
+      "full_relu_result": "PASS",
+      "full_relu_exact_residues": 1179648,
+      "same_ciphertext": true,
+      "same_keys": true,
+      "final_error_vs_original_polynomial": 0.0000038763421295033,
+      "final_error_vs_polynomial_of_decrypted_input": 6.8546071288206e-9,
+      "stage_errors": [
+        0.000062737863706128,
+        0.00025866282258056,
+        0.00026078064029823
+      ],
+      "he_tolerance": 0.00001,
+      "final_output": "PASS",
+      "stage_guard": "FAIL",
+      "precision": "FAIL",
+      "process_exit_code": 1,
+      "note": "Existing all-domain/near-zero intermediate-stage guard failures remain visible. No thresholds were relaxed. Full output is bitwise identical with basis fusion disabled."
+    },
+    "full_network_preparation": {
+      "result": "PASS",
+      "same_ciphertext_and_plaintexts": true,
+      "exact_checks": 285,
+      "exact_residues": 824311808,
+      "metadata_equal": true,
+      "existing_conv_exact_checks": 480
+    },
+    "online": {
+      "exact_checks": 0,
+      "observer_decryptions": 0,
+      "host_transfers": 0,
+      "intermediate_reencryptions": 0,
+      "post_timing_decryptions": 1,
+      "accuracy_threshold_unchanged": 0.1,
+      "image": 0,
+      "prediction": 3
+    },
+    "precision_note": "Independent A/B processes generate different random keys/input ciphertexts. Do not attribute their differing logit errors to fusion; same-ciphertext checks are exact."
+  },
+  "measurements": {
+    "off": {
+      "wall_ms": 6955.467662,
+      "cuda_event_ms": 6960.3642578125,
+      "gpu_activity_union_ms": 6856.672954,
+      "host_enqueue_ms": 6941.038591,
+      "activities": 109469,
+      "prepared_free_MiB": 1470.375,
+      "bootstrap_qp_full_MiB": 4108,
+      "bootstrap_qp_compact_MiB": 884.787109375,
+      "bootstrap_qp_compression_ratio": 4.64292478549086,
+      "bootstrap_c2s_baby_tile": 8,
+      "bootstrap_c2s_tile_batches": 3,
+      "relu_materialized_moddrops": 19,
+      "relu_zero_copy_moddrops": 494,
+      "relu_q_prefix_source_views": 1463,
+      "relu_q_prefix_discarded_q_limbs": 1159,
+      "relu_fused_leaf_calls": 266,
+      "relu_fused_leaf_terms": 570,
+      "relu_fused_basis_calls": 0,
+      "relu_fused_basis_constants": 0,
+      "relu_fused_basis_products": 0,
+      "conv_plain_batch_calls": 480,
+      "conv_plain_batch_terms": 1440,
+      "breakdown_sum_ms": 6856.672954000001,
+      "breakdown_overlap_ms": 9.094947017729282e-13,
+      "conv_bn_gpu_ms": 685.880943,
+      "relu_gpu_ms": 1085.493617,
+      "bootstrap_gpu_ms": 5042.77596,
+      "shortcut_gpu_ms": 29.678409,
+      "pool_fc_gpu_ms": 12.326844,
+      "residual_copy_gpu_ms": 0.517181,
+      "category_sum_ms": 6856.672954000001,
+      "max_logit_error": 0.01131988253998806,
+      "gpu_prediction": 3
+    },
+    "on": {
+      "wall_ms": 6944.887899,
+      "cuda_event_ms": 6947.69384765625,
+      "gpu_activity_union_ms": 6847.917651,
+      "host_enqueue_ms": 6930.393866,
+      "activities": 108709,
+      "prepared_free_MiB": 1470.375,
+      "bootstrap_qp_full_MiB": 4108,
+      "bootstrap_qp_compact_MiB": 884.787109375,
+      "bootstrap_qp_compression_ratio": 4.64292478549086,
+      "bootstrap_c2s_baby_tile": 8,
+      "bootstrap_c2s_tile_batches": 3,
+      "relu_materialized_moddrops": 19,
+      "relu_zero_copy_moddrops": 494,
+      "relu_q_prefix_source_views": 1463,
+      "relu_q_prefix_discarded_q_limbs": 1159,
+      "relu_fused_leaf_calls": 266,
+      "relu_fused_leaf_terms": 570,
+      "relu_fused_basis_calls": 285,
+      "relu_fused_basis_constants": 190,
+      "relu_fused_basis_products": 95,
+      "conv_plain_batch_calls": 480,
+      "conv_plain_batch_terms": 1440,
+      "breakdown_sum_ms": 6847.917650999998,
+      "breakdown_overlap_ms": -1.8189894035458565e-12,
+      "conv_bn_gpu_ms": 686.239322,
+      "relu_gpu_ms": 1073.878851,
+      "bootstrap_gpu_ms": 5045.323606999999,
+      "shortcut_gpu_ms": 29.573378,
+      "pool_fc_gpu_ms": 12.391588,
+      "residual_copy_gpu_ms": 0.5109049999999999,
+      "category_sum_ms": 6847.917651,
+      "max_logit_error": 0.01675863613356121,
+      "gpu_prediction": 3
+    }
+  },
+  "deltas": {
+    "relu_gpu_ms": {
+      "on_minus_off_ms": -11.614766000000145,
+      "reduction_percent": 1.0699985534783798
+    },
+    "gpu_activity_union_ms": {
+      "on_minus_off_ms": -8.755302999999913,
+      "reduction_percent": 0.12769025238242263
+    },
+    "wall_ms": {
+      "on_minus_off_ms": -10.57976299999973,
+      "reduction_percent": 0.15210714094467642
+    },
+    "cuda_event_ms": {
+      "on_minus_off_ms": -12.67041015625,
+      "reduction_percent": 0.18203659588689472
+    },
+    "conv_bn_gpu_ms": {
+      "on_minus_off_ms": 0.35837900000001355,
+      "reduction_percent": -0.05225090500874487
+    },
+    "bootstrap_gpu_ms": {
+      "on_minus_off_ms": 2.547646999999415,
+      "reduction_percent": -0.05052072549341286
+    }
+  },
+  "conclusion": {
+    "local_relu_improvement_observed": true,
+    "stable_speedup_established": false,
+    "note": "Single neighboring A/B pair: ReLU falls about 1.07%; full-network wall falls about 10.58 ms (0.15%). Small measured gain, not a statistical confidence interval or a promised stable speedup."
+  },
+  "tests": {
+    "bench": {
+      "passed": 36,
+      "skipped": 0,
+      "includes_current_relu_and_prior_conv_and_leaf_evidence": true
+    },
+    "analysis": {
+      "passed": 24,
+      "skipped": 28
+    },
+    "selected_network_metadata": {
+      "passed": 3,
+      "skipped": 2
+    },
+    "core_build": "PASS",
+    "application_build": "PASS",
+    "standalone_build": "PASS",
+    "legacy_runtime_symbol_check": "PASS",
+    "diff_check": "PASS"
+  },
+  "provenance": {
+    "git_head": "410dfbdca6644fc51a5513521027b43b633bd730",
+    "uncommitted_worktree": true,
+    "artifacts_in_tmp": true,
+    "application": {
+      "path": "/tmp/poseidon_resnet20_relu_basis",
+      "sha256": "302df76a54c9e9e8cbf84087d4a76c5cef8011f31554bc186aa1755c70a42b10"
+    },
+    "standalone": {
+      "path": "/tmp/poseidon_relu_basis_precision",
+      "sha256": "e2a67df2dc4afe87609015fd80b29188763e1a3cab086ceb7b30ed5e3c8b524c"
+    },
+    "logs": [
+      {
+        "path": "/tmp/poseidon_resnet20_relu_basis_off.log",
+        "sha256": "aae46922f38bd88a29dddb6082293156c04fc1b2d8c1f6b20f578353d483a211"
+      },
+      {
+        "path": "/tmp/poseidon_resnet20_relu_basis_on.log",
+        "sha256": "fba455d4bca9061c1b03dcfa1b45faffd8c2d7b2671620bb4570629355d82185"
+      },
+      {
+        "path": "/tmp/poseidon_relu_basis_accuracy.log",
+        "sha256": "5ac7992e9d5de39b102fa74065ebeb7f7bb688957a3f85a291af6043322d52a3"
+      },
+      {
+        "path": "/tmp/poseidon_relu_basis_metadata.log",
+        "sha256": "121d47c910db7b399ec64ba9442c0ec2bbc3272eaed7acd03f55504ff3551d1f"
+      }
+    ]
+  }
+}
