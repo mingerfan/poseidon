@@ -9,6 +9,8 @@ set(CMAKE_CUDA_STANDARD_REQUIRED ON)
 
 set(POSEIDON_ROOT "${CMAKE_CURRENT_LIST_DIR}/../.." CACHE PATH
     "Path to the Poseidon source tree")
+set(POSEIDON_GPU_CUDA_ARCHITECTURES "70" CACHE STRING
+    "CUDA architectures for the ResNet GPU benchmark")
 set(POSEIDON_GPU_SHARED_DIR "${CMAKE_CURRENT_LIST_DIR}/../resnet50_gpu")
 
 set(POSEIDON_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
@@ -73,21 +75,39 @@ add_executable(poseidon_gpu_resnet18
     resnet18_weights.cpp
     "${POSEIDON_GPU_SHARED_DIR}/gpu_ckks_runtime.cpp"
     "${POSEIDON_GPU_SHARED_DIR}/gpu_multiplexed_tensor.cpp"
-    "${POSEIDON_GPU_SHARED_DIR}/gpu_relu.cpp"
+    "${POSEIDON_GPU_SHARED_DIR}/gpu_relu_s2c_first.cpp"
     "${POSEIDON_GPU_SHARED_DIR}/resnet50_config.cpp"
     ${POSEIDON_GPU_SOURCES})
 
 target_include_directories(poseidon_gpu_resnet18 PRIVATE
     "${CMAKE_CURRENT_LIST_DIR}"
     "${POSEIDON_GPU_SHARED_DIR}"
-    "${POSEIDON_ROOT}/src")
+    "${POSEIDON_ROOT}/src"
+    "${POSEIDON_ROOT}/third_party/rmm/include"
+    "${POSEIDON_ROOT}/third_party/cccl/libcudacxx/include"
+    "${POSEIDON_ROOT}/third_party/cccl/cub"
+    "${POSEIDON_ROOT}/third_party/cccl/thrust"
+    "${POSEIDON_ROOT}/third_party/spdlog/include"
+    "${POSEIDON_ROOT}/third_party/fmt/include"
+    "${POSEIDON_ROOT}/third_party/nvtx/c/include")
 target_link_libraries(poseidon_gpu_resnet18 PRIVATE
     poseidon_shared
     CUDA::cudart
     rmm::rmm)
 target_compile_options(poseidon_gpu_resnet18 PRIVATE
+    $<$<COMPILE_LANGUAGE:CXX>:-O1>
+    $<$<COMPILE_LANGUAGE:CXX>:-ffunction-sections>
+    $<$<COMPILE_LANGUAGE:CXX>:-fdata-sections>
     $<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>)
+target_link_options(poseidon_gpu_resnet18 PRIVATE -Wl,--gc-sections)
 target_compile_definitions(poseidon_gpu_resnet18 PRIVATE
+    FMT_HEADER_ONLY=1
+    SPDLOG_FMT_EXTERNAL
+    LIBCUDACXX_ENABLE_EXPERIMENTAL_MEMORY_RESOURCE
+    THRUST_DISABLE_ABI_NAMESPACE
+    THRUST_IGNORE_ABI_NAMESPACE_ERROR
     POSEIDON_GPU_RESNET18_SOURCE_DIR="${CMAKE_CURRENT_LIST_DIR}"
-    POSEIDON_GPU_RESNET50_SOURCE_DIR="${POSEIDON_GPU_SHARED_DIR}")
-set_target_properties(poseidon_gpu_resnet18 PROPERTIES CUDA_ARCHITECTURES 70)
+    POSEIDON_GPU_RESNET50_SOURCE_DIR="${POSEIDON_GPU_SHARED_DIR}"
+    POSEIDON_RESNET20_RELU_FIXTURE="${POSEIDON_ROOT}/Doc/analysis/resnet20_joint_chain_20260911/relu_precision_fixture.txt")
+set_target_properties(poseidon_gpu_resnet18 PROPERTIES
+    CUDA_ARCHITECTURES "${POSEIDON_GPU_CUDA_ARCHITECTURES}")

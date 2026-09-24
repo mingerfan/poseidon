@@ -1,5 +1,6 @@
 #include "gpu_resnet50_inference.h"
 
+#include "gpu_activity_timing.h"
 #include "gpu_multiplexed_tensor.h"
 #include "gpu_relu.h"
 
@@ -10,6 +11,8 @@
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
+#include <limits>
+#include <memory>
 #include <optional>
 #include <stdexcept>
 #include <string>
@@ -134,8 +137,11 @@ auto timed(const std::string &label, Function &&function)
 class StagewiseGpuTimer
 {
 public:
-    StagewiseGpuTimer(GpuCkksRuntime &runtime, bool enabled)
-        : runtime_(runtime), enabled_(enabled)
+    StagewiseGpuTimer(
+        GpuCkksRuntime &runtime,
+        bool enabled,
+        poseidon::benchmark::s2c_first::GpuActivityTiming *activity = nullptr)
+        : runtime_(runtime), enabled_(enabled), activity_(activity)
     {}
 
     template <typename Function>
@@ -155,8 +161,16 @@ public:
                 std::chrono::steady_clock::now() - preparation_begin).count();
         runtime_.synchronize();
         const auto measured_begin = std::chrono::steady_clock::now();
+        if (activity_)
+        {
+            activity_->stage(label, true);
+        }
         auto result = function();
         runtime_.synchronize();
+        if (activity_)
+        {
+            activity_->stage(label, false);
+        }
         const double measured_seconds = std::chrono::duration<double>(
             std::chrono::steady_clock::now() - measured_begin).count();
         elapsed_seconds_ += measured_seconds;
@@ -175,6 +189,7 @@ public:
 private:
     GpuCkksRuntime &runtime_;
     bool enabled_ = false;
+    poseidon::benchmark::s2c_first::GpuActivityTiming *activity_ = nullptr;
     double elapsed_seconds_ = 0.0;
 };
 
@@ -204,7 +219,17 @@ GpuMultiplexedTensor bootstrap_tensor(
     auto output = empty_like(input);
     for (std::size_t pack = 0; pack < input.packs.size(); ++pack)
     {
-        output.packs[pack] = runtime.bootstrap(input.packs[pack]);
+        const std::size_t target_q_count =
+            std::min<std::size_t>(input.packs[pack].meta.q_count, 6);
+        auto prepared =
+            runtime.drop_to_q_count(input.packs[pack], target_q_count);
+        if (prepared.meta.q_count != 6 ||
+            std::abs(std::log2(prepared.meta.scale) - 40.0) > 1.0e-9)
+        {
+            throw std::runtime_error(
+                "ResNet50 bootstrap input is not Q6/scale40");
+        }
+        output.packs[pack] = runtime.bootstrap(prepared);
         std::cout << "[GPU ResNet50] bootstrap pack " << pack + 1 << '/'
                   << input.packs.size() << '\n';
     }
@@ -444,6 +469,20 @@ void verify_values(
               << maximum_error << '\n';
     if (!std::isfinite(maximum_error) || maximum_error > tolerance)
     {
+        const std::size_t sample_count =
+            std::min<std::size_t>(expected.size(), 5);
+        for (std::size_t index = 0; index < sample_count; ++index)
+        {
+            const double expected_value = expected[index];
+            const double actual_value = actual[index];
+            const double ratio = expected_value == 0.0
+                ? std::numeric_limits<double>::quiet_NaN()
+                : actual_value / expected_value;
+            std::cout << "[GPU ResNet50] " << label
+                      << " sample[" << index << "] expected="
+                      << expected_value << " actual=" << actual_value
+                      << " ratio=" << ratio << '\n';
+        }
         throw std::runtime_error(label + " verification failed");
     }
 }
@@ -523,7 +562,8 @@ GpuResNet50Result run_gpu_resnet50_impl(
     GpuCkksRuntime &runtime,
     bool enable_validation,
     bool measure_gpu_only,
-    bool measure_staged_gpu_only)
+    bool measure_staged_gpu_only,
+    poseidon::benchmark::s2c_first::GpuActivityTiming *activity = nullptr)
 {
     topology.validate();
     if (max_blocks > topology.blocks.size())
@@ -537,7 +577,7 @@ GpuResNet50Result run_gpu_resnet50_impl(
     const bool validate_intermediates = enable_validation &&
         (max_blocks <= 1 ||
          std::getenv("POSEIDON_GPU_RESNET50_VALIDATE_BLOCKS") != nullptr);
-    StagewiseGpuTimer stage_timer(runtime, measure_staged_gpu_only);
+    StagewiseGpuTimer stage_timer(runtime, measure_staged_gpu_only, activity);
     std::chrono::steady_clock::time_point gpu_only_start;
     bool profiler_started = false;
     if (measure_gpu_only)
@@ -956,10 +996,21 @@ GpuResNet50Result run_gpu_resnet50_staged_gpu_only(
     }
     runtime.enable_full_device_cache();
     std::cout << "[GPU ResNet50] starting layer-wise prepare/replay timing\n";
-    return run_gpu_resnet50_impl(
+    std::unique_ptr<poseidon::benchmark::s2c_first::GpuActivityTiming> activity;
+    if (std::getenv("POSEIDON_GPU_RESNET50_ACTIVITY") != nullptr)
+    {
+        activity =
+            std::make_unique<poseidon::benchmark::s2c_first::GpuActivityTiming>();
+    }
+    auto result = run_gpu_resnet50_impl(
         image_id, topology, weights, max_blocks, runtime,
         /*enable_validation=*/false, /*measure_gpu_only=*/false,
-        /*measure_staged_gpu_only=*/true);
+        /*measure_staged_gpu_only=*/true, activity.get());
+    if (activity)
+    {
+        activity->finish().print();
+    }
+    return result;
 }
 
 GpuResNet50Result run_gpu_resnet50_head_check(

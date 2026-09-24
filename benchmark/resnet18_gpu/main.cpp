@@ -4,6 +4,7 @@
 #include "resnet18_weights.h"
 
 #include "gpu_ckks_runtime.h"
+#include "gpu_relu.h"
 
 #include <algorithm>
 #include <chrono>
@@ -19,6 +20,85 @@ namespace
 
 namespace resnet18 = poseidon::benchmark::resnet18_gpu;
 namespace shared_gpu = poseidon::benchmark::resnet50_gpu;
+
+void run_gpu_relu_check(const shared_gpu::ResNet50GpuConfig &config)
+{
+    shared_gpu::GpuCkksRuntime runtime(config);
+    runtime.initialize_evaluation_keys();
+
+    std::vector<double> input(
+        static_cast<std::size_t>(1) << config.log_slots);
+    std::fill(input.begin(), input.end(), 0.125);
+    auto encrypted = runtime.encrypt(input);
+    auto q31 = runtime.drop_to_q_count(encrypted, 31);
+    const auto decoded_input = runtime.decrypt(q31);
+    auto activated = shared_gpu::polynomial_relu(q31, runtime);
+    const auto decoded = runtime.decrypt(activated);
+
+    double maximum_error = 0.0;
+    std::size_t maximum_index = 0;
+    double input_error = 0.0;
+    std::size_t input_error_index = 0;
+    for (std::size_t index = 0; index < input.size(); ++index)
+    {
+        const double decoded_input_value = decoded_input[index].real();
+        const double local_input_error =
+            std::abs(decoded_input_value - input[index]);
+        if (local_input_error > input_error)
+        {
+            input_error = local_input_error;
+            input_error_index = index;
+        }
+        const double expected =
+            shared_gpu::polynomial_relu_reference(decoded_input_value);
+        const double error = std::abs(decoded[index].real() - expected);
+        if (error > maximum_error)
+        {
+            maximum_error = error;
+            maximum_index = index;
+        }
+    }
+    std::cout << "GPU ResNet18 relu_check input_error=" << input_error
+              << " input_index=" << input_error_index << '\n';
+    std::cout << "GPU ResNet18 relu_check max_error=" << maximum_error
+              << " index=" << maximum_index
+              << " input=" << decoded_input[maximum_index].real()
+              << " expected="
+              << shared_gpu::polynomial_relu_reference(input[maximum_index])
+              << " actual=" << decoded[maximum_index].real()
+              << " q=" << activated.meta.q_count
+              << " log2_scale=" << std::log2(activated.meta.scale) << '\n';
+    for (const std::size_t index :
+         {std::size_t{0}, std::size_t{1023}, std::size_t{1024},
+          std::size_t{8191}, std::size_t{8192}, std::size_t{11263},
+          std::size_t{16383}, std::size_t{16384}, std::size_t{28671}})
+    {
+        std::cout << "GPU ResNet18 relu_check sample_index=" << index
+                  << " input=" << decoded_input[index].real()
+                  << " actual=" << decoded[index].real() << '\n';
+    }
+    for (std::size_t block = 0; block < 4; ++block)
+    {
+        std::size_t correct = 0;
+        const std::size_t begin = block * 8192;
+        const std::size_t end = begin + 8192;
+        for (std::size_t index = begin; index < end; ++index)
+        {
+            const double expected = shared_gpu::polynomial_relu_reference(
+                decoded_input[index].real());
+            if (std::abs(decoded[index].real() - expected) <= 1.0e-4)
+            {
+                ++correct;
+            }
+        }
+        std::cout << "GPU ResNet18 relu_check block=" << block
+                  << " correct=" << correct << "/8192\n";
+    }
+    if (!std::isfinite(maximum_error) || maximum_error > 2.0e-4)
+    {
+        throw std::runtime_error("GPU ResNet18 relu_check failed");
+    }
+}
 
 void run_gpu_smoke(const shared_gpu::ResNet50GpuConfig &config)
 {
@@ -121,6 +201,10 @@ int main(int argc, char **argv)
         {
             run_gpu_smoke(config);
         }
+        else if (argc == 2 && std::string(argv[1]) == "--relu-check")
+        {
+            run_gpu_relu_check(config);
+        }
         else if (argc == 2 && std::string(argv[1]) == "--topology-check")
         {
             topology.validate();
@@ -210,7 +294,7 @@ int main(int argc, char **argv)
         {
             throw std::invalid_argument(
                 "usage: poseidon_gpu_resnet18 "
-                "[--smoke|--topology-check|--weights-check|"
+                "[--smoke|--relu-check|--topology-check|--weights-check|"
                 "--head-check IMAGE_ID|--infer IMAGE_ID [MAX_BLOCKS]|"
                 "--gpu-only IMAGE_ID [MAX_BLOCKS]|"
                 "--gpu-staged IMAGE_ID [MAX_BLOCKS]]");

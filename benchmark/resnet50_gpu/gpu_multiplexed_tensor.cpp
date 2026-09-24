@@ -998,7 +998,7 @@ GpuMultiplexedTensor average_pool2d_stride2(const GpuMultiplexedTensor &input,
                             }
                             const auto target = output.slot_index(channel, oh, ow);
                             const auto source = input.slot_index(channel, ih, iw);
-                            mask[target] = 1.0;
+                            mask[target] = 1.0 / 9.0;
                             if (!has_rotation)
                             {
                                 rotation_step = static_cast<long long>(source) -
@@ -1037,8 +1037,7 @@ GpuMultiplexedTensor average_pool2d_stride2(const GpuMultiplexedTensor &input,
         {
             throw std::runtime_error("GPU average pool produced an empty output pack");
         }
-        std::vector<double> average(output.slot_count, 1.0 / 9.0);
-        output.packs[output_pack] = runtime.multiply_plain_rescale(*sum, average);
+        output.packs[output_pack] = std::move(*sum);
     }
     return output;
 }

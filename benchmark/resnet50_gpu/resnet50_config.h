@@ -34,6 +34,10 @@ struct ResNet50GpuConfig
     std::uint32_t physical_primes_per_application_level = 2;
     std::vector<std::uint32_t> log_q;
     std::vector<std::uint32_t> log_p;
+    // Exact moduli are required when the S2C-first bootstrap consumes the
+    // verified Q50/P25 chain. Empty vectors fall back to log_q/log_p.
+    std::vector<std::uint64_t> q_moduli;
+    std::vector<std::uint64_t> p_moduli;
 
     std::size_t degree() const noexcept;
     std::size_t slot_count() const noexcept;

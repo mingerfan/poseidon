@@ -24,6 +24,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <cstdint>
+#include <iostream>
 #include <limits>
 #include <mutex>
 #include <numeric>
@@ -127,14 +128,52 @@ ParametersLiteral make_parameters(const ResNet50GpuConfig &config)
         config.log_n,
         config.log_slots,
         config.log_scale,
-        /*hamming_weight=*/0,
+        /*hamming_weight=*/192,
         config.q0_level,
         Modulus(0),
         {},
         {},
         sec_level_type::none);
-    parameters.set_log_modulus(config.log_q, config.log_p);
+    if (!config.q_moduli.empty())
+    {
+        std::vector<Modulus> q;
+        std::vector<Modulus> p;
+        q.reserve(config.q_moduli.size());
+        p.reserve(config.p_moduli.size());
+        for (const auto value : config.q_moduli)
+        {
+            q.emplace_back(value);
+        }
+        for (const auto value : config.p_moduli)
+        {
+            p.emplace_back(value);
+        }
+        parameters.set_modulus(q, p);
+    }
+    else
+    {
+        parameters.set_log_modulus(config.log_q, config.log_p);
+    }
     return parameters;
+}
+
+void configure_s2c_first_evalmod_environment()
+{
+    const std::pair<const char *, const char *> settings[] = {
+        {"POSEIDON_BOOTSTRAP_EVALMOD_DYNAMIC_RESCALE", "1"},
+        {"POSEIDON_EVALMOD_LOG_SPLIT", "3"},
+        {"POSEIDON_EVALMOD_FLAT_BSGS_B8", "0"},
+        {"POSEIDON_EVALMOD_VIRTUAL_DEGREE_BOUND", "0"},
+        {"POSEIDON_EVALMOD_LEAD_LEAF_RESPLIT", "0"},
+    };
+    for (const auto &[name, value] : settings)
+    {
+        if (::setenv(name, value, 1) != 0)
+        {
+            throw std::runtime_error(
+                std::string("failed to configure ") + name);
+        }
+    }
 }
 
 LinearMatrixGroup make_dynamic_dft_group(
@@ -286,7 +325,11 @@ public:
           config(config),
           application_scale(std::ldexp(1.0, config.application_log_scale)),
           application_parms_id(
-              gpu_parameters.get_level_by_q_count(config.application_q_count()).parms_id)
+              gpu_parameters.get_level_by_q_count(config.application_q_count()).parms_id),
+          input_parms_id(
+              gpu_parameters.get_level_by_q_count(
+                  config.application_q_count() - 4)
+                  .parms_id)
     {
         keygen.create_public_key(public_key);
         encryptor = std::make_unique<Encryptor>(
@@ -309,12 +352,22 @@ public:
     ResNet50GpuConfig config;
     double application_scale;
     parms_id_type application_parms_id;
+    parms_id_type input_parms_id;
     std::unique_ptr<gpu::GpuRelinKeysData> gpu_relin_keys;
     std::unique_ptr<gpu::GpuGaloisKeysData> gpu_galois_keys;
     std::unique_ptr<RelinKeys> host_relin_keys;
     std::unique_ptr<gpu::GpuGaloisKeysData> gpu_bootstrap_galois_keys;
     std::unique_ptr<gpu::GpuBootstrapData> bootstrap_data;
     std::unique_ptr<gpu::GpuBootstrapWorkspace> bootstrap_workspace;
+    std::unique_ptr<gpu::GpuLinearMatrixGroupQP> s2c_first_stc;
+    std::unique_ptr<gpu::GpuLinearMatrixGroupQP> s2c_first_cts;
+    std::unique_ptr<gpu::GpuPlaintextData> s2c_first_minus_i;
+    std::unique_ptr<gpu::GpuPlaintextData> s2c_first_plus_i;
+    std::unique_ptr<gpu::GpuDoubleHoistWorkspace> s2c_first_stc_workspace;
+    std::unique_ptr<gpu::GpuDoubleHoistWorkspace> s2c_first_cts_workspace;
+    std::unique_ptr<gpu::GpuBootstrapWorkspace> s2c_first_evalmod_workspace;
+    double s2c_first_alpha = 1.0;
+    double s2c_first_preparation_target = 0.0;
     std::unordered_map<std::string, gpu::GpuPlaintextData> plaintext_cache;
     std::unordered_map<std::string, gpu::GpuCiphertextData> ciphertext_cache;
     std::unique_ptr<gpu::GpuCiphertextData> encrypted_one_cache;
@@ -345,7 +398,7 @@ GpuCkksRuntime::encrypt(const std::vector<double> &slots) const
     Plaintext plaintext;
     impl_->encoder.encode(
         slots,
-        impl_->application_parms_id,
+        impl_->input_parms_id,
         impl_->application_scale,
         plaintext);
 
@@ -376,7 +429,7 @@ GpuCkksRuntime::DeviceCiphertext GpuCkksRuntime::encrypt_constant(double value) 
     Plaintext plaintext;
     impl_->encoder.encode(
         value,
-        impl_->application_parms_id,
+        impl_->input_parms_id,
         impl_->application_scale,
         plaintext);
     Ciphertext ciphertext;
@@ -523,6 +576,26 @@ GpuCkksRuntime::DeviceCiphertext GpuCkksRuntime::multiply_plain(
     auto device_plaintext = encode_and_upload_plain(
         source, plain_slots, plain_scale);
     return multiply_plain_preencoded(source, device_plaintext);
+}
+
+GpuCkksRuntime::DeviceCiphertext GpuCkksRuntime::multiply_plain_scalar(
+    const DeviceCiphertext &source,
+    double value,
+    double plain_scale) const
+{
+    if (!(plain_scale > 0.0) || !std::isfinite(plain_scale))
+    {
+        throw std::invalid_argument(
+            "multiply_plain_scalar requires a positive finite scale");
+    }
+    Plaintext host_plaintext;
+    impl_->encoder.encode(
+        value, source.meta.parms_id, plain_scale, host_plaintext);
+    auto device_plaintext = gpu::GpuUploader::upload_plaintext(
+        host_plaintext, impl_->device_id);
+    DeviceCiphertext result;
+    impl_->gpu_evaluator.multiply_plain(source, device_plaintext, result);
+    return result;
 }
 
 GpuCkksRuntime::DevicePlaintext GpuCkksRuntime::encode_and_upload_plain(
@@ -995,24 +1068,23 @@ void GpuCkksRuntime::initialize_bootstrap()
     {
         return;
     }
+    configure_s2c_first_evalmod_environment();
     initialize_evaluation_keys();
-    impl_->gpu_parameters.configure_bootstrap_raise_target(
-        impl_->context,
-        static_cast<std::size_t>(impl_->config.q0_level + 1),
-        impl_->config.bootstrap_q_count);
-    if (::setenv("POSEIDON_BOOTSTRAP_EVALMOD_DYNAMIC_RESCALE", "1", 1) != 0)
+    const std::size_t bootstrap_q_count =
+        static_cast<std::size_t>(impl_->config.bootstrap_q_count);
+    if (bootstrap_q_count != impl_->config.q_moduli.size())
     {
-        throw std::runtime_error("failed to enable GPU bootstrap dynamic rescale");
+        throw std::logic_error("S2C-first bootstrap requires the exact Q50 chain");
     }
 
-    const double evalmod_scale = std::exp2(
+    const double working_scale = std::exp2(
         static_cast<double>(impl_->config.evalmod_log_scale));
     const std::uint32_t log_message_ratio = static_cast<std::uint32_t>(
         std::llround(std::log2(impl_->config.message_ratio)));
     EvalModPoly eval_mod_poly(
         impl_->context,
         CosDiscrete,
-        evalmod_scale,
+        working_scale,
         /*level_start=*/0,
         log_message_ratio,
         impl_->config.double_angle,
@@ -1022,44 +1094,43 @@ void GpuCkksRuntime::initialize_bootstrap()
     const double c2s_scaling =
         eval_mod_poly.q_div() /
         (eval_mod_poly.k() * eval_mod_poly.sc_fac() * eval_mod_poly.q_diff());
-    const double bootstrap_native_scale = std::exp2(
-        static_cast<double>(impl_->config.bootstrap_output_log_scale));
-    const double s2c_scaling =
-        bootstrap_native_scale /
-        (eval_mod_poly.scaling_factor() / eval_mod_poly.message_ratio());
-    const double raised_scale = evalmod_scale;
+    const double preparation_target = std::exp2(std::round(std::log2(
+        impl_->context.crt_context()->q0() /
+        static_cast<double>(impl_->config.message_ratio))));
+    impl_->s2c_first_preparation_target = preparation_target;
 
     auto coeff_to_slot = make_dynamic_dft_group(
         impl_->context,
         impl_->encoder,
         encode,
-        impl_->config.bootstrap_q_count - 1,
+        static_cast<std::uint32_t>(bootstrap_q_count - 1),
         c2s_scaling,
-        raised_scale,
-        evalmod_scale,
+        working_scale,
+        working_scale,
         1.0);
     const auto c2s_counts = dft_rescale_counts(coeff_to_slot);
     const std::size_t c2s_consumed = std::accumulate(
         c2s_counts.begin(), c2s_counts.end(), std::size_t{0});
-    if (c2s_consumed >= impl_->config.bootstrap_q_count)
+    if (c2s_consumed >= bootstrap_q_count)
     {
         throw std::runtime_error("GPU bootstrap C2S consumes the modulus chain");
     }
     const std::size_t c2s_output_q_count =
-        impl_->config.bootstrap_q_count - c2s_consumed;
+        bootstrap_q_count - c2s_consumed;
     const auto evalmod_input_parms_id = impl_->context.crt_context()
         ->parms_id_map().at(static_cast<std::uint32_t>(c2s_output_q_count - 1));
+    const double c2s_output_scale =
+        planned_dft_output_scale(impl_->context, working_scale, coeff_to_slot);
     const auto evalmod_context = impl_->context.crt_context()->get_context_data(
         evalmod_input_parms_id);
     if (!evalmod_context)
     {
-        throw std::runtime_error("GPU bootstrap EvalMod input level is absent");
+        throw std::runtime_error("S2C-first EvalMod input level is absent");
     }
     eval_mod_poly.set_level_start(
         static_cast<std::uint32_t>(evalmod_context->level()));
-    const double c2s_output_scale = planned_dft_output_scale(
-        impl_->context, raised_scale, coeff_to_slot);
-    auto evalmod_data = gpu::GpuUploader::upload_eval_mod_high_precision(
+
+    auto native_evalmod = gpu::GpuUploader::upload_eval_mod_high_precision(
         eval_mod_poly,
         impl_->encoder,
         evalmod_input_parms_id,
@@ -1073,45 +1144,64 @@ void GpuCkksRuntime::initialize_bootstrap()
         std::numeric_limits<double>::quiet_NaN(),
         std::numeric_limits<double>::quiet_NaN(),
         /*fuse_leaf_terms_before_rescale=*/true,
-        c2s_output_scale);
-
-    const auto evalmod_output_context = impl_->context.crt_context()->get_context_data(
-        evalmod_data.output_parms_id);
-    if (!evalmod_output_context)
+        c2s_output_scale,
+        /*metadata_only=*/true);
+    if (native_evalmod.output_q_count != 31)
     {
-        throw std::runtime_error("GPU bootstrap EvalMod output level is absent");
+        throw std::runtime_error(
+            "S2C-first bootstrap requires a Q31 native EvalMod output");
     }
-    const double s2c_input_scale = evalmod_data.output_scale;
-    const double s2c_minimum_scale = std::exp2(60.0);
+
+    const double native_output_scale = native_evalmod.output_scale;
+    const double application_scale = std::exp2(
+        static_cast<double>(impl_->config.application_log_scale));
+    const double alpha = application_scale / native_output_scale;
+    if (!(alpha > 0.0 && alpha < 1.0))
+    {
+        throw std::runtime_error("S2C-first output-scale fold is invalid");
+    }
+    const double seed = std::pow(alpha, 0.25);
+    const double da_base = eval_mod_poly.sqrt_2pi() * seed;
+    auto folded_coefficients = eval_mod_poly.sine_poly();
+    for (auto &coefficient : folded_coefficients.data())
+    {
+        coefficient *= seed;
+    }
+    auto evalmod_data = gpu::GpuUploader::upload_eval_mod_high_precision(
+        eval_mod_poly,
+        impl_->encoder,
+        evalmod_input_parms_id,
+        impl_->device_id,
+        impl_->gpu_relin_keys.get(),
+        parms_id_zero,
+        /*logical_rescale_count=*/1,
+        &folded_coefficients,
+        /*include_input_offset=*/true,
+        std::numeric_limits<std::uint32_t>::max(),
+        da_base,
+        std::numeric_limits<double>::quiet_NaN(),
+        /*fuse_leaf_terms_before_rescale=*/true,
+        c2s_output_scale,
+        /*metadata_only=*/false);
+
     auto slot_to_coeff = make_dynamic_dft_group(
         impl_->context,
         impl_->encoder,
         decode,
-        static_cast<std::uint32_t>(evalmod_output_context->level()),
-        s2c_scaling,
-        s2c_input_scale,
-        s2c_minimum_scale,
+        /*level_start=*/5,
+        /*scaling=*/1.0,
+        /*input_scale=*/application_scale,
+        /*minimum_scale=*/working_scale,
         1.0);
-    const double raw_s2c_output_scale = planned_dft_output_scale(
-        impl_->context, s2c_input_scale, slot_to_coeff);
-    slot_to_coeff = make_dynamic_dft_group(
-        impl_->context,
-        impl_->encoder,
-        decode,
-        static_cast<std::uint32_t>(evalmod_output_context->level()),
-        s2c_scaling,
-        s2c_input_scale,
-        s2c_minimum_scale,
-        evalmod_scale / raw_s2c_output_scale);
 
     auto host_galois_keys = make_bootstrap_galois_keys(
         impl_->context, impl_->keygen, coeff_to_slot, slot_to_coeff);
-    auto uploaded_galois = gpu::GpuUploader::upload_galois_keys(
+    auto uploaded_galois = gpu::GpuUploader::upload_double_hoist_galois_keys(
         host_galois_keys, impl_->device_id);
     impl_->gpu_bootstrap_galois_keys =
         std::make_unique<gpu::GpuGaloisKeysData>(std::move(uploaded_galois));
     auto key_q_counts = required_dft_key_q_counts(
-        impl_->config.bootstrap_q_count, coeff_to_slot, true);
+        bootstrap_q_count, coeff_to_slot, true);
     const auto s2c_key_q_counts = required_dft_key_q_counts(
         evalmod_data.output_q_count, slot_to_coeff, false);
     key_q_counts.insert(
@@ -1138,32 +1228,34 @@ void GpuCkksRuntime::initialize_bootstrap()
         plus_i);
 
     auto data = std::make_unique<gpu::GpuBootstrapData>();
-    data->linear_transform_mode = gpu::GpuLinearTransformMode::ClassicBsgs;
-    data->q0_parms_id = impl_->context.crt_context()->parms_id_map().at(
-        impl_->config.q0_level);
-    data->raised_parms_id = impl_->context.crt_context()->parms_id_map().at(
-        impl_->config.bootstrap_q_count - 1);
-    data->q0_over_message_ratio = std::exp2(std::round(std::log2(
-        impl_->context.crt_context()->q0() /
-        static_cast<double>(impl_->config.message_ratio))));
-    data->raised_scale_override = raised_scale;
-    data->slot_to_coeff_input_scale = s2c_input_scale;
-    data->project_real = true;
-    data->output_ratio = impl_->config.message_ratio;
-    data->slot_to_coeff_output_scale = evalmod_scale;
-    data->coeff_to_slot_matrix =
-        gpu::GpuUploader::upload_linear_matrix_group(
-            coeff_to_slot, impl_->device_id);
-    data->slot_to_coeff_matrix =
-        gpu::GpuUploader::upload_linear_matrix_group(
-            slot_to_coeff, impl_->device_id);
-    data->minus_i_plaintext = gpu::GpuUploader::upload_plaintext(
-        minus_i, impl_->device_id);
-    data->plus_i_plaintext = gpu::GpuUploader::upload_plaintext(
-        plus_i, impl_->device_id);
     data->eval_mod = std::move(evalmod_data);
     impl_->bootstrap_data = std::move(data);
-    impl_->bootstrap_workspace = std::make_unique<gpu::GpuBootstrapWorkspace>();
+    impl_->s2c_first_stc = std::make_unique<gpu::GpuLinearMatrixGroupQP>(
+        gpu::GpuUploader::upload_linear_matrix_group_qp(
+            slot_to_coeff, impl_->context, impl_->device_id, 1));
+    impl_->s2c_first_cts = std::make_unique<gpu::GpuLinearMatrixGroupQP>(
+        gpu::GpuUploader::upload_linear_matrix_group_qp(
+            coeff_to_slot, impl_->context, impl_->device_id, 1));
+    impl_->s2c_first_minus_i = std::make_unique<gpu::GpuPlaintextData>(
+        gpu::GpuUploader::upload_plaintext(minus_i, impl_->device_id));
+    impl_->s2c_first_plus_i = std::make_unique<gpu::GpuPlaintextData>(
+        gpu::GpuUploader::upload_plaintext(plus_i, impl_->device_id));
+    impl_->s2c_first_stc_workspace =
+        std::make_unique<gpu::GpuDoubleHoistWorkspace>();
+    impl_->s2c_first_cts_workspace =
+        std::make_unique<gpu::GpuDoubleHoistWorkspace>();
+    impl_->s2c_first_evalmod_workspace =
+        std::make_unique<gpu::GpuBootstrapWorkspace>();
+    impl_->s2c_first_alpha = alpha;
+
+    std::cout << "S2C_FIRST_BOOTSTRAP_READY q=" << bootstrap_q_count
+              << " p=" << impl_->config.p_moduli.size()
+              << " native_q=" << native_evalmod.output_q_count
+              << " native_log_scale=" << std::log2(native_output_scale)
+              << " alpha=" << alpha
+              << " output_q=" << impl_->config.application_q_count()
+              << " output_log_scale=" << impl_->config.application_log_scale
+              << '\n';
 }
 
 bool GpuCkksRuntime::bootstrap_ready() const noexcept
@@ -1203,128 +1295,89 @@ GpuCkksRuntime::DeviceCiphertext GpuCkksRuntime::bootstrap_modraise(
 GpuCkksRuntime::DeviceCiphertext GpuCkksRuntime::bootstrap(
     const DeviceCiphertext &source) const
 {
-    if (!impl_->bootstrap_data || !impl_->bootstrap_workspace ||
-        !impl_->gpu_relin_keys || !impl_->gpu_bootstrap_galois_keys)
+    if (!impl_->bootstrap_data || !impl_->s2c_first_stc ||
+        !impl_->s2c_first_cts || !impl_->s2c_first_minus_i ||
+        !impl_->s2c_first_plus_i || !impl_->gpu_relin_keys ||
+        !impl_->gpu_bootstrap_galois_keys ||
+        !impl_->s2c_first_stc_workspace ||
+        !impl_->s2c_first_cts_workspace ||
+        !impl_->s2c_first_evalmod_workspace)
     {
         throw std::logic_error("bootstrap requires initialize_bootstrap");
     }
-    impl_->gpu_parameters.configure_bootstrap_raise_target(
-        impl_->context,
-        static_cast<std::size_t>(impl_->config.q0_level + 1),
-        impl_->config.bootstrap_q_count);
-    DeviceCiphertext result;
-    impl_->gpu_evaluator.bootstrap(
+    if (source.meta.q_count != 6 ||
+        std::abs(std::log2(source.meta.scale) - 40.0) > 1.0e-8)
+    {
+        throw std::invalid_argument(
+            "S2C-first bootstrap requires a Q6/scale40 application input; got q=" +
+            std::to_string(source.meta.q_count) + " log2_scale=" +
+            std::to_string(std::log2(source.meta.scale)));
+    }
+
+    DeviceCiphertext s2c_output;
+    impl_->gpu_evaluator.dft_double_hoist(
         source,
+        *impl_->s2c_first_stc,
+        *impl_->gpu_bootstrap_galois_keys,
+        *impl_->s2c_first_stc_workspace,
+        s2c_output);
+    DeviceCiphertext prepared;
+    impl_->gpu_evaluator.bootstrap_prepare_modraise_input(
+        s2c_output,
+        prepared,
+        impl_->context.crt_context()->parms_id_map().at(
+            static_cast<std::uint32_t>(impl_->config.q0_level)),
+        impl_->s2c_first_preparation_target);
+    DeviceCiphertext raised;
+    impl_->gpu_evaluator.raise_modulus(prepared, raised);
+    raised.meta.scale = std::exp2(
+        static_cast<double>(impl_->config.evalmod_log_scale));
+
+    DeviceCiphertext real;
+    DeviceCiphertext imag;
+    impl_->gpu_evaluator.coeff_to_slot_double_hoist(
+        raised,
+        *impl_->s2c_first_cts,
+        *impl_->s2c_first_minus_i,
+        *impl_->gpu_bootstrap_galois_keys,
+        *impl_->s2c_first_cts_workspace,
+        real,
+        imag);
+    DeviceCiphertext eval_real;
+    DeviceCiphertext eval_imag;
+    impl_->gpu_evaluator.eval_mod_high_precision(
+        real,
         *impl_->bootstrap_data,
         *impl_->gpu_relin_keys,
-        *impl_->gpu_bootstrap_galois_keys,
-        *impl_->bootstrap_workspace,
-        result);
+        *impl_->s2c_first_evalmod_workspace,
+        eval_real);
+    impl_->gpu_evaluator.eval_mod_high_precision(
+        imag,
+        *impl_->bootstrap_data,
+        *impl_->gpu_relin_keys,
+        *impl_->s2c_first_evalmod_workspace,
+        eval_imag);
 
-    // Normalize the refreshed ciphertext to the profile's configured output
-    // scale before returning to the application chain.
-    const double target_scale = std::exp2(
-        static_cast<double>(impl_->config.bootstrap_output_log_scale));
-    DeviceCiphertext normalized;
-    if (std::abs(result.meta.scale / target_scale - 1.0) <= 1.0e-6)
-    {
-        result.meta.scale = target_scale;
-        normalized = std::move(result);
-    }
-    else
-    {
-        const auto context_data = impl_->context.crt_context()->get_context_data(
-            result.meta.parms_id);
-        if (!context_data || context_data->coeff_modulus().empty())
-        {
-            throw std::runtime_error("bootstrap output has no scale-correction level");
-        }
-        const double modulus = static_cast<double>(
-            context_data->coeff_modulus().back().value());
-        const double plain_scale = target_scale * modulus / result.meta.scale;
-        const auto correction_key = scalar_plaintext_cache_key(
-            "bootstrap_correction", result.meta.q_count, 1.0, plain_scale);
-        auto correction_found = impl_->plaintext_cache.find(correction_key);
-        if (correction_found == impl_->plaintext_cache.end())
-        {
-            Plaintext correction;
-            impl_->encoder.encode(
-                1.0, result.meta.parms_id, plain_scale, correction);
-            auto uploaded = gpu::GpuUploader::upload_plaintext(
-                correction, impl_->device_id);
-            correction_found = impl_->plaintext_cache.emplace(
-                correction_key, std::move(uploaded)).first;
-        }
-        DeviceCiphertext product;
-        impl_->gpu_evaluator.multiply_plain(
-            result, correction_found->second, product);
-        normalized = rescale(product, 1);
-        normalized.meta.scale = target_scale;
-    }
-    DeviceCiphertext application_level;
-    if (normalized.meta.q_count > impl_->config.application_q_count())
-    {
-        application_level = drop_to_q_count(
-            normalized, impl_->config.application_q_count());
-    }
-    else if (normalized.meta.q_count < impl_->config.application_q_count())
-    {
-        const auto q0_parms_id = impl_->context.crt_context()->parms_id_map().at(
-            impl_->config.q0_level);
-        DeviceCiphertext prepared;
-        impl_->gpu_evaluator.bootstrap_prepare_modraise_input(
-            normalized,
-            prepared,
-            q0_parms_id,
-            target_scale);
-        impl_->gpu_parameters.configure_bootstrap_raise_target(
-            impl_->context,
-            static_cast<std::size_t>(impl_->config.q0_level + 1),
-            impl_->config.application_q_count());
-        DeviceCiphertext raised;
-        impl_->gpu_evaluator.raise_modulus(
-            prepared, impl_->application_parms_id, raised);
-        raised.meta.scale = target_scale;
-        application_level = std::move(raised);
-    }
-    else
-    {
-        application_level = std::move(normalized);
-    }
-
-    if (std::abs(impl_->application_scale / target_scale - 1.0) <= 1.0e-12)
-    {
-        application_level.meta.scale = impl_->application_scale;
-        return application_level;
-    }
-    const double promotion_scale = impl_->application_scale / target_scale;
-    // The matrix normalization is calibrated at message_ratio=32. Ratios
-    // above or below it change the raw output magnitude proportionally, so
-    // fold the reciprocal correction into this exact scale-promotion plain.
-    const double message_ratio_correction =
-        32.0 / static_cast<double>(impl_->config.message_ratio);
-    const auto promotion_key = scalar_plaintext_cache_key(
-        "bootstrap_promotion", application_level.meta.q_count,
-        message_ratio_correction, promotion_scale);
-    auto promotion_found = impl_->plaintext_cache.find(promotion_key);
-    if (promotion_found == impl_->plaintext_cache.end())
-    {
-        Plaintext promotion_plaintext;
-        impl_->encoder.encode(
-            message_ratio_correction,
-            application_level.meta.parms_id,
-            promotion_scale,
-            promotion_plaintext);
-        auto uploaded = gpu::GpuUploader::upload_plaintext(
-            promotion_plaintext, impl_->device_id);
-        promotion_found = impl_->plaintext_cache.emplace(
-            promotion_key, std::move(uploaded)).first;
-    }
-    DeviceCiphertext promoted;
+    DeviceCiphertext scaled_imag;
     impl_->gpu_evaluator.multiply_plain(
-        application_level, promotion_found->second, promoted);
-    promoted.meta.scale = impl_->application_scale;
-    return promoted;
+        eval_imag, *impl_->s2c_first_plus_i, scaled_imag);
+    DeviceCiphertext combined;
+    impl_->gpu_evaluator.add(eval_real, scaled_imag, combined);
+    DeviceCiphertext half;
+    impl_->gpu_evaluator.multiply_scalar(combined, 16, half);
+    DeviceCiphertext conjugated;
+    impl_->gpu_evaluator.conjugate(
+        half, *impl_->gpu_bootstrap_galois_keys, conjugated);
+    DeviceCiphertext folded;
+    impl_->gpu_evaluator.add(half, conjugated, folded);
+    folded.meta.scale *= impl_->s2c_first_alpha;
+    if (folded.meta.q_count != 31 ||
+        std::abs(std::log2(folded.meta.scale) - 40.0) > 1.0e-9)
+    {
+        throw std::runtime_error(
+            "S2C-first bootstrap did not produce Q31/scale40");
+    }
+    return folded;
 }
 
 GpuCkksRuntime::DeviceCiphertext GpuCkksRuntime::square_relinearize_rescale(
@@ -1416,6 +1469,44 @@ GpuCkksRuntime::DeviceCiphertext GpuCkksRuntime::multiply_relinearize_rescale(
     normalized = rescale(normalized, 1);
     normalized.meta.scale = target_scale;
     return normalized;
+}
+
+GpuCkksRuntime::DeviceCiphertext GpuCkksRuntime::multiply_relinearize(
+    const DeviceCiphertext &left,
+    const DeviceCiphertext &right) const
+{
+    if (!impl_->gpu_relin_keys)
+    {
+        throw std::logic_error(
+            "multiply_relinearize requires initialize_evaluation_keys");
+    }
+
+    const std::size_t target_q_count =
+        std::min(left.meta.q_count, right.meta.q_count);
+    std::unique_ptr<DeviceCiphertext> adjusted_left;
+    std::unique_ptr<DeviceCiphertext> adjusted_right;
+    const DeviceCiphertext *left_view = &left;
+    const DeviceCiphertext *right_view = &right;
+    if (left.meta.q_count != target_q_count)
+    {
+        adjusted_left = std::make_unique<DeviceCiphertext>(
+            drop_to_q_count(left, target_q_count));
+        left_view = adjusted_left.get();
+    }
+    if (right.meta.q_count != target_q_count)
+    {
+        adjusted_right = std::make_unique<DeviceCiphertext>(
+            drop_to_q_count(right, target_q_count));
+        right_view = adjusted_right.get();
+    }
+
+    DeviceCiphertext multiplied;
+    impl_->gpu_evaluator.multiply(*left_view, *right_view, multiplied);
+    DeviceCiphertext relinearized;
+    impl_->gpu_evaluator.relinearize(
+        multiplied, *impl_->gpu_relin_keys, relinearized);
+    relinearized.meta.scale = left_view->meta.scale * right_view->meta.scale;
+    return relinearized;
 }
 
 int GpuCkksRuntime::device_id() const noexcept

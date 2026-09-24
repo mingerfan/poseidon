@@ -84,12 +84,12 @@ CUDA_VISIBLE_DEVICES=0 POSEIDON_NTT_ALGO=fourstep \
 ```
 
 The physical modulus representation is intentionally different from the CPU
-chain because GPU residues are `uint32_t`. The optimized application profile
-is `Q36/P18/dnum=2`: q0 uses two physical primes, the verified bootstrap prefix
-ends at Q34, and two application primes extend refreshed results to Q36. One
-logical application level consumes two physical 32-bit Q primes. The
-14-level `[15,15,27]` ReLU therefore consumes 28 physical primes and returns at
-Q8. The logical application and EvalMod scales remain `2^40` and `2^45`.
+chain because GPU residues are `uint32_t`. The GPU application uses the
+validated S2C-first profile from the ResNet20 bring-up: exact `Q50/P25/dnum=2`,
+q0 preparation at `q0/32`, scale-45 C2S/EvalMod, and a folded Q31/scale-40
+bootstrap output. The existing application prefix is restored to Q36 by
+ModRaise so the network-side ReLU/convolution schedule remains unchanged. One
+logical application level consumes two physical 32-bit Q primes.
 
 Implemented and numerically tested on V100:
 

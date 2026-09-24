@@ -57,6 +57,10 @@ public:
         const DeviceCiphertext &source,
         const std::vector<double> &plain_slots,
         double plain_scale) const;
+    DeviceCiphertext multiply_plain_scalar(
+        const DeviceCiphertext &source,
+        double value,
+        double plain_scale) const;
     // Split plaintext preparation from evaluation so a fixed encoded
     // diagonal can be reused by several ciphertexts without repeating CPU
     // CKKS encoding and Host-to-Device transfer.
@@ -126,6 +130,12 @@ public:
     DeviceCiphertext square_relinearize_rescale(
         const DeviceCiphertext &source) const;
     DeviceCiphertext multiply_relinearize_rescale(
+        const DeviceCiphertext &left,
+        const DeviceCiphertext &right) const;
+    // Fixture-driven polynomial schedules need the product and
+    // relinearization without an implicit rescale. The caller applies the
+    // exact number of physical-prime drops declared by the schedule.
+    DeviceCiphertext multiply_relinearize(
         const DeviceCiphertext &left,
         const DeviceCiphertext &right) const;
     DeviceCiphertext rescale(

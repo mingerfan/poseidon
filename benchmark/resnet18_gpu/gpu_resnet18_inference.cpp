@@ -11,6 +11,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
+#include <limits>
 #include <optional>
 #include <stdexcept>
 #include <string>
@@ -210,7 +211,17 @@ GpuMultiplexedTensor bootstrap_tensor(
     auto output = empty_like(input);
     for (std::size_t pack = 0; pack < input.packs.size(); ++pack)
     {
-        output.packs[pack] = runtime.bootstrap(input.packs[pack]);
+        const std::size_t target_q_count =
+            std::min<std::size_t>(input.packs[pack].meta.q_count, 6);
+        auto prepared =
+            runtime.drop_to_q_count(input.packs[pack], target_q_count);
+        if (prepared.meta.q_count != 6 ||
+            std::abs(std::log2(prepared.meta.scale) - 40.0) > 1.0e-9)
+        {
+            throw std::runtime_error(
+                "ResNet18 bootstrap input is not Q6/scale40");
+        }
+        output.packs[pack] = runtime.bootstrap(prepared);
         std::cout << "[GPU ResNet18] bootstrap pack " << pack + 1 << '/'
                   << input.packs.size() << '\n';
     }
@@ -242,15 +253,45 @@ void verify_values(
         throw std::runtime_error(label + " verification shape mismatch");
     }
     double maximum_error = 0.0;
+    std::size_t maximum_index = 0;
     for (std::size_t index = 0; index < expected.size(); ++index)
     {
-        maximum_error = std::max(
-            maximum_error, std::abs(expected[index] - actual[index]));
+        const double error = std::abs(expected[index] - actual[index]);
+        if (error > maximum_error)
+        {
+            maximum_error = error;
+            maximum_index = index;
+        }
     }
     std::cout << "[GPU ResNet18] " << label
               << " max_abs_error=" << maximum_error << '\n';
     if (!std::isfinite(maximum_error) || maximum_error > tolerance)
     {
+        const double maximum_expected = expected[maximum_index];
+        const double maximum_actual = actual[maximum_index];
+        std::cout << "[GPU ResNet18] " << label
+                  << " maximum_index=" << maximum_index
+                  << " expected=" << maximum_expected
+                  << " actual=" << maximum_actual
+                  << " ratio="
+                  << (maximum_expected == 0.0
+                          ? std::numeric_limits<double>::quiet_NaN()
+                          : maximum_actual / maximum_expected)
+                  << '\n';
+        const std::size_t sample_count =
+            std::min<std::size_t>(expected.size(), 5);
+        for (std::size_t index = 0; index < sample_count; ++index)
+        {
+            const double expected_value = expected[index];
+            const double actual_value = actual[index];
+            const double ratio = expected_value == 0.0
+                ? std::numeric_limits<double>::quiet_NaN()
+                : actual_value / expected_value;
+            std::cout << "[GPU ResNet18] " << label
+                      << " sample[" << index << "] expected="
+                      << expected_value << " actual=" << actual_value
+                      << " ratio=" << ratio << '\n';
+        }
         throw std::runtime_error(label + " verification failed");
     }
 }
@@ -270,7 +311,11 @@ GpuMultiplexedTensor bootstrap_relu(
     {
         verify_values(
             label + ".bootstrap", *expected_bootstrap,
-            shared_gpu::decrypt_multiplexed_chw(refreshed, runtime), 1.0e-1);
+            shared_gpu::decrypt_multiplexed_chw(refreshed, runtime), 1.0e-1);       
+    }
+    if (std::getenv("POSEIDON_BOOTSTRAP_RAW") != nullptr)
+    {
+        return refreshed;
     }
     auto activated = stage_timer.run(label + ".relu", [&]() {
         return relu_tensor(refreshed, runtime);

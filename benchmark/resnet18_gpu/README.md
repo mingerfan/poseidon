@@ -95,9 +95,10 @@ complete filename with `POSEIDON_GPU_RESNET18_LOG_FILE`.
 - projection: `1x1 stride-2 Conv+BN` at layer2/3/4 block0;
 - nonlinear path: 16 reusable GPU bootstraps plus polynomial `[15,15,27]` ReLU;
 - head: encrypted global average pool and `512x1000` fully connected layer;
-- CKKS: `N=65536`, 32768 slots, Q36/P18, `dnum=2`;
+- CKKS: `N=65536`, 32768 slots, exact Q50/P25, `dnum=2`;
 - application operations: logical scale `2^40`;
-- bootstrap: Q34 prefix, EvalMod scale `2^45`, output scale `2^40`;
+- bootstrap: S2C-first Q50/P25, EvalMod scale `2^45`, folded Q31/scale `2^40`;
+- application restoration: Q36 via ModRaise for the existing ReLU schedule;
 - one ciphertext multiplication level consumes two physical 32-bit Q primes;
 - the 14-level `[15,15,27]` ReLU consumes 28 physical Q primes.
 

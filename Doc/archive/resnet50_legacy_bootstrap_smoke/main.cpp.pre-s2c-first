@@ -82,10 +82,8 @@ void run_gpu_smoke(
         -1.0, -0.5, -0.125, 0.0, 0.125, 0.5, 1.0,
     };
     auto encrypted_relu_input = runtime.encrypt(relu_input);
-    auto q31_relu_input =
-        runtime.drop_to_q_count(encrypted_relu_input, 31);
     auto encrypted_relu = poseidon::benchmark::resnet50_gpu::polynomial_relu(
-        q31_relu_input, runtime);
+        encrypted_relu_input, runtime);
     const auto decoded_relu = runtime.decrypt(encrypted_relu);
     max_error = 0.0;
     for (std::size_t index = 0; index < relu_input.size(); ++index)
@@ -112,6 +110,22 @@ void run_gpu_smoke(
     {
         throw std::runtime_error("GPU polynomial ReLU error exceeds 2e-2");
     }
+    auto raised_relu = runtime.bootstrap_modraise(encrypted_relu);
+    const auto decoded_raised_relu = runtime.decrypt(raised_relu);
+    max_error = 0.0;
+    for (std::size_t index = 0; index < relu_input.size(); ++index)
+    {
+        max_error = std::max(
+            max_error,
+            std::abs(decoded_raised_relu[index].real() - decoded_relu[index].real()));
+    }
+    std::cout << "GPU bootstrap prepare/ModRaise max_error=" << max_error
+              << " output_q=" << raised_relu.meta.q_count << '\n';
+    if (max_error > 2.0e-5 || raised_relu.meta.q_count != config.log_q.size())
+    {
+        throw std::runtime_error("GPU extended-chain ModRaise validation failed");
+    }
+
     std::vector<double> chw(2 * 4 * 4);
     for (std::size_t index = 0; index < chw.size(); ++index)
     {
@@ -162,29 +176,18 @@ void run_gpu_smoke(
         poseidon::benchmark::resnet50_gpu::decrypt_multiplexed_chw(
             conv_output, runtime);
     max_error = 0.0;
-    std::size_t conv_max_index = 0;
     for (std::size_t index = 0; index < single_channel.size(); ++index)
     {
         const double expected = single_channel[index] * 1.75 * -0.5 + 0.2;
-        const double error = std::abs(decoded_conv[index] - expected);
-        if (error > max_error)
-        {
-            max_error = error;
-            conv_max_index = index;
-        }
+        max_error = std::max(max_error, std::abs(decoded_conv[index] - expected));
     }
     std::cout << "GPU multiplexed Conv1x1+BN max_error=" << max_error << '\n';
-    std::cout << "GPU multiplexed Conv1x1+BN max_index=" << conv_max_index
-              << " input=" << single_channel[conv_max_index]
-              << " expected="
-              << single_channel[conv_max_index] * 1.75 * -0.5 + 0.2
-              << " actual=" << decoded_conv[conv_max_index] << '\n';
-    // ponytail: informational only. This synthetic tensor is replicated to
-    // 2048 slots; real Bottleneck validation is the precision acceptance test.
-    if (max_error > 3.0e-3)
+    // The Q36/2^40 profile trades a small amount of SIMD convolution
+    // precision for a much shorter chain; real image-0 Bottleneck validation
+    // remains near 1e-4, so keep this synthetic stress case below 1e-3.
+    if (max_error > 1.0e-3)
     {
-        std::cerr << "warning: synthetic multiplexed convolution smoke error="
-                  << max_error << '\n';
+        throw std::runtime_error("GPU multiplexed convolution smoke error exceeds 1e-3");
     }
 
     auto pooled = poseidon::benchmark::resnet50_gpu::global_average_pool(
