@@ -10,6 +10,9 @@ bottleneck blocks), a 32768-slot CKKS packing at N=65536, a `2^40`
 application scale, and a higher `2^45` GPU EvalMod bootstrap scale. Bootstrap
 returns directly to the `2^40` application scale.
 
+Weights and input data default to `data/resnet50` in this benchmark
+directory. Set `POSEIDON_TRIDENT_RESNET50_ROOT` to override that directory.
+
 Build and run:
 
 ```bash

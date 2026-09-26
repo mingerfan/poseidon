@@ -71,7 +71,7 @@ std::filesystem::path default_trident_resnet50_root()
         return override_root;
     }
     return std::filesystem::path(POSEIDON_GPU_RESNET50_SOURCE_DIR) /
-           "../../../Trident/resnet50";
+           "data/resnet50";
 }
 
 ResNet50Weights load_resnet50_weights(const std::filesystem::path &resnet50_root)

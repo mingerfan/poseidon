@@ -102,8 +102,8 @@ complete filename with `POSEIDON_GPU_RESNET18_LOG_FILE`.
 - one ciphertext multiplication level consumes two physical 32-bit Q primes;
 - the 14-level `[15,15,27]` ReLU consumes 28 physical Q primes.
 
-Weights and input data default to `Trident/resnet18`. Set
-`POSEIDON_TRIDENT_RESNET18_ROOT` to override that directory.
+Weights and input data default to `data/resnet18` in this benchmark
+directory. Set `POSEIDON_TRIDENT_RESNET18_ROOT` to override that directory.
 
 ## Current V100 validation
 

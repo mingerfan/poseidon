@@ -60,7 +60,7 @@ std::filesystem::path default_trident_resnet18_root()
         return override_root;
     }
     return std::filesystem::path(POSEIDON_GPU_RESNET18_SOURCE_DIR) /
-           "../../../Trident/resnet18";
+           "data/resnet18";
 }
 
 ResNet18Weights load_resnet18_weights(const std::filesystem::path &resnet18_root)
