@@ -24,6 +24,9 @@ def descriptor(name):
     return copy.deepcopy(EXERCISES[name]['model'])
 
 def validate_exercise_request(request):
+    if request.get('task')=='hecate-unified-graph-synthesis-v1':
+        from unified_graph_exercises import validate_request
+        return validate_request(request)
     spec=request.get('construction_exercise')
     require(request.get('task')==TASK and type(spec) is dict and spec==exercise_spec(spec.get('id')) and
             request.get('model')==descriptor(spec['id']),'Packed-native exercise model/specification changed')
@@ -142,10 +145,19 @@ def run_probe(nodes,plan,request,probe,budget,loops,intervention=None):
             elif type(statement) is ast.Assign:assign(statement.targets[0],expression(statement.value))
             else:expression(statement.value)
         return stored('return',fn.body[-1],expression(fn.body[-1].value))
-    count=request['layout']['model_input_binding']['logical_elements']
-    x=Cell('c',tuple((((i*i+3*i+7*probe+1)%23)-11)/32 if i<count else 0.
-                     for i in range(period)))
-    args=[x if n=='x' else Cell('c',(0.,)*period) for n in plan['functions']['golden']['parameters']]
+    if request.get('task')=='hecate-unified-graph-synthesis-v1':
+        bindings=request['layout']['inputs'];inputs={}
+        for j,b in enumerate(bindings):
+            count=math.prod(b['shape'])
+            inputs[b['dsl_name']]=Cell('c',tuple((((i*i+3*i+7*probe+5*j+1)%23)-11)/32
+                                                if i<count else 0. for i in range(period)))
+        inputs['zero_ct']=Cell('c',(0.,)*period)
+        args=[inputs[n] for n in plan['functions']['golden']['parameters']]
+    else:
+        count=request['layout']['model_input_binding']['logical_elements']
+        x=Cell('c',tuple((((i*i+3*i+7*probe+1)%23)-11)/32 if i<count else 0.
+                         for i in range(period)))
+        args=[x if n=='x' else Cell('c',(0.,)*period) for n in plan['functions']['golden']['parameters']]
     output=flat(invoke('golden',args))
     selected=[output[c].values[s] for c,s in request['layout']['output_selectors']]
     require(all(math.isfinite(x) for x in selected),'Nonfinite packed-native probe')

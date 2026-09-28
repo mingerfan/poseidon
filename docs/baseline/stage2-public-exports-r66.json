@@ -1,0 +1,617 @@
+{
+  "actual_ciphertext_execution": false,
+  "actual_compile": false,
+  "binding": "33e36e527eadf1b9b2636c2465085bbdcc3766ccef17691e519068f8cbbeb10a",
+  "candidate_permissions_unchanged": true,
+  "classification_only": true,
+  "format": "poseidon-public-export-audit-v1",
+  "he_helpers_already_inventoried": [
+    "HE_Avg",
+    "HE_BN",
+    "HE_Concat",
+    "HE_Conv",
+    "HE_ConvBN",
+    "HE_DS",
+    "HE_DwConv",
+    "HE_Linear",
+    "HE_MPBN",
+    "HE_Max",
+    "HE_MaxPad",
+    "HE_Pool",
+    "HE_ReLU",
+    "HE_ReshapeLinear",
+    "HE_SiLU"
+  ],
+  "hecate_declared_exports": [
+    {
+      "execution_claim": false,
+      "source": "third_party/dacapo/python/hecate/hecate/__init__.py",
+      "state": "declared_without_definition",
+      "symbol": "setMain"
+    },
+    {
+      "execution_claim": false,
+      "source": "third_party/dacapo/python/hecate/hecate/__init__.py",
+      "state": "statically_bound",
+      "symbol": "Plain"
+    },
+    {
+      "execution_claim": false,
+      "source": "third_party/dacapo/python/hecate/hecate/__init__.py",
+      "state": "declared_without_definition",
+      "symbol": "Model"
+    },
+    {
+      "execution_claim": false,
+      "source": "third_party/dacapo/python/hecate/hecate/__init__.py",
+      "state": "declared_without_definition",
+      "symbol": "sigmoid"
+    },
+    {
+      "execution_claim": false,
+      "source": "third_party/dacapo/python/hecate/hecate/__init__.py",
+      "state": "declared_without_definition",
+      "symbol": "sqrt"
+    },
+    {
+      "execution_claim": false,
+      "source": "third_party/dacapo/python/hecate/hecate/__init__.py",
+      "state": "declared_without_definition",
+      "symbol": "inverse"
+    },
+    {
+      "execution_claim": false,
+      "source": "third_party/dacapo/python/hecate/hecate/__init__.py",
+      "state": "declared_without_definition",
+      "symbol": "sum"
+    },
+    {
+      "execution_claim": false,
+      "source": "third_party/dacapo/python/hecate/hecate/__init__.py",
+      "state": "declared_without_definition",
+      "symbol": "mean"
+    },
+    {
+      "execution_claim": false,
+      "source": "third_party/dacapo/python/hecate/hecate/__init__.py",
+      "state": "declared_without_definition",
+      "symbol": "variance"
+    },
+    {
+      "execution_claim": false,
+      "source": "third_party/dacapo/python/hecate/hecate/__init__.py",
+      "state": "statically_bound",
+      "symbol": "func"
+    },
+    {
+      "execution_claim": false,
+      "source": "third_party/dacapo/python/hecate/hecate/__init__.py",
+      "state": "declared_without_definition",
+      "symbol": "compile"
+    },
+    {
+      "execution_claim": false,
+      "source": "third_party/dacapo/python/hecate/hecate/__init__.py",
+      "state": "declared_without_definition",
+      "symbol": "dump"
+    },
+    {
+      "execution_claim": false,
+      "source": "third_party/dacapo/python/hecate/hecate/__init__.py",
+      "state": "declared_without_definition",
+      "symbol": "loadModule"
+    },
+    {
+      "execution_claim": false,
+      "source": "third_party/dacapo/python/hecate/hecate/__init__.py",
+      "state": "declared_without_definition",
+      "symbol": "getFunctionInfo"
+    },
+    {
+      "execution_claim": false,
+      "source": "third_party/dacapo/python/hecate/hecate/__init__.py",
+      "state": "declared_without_definition",
+      "symbol": "loadContext"
+    },
+    {
+      "execution_claim": false,
+      "source": "third_party/dacapo/python/hecate/hecate/__init__.py",
+      "state": "declared_without_definition",
+      "symbol": "encrypt"
+    },
+    {
+      "execution_claim": false,
+      "source": "third_party/dacapo/python/hecate/hecate/__init__.py",
+      "state": "declared_without_definition",
+      "symbol": "decrypt"
+    },
+    {
+      "execution_claim": false,
+      "source": "third_party/dacapo/python/hecate/hecate/__init__.py",
+      "state": "declared_without_definition",
+      "symbol": "toggleDebug"
+    },
+    {
+      "execution_claim": false,
+      "source": "third_party/dacapo/python/hecate/hecate/__init__.py",
+      "state": "declared_without_definition",
+      "symbol": "precision_cast"
+    },
+    {
+      "execution_claim": false,
+      "source": "third_party/dacapo/python/hecate/hecate/__init__.py",
+      "state": "declared_without_definition",
+      "symbol": "PlainMat"
+    },
+    {
+      "execution_claim": false,
+      "source": "third_party/dacapo/python/hecate/hecate/__init__.py",
+      "state": "declared_without_definition",
+      "symbol": "reduce"
+    },
+    {
+      "execution_claim": false,
+      "source": "third_party/dacapo/python/hecate/hecate/__init__.py",
+      "state": "declared_without_definition",
+      "symbol": "BackendType"
+    },
+    {
+      "execution_claim": false,
+      "source": "third_party/dacapo/python/hecate/hecate/__init__.py",
+      "state": "declared_without_definition",
+      "symbol": "setBound"
+    },
+    {
+      "execution_claim": false,
+      "source": "third_party/dacapo/python/hecate/hecate/__init__.py",
+      "state": "declared_without_definition",
+      "symbol": "load_mlir"
+    },
+    {
+      "execution_claim": false,
+      "source": "third_party/dacapo/python/hecate/hecate/__init__.py",
+      "state": "declared_without_definition",
+      "symbol": "pprint"
+    },
+    {
+      "execution_claim": false,
+      "source": "third_party/dacapo/python/hecate/hecate/__init__.py",
+      "state": "statically_bound",
+      "symbol": "hecate_dir"
+    },
+    {
+      "execution_claim": false,
+      "source": "third_party/dacapo/python/hecate/hecate/__init__.py",
+      "state": "statically_bound",
+      "symbol": "removeCtxt"
+    },
+    {
+      "execution_claim": false,
+      "source": "third_party/dacapo/python/hecate/hecate/__init__.py",
+      "state": "statically_bound",
+      "symbol": "Empty"
+    },
+    {
+      "execution_claim": false,
+      "source": "third_party/dacapo/python/hecate/hecate/__init__.py",
+      "state": "statically_bound",
+      "symbol": "bootstrap"
+    },
+    {
+      "execution_claim": false,
+      "source": "third_party/dacapo/python/hecate/hecate/__init__.py",
+      "state": "statically_bound",
+      "symbol": "save"
+    },
+    {
+      "execution_claim": false,
+      "source": "third_party/dacapo/python/hecate/hecate/__init__.py",
+      "state": "declared_without_definition",
+      "symbol": "SimFHE"
+    }
+  ],
+  "ledger_sha256": "f07d6fbb1f2c55022dcbc421a9e8082b446d3bdc34dff170ebd3f97352fb8851",
+  "limitation": "Static source/export audit; exported imported modules do not grant candidates arbitrary Python/NumPy/Torch access",
+  "original_api_inventory": 107,
+  "original_inventory_scope": "Named definitions in expr.py, Func.py, MPCB.py, Poly.py",
+  "paid_calls": 0,
+  "reference_models": [
+    {
+      "ast_sha256": "c9a86b70dbbca5a19d4335337822894cd71ba87f1d7f5fe80b04d0a9ed71c38a",
+      "candidate_callable": false,
+      "disposition": "reference_model_definition",
+      "end_line": 97,
+      "execution_claim": false,
+      "line": 17,
+      "source": "third_party/dacapo/python/poly/poly/models/AlexNet.py",
+      "symbol": "AlexNet.AlexNet"
+    },
+    {
+      "ast_sha256": "facf3539461c6b5bec272e8941af6fab9a4bcb97d0f198548330d6bdcf49a1a8",
+      "candidate_callable": false,
+      "disposition": "reference_model_definition",
+      "end_line": 101,
+      "execution_claim": false,
+      "line": 100,
+      "source": "third_party/dacapo/python/poly/poly/models/AlexNet.py",
+      "symbol": "AlexNet.alexnet"
+    },
+    {
+      "ast_sha256": "2031e2770fb0d739712743d257d45c6ce682cf1beca5952de19bba158c8ebc18",
+      "candidate_callable": false,
+      "disposition": "reference_model_definition",
+      "end_line": 24,
+      "execution_claim": false,
+      "line": 20,
+      "source": "third_party/dacapo/python/poly/poly/models/Lenet.py",
+      "symbol": "Lenet.Square"
+    },
+    {
+      "ast_sha256": "8e68bef13d5ef7db8feea01d65c94369d03921b0edefeab131144aff611f7adc",
+      "candidate_callable": false,
+      "disposition": "reference_model_definition",
+      "end_line": 103,
+      "execution_claim": false,
+      "line": 30,
+      "source": "third_party/dacapo/python/poly/poly/models/Lenet.py",
+      "symbol": "Lenet.CNNClassifier"
+    },
+    {
+      "ast_sha256": "4936625db193fd7eec8e69883227f4600600b8c645929effd5541cbe4c000d83",
+      "candidate_callable": false,
+      "disposition": "reference_model_definition",
+      "end_line": 40,
+      "execution_claim": false,
+      "line": 29,
+      "source": "third_party/dacapo/python/poly/poly/models/MobileNet.py",
+      "symbol": "MobileNet.BasicConv2d"
+    },
+    {
+      "ast_sha256": "d7a314a5e29141fc14358a38ea7159a7fd611099eb4ca3c14982d18c65289420",
+      "candidate_callable": false,
+      "disposition": "reference_model_definition",
+      "end_line": 55,
+      "execution_claim": false,
+      "line": 42,
+      "source": "third_party/dacapo/python/poly/poly/models/MobileNet.py",
+      "symbol": "MobileNet.DepthwiseConv2d"
+    },
+    {
+      "ast_sha256": "845ef716d5acae3160f75a4458bec92e0b6c3b373a740616b752a8a44fae31c9",
+      "candidate_callable": false,
+      "disposition": "reference_model_definition",
+      "end_line": 93,
+      "execution_claim": false,
+      "line": 58,
+      "source": "third_party/dacapo/python/poly/poly/models/MobileNet.py",
+      "symbol": "MobileNet.MobileNet"
+    },
+    {
+      "ast_sha256": "c10b45c2d22ee6014722f693f613a6a414a60ac5e81050eb8139840b0eabda62",
+      "candidate_callable": false,
+      "disposition": "reference_model_definition",
+      "end_line": 98,
+      "execution_claim": false,
+      "line": 97,
+      "source": "third_party/dacapo/python/poly/poly/models/MobileNet.py",
+      "symbol": "MobileNet.mobilenet"
+    },
+    {
+      "ast_sha256": "16a9166977187f8b49d81893d32d15a2be9141245bd439c175ea4401ff2d4acc",
+      "candidate_callable": false,
+      "disposition": "reference_model_definition",
+      "end_line": 16,
+      "execution_claim": false,
+      "line": 12,
+      "source": "third_party/dacapo/python/poly/poly/models/ResNet.py",
+      "symbol": "ResNet._weights_init"
+    },
+    {
+      "ast_sha256": "50ed87922d9f8ad527a96c32574cadfecf673b060a3b32bbb99d11f458ce6d52",
+      "candidate_callable": false,
+      "disposition": "reference_model_definition",
+      "end_line": 24,
+      "execution_claim": false,
+      "line": 18,
+      "source": "third_party/dacapo/python/poly/poly/models/ResNet.py",
+      "symbol": "ResNet.LambdaLayer"
+    },
+    {
+      "ast_sha256": "f809e57105b3a77781c60d0c6d57ed94bc27afcf5ddb27e053bf6fd7026ab656",
+      "candidate_callable": false,
+      "disposition": "reference_model_definition",
+      "end_line": 58,
+      "execution_claim": false,
+      "line": 27,
+      "source": "third_party/dacapo/python/poly/poly/models/ResNet.py",
+      "symbol": "ResNet.BasicBlock"
+    },
+    {
+      "ast_sha256": "62014971408d8336d09994d9d24a98b9a73e5f172f8657e765bac740f92f5a65",
+      "candidate_callable": false,
+      "disposition": "reference_model_definition",
+      "end_line": 95,
+      "execution_claim": false,
+      "line": 61,
+      "source": "third_party/dacapo/python/poly/poly/models/ResNet.py",
+      "symbol": "ResNet.ResNet"
+    },
+    {
+      "ast_sha256": "db5036e243070ec47b2ddb08e27a9a7a74e218ed8045f4dd3f39e55aacbd48dc",
+      "candidate_callable": false,
+      "disposition": "reference_model_definition",
+      "end_line": 99,
+      "execution_claim": false,
+      "line": 98,
+      "source": "third_party/dacapo/python/poly/poly/models/ResNet.py",
+      "symbol": "ResNet.resnet20"
+    },
+    {
+      "ast_sha256": "c6eadfdfbbf99af3e88dfebc751cc250de6d4bf51056e200a54c3198dba78e33",
+      "candidate_callable": false,
+      "disposition": "reference_model_definition",
+      "end_line": 103,
+      "execution_claim": false,
+      "line": 102,
+      "source": "third_party/dacapo/python/poly/poly/models/ResNet.py",
+      "symbol": "ResNet.resnet32"
+    },
+    {
+      "ast_sha256": "cc9247295fccce965b6218a9e891043c081d8f38ce10e97ac9e375a5f1a6a418",
+      "candidate_callable": false,
+      "disposition": "reference_model_definition",
+      "end_line": 107,
+      "execution_claim": false,
+      "line": 106,
+      "source": "third_party/dacapo/python/poly/poly/models/ResNet.py",
+      "symbol": "ResNet.resnet44"
+    },
+    {
+      "ast_sha256": "992e38e407474471ef3979eb1d1b048e6e15c0bed58119620f179d416573e378",
+      "candidate_callable": false,
+      "disposition": "reference_model_definition",
+      "end_line": 111,
+      "execution_claim": false,
+      "line": 110,
+      "source": "third_party/dacapo/python/poly/poly/models/ResNet.py",
+      "symbol": "ResNet.resnet56"
+    },
+    {
+      "ast_sha256": "3546636374cb5a82805a8b7642fb1d3f9aa34156a7f5775ab6fba427d7eedede",
+      "candidate_callable": false,
+      "disposition": "reference_model_definition",
+      "end_line": 115,
+      "execution_claim": false,
+      "line": 114,
+      "source": "third_party/dacapo/python/poly/poly/models/ResNet.py",
+      "symbol": "ResNet.resnet110"
+    },
+    {
+      "ast_sha256": "19f95cce09fabf93f42e19e3457e96456edc59af833cc43e22efc3334b3a571c",
+      "candidate_callable": false,
+      "disposition": "reference_model_definition",
+      "end_line": 119,
+      "execution_claim": false,
+      "line": 118,
+      "source": "third_party/dacapo/python/poly/poly/models/ResNet.py",
+      "symbol": "ResNet.resnet1202"
+    },
+    {
+      "ast_sha256": "661aba7259b16edda14897c488e3c0034aa2090542d778f5ab66fd79c215119c",
+      "candidate_callable": false,
+      "disposition": "reference_model_definition",
+      "end_line": 39,
+      "execution_claim": false,
+      "line": 28,
+      "source": "third_party/dacapo/python/poly/poly/models/SqueezeNet.py",
+      "symbol": "SqueezeNet.BasicConv2d"
+    },
+    {
+      "ast_sha256": "b011b7d0b937061d981b9eaaaff7f479c8080c76cc70bb720b0e5a6e83233b75",
+      "candidate_callable": false,
+      "disposition": "reference_model_definition",
+      "end_line": 56,
+      "execution_claim": false,
+      "line": 42,
+      "source": "third_party/dacapo/python/poly/poly/models/SqueezeNet.py",
+      "symbol": "SqueezeNet.Fire"
+    },
+    {
+      "ast_sha256": "ddea457918c70b768a84e7b728a99c25ab992b1b770af653af769a66428d8719",
+      "candidate_callable": false,
+      "disposition": "reference_model_definition",
+      "end_line": 122,
+      "execution_claim": false,
+      "line": 58,
+      "source": "third_party/dacapo/python/poly/poly/models/SqueezeNet.py",
+      "symbol": "SqueezeNet.SqueezeNet"
+    },
+    {
+      "ast_sha256": "db0aa8e1dc474e483f2d0767fc64921a10510fec890c28821aaf8fbbacf385e1",
+      "candidate_callable": false,
+      "disposition": "reference_model_definition",
+      "end_line": 125,
+      "execution_claim": false,
+      "line": 124,
+      "source": "third_party/dacapo/python/poly/poly/models/SqueezeNet.py",
+      "symbol": "SqueezeNet.squeezenet"
+    },
+    {
+      "ast_sha256": "992578c26fd81ae6304763826ba7268b7c2074d100ad345bf00f3b42fd359fe6",
+      "candidate_callable": false,
+      "disposition": "reference_model_definition",
+      "end_line": 28,
+      "execution_claim": false,
+      "line": 17,
+      "source": "third_party/dacapo/python/poly/poly/models/VGG16.py",
+      "symbol": "VGG16.BasicConv2d"
+    },
+    {
+      "ast_sha256": "58af9589327cfd05160f7a72bdf3c954e72c7683ef60df76fe4c3be1e734307f",
+      "candidate_callable": false,
+      "disposition": "reference_model_definition",
+      "end_line": 121,
+      "execution_claim": false,
+      "line": 31,
+      "source": "third_party/dacapo/python/poly/poly/models/VGG16.py",
+      "symbol": "VGG16.VGG16"
+    },
+    {
+      "ast_sha256": "da53de2953757f28e5e7e6b434f7ef4429c4bec3d2c131e8d0353d8aff80a447",
+      "candidate_callable": false,
+      "disposition": "reference_model_definition",
+      "end_line": 125,
+      "execution_claim": false,
+      "line": 124,
+      "source": "third_party/dacapo/python/poly/poly/models/VGG16.py",
+      "symbol": "VGG16.vgg16"
+    }
+  ],
+  "reviewed_package_python_files": 13,
+  "runner_sha256": "80ae2495805aa0100c650534c8b239a1c6ebb631bbfbb847110f2069aeca47f5",
+  "runtime_interfaces": [
+    {
+      "ast_sha256": "31cd5791a7e0b0b652301788df9121e0370dc4b281665f69d9558dfcf8692839",
+      "candidate_callable": false,
+      "disposition": "trusted_runtime_administration",
+      "end_line": 117,
+      "execution_claim": false,
+      "line": 73,
+      "reason": "Library/context/key/file/encrypt/decrypt/run/debug administration owned by trusted harness; not a generated DSL expression",
+      "source": "third_party/dacapo/python/hecate/hecate/runner.py",
+      "symbol": "runner.reinit_lw"
+    },
+    {
+      "ast_sha256": "63c77de16d021521e02179744a958a0733b8109b3cf30128d5512ccc79c05d9f",
+      "candidate_callable": false,
+      "disposition": "trusted_runtime_administration",
+      "end_line": 171,
+      "execution_claim": false,
+      "line": 123,
+      "reason": "Library/context/key/file/encrypt/decrypt/run/debug administration owned by trusted harness; not a generated DSL expression",
+      "source": "third_party/dacapo/python/hecate/hecate/runner.py",
+      "symbol": "runner.setLibnHW"
+    },
+    {
+      "ast_sha256": "e8e9925544f5669d003b3842da7a12d928202262bf598a583f377f0c1f2566cc",
+      "candidate_callable": false,
+      "disposition": "trusted_runtime_administration",
+      "end_line": 271,
+      "execution_claim": false,
+      "line": 174,
+      "reason": "Library/context/key/file/encrypt/decrypt/run/debug administration owned by trusted harness; not a generated DSL expression",
+      "source": "third_party/dacapo/python/hecate/hecate/runner.py",
+      "symbol": "runner.HEVM"
+    },
+    {
+      "ast_sha256": "7b4eee75480ba4d4be3cf077d2719fd6ac4389d699e9ebf79b618bb25e5747bb",
+      "candidate_callable": false,
+      "disposition": "trusted_runtime_administration",
+      "end_line": 202,
+      "execution_claim": false,
+      "line": 175,
+      "reason": "Library/context/key/file/encrypt/decrypt/run/debug administration owned by trusted harness; not a generated DSL expression",
+      "source": "third_party/dacapo/python/hecate/hecate/runner.py",
+      "symbol": "runner.HEVM.__init__"
+    },
+    {
+      "ast_sha256": "1b665a0b55034061b5c95df30ccd464c77dfb821d2343d9b5b62da5744a8aa75",
+      "candidate_callable": false,
+      "disposition": "trusted_runtime_administration",
+      "end_line": 221,
+      "execution_claim": false,
+      "line": 205,
+      "reason": "Library/context/key/file/encrypt/decrypt/run/debug administration owned by trusted harness; not a generated DSL expression",
+      "source": "third_party/dacapo/python/hecate/hecate/runner.py",
+      "symbol": "runner.HEVM.load"
+    },
+    {
+      "ast_sha256": "f682d2a2fd178dfbbfab84d06b7d474889292988898041ea5ad5a5cbb3d743ff",
+      "candidate_callable": false,
+      "disposition": "trusted_runtime_administration",
+      "end_line": 225,
+      "execution_claim": false,
+      "line": 223,
+      "reason": "Library/context/key/file/encrypt/decrypt/run/debug administration owned by trusted harness; not a generated DSL expression",
+      "source": "third_party/dacapo/python/hecate/hecate/runner.py",
+      "symbol": "runner.HEVM.run"
+    },
+    {
+      "ast_sha256": "31fb6d459caa3f25dc1560503cf0e3dd458b037dab2e71582d64d2384c7c6299",
+      "candidate_callable": false,
+      "disposition": "trusted_runtime_administration",
+      "end_line": 231,
+      "execution_claim": false,
+      "line": 227,
+      "reason": "Library/context/key/file/encrypt/decrypt/run/debug administration owned by trusted harness; not a generated DSL expression",
+      "source": "third_party/dacapo/python/hecate/hecate/runner.py",
+      "symbol": "runner.HEVM.setInput"
+    },
+    {
+      "ast_sha256": "6bbcf8f7b451af2d01960e9f5970fb93ce6a68ed8289e3c361cf4aa41723ff83",
+      "candidate_callable": false,
+      "disposition": "trusted_runtime_administration",
+      "end_line": 234,
+      "execution_claim": false,
+      "line": 233,
+      "reason": "Library/context/key/file/encrypt/decrypt/run/debug administration owned by trusted harness; not a generated DSL expression",
+      "source": "third_party/dacapo/python/hecate/hecate/runner.py",
+      "symbol": "runner.HEVM.setDebug"
+    },
+    {
+      "ast_sha256": "3d262230821ea898acbf9f0763d77fa5ab6ef9120f460da7168abf00d6dc6de8",
+      "candidate_callable": false,
+      "disposition": "trusted_runtime_administration",
+      "end_line": 237,
+      "execution_claim": false,
+      "line": 236,
+      "reason": "Library/context/key/file/encrypt/decrypt/run/debug administration owned by trusted harness; not a generated DSL expression",
+      "source": "third_party/dacapo/python/hecate/hecate/runner.py",
+      "symbol": "runner.HEVM.setToGPU"
+    },
+    {
+      "ast_sha256": "14645341ad8f2b6be28e23bf638180d433a7b88b7557df155b016ac929cdce20",
+      "candidate_callable": false,
+      "disposition": "trusted_runtime_administration",
+      "end_line": 254,
+      "execution_claim": false,
+      "line": 239,
+      "reason": "Library/context/key/file/encrypt/decrypt/run/debug administration owned by trusted harness; not a generated DSL expression",
+      "source": "third_party/dacapo/python/hecate/hecate/runner.py",
+      "symbol": "runner.HEVM.getOutput"
+    },
+    {
+      "ast_sha256": "7bd733903ba1e712aea97ec09d0986f4ecc2466ab3114a421d193cafd01f2adb",
+      "candidate_callable": false,
+      "disposition": "trusted_runtime_administration",
+      "end_line": 271,
+      "execution_claim": false,
+      "line": 256,
+      "reason": "Library/context/key/file/encrypt/decrypt/run/debug administration owned by trusted harness; not a generated DSL expression",
+      "source": "third_party/dacapo/python/hecate/hecate/runner.py",
+      "symbol": "runner.HEVM.printer"
+    }
+  ],
+  "source_hashes": {
+    "third_party/dacapo/python/hecate/hecate/__init__.py": "6f67ec3852486e75fc467eea7cdadc89953254072a74522038930900f347dd82",
+    "third_party/dacapo/python/hecate/hecate/expr.py": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+    "third_party/dacapo/python/hecate/hecate/runner.py": "25b58772d8abc82c6739757ac41cd1145f0a5bdf778ce288cd3d5ca55661fab4",
+    "third_party/dacapo/python/poly/poly/Func.py": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+    "third_party/dacapo/python/poly/poly/MPCB.py": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+    "third_party/dacapo/python/poly/poly/Poly.py": "0b0815a056c9946b2235b5660fde671bcba2ea2376a078ca8bf3cf91a284bbf7",
+    "third_party/dacapo/python/poly/poly/__init__.py": "f03cd272bdf8b07ee5fca1d76a61d9cbc94fd5243c8731a8e45776d886b61c55",
+    "third_party/dacapo/python/poly/poly/data/coeffStr.txt": "30fc9ac1244dedb9985d248046eb8e498f4e8a1616e08329afd258ad912ec701",
+    "third_party/dacapo/python/poly/poly/data/sgn151527.txt": "944cd56c292a8bfd2b6fc62af72b025faf60f4e862329ae443e27c007ee6b244",
+    "third_party/dacapo/python/poly/poly/data/tree15.txt": "9962d3bb1245e55dd3fd98686fe50ff53c695aa89dd8d508074cc3754a7c66fa",
+    "third_party/dacapo/python/poly/poly/data/tree27.txt": "97bbb1d3ddf8c43a654d7322cd310830101b536360fa0fad5d9d452d5a5f8477",
+    "third_party/dacapo/python/poly/poly/data/treeStr.txt": "c8fd9cb979aca6c4d36d0bfe779d6d16aff3ea6b0fd2f18b37baa85b8c2dd0fd",
+    "third_party/dacapo/python/poly/poly/models/AlexNet.py": "bd391b0e2bd17561233677f3769e42c2afafc72cfbb0f9f23c82239bf264c6d4",
+    "third_party/dacapo/python/poly/poly/models/Lenet.py": "06cc34c77b91d427cf77c161c55d060247d8c6c922fb171f53683b2f9d52191e",
+    "third_party/dacapo/python/poly/poly/models/MobileNet.py": "07479c21a7657920c99b08d7017a574be563a55b48f09ee9f247f830e9a9285d",
+    "third_party/dacapo/python/poly/poly/models/ResNet.py": "c72240eb23641314cf07436dfe92561be870b278be9ef9cc35ef9133edeeb2a3",
+    "third_party/dacapo/python/poly/poly/models/SqueezeNet.py": "8f529063f5c0c37f5d4f992d7a8b8635fd40028a46fa978a07f5cb795477c7a9",
+    "third_party/dacapo/python/poly/poly/models/VGG16.py": "ce87bbcdb1e5400619fd0cd9ddfa5df04e418fd94b2f22648a79600cf6c83d05"
+  },
+  "unknown_executable_helper_definitions": [],
+  "whole_python_support": false
+}

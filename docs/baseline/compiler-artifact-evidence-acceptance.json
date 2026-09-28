@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "stage": "compiler-evidence-r19",
+  "checkout": "/home/lhohy/Code/Poseidon",
+  "platform": "aarch64-linux",
+  "branch": "lhy-agent-dsl",
+  "runtime_source_sha256": "b2b3bb14098e64740f52f03b68acf9fdf99e85a4b0befd396646ca72b6eb14fa",
+  "frozen_release": "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/semantic-v1-compiler-r19",
+  "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/compiler-evidence-r19-final.json",
+  "report_sha256": "c04ecc464eb5e1ceee31722e2f32990f6dd7a2241c8dd4de3cb3520de5d398ff",
+  "coverage_sha256": "7e681a9547485e3af2c54d6dfa9144f13197ddfc2fea37ba48da1a71a03ea554",
+  "checker_sources": {
+    "scripts/baseline/compiler_artifact_evidence.py": "23d269549aa9bd254e2ab7a52aa2bd3f8fc6b18329381e94024278d0ffe541f5",
+    "scripts/baseline/compiler_evidence_cli.py": "17aeac085b84399743731677bac4bfd370c61524842cabdb2e8f8bf6d431fc27"
+  },
+  "audited_executions": 35,
+  "numerical_passed": 34,
+  "numerical_failed": 1,
+  "observed_execution_counts": {
+    "compiler.modswitch": 35,
+    "compiler.relinearization": 10,
+    "compiler.rescale": 19,
+    "compiler.rotation_keys": 26,
+    "compiler.security_parameters": 35
+  },
+  "unit": {
+    "passed": 34,
+    "failed": 0,
+    "skipped": 0
+  },
+  "actual_compile": false,
+  "new_encrypted_executions": 0,
+  "agent_calls": 0,
+  "all_input_proof": false,
+  "default_w40_precision_resolved": false
+}

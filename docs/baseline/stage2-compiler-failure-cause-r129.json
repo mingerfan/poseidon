@@ -1,0 +1,70 @@
+{
+  "binding": "32de5d918e35e73a42fa2b11550292beb902fce4eefa76ab3af90e15517e3159",
+  "confirmed": "Pinned MulOp inference rejects the retained operand types by the scale/level budget predicate; shapes and operand levels match.",
+  "format": "poseidon-static-compiler-failure-cause-r129",
+  "inference": "Sequential Chebyshev recurrence in generated candidate plausibly consumes excessive depth; alternative legal expression viability needs separate evidence.",
+  "limitations": [
+    "This is a static reconstruction of the predicate applied to actual compiler diagnostics, not a new compile or FHE run.",
+    "Does not prove the mathematical model impossible under this backend.",
+    "No proposal to raise security/level limits or replace the generated answer."
+  ],
+  "new_encrypted_executions": 0,
+  "new_paid_calls": 0,
+  "operations": [
+    {
+      "attempt": 2,
+      "configured_bound": 780,
+      "lhs": {
+        "kind": "pl",
+        "level": 13,
+        "scale": 45,
+        "shape": 1
+      },
+      "lhs_budget": 825,
+      "log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-fkdv0l8s/attempt-02/compile.log",
+      "rejected_predicate": "upper_bound * rescale_factor >= lhs.level * rescale_factor + lhs.scale",
+      "rhs": {
+        "kind": "ci",
+        "level": 13,
+        "scale": 75,
+        "shape": 1
+      },
+      "sha256": "9b522a7e617bdef4494d0d14ee956b7fffacc369ccb6a9f880590ad32bc0aef4"
+    },
+    {
+      "attempt": 3,
+      "configured_bound": 780,
+      "lhs": {
+        "kind": "ci",
+        "level": 12,
+        "scale": 75,
+        "shape": 1
+      },
+      "lhs_budget": 795,
+      "log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-fkdv0l8s/attempt-03/compile.log",
+      "rejected_predicate": "upper_bound * rescale_factor >= lhs.level * rescale_factor + lhs.scale",
+      "rhs": {
+        "kind": "pl",
+        "level": 12,
+        "scale": 45,
+        "shape": 1
+      },
+      "sha256": "23e57391add15323cab478443a61c119cc686a843ed96d1944f82f62d4183619"
+    }
+  ],
+  "parents": {
+    "/home/lhohy/Code/Poseidon/third_party/dacapo/lib/Dialect/Earth/IR/EarthDialect.cpp": "f022d4668e0bfac7e9389a54573836c66422dbd015fc857804f14ec6d3bd6a9c",
+    "/home/lhohy/Code/Poseidon/third_party/dacapo/profiled_SEAL_CPU.json": "ab53faeac14298e846a4ea8e9b2cbfaef4469a6b03ba25b80f37c79387fd246e",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-fkdv0l8s/report.json": "daa4cb156a2f016ab4a486dfb9c3afc324616964fefadde02ef4fde07c050c39",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-fkdv0l8s/request.json": "d0e4e91ac243ee697a3ef69219d0e255aea097cc0dcbea37a488b65a0921e3e4"
+  },
+  "profile_hash_matches_frozen_request": true,
+  "rescaling_factor": 60,
+  "source_predicate_lines": [
+    324,
+    333
+  ],
+  "stage2_complete": false,
+  "task": "free_supplement_semantic_context_89458ebf15d877d81d6b8b2d",
+  "upper_bound": 13
+}

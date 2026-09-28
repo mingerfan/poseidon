@@ -1,0 +1,33 @@
+{
+  "active_queue": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-remaining-queue-r131",
+  "binding": "b9b5fb6aaada4869f37927fb894b63c33f3a07764aa7b0e5cd8937f92691a436",
+  "commit_or_push": false,
+  "counts": {
+    "failed": 48,
+    "launched_unconfirmed": 29,
+    "not_run": 1180,
+    "passed": 746,
+    "running_verified": 10,
+    "terminal_pending_audit": 17
+  },
+  "format": "poseidon-stage2-progress-r132",
+  "installs": false,
+  "investigations": [
+    "stage2-unconfirmed-review-r132.json",
+    "stage2-compiler-second-failure-cause-r132.json"
+  ],
+  "note": "New paid execution continues only within the existing authorized queue. Investigation itself made no paid calls and did not modify candidate outputs.",
+  "partition_states": {
+    "backend_blocked": 3,
+    "current_compiler_contexts_passed": 5,
+    "designated_contexts_passed": 25,
+    "incomplete_agent_contexts": 352,
+    "static_controls_separate": 16
+  },
+  "runtime_source_sha256": "80738a33351d8c532cd8e4b032de63cc6785d6e5cf8a349f78e52aab5fffd58e",
+  "session": 2315,
+  "source_runtime_changes": false,
+  "stage2_complete": false,
+  "summary": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-remaining-progress-r132.json",
+  "summary_sha256": "f9602cecf05e45a5406ef5e9738b22e293c4982d1ede91f81f669e4377a10575"
+}

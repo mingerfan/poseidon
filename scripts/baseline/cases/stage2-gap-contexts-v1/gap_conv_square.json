@@ -1,0 +1,99 @@
+{
+  "format": "poseidon-operator-graph-v1",
+  "id": "gap_conv_square",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        1,
+        3,
+        3
+      ]
+    }
+  ],
+  "constants": {
+    "weight": [
+      [
+        [
+          [
+            0.1,
+            0.2,
+            0.1
+          ],
+          [
+            0.2,
+            0.3,
+            0.2
+          ],
+          [
+            0.1,
+            0.2,
+            0.1
+          ]
+        ]
+      ]
+    ]
+  },
+  "nodes": [
+    {
+      "id": "base",
+      "op": "conv2d",
+      "inputs": [
+        "x",
+        "weight"
+      ],
+      "attrs": {
+        "stride": [
+          2,
+          2
+        ],
+        "padding": [
+          1,
+          1
+        ],
+        "dilation": [
+          1,
+          1
+        ],
+        "groups": 1
+      },
+      "outputs": [
+        "base_v"
+      ]
+    },
+    {
+      "id": "context",
+      "op": "square",
+      "inputs": [
+        "base_v"
+      ],
+      "attrs": {},
+      "outputs": [
+        "y"
+      ]
+    },
+    {
+      "id": "reduce",
+      "op": "mean",
+      "inputs": [
+        "y"
+      ],
+      "attrs": {
+        "axes": [
+          -2,
+          -1
+        ],
+        "keepdims": false
+      },
+      "outputs": [
+        "out"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output",
+      "value": "out"
+    }
+  ]
+}

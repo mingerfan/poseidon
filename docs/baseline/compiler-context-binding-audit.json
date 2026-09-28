@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "tests_passed": 6,
+  "failed": 0,
+  "skipped": 0,
+  "exit_code": 0,
+  "requirements": 5,
+  "contexts_per_requirement": 3,
+  "unique_prior_execution_records": 7,
+  "new_encrypted_executions": 0,
+  "paid_calls": 0,
+  "files": {
+    "scripts/baseline/benchmarks/tools/test_compiler_context_bindings.py": "3adff2a35a4dec13d9ceb331014ea35ab531bddcf5274d072a59dfa8332bad55",
+    "scripts/baseline/benchmarks/tools/bind_compiler_context_examples.py": "1ae27ca4737cf135f00051bda347f1831b11029e656f147a2a3fecf2ba7d634b",
+    "scripts/baseline/benchmarks/compiler-contexts-draft-v2/examples.json": "4f24c27630da7d82cfd3eeec911eeaee8993c7a14a4968beab44cafef901fec9"
+  },
+  "log_sha256": "b9462e8e3849e17a0c98f4c2bbc7549c6429769c5011299d90ef1bc216f305c5"
+}

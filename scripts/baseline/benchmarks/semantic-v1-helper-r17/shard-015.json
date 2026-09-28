@@ -1,0 +1,7231 @@
+{
+  "rows": [
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c3": [
+            0.03125,
+            0.03125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0240",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c2",
+              "c3"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n3",
+            "inputs": [
+              "n0v0",
+              "n2v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n3v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n4",
+            "inputs": [
+              "input2"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n4v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n5",
+            "inputs": [
+              "n3v0",
+              "n4v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n5v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n5v0"
+          },
+          {
+            "name": "output1",
+            "value": "n0v0"
+          },
+          {
+            "name": "output2",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "d2ee553af4296b82d68320f0d8fa97291655a9ff395b1670fc887f047d345012",
+      "reference_status": "unverified",
+      "signature": "5106f5b73e7e0da5a9b399316f3802eac2dd4699b776b1eba1d5dcb2f29c765f",
+      "split": "validation",
+      "topology": "124ab9fadf8a1c044e6655c1c5c6ac8d9a6dbd0926467ebe34303d2e221a1fbf"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c3": [
+            0.03125,
+            0.03125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0241",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input3",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c2",
+              "c3"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n3",
+            "inputs": [
+              "n0v0",
+              "n2v0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n3v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n4",
+            "inputs": [
+              "input2"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n4v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n5",
+            "inputs": [
+              "n3v0",
+              "n4v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n5v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n6",
+            "inputs": [
+              "input3"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n6v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n7",
+            "inputs": [
+              "n5v0",
+              "n6v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n7v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n7v0"
+          }
+        ]
+      },
+      "model_sha256": "a98e7d7a8daf79209a1309149b3ad51aa007e7bfae7837ebc98d64ef989e6a93",
+      "reference_status": "unverified",
+      "signature": "2421377c8d13f179df8f8f1979fdb018f71545238bee3ae10b0efe7486cf5f5e",
+      "split": "development",
+      "topology": "2b20e010721d0a82d7890b0ef85aad8c1ca39688a7be5a28d845af55a6b13d2b"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c3": [
+            0.03125,
+            0.03125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0242",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c2",
+              "c3"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n3",
+            "inputs": [
+              "n0v0",
+              "n2v0"
+            ],
+            "op": "multiply",
+            "outputs": [
+              "n3v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n3v0"
+          }
+        ]
+      },
+      "model_sha256": "0d7ef398d1d65fcc18baac1e93f44e26be2061b5d19f1b1b9ac6d2b54aba1f0f",
+      "reference_status": "unverified",
+      "signature": "b5f629d03fcb53c3e8d4e5cdd4199f7e3fa6dfeac584218b4563cc7aa536e9a5",
+      "split": "development",
+      "topology": "4b427c3d0e3f5c6f9c64e046ecb67a03b7992128de9719d1b2fb489a3f3c0a31"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c3": [
+            0.03125,
+            0.03125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0243",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c2",
+              "c3"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": 0
+            },
+            "id": "n3",
+            "inputs": [
+              "n0v0",
+              "n2v0"
+            ],
+            "op": "concat",
+            "outputs": [
+              "n3v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n4",
+            "inputs": [
+              "input2"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n4v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n5",
+            "inputs": [
+              "n3v0",
+              "n4v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n5v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": -1,
+              "sections": [
+                1,
+                3
+              ]
+            },
+            "id": "n6",
+            "inputs": [
+              "n5v0"
+            ],
+            "op": "split",
+            "outputs": [
+              "n6v0",
+              "n6v1"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": -1
+            },
+            "id": "n7",
+            "inputs": [
+              "n6v1",
+              "n6v0"
+            ],
+            "op": "concat",
+            "outputs": [
+              "n7v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n7v0"
+          },
+          {
+            "name": "output1",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "d53f5c73b7c496031223d5a587d008a3fdcc203eebe4220694bd922c5bcdc8ee",
+      "reference_status": "unverified",
+      "signature": "515e2f78fec01b87faab8699d15e6c7aa3d752fa7050438f4f793d1f59b48bf9",
+      "split": "holdout",
+      "topology": "9549d6642c790ff0097fb78926a05fd2d2f6fd4fc0c31e581f06f8b66d8aa287"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c3": [
+            0.03125,
+            0.03125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0244",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input3",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c2",
+              "c3"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": 0
+            },
+            "id": "n3",
+            "inputs": [
+              "n0v0",
+              "n2v0"
+            ],
+            "op": "stack",
+            "outputs": [
+              "n3v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n4",
+            "inputs": [
+              "input2"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n4v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n5",
+            "inputs": [
+              "n3v0",
+              "n4v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n5v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n6",
+            "inputs": [
+              "input3"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n6v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n7",
+            "inputs": [
+              "n5v0",
+              "n6v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n7v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n7v0"
+          }
+        ]
+      },
+      "model_sha256": "b85c8844fe0a297bbef4c188f8b8c77a6a03e829878c0550773cc3303b7ac841",
+      "reference_status": "unverified",
+      "signature": "eaf7ad4eb8e97643a98e280604353c1028d4439c2db06e19ac20192689695f91",
+      "split": "development",
+      "topology": "99b20c9111f0ebe264cf862e0e570b71b206a3af7ea04c9d9269b515653bb325"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c3": [
+            0.03125,
+            0.03125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0245",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1"
+            ],
+            "op": "square",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c2",
+              "c3"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n3",
+            "inputs": [
+              "n0v0",
+              "n2v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n3v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n3v0"
+          },
+          {
+            "name": "output1",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "dbbb8dc534aee3581e076f62158846e5550f04b657e12fa47cc0845df6c8417e",
+      "reference_status": "unverified",
+      "signature": "fba128b394468cfb1160f95139088526204955cf433f98d4b9b33de5db3fb1f9",
+      "split": "holdout",
+      "topology": "7eb18636f569daa73660be029fb89bcb72e183f02c2f260e2f5f000896ecbc82"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c3": [
+            0.03125,
+            0.03125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0246",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1"
+            ],
+            "op": "square",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c2",
+              "c3"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n3",
+            "inputs": [
+              "n0v0",
+              "n2v0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n3v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n4",
+            "inputs": [
+              "input2"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n4v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n5",
+            "inputs": [
+              "n3v0",
+              "n4v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n5v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n5v0"
+          },
+          {
+            "name": "output1",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "e64395041a7ef878b328cc9cdf8b2526e6261ce219b866d44827c4f9b53a0950",
+      "reference_status": "unverified",
+      "signature": "74ad0d996b069346578460a11c529bd82a856ba851dada977db390d560e36648",
+      "split": "development",
+      "topology": "440a4efb996f4229b5f7c6e69b77fa225eccfa0bd6f753f5f397f0bca28b9ba4"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c3": [
+            0.03125,
+            0.03125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0247",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input3",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1"
+            ],
+            "op": "square",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c2",
+              "c3"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n3",
+            "inputs": [
+              "n0v0",
+              "n2v0"
+            ],
+            "op": "multiply",
+            "outputs": [
+              "n3v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n4",
+            "inputs": [
+              "input2"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n4v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n5",
+            "inputs": [
+              "n3v0",
+              "n4v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n5v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n6",
+            "inputs": [
+              "input3"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n6v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n7",
+            "inputs": [
+              "n5v0",
+              "n6v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n7v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n7v0"
+          }
+        ]
+      },
+      "model_sha256": "956aad47bc6b0f1ac3dd4190bf0e157610bafb664d9c480a9dd53dad2b78762b",
+      "reference_status": "unverified",
+      "signature": "f0c9b08ba41eb0f6df472c44a0281d4eebbf656b608cdc9396fd1338e5a54142",
+      "split": "validation",
+      "topology": "9aa5757afc8294947d399c8299c7f693538ca7a170175a65363dc4e8b67de7f9"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c3": [
+            0.03125,
+            0.03125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0248",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1"
+            ],
+            "op": "square",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c2",
+              "c3"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": 0
+            },
+            "id": "n3",
+            "inputs": [
+              "n0v0",
+              "n2v0"
+            ],
+            "op": "concat",
+            "outputs": [
+              "n3v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n3v0"
+          }
+        ]
+      },
+      "model_sha256": "0f4b0d550e75116f333d25b602f7a8423c08d4f4c1829d1c8182fd9494ca4ecb",
+      "reference_status": "unverified",
+      "signature": "3a30b2a9edb1efe24b513f5302d0bf1aaf853dd00d3be7c1610ed33bf461355b",
+      "split": "holdout",
+      "topology": "a138bb1dab6d9719590d589ab9aae473586aa1e5704f33739f322b36b3f191a8"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c3": [
+            0.03125,
+            0.03125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0249",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1"
+            ],
+            "op": "square",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c2",
+              "c3"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": 0
+            },
+            "id": "n3",
+            "inputs": [
+              "n0v0",
+              "n2v0"
+            ],
+            "op": "stack",
+            "outputs": [
+              "n3v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n4",
+            "inputs": [
+              "input2"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n4v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n5",
+            "inputs": [
+              "n3v0",
+              "n4v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n5v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n5v0"
+          },
+          {
+            "name": "output1",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "ec262431af2a700c2fb735399eca41cdaa3747e03b96d3cc90cff96c59d9b253",
+      "reference_status": "unverified",
+      "signature": "55216341d606a8bd2449e1e1e1f0954d464235766166112b356a1589a3e366f8",
+      "split": "development",
+      "topology": "ba048508e817a05f3d1e5d4c33ba104b00185704aecad25f8276439ebec8183f"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c3": [
+            0.0625,
+            0.0625
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0250",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input3",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1",
+              "c2",
+              "c3"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n0v0",
+              "n1v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n3",
+            "inputs": [
+              "input2"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n3v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n4",
+            "inputs": [
+              "n2v0",
+              "n3v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n4v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n5",
+            "inputs": [
+              "input3"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n5v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n6",
+            "inputs": [
+              "n4v0",
+              "n5v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n6v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": -1,
+              "sections": [
+                1,
+                1
+              ]
+            },
+            "id": "n7",
+            "inputs": [
+              "n6v0"
+            ],
+            "op": "split",
+            "outputs": [
+              "n7v0",
+              "n7v1"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": -1
+            },
+            "id": "n8",
+            "inputs": [
+              "n7v1",
+              "n7v0"
+            ],
+            "op": "concat",
+            "outputs": [
+              "n8v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n8v0"
+          },
+          {
+            "name": "output1",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "32d8b282d611cd4c88abad456856c1a194e1ffa10d473fb831ba810971312e43",
+      "reference_status": "unverified",
+      "signature": "895f620f0be63fa1a688bbcc7071eee3ed723879bd6fbbc7575c38bf4e1f394a",
+      "split": "validation",
+      "topology": "92899dc368a34aae367e8856936213bca2e4df71c8b83d41a0c6663ab1ebc40b"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c3": [
+            0.0625,
+            0.0625
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0251",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1",
+              "c2",
+              "c3"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n0v0",
+              "n1v0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "1925f47acfd81546da0c072692f584465ddaec15b966833680253b94fac53d79",
+      "reference_status": "unverified",
+      "signature": "4ab25d7ebc002e57639bb9e319680253a634271097eefb72e813db9a13946a86",
+      "split": "validation",
+      "topology": "98ad5a2f84b4fce6788ee525de17be5757f878ad981b8f05313b3512eeeeafa5"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c3": [
+            0.0625,
+            0.0625
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0252",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1",
+              "c2",
+              "c3"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n0v0",
+              "n1v0"
+            ],
+            "op": "multiply",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n3",
+            "inputs": [
+              "input2"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n3v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n4",
+            "inputs": [
+              "n2v0",
+              "n3v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n4v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n4v0"
+          },
+          {
+            "name": "output1",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "bbf9529b2192a14d0562ed341fb1de1b85b4d0a0576c59e6c065da0b2e9f3a6e",
+      "reference_status": "unverified",
+      "signature": "783a8f8f6010ca72ef1aa43da973117338c6a736a4d8a31be0477cff0733f2ef",
+      "split": "development",
+      "topology": "30e2b59c8a661fcd50b65d43d0fe461bf9919e3877728591013e0ff4d0dc9aef"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c3": [
+            0.0625,
+            0.0625
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0253",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input3",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1",
+              "c2",
+              "c3"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": 0
+            },
+            "id": "n2",
+            "inputs": [
+              "n0v0",
+              "n1v0"
+            ],
+            "op": "concat",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n3",
+            "inputs": [
+              "input2"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n3v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n4",
+            "inputs": [
+              "n2v0",
+              "n3v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n4v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n5",
+            "inputs": [
+              "input3"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n5v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n6",
+            "inputs": [
+              "n4v0",
+              "n5v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n6v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n6v0"
+          }
+        ]
+      },
+      "model_sha256": "4e92ca3fefe3f79a39945358f0d9a8c37ec8806319551b936bc1f6e4ec0bd57f",
+      "reference_status": "unverified",
+      "signature": "00b634de14ffae6e415e0037fab3355334019222d5d46fdb7fbe50ec8d64bb19",
+      "split": "validation",
+      "topology": "a270b7d5b35cfd3af8dbae4ecbf72b5d4936ce7e6d3bb9c81108d70e2fcaafe2"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c3": [
+            0.0625,
+            0.0625
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0254",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1",
+              "c2",
+              "c3"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": 0
+            },
+            "id": "n2",
+            "inputs": [
+              "n0v0",
+              "n1v0"
+            ],
+            "op": "stack",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "d8e9fedcfc1082a006b8a512402280283299940feed772ed0165062f01ac3506",
+      "reference_status": "unverified",
+      "signature": "a34e8bfe51b5bfa9c88cd114639176c86fc793d4111fc2224395871af781ba28",
+      "split": "validation",
+      "topology": "85028a85ced90efe0d5d20437539506584bc868cd2388efb310c5100b5952fbc"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            0.125
+          ],
+          "c3": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c4": [
+            0.03125,
+            0.03125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0255",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1",
+              "c2"
+            ],
+            "op": "add",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c3",
+              "c4"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n3",
+            "inputs": [
+              "n0v0",
+              "n2v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n3v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n4",
+            "inputs": [
+              "input2"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n4v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n5",
+            "inputs": [
+              "n3v0",
+              "n4v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n5v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n5v0"
+          },
+          {
+            "name": "output1",
+            "value": "n0v0"
+          },
+          {
+            "name": "output2",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "d53e82feeddb7acf117f9aa648fa1e3059137497efc0e44816c24d2af615fe0c",
+      "reference_status": "unverified",
+      "signature": "2308df0a5c278412b57fd3582a4adaf241c0b8e2f5b0ac1e0a8836c72f6086b0",
+      "split": "validation",
+      "topology": "5c156de7298752cfd664ad8c003e12ea7dc1c0f96a3e960feb71800182ecacdb"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            0.125
+          ],
+          "c3": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c4": [
+            0.03125,
+            0.03125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0256",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input3",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1",
+              "c2"
+            ],
+            "op": "add",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c3",
+              "c4"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n3",
+            "inputs": [
+              "n0v0",
+              "n2v0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n3v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n4",
+            "inputs": [
+              "input2"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n4v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n5",
+            "inputs": [
+              "n3v0",
+              "n4v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n5v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n6",
+            "inputs": [
+              "input3"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n6v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n7",
+            "inputs": [
+              "n5v0",
+              "n6v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n7v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n7v0"
+          }
+        ]
+      },
+      "model_sha256": "50e46c95fcdf1ccfa3822331e1076137327a12ffa8e28c3baa3404a3f7793a26",
+      "reference_status": "unverified",
+      "signature": "c255df93fbcfaa07a152278c172427cf3f58e4fed88e5d743ad3de4dfb006dbf",
+      "split": "holdout",
+      "topology": "cc2f5fcd4d8b8684fdc575850b980a60a019145d4f5f9031e58b47e4c3b77cd6"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            0.125
+          ],
+          "c3": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c4": [
+            0.03125,
+            0.03125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0257",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1",
+              "c2"
+            ],
+            "op": "add",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c3",
+              "c4"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n3",
+            "inputs": [
+              "n0v0",
+              "n2v0"
+            ],
+            "op": "multiply",
+            "outputs": [
+              "n3v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": -1,
+              "sections": [
+                1,
+                1
+              ]
+            },
+            "id": "n4",
+            "inputs": [
+              "n3v0"
+            ],
+            "op": "split",
+            "outputs": [
+              "n4v0",
+              "n4v1"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": -1
+            },
+            "id": "n5",
+            "inputs": [
+              "n4v1",
+              "n4v0"
+            ],
+            "op": "concat",
+            "outputs": [
+              "n5v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n5v0"
+          }
+        ]
+      },
+      "model_sha256": "5ce0b04920e55015d6bce674121f44a999e330db2cb33a7c41b02e93bd507008",
+      "reference_status": "unverified",
+      "signature": "7dd1b1359232f66f9e7ff5b094ee041447628555342ba9e8893a7b98567d6a28",
+      "split": "holdout",
+      "topology": "6aee312eb229b90cc6f6ec1e2d36d3aae501e6b007547d877acad2a025f1d72d"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            0.125
+          ],
+          "c3": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c4": [
+            0.03125,
+            0.03125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0258",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1",
+              "c2"
+            ],
+            "op": "add",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c3",
+              "c4"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": 0
+            },
+            "id": "n3",
+            "inputs": [
+              "n0v0",
+              "n2v0"
+            ],
+            "op": "concat",
+            "outputs": [
+              "n3v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n4",
+            "inputs": [
+              "input2"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n4v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n5",
+            "inputs": [
+              "n3v0",
+              "n4v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n5v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n5v0"
+          },
+          {
+            "name": "output1",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "536e3ffa777844e1841df3f21c69ae8e01352a8e9afc1f20eb22a30bc4893f99",
+      "reference_status": "unverified",
+      "signature": "d21e55873806dcedf63ee408626d3cec3b0f5ad394619dfbecba999871e5e3e2",
+      "split": "validation",
+      "topology": "fc5a877452a5cdea7ac356f0a7ede31ea0806a802d2e59fc1385363e31bd6bd4"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            0.125
+          ],
+          "c3": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c4": [
+            0.03125,
+            0.03125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0259",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input3",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1",
+              "c2"
+            ],
+            "op": "add",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c3",
+              "c4"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": 0
+            },
+            "id": "n3",
+            "inputs": [
+              "n0v0",
+              "n2v0"
+            ],
+            "op": "stack",
+            "outputs": [
+              "n3v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n4",
+            "inputs": [
+              "input2"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n4v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n5",
+            "inputs": [
+              "n3v0",
+              "n4v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n5v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n6",
+            "inputs": [
+              "input3"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n6v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n7",
+            "inputs": [
+              "n5v0",
+              "n6v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n7v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n7v0"
+          }
+        ]
+      },
+      "model_sha256": "ad545853dda2dca8ad0b6f1f4d92b71e6956f0070ef855647f22eec1989dce32",
+      "reference_status": "unverified",
+      "signature": "2557110ba0d4a41eeb30b8e30b06ffd3f742866539e5d087d8004909e8a81c13",
+      "split": "validation",
+      "topology": "b5687ada900d497e7a7c8fd44d439a49bea59a0c1fb7ef3e1cded1963b822cf7"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            0.125
+          ],
+          "c3": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c4": [
+            0.03125,
+            0.03125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0260",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1",
+              "c2"
+            ],
+            "op": "multiply",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c3",
+              "c4"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n3",
+            "inputs": [
+              "n0v0",
+              "n2v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n3v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n3v0"
+          },
+          {
+            "name": "output1",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "02596890e2b72e3898fa6fb61d00d2c795358675f9bd8ba003c96c744390fd43",
+      "reference_status": "unverified",
+      "signature": "52ef9d335990ab364cfaec4827a40532d07ef023239a0e20aa53a589454be00d",
+      "split": "development",
+      "topology": "5e1a87b345fbb26593382b405305b4f57a4178b75977b567cb5b70c8b71b37c9"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            0.125
+          ],
+          "c3": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c4": [
+            0.03125,
+            0.03125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0261",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1",
+              "c2"
+            ],
+            "op": "multiply",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c3",
+              "c4"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n3",
+            "inputs": [
+              "n0v0",
+              "n2v0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n3v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n4",
+            "inputs": [
+              "input2"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n4v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n5",
+            "inputs": [
+              "n3v0",
+              "n4v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n5v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n5v0"
+          },
+          {
+            "name": "output1",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "b0a3c62cae2de7cf5d38b34ef4bf30b22c487cb987912f7376622ed6167d5b00",
+      "reference_status": "unverified",
+      "signature": "4317cd110a2c9fb5b6587a90087ddd8063f99491675df0236c8b1775756545e8",
+      "split": "development",
+      "topology": "884d304319002e3e615bf29112cb4194163be96ff57075e2db6dc7ff97cf5f97"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            0.125
+          ],
+          "c3": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c4": [
+            0.03125,
+            0.03125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0262",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input3",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1",
+              "c2"
+            ],
+            "op": "multiply",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c3",
+              "c4"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n3",
+            "inputs": [
+              "n0v0",
+              "n2v0"
+            ],
+            "op": "multiply",
+            "outputs": [
+              "n3v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n4",
+            "inputs": [
+              "input2"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n4v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n5",
+            "inputs": [
+              "n3v0",
+              "n4v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n5v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n6",
+            "inputs": [
+              "input3"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n6v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n7",
+            "inputs": [
+              "n5v0",
+              "n6v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n7v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n7v0"
+          }
+        ]
+      },
+      "model_sha256": "ef226f806d36654ed65df05c3054bc2fc3d39dd82a4e3c042467294aaa4192b6",
+      "reference_status": "unverified",
+      "signature": "9f5d27ff57373b16afd970928e547ce0058e47a856a1597711dfce1c8fe9abc2",
+      "split": "holdout",
+      "topology": "37a8e2b958ce1dc5dd7843f8a181c1a688631720d42e81a843d8685691cd7457"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            0.125
+          ],
+          "c3": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c4": [
+            0.03125,
+            0.03125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0263",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1",
+              "c2"
+            ],
+            "op": "multiply",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c3",
+              "c4"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": 0
+            },
+            "id": "n3",
+            "inputs": [
+              "n0v0",
+              "n2v0"
+            ],
+            "op": "concat",
+            "outputs": [
+              "n3v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n3v0"
+          }
+        ]
+      },
+      "model_sha256": "09fee0ba13dd1044c4ec71643f7f0154564dd13b4edc5d4e2f4a942258308aa6",
+      "reference_status": "unverified",
+      "signature": "e2b1b340d3a1fffc263edb5cf2be39bf67f620a8613a32dd8b14121ec6549ee5",
+      "split": "holdout",
+      "topology": "bc27bb8ae3a6a960a42f81517abb39e071148f506afca5e636621ee452fb8e10"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            0.125
+          ],
+          "c3": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c4": [
+            0.03125,
+            0.03125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0264",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1",
+              "c2"
+            ],
+            "op": "multiply",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c3",
+              "c4"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": 0
+            },
+            "id": "n3",
+            "inputs": [
+              "n0v0",
+              "n2v0"
+            ],
+            "op": "stack",
+            "outputs": [
+              "n3v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n4",
+            "inputs": [
+              "input2"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n4v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n5",
+            "inputs": [
+              "n3v0",
+              "n4v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n5v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": -1,
+              "sections": [
+                1,
+                1
+              ]
+            },
+            "id": "n6",
+            "inputs": [
+              "n5v0"
+            ],
+            "op": "split",
+            "outputs": [
+              "n6v0",
+              "n6v1"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": -1
+            },
+            "id": "n7",
+            "inputs": [
+              "n6v1",
+              "n6v0"
+            ],
+            "op": "concat",
+            "outputs": [
+              "n7v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n7v0"
+          },
+          {
+            "name": "output1",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "dd6248a8c433fc641b89a048c35797022b09249b573fe18a9a26be242e0408f8",
+      "reference_status": "unverified",
+      "signature": "fe3957fd44eb74d07152fe02660fedda74aa6916ec2c3ca97c7fc9c6cdfbdfd1",
+      "split": "development",
+      "topology": "3f5ec8e2e67c45ac0d0789525087e21a182d301ef8abb2ae37293ed885156e5e"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            0.0625,
+            -0.125,
+            0.03125,
+            0.015625
+          ],
+          "c3": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c4": [
+            0.03125,
+            0.03125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0265",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input3",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "basis": "power"
+            },
+            "id": "n1",
+            "inputs": [
+              "input1",
+              "c2"
+            ],
+            "op": "polynomial",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c3",
+              "c4"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n3",
+            "inputs": [
+              "n0v0",
+              "n2v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n3v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n4",
+            "inputs": [
+              "input2"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n4v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n5",
+            "inputs": [
+              "n3v0",
+              "n4v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n5v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n6",
+            "inputs": [
+              "input3"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n6v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n7",
+            "inputs": [
+              "n5v0",
+              "n6v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n7v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n7v0"
+          },
+          {
+            "name": "output1",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "96c8a7bc13cf0c798f763997e5a5d44bb902507c4c32d5fa0bfff1179ac99d18",
+      "reference_status": "unverified",
+      "signature": "b80bb89fadccc290af759ec87bd7f735c9e18e92bb04b34c73f9c793d4cf7e28",
+      "split": "validation",
+      "topology": "57b6c5e7b2ee16e9e1232611b2faf969b598f9d8fb0c5ba5e314923f92444be3"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            0.0625,
+            -0.125,
+            0.03125,
+            0.015625
+          ],
+          "c3": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c4": [
+            0.03125,
+            0.03125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0266",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "basis": "power"
+            },
+            "id": "n1",
+            "inputs": [
+              "input1",
+              "c2"
+            ],
+            "op": "polynomial",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c3",
+              "c4"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n3",
+            "inputs": [
+              "n0v0",
+              "n2v0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n3v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n3v0"
+          }
+        ]
+      },
+      "model_sha256": "b53b6ad1eafe5026575307460d9a42929ab73ff19e9cb362fce572e758a7b6f4",
+      "reference_status": "unverified",
+      "signature": "d4fb01c22531fd10db1bc174ec0a842925de3e593f0bf8b2a32829a683069847",
+      "split": "validation",
+      "topology": "ff19b1bab09297bcf9609294b51df43a48dc56344d5bcb8db30ad68c178bc84a"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            0.0625,
+            -0.125,
+            0.03125,
+            0.015625
+          ],
+          "c3": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c4": [
+            0.03125,
+            0.03125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0267",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "basis": "power"
+            },
+            "id": "n1",
+            "inputs": [
+              "input1",
+              "c2"
+            ],
+            "op": "polynomial",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c3",
+              "c4"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n3",
+            "inputs": [
+              "n0v0",
+              "n2v0"
+            ],
+            "op": "multiply",
+            "outputs": [
+              "n3v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n4",
+            "inputs": [
+              "input2"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n4v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n5",
+            "inputs": [
+              "n3v0",
+              "n4v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n5v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n5v0"
+          },
+          {
+            "name": "output1",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "147244efefd2930c4f4ff0e57572a4c5ef8f906620f36bbb93941595e8f954f4",
+      "reference_status": "unverified",
+      "signature": "32a228e37822040932ee6490917f3779b200a6e222a5762aafcb953fe2519042",
+      "split": "holdout",
+      "topology": "9c70ea2f528efd025306b49050ff3394181ac7a3796daf046a1c83d9572c5c20"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            0.0625,
+            -0.125,
+            0.03125,
+            0.015625
+          ],
+          "c3": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c4": [
+            0.03125,
+            0.03125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0268",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input3",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "basis": "power"
+            },
+            "id": "n1",
+            "inputs": [
+              "input1",
+              "c2"
+            ],
+            "op": "polynomial",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c3",
+              "c4"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": 0
+            },
+            "id": "n3",
+            "inputs": [
+              "n0v0",
+              "n2v0"
+            ],
+            "op": "concat",
+            "outputs": [
+              "n3v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n4",
+            "inputs": [
+              "input2"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n4v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n5",
+            "inputs": [
+              "n3v0",
+              "n4v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n5v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n6",
+            "inputs": [
+              "input3"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n6v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n7",
+            "inputs": [
+              "n5v0",
+              "n6v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n7v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n7v0"
+          }
+        ]
+      },
+      "model_sha256": "2b769616b2706d615c4eecae1e123a790894c793a7db6962efa368bbe58894cc",
+      "reference_status": "unverified",
+      "signature": "40439bb95203a456011cc15e4878ca063785f868225eff66d18998c31fc2088d",
+      "split": "holdout",
+      "topology": "03bbb8bdcb64fcd022e5ba79f72ba0061992530ec06f95b52083d2b1ddb32efd"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            0.0625,
+            -0.125,
+            0.03125,
+            0.015625
+          ],
+          "c3": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c4": [
+            0.03125,
+            0.03125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0269",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "basis": "power"
+            },
+            "id": "n1",
+            "inputs": [
+              "input1",
+              "c2"
+            ],
+            "op": "polynomial",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c3",
+              "c4"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": 0
+            },
+            "id": "n3",
+            "inputs": [
+              "n0v0",
+              "n2v0"
+            ],
+            "op": "stack",
+            "outputs": [
+              "n3v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n3v0"
+          }
+        ]
+      },
+      "model_sha256": "a406968956b4d7bba1070771f037d212eb3460d1c85c2e52a97767d61d30848d",
+      "reference_status": "unverified",
+      "signature": "2e9d01af0e1e134136bae6a67ae407b6f8381d41ce03309ab246cf77b6d99ee0",
+      "split": "holdout",
+      "topology": "1dbc4e8294dfb009d48bec3e81dd7e52bd31752eb838d2d853ba0f53b8d92d97"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0270",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n0v0",
+              "n1v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n3",
+            "inputs": [
+              "input2"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n3v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n4",
+            "inputs": [
+              "n2v0",
+              "n3v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n4v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n4v0"
+          },
+          {
+            "name": "output1",
+            "value": "n0v0"
+          },
+          {
+            "name": "output2",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "92c98c462f6f64ac9f7f7f01586ec4c0f0b0284d7a17642da76cb4d2837dcfaf",
+      "reference_status": "unverified",
+      "signature": "709c185b4b57df2c8839ca3ef8ebd5e3422b03858524b619a4d03dcac61ca16b",
+      "split": "validation",
+      "topology": "9b5ce564c4a0c088b1fe9e399c57866b7b9ca1a23535fc2e1aaf5ec4734322c5"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0271",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input3",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n0v0",
+              "n1v0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n3",
+            "inputs": [
+              "input2"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n3v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n4",
+            "inputs": [
+              "n2v0",
+              "n3v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n4v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n5",
+            "inputs": [
+              "input3"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n5v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n6",
+            "inputs": [
+              "n4v0",
+              "n5v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n6v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": -1,
+              "sections": [
+                1,
+                2
+              ]
+            },
+            "id": "n7",
+            "inputs": [
+              "n6v0"
+            ],
+            "op": "split",
+            "outputs": [
+              "n7v0",
+              "n7v1"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": -1
+            },
+            "id": "n8",
+            "inputs": [
+              "n7v1",
+              "n7v0"
+            ],
+            "op": "concat",
+            "outputs": [
+              "n8v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n8v0"
+          }
+        ]
+      },
+      "model_sha256": "ebfb9b4e8024701bb387b887c9f59f5ff43cb5f9152c339580ab15799d85f119",
+      "reference_status": "unverified",
+      "signature": "6106ecb3de37020e74f8c00f5322264247142ac579a6aeda851b8569e50c3110",
+      "split": "validation",
+      "topology": "74f85bab9ba70811504d3da8bd0a3b95b9af4fed4fbf4bd2728867aa4a2fc09a"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0272",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n0v0",
+              "n1v0"
+            ],
+            "op": "multiply",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "2575f065ec5f255925f28bf3ce9c5e25f7193ec9749b279ffecd6c11f4c02568",
+      "reference_status": "unverified",
+      "signature": "9ccd5491a22ac7be2d1fc0f20be3bbe126f43c73115edbc614a57c159460a49c",
+      "split": "development",
+      "topology": "ce105ea76d5849d0c14c14b4b76f6c770fa5e546faf257c4415edf23f38e8856"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0273",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": 0
+            },
+            "id": "n2",
+            "inputs": [
+              "n0v0",
+              "n1v0"
+            ],
+            "op": "concat",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n3",
+            "inputs": [
+              "input2"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n3v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n4",
+            "inputs": [
+              "n2v0",
+              "n3v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n4v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n4v0"
+          },
+          {
+            "name": "output1",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "0bf790a07cd0cb8e3c63f588baf8e7597f0a7f553872465db1b0eb6f5008d84c",
+      "reference_status": "unverified",
+      "signature": "95b9127e456de1b8a2d3ccf50b9f669de04189fb9726b3690f44d2d0dc3b591e",
+      "split": "holdout",
+      "topology": "19018f38ac6a762c9ffa9eb4f97960d21cc2317956e08888fbbc42af9f496c4a"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0274",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input3",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": 0
+            },
+            "id": "n2",
+            "inputs": [
+              "n0v0",
+              "n1v0"
+            ],
+            "op": "stack",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n3",
+            "inputs": [
+              "input2"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n3v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n4",
+            "inputs": [
+              "n2v0",
+              "n3v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n4v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n5",
+            "inputs": [
+              "input3"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n5v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n6",
+            "inputs": [
+              "n4v0",
+              "n5v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n6v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n6v0"
+          }
+        ]
+      },
+      "model_sha256": "4c9158af6adae07d2358b9db6edf9cb5ed351ccf8cc1c7dd600f731dd5771b43",
+      "reference_status": "unverified",
+      "signature": "5cf2eb509404b0b59581f5ba434c0d924f3310687a5b039a9089c72d0a88ec0d",
+      "split": "holdout",
+      "topology": "9fb647dce64772c4c4fabd9bb2e47a96482aa27aa4b3c70b0fc7b9754f4af8b8"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0275",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1"
+            ],
+            "op": "square",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n0v0",
+              "n1v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          },
+          {
+            "name": "output1",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "255b3bafe48b1737c655de4b8127dc1076a599ad858d6157565d23d7a6231ac3",
+      "reference_status": "unverified",
+      "signature": "57a97b8f5554d9aba5f1888c3c12c11a2bc86d494e8c2237551ad376de55eeaf",
+      "split": "development",
+      "topology": "97d89b94f4b7b05d2e9dd5373f38855a03d091d4aa01b8f4ba161562a1594b77"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0276",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1"
+            ],
+            "op": "square",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n0v0",
+              "n1v0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n3",
+            "inputs": [
+              "input2"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n3v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n4",
+            "inputs": [
+              "n2v0",
+              "n3v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n4v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n4v0"
+          },
+          {
+            "name": "output1",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "04b4440f6cc7a50759952a9ec40846d827f9bcac596e1120caca12aa155788ab",
+      "reference_status": "unverified",
+      "signature": "77a5a1202f523a128c8da43c353ef97f679e9779d0fd2db366fdc334d59151d9",
+      "split": "validation",
+      "topology": "7fdd0fdc6fe90eedc1a737f04f34f99497241b85302e0b739e3fdcdb02adfb15"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0277",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input3",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1"
+            ],
+            "op": "square",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n0v0",
+              "n1v0"
+            ],
+            "op": "multiply",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n3",
+            "inputs": [
+              "input2"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n3v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n4",
+            "inputs": [
+              "n2v0",
+              "n3v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n4v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n5",
+            "inputs": [
+              "input3"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n5v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n6",
+            "inputs": [
+              "n4v0",
+              "n5v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n6v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n6v0"
+          }
+        ]
+      },
+      "model_sha256": "49d1693f4fe3f99020f246ccdd4579dfb94ab21c25df4c76dccb3cd2d3f3ac4b",
+      "reference_status": "unverified",
+      "signature": "ce16d2afc29769c3a8f47f893fdb7817ea34fd912d26bbdefb7ab5dd12ae3dfe",
+      "split": "development",
+      "topology": "0c62ab0037e7b3a61960eace3bcc5bc49a9e74f2161272613e4e035d611e6638"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0278",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1"
+            ],
+            "op": "square",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": 0
+            },
+            "id": "n2",
+            "inputs": [
+              "n0v0",
+              "n1v0"
+            ],
+            "op": "concat",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": -1,
+              "sections": [
+                1,
+                5
+              ]
+            },
+            "id": "n3",
+            "inputs": [
+              "n2v0"
+            ],
+            "op": "split",
+            "outputs": [
+              "n3v0",
+              "n3v1"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": -1
+            },
+            "id": "n4",
+            "inputs": [
+              "n3v1",
+              "n3v0"
+            ],
+            "op": "concat",
+            "outputs": [
+              "n4v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n4v0"
+          }
+        ]
+      },
+      "model_sha256": "99ee6810c8bab22d3808b40d280e62b324b858cf3bbb9e36277822a3d91938c5",
+      "reference_status": "unverified",
+      "signature": "f811237e64d0166a8da29150fdbe89a1b58b455b73ec91ffc6ce3634dd6de9db",
+      "split": "holdout",
+      "topology": "3f09b1fccee9435465129bde568793af373737be662b12bfec89e87c26e1dab0"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0279",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1"
+            ],
+            "op": "square",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": 0
+            },
+            "id": "n2",
+            "inputs": [
+              "n0v0",
+              "n1v0"
+            ],
+            "op": "stack",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n3",
+            "inputs": [
+              "input2"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n3v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n4",
+            "inputs": [
+              "n2v0",
+              "n3v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n4v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n4v0"
+          },
+          {
+            "name": "output1",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "e8d1408af3f19ced4dd41b8bb3d6db9407ef36628dec91e58ca38f072e398ef6",
+      "reference_status": "unverified",
+      "signature": "29412e407c4582da89e22d461f2ba262aa4767968c7c2f47f70bee34370e35c6",
+      "split": "holdout",
+      "topology": "9e8323b700a3de589c87cf7201e90f638f707d1eaa4b089e1e9de91e9bc1746a"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ],
+          "c1": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c2": [
+            0.0625,
+            0.0625
+          ],
+          "c3": [
+            [
+              -0.125,
+              -0.03125
+            ],
+            [
+              0.09375,
+              -0.09375
+            ],
+            [
+              0.03125,
+              0.125
+            ]
+          ],
+          "c4": [
+            0.03125,
+            0.03125,
+            0.03125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0280",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input3",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1",
+              "c1",
+              "c2"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c3",
+              "c4"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n3",
+            "inputs": [
+              "n0v0",
+              "n2v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n3v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n4",
+            "inputs": [
+              "input2"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n4v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n5",
+            "inputs": [
+              "n3v0",
+              "n4v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n5v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n6",
+            "inputs": [
+              "input3"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n6v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n7",
+            "inputs": [
+              "n5v0",
+              "n6v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n7v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n7v0"
+          },
+          {
+            "name": "output1",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "74d2524accaa292cff558ad8103b6fba92123e61edb2719d9e5f853c1c888897",
+      "reference_status": "unverified",
+      "signature": "8c09c4b0b9fae28832ac9bc8f277bc463fb55448ea8fa6e7c23bd70da29c91e2",
+      "split": "validation",
+      "topology": "3dd7719f29c03ce89c4184cbd1604fea814e28fa8c4dc80535597ed1aa3def5f"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ],
+          "c1": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c2": [
+            0.0625,
+            0.0625
+          ],
+          "c3": [
+            [
+              -0.125,
+              -0.03125
+            ],
+            [
+              0.09375,
+              -0.09375
+            ],
+            [
+              0.03125,
+              0.125
+            ]
+          ],
+          "c4": [
+            0.03125,
+            0.03125,
+            0.03125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0281",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1",
+              "c1",
+              "c2"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c3",
+              "c4"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n3",
+            "inputs": [
+              "n0v0",
+              "n2v0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n3v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n3v0"
+          }
+        ]
+      },
+      "model_sha256": "5ba771e3e8ed5bef0937a8a883318ddf52446ea78662873693248e9d22d5084e",
+      "reference_status": "unverified",
+      "signature": "e2c7c09810b039ec76aee3e7e05479216a940054794441dba613075e924620f5",
+      "split": "validation",
+      "topology": "c196a0d01447a7ff5a969d3269ca64e9b85be7f00473f80656af13a8dc5bb553"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ],
+          "c1": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c2": [
+            0.0625,
+            0.0625
+          ],
+          "c3": [
+            [
+              -0.125,
+              -0.03125
+            ],
+            [
+              0.09375,
+              -0.09375
+            ],
+            [
+              0.03125,
+              0.125
+            ]
+          ],
+          "c4": [
+            0.03125,
+            0.03125,
+            0.03125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0282",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1",
+              "c1",
+              "c2"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c3",
+              "c4"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n3",
+            "inputs": [
+              "n0v0",
+              "n2v0"
+            ],
+            "op": "multiply",
+            "outputs": [
+              "n3v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n4",
+            "inputs": [
+              "input2"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n4v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n5",
+            "inputs": [
+              "n3v0",
+              "n4v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n5v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n5v0"
+          },
+          {
+            "name": "output1",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "7a2ae78853c628566ecd60b368663045cb740036e511509bf8167d1e6ce0ba39",
+      "reference_status": "unverified",
+      "signature": "e3c3f59138521764edda5ea8905b15692cd7ab0f8141e03e977b6e131501842a",
+      "split": "holdout",
+      "topology": "368a47a42043d2faf83e67d3e3cf81a638bb2be7188d4fd8cbbfed79fb95788a"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ],
+          "c1": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c2": [
+            0.0625,
+            0.0625
+          ],
+          "c3": [
+            [
+              -0.125,
+              -0.03125
+            ],
+            [
+              0.09375,
+              -0.09375
+            ],
+            [
+              0.03125,
+              0.125
+            ]
+          ],
+          "c4": [
+            0.03125,
+            0.03125,
+            0.03125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0283",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input3",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1",
+              "c1",
+              "c2"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c3",
+              "c4"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": 0
+            },
+            "id": "n3",
+            "inputs": [
+              "n0v0",
+              "n2v0"
+            ],
+            "op": "concat",
+            "outputs": [
+              "n3v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n4",
+            "inputs": [
+              "input2"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n4v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n5",
+            "inputs": [
+              "n3v0",
+              "n4v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n5v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n6",
+            "inputs": [
+              "input3"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n6v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n7",
+            "inputs": [
+              "n5v0",
+              "n6v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n7v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n7v0"
+          }
+        ]
+      },
+      "model_sha256": "32d222b9bd7a92d0b53284b3beb728fa34ab37b3bfcdde64ffc0620176e31b59",
+      "reference_status": "unverified",
+      "signature": "e1bee78a108c3714a3efc6942ac3c873c8c04a39f1d83e8cee34770ad593b1cc",
+      "split": "holdout",
+      "topology": "9b512225cce8399d93506d1c99c549b9f39efde795b77becf085d7a492ed4119"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ],
+          "c1": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ]
+          ],
+          "c2": [
+            0.0625,
+            0.0625
+          ],
+          "c3": [
+            [
+              -0.125,
+              -0.03125
+            ],
+            [
+              0.09375,
+              -0.09375
+            ],
+            [
+              0.03125,
+              0.125
+            ]
+          ],
+          "c4": [
+            0.03125,
+            0.03125,
+            0.03125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0284",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1",
+              "c1",
+              "c2"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c3",
+              "c4"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": 0
+            },
+            "id": "n3",
+            "inputs": [
+              "n0v0",
+              "n2v0"
+            ],
+            "op": "stack",
+            "outputs": [
+              "n3v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n3v0"
+          }
+        ]
+      },
+      "model_sha256": "8e7134ed492dab0b0926627da948135beaf61f15162564f905de26a48e9af8d0",
+      "reference_status": "unverified",
+      "signature": "b6fab8a9ba04d66c31ec83b333a0093fcff8e25b1ab2ed7f48c441fdcbf59885",
+      "split": "development",
+      "topology": "8d444a08a2eb54d57047f4936749dc552c5dc0a577e274c1e000bea6a5a49dd5"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ],
+          "c1": [
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0285",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1",
+              "c1"
+            ],
+            "op": "add",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n0v0",
+              "n1v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n3",
+            "inputs": [
+              "input2"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n3v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n4",
+            "inputs": [
+              "n2v0",
+              "n3v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n4v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": -1,
+              "sections": [
+                1,
+                2
+              ]
+            },
+            "id": "n5",
+            "inputs": [
+              "n4v0"
+            ],
+            "op": "split",
+            "outputs": [
+              "n5v0",
+              "n5v1"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": -1
+            },
+            "id": "n6",
+            "inputs": [
+              "n5v1",
+              "n5v0"
+            ],
+            "op": "concat",
+            "outputs": [
+              "n6v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n6v0"
+          },
+          {
+            "name": "output1",
+            "value": "n0v0"
+          },
+          {
+            "name": "output2",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "a825ff5909eb5c6c8656ca8a3fcd914d9b03a5bf60672069903d3b23614f6cde",
+      "reference_status": "unverified",
+      "signature": "00e692bae701fb7d7bc2fef8ca13267a1c4cf0d0259550071f921a3c52460fb2",
+      "split": "holdout",
+      "topology": "c5a889f4b8439c8bfe72703bfe399a8b2a9353953be6ccec3816c319ab797ce4"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ],
+          "c1": [
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0286",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input3",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1",
+              "c1"
+            ],
+            "op": "add",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n0v0",
+              "n1v0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n3",
+            "inputs": [
+              "input2"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n3v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n4",
+            "inputs": [
+              "n2v0",
+              "n3v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n4v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n5",
+            "inputs": [
+              "input3"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n5v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n6",
+            "inputs": [
+              "n4v0",
+              "n5v0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n6v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n6v0"
+          }
+        ]
+      },
+      "model_sha256": "6e4fa443aa4c7f618af3de6323d67307e27312180758cace602b42ae5559007c",
+      "reference_status": "unverified",
+      "signature": "0a1a67c4128467ff52399052ca06c154a07d93b34215983124b6f224aef34adb",
+      "split": "validation",
+      "topology": "18928bc258128b7b94ac04bb82214637302e6243a633b71be3a50d42e2d86560"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "graph",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ],
+          "c1": [
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_graph_0287",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              3
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1",
+              "c1"
+            ],
+            "op": "add",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n0v0",
+              "n1v0"
+            ],
+            "op": "multiply",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "22485998d8571af1f9c56791498182dcd6ec40c44ede4745d67e10fb6f64b069",
+      "reference_status": "unverified",
+      "signature": "d23d6a6538ec0762f579177468fddd827cfa1c67ea7ba12a27a832519cf88dc0",
+      "split": "development",
+      "topology": "8675d1f02a1c2bee1cf9e7d9be973258a9d0684b5f6d0e8c6210b6580d993cfb"
+    }
+  ],
+  "version": "poseidon-semantic-benchmark-v1"
+}

@@ -17,7 +17,13 @@ MAX_RANGE=128
 MAX_NODES=4096
 MAX_INTEGER=1048576
 
-def expand(tree, constants, *, scalar_augmented=False):
+def expand(tree, constants, *, scalar_augmented=False, upstream_helpers=False, upstream_request=None):
+    require(type(upstream_helpers) is bool,'Invalid upstream capability flag')
+    if upstream_helpers:
+        from upstream_candidate_helpers import dispatch_specs
+        trusted=set(dispatch_specs(upstream_request))
+    else:
+        trusted=set()
     require(type(tree) is ast.Module and all(type(n) is ast.FunctionDef for n in tree.body),
             'Native loops require top-level function declarations')
     require(len(list(ast.walk(tree)))<=MAX_NODES,'Native loop source node bound')
@@ -32,7 +38,7 @@ def expand(tree, constants, *, scalar_augmented=False):
         require(type(node) in allowed,'Unsupported native loop syntax')
         if type(node) is ast.Call:
             if type(node.func) is ast.Name:
-                require(node.func.id in declared|{'range'} and not node.keywords,
+                require(node.func.id in declared|trusted|{'range'} and not node.keywords,
                         'Unknown/keyword native loop call')
             else:
                 require(type(node.func) is ast.Attribute,'Unsupported native loop callable')
@@ -47,7 +53,7 @@ def expand(tree, constants, *, scalar_augmented=False):
         if type(node) is ast.Attribute:
             require(node.attr in (*storage.METHODS,'rotate','array','func','T'),
                     'Unsupported native loop attribute')
-    forbidden=set(constants)|declared|{'hc','np','object','range','zero_ct'}
+    forbidden=set(constants)|declared|trusted|{'hc','np','object','range','zero_ct'}
     result=copy.deepcopy(tree)
     records=[]; iterations=0; expanded_nodes=0
 

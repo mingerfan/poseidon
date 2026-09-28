@@ -1,0 +1,71 @@
+{
+  "format": "poseidon-offline-case-list-v1",
+  "cases": [
+    {
+      "id": "gap_capacity64_negate",
+      "file": "gap_capacity64_negate.json",
+      "sha256": "695984f7e917bd58e221298465be1b269635d6acdd892f123aa1882feb07e7dc",
+      "core_model_sha256": "de8173a5c6a3e531df92c41d0a9f0d9208ad1cba73cbb624d27696ba7fae8efb",
+      "topology": "5f1f56a39f1f77293eaad292adc9638573cf6a59964fdcfbeee4d51a6d191843"
+    },
+    {
+      "id": "gap_capacity64_square",
+      "file": "gap_capacity64_square.json",
+      "sha256": "25c3e922f68ce84ec5823bd79727a775897f16f851fb7fca10bd884fcb1b42a7",
+      "core_model_sha256": "d79c16febb4c5890f466f6ea4758adef4928258614fc0fafdb9b8f07a4327ef6",
+      "topology": "034e23a1490baa206e5bada139f39c012525863422d44f8964445e5f710ea430"
+    },
+    {
+      "id": "gap_capacity64_residual",
+      "file": "gap_capacity64_residual.json",
+      "sha256": "3cb2692cbeddee1fe1decad03478a01428aa9014a414014a87aea5d0f0a16eca",
+      "core_model_sha256": "e08398ddece3de765ad1f94cbefc0704a2c5ddf8d8dbe6604f7cac2f7cd8a532",
+      "topology": "8a8386cdbabe9b5b215430d2874d6d492865c551ce7e68db7a3e0d7d8fd5b5b1"
+    },
+    {
+      "id": "gap_capacity128_negate",
+      "file": "gap_capacity128_negate.json",
+      "sha256": "d8907dd7c3a3d916e4c210f0e38cd28b414bfd1d706918e606b84dc30ca5ebdd",
+      "core_model_sha256": "5a7dc9f823906a20251e238f84025395cbd841bf31720279ff8f55d0761c3b11",
+      "topology": "5f1f56a39f1f77293eaad292adc9638573cf6a59964fdcfbeee4d51a6d191843"
+    },
+    {
+      "id": "gap_capacity128_square",
+      "file": "gap_capacity128_square.json",
+      "sha256": "be64840a3777aaf576b3778a83fd09e0eb54b9406f2bd8697a5b83c9eec313a3",
+      "core_model_sha256": "0a6c9f0372bf2840c69bfa9a92e5e1efaef48dd4ce7fd313fb64c2d9958e66c0",
+      "topology": "034e23a1490baa206e5bada139f39c012525863422d44f8964445e5f710ea430"
+    },
+    {
+      "id": "gap_capacity128_residual",
+      "file": "gap_capacity128_residual.json",
+      "sha256": "6f0af639eea102cf93ef1536cae5d41a9bcd156df5c63b37bce2620f269f13e3",
+      "core_model_sha256": "0b2d890352f35560572e05b7cdeb5688199b6161442d5b7b48f5227a7b37829d",
+      "topology": "8a8386cdbabe9b5b215430d2874d6d492865c551ce7e68db7a3e0d7d8fd5b5b1"
+    },
+    {
+      "id": "gap_capacity256_negate",
+      "file": "gap_capacity256_negate.json",
+      "sha256": "76636aee4870d0c0303d416d1680c3d97af92a121576512a264505f6aadd091e",
+      "core_model_sha256": "3f656241299f9ec83983b99fb477a8b224b653a6c912fcb402c69228ba79590f",
+      "topology": "5f1f56a39f1f77293eaad292adc9638573cf6a59964fdcfbeee4d51a6d191843"
+    },
+    {
+      "id": "gap_capacity256_square",
+      "file": "gap_capacity256_square.json",
+      "sha256": "53ad9e76209a3e77576111bed3e739f06d765086584ab2562f6c6baf83fb7655",
+      "core_model_sha256": "a492c4660117800cc39432c7aff2f8cf4bac6037f2d16ae78fb5933d7d586169",
+      "topology": "034e23a1490baa206e5bada139f39c012525863422d44f8964445e5f710ea430"
+    },
+    {
+      "id": "gap_capacity256_residual",
+      "file": "gap_capacity256_residual.json",
+      "sha256": "71f66b45c64bcf6a8f9606b98aa3c5c598e72fee4eda7587c88b414692653bec",
+      "core_model_sha256": "687a467d574640a52e744dc5b630e4c69e2b70462c30e89cfc6666568fb87370",
+      "topology": "8a8386cdbabe9b5b215430d2874d6d492865c551ce7e68db7a3e0d7d8fd5b5b1"
+    }
+  ],
+  "original_cases_replaced": false,
+  "original_corpus_count": 1200,
+  "purpose": "Additional semantic contexts; original failures remain unresolved tasks"
+}

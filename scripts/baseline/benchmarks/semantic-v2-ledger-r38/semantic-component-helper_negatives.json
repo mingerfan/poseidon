@@ -1,0 +1,691 @@
+{
+  "actual_frontend_executed": false,
+  "encrypted_execution": false,
+  "fixtures": [
+    {
+      "expected_rejection": "No reachable upstream helper: HE_SiLU",
+      "id": "upstream_silu_frozen_0__omit_HE_SiLU",
+      "omitted_helper": "HE_SiLU",
+      "positive_task_id": "upstream_silu_frozen_0",
+      "positive_task_sha256": "c4399f4cb61ccf45e1d7ccc055119d9d49e34bb341f5e615c319de77c10765f3",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_SiLU",
+      "id": "upstream_silu_nested_native__omit_HE_SiLU",
+      "omitted_helper": "HE_SiLU",
+      "positive_task_id": "upstream_silu_nested_native",
+      "positive_task_sha256": "ada0bf836e426b7f853f9a91997f3d1157d5188dd469dcbe3d34669f334af778",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_SiLU",
+      "id": "upstream_silu_shared_rotation__omit_HE_SiLU",
+      "omitted_helper": "HE_SiLU",
+      "positive_task_id": "upstream_silu_shared_rotation",
+      "positive_task_sha256": "bab34b91ebdfe1a9e8c18d60a3324ae440a0638d2b90434e23a7cb7ce8f40ef7",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_BN0",
+      "id": "upstream_bn_asymmetric_0__omit_HE_BN0",
+      "omitted_helper": "HE_BN0",
+      "positive_task_id": "upstream_bn_asymmetric_0",
+      "positive_task_sha256": "d7da2f40043735b36222476a68de631de030435f02a8d4316eae2a9fb77cf859",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_BN0",
+      "id": "upstream_bn_multi_residual__omit_HE_BN0",
+      "omitted_helper": "HE_BN0",
+      "positive_task_id": "upstream_bn_multi_residual",
+      "positive_task_sha256": "2b2397a408bc1dbb563224885dd10d1a7d122e16ba6a3cdebe6b1e4ec260594f",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_BN1",
+      "id": "upstream_bn_multi_residual__omit_HE_BN1",
+      "omitted_helper": "HE_BN1",
+      "positive_task_id": "upstream_bn_multi_residual",
+      "positive_task_sha256": "2b2397a408bc1dbb563224885dd10d1a7d122e16ba6a3cdebe6b1e4ec260594f",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_BN0",
+      "id": "upstream_bn_then_linear__omit_HE_BN0",
+      "omitted_helper": "HE_BN0",
+      "positive_task_id": "upstream_bn_then_linear",
+      "positive_task_sha256": "d3deb82169461c50dacf9db0886d5617d1181fb97a3223433a3ddcaea6c6871b",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_BN0",
+      "id": "upstream_linear_then_bn__omit_HE_BN0",
+      "omitted_helper": "HE_BN0",
+      "positive_task_id": "upstream_linear_then_bn",
+      "positive_task_sha256": "a0e8c44b26d570b9d194bae749400149136a1213a44ba4df1b610aecc7514be5",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_BN0",
+      "id": "upstream_bn_nested_native__omit_HE_BN0",
+      "omitted_helper": "HE_BN0",
+      "positive_task_id": "upstream_bn_nested_native",
+      "positive_task_sha256": "6d93d863ba4e8556738bb1f9400d0152ec0e9cdb6b705ffbc436f1f5c395e1df",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Concat0",
+      "id": "upstream_concat_frozen_1__omit_HE_Concat0",
+      "omitted_helper": "HE_Concat0",
+      "positive_task_id": "upstream_concat_frozen_1",
+      "positive_task_sha256": "e824f8d0a9e7a86b674146dfcda92c446dea105e320e9b828354d988646097c0",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Concat0",
+      "id": "upstream_concat_square_negate__omit_HE_Concat0",
+      "omitted_helper": "HE_Concat0",
+      "positive_task_id": "upstream_concat_square_negate",
+      "positive_task_sha256": "6591269a13daeae53d26c0e1d120b257e7c34234b2da92251cde6abdc7adc199",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Concat0",
+      "id": "upstream_concat_then_linear__omit_HE_Concat0",
+      "omitted_helper": "HE_Concat0",
+      "positive_task_id": "upstream_concat_then_linear",
+      "positive_task_sha256": "f01b5d4557aaa127908e419faeb54e6f2c158e601d21846028d0bf06fe92bca5",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Conv0",
+      "id": "upstream_conv_1_2_2_1_1__omit_HE_Conv0",
+      "omitted_helper": "HE_Conv0",
+      "positive_task_id": "upstream_conv_1_2_2_1_1",
+      "positive_task_sha256": "79660ebf544e9393493ae66224b26e926633529045f20890bef0cc31e6529632",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Conv0",
+      "id": "upstream_conv_1_2_2_1_1_pre_negate__omit_HE_Conv0",
+      "omitted_helper": "HE_Conv0",
+      "positive_task_id": "upstream_conv_1_2_2_1_1_pre_negate",
+      "positive_task_sha256": "c2630e411e07156e31e314108670be996ed593a887ae698e5ec2b677ddc56ca1",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Conv0",
+      "id": "upstream_conv_1_2_2_1_1_post_square__omit_HE_Conv0",
+      "omitted_helper": "HE_Conv0",
+      "positive_task_id": "upstream_conv_1_2_2_1_1_post_square",
+      "positive_task_sha256": "2f28ae703144b2c8540dad1ebbde20b10faee9a603221b243d8e6e3515305eed",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Avg0",
+      "id": "upstream_avg_1_4_4_2_2__omit_HE_Avg0",
+      "omitted_helper": "HE_Avg0",
+      "positive_task_id": "upstream_avg_1_4_4_2_2",
+      "positive_task_sha256": "a1064db24cab884c2f296fee6c9ef6bafb9cce212113bb6568d02a8565a3413a",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Avg0",
+      "id": "upstream_avg_1_4_4_2_2_pre_negate__omit_HE_Avg0",
+      "omitted_helper": "HE_Avg0",
+      "positive_task_id": "upstream_avg_1_4_4_2_2_pre_negate",
+      "positive_task_sha256": "054223b2ebad6db3aa981bd0bdab0c0501f03afa8e7106d48d0510201be878a2",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Avg0",
+      "id": "upstream_avg_1_4_4_2_2_post_square__omit_HE_Avg0",
+      "omitted_helper": "HE_Avg0",
+      "positive_task_id": "upstream_avg_1_4_4_2_2_post_square",
+      "positive_task_sha256": "98441a2c3ab8e444da550f7b91126d1e537701489bdb60ea356520db041a3d78",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Pool0",
+      "id": "upstream_pool_2_4_4__omit_HE_Pool0",
+      "omitted_helper": "HE_Pool0",
+      "positive_task_id": "upstream_pool_2_4_4",
+      "positive_task_sha256": "b420cf118bc23f897079b9b2f11e65dbf05ea61bead0419c30827ea0cc7ed517",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Pool0",
+      "id": "upstream_pool_2_4_4_pre_negate__omit_HE_Pool0",
+      "omitted_helper": "HE_Pool0",
+      "positive_task_id": "upstream_pool_2_4_4_pre_negate",
+      "positive_task_sha256": "98e6d2b2144fce888d6cbff0d674d1e18a65e56c7cd6159fa6629c43fa3e8ac7",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Pool0",
+      "id": "upstream_pool_2_4_4_post_square__omit_HE_Pool0",
+      "omitted_helper": "HE_Pool0",
+      "positive_task_id": "upstream_pool_2_4_4_post_square",
+      "positive_task_sha256": "8fede438e6e7625ed965444d3066a3c3714bbf9c65d17b505362a6d2ae5654b9",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Conv0",
+      "id": "upstream_bench_helper_0016__omit_HE_Conv0",
+      "omitted_helper": "HE_Conv0",
+      "positive_task_id": "upstream_bench_helper_0016",
+      "positive_task_sha256": "555ac7002cac69b3ffafd28ecd55e071e392a1616506a15ace9bd87c5c80d8c2",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Conv0",
+      "id": "upstream_bench_helper_0018__omit_HE_Conv0",
+      "omitted_helper": "HE_Conv0",
+      "positive_task_id": "upstream_bench_helper_0018",
+      "positive_task_sha256": "986bca6d6535cba255448394d33bdc304061182dd316fe8bd1ea23c1fd613e45",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Conv0",
+      "id": "upstream_bench_helper_0021__omit_HE_Conv0",
+      "omitted_helper": "HE_Conv0",
+      "positive_task_id": "upstream_bench_helper_0021",
+      "positive_task_sha256": "a80b2f9fb5315ec75895bdb7d153ee3552dfe4c5340c75ab59e530730f00f20e",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Pool0",
+      "id": "upstream_bench_helper_0021__omit_HE_Pool0",
+      "omitted_helper": "HE_Pool0",
+      "positive_task_id": "upstream_bench_helper_0021",
+      "positive_task_sha256": "a80b2f9fb5315ec75895bdb7d153ee3552dfe4c5340c75ab59e530730f00f20e",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Avg0",
+      "id": "upstream_bench_helper_0048__omit_HE_Avg0",
+      "omitted_helper": "HE_Avg0",
+      "positive_task_id": "upstream_bench_helper_0048",
+      "positive_task_sha256": "49d53e8c6f8888065c7b1650e1983859758a877f10832f45f829225cde2f3a8c",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Avg0",
+      "id": "upstream_bench_helper_0050__omit_HE_Avg0",
+      "omitted_helper": "HE_Avg0",
+      "positive_task_id": "upstream_bench_helper_0050",
+      "positive_task_sha256": "462edaa99a2e2f1c51182035364f4e018a939e85b69ab4ad309ed62b68aa3634",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Avg0",
+      "id": "upstream_bench_helper_0053__omit_HE_Avg0",
+      "omitted_helper": "HE_Avg0",
+      "positive_task_id": "upstream_bench_helper_0053",
+      "positive_task_sha256": "9dcb8a10ee5b126e4941f8fb3b8dfc0f018bb6fe857279922f3940f12a6508f3",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Pool0",
+      "id": "upstream_bench_helper_0053__omit_HE_Pool0",
+      "omitted_helper": "HE_Pool0",
+      "positive_task_id": "upstream_bench_helper_0053",
+      "positive_task_sha256": "9dcb8a10ee5b126e4941f8fb3b8dfc0f018bb6fe857279922f3940f12a6508f3",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Pool0",
+      "id": "upstream_bench_helper_0064__omit_HE_Pool0",
+      "omitted_helper": "HE_Pool0",
+      "positive_task_id": "upstream_bench_helper_0064",
+      "positive_task_sha256": "688ca4f3893d4aedb3bc38940d7ed40e5b2ec90a98d42a926f0d50d57a4c752b",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Pool0",
+      "id": "upstream_bench_helper_0066__omit_HE_Pool0",
+      "omitted_helper": "HE_Pool0",
+      "positive_task_id": "upstream_bench_helper_0066",
+      "positive_task_sha256": "2e98e183d15d6f1df36b9fa5b6b1cb90942b0c07319039d912659d94e06e1454",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Pool0",
+      "id": "upstream_mapped_pool_then_square__omit_HE_Pool0",
+      "omitted_helper": "HE_Pool0",
+      "positive_task_id": "upstream_mapped_pool_then_square",
+      "positive_task_sha256": "99652fc25e9c433c5e980da114f93e165f34ec7eef5e422f4efe62a21310315d",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_ConvBN0",
+      "id": "upstream_bench_helper_0024__omit_HE_ConvBN0",
+      "omitted_helper": "HE_ConvBN0",
+      "positive_task_id": "upstream_bench_helper_0024",
+      "positive_task_sha256": "ff29cef1f428bb5b29ffc2eeb8e282bcee68277b89d8402fb2e8f276e146f0cf",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_ConvBN0",
+      "id": "upstream_bench_helper_0026__omit_HE_ConvBN0",
+      "omitted_helper": "HE_ConvBN0",
+      "positive_task_id": "upstream_bench_helper_0026",
+      "positive_task_sha256": "39e427ce68ea0082de888c6af27aa26bb805456ecf54b8065b5404f2e395fbcb",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_ConvBN0",
+      "id": "upstream_bench_helper_0029__omit_HE_ConvBN0",
+      "omitted_helper": "HE_ConvBN0",
+      "positive_task_id": "upstream_bench_helper_0029",
+      "positive_task_sha256": "0adaecbbb4cc19e609b15ca8339e5fe35865e54db9e56cd7b7f4b15bcb9333c9",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Pool0",
+      "id": "upstream_bench_helper_0029__omit_HE_Pool0",
+      "omitted_helper": "HE_Pool0",
+      "positive_task_id": "upstream_bench_helper_0029",
+      "positive_task_sha256": "0adaecbbb4cc19e609b15ca8339e5fe35865e54db9e56cd7b7f4b15bcb9333c9",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_DwConv0",
+      "id": "upstream_bench_helper_0088__omit_HE_DwConv0",
+      "omitted_helper": "HE_DwConv0",
+      "positive_task_id": "upstream_bench_helper_0088",
+      "positive_task_sha256": "0e03bf373b6a3ae9a150a0a5effaa48e7a67e71c9b9c1a479e2a22f6c858e620",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_DwConv0",
+      "id": "upstream_bench_helper_0090__omit_HE_DwConv0",
+      "omitted_helper": "HE_DwConv0",
+      "positive_task_id": "upstream_bench_helper_0090",
+      "positive_task_sha256": "b24fa07b6c35d3f153df7c592ff0f6794a9e7c81b8673ff899e1ed19b6fe7ad7",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_DwConv0",
+      "id": "upstream_bench_helper_0093__omit_HE_DwConv0",
+      "omitted_helper": "HE_DwConv0",
+      "positive_task_id": "upstream_bench_helper_0093",
+      "positive_task_sha256": "5fa679d39687bde605cb50bba7c411ace71f7a7e422790405684f5d6498436b0",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Pool0",
+      "id": "upstream_bench_helper_0093__omit_HE_Pool0",
+      "omitted_helper": "HE_Pool0",
+      "positive_task_id": "upstream_bench_helper_0093",
+      "positive_task_sha256": "5fa679d39687bde605cb50bba7c411ace71f7a7e422790405684f5d6498436b0",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_DS0",
+      "id": "upstream_bench_helper_0056__omit_HE_DS0",
+      "omitted_helper": "HE_DS0",
+      "positive_task_id": "upstream_bench_helper_0056",
+      "positive_task_sha256": "e3406130e0c1c863c961a97110302134789b172e66221997ab50faf4c8177f13",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_DS0",
+      "id": "upstream_bench_helper_0058__omit_HE_DS0",
+      "omitted_helper": "HE_DS0",
+      "positive_task_id": "upstream_bench_helper_0058",
+      "positive_task_sha256": "8d67faf5586f0cf9f9c29ebbba756a4a8f4310c5424193dcee81be6cc29e9881",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_DS0",
+      "id": "upstream_ds_then_square__omit_HE_DS0",
+      "omitted_helper": "HE_DS0",
+      "positive_task_id": "upstream_ds_then_square",
+      "positive_task_sha256": "cdd2c8465b88c040223400fe0a96745e7f3161b1b2414f61742dc33852d0642e",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_MPBN0",
+      "id": "upstream_bench_helper_0008__omit_HE_MPBN0",
+      "omitted_helper": "HE_MPBN0",
+      "positive_task_id": "upstream_bench_helper_0008",
+      "positive_task_sha256": "1cd84ac7e3ff672c3e120fcf14eb6be0f08540342f28157564189cc3cc3dba38",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Linear0",
+      "id": "upstream_bench_helper_0072__omit_HE_Linear0",
+      "omitted_helper": "HE_Linear0",
+      "positive_task_id": "upstream_bench_helper_0072",
+      "positive_task_sha256": "2caa3f65187aa30578fd4f83f8681f6c4ca4c0a0e18b2593aedfe2a1452a91be",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_ReshapeLinear0",
+      "id": "upstream_bench_helper_0080__omit_HE_ReshapeLinear0",
+      "omitted_helper": "HE_ReshapeLinear0",
+      "positive_task_id": "upstream_bench_helper_0080",
+      "positive_task_sha256": "7ee58ebe715410d30b27b7c9e32c5ab01f1c6d69386f23df3e4fa193684f5f85",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_MPBN0",
+      "id": "upstream_virtual_38_HE_MPBN__omit_HE_MPBN0",
+      "omitted_helper": "HE_MPBN0",
+      "positive_task_id": "upstream_virtual_38_HE_MPBN",
+      "positive_task_sha256": "8258737f63d3ba04844b06643e5fe50ee8a1573d5826cd45e3f608761a1802f8",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_MPBN0",
+      "id": "upstream_virtual_39_HE_MPBN__omit_HE_MPBN0",
+      "omitted_helper": "HE_MPBN0",
+      "positive_task_id": "upstream_virtual_39_HE_MPBN",
+      "positive_task_sha256": "2da053fbb595fd0f71209a1b740f0674bb3fc41d2536145ccb493a8f3a15d8bf",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Linear0",
+      "id": "upstream_virtual_40_HE_Linear__omit_HE_Linear0",
+      "omitted_helper": "HE_Linear0",
+      "positive_task_id": "upstream_virtual_40_HE_Linear",
+      "positive_task_sha256": "8a0e3184e9123e29d4fb91c502e7b2e38cb02e0946f593e2d3bc002d61087e2e",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Linear0",
+      "id": "upstream_virtual_41_HE_Linear__omit_HE_Linear0",
+      "omitted_helper": "HE_Linear0",
+      "positive_task_id": "upstream_virtual_41_HE_Linear",
+      "positive_task_sha256": "7dded6471c967853097d47777e807619103948394af2babe4933debb1b8e1ab2",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_ReshapeLinear0",
+      "id": "upstream_virtual_42_HE_ReshapeLinear__omit_HE_ReshapeLinear0",
+      "omitted_helper": "HE_ReshapeLinear0",
+      "positive_task_id": "upstream_virtual_42_HE_ReshapeLinear",
+      "positive_task_sha256": "9cfc4531582e89f29ae84b44ba26a40160a55bad0b80d552502f48c3fa299a22",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_ReshapeLinear0",
+      "id": "upstream_virtual_43_HE_ReshapeLinear__omit_HE_ReshapeLinear0",
+      "omitted_helper": "HE_ReshapeLinear0",
+      "positive_task_id": "upstream_virtual_43_HE_ReshapeLinear",
+      "positive_task_sha256": "2caa25bf077467114f63dd0f5790cb11d8457564f62d055ca992e11cc9bd00ff",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Linear0_chunk0",
+      "id": "upstream_chunk_helper_0__omit_HE_Linear0_chunk0",
+      "omitted_helper": "HE_Linear0_chunk0",
+      "positive_task_id": "upstream_chunk_helper_0",
+      "positive_task_sha256": "6691a5fe5b9a71601cdf42500d51f33eae744babb5b2bc97ff84a91627f59dec",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Linear0_chunk1",
+      "id": "upstream_chunk_helper_0__omit_HE_Linear0_chunk1",
+      "omitted_helper": "HE_Linear0_chunk1",
+      "positive_task_id": "upstream_chunk_helper_0",
+      "positive_task_sha256": "6691a5fe5b9a71601cdf42500d51f33eae744babb5b2bc97ff84a91627f59dec",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Linear0_chunk0",
+      "id": "upstream_chunk_helper_1__omit_HE_Linear0_chunk0",
+      "omitted_helper": "HE_Linear0_chunk0",
+      "positive_task_id": "upstream_chunk_helper_1",
+      "positive_task_sha256": "f38fd165c85d3b489d2499b507617321e3ee2a5b6ab83c3bdddeb168e448e9f2",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Linear0_chunk1",
+      "id": "upstream_chunk_helper_1__omit_HE_Linear0_chunk1",
+      "omitted_helper": "HE_Linear0_chunk1",
+      "positive_task_id": "upstream_chunk_helper_1",
+      "positive_task_sha256": "f38fd165c85d3b489d2499b507617321e3ee2a5b6ab83c3bdddeb168e448e9f2",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Linear0_chunk2",
+      "id": "upstream_chunk_helper_1__omit_HE_Linear0_chunk2",
+      "omitted_helper": "HE_Linear0_chunk2",
+      "positive_task_id": "upstream_chunk_helper_1",
+      "positive_task_sha256": "f38fd165c85d3b489d2499b507617321e3ee2a5b6ab83c3bdddeb168e448e9f2",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Linear0_chunk0",
+      "id": "upstream_chunk_helper_2__omit_HE_Linear0_chunk0",
+      "omitted_helper": "HE_Linear0_chunk0",
+      "positive_task_id": "upstream_chunk_helper_2",
+      "positive_task_sha256": "374610c88877b309eddd27699b247c092c0de0b0ccaad806ec7c8facdcd77241",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Linear0_chunk0",
+      "id": "upstream_chunk_helper_3__omit_HE_Linear0_chunk0",
+      "omitted_helper": "HE_Linear0_chunk0",
+      "positive_task_id": "upstream_chunk_helper_3",
+      "positive_task_sha256": "9d0f2beeab7a5c8ea5513a042609cf7f964a3754d7fb72df8626dcd14a9d8dec",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Linear0_chunk1",
+      "id": "upstream_chunk_helper_3__omit_HE_Linear0_chunk1",
+      "omitted_helper": "HE_Linear0_chunk1",
+      "positive_task_id": "upstream_chunk_helper_3",
+      "positive_task_sha256": "9d0f2beeab7a5c8ea5513a042609cf7f964a3754d7fb72df8626dcd14a9d8dec",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_MPBN0_chunk0",
+      "id": "upstream_chunk_helper_4__omit_HE_MPBN0_chunk0",
+      "omitted_helper": "HE_MPBN0_chunk0",
+      "positive_task_id": "upstream_chunk_helper_4",
+      "positive_task_sha256": "07b72c585e34a02b8e61c804035660568904c09b574187f576ba97002505feb4",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_MPBN0_chunk1",
+      "id": "upstream_chunk_helper_4__omit_HE_MPBN0_chunk1",
+      "omitted_helper": "HE_MPBN0_chunk1",
+      "positive_task_id": "upstream_chunk_helper_4",
+      "positive_task_sha256": "07b72c585e34a02b8e61c804035660568904c09b574187f576ba97002505feb4",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_MPBN0_chunk0",
+      "id": "upstream_chunk_helper_5__omit_HE_MPBN0_chunk0",
+      "omitted_helper": "HE_MPBN0_chunk0",
+      "positive_task_id": "upstream_chunk_helper_5",
+      "positive_task_sha256": "3c4b558bc12bf96158ec3285bf982f540adfa6f64693c8854c7f08f6c9384d0c",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_MPBN0_chunk1",
+      "id": "upstream_chunk_helper_5__omit_HE_MPBN0_chunk1",
+      "omitted_helper": "HE_MPBN0_chunk1",
+      "positive_task_id": "upstream_chunk_helper_5",
+      "positive_task_sha256": "3c4b558bc12bf96158ec3285bf982f540adfa6f64693c8854c7f08f6c9384d0c",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_MPBN0_chunk2",
+      "id": "upstream_chunk_helper_5__omit_HE_MPBN0_chunk2",
+      "omitted_helper": "HE_MPBN0_chunk2",
+      "positive_task_id": "upstream_chunk_helper_5",
+      "positive_task_sha256": "3c4b558bc12bf96158ec3285bf982f540adfa6f64693c8854c7f08f6c9384d0c",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_ReshapeLinear0_chunk0",
+      "id": "upstream_chunk_helper_6__omit_HE_ReshapeLinear0_chunk0",
+      "omitted_helper": "HE_ReshapeLinear0_chunk0",
+      "positive_task_id": "upstream_chunk_helper_6",
+      "positive_task_sha256": "19c8c72e2ca11bc86a3ae78e1dcb85c3e3ea2dbfbc586f746ac203bdfd7ad885",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Linear0_chunk0",
+      "id": "upstream_chunk_helper_7__omit_HE_Linear0_chunk0",
+      "omitted_helper": "HE_Linear0_chunk0",
+      "positive_task_id": "upstream_chunk_helper_7",
+      "positive_task_sha256": "f9f9a77bcbf8b7eeec12fbc1ae913b2880016c877cb01a46f1118eb0b646d9b5",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Linear0_chunk1",
+      "id": "upstream_chunk_helper_7__omit_HE_Linear0_chunk1",
+      "omitted_helper": "HE_Linear0_chunk1",
+      "positive_task_id": "upstream_chunk_helper_7",
+      "positive_task_sha256": "f9f9a77bcbf8b7eeec12fbc1ae913b2880016c877cb01a46f1118eb0b646d9b5",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Linear1_chunk0",
+      "id": "upstream_chunk_helper_7__omit_HE_Linear1_chunk0",
+      "omitted_helper": "HE_Linear1_chunk0",
+      "positive_task_id": "upstream_chunk_helper_7",
+      "positive_task_sha256": "f9f9a77bcbf8b7eeec12fbc1ae913b2880016c877cb01a46f1118eb0b646d9b5",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_Linear0_chunk0",
+      "id": "upstream_chunk_helper_8__omit_HE_Linear0_chunk0",
+      "omitted_helper": "HE_Linear0_chunk0",
+      "positive_task_id": "upstream_chunk_helper_8",
+      "positive_task_sha256": "b89da20ea7f2eb45dee7c83748189c01de4d38dfd161baebc0cfd970f6f9eb23",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_MPBN0_chunk0",
+      "id": "upstream_chunk_helper_9__omit_HE_MPBN0_chunk0",
+      "omitted_helper": "HE_MPBN0_chunk0",
+      "positive_task_id": "upstream_chunk_helper_9",
+      "positive_task_sha256": "34a2641094317190b02bf2861bbdc82036bdeb301cd924bc86ab3086b2c5d212",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_MPBN0_chunk1",
+      "id": "upstream_chunk_helper_9__omit_HE_MPBN0_chunk1",
+      "omitted_helper": "HE_MPBN0_chunk1",
+      "positive_task_id": "upstream_chunk_helper_9",
+      "positive_task_sha256": "34a2641094317190b02bf2861bbdc82036bdeb301cd924bc86ab3086b2c5d212",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_MPBN0_chunk0",
+      "id": "upstream_chunk_helper_10__omit_HE_MPBN0_chunk0",
+      "omitted_helper": "HE_MPBN0_chunk0",
+      "positive_task_id": "upstream_chunk_helper_10",
+      "positive_task_sha256": "3b3ac0a6954410085080cba3a2ff0173827ec0509c17c80167f48ba221d02cf6",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_MPBN0_chunk1",
+      "id": "upstream_chunk_helper_10__omit_HE_MPBN0_chunk1",
+      "omitted_helper": "HE_MPBN0_chunk1",
+      "positive_task_id": "upstream_chunk_helper_10",
+      "positive_task_sha256": "3b3ac0a6954410085080cba3a2ff0173827ec0509c17c80167f48ba221d02cf6",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_ReshapeLinear0_chunk0",
+      "id": "upstream_chunk_helper_11__omit_HE_ReshapeLinear0_chunk0",
+      "omitted_helper": "HE_ReshapeLinear0_chunk0",
+      "positive_task_id": "upstream_chunk_helper_11",
+      "positive_task_sha256": "da87a3b8609bdab4ef837c1307c9b34a177cb89454b9b23f8f67dbeebbd06a88",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    },
+    {
+      "expected_rejection": "No reachable upstream helper: HE_ReshapeLinear0_chunk0",
+      "id": "upstream_chunk_helper_12__omit_HE_ReshapeLinear0_chunk0",
+      "omitted_helper": "HE_ReshapeLinear0_chunk0",
+      "positive_task_id": "upstream_chunk_helper_12",
+      "positive_task_sha256": "eee6e37b2abe6e3b78822336b2ec66b401cf00ecc4feb15ada20a229a69e7316",
+      "runner": "scripts/baseline/benchmarks/tools/verify_helper_call_counterexamples.py",
+      "status": "not_run"
+    }
+  ],
+  "schema": 1
+}

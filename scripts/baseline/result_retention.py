@@ -12,9 +12,9 @@ import stat
 import subprocess
 import time
 
-PREFIXES = ('agent-deepseek-', 'candidate-replay-', 'fx-batch-', 'seal-cpu-golden-', 'multi-input-golden-')
+PREFIXES = ('upstream-silu-', 'upstream-bn-', 'agent-deepseek-', 'candidate-replay-', 'fx-batch-', 'seal-cpu-golden-', 'multi-input-golden-')
 TERMINAL = {'passed', 'failed', 'repair_budget_exhausted', 'provider_failed', 'provider_exhausted',
-            'infrastructure_failed', 'input_failed'}
+            'infrastructure_failed', 'input_failed', 'cancelled'}
 KEYS = {'gal.seal', 'relin.seal', 'sec.seal', 'pub.seal', 'parm.seal'}
 
 
@@ -26,7 +26,7 @@ def bounded_json(path):
     return json.loads(raw), hashlib.sha256(raw).hexdigest()
 
 
-def plan_run(run, results):
+def plan_run(run, results, *, key_directory_identity=None):
     results = Path(results).resolve()
     run = Path(run).absolute()
     if run.is_symlink() or run.resolve() != run or run.parent != results or not run.name.startswith(PREFIXES):
@@ -39,10 +39,22 @@ def plan_run(run, results):
         return dict(run=str(run), report_sha256=digest, files=[], bytes=0)
     if keys.is_symlink() or not keys.is_dir():
         raise ValueError('Key directory must not be a link')
-    parameters, pdigest = bounded_json(run/'parameters.json')
-    if (parameters.get('seal_version') != '4.0.0' or parameters.get('polynomial_degree') != 32768
-            or parameters.get('security_check') != 'tc128' or parameters.get('parameters_set') is not True):
-        raise ValueError('Unrecognized generated key parameters')
+    directory_info = keys.stat()
+    identity = (directory_info.st_dev, directory_info.st_ino)
+    # Only the owning live worker may attest to a partially created key directory.
+    # Retrospective cleanup still requires complete validated parameter metadata.
+    partial = (key_directory_identity is not None and report.get('status') == 'cancelled'
+               and report.get('failure_layer') == 'key_setup')
+    if partial:
+        if (tuple(key_directory_identity) != identity or directory_info.st_uid != os.getuid()
+                or stat.S_IMODE(directory_info.st_mode) != 0o700):
+            raise ValueError('Partial key directory ownership mismatch')
+        pdigest = None
+    else:
+        parameters, pdigest = bounded_json(run/'parameters.json')
+        if (parameters.get('seal_version') != '4.0.0' or parameters.get('polynomial_degree') != 32768
+                or parameters.get('security_check') != 'tc128' or parameters.get('parameters_set') is not True):
+            raise ValueError('Unrecognized generated key parameters')
     files = []
     for path in sorted(keys.iterdir()):
         info = path.lstat()
@@ -50,12 +62,12 @@ def plan_run(run, results):
             raise ValueError('Unexpected key-directory entry; preserve everything')
         files.append(dict(name=path.name, bytes=info.st_size, inode=info.st_ino, device=info.st_dev))
     return dict(run=str(run), report_sha256=digest, parameters_sha256=pdigest,
-                files=files, bytes=sum(f['bytes'] for f in files))
+                key_directory_identity=identity, partial_key_setup=partial, files=files, bytes=sum(f['bytes'] for f in files))
 
 
-def cleanup_run(run, results):
-    plan = plan_run(run, results)
-    if not plan['files']:
+def cleanup_run(run, results, *, key_directory_identity=None):
+    plan = plan_run(run, results, key_directory_identity=key_directory_identity)
+    if 'key_directory_identity' not in plan:
         return plan
     run = Path(plan['run'])
     audit = run/'key-cleanup.json'
@@ -66,7 +78,11 @@ def cleanup_run(run, results):
                        regenerate='seal_golden_keys NEW_EMPTY_DIRECTORY <rotation_steps from parameters.json>'), stream, indent=2)
     directory = os.open(run/'private-keys', os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
     removed = []
+    completed = False
     try:
+        opened = os.fstat(directory)
+        if (opened.st_dev, opened.st_ino) != tuple(plan['key_directory_identity']):
+            raise ValueError('Key directory changed during cleanup')
         if bounded_json(run/'report.json')[1] != plan['report_sha256']:
             raise ValueError('Report changed during cleanup')
         for item in plan['files']:
@@ -76,12 +92,16 @@ def cleanup_run(run, results):
                 raise ValueError('Key changed during cleanup')
             os.unlink(item['name'], dir_fd=directory)
             removed.append(item)
+        current = (run/'private-keys').stat()
+        if (current.st_dev, current.st_ino) != tuple(plan['key_directory_identity']):
+            raise ValueError('Key directory changed after cleanup')
+        (run/'private-keys').rmdir()
+        completed = True
     finally:
         os.close(directory)
         with (run/'key-cleanup-outcome.json').open('x') as stream:
             json.dump(dict(removed=removed, freed_bytes=sum(i['bytes'] for i in removed),
-                           complete=len(removed)==len(plan['files']), finished_unix=time.time()), stream, indent=2)
-    (run/'private-keys').rmdir()
+                           complete=completed, finished_unix=time.time()), stream, indent=2)
     return plan
 
 
@@ -93,7 +113,7 @@ def main():
     if args.apply:
         processes=subprocess.run(['ps','-eo','args='],capture_output=True,text=True,check=True,timeout=10).stdout
         if any(name in processes for name in ('run_candidate.py','run_agent_batch.py','run_model_batch.py',
-                                              'seal_cpu_golden.py','run_multi_input_goldens.py')):
+                                              'seal_cpu_golden.py','run_multi_input_goldens.py','upstream_helper_probe.py')):
             raise ValueError('Stop experiment runners before retrospective cleanup')
     results=WORK/'results'
     plans, skipped=[],[]

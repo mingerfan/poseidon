@@ -1,0 +1,67 @@
+{
+  "format": "poseidon-campaign-preparation-acceptance-r108-v1",
+  "campaign_binding": "b6efd27e150dcf8ee68b0d85c4ca1c59cd71fb303e4538cd9e8b6ad7176ca3d3",
+  "runtime_source_sha256": "c74d21106c1e509ad75d4e59828b07093af6284fc0cd67793711958e5807f8ad",
+  "planned": 2030,
+  "prepared": 2030,
+  "preparation_blocked": 0,
+  "shards": 43,
+  "validated_requests": 2030,
+  "actual_cli_prepared": 8,
+  "paid_calls": 0,
+  "claimed_existing_tasks": [
+    {
+      "id": "construct_000_0",
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/274f776af8e75186278d12794ea1e8e31e3f9e001408f81b27839fd95f45c4e9.json",
+      "claim_sha256": "e4e665a449d5ca3287d72922c7aff602baded12b7cc08fb005a0fb36e8ff142f"
+    },
+    {
+      "id": "construct_000_1",
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/7bf8bd17ee7cf4a73e87bb728de5a3156a1f4cf64f895c24a07b6ea6a7cc7ba2.json",
+      "claim_sha256": "d49434f6420b20d3fc5b5d4139fca3bf22e025b0223782caee145a4984b2973d"
+    },
+    {
+      "id": "construct_000_2",
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/b90da43a0a43561dd492c88cc30732737a8b320d225a4b25877e02c8c3f24aec.json",
+      "claim_sha256": "1b93d92a3f783f9be51406dc4ff4a2a318f4878cccc05448f4c0e31e767c085d"
+    },
+    {
+      "id": "construct_001_0",
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/73c3bb85bb52bad204895c51ae24b67c9425d4dea3b34215d5ad7e071baf0fa3.json",
+      "claim_sha256": "227e103b5a1cae5ffd8363d0538805076d3cd8b1fa04b557d3b90a2dc2c24ef8"
+    },
+    {
+      "id": "construct_001_1",
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/e50d0838da9dbfd64e9ec972c03fd7c109feec12df10fba24261a920edb66d3f.json",
+      "claim_sha256": "d694f6237ff99242367e8f5c9fdf9d80cf34f02f79f57236dee1b73cede96743"
+    },
+    {
+      "id": "construct_001_2",
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/6c6ab2d2eb784bc9518ec8b6ebc6a638f9e93610b86cccb0dd6602e12c64d028.json",
+      "claim_sha256": "b3e3184463f3124f9e250aab969045fe9e96cddb7b83198ead13649330a0c62e"
+    },
+    {
+      "id": "construct_004_0",
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/7b418dd8dfc081dd939e15e76e7d2b491ade466503749e91f3f454aaa35c9805.json",
+      "claim_sha256": "700bca1ebd678a5a2b61be6481afc20978bcb82a90bd9c6743e77d8ff12c6635"
+    },
+    {
+      "id": "construct_004_1",
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/917bce8e930865297fd3521d423c76a3dd4669b0e184de7ba21c24e003b2c5a5.json",
+      "claim_sha256": "d6f96428e1d421bac74b708f8f1883494393092de16a93aa7561e2a4b18c8bff"
+    },
+    {
+      "id": "construct_004_2",
+      "claim_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-evaluation-claims/d5b285c97632d68901bc416a09d215bba5f044870dc6181c68ac5de9c5cb5500.json",
+      "claim_sha256": "12fc74bed86e5d2a5a8b9116e80f03a60f68031cc20551063368ee94bcbfb909"
+    }
+  ],
+  "paid_batch_audit_binding": "4486a947266b1cdaccb552044d30a89da24a1a5513edb65db49e4e3101d92265",
+  "stage2_complete": false,
+  "source_files": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-composite-agent-r108-campaign-audit/report.json": "c6d8138eb189bb491c7ae2b976f043dbf589cb7741c96411d1e34f11f8e67374",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-prepare-r106/index.json": "9878db36b26bc0002073367fdb6e5eae4c90e31ee061a96dd31de90005f4cb86",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-campaign-preflight-r108/report.json": "ad54906f11043a9abc1993ce16126ee0b398165683747c04c0c362e92025a07a"
+  },
+  "binding": "12905611ca03e7118d4328ba40dfe9b4e526630716c7895def0a01b21b3fd144"
+}

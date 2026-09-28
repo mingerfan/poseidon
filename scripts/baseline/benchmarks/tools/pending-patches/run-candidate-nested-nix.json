@@ -1,0 +1,6 @@
+{
+  "source_sha256": "08e6c5450646d04d9322a04ff599fd7680809d7d159b828d8ee76b171e27af9e",
+  "proposed_sha256": "f8e341e49a0d86f01c2cfa79f9e3ef7f8306520edada8393400c1faf0c5c7719",
+  "applied": false,
+  "scope": "Only paid launcher when already in exact pinned Nix Python; no credential or API use in verification"
+}

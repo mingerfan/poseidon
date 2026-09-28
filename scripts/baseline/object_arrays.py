@@ -171,6 +171,13 @@ def copy(value):
     return wrap(value.data.copy())
 
 
+def storage_facts(source,result,operation):
+    import numpy as np
+    require(type(source) is ObjectArray and type(result) is ObjectArray,'Storage facts require object arrays')
+    return dict(operation=operation,source_shape=list(source.shape),result_shape=list(result.shape),
+                shares_storage=bool(np.shares_memory(source.data,result.data)))
+
+
 def transpose(value, axes=None):
     if axes is not None:
         require(type(axes) in (tuple, list) and len(axes) == len(value.shape) and
@@ -204,19 +211,26 @@ def arithmetic_facts(left, right):
     import numpy as np
     from public_numeric import Array
     from function_construction import Value
-    def dimensions(value):
-        return list(value.shape) if type(value) in (ObjectArray,Array) else []
-    def has(value, kind):
-        return type(value) is ObjectArray and any(
-            type(v) is Value and v.kind == kind for v in value.data.flat)
-    return dict(left_shape=dimensions(left),right_shape=dimensions(right),
+    def cells(value):
+        if type(value) is ObjectArray:return value.data
+        if type(value) is Array:return np.asarray(value.values,dtype=object).reshape(value.shape)
+        return np.asarray(value,dtype=object)
+    a,b=cells(left),cells(right)
+    dimensions=np.broadcast_shapes(a.shape,b.shape)
+    shape(dimensions)  # observation also respects the pre-allocation shape bound
+    aa=np.broadcast_to(a,dimensions);bb=np.broadcast_to(b,dimensions)
+    cipher_pairs=(sum(type(x) is Value and x.kind=='cipher' and
+                      type(y) is Value and y.kind=='cipher' for x,y in zip(aa.flat,bb.flat))
+                  if type(left) is ObjectArray and type(right) is ObjectArray else 0)
+    return dict(left_shape=list(a.shape),right_shape=list(b.shape),
         overlapping=type(left) is ObjectArray and type(right) is ObjectArray and
                     bool(np.shares_memory(left.data,right.data)),
-        empty_left=type(left) is ObjectArray and any(type(v) is Empty for v in left.data.flat),
-        cipher_pair=has(left,'cipher') and has(right,'cipher'))
+        empty_left=any(type(v) is Empty for v in aa.flat),
+        cipher_pair=bool(cipher_pairs),cipher_pair_cells=cipher_pairs)
 
 
-def elementwise(op, left, right, apply, *, inplace=False):
+
+def elementwise(op, left, right, apply, *, inplace=False, _probe_sequential=False):
     """Bounded ndarray broadcasting; apply is a trusted symbolic scalar callback.
 
     Never invoke a NumPy ufunc on candidate objects. Snapshot both operands
@@ -229,6 +243,8 @@ def elementwise(op, left, right, apply, *, inplace=False):
     require(type(left) is ObjectArray or type(right) is ObjectArray,
             'Object arithmetic requires an object array')
     def operand(value):
+        if _probe_sequential and type(value) is ObjectArray:
+            return wrap(value.data).data
         if type(value) is Array:
             shape(value.shape)
             return np.array([scalar(x) for x in value.values], dtype=object).reshape(value.shape)
@@ -242,11 +258,19 @@ def elementwise(op, left, right, apply, *, inplace=False):
     if inplace:
         require(type(left) is ObjectArray and dimensions == left.shape,
                 'In-place object broadcast cannot expand destination shape')
-    aa = np.broadcast_to(a, dimensions).copy()
-    bb = np.broadcast_to(b, dimensions).copy()
+    require(type(_probe_sequential) is bool and (not _probe_sequential or inplace),
+            'Sequential overlap probe is trusted and in-place only')
+    aa = np.broadcast_to(a, dimensions)
+    bb = np.broadcast_to(b, dimensions)
+    if not _probe_sequential:
+        aa=aa.copy();bb=bb.copy()
     result = np.empty(dimensions, dtype=object)
     for index in np.ndindex(dimensions):
         result[index] = scalar(apply(op, scalar(aa[index]), scalar(bb[index])))
+        if _probe_sequential:
+            # Counterfactual only: expose earlier writes to later overlapping reads.
+            # Normal execution always snapshots both operands before any write.
+            left.data[index]=result[index]
     if inplace:
         left.data[...] = result
         return left

@@ -1,0 +1,378 @@
+{
+  "format": "poseidon-component-acceptance-r166",
+  "parents": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/component-integration-r161/acceptance-r163/report.json": "159fe26fc83545e62db516f19b4d95c79c58eedb93f89736ae0b32f2b4a2e1f1",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/component-integration-r161/lifecycle-r166/report.json": "27383764150366abeb08b5fec44f2306d08554b5cb12b41a0248b04a4f4dfe16",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/component-integration-r161/capability-r164.json": "b4f598a73b11204901e42af08e5e7b7a3ed3f05502fbab67e02dc1587585bfe2"
+  },
+  "branch": "lhy-agent-dsl",
+  "head": "3493c905dd8f4ce8e04211c83b337be243befe14",
+  "tests": {
+    "passed": 104,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 6
+  },
+  "bundle_roundtrip_cases": [
+    {
+      "bundle_binding": "1cb0b46f611ef6ffb786518f8c4b1fe897d7eb8d44604ba5d0b821c6e1255587",
+      "case": "native",
+      "first": {
+        "compared_values": 8,
+        "encrypted_execution": true,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-oh5t143f",
+        "exit_code": 0,
+        "format": "poseidon-agent-component-v1",
+        "job_sha256": "3bb75724713ed6e96fe1247bec5bf89db53ca8242d1a9993a31f6ff604543564",
+        "max_absolute_error": 4.913388584881773e-10,
+        "new_agent_generation": false,
+        "numerically_validated": true,
+        "paid_calls": 0,
+        "request_id": "5a52844ab78196d2b08a079907cba3688eb82848ee857f77885b41f369822813",
+        "status": "passed"
+      },
+      "replay": {
+        "bundle_binding": "1cb0b46f611ef6ffb786518f8c4b1fe897d7eb8d44604ba5d0b821c6e1255587",
+        "compared_values": 8,
+        "encrypted_execution": true,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-98uaie6o",
+        "exit_code": 0,
+        "format": "poseidon-agent-component-v1",
+        "max_absolute_error": 9.439247161679987e-10,
+        "new_agent_generation": false,
+        "numerically_validated": true,
+        "origin_agent_generated": false,
+        "paid_calls": 0,
+        "request_id": "5a52844ab78196d2b08a079907cba3688eb82848ee857f77885b41f369822813",
+        "status": "passed"
+      },
+      "seconds": 7.502915110002505,
+      "status": "passed"
+    },
+    {
+      "bundle_binding": "60dd8b800a11eae4eb7c7cee4f168cb51b0c315130a983279ad2e020b4e986ff",
+      "case": "public-directed",
+      "first": {
+        "compared_values": 8,
+        "encrypted_execution": true,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-tipcxljs",
+        "exit_code": 0,
+        "format": "poseidon-agent-component-v1",
+        "job_sha256": "9f7761db2019a1724237c5a693fa1654d0a3d069bad19c1585675b0f7975a3ad",
+        "max_absolute_error": 3.409292848033374e-10,
+        "new_agent_generation": false,
+        "numerically_validated": true,
+        "paid_calls": 0,
+        "request_id": "4ae66df5dc761e4016903ffe5405065fa7f63dfb37e2c668b133b9c722a2df4d",
+        "status": "passed"
+      },
+      "replay": {
+        "bundle_binding": "60dd8b800a11eae4eb7c7cee4f168cb51b0c315130a983279ad2e020b4e986ff",
+        "compared_values": 8,
+        "encrypted_execution": true,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-y1cto2yd",
+        "exit_code": 0,
+        "format": "poseidon-agent-component-v1",
+        "max_absolute_error": 1.4551257976336274e-09,
+        "new_agent_generation": false,
+        "numerically_validated": true,
+        "origin_agent_generated": false,
+        "paid_calls": 0,
+        "request_id": "4ae66df5dc761e4016903ffe5405065fa7f63dfb37e2c668b133b9c722a2df4d",
+        "status": "passed"
+      },
+      "seconds": 7.635891058976995,
+      "status": "passed"
+    },
+    {
+      "bundle_binding": "2802d0ecb98b364080fb7e0ac54f042b3a88faec4fcfdf3e28360030498d1ad9",
+      "case": "multioutput",
+      "first": {
+        "compared_values": 20,
+        "encrypted_execution": true,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-yxbqhc8k",
+        "exit_code": 0,
+        "format": "poseidon-agent-component-v1",
+        "job_sha256": "6a3c7393e455d9a0c56d7570b47f54b91f7773973ff3e2eb74fc1714c3e62158",
+        "max_absolute_error": 3.3346436723036277e-10,
+        "new_agent_generation": false,
+        "numerically_validated": true,
+        "paid_calls": 0,
+        "request_id": "fd408818d5438ad9677e19f035bac03d08f9f7e45492e1cb4de608ad57f54ada",
+        "status": "passed"
+      },
+      "replay": {
+        "bundle_binding": "2802d0ecb98b364080fb7e0ac54f042b3a88faec4fcfdf3e28360030498d1ad9",
+        "compared_values": 20,
+        "encrypted_execution": true,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-bxqf1bih",
+        "exit_code": 0,
+        "format": "poseidon-agent-component-v1",
+        "max_absolute_error": 3.730773467935933e-10,
+        "new_agent_generation": false,
+        "numerically_validated": true,
+        "origin_agent_generated": false,
+        "paid_calls": 0,
+        "request_id": "fd408818d5438ad9677e19f035bac03d08f9f7e45492e1cb4de608ad57f54ada",
+        "status": "passed"
+      },
+      "seconds": 8.056730860989774,
+      "status": "passed"
+    },
+    {
+      "bundle_binding": "5b20dd6971d238b54e25d4c7f6bd9adaedf3c38b3231687462f7cf38c62a78c4",
+      "case": "chunk",
+      "first": {
+        "compared_values": 24,
+        "encrypted_execution": true,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-5f1yo0va",
+        "exit_code": 0,
+        "format": "poseidon-agent-component-v1",
+        "job_sha256": "74097afac8c0e1111258ab19a6003b4d09c673dcd89285c5ed124467a1fb5845",
+        "max_absolute_error": 8.872405032889219e-10,
+        "new_agent_generation": false,
+        "numerically_validated": true,
+        "paid_calls": 0,
+        "request_id": "ca80a4554fa101b1cae6bcdd8f8d73954dac7289dea7f81a550965021b8b7298",
+        "status": "passed"
+      },
+      "replay": {
+        "bundle_binding": "5b20dd6971d238b54e25d4c7f6bd9adaedf3c38b3231687462f7cf38c62a78c4",
+        "compared_values": 24,
+        "encrypted_execution": true,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-pyjozywl",
+        "exit_code": 0,
+        "format": "poseidon-agent-component-v1",
+        "max_absolute_error": 7.482598984864808e-10,
+        "new_agent_generation": false,
+        "numerically_validated": true,
+        "origin_agent_generated": false,
+        "paid_calls": 0,
+        "request_id": "ca80a4554fa101b1cae6bcdd8f8d73954dac7289dea7f81a550965021b8b7298",
+        "status": "passed"
+      },
+      "seconds": 8.077720939996652,
+      "status": "passed"
+    },
+    {
+      "bundle_binding": "098423f51c535792da60d8d0a24df5de5238b7ce82a5208a90f597658ee91560",
+      "case": "actual-helper",
+      "first": {
+        "compared_values": 24,
+        "encrypted_execution": true,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-9dyp80j2",
+        "exit_code": 0,
+        "format": "poseidon-agent-component-v1",
+        "job_sha256": "2c14fb8de753d8ad95450249d7ba19dadd435ca881952f2224b63d2aaa2a107e",
+        "max_absolute_error": 2.6170850556117564e-10,
+        "new_agent_generation": false,
+        "numerically_validated": true,
+        "paid_calls": 0,
+        "request_id": "0fabd3775b6944a5e7b1b95573847e4a07b4d67390df85a9a8a1e27d35fd27d3",
+        "status": "passed"
+      },
+      "replay": {
+        "bundle_binding": "098423f51c535792da60d8d0a24df5de5238b7ce82a5208a90f597658ee91560",
+        "compared_values": 24,
+        "encrypted_execution": true,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-_6ijqq5v",
+        "exit_code": 0,
+        "format": "poseidon-agent-component-v1",
+        "max_absolute_error": 1.141655658898344e-09,
+        "new_agent_generation": false,
+        "numerically_validated": true,
+        "origin_agent_generated": false,
+        "paid_calls": 0,
+        "request_id": "0fabd3775b6944a5e7b1b95573847e4a07b4d67390df85a9a8a1e27d35fd27d3",
+        "status": "passed"
+      },
+      "seconds": 8.58798222799669,
+      "status": "passed"
+    },
+    {
+      "bundle_binding": "97076d855ca8357c7c6ef4c39f83b5e4d3522be0020c17ee0de7d9ef4b410f0e",
+      "case": "mlp-provenance",
+      "first": {
+        "compared_values": 8,
+        "encrypted_execution": true,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-7vh20w8y",
+        "exit_code": 0,
+        "format": "poseidon-agent-component-v1",
+        "job_sha256": "1d181a74169e98137d5c1a7f2c5d81345a2ee19e29bf49cdb1024ebf40df2d65",
+        "max_absolute_error": 1.7442997046757114e-08,
+        "new_agent_generation": false,
+        "numerically_validated": true,
+        "paid_calls": 0,
+        "request_id": "ea12869550a2c7ed063953d7a1dc8289f8f555c859101190afe840386dba3f6f",
+        "status": "passed"
+      },
+      "replay": {
+        "bundle_binding": "97076d855ca8357c7c6ef4c39f83b5e4d3522be0020c17ee0de7d9ef4b410f0e",
+        "compared_values": 8,
+        "encrypted_execution": true,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-5mfmfw_h",
+        "exit_code": 0,
+        "format": "poseidon-agent-component-v1",
+        "max_absolute_error": 2.6625054258544445e-08,
+        "new_agent_generation": false,
+        "numerically_validated": true,
+        "origin_agent_generated": false,
+        "paid_calls": 0,
+        "request_id": "ea12869550a2c7ed063953d7a1dc8289f8f555c859101190afe840386dba3f6f",
+        "status": "passed"
+      },
+      "seconds": 9.29293359600706,
+      "status": "passed"
+    },
+    {
+      "bundle_binding": "1375cb38e40ba52f9da80932ec414a5437564f5f23b66c2d4c27fc20e3a7b063",
+      "case": "explicit-compact",
+      "first": {
+        "compared_values": 8,
+        "encrypted_execution": true,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-6_y45lko",
+        "exit_code": 0,
+        "format": "poseidon-agent-component-v1",
+        "job_sha256": "854fffa91fb62f808c61643f16fe547d6838f6d25b7b7a61a0f13cffeb6c74a9",
+        "max_absolute_error": 1.0775713654709307e-10,
+        "new_agent_generation": false,
+        "numerically_validated": true,
+        "paid_calls": 0,
+        "request_id": "f4540a40a9f06fe164edac2b5e2db2fa00967be0d28513149533fc0a2e656841",
+        "status": "passed"
+      },
+      "replay": {
+        "bundle_binding": "1375cb38e40ba52f9da80932ec414a5437564f5f23b66c2d4c27fc20e3a7b063",
+        "compared_values": 8,
+        "encrypted_execution": true,
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-8vazkp0w",
+        "exit_code": 0,
+        "format": "poseidon-agent-component-v1",
+        "max_absolute_error": 2.5661561764422913e-10,
+        "new_agent_generation": false,
+        "numerically_validated": true,
+        "origin_agent_generated": false,
+        "paid_calls": 0,
+        "request_id": "f4540a40a9f06fe164edac2b5e2db2fa00967be0d28513149533fc0a2e656841",
+        "status": "passed"
+      },
+      "seconds": 7.951117491000332,
+      "status": "passed"
+    }
+  ],
+  "bundle_roundtrips_passed": 7,
+  "legacy_v1_replay": "passed",
+  "cancellation": "passed",
+  "concurrency": {
+    "binding": "ca5a44a8c092cf70924a5b01710fc90eb94f321a2b7ce4b2068c5bac7a045f37",
+    "compiler_build_jobs": 0,
+    "failed": 0,
+    "format": "poseidon-component-lifecycle-r166",
+    "implementation": {
+      "agent_response_provenance.py": "1837e43ceb4803bbbe04d475119135dfaeca90e7d170c35ff7032de3c1905c0f",
+      "audit_unified_candidate.py": "1e551db5e000b7068845fa84c9d50a3db205208dc925f4b6caf37b0e156b6613",
+      "candidate_bundle.py": "459f3ce28770ea76f098c61eca3b0590f4f0d3330ff6b72eec6c375f3e703b0e",
+      "component_backend.py": "c31605c76f20f9295df948eb80fae61d5f4e519818bc355a60924126439a90cf",
+      "component_contract.py": "a54bd6f538d32ed6aff69e913264a12030729e8d3b03c90f13cdc483178dff89",
+      "component_control.py": "f3f856b717f90a3163d62a61c4fbc23f9d06fbd7d52e12b3c855fd82e49a3440",
+      "component_worker.py": "8d50300c3e28f63f7036beb8e652cce432c99a33430a938892663e0c828ebe05",
+      "model_decomposition.py": "328a23786022c30ffbe531444d8e0211d10fe0dff8a39d8dee65361857abb1b5",
+      "restricted_model_python.py": "ffee6f0b9acb0bfd470b39e30d843267af5d63c66d221121ec4fd371b9a93bfc",
+      "unified_graph_contract.py": "3ebc26b5a0f9859351881303661667c3807ad00b8c61278ea5f72d740a688bd3",
+      "unified_public_contract.py": "62759a6e226c2ac86c443d2ac4f2a443da25a16d1f9d19b20d3417ae6c2f4c60"
+    },
+    "max_workers": 2,
+    "minimum_guest_available_kib": 5789488,
+    "new_agent_generation": false,
+    "new_paid_calls": 0,
+    "passed": 2,
+    "peak_process_tree_rss_kib": 1907844,
+    "provenance_tests": {
+      "errors": 0,
+      "failed": 0,
+      "run": 5,
+      "skipped": 0
+    },
+    "rows": [
+      {
+        "case": "native",
+        "report_sha256": "fdcd6499d4b9dc1433c2091a2cd09fa10c2459eac783b675f1cbbde421a1787d",
+        "result": {
+          "compared_values": 8,
+          "encrypted_execution": true,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-5ugkmdht",
+          "exit_code": 0,
+          "format": "poseidon-agent-component-v1",
+          "job_sha256": "3bb75724713ed6e96fe1247bec5bf89db53ca8242d1a9993a31f6ff604543564",
+          "max_absolute_error": 5.706486394529975e-10,
+          "new_agent_generation": false,
+          "numerically_validated": true,
+          "paid_calls": 0,
+          "request_id": "5a52844ab78196d2b08a079907cba3688eb82848ee857f77885b41f369822813",
+          "status": "passed"
+        }
+      },
+      {
+        "case": "multioutput",
+        "report_sha256": "31346357c775f7f3420cd55f15fd541823238de35f93be9d2efcf25469b540bc",
+        "result": {
+          "compared_values": 20,
+          "encrypted_execution": true,
+          "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-wsqaw1uj",
+          "exit_code": 0,
+          "format": "poseidon-agent-component-v1",
+          "job_sha256": "6a3c7393e455d9a0c56d7570b47f54b91f7773973ff3e2eb74fc1714c3e62158",
+          "max_absolute_error": 3.0029168041068033e-10,
+          "new_agent_generation": false,
+          "numerically_validated": true,
+          "paid_calls": 0,
+          "request_id": "fd408818d5438ad9677e19f035bac03d08f9f7e45492e1cb4de608ad57f54ada",
+          "status": "passed"
+        }
+      }
+    ],
+    "seconds": 4.48561435501324
+  },
+  "unchanged_requests": 2030,
+  "compiler_files_unchanged": 93,
+  "compiler_modified": false,
+  "production_evidence_dependencies_reverified": true,
+  "static_counts": [
+    {
+      "construction_coverage": "not_verified",
+      "count": 30,
+      "semantic_validation": "accepted"
+    },
+    {
+      "construction_coverage": "not_requested",
+      "count": 56,
+      "semantic_validation": "not_checked"
+    }
+  ],
+  "semantic_partitions": 401,
+  "upstream_api_classifications": 107,
+  "compiler_models_retained": 33,
+  "successful_encrypted_invocations": 17,
+  "unique_benchmark_models_not_claimed": true,
+  "new_paid_calls": 0,
+  "new_agent_generation": false,
+  "tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "historical_failures_preserved": [
+    "acceptance: Python provenance omitted package/source hashes; qualification passed but export failed; fixed.",
+    "acceptance-final: cancellation cleanup terminal status missing; private experiment keys subsequently cleaned with existing safe policy.",
+    "lifecycle-r164: historical pilot fixture required an older source binding; no test ran; replaced with explicitly current synthetic fixture.",
+    "lifecycle-r165: pure Nix lacked ps; both just-started workers stopped; used read-only /proc resource sampling in r166."
+  ],
+  "unverified": [
+    "New live Agent export end-to-end; only synthetic retained-provenance tests and manual FHE replay were run.",
+    "Cross-platform bundle requalification and current x86 execution.",
+    "Outer SSH/Nix launcher cancellation, SIGKILL recovery, durable JobHandle and complete RunContext.",
+    "Legacy schemas through new worker; continue using original CLI.",
+    "Full current-version semantic three-context coverage, remaining static candidates, 33 compiler cases and real bootstrap.",
+    "Full CLI/batch migration to component adapters and deployment inference API."
+  ],
+  "binding": "8d94d9a3358d0f7b601b165a565861526c1efde9a62267e08bed8ad40906e32c"
+}

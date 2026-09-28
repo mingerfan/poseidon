@@ -1,0 +1,106 @@
+{
+  "format": "poseidon-stage2-failure-causes-r151",
+  "parents": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-capacity-probe-r151/report.json": "f2ba9107b533510c9e3ea4b6bb11c4536a434058df11f619738eb7c9c086d8ee",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-capacity-probe-r151/plan.json": "76b25880c4a4a2c45a8eb261252a69fb3b6ae1a61dda6cdc02296c65ba5faa27",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-padding-diagnosis-r151.json": "e84f9f30edeff2d0ab9363f1ea8310a6445711412ac3b701f045718b34ad8481"
+  },
+  "compiler_replays": [
+    {
+      "compile_exit": 1,
+      "compiled_successfully": false,
+      "diagnosed_failure": "configured_scale_level_capacity_exceeded",
+      "diagnostics": [
+        {
+          "capacity_exceeded": true,
+          "capacity_limit": 780,
+          "levels_equal": true,
+          "lhs_capacity": 825,
+          "lhs_level": 13,
+          "lhs_scale": 45,
+          "lhs_shape": 1,
+          "rhs_level": 13,
+          "rhs_scale": 75,
+          "rhs_shape": 1,
+          "shapes_equal": true
+        }
+      ],
+      "encrypted_execution": false,
+      "expected_capacity_rejection_verified": true,
+      "id": "free_bench_helper_0032",
+      "log_sha256": "d2d14b63c3b54efefd5a74b62a6cea9198248fb3349a8d1dd514e70d96c81925",
+      "original_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-0l5ucnop/attempt-00",
+      "original_ir_sha256": "02d941dea1792394f5bb50d4e4610fece858bd902fb11852de8115f648017b94"
+    },
+    {
+      "compile_exit": 1,
+      "compiled_successfully": false,
+      "diagnosed_failure": "configured_scale_level_capacity_exceeded",
+      "diagnostics": [
+        {
+          "capacity_exceeded": true,
+          "capacity_limit": 780,
+          "levels_equal": true,
+          "lhs_capacity": 810,
+          "lhs_level": 12,
+          "lhs_scale": 90,
+          "lhs_shape": 1,
+          "rhs_level": 12,
+          "rhs_scale": 45,
+          "rhs_shape": 1,
+          "shapes_equal": true
+        }
+      ],
+      "encrypted_execution": false,
+      "expected_capacity_rejection_verified": true,
+      "id": "free_bench_helper_0033",
+      "log_sha256": "88ab4f2e6a4f9cc11778f76aebd2ddfa39f63661277e3976618e8905e738f88c",
+      "original_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-2sfh9k00/attempt-00",
+      "original_ir_sha256": "9dcc277b5777c5deadb9afe2b327c45d74efc6aa472cfbb68dca9f1ccec514b7"
+    },
+    {
+      "compile_exit": 1,
+      "compiled_successfully": false,
+      "diagnosed_failure": "configured_scale_level_capacity_exceeded",
+      "diagnostics": [
+        {
+          "capacity_exceeded": true,
+          "capacity_limit": 780,
+          "levels_equal": true,
+          "lhs_capacity": 810,
+          "lhs_level": 12,
+          "lhs_scale": 90,
+          "lhs_shape": 1,
+          "rhs_level": 12,
+          "rhs_scale": 45,
+          "rhs_shape": 1,
+          "shapes_equal": true
+        }
+      ],
+      "encrypted_execution": false,
+      "expected_capacity_rejection_verified": true,
+      "id": "free_bench_helper_0034",
+      "log_sha256": "7b5b9bdd4a96cc7fe154889d9b8107b8a5792475f02d541e3f6d4a270d6b3b5f",
+      "original_evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-vfebar7z/attempt-00",
+      "original_ir_sha256": "72015bec63906fee2dec023bc25d89ffe36b0f8888864945c0303e81bef5bf20"
+    }
+  ],
+  "numeric_diagnosis": {
+    "id": "construct_119_1",
+    "confirmed_explanation": "Both polynomial branches add 1/16 to padding. The positive-five rotation correctly places the second branch; adding two unmasked branches adds an unwanted 1/16 to every logical output. Public nonlocal counter runs once and multiplies by one.",
+    "four_input_sets_checked": 4,
+    "compared_values": 24,
+    "manual_vs_decryption_max_absolute_error": 1.0156370111591428e-07,
+    "manual_vs_reference_offset": 0.0625
+  },
+  "actual_compiler_invocations": 3,
+  "expected_compiler_rejections_verified": 3,
+  "successful_compilations": 0,
+  "paid_calls": 0,
+  "new_encrypted_executions": 0,
+  "new_agent_passes": 0,
+  "stage2_complete": false,
+  "conclusion": "The exact retained high-degree candidates exceed fixed compiler capacity; the retained numerical candidate leaves polynomial padding unmasked. Neither finding authorizes changing security parameters or reference values.",
+  "remaining": "Requirement-level completion audit must distinguish historical offline semantic acceptance, completed paid evaluation with failures, and successful Agent coverage; do not silently require or claim universal Agent success.",
+  "binding": "b99409bc8b6a5a0bb7e1329b6937d65cf4326cb9fae7c043285c79c6ab1856b0"
+}

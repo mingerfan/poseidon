@@ -1,0 +1,159 @@
+{
+  "format": "poseidon-stage2-progress-review-r144",
+  "observed_at_utc": "2026-09-25T15:06:53.038014+00:00",
+  "runtime_source_sha256": "80738a33351d8c532cd8e4b032de63cc6785d6e5cf8a349f78e52aab5fffd58e",
+  "summary": {
+    "planned": 2030,
+    "statuses": {
+      "passed": 1309,
+      "launched_unconfirmed": 49,
+      "failed": 136,
+      "terminal_pending_audit": 240,
+      "running_verified": 10,
+      "not_run": 286
+    },
+    "audited": 1445,
+    "audited_task_success_rate": 0.9058823529411765,
+    "all_planned_task_success_rate": 0.6448275862068965,
+    "all_tasks_audited": false
+  },
+  "groups": {
+    "directed_construction": {
+      "planned": 627,
+      "statuses": {
+        "failed": 44,
+        "passed": 119,
+        "launched_unconfirmed": 9,
+        "terminal_pending_audit": 240,
+        "running_verified": 10,
+        "not_run": 205
+      },
+      "audited": 163,
+      "audited_task_success_rate": 0.7300613496932515,
+      "all_planned_task_success_rate": 0.189792663476874,
+      "all_tasks_audited": false
+    },
+    "directed_fixed_polynomial": {
+      "planned": 21,
+      "statuses": {
+        "not_run": 21
+      },
+      "audited": 0,
+      "audited_task_success_rate": null,
+      "all_planned_task_success_rate": 0.0,
+      "all_tasks_audited": false
+    },
+    "directed_helper": {
+      "planned": 60,
+      "statuses": {
+        "not_run": 60
+      },
+      "audited": 0,
+      "audited_task_success_rate": null,
+      "all_planned_task_success_rate": 0.0,
+      "all_tasks_audited": false
+    },
+    "free_gap_context": {
+      "planned": 30,
+      "statuses": {
+        "passed": 29,
+        "launched_unconfirmed": 1
+      },
+      "audited": 29,
+      "audited_task_success_rate": 1.0,
+      "all_planned_task_success_rate": 0.9666666666666667,
+      "all_tasks_audited": false
+    },
+    "free_primary": {
+      "planned": 1200,
+      "statuses": {
+        "passed": 1080,
+        "launched_unconfirmed": 37,
+        "failed": 83
+      },
+      "audited": 1163,
+      "audited_task_success_rate": 0.9286328460877042,
+      "all_planned_task_success_rate": 0.9,
+      "all_tasks_audited": false
+    },
+    "free_supplement": {
+      "planned": 92,
+      "statuses": {
+        "passed": 81,
+        "failed": 9,
+        "launched_unconfirmed": 2
+      },
+      "audited": 90,
+      "audited_task_success_rate": 0.9,
+      "all_planned_task_success_rate": 0.8804347826086957,
+      "all_tasks_audited": false
+    }
+  },
+  "context_coverage": {
+    "executable_partitions": 377,
+    "minimum_three_topologies_verified": 157,
+    "all_designated_tasks_passed": 144,
+    "other_partition_states": {
+      "backend_blocked": 3,
+      "current_compiler_contexts_passed": 5,
+      "static_controls_separate": 16
+    }
+  },
+  "guidance_diagnostic_split_review": {
+    "cases": [
+      {
+        "model_id": "bench_graph_0009",
+        "split": "development",
+        "topology": "0d7275fbf8e3e249611b6a8c94927952bcbb850f99b71edfbbd1cd10434f21c9",
+        "model_sha256": "8373ed1aee3a4ff98707848ef0c311ee52876069f2e7f8f06d447bd9592c676d"
+      },
+      {
+        "model_id": "bench_graph_0038",
+        "split": "development",
+        "topology": "5236882e7d3db43140e4aed25bdb29348a83bdf5b9bed6cd7e6ca04ff47282ee",
+        "model_sha256": "afb11b9a31de7b4572daec4d729be5beedcca09c0dd95a42a60c7f45a18de5d1"
+      }
+    ],
+    "scope": "Only the two focused candidate diagnostics that motivated r141; not a claim that all previous development avoided held-out data.",
+    "frozen_splits_modified": false,
+    "production_guidance_changed": false,
+    "improvement_effectiveness_verified": false
+  },
+  "parents": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-progress-r144.json": "eb0d6165916891aa527216bcf186f7396bb31db2ce7e53c1a3ba4d41079458b0",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-distinct-contexts-r144.json": "5ba354946bc146878bbe2ddb68cf824c05a63abbe2cd871c4de56db4448beec9",
+    "/home/lhohy/Code/Poseidon/docs/baseline/stage2-directed-diagnostics-r140.json": "7ed74823d27ba2dd0356f6d58d8d87aee688a74f82a05cbb69541333cf6f7f97",
+    "/home/lhohy/Code/Poseidon/docs/baseline/stage2-directed-guidance-offline-r141.json": "748db0bd6d46fac0cff2087e31380f4e3f965d1c1e17cbd98e085ad9fcb8c4ac",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/semantic-v2-ledger-r38/index.json": "ee7a0868cd5ea68e7ada18e43a52249b6d1a474a4c13e006fb7285cbe506a6a2",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/semantic-v2-ledger-r38/shard-000.json": "d8a1d65f3e9c41cb0655fc8134e93ebca2d9dfa2189319eb975eada54844771b",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/semantic-v2-ledger-r38/shard-001.json": "50f5ba2e4849470a40e7bf8e06f3616050e1930a6f4fadc9fbe62aaffc7232aa",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/semantic-v2-ledger-r38/shard-002.json": "fdccea4e160194dfde1f085047058d8ffa08616d29651bf0ec28a9274401b1b1",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/semantic-v2-ledger-r38/shard-003.json": "8407c14c4d827227c1924a1facfb2b7a1681f57f360ce659c9f86c85a6e32829",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/semantic-v2-ledger-r38/shard-004.json": "649fea9fe7af1a28cdbb20225e769048f29bb355955ea969ae483849e180434c",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/semantic-v2-ledger-r38/shard-005.json": "c99ee356034cd917ff32513f9000a5a9844dc23d2da93221308318024f458bb3",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/semantic-v2-ledger-r38/shard-006.json": "ee77b1b21155079fcd4ed613cda262f387fca4ce9a43d6cad8c551185a452d23",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/semantic-v2-ledger-r38/shard-007.json": "511e78ac862fdca6d9bbeb6cff7afd65d521e46b0db393b3f1f14461d6b284a3",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/semantic-v2-ledger-r38/shard-008.json": "be56956bd7cc550a6f67bd32db02ced826aa38e51f93e3b448ab1e90e7a851ca",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/semantic-v2-ledger-r38/shard-009.json": "02f0ca3defab8690068b746654d1e9754a6ebb457463b0799553a9f83e3e5e08",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/semantic-v2-ledger-r38/shard-010.json": "b6c01713c9f401e4a02f953891311d3fa2d8af3c3ff3bb5ce79deda8edb50960",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/semantic-v2-ledger-r38/shard-011.json": "f9de1e4a3b94f53c23214ac0ce5894ac232c3b89292f322d7894c5649a708114",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/semantic-v2-ledger-r38/shard-012.json": "7fd17caa3d7c0b059a12e8fa781bae3b0aa62f3c5dedcdfca35d2a18da9b0c8d",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/semantic-v2-ledger-r38/shard-013.json": "afc1892ab57ed3018410e3131dc0a7bf7fa193e49ea85bb99b5b1f14a25265c1",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/semantic-v2-ledger-r38/shard-014.json": "116d8f51886bfea89eacf3e87f07af45ffbb16eaf53fcce9e03437753af80deb",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/semantic-v2-ledger-r38/shard-015.json": "bd45b9905eca08d266c2b95a9b80b202b503eb8adc45c1084845d57c656e3af8",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/semantic-v2-ledger-r38/shard-016.json": "3216c8791ed480c9b8cecbae7fb51d68cc7be0df892eda85b652cad2a54df3c1",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/semantic-v2-ledger-r38/shard-017.json": "141cd345f4d98c6e5d27b15f90829dfb7866af76e3fc9f53265a979afa34334c",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/semantic-v2-ledger-r38/shard-018.json": "8dce9bab6703ab2dc89c9b8b854764e0675cb553effe55a32547e8a5877d1076",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/semantic-v2-ledger-r38/shard-019.json": "1d35d0882c68abb9b410ed70d63d9678e2a172e24d498e26b5fdf3bcfe9c7365",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/semantic-v2-ledger-r38/shard-020.json": "e403bb1613fd6ebea7a627dd7a9bb23f6c1ca7bb2994fe60e2533305281d5850",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/semantic-v2-ledger-r38/shard-021.json": "d7dbb64f8c3e71c804bf555de48bdc649844903729b24ad78374de2ccbededa6",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/semantic-v2-ledger-r38/shard-022.json": "aa325a50bee6dcc84a4957b55866247864994213b15e7159bf90ada4ca0dc4ba",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/semantic-v2-ledger-r38/shard-023.json": "9a099e6674fb324c101013d3aa5b392c33bf5fb6d171add08dad1dd30f9c9110",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/semantic-v2-ledger-r38/shard-024.json": "6fa9691f0dedfa5e8edae92d85067b15f246586e0e3f899adca665b4780e0bf1"
+  },
+  "new_paid_calls_by_this_review": 0,
+  "new_compilations_by_this_review": 0,
+  "new_encrypted_executions_by_this_review": 0,
+  "stage2_complete": false,
+  "binding": "ee4571bda05c39e3b94b5c134a7ae5c6d8b1b4f77581c52ad16d0d7f69b10427"
+}

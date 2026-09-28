@@ -15,7 +15,7 @@ from seal_artifact_gate import require
 from workspace_paths import WORK_BASE
 from platform_config import configuration
 
-MODULES = ("hevm_abi.py", "platform_config.py", "platform-profiles.json", "workspace_paths.py", "candidate_trace.py", "candidate_contract.py", "candidate_worker.py", "hecate_contract.py", "public_construction.py", "function_construction.py", "lexical_scope.py", "construction_calls.py",
+MODULES = ("unified_chunk_layout.py","upstream_helper_coverage.py", "upstream_candidate_helpers.py", "upstream-helpers-v1.json", "unified_public_views.py", "unified_public_storage.py", "unified_public_arithmetic.py", "unified_public_unary.py", "unified_public_exercises.py", "unified_public_interventions.py", "unified_public_coverage.py", "construction_evidence.py", "capability_combinations.py", "unified_public_contract.py", "upstream_helper_probe.py", "unified_graph_exercises.py", "unified_native_coverage.py", "benchmark_graph.py", "unified_graph_contract.py", "unified_logical_semantics.py", "unified_directed_semantics.py","unified_failure_semantics.py","unified_typed_guidance.py", "unified_precise_guidance.py", "unified_gate_guidance.py", "unified_expression_guidance.py", "hevm_abi.py", "platform_config.py", "platform-profiles.json", "workspace_paths.py", "candidate_trace.py", "candidate_contract.py", "candidate_worker.py", "hecate_contract.py", "public_construction.py", "function_construction.py", "lexical_scope.py", "construction_calls.py",
            "packed_native_exercises.py", "packed-native-exercises-v1.json",
            "public_numeric.py", "public_strings.py", "public_polynomial.py", "object_arrays.py", "construction_exercises.py", "construction-exercises-v1.json", "seal_artifact_gate.py", "seal_cpu_golden.py", "python_compiler_smoke.py",
            "hecate_python_env.py", "continue_dacapo_cpp.py", "spatial_ops.py", "cipher_abi.py", "chunked_input_abi.py", "packed_input_abi.py",
@@ -26,7 +26,7 @@ MODULES = ("hevm_abi.py", "platform_config.py", "platform-profiles.json", "works
            "native_function_exercises.py", "native-function-exercises-v1.json", "native_array_exercises.py", "compiler_configuration.py", "native_star_exercises.py")
 
 
-def command(payload, output, argv, keys=None):
+def command(payload, output, argv, keys=None, *, helpers=False):
     require(output.resolve().is_relative_to(WORK / "results") and output.is_dir(), "Invalid sandbox output")
     require(payload.resolve().is_relative_to(WORK / "results") and payload.is_file(), "Invalid sandbox payload")
     library = os.environ["HECATE_PYTHON_LIBRARY_PATH"]
@@ -42,12 +42,24 @@ def command(payload, output, argv, keys=None):
            "--ro-bind", str(PROFILE), "/profile.json",
            "--ro-bind", str(BUILD / "hevm-abi.json"), str(BUILD / "hevm-abi.json"),
            "--ro-bind", str(KEY_BUILD / "libseal_golden_metadata.so"), str(KEY_BUILD / "libseal_golden_metadata.so")]
+    parameter_observer=KEY_BUILD/"libseal_artifact_parameters.so"
+    require(parameter_observer.is_file(), "Build the pinned SEAL artifact checker before execution")
+    cmd += ["--ro-bind",str(parameter_observer),str(parameter_observer)]
     for name in MODULES:
         cmd += ["--ro-bind", str(ROOT / "scripts/baseline" / name), "/app/" + name]
     # New packing verification is opt-in; legacy installations do not require it.
     packed_observer=KEY_BUILD/'libseal_packed_metadata.so'
     if packed_observer.is_file():
         cmd += ['--ro-bind',str(packed_observer),str(packed_observer)]
+    if helpers:
+        from poly_dependencies import verify,TARGET
+        verify()
+        cmd += ["--ro-bind",str(TARGET),"/poly-deps", "--ro-bind",
+                str(ROOT/"third_party/dacapo/python/poly"),"/upstream-poly"]
+        cmd += ["--dir","/app/upstream_adapters"]
+        for name in ("__init__.py","batch_norm.py","batch_norm_node.py","concat_node.py","periodic_ring.py","spatial_node.py","spatial_mapped.py","fused_conv_bn.py","downsample_node.py","virtual_ring.py","virtual_node.py","chunk_virtual_node.py","fixed_polynomial.py"):
+            cmd += ["--ro-bind",str(ROOT/"scripts/baseline/upstream_adapters"/name),
+                    "/app/upstream_adapters/"+name]
     if keys is not None:
         require(keys.resolve().is_relative_to(WORK / "results") and keys.is_dir(), "Invalid keys directory")
         cmd += ["--ro-bind", str(keys), "/keys"]
@@ -68,8 +80,8 @@ def limits():
     resource.setrlimit(resource.RLIMIT_NOFILE, (128, 128))
 
 
-def run(payload, output, argv, log, seconds=60, keys=None):
-    cmd = command(payload, output, argv, keys)
+def run(payload, output, argv, log, seconds=60, keys=None, *, helpers=False):
+    cmd = command(payload, output, argv, keys, helpers=helpers)
     with log.open("w") as stream:
         # Strip host loader overrides so the existing Ubuntu bwrap uses its own libc.
         result = subprocess.run(["/usr/bin/timeout", "-k", "3s", str(seconds), *cmd],

@@ -1,0 +1,51 @@
+{
+  "all_designated_tasks_passed": 30,
+  "automatic_retry_authorized": false,
+  "binding": "3d567bca02533caa28ae19d47bf73138f05860c0abf1344b590d194d1e6ea5e7",
+  "current_queue": "stage2-remaining-queue-r135",
+  "evidence": {
+    "stage2-agent-progress-r136.json": {
+      "binding": "cc3be0d0384540e607b6d67d6191ceac27e91ed2c9e22cabedde126f0e051d5f",
+      "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-progress-r136.json",
+      "sha256": "14f2d7434475657bff386ef266c1f4721d934c454098af0e82d904279a741623"
+    },
+    "stage2-distinct-contexts-r136.json": {
+      "binding": "0a07379752f7c6837624bfeed6ca10a461e486c66afe6067e381bc6c899136ff",
+      "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-distinct-contexts-r136.json",
+      "sha256": "abfd1bb43b6842b184e4098add68457c25842de067f90cecb7b7c3ce73a12ae8"
+    },
+    "stage2-unconfirmed-review-r136.json": {
+      "binding": "4bfe8935a63e75e9e946ba71ead0026bd98c2c0fd3eb6a1edaf26e7ee05d33c5",
+      "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-unconfirmed-review-r136.json",
+      "sha256": "e096a60155697d18144f2c6c6e4d3a93d22567f7488e2863fe2aa5c3cc2a2896"
+    }
+  },
+  "executable_partitions": 377,
+  "format": "poseidon-stage2-progress-review-v1",
+  "interrupted_review": {
+    "calls_marked_in_flight": 35,
+    "cases_with_response": 0,
+    "cases_without_recorded_http_attempt": 13,
+    "recorded_generations": 36,
+    "recorded_http_attempts": 41,
+    "stopped_cases": 49
+  },
+  "limitation": "Point-in-time summary. Existing interrupted claims are preserved. Local attempt checkpoints do not establish provider billing; pending audits never count as passes.",
+  "live_queue_paid_activity_continues": true,
+  "minimum_three_topologies_verified": 35,
+  "queue_binding": "ab7bd25116a77f36dd8c322a8cdc4c1bff9cf819b5dad0671819d83b8305da77",
+  "queue_session": 92221,
+  "review_new_compilations": 0,
+  "review_new_encrypted_executions": 0,
+  "review_new_paid_calls": 0,
+  "runtime_source_sha256": "80738a33351d8c532cd8e4b032de63cc6785d6e5cf8a349f78e52aab5fffd58e",
+  "stage2_complete": false,
+  "task_statuses": {
+    "failed": 50,
+    "launched_unconfirmed": 49,
+    "not_run": 1007,
+    "passed": 808,
+    "running_verified": 10,
+    "terminal_pending_audit": 106
+  }
+}

@@ -93,19 +93,25 @@ def main():
     candidate, request = payload["candidate"], payload["request"]
     validate_candidate(candidate, request)
     from packed_input_abi import NATIVE_TASKS, NATIVE_EXERCISE_TASK
-    packed_native = request['task'] in NATIVE_TASKS
-    packed_exercise = request['task']==NATIVE_EXERCISE_TASK
+    from unified_graph_contract import TASK as UNIFIED_TASK
+    public_unified=request['task']==UNIFIED_TASK and 'construction_profile' in request
+    packed_native = request['task'] in NATIVE_TASKS or (request['task'] == UNIFIED_TASK and not public_unified)
+    packed_exercise = request['task']==NATIVE_EXERCISE_TASK or (request['task']==UNIFIED_TASK and 'construction_exercise' in request)
     if packed_native or request['task'] in ('hecate-native-function-synthesis-v1', 'hecate-native-function-synthesis-v2', 'hecate-native-function-synthesis-v3', 'hecate-native-function-synthesis-v4', 'hecate-native-function-synthesis-v5', 'hecate-native-function-synthesis-v6', 'hecate-native-function-synthesis-v7', 'hecate-native-function-synthesis-v8', 'hecate-native-function-synthesis-v9', 'hecate-native-function-synthesis-v10'):
         from decorated_functions import register
         hc = load_frontend()
         calls = []
+        upstream_calls = []
+        bound_calls = []
         storage_events = []
         star_events = []
         augmented_events = []
         mutation_events = []
         _, plan = register(candidate['hecate_source'], request['public_constants'], hc,
                            request['layout']['output_ciphertexts'], input_names=request_input_names(request),
-                           observe=calls.append, arrays=request['task'] in ('hecate-native-function-synthesis-v3','hecate-native-function-synthesis-v4','hecate-native-function-synthesis-v5'),
+                           observe=calls.append, upstream_helpers="upstream_helpers" in request,
+                           observe_upstream=upstream_calls.append, upstream_request=request if "upstream_helpers" in request else None,
+                           observe_upstream_binding=bound_calls.append, arrays=request['task'] in ('hecate-native-function-synthesis-v3','hecate-native-function-synthesis-v4','hecate-native-function-synthesis-v5'),
                            starred_calls=request['task'] in ('hecate-native-function-synthesis-v5','hecate-native-function-synthesis-v6','hecate-native-function-synthesis-v8'),
                            array_arithmetic=request['task'] == 'hecate-native-function-synthesis-v6',
                            public_loops=request['task'] == 'hecate-native-function-synthesis-v7',
@@ -118,6 +124,14 @@ def main():
                            observe_starred=star_events.append if packed_exercise or request['task'] == 'hecate-native-function-synthesis-v8' else None)
         Path('/out/native-function-plan.json').write_text(json.dumps(plan, sort_keys=True))
         save_trace(hc, request, 'validated_native_AST_to_Hecate_functions')
+        if "upstream_helpers" in request:
+            import hashlib
+            from upstream_candidate_helpers import BN_PROFILE,CONCAT_PROFILE,SPATIAL_PROFILE,MAPPED_PROFILE,FUSED_PROFILE,DS_PROFILE,VR_PROFILE,CHUNK_PROFILE
+            profile=request["upstream_helpers"]["profile"]
+            Path('/out/upstream-calls.json').write_text(json.dumps(dict(schema=1,profile=profile,
+                request_id=request['request_id'],source_sha256=hashlib.sha256(candidate['hecate_source'].encode()).hexdigest(),
+                calls=upstream_calls,candidate_python_executed=False,output_contribution_proven=False,
+                **({"bound_calls":bound_calls} if profile in (BN_PROFILE,CONCAT_PROFILE,SPATIAL_PROFILE,MAPPED_PROFILE,FUSED_PROFILE,DS_PROFILE,VR_PROFILE,CHUNK_PROFILE) else {})),sort_keys=True))
         Path('/out/native-call-events.json').write_text(json.dumps(calls, sort_keys=True))
         if packed_exercise or request['task'] == 'hecate-native-function-synthesis-v4':
             Path('/out/native-array-events.json').write_text(json.dumps(storage_events, sort_keys=True))
@@ -130,6 +144,16 @@ def main():
         return
     source = candidate['hecate_source']
     public_constants = request['public_constants']
+    if public_unified:
+        from unified_public_contract import normalize,event_record,CONTRACT
+        events=[]
+        expanded=normalize(source,request,observe=lambda node:events.append(event_record(node)))
+        source=expanded['source'];public_constants=expanded['constants']
+        Path('/out/normalized-source.py').write_text(source)
+        Path('/out/construction.json').write_text(json.dumps(expanded['construction'],sort_keys=True))
+        Path('/out/derived-constants.json').write_text(json.dumps(expanded['derived_constants'],sort_keys=True,allow_nan=False))
+        Path('/out/public-construction-events.json').write_text(json.dumps(dict(profile=CONTRACT,events=events,
+            candidate_python_executed=False,normalized_sha256=expanded['construction']['normalized_sha256']),sort_keys=True))
     if request['task'] in ('hecate-function-synthesis-v7', 'hecate-function-synthesis-v8', 'hecate-function-synthesis-v9', 'hecate-function-synthesis-v10', 'hecate-function-synthesis-v11', 'hecate-function-synthesis-v12', 'hecate-function-synthesis-v13', 'hecate-function-synthesis-v14', 'hecate-function-synthesis-v15', 'hecate-function-synthesis-v16', 'hecate-function-synthesis-v17', 'hecate-function-synthesis-v18', 'hecate-function-synthesis-v19', 'hecate-function-synthesis-v20', 'hecate-function-synthesis-v21', 'hecate-function-synthesis-v22'):
         if request['task'] != 'hecate-function-synthesis-v7':
             from function_construction import normalize
@@ -181,7 +205,7 @@ def main():
         # Plain on the left must use Hecate dispatch, not NumPy's object ufunc.
         # Construct constants inside the active frontend function.
         bound = ({k: hc.resolveType(v) for k, v in constants.items()}
-                 if request['task'] in ('hecate-periodic-packed-synthesis-v1', 'hecate-chunked-input-synthesis-v1', 'hecate-function-synthesis-v6', 'hecate-function-synthesis-v7',
+                 if public_unified or request['task'] in ('hecate-periodic-packed-synthesis-v1', 'hecate-chunked-input-synthesis-v1', 'hecate-function-synthesis-v6', 'hecate-function-synthesis-v7',
                                         'hecate-function-synthesis-v8', 'hecate-function-synthesis-v9',
                                         'hecate-function-synthesis-v10', 'hecate-function-synthesis-v11',
                                         'hecate-function-synthesis-v12', 'hecate-function-synthesis-v13',
@@ -189,7 +213,7 @@ def main():
         return evaluate_tree(source, bound,
                              encrypted_inputs=dict(zip(names, inputs)))
 
-    save_trace(hc, request, 'validated_AST_to_Hecate_objects')
+    save_trace(hc, request, 'validated_public_AST_normalization_to_Hecate_objects' if public_unified else 'validated_AST_to_Hecate_objects')
 
 
 if __name__ == "__main__":

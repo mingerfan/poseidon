@@ -1,0 +1,15 @@
+--- a/scripts/baseline/run_candidate.py
++++ b/scripts/baseline/run_candidate.py
+@@ -684,6 +684,12 @@
+             return 2
+         try:
+             from deepseek_provider import generation_deadline
++            # A benchmark child may already run in the exact pinned pure shell.
++            # Re-entering nix-portable here would deadlock on the parent's
++            # exclusive launcher lock. Keep credential loading/cleanup here,
++            # then call the same trusted execution path in this environment.
++            if os.environ.get("IN_NIX_SHELL") == "pure" and Path(sys.prefix) == VENV:
++                return inside(args)
+             return enter_nix(command, seconds=1800 + generation_deadline(args.api_timeout, args.max_repairs + 1, args.provider_retries),
+                              keep_env=("DEEPSEEK_API_KEY",))
+         finally:

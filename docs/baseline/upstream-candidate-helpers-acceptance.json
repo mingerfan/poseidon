@@ -1,0 +1,294 @@
+{
+  "accepted_date": "2026-09-22",
+  "actual_compilation": true,
+  "actual_decryption": true,
+  "actual_seal_execution": true,
+  "actual_upstream_helper_execution": true,
+  "agent_calls": 0,
+  "all_dsl_semantics_covered": false,
+  "all_helper_coverage": false,
+  "approximation": {
+    "maximum": 0.2689129328038613,
+    "models": 8,
+    "not_execution_error": true
+  },
+  "branch": "lhy-agent-dsl",
+  "checkout": "/home/lhohy/Code/Poseidon",
+  "commits": 0,
+  "current": {
+    "agent_calls": 0,
+    "all_helpers_supported": false,
+    "compared_values": 248,
+    "directed_helper_contribution_proven": false,
+    "failed": 1,
+    "max_absolute_error": 1.6247308275052806e-08,
+    "passed": 12,
+    "planned": 13,
+    "seconds": 79.31505887699313,
+    "skipped": 0,
+    "source_sha256": "9a1ee63fe5f5c2c335dbbd16032080297bd6c6737a4d1930f2660a40a2c8786a",
+    "weighted_mae": 2.7666886329398077e-09
+  },
+  "default_profile_regression": {
+    "compared_values": 24,
+    "failed": 0,
+    "max_absolute_error": 6.8023595179864875e-06,
+    "passed": 2,
+    "profiles": [
+      "native",
+      "public-v1"
+    ],
+    "skipped": 0
+  },
+  "directed_helper_contribution_proven": false,
+  "downloads": 0,
+  "evidence_hashes": {
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/audit_upstream_candidate_batch.py": "bfc8872ef8914e3dea52c400dd38f7b108003903761e363958b4e07baac37c3f",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/run_upstream_candidate_batch.py": "6531b2b3fe79fbf0f14e63684c7ad3d67c7087b68d0047e9e7c869140483a5e9",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-candidate-final-unit.log": "05d387bbf29cea713bbc443fb0c62b2214543f6d1520eba791071f9581acf85b",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-candidate-initial-unit.log": "60a547ab4163903f2a93118307749267a189d4e7a977623d572c6508e0825f03",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-candidate-r15-final/frozen-source.tar.gz": "6c9f889a5ba3d2d1e2a3317937bdef5e6d6da0c59c95c57fca1788348b17d114",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-candidate-r15-final/independent-audit.json": "1143f979d7025102460560d7bccbf79d2cf0d0b6a133ebd5430c33b9cc916b42",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-candidate-r15-final/plan.json": "bf20aaba033271b3e28e3f49db54ffef2d190491661e77280d1047c2b0e44ef7",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-candidate-r15-final/report.json": "78e206e26df7c799c2cdeabedc643e5748fb6efc9516f3f60d74b05bb1519ebb",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-candidate-r15-regression/harness-note.json": "c14826e9402eb6fa65b639160923fea6b41eec1cc62ed5ab9cf468943378adbf",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-candidate-r15-regression/report.json": "1d68749add0d5351258d51f09334a7962f075ea15144711ed20119c2618631f7",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-candidate-r15-regression/source.json": "424bcb6a36901584ab27dfe7115c803f72ea9aabf3b3758d7de3d12f25722613",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-candidate-r15-regression/unit.json": "222d8308bb73ff1bad2d0b5f8f5661c06fa7e25b527a5df16dd73d07a21dc736",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-candidate-r15-regression/unit.log": "0a6ca8e5af0ae849702da59d482418a2a8d0d41a589ee878b7a1583ab999b2f4",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-candidate-unit-v2.log": "d2c42ef3c1d2b2d21ca822d5ce762169d0b33c65fa48e8d5210ad498f379a548"
+  },
+  "head": "3493c905dd8f4ce8e04211c83b337be243befe14",
+  "installs": 0,
+  "legacy_request_hashes_rechecked_unchanged": 48,
+  "modelset_models": 1200,
+  "new_benchmark_models_added": 0,
+  "platform": "aarch64-linux",
+  "profile": "upstream-poly-silu-v1",
+  "prs": 0,
+  "pushes": 0,
+  "reference": {
+    "failed": 0,
+    "passed": 13,
+    "probes": 208,
+    "skipped": 0
+  },
+  "retained_earlier_batches": [
+    "upstream-candidate-pilot-r15",
+    "upstream-candidate-pilot-r15b",
+    "upstream-candidate-r15"
+  ],
+  "rows": [
+    {
+      "contribution_negative": false,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-tz6xbgn5",
+      "frozen_corpus_model": "bench_helper_0112",
+      "id": "silu_frozen_0",
+      "reference_max": 3.3306690738754696e-16,
+      "reference_probes": 16,
+      "status": "passed",
+      "upstream_trace": {
+        "actual_upstream_calls": 1,
+        "agent_generation_proven": false,
+        "output_contribution_proven": false,
+        "profile": "upstream-poly-silu-v1"
+      }
+    },
+    {
+      "contribution_negative": false,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-nzh7vdna",
+      "frozen_corpus_model": "bench_helper_0113",
+      "id": "silu_frozen_1",
+      "reference_max": 3.3306690738754696e-16,
+      "reference_probes": 16,
+      "status": "passed",
+      "upstream_trace": {
+        "actual_upstream_calls": 1,
+        "agent_generation_proven": false,
+        "output_contribution_proven": false,
+        "profile": "upstream-poly-silu-v1"
+      }
+    },
+    {
+      "contribution_negative": false,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-0ndne__e",
+      "frozen_corpus_model": "bench_helper_0114",
+      "id": "silu_frozen_2",
+      "reference_max": 3.3306690738754696e-16,
+      "reference_probes": 16,
+      "status": "passed",
+      "upstream_trace": {
+        "actual_upstream_calls": 1,
+        "agent_generation_proven": false,
+        "output_contribution_proven": false,
+        "profile": "upstream-poly-silu-v1"
+      }
+    },
+    {
+      "contribution_negative": false,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-lw3jo813",
+      "frozen_corpus_model": "bench_helper_0115",
+      "id": "silu_frozen_3",
+      "reference_max": 3.3306690738754696e-16,
+      "reference_probes": 16,
+      "status": "passed",
+      "upstream_trace": {
+        "actual_upstream_calls": 1,
+        "agent_generation_proven": false,
+        "output_contribution_proven": false,
+        "profile": "upstream-poly-silu-v1"
+      }
+    },
+    {
+      "contribution_negative": false,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ad7utem3",
+      "frozen_corpus_model": "bench_helper_0116",
+      "id": "silu_frozen_4",
+      "reference_max": 3.3306690738754696e-16,
+      "reference_probes": 16,
+      "status": "passed",
+      "upstream_trace": {
+        "actual_upstream_calls": 1,
+        "agent_generation_proven": false,
+        "output_contribution_proven": false,
+        "profile": "upstream-poly-silu-v1"
+      }
+    },
+    {
+      "contribution_negative": false,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-kq71jwjt",
+      "frozen_corpus_model": "bench_helper_0117",
+      "id": "silu_frozen_5",
+      "reference_max": 3.3306690738754696e-16,
+      "reference_probes": 16,
+      "status": "passed",
+      "upstream_trace": {
+        "actual_upstream_calls": 1,
+        "agent_generation_proven": false,
+        "output_contribution_proven": false,
+        "profile": "upstream-poly-silu-v1"
+      }
+    },
+    {
+      "contribution_negative": false,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-hms2d611",
+      "frozen_corpus_model": "bench_helper_0118",
+      "id": "silu_frozen_6",
+      "reference_max": 3.3306690738754696e-16,
+      "reference_probes": 16,
+      "status": "passed",
+      "upstream_trace": {
+        "actual_upstream_calls": 1,
+        "agent_generation_proven": false,
+        "output_contribution_proven": false,
+        "profile": "upstream-poly-silu-v1"
+      }
+    },
+    {
+      "contribution_negative": false,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ipe7rj38",
+      "frozen_corpus_model": "bench_helper_0119",
+      "id": "silu_frozen_7",
+      "reference_max": 3.3306690738754696e-16,
+      "reference_probes": 16,
+      "status": "passed",
+      "upstream_trace": {
+        "actual_upstream_calls": 1,
+        "agent_generation_proven": false,
+        "output_contribution_proven": false,
+        "profile": "upstream-poly-silu-v1"
+      }
+    },
+    {
+      "compiler_log": "/upstream-poly/poly/MPCB.py:77:0: error: 'earth.mul' op failed to infer returned types\n/upstream-poly/poly/MPCB.py:77:0: note: see current operation: %323 = \"earth.mul\"(%322, %321) : (tensor<1x!earth.ci<80 * 12>>, tensor<1x!earth.ci<80 * 12>>) -> tensor<1x!earth.ci<0 * 0>>\n",
+      "contribution_negative": false,
+      "diagnostic": "Isolated compiler failed (exit 1); see compile.log",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ewd3d_4l",
+      "failure_layer": "compiler",
+      "frozen_corpus_model": null,
+      "id": "silu_multi_residual",
+      "reference_max": 2.220446049250313e-16,
+      "reference_probes": 16,
+      "status": "repair_budget_exhausted",
+      "upstream_trace": {
+        "actual_upstream_calls": 1,
+        "agent_generation_proven": false,
+        "output_contribution_proven": false,
+        "profile": "upstream-poly-silu-v1"
+      }
+    },
+    {
+      "contribution_negative": false,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-wjcg3xuh",
+      "frozen_corpus_model": null,
+      "id": "silu_nested_native",
+      "reference_max": 2.220446049250313e-16,
+      "reference_probes": 16,
+      "status": "passed",
+      "upstream_trace": {
+        "actual_upstream_calls": 1,
+        "agent_generation_proven": false,
+        "output_contribution_proven": false,
+        "profile": "upstream-poly-silu-v1"
+      }
+    },
+    {
+      "contribution_negative": false,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-og720h0o",
+      "frozen_corpus_model": null,
+      "id": "silu_shared_rotation",
+      "reference_max": 3.3306690738754696e-16,
+      "reference_probes": 16,
+      "status": "passed",
+      "upstream_trace": {
+        "actual_upstream_calls": 1,
+        "agent_generation_proven": false,
+        "output_contribution_proven": false,
+        "profile": "upstream-poly-silu-v1"
+      }
+    },
+    {
+      "contribution_negative": false,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-6ms8z9f5",
+      "frozen_corpus_model": "bench_helper_0114",
+      "id": "silu_array_starred",
+      "reference_max": 3.3306690738754696e-16,
+      "reference_probes": 16,
+      "status": "passed",
+      "upstream_trace": {
+        "actual_upstream_calls": 1,
+        "agent_generation_proven": false,
+        "output_contribution_proven": false,
+        "profile": "upstream-poly-silu-v1"
+      }
+    },
+    {
+      "contribution_negative": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-k005r6ly",
+      "frozen_corpus_model": "bench_primitive_0004",
+      "id": "silu_unused_definition",
+      "reference_max": 0.0,
+      "reference_probes": 16,
+      "status": "passed",
+      "upstream_trace": {
+        "actual_upstream_calls": 1,
+        "agent_generation_proven": false,
+        "output_contribution_proven": false,
+        "profile": "upstream-poly-silu-v1"
+      }
+    }
+  ],
+  "source_sha256": "9a1ee63fe5f5c2c335dbbd16032080297bd6c6737a4d1930f2660a40a2c8786a",
+  "unit": {
+    "failed": 0,
+    "passed": 107,
+    "skip_reasons": [
+      "test_numerical_fault_and_recovery_are_real_encrypted_runs (test_candidate_pipeline.CandidateEvidenceTests) ... skipped 'requires actual isolated candidate replay run'",
+      "test_private_reference_and_artifact_integrity (test_candidate_pipeline.CandidateEvidenceTests) ... skipped 'requires actual isolated candidate replay run'",
+      "test_real_sandbox_probe_and_no_agent_claim (test_candidate_pipeline.CandidateEvidenceTests) ... skipped 'requires actual isolated candidate replay run'"
+    ],
+    "skipped": 3,
+    "total": 110
+  },
+  "x86_retested": false
+}

@@ -10,10 +10,10 @@ from hecate_python_env import digest
 from seal_artifact_gate import inspect_artifacts
 
 
-def artifact(ops=((6, 0, 0, 0),), result_level=13, result_register=0):
+def artifact(ops=((6, 0, 0, 0),), result_level=13, result_register=0, result_scale=40):
     return (struct.pack("<IIQQ", 0x4845564D, 24, 1, 1) +
             struct.pack("<5Q", 80, len(ops), 2, 2, 13) +
-            struct.pack("<5Q", 40, 13, 40, result_level, result_register) +
+            struct.pack("<5Q", 40, 13, result_scale, result_level, result_register) +
             b"".join(struct.pack("<4H", *op) for op in ops))
 
 
@@ -76,7 +76,7 @@ class SealGateTests(unittest.TestCase):
     def test_encode_and_eager_plain_reuse_rejected(self):
         encode = (0, 0, 0, (13 << 10) | 40)
         cst = struct.pack("<qqd", 1, 1, 2)
-        inspect_artifacts(artifact((encode, (9, 0, 0, 0))), cst)
+        inspect_artifacts(artifact((encode, (9, 0, 0, 0)),result_scale=80), cst)
         with self.assertRaisesRegex(ValueError, "Repeated plain"):
             inspect_artifacts(artifact((encode, encode)), cst)
 

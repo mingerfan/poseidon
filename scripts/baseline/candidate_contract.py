@@ -517,6 +517,8 @@ TASK_RULES[LOOP_TASK] = (LOOP_CONTRACT, LOOP_RULES)
 TASK_RULES[AUGMENTED_TASK] = (AUGMENTED_CONTRACT, AUGMENTED_RULES)
 TASK_RULES[MUTATION_TASK] = (MUTATION_CONTRACT, MUTATION_RULES)
 TASK_RULES[STAR_EXERCISE_TASK] = (STAR_CONTRACT, STAR_EXERCISE_RULES)
+from unified_graph_contract import TASK as UNIFIED_TASK, CONTRACT as UNIFIED_CONTRACT, RULES as UNIFIED_RULES
+TASK_RULES[UNIFIED_TASK] = (UNIFIED_CONTRACT, UNIFIED_RULES)
 
 
 SEMANTIC_GUIDANCE = {
@@ -681,6 +683,9 @@ SEMANTIC_GUIDANCE_V22 = dict(SEMANTIC_GUIDANCE_V21,
 
 
 def valid_semantic_guidance(request):
+    if request.get('task') == UNIFIED_TASK:
+        from unified_graph_contract import GUIDANCE
+        return request.get('semantic_guidance') == GUIDANCE
     # Historical requests have no guidance field and remain verifiable unchanged.
     if 'semantic_guidance' not in request:
         return True
@@ -734,6 +739,10 @@ def valid_semantic_guidance(request):
 
 
 def request_input_names(request):
+    if request.get('task') == UNIFIED_TASK:
+        from unified_graph_contract import validate_request
+        validate_request(request)
+        return physical_input_names(request['layout'])
     request_rotations(request)  # Verify the version/rules pair before interpreting layout.
     if request.get('task') in PACKED_TASKS:
         from packed_input_abi import validate_request
@@ -772,6 +781,10 @@ def request_input_names(request):
 
 
 def request_rotations(request):
+    if request.get('task') == UNIFIED_TASK:
+        from unified_graph_contract import validate_request
+        from packed_input_abi import rotations
+        return rotations(validate_request(request))
     task = request.get("task")
     require(type(task) is str and task in TASK_RULES and request.get("rules") == TASK_RULES[task][1],
             "Unknown rotation contract")
@@ -783,6 +796,14 @@ def request_rotations(request):
 
 def canonical(value):
     return json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
+
+
+def trace_payload_json(request, candidate):
+    """Compact transport representation; preserve the existing total byte gate."""
+    value = json.dumps(dict(request=request, candidate=candidate),
+                       sort_keys=True, separators=(",", ":"), allow_nan=False)
+    require(len(value.encode()) <= MAX_BYTES, "Trace payload size limit")
+    return value
 
 
 def strict_json(raw):
@@ -958,6 +979,9 @@ def make_request(translation, descriptor, profile_hash, model_structure=None, *,
 
 
 def validate_candidate(candidate, request):
+    if request.get('task') == UNIFIED_TASK:
+        from unified_graph_contract import validate_candidate as unified_validate
+        return unified_validate(candidate, request)
     from compiler_configuration import request_configuration
     request_configuration(request)
     require(type(candidate) is dict and set(candidate) == set(RESPONSE_SCHEMA["required"]),
@@ -1007,7 +1031,7 @@ class ReplayProvider:
         return response
 
 
-def run_feedback_loop(request, provider, evaluate, record, max_repairs=MAX_REPAIRS):
+def run_feedback_loop(request, provider, evaluate, record, max_repairs=MAX_REPAIRS, *, control=None):
     """Bounded orchestration; evaluator/record are trusted host capabilities.
 
     Host receives raw strings only. Generator receives copies of public data,
@@ -1017,6 +1041,11 @@ def run_feedback_loop(request, provider, evaluate, record, max_repairs=MAX_REPAI
     history = []
     terminal = "repair_budget_exhausted"
     for index in range(max_repairs + 1):
+        if control is not None:
+            stop = control.before_generation(index)
+            if stop:
+                terminal = stop
+                break
         try:
             raw = provider.generate(copy.deepcopy(request), copy.deepcopy(history))
         except StopIteration:
@@ -1025,12 +1054,22 @@ def run_feedback_loop(request, provider, evaluate, record, max_repairs=MAX_REPAI
         except Exception:
             terminal = "provider_failed"
             break  # Do not echo provider errors which might include credentials.
+        if control is not None:
+            stop = control.before_evaluation(raw, index)
+            if stop:
+                terminal = stop
+                break
         feedback = evaluate(raw, index)
         history.append(copy.deepcopy(feedback))
         record(index, raw, copy.deepcopy(feedback))
         if feedback["status"] == "passed":
             terminal = "passed"
             break
+        if control is not None:
+            stop = control.after_evaluation(feedback, index)
+            if stop:
+                terminal = stop
+                break
         if feedback.get("category") in ("infrastructure", "integrity"):
             terminal = feedback["category"] + "_failed"
             break

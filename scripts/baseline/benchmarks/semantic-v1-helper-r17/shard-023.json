@@ -1,0 +1,2458 @@
+{
+  "rows": [
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0144",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              8
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {
+              "dim0": 0,
+              "dim1": 0
+            },
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "transpose",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "d493ebde540ff2b08c1737c4239396172786e220b4531fd91a2484b94d173dcc",
+      "reference_status": "unverified",
+      "signature": "d2d0427052e08b1e6382918e02f793a7d844f97c3df3d622a7d394a317e5ebbd",
+      "split": "development",
+      "topology": "15bae11436150ed8c1da2f6f38728083c8ab9c3898b765ad31e1254c9f6505a0"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0145",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              8
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {
+              "dims": [
+                0
+              ]
+            },
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "permute",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "502bd107340a5d637b2937c7e1dd2ea702c1261a8482abb4af984463d5d6c5ac",
+      "reference_status": "unverified",
+      "signature": "825857f64e7f7ff4140359824be84247310742b4af987a04d267c944720bbc89",
+      "split": "development",
+      "topology": "dd076ded5e05d1d3c2878797547c5ab5a87cccb51a3ae3326c0d844209e25e09"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0146",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              8
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {
+              "step": 1
+            },
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "rotate",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "52447c10b47db3c2b8375f7e8e2c73ee2e8984735463d4d6d981973a907094e5",
+      "reference_status": "unverified",
+      "signature": "eb78eabacbef7ea78f467af5a707fce16ee7d66348f41e44d05ebb6bb0f9d1ba",
+      "split": "development",
+      "topology": "d5804387ad1e9ca5725dea7ef73351e98282d544c9f1a8295804cd4b4547e13a"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0147",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              8
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": -1
+            },
+            "id": "n1",
+            "inputs": [
+              "input0",
+              "n0v0"
+            ],
+            "op": "concat",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "7fee24fab11651a8833c2f1c1e2f208e3d6b50ba727c8dc7480a2a6be6c33d75",
+      "reference_status": "unverified",
+      "signature": "59890a959f01edad590122444bd2533974aa2bc7195dbb84867a7f61f35b9a73",
+      "split": "development",
+      "topology": "c988f77a7820b6596ea9482806036a6372e0d87b37f7274171475213a22e4365"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0148",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              8
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": 0
+            },
+            "id": "n1",
+            "inputs": [
+              "input0",
+              "n0v0"
+            ],
+            "op": "stack",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "3b5a6519f78a8bfcf307cbfed1b8ab496971269f07c6a90039aa6d18f811919d",
+      "reference_status": "unverified",
+      "signature": "120f13f73bd14314f45015d3fd2e36a3b3d5ee7d285be59205d86c90283ff91c",
+      "split": "development",
+      "topology": "d50cfb9e74b46d4187a4428f8d733bda49992d5fc14c20fa37839ba9f460134f"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0149",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              8
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {
+              "axis": -1,
+              "start": 0,
+              "step": 1,
+              "stop": 8
+            },
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "slice",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "bd1be6d8344f8cfa8cea8b60c8eaa2de3ed1baec2d0410953be13a5be7a08d06",
+      "reference_status": "unverified",
+      "signature": "46df315498b7de2c2870fa6024a8588c7fee8a31fb17b65b42a1153480c318c4",
+      "split": "development",
+      "topology": "d54a774edcea3c979062f41a88151911e16eff207961a8500660e49305f9d212"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0150",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              8
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {
+              "axis": -1,
+              "sections": [
+                1,
+                7
+              ]
+            },
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "split",
+            "outputs": [
+              "n0v0",
+              "n0v1"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": -1
+            },
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "n0v1"
+            ],
+            "op": "concat",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "2f5401f3f2ae0021e0d2c0c3c6ba3cd23dfc6c62d372579e4db10b083ab9f3dd",
+      "reference_status": "unverified",
+      "signature": "afd7bfacb93758d3854e88f2af3cc58464e4b670ef1ece6b0e6ee60f4aed7f75",
+      "split": "development",
+      "topology": "073abe103e39783c5aefbc282f9e3cc0eb2f5a03beeeda8418b97a2f66367a6e"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0151",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              8
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "sum",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "13709c4eed2972b7d4f56bb0d22b43feeaeba503c33dec3bfad945ccb13d9045",
+      "reference_status": "unverified",
+      "signature": "e6645f3706434b616fb504482d8e2f56429a812744a4971009d5e7679fc86c03",
+      "split": "development",
+      "topology": "49193be9da2b5219d085765047ed7ab9dc8e9f39cc5076b8a5a7736b6702465e"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0152",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              8
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "ac1376e1c4c3308d4add38195e086c3ea8fdd39cd4731be320e4c56a1bc7868d",
+      "reference_status": "unverified",
+      "signature": "bb37b44ba43f5182c26f633eb26e595bbbbbe378f4f2c6260791063e6f1ec73e",
+      "split": "development",
+      "topology": "806e6d44965b44172584f16967a0116540b722502934744ffc7c904161ae2062"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125,
+            0.125,
+            0.125,
+            0.125,
+            0.125,
+            0.125,
+            0.125,
+            0.125
+          ],
+          "c1": [
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "c2": [
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            0.5
+          ],
+          "c3": [
+            -0.0625,
+            -0.0625,
+            -0.0625,
+            -0.0625,
+            -0.0625,
+            -0.0625,
+            -0.0625,
+            -0.0625
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0153",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              8
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {
+              "shape": [
+                1,
+                8
+              ]
+            },
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "reshape",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "eps": 1e-05
+            },
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "c0",
+              "c1",
+              "c2",
+              "c3"
+            ],
+            "op": "batch_norm",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "811eb2962fc05cae09ad2ed683c6a1ee7b525e37a5553ff5da0e8e6e3251a2a4",
+      "reference_status": "unverified",
+      "signature": "4b688251c14bb2673e6f39655cf0e35612aa3c7ed489bafe45b2a5eee1edb4e4",
+      "split": "development",
+      "topology": "a2ca18242a77e62001ea7d21d9678c3ebbd6d919b402fa47a3a5d772bf206dd7"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.0625,
+            -0.125,
+            0.03125,
+            0.015625
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0154",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              8
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {
+              "basis": "chebyshev"
+            },
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "polynomial",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "46458692d698f0b1c877474fa10935a32da5c7927c08564156fcbe2b30fc66ec",
+      "reference_status": "unverified",
+      "signature": "8fe1f4cc660b67f80a19f9cf571c069569aa883f61973575f36c80b4a9500667",
+      "split": "development",
+      "topology": "8ccba0a0030d50ee44195721a02fd922348919e8cd6ee66f9a9f56824463be31"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0155",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "e92262ac70b06c02cf0c1278275555a4e88574180b5f48143a9b4a5148267ac8",
+      "reference_status": "unverified",
+      "signature": "cb513452de9445e68c2e96dcd1e24124445848008be16422f1738bd1c434baee",
+      "split": "development",
+      "topology": "27e4a9be27acfcdc6e23807b6d93ca759b56434579ff9e85010da71a80b67a64"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0156",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "2ad36f0829e7f03fa456125abedabb86dc92a853433d1e643323f9bfa29010c9",
+      "reference_status": "unverified",
+      "signature": "b13f47986566ebc318f8e317d9e72fbbf430a0b601bc92742617b53d55405fbd",
+      "split": "development",
+      "topology": "3013c7c910baff5ad327c6562d92f7257f32e0e2c740297146e0aae6fbf226a7"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0157",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "multiply",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "8db139fd2f82ace925ea7946d3c531ef7fffebeea461c9e525ef9600e5ade0a8",
+      "reference_status": "unverified",
+      "signature": "bfee4e9cebdbbc1c1fe8b505b1c10711bde3fb4dbe7dbcdb8cab19054dd4acab",
+      "split": "development",
+      "topology": "7e9506ae0c1988fed76559b9586afa13f7f687e2d131620237f813a7ba8faad8"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0158",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "1c3184d491125866780d739fa0d84be5b0fd5a017ed22953d507442d873770a7",
+      "reference_status": "unverified",
+      "signature": "a1a29fb22b0d8c2070cbb3500475f83df97fab5ea1de1146c32265cb8bbbc1f1",
+      "split": "development",
+      "topology": "36af3566cb720f201b57d437c61e49bcb86f5a4250204f3158f3a158b1a229bf"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0159",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "ed47fe911fc1cbde10144b602dea5284045e7f7352c503f9e8203520e63d65a2",
+      "reference_status": "unverified",
+      "signature": "68db67ba13b7d72df8843dd04bb51d2e0ee9cdfdb45a9b8b99b0208880fd6a78",
+      "split": "development",
+      "topology": "7ab83dd3d86789ff5f5c34889b1fb941ee4e603662e9b5922a872ec71a785cd3"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0160",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {
+              "exponent": 4
+            },
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "power",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "5e5847aa61dddc34af81d92293bfb1285e1ac2d834b008d8ad1b9d425a50b9b6",
+      "reference_status": "unverified",
+      "signature": "4010b040982de173b3f45560044315b4d77ef7f76cbfda3a6c893001b3edc367",
+      "split": "development",
+      "topology": "1b1f50e2401c4b89c07b8e525f94d4ec75f49dece4debcfe2a71ebb5817a5ca1"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.125,
+              -0.03125
+            ],
+            [
+              0.09375,
+              -0.09375
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0161",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "7a3a0a747e794328ac453a5eeeb89d5b5f4d81d7bdc75a99d90fcf4f3c2a483d",
+      "reference_status": "unverified",
+      "signature": "55bd1581f0b8bb70bb9aa61981f16170d2f07f03a3135d1d323791671b07e0c1",
+      "split": "development",
+      "topology": "99e020f8d09100ebc16cc9838425f07fe1652eb2a9d3f1807fb480ac545685a2"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0162",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "flatten",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "f669dcc20ed78b1aefe5d74b6042a78bc30969cb3ac24b575103eb1729a6b12a",
+      "reference_status": "unverified",
+      "signature": "313048bb8a637a6e20f0dec0a414b29057c03b2682c4c7df267802df1e59bdff",
+      "split": "development",
+      "topology": "517688480bf0a5c5a99e75093b68f906d921d14539fbc9e905841491ea1697ed"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0163",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {
+              "shape": [
+                2
+              ]
+            },
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "reshape",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "7c584117f05e1c3c86844f6972b932fb3148c168e44593e5dc494d90c272f0b4",
+      "reference_status": "unverified",
+      "signature": "2841ef1df6854246dce1d86b4169589fbabb8485f7334db4a67d869af42522e1",
+      "split": "development",
+      "topology": "e3be5a22578e506b74958006334e5c8e50894f407e2e4ed5050627f4220ab6fa"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0164",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {
+              "dim0": 0,
+              "dim1": 1
+            },
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "transpose",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "953cfd0b5453c5e3cd9e307604e40c60804644dbf431d13a9ae3d31a3d8355c0",
+      "reference_status": "unverified",
+      "signature": "3ea6a1282ebc05881983dbcf03b35f11e55af0a0a5c7b223548efea4dc907983",
+      "split": "development",
+      "topology": "15bae11436150ed8c1da2f6f38728083c8ab9c3898b765ad31e1254c9f6505a0"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0165",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {
+              "dims": [
+                1,
+                0
+              ]
+            },
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "permute",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "1225de5963bc11636c544a9e06cfba84bd2c380011078937c064ceb7791c5706",
+      "reference_status": "unverified",
+      "signature": "cc313f1cf496276aa149cd36f69adc2d77e0c9d96ef9868deb7df03f175b5411",
+      "split": "development",
+      "topology": "dd076ded5e05d1d3c2878797547c5ab5a87cccb51a3ae3326c0d844209e25e09"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0166",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {
+              "step": -1
+            },
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "rotate",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "0c3d24b062c73c572abb15fab6c310a7598a47ecfa9b141ed87a51daf2e510b2",
+      "reference_status": "unverified",
+      "signature": "ac539b200639ac736769e8a7e4cb83782a4bbfccb0ee02229a6cbe5fcff6e3e1",
+      "split": "development",
+      "topology": "d5804387ad1e9ca5725dea7ef73351e98282d544c9f1a8295804cd4b4547e13a"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0167",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": -1
+            },
+            "id": "n1",
+            "inputs": [
+              "input0",
+              "n0v0"
+            ],
+            "op": "concat",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "c2d002b4e9c1e728ad6e720f0e34d8a2caa7475c679f2b7a3aa380406854256d",
+      "reference_status": "unverified",
+      "signature": "25d3c289097df2aa89ef58d603aaee8e25f0b3f38cade7a9afb61dd501de54b8",
+      "split": "development",
+      "topology": "c988f77a7820b6596ea9482806036a6372e0d87b37f7274171475213a22e4365"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0168",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": 0
+            },
+            "id": "n1",
+            "inputs": [
+              "input0",
+              "n0v0"
+            ],
+            "op": "stack",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "24fc27bca0cf91a88480eb5e6abe9d41067d5938f6539da768a85f4c58b1da59",
+      "reference_status": "unverified",
+      "signature": "e4fd6adcc867feb36ea1510de762315dff3c1902b620fcbf4d8efb7a539b6848",
+      "split": "development",
+      "topology": "d50cfb9e74b46d4187a4428f8d733bda49992d5fc14c20fa37839ba9f460134f"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0169",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {
+              "axis": -1,
+              "start": 0,
+              "step": 2,
+              "stop": 2
+            },
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "slice",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "a1f294ccd96b7b59ce143b30cc8b5c1d0ed499f5d779456ff0e809a3e79baca1",
+      "reference_status": "unverified",
+      "signature": "cbbe18c262ab1018c1772afacd52e4e9079a234776f423929a582dc081beaedc",
+      "split": "development",
+      "topology": "d54a774edcea3c979062f41a88151911e16eff207961a8500660e49305f9d212"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0170",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {
+              "axis": -1,
+              "sections": [
+                1,
+                1
+              ]
+            },
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "split",
+            "outputs": [
+              "n0v0",
+              "n0v1"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": -1
+            },
+            "id": "n1",
+            "inputs": [
+              "n0v1",
+              "n0v0"
+            ],
+            "op": "concat",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "b81fccb6bf8457f48637bb81151aadeccde516170c4e2ccbee2f6f7823c772b3",
+      "reference_status": "unverified",
+      "signature": "4d8297ed6b6b1b5855c9f6ada2d1690e3e5c0736d60024fc4420ccf0e97a437c",
+      "split": "development",
+      "topology": "1568d075ba0462cd0cf25795e9834c5746022335f85f558d223467be444d69e4"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0171",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {
+              "axes": [
+                1
+              ],
+              "keepdims": true
+            },
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "sum",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "4191e58d4a6ebf95e77786af71b5bef0d02fe89683d8b1f16566d9a56a7023e5",
+      "reference_status": "unverified",
+      "signature": "53907a64cc1d0fd00d049a33e7bac555f7356068d45d677efcd82de03009ead3",
+      "split": "development",
+      "topology": "49193be9da2b5219d085765047ed7ab9dc8e9f39cc5076b8a5a7736b6702465e"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0172",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {
+              "axes": [
+                1
+              ],
+              "keepdims": true
+            },
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "cdb68e5af0ad59bbf4e54665310692bcc9ec723767f3611029a6a5be980f76a6",
+      "reference_status": "unverified",
+      "signature": "c868d337350c7be06348917db403faad8e2a731067c73e5c2d577765b623b41b",
+      "split": "development",
+      "topology": "806e6d44965b44172584f16967a0116540b722502934744ffc7c904161ae2062"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.0625,
+            -0.125,
+            0.03125,
+            0.015625
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0173",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {
+              "basis": "power"
+            },
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "polynomial",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "1cb91373971dd8d1e5a7892109ade441f7641d76c1cf005b0f5ede7942299afe",
+      "reference_status": "unverified",
+      "signature": "ebf39969ef90f82231ef9cf820e05b9fd50b3c4e4b69a131d892b7dd9be72690",
+      "split": "development",
+      "topology": "8ccba0a0030d50ee44195721a02fd922348919e8cd6ee66f9a9f56824463be31"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              0.125,
+              0.125,
+              0.125
+            ]
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0174",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "a77ce30c1e91c42a2663c2e520a0d067fcc15483a4e532501a0c5da2b6ff38a0",
+      "reference_status": "unverified",
+      "signature": "7cf5a4aa748ea0a2273177b1e66d483ac973438bbbbef09ab7b813cb25192cfb",
+      "split": "development",
+      "topology": "27e4a9be27acfcdc6e23807b6d93ca759b56434579ff9e85010da71a80b67a64"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              0.125,
+              0.125,
+              0.125
+            ]
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0175",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "23aecd77c42acf7adcbe99e3edfe0bd41a5393e4519ca31f527d80a80cdc7a7a",
+      "reference_status": "unverified",
+      "signature": "be6cb57e80b7a0d08a01048ae6ec247ee5ee7ac74704b7966bc769f507e94f70",
+      "split": "development",
+      "topology": "3013c7c910baff5ad327c6562d92f7257f32e0e2c740297146e0aae6fbf226a7"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              0.125,
+              0.125,
+              0.125
+            ]
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0176",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "multiply",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "d6747bed52280fd495dddae626195b60b4489de6397f5c10eeb2c53e18fc6aa1",
+      "reference_status": "unverified",
+      "signature": "f3869831f61733ba4be5c9b1fbf27fd793818c8e2dbe264f002b620d48f8c282",
+      "split": "development",
+      "topology": "7e9506ae0c1988fed76559b9586afa13f7f687e2d131620237f813a7ba8faad8"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0177",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "cf1ef23f16bbb46b54b10f29be1f36b2dc9bb2996e493f939b5f749f33319d77",
+      "reference_status": "unverified",
+      "signature": "97542fb0fb91a434f20ee18aa1e71784def3cbbd5a2cbdf99fc9523b2629700e",
+      "split": "development",
+      "topology": "36af3566cb720f201b57d437c61e49bcb86f5a4250204f3158f3a158b1a229bf"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0178",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "bde8ae11f227ad7c12ef47d1c7c686466ce820dd1ce7e48c6d283c3d90a762ed",
+      "reference_status": "unverified",
+      "signature": "cd9a216815055fe339554dbad30f3532500bc7fd6f2abb8ae011f8a8deaad591",
+      "split": "development",
+      "topology": "7ab83dd3d86789ff5f5c34889b1fb941ee4e603662e9b5922a872ec71a785cd3"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0179",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {
+              "exponent": 2
+            },
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "power",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "d801e8a32f6aad33b63f2c87b8119f77e535b70ed256e650023dae56ab239336",
+      "reference_status": "unverified",
+      "signature": "215d3669c847ca8933f53388d890bcd739ea23ad00d8929423ed0e92f77747b6",
+      "split": "development",
+      "topology": "1b1f50e2401c4b89c07b8e525f94d4ec75f49dece4debcfe2a71ebb5817a5ca1"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.08333333333333333,
+              -0.020833333333333332,
+              0.041666666666666664
+            ],
+            [
+              0.0625,
+              -0.0625,
+              0.0
+            ],
+            [
+              0.020833333333333332,
+              0.08333333333333333,
+              -0.041666666666666664
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625,
+            0.0625
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0180",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "8c3a2bd040dfb8e671cacff5f29e29d61a950520be53084e92fd494992094bec",
+      "reference_status": "unverified",
+      "signature": "b5a93e57af7c922092cda3b6e217c833c65af466656435c23e01011c7f99b0dc",
+      "split": "development",
+      "topology": "99e020f8d09100ebc16cc9838425f07fe1652eb2a9d3f1807fb480ac545685a2"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0181",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "flatten",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "446bac7f0ba6cef4861aece35920ae58af675a9ec9330625fcbc764224e64bb0",
+      "reference_status": "unverified",
+      "signature": "083ed880efd1cc5331500fd9e1878f6dbdc9907005f5e462f1b1ccc904d67888",
+      "split": "development",
+      "topology": "517688480bf0a5c5a99e75093b68f906d921d14539fbc9e905841491ea1697ed"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0182",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {
+              "shape": [
+                3
+              ]
+            },
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "reshape",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "1b08284def967910a4961d2155a23693a7955222e2315782c89d429b4e007738",
+      "reference_status": "unverified",
+      "signature": "9c1d0035b2a83bf7a43c7a07292713d6437e7256f5c52d22cbf1e3dc0a2c62c5",
+      "split": "development",
+      "topology": "e3be5a22578e506b74958006334e5c8e50894f407e2e4ed5050627f4220ab6fa"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0183",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {
+              "dim0": 0,
+              "dim1": 1
+            },
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "transpose",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "3ac763d00db89ade8aee4f70b0046432abdb8fd671f885ea03debca6ab9d7a06",
+      "reference_status": "unverified",
+      "signature": "6e47d48f471dcb6f311be1180dccf72847ca93a226762194ee8ba7b4b3589437",
+      "split": "development",
+      "topology": "15bae11436150ed8c1da2f6f38728083c8ab9c3898b765ad31e1254c9f6505a0"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0184",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {
+              "dims": [
+                1,
+                0
+              ]
+            },
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "permute",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "fae9547db26ac880313a41213b817832ecff02b1871d6f0f1fa904c03db9b532",
+      "reference_status": "unverified",
+      "signature": "2f67099d61c5770158fcb83e87f05b0c88c80d2d92553971a83e229c8f29b8a1",
+      "split": "development",
+      "topology": "dd076ded5e05d1d3c2878797547c5ab5a87cccb51a3ae3326c0d844209e25e09"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0185",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {
+              "step": 2
+            },
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "rotate",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "7154a7186d7cff9c5ae905bb11f32780ad91fd3b08af4875d1c03db56cf49a4b",
+      "reference_status": "unverified",
+      "signature": "ad0a5b549c2ef3eaa9ad6def766a636ea1e3ea805b8d247e6a024d83daf9e35d",
+      "split": "development",
+      "topology": "d5804387ad1e9ca5725dea7ef73351e98282d544c9f1a8295804cd4b4547e13a"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0186",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": -1
+            },
+            "id": "n1",
+            "inputs": [
+              "input0",
+              "n0v0"
+            ],
+            "op": "concat",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "781df914fe41368aca13e644f87df6347159fc9c1844e7b91450f8c11ac2e524",
+      "reference_status": "unverified",
+      "signature": "756fba94108aefae9d181175160b440c51fb27063b31148082f202433ea36b19",
+      "split": "development",
+      "topology": "c988f77a7820b6596ea9482806036a6372e0d87b37f7274171475213a22e4365"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0187",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": 0
+            },
+            "id": "n1",
+            "inputs": [
+              "input0",
+              "n0v0"
+            ],
+            "op": "stack",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "64bd6c94f5840d6eb40fcdc7e0df90d0ed93e1b262ed5c7e1b3a115dc4afa0b4",
+      "reference_status": "unverified",
+      "signature": "3e802c49d4f6bf52c8d616b41e3aea8b8d93cb0633067c0583f71b8fcac83696",
+      "split": "development",
+      "topology": "d50cfb9e74b46d4187a4428f8d733bda49992d5fc14c20fa37839ba9f460134f"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0188",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {
+              "axis": -1,
+              "start": 0,
+              "step": 1,
+              "stop": 3
+            },
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "slice",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "a3bd15cd71f67b6074a9b8bc62ca4588f702b1cf2ffe5092824c07ffa0ba455f",
+      "reference_status": "unverified",
+      "signature": "bfed8ccb02d27c3634e2d734b5e388cacee551b935e9a27a09d7ff720b170021",
+      "split": "development",
+      "topology": "d54a774edcea3c979062f41a88151911e16eff207961a8500660e49305f9d212"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0189",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {
+              "axis": -1,
+              "sections": [
+                1,
+                2
+              ]
+            },
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "split",
+            "outputs": [
+              "n0v0",
+              "n0v1"
+            ]
+          },
+          {
+            "attrs": {
+              "axis": -1
+            },
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "n0v1"
+            ],
+            "op": "concat",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "9d6d9c69a8b104b877742c6d7e7d46c7b54f10619afbc6c82e2767d453d62445",
+      "reference_status": "unverified",
+      "signature": "c1d31ee23fb5fcc6e19a1576946025f575bf8c3ae20ab94d620dfd806f600e1c",
+      "split": "development",
+      "topology": "073abe103e39783c5aefbc282f9e3cc0eb2f5a03beeeda8418b97a2f66367a6e"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0190",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "sum",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "26b7e2293cd2cb5d62c7c8fbe23c40fbae5cea71601d06483f09457f0641e847",
+      "reference_status": "unverified",
+      "signature": "3de931bfbb05d98ef3b6e96d3af61daf6ac8477712506fd4bb2fc6b86e295ed4",
+      "split": "development",
+      "topology": "49193be9da2b5219d085765047ed7ab9dc8e9f39cc5076b8a5a7736b6702465e"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "primitive",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_primitive_0191",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              3
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "08d80ca29d0516313dba3cdcb6b90e2354c0510ebbcd0c9d20314a4bb167b928",
+      "reference_status": "unverified",
+      "signature": "17eb48f7aacff21afd1ae89e35d75417626e644f5c6f364a63c702ec23c3396e",
+      "split": "development",
+      "topology": "806e6d44965b44172584f16967a0116540b722502934744ffc7c904161ae2062"
+    }
+  ],
+  "version": "poseidon-semantic-benchmark-v1"
+}

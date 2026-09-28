@@ -1,0 +1,4755 @@
+{
+  "format": "poseidon-stage2-terminal-review-r145",
+  "parents": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-progress-r145.json": "2d78c60f4b2bea9873edd1dc3ca7f4f992c8105c4092cecbe479e4d97ed35132",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-distinct-contexts-r145.json": "3588f5bcef7c4d49c3427f6f255e95e115544f92d1bbfcb8d98f597300ae3e62",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-remaining-queue-r135/report.json": "af39c8625f484aef3531f3ba961814ff9cf7858de18c5398d9ceddf57968b2e2"
+  },
+  "queue_finished": true,
+  "queue_seconds": 20309.213795894,
+  "runtime_source_sha256": "80738a33351d8c532cd8e4b032de63cc6785d6e5cf8a349f78e52aab5fffd58e",
+  "summary": {
+    "planned": 2030,
+    "statuses": {
+      "passed": 1692,
+      "launched_unconfirmed": 49,
+      "failed": 289
+    },
+    "audited": 1981,
+    "audited_task_success_rate": 0.8541140837960626,
+    "all_planned_task_success_rate": 0.8334975369458129,
+    "all_tasks_audited": false
+  },
+  "groups": {
+    "directed_construction": {
+      "planned": 627,
+      "statuses": {
+        "failed": 196,
+        "passed": 422,
+        "launched_unconfirmed": 9
+      },
+      "audited": 618,
+      "audited_task_success_rate": 0.6828478964401294,
+      "all_planned_task_success_rate": 0.6730462519936204,
+      "all_tasks_audited": false
+    },
+    "directed_fixed_polynomial": {
+      "planned": 21,
+      "statuses": {
+        "passed": 21
+      },
+      "audited": 21,
+      "audited_task_success_rate": 1.0,
+      "all_planned_task_success_rate": 1.0,
+      "all_tasks_audited": true
+    },
+    "directed_helper": {
+      "planned": 60,
+      "statuses": {
+        "passed": 59,
+        "failed": 1
+      },
+      "audited": 60,
+      "audited_task_success_rate": 0.9833333333333333,
+      "all_planned_task_success_rate": 0.9833333333333333,
+      "all_tasks_audited": true
+    },
+    "free_gap_context": {
+      "planned": 30,
+      "statuses": {
+        "passed": 29,
+        "launched_unconfirmed": 1
+      },
+      "audited": 29,
+      "audited_task_success_rate": 1.0,
+      "all_planned_task_success_rate": 0.9666666666666667,
+      "all_tasks_audited": false
+    },
+    "free_primary": {
+      "planned": 1200,
+      "statuses": {
+        "passed": 1080,
+        "launched_unconfirmed": 37,
+        "failed": 83
+      },
+      "audited": 1163,
+      "audited_task_success_rate": 0.9286328460877042,
+      "all_planned_task_success_rate": 0.9,
+      "all_tasks_audited": false
+    },
+    "free_supplement": {
+      "planned": 92,
+      "statuses": {
+        "passed": 81,
+        "failed": 9,
+        "launched_unconfirmed": 2
+      },
+      "audited": 90,
+      "audited_task_success_rate": 0.9,
+      "all_planned_task_success_rate": 0.8804347826086957,
+      "all_tasks_audited": false
+    }
+  },
+  "terminal_failure_layers": {
+    "provider": 95,
+    "static_check": 162,
+    "compiler": 21,
+    "artifact_gate": 1,
+    "numerical_comparison": 10
+  },
+  "provider_failure_categories": {
+    "tls_failure_unresolved": 73,
+    "transport_failure": 7,
+    "provider_failure_unclassified": 15
+  },
+  "audited_generation_count": 3091,
+  "audited_http_attempt_count": 3480,
+  "first_attempt_passed": 1393,
+  "after_repair_passed": 299,
+  "context_denominator": 377,
+  "three_contexts_passed": 239,
+  "gap_partitions": [
+    {
+      "id": "input.rank.2",
+      "layer": "model",
+      "scope": "Mathematical graph semantics; no particular DSL spelling is implied.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "1547f160be2d6846e33392e506daba4e628e437187e48c2b1bf62e59232e0aec",
+        "7ab83dd3d86789ff5f5c34889b1fb941ee4e603662e9b5922a872ec71a785cd3"
+      ],
+      "passed_tasks": [
+        "free_bench_boundary_0020",
+        "free_bench_primitive_0020"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "free_bench_helper_0000",
+          "topology": "ba4c6e4d2166d9aad92f73a397e887d86dcc2e6b1c5e11eb335e1e7daa972b5d",
+          "status": "failed",
+          "failure_layer": "provider"
+        }
+      ]
+    },
+    {
+      "id": "op.avg_pool1d",
+      "layer": "model",
+      "scope": "Mathematical graph semantics; no particular DSL spelling is implied.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "4cdcdc9bb9e154be24d6f723267ac87d2d4229f453bc56cb85416463005b6d0e",
+        "570c8caebd4effec33e325bbbda46f9edcba589eee041d4aacea33f11541ffd1"
+      ],
+      "passed_tasks": [
+        "free_bench_composition_0000",
+        "free_supplement_semantic_context_8e87bd5b0d3c5cf6b336c2f7"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "free_bench_primitive_0022",
+          "topology": "254e6786285e55a2d16eeb26671128bd3672217ed11f12293801bbad554f19ad",
+          "status": "failed",
+          "failure_layer": "provider"
+        }
+      ]
+    },
+    {
+      "id": "op.batch_norm",
+      "layer": "model",
+      "scope": "Mathematical graph semantics; no particular DSL spelling is implied.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "98aae9be7cf91206610696fddc73b4c91ce6d072c9d3798c0fcadebee20ad7da",
+        "a2ca18242a77e62001ea7d21d9678c3ebbd6d919b402fa47a3a5d772bf206dd7"
+      ],
+      "passed_tasks": [
+        "free_bench_helper_0024",
+        "free_bench_primitive_0018"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "free_bench_helper_0000",
+          "topology": "ba4c6e4d2166d9aad92f73a397e887d86dcc2e6b1c5e11eb335e1e7daa972b5d",
+          "status": "failed",
+          "failure_layer": "provider"
+        }
+      ]
+    },
+    {
+      "id": "op.transpose",
+      "layer": "model",
+      "scope": "Mathematical graph semantics; no particular DSL spelling is implied.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "15bae11436150ed8c1da2f6f38728083c8ab9c3898b765ad31e1254c9f6505a0",
+        "f59a581efee47db9cd91ed48aeb4f5ec695325ac3a4d0a191ee6a94b33e492d2"
+      ],
+      "passed_tasks": [
+        "free_bench_primitive_0009",
+        "free_supplement_semantic_context_b678e400f1fffd2ba6be4cfc"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "free_supplement_semantic_context_a369ab072b7e6eed1c6efb9c",
+          "topology": "3fbddeb8138a90ca7c48186cc262ce53c19b07052c94c5b89aa56d2d2545dd59",
+          "status": "launched_unconfirmed",
+          "failure_layer": null
+        }
+      ]
+    },
+    {
+      "id": "output.count.4",
+      "layer": "model",
+      "scope": "Mathematical graph semantics; no particular DSL spelling is implied.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "3de95f855a5b81d290ddcb68d04246e9d4ecd6dd7b32e8a8662e5c6f32097216"
+      ],
+      "passed_tasks": [
+        "free_bench_boundary_0000"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "free_supplement_semantic_context_2b98e0c9b6b34bc86db8b2d2",
+          "topology": "4784c6021af8afe400f57aaedc4609f8277b84c879c08b2d1d51146a4b60cc2c",
+          "status": "failed",
+          "failure_layer": "provider"
+        },
+        {
+          "id": "free_supplement_semantic_context_2bb6160ab533ed6b0c5246a5",
+          "topology": "91c13af6282df54bdcf924ebdcb7d4ce425e829c8f30e5e290532b52721a922c",
+          "status": "failed",
+          "failure_layer": "provider"
+        }
+      ]
+    },
+    {
+      "id": "overload.subtract.public.length1",
+      "layer": "model",
+      "scope": "Mathematical graph semantics; no particular DSL spelling is implied.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "923afdbd90c465fe7a736f99f4c48ccf3c239686f5fdd082430e9d19ea722853",
+        "b33f7466d5657508812284b379c7fdc447f74542eb4b1fd5bd776ed5ef009de2"
+      ],
+      "passed_tasks": [
+        "free_bench_composition_0008",
+        "free_bench_composition_0017"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "free_bench_primitive_0028",
+          "topology": "3013c7c910baff5ad327c6562d92f7257f32e0e2c740297146e0aae6fbf226a7",
+          "status": "launched_unconfirmed",
+          "failure_layer": null
+        }
+      ]
+    },
+    {
+      "id": "parameter.avg_pool1d.count_include_pad.false",
+      "layer": "model",
+      "scope": "Mathematical graph semantics; no particular DSL spelling is implied.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "570c8caebd4effec33e325bbbda46f9edcba589eee041d4aacea33f11541ffd1",
+        "bd0648d1dc863d53f87c501b35ec285865880bae82afbb14594d47354e3942e4"
+      ],
+      "passed_tasks": [
+        "free_bench_composition_0000",
+        "free_supplement_semantic_context_c6ba8988d584f6bcfa8acf6d"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "free_bench_primitive_0022",
+          "topology": "254e6786285e55a2d16eeb26671128bd3672217ed11f12293801bbad554f19ad",
+          "status": "failed",
+          "failure_layer": "provider"
+        }
+      ]
+    },
+    {
+      "id": "parameter.avg_pool1d.kernel.[2]",
+      "layer": "model",
+      "scope": "Mathematical graph semantics; no particular DSL spelling is implied.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "570c8caebd4effec33e325bbbda46f9edcba589eee041d4aacea33f11541ffd1",
+        "ac2be1be8b8e3480cdde80c01b1dc28ead7c2447ba54e6e1c840a6aa3368d584"
+      ],
+      "passed_tasks": [
+        "free_bench_composition_0000",
+        "free_supplement_semantic_context_f6afa945c6f4c9c58a768fa9"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "free_bench_primitive_0022",
+          "topology": "254e6786285e55a2d16eeb26671128bd3672217ed11f12293801bbad554f19ad",
+          "status": "failed",
+          "failure_layer": "provider"
+        }
+      ]
+    },
+    {
+      "id": "parameter.avg_pool1d.padding.[0]",
+      "layer": "model",
+      "scope": "Mathematical graph semantics; no particular DSL spelling is implied.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "1b3e94fa100975dad6555913cba0a8982f292010de82e0da9ece176d32f345b4",
+        "570c8caebd4effec33e325bbbda46f9edcba589eee041d4aacea33f11541ffd1"
+      ],
+      "passed_tasks": [
+        "free_bench_composition_0000",
+        "free_supplement_semantic_context_ce42af5e6ff9723fe162b021"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "free_bench_primitive_0022",
+          "topology": "254e6786285e55a2d16eeb26671128bd3672217ed11f12293801bbad554f19ad",
+          "status": "failed",
+          "failure_layer": "provider"
+        }
+      ]
+    },
+    {
+      "id": "parameter.avg_pool1d.stride.[1]",
+      "layer": "model",
+      "scope": "Mathematical graph semantics; no particular DSL spelling is implied.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "4b5182445e78360f1d6578c9925852dd6cb05fef158e362d1e55784332f25031",
+        "570c8caebd4effec33e325bbbda46f9edcba589eee041d4aacea33f11541ffd1"
+      ],
+      "passed_tasks": [
+        "free_bench_composition_0000",
+        "free_supplement_semantic_context_8a71563885f7f9768adc7961"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "free_bench_primitive_0022",
+          "topology": "254e6786285e55a2d16eeb26671128bd3672217ed11f12293801bbad554f19ad",
+          "status": "failed",
+          "failure_layer": "provider"
+        }
+      ]
+    },
+    {
+      "id": "parameter.batch_norm.eps.1e-05",
+      "layer": "model",
+      "scope": "Mathematical graph semantics; no particular DSL spelling is implied.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "98aae9be7cf91206610696fddc73b4c91ce6d072c9d3798c0fcadebee20ad7da",
+        "a2ca18242a77e62001ea7d21d9678c3ebbd6d919b402fa47a3a5d772bf206dd7"
+      ],
+      "passed_tasks": [
+        "free_bench_helper_0024",
+        "free_bench_primitive_0018"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "free_bench_helper_0000",
+          "topology": "ba4c6e4d2166d9aad92f73a397e887d86dcc2e6b1c5e11eb335e1e7daa972b5d",
+          "status": "failed",
+          "failure_layer": "provider"
+        }
+      ]
+    },
+    {
+      "id": "parameter.conv1d.padding.[1]",
+      "layer": "model",
+      "scope": "Mathematical graph semantics; no particular DSL spelling is implied.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "1547f160be2d6846e33392e506daba4e628e437187e48c2b1bf62e59232e0aec",
+        "570c8caebd4effec33e325bbbda46f9edcba589eee041d4aacea33f11541ffd1"
+      ],
+      "passed_tasks": [
+        "free_bench_composition_0001",
+        "free_bench_primitive_0047"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "free_supplement_semantic_context_028fc08aab1c621935c14c4f",
+          "topology": "3130321bcb1ff18d7a6b1d8f2d3fd92c893727b1243274e5a8dfefd4e0bac677",
+          "status": "failed",
+          "failure_layer": "provider"
+        }
+      ]
+    },
+    {
+      "id": "parameter.mean.axes.[0,1]",
+      "layer": "model",
+      "scope": "Mathematical graph semantics; no particular DSL spelling is implied.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "35a598b55349b3cbda093c74d230d89bc6dfe392b9edb093d89fb11a379de0fc",
+        "a79e9129b76ba22acc4aa8c5cf73455a4b888d474307ff8c1603ed79c7e763dd"
+      ],
+      "passed_tasks": [
+        "free_bench_boundary_0079",
+        "free_supplement_semantic_context_561080373f63f72d8ea40bbd"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "free_supplement_semantic_context_3a099c13bb07eece89bb59df",
+          "topology": "bc2227bc9818082ae0902b5740f61db154a76cc9e26eb5a99d1c50672ad5c240",
+          "status": "launched_unconfirmed",
+          "failure_layer": null
+        }
+      ]
+    },
+    {
+      "id": "parameter.mean.axes.[2]",
+      "layer": "model",
+      "scope": "Mathematical graph semantics; no particular DSL spelling is implied.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "03b481d494effb1a3dbd97e9e854294901da57841d87351fb4b7ac6f5380aea8",
+        "a4eb5e96f4ef9120a4dc78d9d39de117f39e479bde13485d4a9c7753186d511e"
+      ],
+      "passed_tasks": [
+        "free_bench_boundary_0038",
+        "free_bench_boundary_0044"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "free_supplement_semantic_context_296e38c64724df7ae8b60562",
+          "topology": "855bd975f4ca1ce278afa62cb3690094b0edb153586df736f2312366353bedfd",
+          "status": "failed",
+          "failure_layer": "provider"
+        }
+      ]
+    },
+    {
+      "id": "parameter.reshape.shape.[5]",
+      "layer": "model",
+      "scope": "Mathematical graph semantics; no particular DSL spelling is implied.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "e3be5a22578e506b74958006334e5c8e50894f407e2e4ed5050627f4220ab6fa",
+        "feb3387fae57c7bc718fb75f18ec4c783bbf77ca4fb58a2dfab8ddb1443f7f63"
+      ],
+      "passed_tasks": [
+        "free_bench_primitive_0220",
+        "free_supplement_semantic_context_30d715f2e0bb3708f4207cce"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "free_supplement_semantic_context_392c5f2e7cea508aea2f019d",
+          "topology": "6e933b7e02d809eaedccd48f2ab5daf01c2e3e1e372315e050cdfbd61b44a0bd",
+          "status": "failed",
+          "failure_layer": "provider"
+        }
+      ]
+    },
+    {
+      "id": "parameter.rotate.step.-1",
+      "layer": "model",
+      "scope": "Mathematical graph semantics; no particular DSL spelling is implied.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "367acef9296177e8c38e209a1ef54db4aaddbc061b13e46767a2d37f4ae65c20",
+        "7f68d5de85cf02c801b5823970605b5d489eea7179eb966dee7725c2a0e4f684"
+      ],
+      "passed_tasks": [
+        "free_supplement_semantic_context_1af377a501d294bbd13d734a",
+        "free_supplement_semantic_context_372b85c738b33870931314fa"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "free_bench_primitive_0086",
+          "topology": "d5804387ad1e9ca5725dea7ef73351e98282d544c9f1a8295804cd4b4547e13a",
+          "status": "failed",
+          "failure_layer": "provider"
+        }
+      ]
+    },
+    {
+      "id": "parameter.slice.stop.5",
+      "layer": "model",
+      "scope": "Mathematical graph semantics; no particular DSL spelling is implied.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "5d0f8e078f437a525673550ebb5ae8b77bf32d6801ac65da12d414c43cbbdfc8"
+      ],
+      "passed_tasks": [
+        "free_supplement_semantic_context_feda1075854465a169a2eca5"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "free_bench_primitive_0089",
+          "topology": "d54a774edcea3c979062f41a88151911e16eff207961a8500660e49305f9d212",
+          "status": "failed",
+          "failure_layer": "provider"
+        },
+        {
+          "id": "free_supplement_semantic_context_275052929856886b31304246",
+          "topology": "645bdc44c4670386c350f0ff0479443cf348fdf210acdb4c11de3d12f767d014",
+          "status": "failed",
+          "failure_layer": "provider"
+        }
+      ]
+    },
+    {
+      "id": "parameter.slice.stop.7",
+      "layer": "model",
+      "scope": "Mathematical graph semantics; no particular DSL spelling is implied.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "645bdc44c4670386c350f0ff0479443cf348fdf210acdb4c11de3d12f767d014",
+        "d54a774edcea3c979062f41a88151911e16eff207961a8500660e49305f9d212"
+      ],
+      "passed_tasks": [
+        "free_bench_primitive_0129",
+        "free_supplement_semantic_context_903355c74b99037fa16438a2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "free_supplement_semantic_context_a0085d9cf7d506e9215a1742",
+          "topology": "5d0f8e078f437a525673550ebb5ae8b77bf32d6801ac65da12d414c43cbbdfc8",
+          "status": "failed",
+          "failure_layer": "provider"
+        }
+      ]
+    },
+    {
+      "id": "parameter.split.sections.[1,2]",
+      "layer": "model",
+      "scope": "Mathematical graph semantics; no particular DSL spelling is implied.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "1568d075ba0462cd0cf25795e9834c5746022335f85f558d223467be444d69e4",
+        "62a14ccaa184823da7096cadb042e7d37db199942301a6a89c9f1949966c1d4e"
+      ],
+      "passed_tasks": [
+        "free_bench_graph_0215",
+        "free_bench_primitive_0042"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "free_bench_primitive_0189",
+          "topology": "073abe103e39783c5aefbc282f9e3cc0eb2f5a03beeeda8418b97a2f66367a6e",
+          "status": "failed",
+          "failure_layer": "provider"
+        }
+      ]
+    },
+    {
+      "id": "parameter.split.sections.[1,4]",
+      "layer": "model",
+      "scope": "Mathematical graph semantics; no particular DSL spelling is implied.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "073abe103e39783c5aefbc282f9e3cc0eb2f5a03beeeda8418b97a2f66367a6e",
+        "5a270c53e61ae30fca07d5fbf733660c610c7ed4ebd7999de267dc7f6a3dc827"
+      ],
+      "passed_tasks": [
+        "free_bench_primitive_0227",
+        "free_supplement_semantic_context_1d1780ee3ec27105da7f33b7"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "free_bench_primitive_0090",
+          "topology": "1568d075ba0462cd0cf25795e9834c5746022335f85f558d223467be444d69e4",
+          "status": "launched_unconfirmed",
+          "failure_layer": null
+        }
+      ]
+    },
+    {
+      "id": "parameter.split.sections.[1,5]",
+      "layer": "model",
+      "scope": "Mathematical graph semantics; no particular DSL spelling is implied.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "073abe103e39783c5aefbc282f9e3cc0eb2f5a03beeeda8418b97a2f66367a6e",
+        "3f09b1fccee9435465129bde568793af373737be662b12bfec89e87c26e1dab0"
+      ],
+      "passed_tasks": [
+        "free_bench_graph_0278",
+        "free_bench_primitive_0110"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "free_bench_graph_0348",
+          "topology": "c6f4ae9d8f588b522760df27c47cea1a2863b24eb7aa3c8719fc9e445367dc62",
+          "status": "launched_unconfirmed",
+          "failure_layer": null
+        }
+      ]
+    },
+    {
+      "id": "parameter.transpose.dim1.1",
+      "layer": "model",
+      "scope": "Mathematical graph semantics; no particular DSL spelling is implied.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "3fbddeb8138a90ca7c48186cc262ce53c19b07052c94c5b89aa56d2d2545dd59",
+        "f59a581efee47db9cd91ed48aeb4f5ec695325ac3a4d0a191ee6a94b33e492d2"
+      ],
+      "passed_tasks": [
+        "free_supplement_semantic_context_7e401dc9143c67dc8453fcfc",
+        "free_supplement_semantic_context_924652acd6f6301ae32d22fe"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "free_bench_primitive_0164",
+          "topology": "15bae11436150ed8c1da2f6f38728083c8ab9c3898b765ad31e1254c9f6505a0",
+          "status": "failed",
+          "failure_layer": "provider"
+        }
+      ]
+    },
+    {
+      "id": "array.arithmetic",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 0,
+      "passed_topology_signatures": [],
+      "passed_tasks": [],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_000_0",
+          "topology": "f24463b05d6f4066e7929913121cc906d720337e8420fe3db379089da8ebd583",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_000_1",
+          "topology": "45252ee1444c6480ddfc0b5da33023aa6c9e4920091f9fccf75ba4ea8a9272d8",
+          "status": "failed",
+          "failure_layer": "provider"
+        },
+        {
+          "id": "construct_000_2",
+          "topology": "a2dd9dfb57e67d9feccf3de241094c922df1c2620bac6248de6cd7c64478b436",
+          "status": "failed",
+          "failure_layer": "provider"
+        }
+      ]
+    },
+    {
+      "id": "array.mutation",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "5a446236d3284158059c9c600292e934005b88c757537d6dd418bb788e71f7ff",
+        "a4ccfff3356d6e10363fdfa785917b8fe23952ba4c4783e6e5b574c2b40df52d"
+      ],
+      "passed_tasks": [
+        "construct_001_0",
+        "construct_001_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_001_1",
+          "topology": "7eef41a85b91e57557803b09212607aadf57c5d2e5ec7eca1ae888754089feb7",
+          "status": "failed",
+          "failure_layer": "provider"
+        }
+      ]
+    },
+    {
+      "id": "array.storage",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 0,
+      "passed_topology_signatures": [],
+      "passed_tasks": [],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_003_0",
+          "topology": "0d7275fbf8e3e249611b6a8c94927952bcbb850f99b71edfbbd1cd10434f21c9",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_003_1",
+          "topology": "c876863cc68e1cd851c2b29db97a9d320d1b1163a14d3f7c15e8b9b1d0731b42",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_003_2",
+          "topology": "71f8f7c4db673a792d3cf2e115fdb96f98cccc4489939db0e61421e825a1a6cd",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "array.view_copy",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "f28cacde3c0a8a5701cdf3512e591ebb39d833361c0c087a1ed4b0e757414ffc"
+      ],
+      "passed_tasks": [
+        "construct_004_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_004_0",
+          "topology": "3ff4ea40d9a5d065cc929acd0680146f73d1b0891bac3d74a040efcf86ee9d1a",
+          "status": "failed",
+          "failure_layer": "provider"
+        },
+        {
+          "id": "construct_004_2",
+          "topology": "7243df6c511627d5182b71a63563e489c498a26c8e517c49c325a0a0de3e3439",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "attr.T",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "ca0786bc83a14b45bb50a8467e3beb61e22934f5bcf60f99d1652f81898aa30f",
+        "d62dcd42690cd365bc115823b01a9e17206f9dd873e4acdaa5043876cb0757c4"
+      ],
+      "passed_tasks": [
+        "construct_006_0",
+        "construct_006_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_006_1",
+          "topology": "d5f3c64f7f843a5bc2c7caf453e80f1324d0ae5fe00f67f41708fcaef97d0474",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "attr.coef",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "31c40ab4f9a5bbe9240903567a413fba76124069b879155229bcdc296dabaaed",
+        "50838dcba7cb1275811f37c70099f7768b2fc6221216caab82cc5c7295fdf348"
+      ],
+      "passed_tasks": [
+        "construct_007_0",
+        "construct_007_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_007_1",
+          "topology": "a99b8cc3863156ba66c64810b481176f85f06d7bd90ed90a2d61f5d879b2a9e9",
+          "status": "launched_unconfirmed",
+          "failure_layer": null
+        }
+      ]
+    },
+    {
+      "id": "attr.domain",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "05d2c7be513a133560766f2678eeb6008b07acbac7569111e9cdbc836e3e717e"
+      ],
+      "passed_tasks": [
+        "construct_008_0"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_008_1",
+          "topology": "dd9f029f89bb2e491f74ba28b587d6074c42582d12e888604b27a9b3a8207c60",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_008_2",
+          "topology": "cbd41fffe5cb57804f4cdd6c8b787a3d5b840a1eaed62b9aa0b4076e9b70d16f",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "attr.shape",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "2f255200046e14d55979672665c4f4f6ed663ea9d66e038a6121534d60f6c5e5"
+      ],
+      "passed_tasks": [
+        "construct_012_0"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_012_1",
+          "topology": "746ad25844170cb29f5c6915ca8956981a24b7cb94cb2ea2e12731a22e4a378e",
+          "status": "failed",
+          "failure_layer": "provider"
+        },
+        {
+          "id": "construct_012_2",
+          "topology": "5236882e7d3db43140e4aed25bdb29348a83bdf5b9bed6cd7e6ca04ff47282ee",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "attr.size",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "5fc4e7b4671da798b09d93769a5837b90a997e816b8ff9e61866263b1faaa526",
+        "f3aefada4e756e2e82c41659bb04f4b5f6fd40903962c123390689a294aa69a4"
+      ],
+      "passed_tasks": [
+        "construct_013_0",
+        "construct_013_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_013_2",
+          "topology": "1bf32a31d95bee48da3cb82b35ddbc41911bc154c860f21bb09e138edcfd10f2",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "attr.window",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 0,
+      "passed_topology_signatures": [],
+      "passed_tasks": [],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_014_0",
+          "topology": "d05572c97e2c03d5c5b0a952c7877243da82ab54d50627ca17d5d842a821de81",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_014_1",
+          "topology": "83ac57535f2bfc61f1ddc96eea7768e4c4c8f77e661f94f6d5a92dc92c7b1756",
+          "status": "failed",
+          "failure_layer": "provider"
+        },
+        {
+          "id": "construct_014_2",
+          "topology": "6eb1a4fd79847361e719ccc74b93e2a6534dbb9386c2d54ba28588917a32caa6",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "aug.Add",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "6377ae1020da879ede83ecd483b31fefa66de53008fa268e8ba490dc81094cb9",
+        "d97b722ea9653199788c85fe2e49b603955db47a412c23f8c0cfcaac64dce98d"
+      ],
+      "passed_tasks": [
+        "construct_015_0",
+        "construct_015_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_015_1",
+          "topology": "d05494bd7d876112a59f0f75fb9f504f7c6a1a743e9fcae29d7cbb56a825a822",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "aug.Mult",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "3e1d51839eda290e958cd57485e893bbeadfbde68d6ccb9bbdb7ac28436f5dce",
+        "5ffcfc249ce4b0c440b4c5858f67745ee27f3d14215bb16dfb9dd567a00deafa"
+      ],
+      "passed_tasks": [
+        "construct_016_1",
+        "construct_016_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_016_0",
+          "topology": "59435f4c8465e1256c32ecaf2fa49f3a56be99b8564091edc0a8eebf4b6effec",
+          "status": "failed",
+          "failure_layer": "provider"
+        }
+      ]
+    },
+    {
+      "id": "binary.Sub",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "02d7f2e75c74eec0d1c4da173704076f6d8b5eea13dd1d36a5ea78ef3ee41662",
+        "71232db96e342fe7548dd90746ec5bcf9a21046c6e2427fb6d4746452a035bc6"
+      ],
+      "passed_tasks": [
+        "construct_023_0",
+        "construct_023_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_023_1",
+          "topology": "12dca48d1119bd4c665105e799461ba204e79d6e1ae57bc22e4b55ce2fdc242a",
+          "status": "launched_unconfirmed",
+          "failure_layer": null
+        }
+      ]
+    },
+    {
+      "id": "bool.And",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "ac191132e125e3795995a18b279656cf7319be669257f55e2b818671a12c89f0"
+      ],
+      "passed_tasks": [
+        "construct_024_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_024_0",
+          "topology": "531a99df85740cf9ce8140814a53cd918ff7121a458fa8cb088df5b0f9a227dc",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_024_2",
+          "topology": "83d3d5b293da2309faf264df8434b1db05b5898192d031d329ffc7606a6493e7",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "bool.Or",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 0,
+      "passed_topology_signatures": [],
+      "passed_tasks": [],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_025_0",
+          "topology": "e455c178a7e915a6c19488888a596589a6989b01a3ba30759d96823528540610",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_025_1",
+          "topology": "dd86abea74bddc794282f1c2aec5728585f972533c8a29c27770f9f4f2bf0229",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_025_2",
+          "topology": "fd922c06a42cc76db00ab27355767bd8ffc39512fc36391bd30e5aec20270baf",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "boolean_cells",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "ed46c36c1424483123962a0076537333f474d881c3778252ba2ee0fa6b53b6f7",
+        "fd93f046b87559bbc348f3aa392753120fe08c9fbee4c26688ea9d5803a95a70"
+      ],
+      "passed_tasks": [
+        "construct_026_1",
+        "construct_026_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_026_0",
+          "topology": "4f71510c10a292a4cce392750fb0472784f92f9f9244f1f42d32aaacd53276ec",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "call.Chebyshev",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "ad7248ed96334cc4d18ed5a20892178977c69a79139f1b181ea11cbb4405b371"
+      ],
+      "passed_tasks": [
+        "construct_027_0"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_027_1",
+          "topology": "885856264a4e5d95c9e578402b23103f6d0814ef4ae5a250cf9ac1834bec80dc",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_027_2",
+          "topology": "76a58f8732f4bf8b761a13c2e1d77fa18431fd285e6c8f65fe99ef3f454f75b2",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "call.Empty",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "55233ebadfb966f060899029dd72f72216175c831c0c25280e245258accd6d39",
+        "8977f0609b007bd3d71d53d50f72e2b58c805e20866caca94f42800dd8beda2d"
+      ],
+      "passed_tasks": [
+        "construct_028_0",
+        "construct_028_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_028_1",
+          "topology": "97f745ebd11e1f66dbb4fd0c36acea990ebfdff561764c36d101367a4179c637",
+          "status": "failed",
+          "failure_layer": "provider"
+        }
+      ]
+    },
+    {
+      "id": "call.UAdd",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 0,
+      "passed_topology_signatures": [],
+      "passed_tasks": [],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_029_0",
+          "topology": "61dd9fd4c04b41b1afe99a4a3226abfc0a466e1b0ad97f375d4b4e91a2b896c2",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_029_1",
+          "topology": "bcb991b4fc17b1fb8f6dc8b5acdb088eb39b914a0071311928f38e4ff260edd3",
+          "status": "failed",
+          "failure_layer": "provider"
+        },
+        {
+          "id": "construct_029_2",
+          "topology": "9221fc9931c110bcaa499925fb3d70ff2cd4cb43ee7e043a7aeedcf53f9d95e4",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "call.ceil",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "b1a15ba1e458ede9a1dea3e893209e8c573d5745b37f79e9c590b4626d69c4b9",
+        "c5d38d1262b9097ed3e9298d7a8ec461ac1b998babbdbc3c2e90ceff840c2b54"
+      ],
+      "passed_tasks": [
+        "construct_033_0",
+        "construct_033_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_033_2",
+          "topology": "4c34366036cc3b1aaf359cab093ca5647a62313a25ce7171460ff9134fc5bcd0",
+          "status": "failed",
+          "failure_layer": "provider"
+        }
+      ]
+    },
+    {
+      "id": "call.clear",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "267a2c83695393fa52f28bdc58db51bb596af2b7434829a4736ead42844bda6a"
+      ],
+      "passed_tasks": [
+        "construct_034_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_034_0",
+          "topology": "156c21ab1471ba3bc3495428ef35b65701fcb5fb953cf25d6cd9412999696a6e",
+          "status": "failed",
+          "failure_layer": "provider"
+        },
+        {
+          "id": "construct_034_2",
+          "topology": "bae58089646dee0860488ccb677a720dbeac5d89a325ce5a464c6d27d1cb1448",
+          "status": "failed",
+          "failure_layer": "provider"
+        }
+      ]
+    },
+    {
+      "id": "call.copy",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "63f81ade585ea6084ec8d98a50750ef8732a0dda8ce09aee03e153bc56f6f2a4",
+        "cefe74294127189d42d3fb6bba19ca48f03facd7e70e80d3dcd3e8ce46d3e274"
+      ],
+      "passed_tasks": [
+        "construct_036_0",
+        "construct_036_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_036_2",
+          "topology": "ad1b3917cf76ac558f577409a7a2accc171112b8dd403cc4d3ba0bdcd8308200",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "call.empty",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "abebd4effc240b64751221b374fbee89f69d1269e6139316075a4b035ff41658",
+        "c63314c603253800ef90103899005e1a59012844ef9d907a321b72fc96575e66"
+      ],
+      "passed_tasks": [
+        "construct_038_0",
+        "construct_038_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_038_2",
+          "topology": "4e9ab8741a8edf2b4874d835ff3fdade958d4bbf1ec918ab74d3e8761815bbe5",
+          "status": "failed",
+          "failure_layer": "provider"
+        }
+      ]
+    },
+    {
+      "id": "call.empty_return",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "315962a00425001b92ade1072260ef6a72df5c3c92e2586e6c76c1d1b9552fa2",
+        "e9b8b0f10571407ffd1112d29c052a7f40cf682d354861b8e8d0b5c7d115d62d"
+      ],
+      "passed_tasks": [
+        "construct_039_0",
+        "construct_039_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_039_1",
+          "topology": "8d215c5f98d854f35feeb8247892a80aeb8839f164e8555e768881bc634230a9",
+          "status": "launched_unconfirmed",
+          "failure_layer": null
+        }
+      ]
+    },
+    {
+      "id": "call.enumerate",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 0,
+      "passed_topology_signatures": [],
+      "passed_tasks": [],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_040_0",
+          "topology": "eddb4fbee8c9cad05edf66595b18db90940d50d72b9de1a85025548a89e74924",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_040_1",
+          "topology": "3cd17adf34de678ca2a9db199cf73b1fa7818f93aabecb41b91ccefeb5bb740d",
+          "status": "failed",
+          "failure_layer": "provider"
+        },
+        {
+          "id": "construct_040_2",
+          "topology": "a49df15db1ab86d3ee6d948853c7f9f15ddd040d04a41bc981cf2fb26245f634",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "call.full",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "aa7b38d16d34db11f283bc8ffb503335dd001d764f2f3b09f677a9665a4e07ed"
+      ],
+      "passed_tasks": [
+        "construct_045_0"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_045_1",
+          "topology": "461d307fd6121c20a12e94f7dfdb4255923b97cc5ad6543c69add19b84a848cc",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_045_2",
+          "topology": "4bd3f54817ec98776fa75786eee5bee3d09bffeda77ee11fa2022bf148b084b4",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "call.int",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "6cb008af98e754d9672d97e2f8238100260127eb2b265ee09ddf3ef3ca03e19c",
+        "fe7a6f3b6104f50675b3c720a40068a799222325e3f165b6abd975347309a508"
+      ],
+      "passed_tasks": [
+        "construct_048_0",
+        "construct_048_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_048_2",
+          "topology": "efff0be18c877f96d2b66528fd38b454308c74559332ff2274cb582f95f2336b",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "call.items",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "8a295048d33fa6da526a66e49e0f460fc611ecafc165ee78c4b510d825aee326",
+        "e9050f3c4cc78292ee0a7c3d278f7052ffaa0cfb3870ff3c38d382f99d8b247f"
+      ],
+      "passed_tasks": [
+        "construct_049_0",
+        "construct_049_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_049_2",
+          "topology": "4c079a7f8676af5ccb14f2aacc97d79cf942d3cd5d635115ec8e8e9ae71533cf",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "call.iter",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "8854acd7cd8ae11a6f5c8abb0bce1dfc7dd8a159fca887fc05c708b505c1b1d5"
+      ],
+      "passed_tasks": [
+        "construct_050_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_050_0",
+          "topology": "5e898b9922e86ad41bc95a81595d0b0128e67056d04f9e577d9480628cf6c860",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_050_1",
+          "topology": "4c7e91f651f37e0609c233d12c9f3da0055c7f46678db3c11b912223c9b691ab",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "call.join",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "b00440c69d1c5cd4752ca3b8d2475f723ded8762f51cd5e13974f9bd6c28d28c",
+        "ed4e7a985ecad76ff1aca67038700e456e27cab7044557c8ea66800143b6f0d7"
+      ],
+      "passed_tasks": [
+        "construct_051_0",
+        "construct_051_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_051_2",
+          "topology": "92ce3253c98b48ce3c772e1f7d1c6d54ad4c93a814809e8ada2983f81d51bd46",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "call.keys",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "b1ae82696258e44ddd26769aafd208239a69af79c337ee4a3ec4a44c24909596",
+        "c04c0379032c2e5c32f442a6bd40a5f080eafd8fc30297abcf7ff634514ab5c2"
+      ],
+      "passed_tasks": [
+        "construct_052_0",
+        "construct_052_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_052_1",
+          "topology": "d428efed63a42eb50d058ef9021423eec0a781ad778042085e39a548289b974e",
+          "status": "failed",
+          "failure_layer": "numerical_comparison"
+        }
+      ]
+    },
+    {
+      "id": "call.len",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "e323a1b706b315eef990211b370fee30271805393481c2bb0f9d85fd58393bb7",
+        "e8a44bc0ba23c08ee3329512a2d768acc5d5219ad79c97578859ea002ca107fc"
+      ],
+      "passed_tasks": [
+        "construct_053_0",
+        "construct_053_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_053_1",
+          "topology": "1667dfb85ab353a12f34fee2204ef6d4875b1158438dd4cd496cbfc71d435ff2",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "call.list",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 0,
+      "passed_topology_signatures": [],
+      "passed_tasks": [],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_054_0",
+          "topology": "197df9115207303f2d88c09764be89d827b52318f58efd4315a3962b3d178a77",
+          "status": "failed",
+          "failure_layer": "provider"
+        },
+        {
+          "id": "construct_054_1",
+          "topology": "ef2954698823da4c55ebbc5b31e41eaf6efb36fdaeea6873a250a4ab50710922",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_054_2",
+          "topology": "37365223c9bc2bd8631a8b1819e8c000221d077900a9cef95d3d8f11bd9e5384",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "call.log2",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "2284eaef59ea6f9e937c5ca7610c0c54214985f8e88d4bf0a144966029ef24b8",
+        "e3ddbbf488677559d253334d7f8118ecf13f946d739e0df186aaac4140feb9c9"
+      ],
+      "passed_tasks": [
+        "construct_055_0",
+        "construct_055_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_055_1",
+          "topology": "24b408909ec63baa20fb893f0db012ec81eb25582063cf260a2210ee6030e6fe",
+          "status": "launched_unconfirmed",
+          "failure_layer": null
+        }
+      ]
+    },
+    {
+      "id": "call.partition",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "0ca18130dddd8bb0a0a59576b7fb5535edf9617e26ace418af4323efd1f55c4b"
+      ],
+      "passed_tasks": [
+        "construct_060_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_060_0",
+          "topology": "acade310a8d514336ac250652dc8360d975677de457abdeda1450273767e00a1",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_060_1",
+          "topology": "93b210d762a01a05c48f15a9208857e2fc78b2d8565623a09b2b0eea015b2d7b",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "call.popitem",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "39e896ebc26b4cc1ad8c30df03cace94964bb5bd3f831a43885b2bb38eb288db",
+        "a9493d028841c743ee22e6d400cc2f0e95e07cf2e1a04b51ecd796f84c6bbeca"
+      ],
+      "passed_tasks": [
+        "construct_063_0",
+        "construct_063_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_063_2",
+          "topology": "dbbba21e17b4514ce9fb4836b61cf79715677b774075cb1c5adbaa26f0d2f44f",
+          "status": "failed",
+          "failure_layer": "numerical_comparison"
+        }
+      ]
+    },
+    {
+      "id": "call.pow",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "497167be48fe72bc959dfdd53891e48cd1ccced580f403005a0a99969f6c5008"
+      ],
+      "passed_tasks": [
+        "construct_064_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_064_0",
+          "topology": "5c4e1139476db8ab69ed8e352811f264ea8f22683e2a88aac4b522b4ab0f3516",
+          "status": "failed",
+          "failure_layer": "provider"
+        },
+        {
+          "id": "construct_064_1",
+          "topology": "93c9326b83b4b684807f41f524afe0604443a02690f3f47671c84758618ad3fb",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "call.replace",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "21884240ba6ac87aaeb78f406c2981d6f96809808a470e98748dc46145bc08ac",
+        "f8b1812827ad2875e18ecc022596c7cba5def872fac9c0c937fd1f59e4732472"
+      ],
+      "passed_tasks": [
+        "construct_067_0",
+        "construct_067_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_067_1",
+          "topology": "06ae4272ec7fef78d1fa4fbc057d9beb54377f9f98bc7e54bc5ba5e6316ec3af",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "call.reversed",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "d68c41923554af8cf2410deeff6864214466fb6088ed7047fcc542264f3cd975",
+        "f91ea7d7955420a929918aa4ff96bed5d3759043ed5af0868f50d8fd38fe12ab"
+      ],
+      "passed_tasks": [
+        "construct_069_0",
+        "construct_069_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_069_2",
+          "topology": "c923d0067d8e09192dfdd2ca9abd6d0254ce8ba77424bfd3ad02d596dfa84555",
+          "status": "failed",
+          "failure_layer": "provider"
+        }
+      ]
+    },
+    {
+      "id": "call.rpartition",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "22afd8d1772470bd7047cb3453f56caca71f0e0473bc79be8807a16f59fd4ffc",
+        "5106690945f109b461e1040063709576eadd7e4917d038578f82793457bdfc78"
+      ],
+      "passed_tasks": [
+        "construct_070_1",
+        "construct_070_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_070_0",
+          "topology": "47278392c5586e7c5baf570014f78cc6d0596a68bfa837a2096f20cd14136962",
+          "status": "failed",
+          "failure_layer": "provider"
+        }
+      ]
+    },
+    {
+      "id": "call.rsplit",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "62a14ccaa184823da7096cadb042e7d37db199942301a6a89c9f1949966c1d4e"
+      ],
+      "passed_tasks": [
+        "construct_071_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_071_0",
+          "topology": "69e3c5faa36bb7730e1996c3e27f91deface51de4e7913e34b80b95d744e9dc1",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_071_1",
+          "topology": "053e6f535946c990ce6c936926d8eb9e9dc5e81f550f27925774a2eaa0574d70",
+          "status": "launched_unconfirmed",
+          "failure_layer": null
+        }
+      ]
+    },
+    {
+      "id": "call.setdefault",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "a2f4a3fe46388a1aec2a163b325bbdbe6392f76c7afd53dbef0185f5ff66a8be",
+        "e5214edda52cfc6fbd9ff11014742088c6777569956089762cea1e1c0658ca4f"
+      ],
+      "passed_tasks": [
+        "construct_074_0",
+        "construct_074_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_074_2",
+          "topology": "b72b9317e81c8e2457c5692f9ef24b25bc1f0773304a42cdabc36fa038807ad8",
+          "status": "failed",
+          "failure_layer": "numerical_comparison"
+        }
+      ]
+    },
+    {
+      "id": "call.sorted",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "728eab27f461bef091df4eeafb30a6aa645238c2f3c8c3e786dd709de2fb97a9",
+        "f05a8283c1ca0d91486200c6fea8e178565c1def351db03f0930f332ca0b6884"
+      ],
+      "passed_tasks": [
+        "construct_075_0",
+        "construct_075_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_075_1",
+          "topology": "e96eedf3212ca3a4b8d3a439e088ad0af0045310abe4eb08a634040d3a52127e",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "call.split",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "88efdd69e1c37e13f2f2527834a64a467bbb48accd456d3c4ea572db8378ea70"
+      ],
+      "passed_tasks": [
+        "construct_076_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_076_0",
+          "topology": "e59695908c94a9bda3cfe62997ec50b3ff5eef0484954d7c379c8718cc2ba798",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_076_1",
+          "topology": "a24a52989d1ef5bc1cdbe57a04a93a2c829775cb6ad602bfebbb157ff94c0794",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "call.transpose",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "8d8dba7bcfdd5190b0f74549a1956d77bd3d95de5c7359c08ce4d9ba3b12cc7c",
+        "e3950c56a5e601ec1b5a9188e386897ccd9d03dcc5104efb63abf0b3df96f2bc"
+      ],
+      "passed_tasks": [
+        "construct_078_1",
+        "construct_078_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_078_0",
+          "topology": "04b3b9745143b44c0b48f65ef4b135d64edc20c459598c13859cc2288b00b44e",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "call.tuple",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "2c5b56984e93af15fe25234dcd62d79e1855629c5f13c72692c94391363e2bd2"
+      ],
+      "passed_tasks": [
+        "construct_079_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_079_0",
+          "topology": "ec7cf860d3da31626f253e898bc01eba5a218756e60094ee7ebab2e62e7a6290",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_079_1",
+          "topology": "5011f45ac5026c71fc36b0f08ea9ae10d43566c29cb132cfa6d5d349a0d36935",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "call.update",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "440a4efb996f4229b5f7c6e69b77fa225eccfa0bd6f753f5f397f0bca28b9ba4",
+        "a138bb1dab6d9719590d589ab9aae473586aa1e5704f33739f322b36b3f191a8"
+      ],
+      "passed_tasks": [
+        "construct_082_0",
+        "construct_082_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_082_1",
+          "topology": "9aa5757afc8294947d399c8299c7f693538ca7a170175a65363dc4e8b67de7f9",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "call.values",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 0,
+      "passed_topology_signatures": [],
+      "passed_tasks": [],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_083_0",
+          "topology": "ba048508e817a05f3d1e5d4c33ba104b00185704aecad25f8276439ebec8183f",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_083_1",
+          "topology": "92899dc368a34aae367e8856936213bca2e4df71c8b83d41a0c6663ab1ebc40b",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_083_2",
+          "topology": "98ad5a2f84b4fce6788ee525de17be5757f878ad981b8f05313b3512eeeeafa5",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "call.zip",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "5c156de7298752cfd664ad8c003e12ea7dc1c0f96a3e960feb71800182ecacdb"
+      ],
+      "passed_tasks": [
+        "construct_085_0"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_085_1",
+          "topology": "cc2f5fcd4d8b8684fdc575850b980a60a019145d4f5f9031e58b47e4c3b77cd6",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_085_2",
+          "topology": "6aee312eb229b90cc6f6ec1e2d36d3aae501e6b007547d877acad2a025f1d72d",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "cast.float.bool",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "b5687ada900d497e7a7c8fd44d439a49bea59a0c1fb7ef3e1cded1963b822cf7",
+        "fc5a877452a5cdea7ac356f0a7ede31ea0806a802d2e59fc1385363e31bd6bd4"
+      ],
+      "passed_tasks": [
+        "construct_086_0",
+        "construct_086_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_086_2",
+          "topology": "5e1a87b345fbb26593382b405305b4f57a4178b75977b567cb5b70c8b71b37c9",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "cast.float.default",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "884d304319002e3e615bf29112cb4194163be96ff57075e2db6dc7ff97cf5f97"
+      ],
+      "passed_tasks": [
+        "construct_087_0"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_087_1",
+          "topology": "37a8e2b958ce1dc5dd7843f8a181c1a688631720d42e81a843d8685691cd7457",
+          "status": "launched_unconfirmed",
+          "failure_layer": null
+        },
+        {
+          "id": "construct_087_2",
+          "topology": "bc27bb8ae3a6a960a42f81517abb39e071148f506afca5e636621ee452fb8e10",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "cast.float.numeric.legacy",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 0,
+      "passed_topology_signatures": [],
+      "passed_tasks": [],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_088_0",
+          "topology": "3f5ec8e2e67c45ac0d0789525087e21a182d301ef8abb2ae37293ed885156e5e",
+          "status": "failed",
+          "failure_layer": "provider"
+        },
+        {
+          "id": "construct_088_1",
+          "topology": "57b6c5e7b2ee16e9e1232611b2faf969b598f9d8fb0c5ba5e314923f92444be3",
+          "status": "failed",
+          "failure_layer": "provider"
+        },
+        {
+          "id": "construct_088_2",
+          "topology": "ff19b1bab09297bcf9609294b51df43a48dc56344d5bcb8db30ad68c178bc84a",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "cast.float.numeric.zero",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "03bbb8bdcb64fcd022e5ba79f72ba0061992530ec06f95b52083d2b1ddb32efd",
+        "1dbc4e8294dfb009d48bec3e81dd7e52bd31752eb838d2d853ba0f53b8d92d97"
+      ],
+      "passed_tasks": [
+        "construct_089_1",
+        "construct_089_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_089_0",
+          "topology": "9c70ea2f528efd025306b49050ff3394181ac7a3796daf046a1c83d9572c5c20",
+          "status": "failed",
+          "failure_layer": "provider"
+        }
+      ]
+    },
+    {
+      "id": "cast.float.object.legacy",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "74f85bab9ba70811504d3da8bd0a3b95b9af4fed4fbf4bd2728867aa4a2fc09a"
+      ],
+      "passed_tasks": [
+        "construct_090_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_090_0",
+          "topology": "9b5ce564c4a0c088b1fe9e399c57866b7b9ca1a23535fc2e1aaf5ec4734322c5",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_090_2",
+          "topology": "ce105ea76d5849d0c14c14b4b76f6c770fa5e546faf257c4415edf23f38e8856",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "cast.float.str",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "0c62ab0037e7b3a61960eace3bcc5bc49a9e74f2161272613e4e035d611e6638",
+        "7fdd0fdc6fe90eedc1a737f04f34f99497241b85302e0b739e3fdcdb02adfb15"
+      ],
+      "passed_tasks": [
+        "construct_092_0",
+        "construct_092_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_092_2",
+          "topology": "3f09b1fccee9435465129bde568793af373737be662b12bfec89e87c26e1dab0",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "cast.int.base",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "3dd7719f29c03ce89c4184cbd1604fea814e28fa8c4dc80535597ed1aa3def5f",
+        "9e8323b700a3de589c87cf7201e90f638f707d1eaa4b089e1e9de91e9bc1746a"
+      ],
+      "passed_tasks": [
+        "construct_093_0",
+        "construct_093_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_093_2",
+          "topology": "c196a0d01447a7ff5a969d3269ca64e9b85be7f00473f80656af13a8dc5bb553",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "cast.int.bool",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "9b512225cce8399d93506d1c99c549b9f39efde795b77becf085d7a492ed4119"
+      ],
+      "passed_tasks": [
+        "construct_094_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_094_0",
+          "topology": "368a47a42043d2faf83e67d3e3cf81a638bb2be7188d4fd8cbbfed79fb95788a",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_094_2",
+          "topology": "8d444a08a2eb54d57047f4936749dc552c5dc0a577e274c1e000bea6a5a49dd5",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "cast.int.numeric.negative_fraction",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "479a4a55ed4c206f5ae4e10ae8bd6acd7a64531cbe431b1e7f91f4e3cdab8efc"
+      ],
+      "passed_tasks": [
+        "construct_097_0"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_097_1",
+          "topology": "586f67ba6ad98f7aebe9acdd9a9e769a3f92048fdf0adfc9d7ba0995fddfd6b1",
+          "status": "failed",
+          "failure_layer": "numerical_comparison"
+        },
+        {
+          "id": "construct_097_2",
+          "topology": "ad93c8bb9e3c3fe609870ee2d5d3b46748c65e9f7926c4319e1a30ea75a51dce",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "compare.In",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 0,
+      "passed_topology_signatures": [],
+      "passed_tasks": [],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_100_0",
+          "topology": "3461e23a79bc860d3ab6790e5b39ffc72f7f580136da969bcb99259d430b46b3",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_100_1",
+          "topology": "2f835286549d49c15ca06ea2245d8bf5497f01977ba0e181bbdbdd5386885df9",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_100_2",
+          "topology": "23b0806ab20016bd4f14fff6eb362c297ad6a559b25dbd1557f0cd6243c22c3e",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "compare.NotIn",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "57018a66c54d9799128cc46a854246a3fdedd79e50c46452a6c2a36dd94645c5"
+      ],
+      "passed_tasks": [
+        "construct_101_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_101_0",
+          "topology": "26362050f1e888d871601e2d43bb99360299844f203540536eecb9b3aced2c29",
+          "status": "failed",
+          "failure_layer": "provider"
+        },
+        {
+          "id": "construct_101_2",
+          "topology": "94ef82e395d2d4a2a8ad650ac9eb080f396af463f859072ef003cc60824cfa30",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "counter.closure_instances",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "5441d6feabc11dd34cd2b9d78365b9511851150db6605a515f1007d57af32ace"
+      ],
+      "passed_tasks": [
+        "construct_103_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_103_0",
+          "topology": "17dea4e68fff5878a2aed64b24f34229207d114652ec0a9c282bb858c181b906",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_103_1",
+          "topology": "616ae9fafafc23a05672f65b4bb7348e16dd730a1755801e73fd553764964d15",
+          "status": "launched_unconfirmed",
+          "failure_layer": null
+        }
+      ]
+    },
+    {
+      "id": "counter.comprehensions",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "40c205615ef9ed3d6b3c456f264483368a7f4f94b8fbb71072951c138946c446"
+      ],
+      "passed_tasks": [
+        "construct_104_0"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_104_1",
+          "topology": "083af3211e87ca34fd3f658caedce49af2ef411feda821860a17bf6716cb4a9a",
+          "status": "failed",
+          "failure_layer": "provider"
+        },
+        {
+          "id": "construct_104_2",
+          "topology": "05fb5e36abbbdc7fe2c807e2dd0f385c29a668fe39be187d0b1af74cb82cec43",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "counter.container_writes",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "98998058af937a4fa5362494ff05a36f129c14dc1ec0637108ca9815817ad251"
+      ],
+      "passed_tasks": [
+        "construct_105_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_105_0",
+          "topology": "d3f76050c9ed5478af9e83155d8244398ea979cb03f794c2ebf2640c112948b5",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_105_2",
+          "topology": "ef87107cbcb02d184fd9a96f704527ab093ef56176153799eb36644961493014",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "counter.default_evaluations",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 0,
+      "passed_topology_signatures": [],
+      "passed_tasks": [],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_106_0",
+          "topology": "659a051af0b6b6f2c675f69a46241620f215bf6d786ccc33466db1fb8992929e",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_106_1",
+          "topology": "c39a0a630af921c35e26eca267456fbf9dfabcdef86d2a28e1022fa8d7d3b49f",
+          "status": "failed",
+          "failure_layer": "provider"
+        },
+        {
+          "id": "construct_106_2",
+          "topology": "2deafc677f50e10ad88faaa3213df391a48989e6deba54e40a45b0f4528f2669",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "counter.empty_operations",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "724a3c9d2583fe89497218c16ce710fdef2ab7169bf646bd467c8f088add52ce"
+      ],
+      "passed_tasks": [
+        "construct_107_0"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_107_1",
+          "topology": "28aab9803cac5e6dc6ff6a496f7f9fceebb4a33faffda7a30d9ac3d98921e409",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_107_2",
+          "topology": "175a32727bf5f2003a30abec83ed0afd424423084443264ca7d69c684cee3e61",
+          "status": "failed",
+          "failure_layer": "numerical_comparison"
+        }
+      ]
+    },
+    {
+      "id": "counter.iterator_advances",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "824447a4d2e33f6d434361ed65c9247aad57e1fe02e88e3f19ac6440a1efc46f",
+        "e5f0e5937b1b1827c1f8d32996dab6a4f7717dbda349df86e552ba1089de5fcb"
+      ],
+      "passed_tasks": [
+        "construct_109_0",
+        "construct_109_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_109_2",
+          "topology": "259b12793cb4b1b84e5c4a48e7c0b71a536bc5a8353709993ae67b97239705c0",
+          "status": "failed",
+          "failure_layer": "numerical_comparison"
+        }
+      ]
+    },
+    {
+      "id": "counter.lambda_instances",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "2164d24fc4707b6482256471f59bc9b127bb4299f31ff4c5deffbf4e030c74bf",
+        "962bd35ab4433f96201dca87f5c6e326cd9adea580eea6c7d82d9bdb1e1c6092"
+      ],
+      "passed_tasks": [
+        "construct_111_0",
+        "construct_111_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_111_1",
+          "topology": "d66822ce45df62df9ebc16ad662de1a6ea1ebdefd3f9092d339896b4ac2030bd",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "counter.loop_breaks",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 0,
+      "passed_topology_signatures": [],
+      "passed_tasks": [],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_112_0",
+          "topology": "2c5c0a65c6584d15775c7d04464ef4e1fe41f4696283fa4f51b74923f7fc408e",
+          "status": "failed",
+          "failure_layer": "provider"
+        },
+        {
+          "id": "construct_112_1",
+          "topology": "2ab104be00ff4f343cf460f9ea6b2018a2c8f006276ab0660c8c7217c3af17b9",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_112_2",
+          "topology": "3dcebc9d1b026cca068c410cf2847b41d86a72a85271536cb1c3b5938d4b0d59",
+          "status": "failed",
+          "failure_layer": "numerical_comparison"
+        }
+      ]
+    },
+    {
+      "id": "counter.loop_continues",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 0,
+      "passed_topology_signatures": [],
+      "passed_tasks": [],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_113_0",
+          "topology": "1c4d0a87dd27d9604717a2781af333bfe71201f3fdd961b9919412ae6989beee",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_113_1",
+          "topology": "e5fc161b03bdb553637a50ebd3fd23d524093bdd0a56e4aa271c7c8c9b15ad34",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_113_2",
+          "topology": "0287b0e998d94f17fca931b50dd96f3af3e2e90ed41cd0facf2366659ae1668c",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "counter.loop_iterations",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "5043f2971fe79234fa7207f28e53a01267406bf27882be553305b66c95988004"
+      ],
+      "passed_tasks": [
+        "construct_114_0"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_114_1",
+          "topology": "596a3160047dc7a75ddeda944d49308708c28881f22d1e51e53f2c1fffde775b",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_114_2",
+          "topology": "5a8d3ce6c2c727d106a4fed7980be123be7564a9b58728e964ec362e55cebea4",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "counter.mapping_calls",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "3f191ac5727618acf9359c39be85bd0af8a485859b65d82f308e0ff65ea46c83"
+      ],
+      "passed_tasks": [
+        "construct_115_0"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_115_1",
+          "topology": "401dbb53b8ff3fb0c1ca56d7bca84a97da1345e3ad86c58bfc679178570f8014",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_115_2",
+          "topology": "ba041a823103b8bef0afbeeac5a66fe5e28e6d8d72882c2c8a76a48fef0efcc9",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "counter.mapping_views",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 0,
+      "passed_topology_signatures": [],
+      "passed_tasks": [],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_116_0",
+          "topology": "c6f4ae9d8f588b522760df27c47cea1a2863b24eb7aa3c8719fc9e445367dc62",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_116_1",
+          "topology": "652c3655b8443b95d57d25be68798e3dc18c2220036c98fbcbd52b3db83036e4",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_116_2",
+          "topology": "e07ffdd2bbf2ebee0e26bad75adb87d7bf380999b90bae9be8bcfdd8d0e42384",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "counter.mapping_writes",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 0,
+      "passed_topology_signatures": [],
+      "passed_tasks": [],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_117_0",
+          "topology": "1f419468f56b6cecac979bfb0c1dd4fa5ad0f0ee7efc548a0b9b2256bc6ea829",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_117_1",
+          "topology": "bc05f811e247073417bf5b6ac6ff4e4b49979d29fe10b0aea23a197bc2a6b044",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_117_2",
+          "topology": "cd0c34138f3e66ff6cbce097d8472f50b73f369a179b9dc1f9246f86cc638c9f",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "counter.membership_tests",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "be6388c7534a7afb86e553a27f457f581cce785f7e67229f6b27699a23068615"
+      ],
+      "passed_tasks": [
+        "construct_118_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_118_0",
+          "topology": "12b081e74e3c5d23311fd79f487b87457ea4a32f7b468ba72a406c35ed642463",
+          "status": "failed",
+          "failure_layer": "numerical_comparison"
+        },
+        {
+          "id": "construct_118_1",
+          "topology": "34551c4fba3173381a529c87c1bf4d14c60bb9ff4715e6dde4f40e2755ced49d",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "counter.nonlocal_writes",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "01bcc7ac517c81ea2bdc3040f29952f6fdfd02dc674d9a8e9200c0c00f73efdf"
+      ],
+      "passed_tasks": [
+        "construct_119_0"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_119_1",
+          "topology": "b335e937447ca6a3c8b26790bd9dc0e646c7a433f7069f76fb1aa2d3a6675c1a",
+          "status": "launched_unconfirmed",
+          "failure_layer": null
+        },
+        {
+          "id": "construct_119_2",
+          "topology": "2513c5494994b07ee533eb047be5b91295a5aeed2c6b30e6101591396ade4ecf",
+          "status": "failed",
+          "failure_layer": "numerical_comparison"
+        }
+      ]
+    },
+    {
+      "id": "counter.public_numeric_operations",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "3013c7c910baff5ad327c6562d92f7257f32e0e2c740297146e0aae6fbf226a7"
+      ],
+      "passed_tasks": [
+        "construct_122_0"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_122_1",
+          "topology": "5f7b8b0aef8b524c40ab1aed85204b655890753f84e0e5df0fe656b4ec27c7c9",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_122_2",
+          "topology": "af0836cb0c59c4e7ab431fdb679b5dc309e165377f15c8db427160807a0547c5",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "counter.public_numpy_functions",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "8ccba0a0030d50ee44195721a02fd922348919e8cd6ee66f9a9f56824463be31",
+        "ba534803910a7637ee096d751fe4e2fe19a1b48eb54addb755d71c5d42c756a7"
+      ],
+      "passed_tasks": [
+        "construct_123_1",
+        "construct_123_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_123_0",
+          "topology": "35a598b55349b3cbda093c74d230d89bc6dfe392b9edb093d89fb11a379de0fc",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "counter.public_polynomial_operations",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "570c8caebd4effec33e325bbbda46f9edcba589eee041d4aacea33f11541ffd1"
+      ],
+      "passed_tasks": [
+        "construct_124_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_124_0",
+          "topology": "acf2cc8bb3d3b484c19561018e97d82071e8576751b60c580267f2693561ff5a",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_124_1",
+          "topology": "1c3aa316ebf46f0fecd542bc0b4afde6c4721d8a053b0643050d48703250bfa7",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "counter.public_string_calls",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "19989bc07a90ff0498e2e0d49ab47d84e7bdfdb310c965b6af67bfcd26ec5402",
+        "97fe2f4aa0c84e9bca2680477dc2ba6a46a2ac9d35475f898fbd489359292167"
+      ],
+      "passed_tasks": [
+        "construct_125_0",
+        "construct_125_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_125_2",
+          "topology": "fa35a9203a274952418055957448536c2d0c6fe942f2c9289f3ab69969fc18a1",
+          "status": "failed",
+          "failure_layer": "provider"
+        }
+      ]
+    },
+    {
+      "id": "counter.sequence_operations",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 0,
+      "passed_topology_signatures": [],
+      "passed_tasks": [],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_126_0",
+          "topology": "4af5867e4d9943ca439b9b1b0b17a964f4bfe2cfd80a9fd5e3b838781b79ee67",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_126_1",
+          "topology": "b33f7466d5657508812284b379c7fdc447f74542eb4b1fd5bd776ed5ef009de2",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_126_2",
+          "topology": "b1fd98458e1e29a81c8c0c71dcc769a981d471abb6b63d06d9ccdad09141b75d",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "counter.short_circuits",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "0fb139c8594c06538a6c329128dbe5d95943c6c66e5d624b98138cc2ae755ad7"
+      ],
+      "passed_tasks": [
+        "construct_127_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_127_0",
+          "topology": "38e39711b7ce4bee05f3f13a48c057e36e2e54e24b460187692270d445e1c80c",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_127_2",
+          "topology": "3910ee119db7b4f6b9461a7cf115e2f05f88f436d0bd0429bedee89e7df9eaa7",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "counter.slice_writes",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "27808289b3e769bd6b401bf5418bcb434c73cc9c42c024af871014600771603f",
+        "d75a0d2eee6ba3dc6ac7eaba61d3587aa64868f1e417c99325ed7c3a81fc918e"
+      ],
+      "passed_tasks": [
+        "construct_128_0",
+        "construct_128_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_128_2",
+          "topology": "e8944e0f32323b8b6c71b7d6017c18122fa6f08f995a1b3c1734a3d1984db6c4",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "counter.sort_key_calls",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "923afdbd90c465fe7a736f99f4c48ccf3c239686f5fdd082430e9d19ea722853"
+      ],
+      "passed_tasks": [
+        "construct_129_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_129_0",
+          "topology": "dfd34b3603693282989eef4cbba455486b8ae8ff602919f3228b511620b10f08",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_129_2",
+          "topology": "23d87fec814e78b2a51ce1ff05129d521fef4967533a07f55ac5a37601795f84",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "counter.sorted_calls",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 0,
+      "passed_topology_signatures": [],
+      "passed_tasks": [],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_130_0",
+          "topology": "c72c2ce2d9e21b468bd6ecf9850bbb63c5abf4b24bcc461aab28c6f0eb4678bf",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_130_1",
+          "topology": "3a9d780df56dc5ba0ffe1226fab5afacf2fb4ad8fdda8dd3947aa9b60186674c",
+          "status": "failed",
+          "failure_layer": "provider"
+        },
+        {
+          "id": "construct_130_2",
+          "topology": "9e02f4a8518cc376b9282c34ed5f2056fe6a372bc809193a26be49d048346500",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "counter.starred_expansions",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "03c64a24f9239abddee56d56c27f6ee33f4ab9510eb1cc8c509b8c20098eb3cb"
+      ],
+      "passed_tasks": [
+        "construct_131_0"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_131_1",
+          "topology": "fa74ce9e2865dd3d8f34ddca0f5502fcb29755ffabf1fdaff47d2be3a5f147f2",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_131_2",
+          "topology": "dd237ad3f76ad14080870252a6f38be1b25a27e5ab3371933eb36ba162b686d2",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "empty_left",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 0,
+      "passed_topology_signatures": [],
+      "passed_tasks": [],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_133_0",
+          "topology": "b3142e7ad39bc970a1ff98b427458b99792c6b0474fede250d699aee77e09425",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_133_1",
+          "topology": "9f42e9bb5c979fe44f0ea119534f19556ecad84f189c85ec5d48ac497eedd32a",
+          "status": "failed",
+          "failure_layer": "provider"
+        },
+        {
+          "id": "construct_133_2",
+          "topology": "c45219fd6b1037905cb845c750a2bebe6273ff0ef4a8cd5c36e7c9dfc4090aad",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "event.for_else",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "4e5c62b14b8ad742a31c411037c60ce7dc0c54ab2f8a58d7f558a0c93df49d5e"
+      ],
+      "passed_tasks": [
+        "construct_134_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_134_0",
+          "topology": "53824dc3679b700b3cb72a59fc2719a3eb6f63ecd2de8433410880548102358e",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_134_2",
+          "topology": "a9066b9386dbf67072e22b279acc7fc93de7c925ac4573b4d2007ede8a9208e4",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "event.while_else",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "59eedaa071e66a711b44ccd31b95a3cd517a9501988d9a9dafd0217ad318c757",
+        "bd6e8bc84dd12dde072c23dfabf25db2b527fa33d46679417bab105b988ee624"
+      ],
+      "passed_tasks": [
+        "construct_135_0",
+        "construct_135_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_135_1",
+          "topology": "91e6be2161260c37db5814b3edaab68425fd9fb025cce147a2b754ea502c700d",
+          "status": "launched_unconfirmed",
+          "failure_layer": null
+        }
+      ]
+    },
+    {
+      "id": "expansion.kwstar",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "0ee07c439394f678bbc03542724374e5e2960e5add05c786f0874eccfe9e202a",
+        "91c5db02c487854e5c4efea6b11ffce07103afe00f31fb36cadf6767f90c143c"
+      ],
+      "passed_tasks": [
+        "construct_136_1",
+        "construct_136_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_136_0",
+          "topology": "826bd016742366b07b7127c04faf78349f322f02f2628a325ea7236ee346cd58",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "fresh.UAdd",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 0,
+      "passed_topology_signatures": [],
+      "passed_tasks": [],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_138_0",
+          "topology": "80398c00089d5f85f75858fcb5e4506c246935dfa48c05465ddeb7853c81b55f",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_138_1",
+          "topology": "090bb1ab295e4c206cafe8a2c367b3eede40d0df5e56e25b3a62b3fbd6bea083",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_138_2",
+          "topology": "d9ac0143e6b7976155da85a01e7e8e673dfbd0079ce76040dd05c5a99b166e12",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "fresh.USub",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 0,
+      "passed_topology_signatures": [],
+      "passed_tasks": [],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_139_0",
+          "topology": "04d058bb0df0ee88dcee26a9528384c5dc85f86cad00b2f2efefb42139e6d4ca",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_139_1",
+          "topology": "8eb3d3657d20a6438094a345261e16cda4502deb79d7f7cb125b65f9c85b0fd1",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_139_2",
+          "topology": "f3268ca7f521bd31b0a856e389b39617cea38965204f4f6fb20b7444db4d1fe2",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "index.zero",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "bc6b81fc1dd70ab87a55a3a248abba61a89981c1572f2501c22716f9ff3cd233",
+        "db672f4bf4ce10ef34a74e27a95c1ee7a0b11e9776309737232f454646da33fa"
+      ],
+      "passed_tasks": [
+        "construct_143_1",
+        "construct_143_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_143_0",
+          "topology": "a50d387d03f8a32c0db021c3e8d6ea66347e54bedfa524a5a0cb8e9ed98a488a",
+          "status": "failed",
+          "failure_layer": "provider"
+        }
+      ]
+    },
+    {
+      "id": "inplace.Add",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "4ac6ebbecec3cd0f623531deeb420944217e3f7841af8e531b679e60d3cfa657",
+        "4f2a8930ecf48eb03f9ab3b9aaf3636611c76d978cbcc790b3bcd02bbc719686"
+      ],
+      "passed_tasks": [
+        "construct_144_0",
+        "construct_144_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_144_2",
+          "topology": "e4a1145dd1e31facf803acaf77546ea53cceda4d27a6b53ad1d0ef0533a706bf",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "input_view",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "66e055692db99d052d8145d64a12c77220fdb957be47b961f400d3253d888e4a",
+        "c3d17ed9d5b2b666b633a45548feb049e028c7d08bb1f0a16fbc9c606d5c875c"
+      ],
+      "passed_tasks": [
+        "construct_147_0",
+        "construct_147_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_147_1",
+          "topology": "36faeef6d78c4b1b056f102c401b3e5e6fdb9b7f039219492ffe8a8a16594b45",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "item.numeric.flat_negative",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "1e149e274db6d8634d351f83bbe493878081d92af9c3e384e7dab94e70d1355c",
+        "2828f6be487bfa7847dd148add9b4eb441127832d1d24c4162f5bf8ed8a957d0"
+      ],
+      "passed_tasks": [
+        "construct_148_0",
+        "construct_148_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_148_2",
+          "topology": "01a79741d2d50c2b86690fdaa3fef5c52cb4ac9d112bd08cbc4d1da239a51645",
+          "status": "failed",
+          "failure_layer": "provider"
+        }
+      ]
+    },
+    {
+      "id": "item.numeric.positional",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 0,
+      "passed_topology_signatures": [],
+      "passed_tasks": [],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_149_0",
+          "topology": "33d12669dd3193f2544612acb80bcc87a6bfbea75add8d9d1d1c87d9a182d96f",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_149_1",
+          "topology": "105b69acfbb37065427493ea14a4419081d2a4a4863e8195b208f9f06aac4671",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_149_2",
+          "topology": "edece3c082b9230abf3cd103366e48834b00be2145e0c87d758f252a5bd96132",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "item.numeric.tuple",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "f6d26e5b0fe92ed88f0608e682f002a03badf99a204fa7fa42b8ff7b979fb25b",
+        "fc5ea737c5f87f911eafa063dae38b33d6931434196592c99a367143d2b1dede"
+      ],
+      "passed_tasks": [
+        "construct_151_1",
+        "construct_151_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_151_0",
+          "topology": "4307c2d5e1989818df284944e569d7f91156d8118c66909d56bcf610430d9e77",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "item.object.cipher",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "2bc62472f77d47f7a240a3387b3c68a5c748f90c51d78605e642effa58121edd",
+        "335d3c88a89e802c0651a0e8526a371c65ddcfb17a3aa784c2d08b40f4f5b466"
+      ],
+      "passed_tasks": [
+        "construct_152_0",
+        "construct_152_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_152_2",
+          "topology": "1e84bfa3a35c6748236cefc20f4cd75a3a46f1d92a5a692cd3855d4a82556beb",
+          "status": "failed",
+          "failure_layer": "numerical_comparison"
+        }
+      ]
+    },
+    {
+      "id": "lambda.kwarg",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "47dfdc600aa6d7dfa80d64335d8dd024e666fdec100584480a208d764068a1d0",
+        "d1b13b2a24525442457a6d3e54d633d2830a23f064211c6cf6d96923c3489455"
+      ],
+      "passed_tasks": [
+        "construct_154_0",
+        "construct_154_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_154_1",
+          "topology": "d624b54b53fdfeb1207651f965ca546d96adbb220e866196516fbc520faa0fa7",
+          "status": "failed",
+          "failure_layer": "provider"
+        }
+      ]
+    },
+    {
+      "id": "native.call",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "3ad0c0ac72cbd71c4b8a4088aec8d1b6f174ee0013fa715462a2985ba23139e3",
+        "a46d7cd8981b5477a024174600de28a3bdff6dc1fea3206e6393fc6aa5dfb8cb"
+      ],
+      "passed_tasks": [
+        "construct_159_1",
+        "construct_159_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_159_0",
+          "topology": "54791bb170e3e5b230c3f41cdff86378241490e15fde70f38f4d7260e98a4722",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "native.starred",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 0,
+      "passed_topology_signatures": [],
+      "passed_tasks": [],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_161_0",
+          "topology": "8a4b615ba1a7220cdc0844135eebdd31884655fda55c4c71cb9274c52c98f443",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_161_1",
+          "topology": "0df5ece7c753d0d697b6063b567dea045b6d185734b161cab48e086a2aa70b19",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_161_2",
+          "topology": "30ea9d960aa7822ab929047072c03fb6a27919683126b1b03da4516464407ab1",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "node.Lambda",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "67487d98b5202d2017350467c109f8d9e277ad75319f368b6dbd1822d2136b87",
+        "6fe3b15bb15daa2424d38cc6b5069d5cea14ff13f62349dbfdf001fac15a5b04"
+      ],
+      "passed_tasks": [
+        "construct_165_0",
+        "construct_165_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_165_1",
+          "topology": "3b5bc819226e024daa11768f22bee24ff83672238261d32d35dfc12d761d3eb6",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "node.ListComp",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "c6fbef01a2a4079336bc9dd2dd588b28aba1910ff7d6b33fb43cca3d147838ba",
+        "ee7cc653b7bd2414c67522fea8b2996206124ef75e73990eeddd91b78ebff599"
+      ],
+      "passed_tasks": [
+        "construct_166_0",
+        "construct_166_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_166_2",
+          "topology": "b314654de0a65e3cb5a8cd0423a263dc9c66916cf05a6809f6d1f641ac266444",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "object.named_numeric_constructor",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 0,
+      "passed_topology_signatures": [],
+      "passed_tasks": [],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_169_0",
+          "topology": "4d34c690fd991630efa056818ce6080ab9133c804844d80b1ae5b770b60e6807",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_169_1",
+          "topology": "ea96362979e6e9d6cfe65794c6348dc65e8da0da774477c2be6088a90c71fb78",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_169_2",
+          "topology": "d2652da62a12decf2e259b7a4dd109b1184fb61a78fa6fef2dcec81030f89224",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "operator.UAdd",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 0,
+      "passed_topology_signatures": [],
+      "passed_tasks": [],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_171_0",
+          "topology": "e5a855adfdc687fe2cffb7affc9159cb3bd647248b4b12d765108103b4d164eb",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_171_1",
+          "topology": "6f14f99987080f61df0308a3afa606bb03b79c142922ce1114453fdb49bc9f7b",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_171_2",
+          "topology": "85013b5232da0e8c4d37d63e30448e6798d4defce7d4552739f68d42b1f59f17",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "operator.USub",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "8ff8aa2af1d1ca0e84143f791e90b28a3c70320a90e88152ef82525aaac30ce8",
+        "a1060141dcc7255ce4709d5c843dda590d57cdcc5812c94a1855705e53cb39ca"
+      ],
+      "passed_tasks": [
+        "construct_172_0",
+        "construct_172_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_172_2",
+          "topology": "09f28c9857e1456db1285df4b52fdb604e0cc5ae47561d0e96fe047673a5878f",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "overlap",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 0,
+      "passed_topology_signatures": [],
+      "passed_tasks": [],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_173_0",
+          "topology": "5e39ce46e4ce74c76e4c3c2df496a04300217952603a652feeb86b31212e15a5",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_173_1",
+          "topology": "ee9b326948e88f66b27acea3481048769b8dd722eddb3d1cd0624a1912d2041c",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_173_2",
+          "topology": "d1593e4ca5df5677439e19c46fd03d7dec1dfead92e7d39b3b10d91d7f16dea5",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "public_cells",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 0,
+      "passed_topology_signatures": [],
+      "passed_tasks": [],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_176_0",
+          "topology": "d1c505bace1b16fd185cea77257c30083166fd0f33f3568af1b986b87cffc72b",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_176_1",
+          "topology": "3085e86e3869160f6763c5d8be86c57015096dc68ea7b4e54f2bd4de0876d537",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_176_2",
+          "topology": "113373ee0f8d7505baecda8f6207c8f340bfe52c86d9de81d807f7569ac52b54",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "rank_broadcast",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "87e3e26372641eae9771eaa66b557b6a7b0849963094d0f03f0aaab32a7cc8f0",
+        "f2325b46454008417ea5df351c2b4c57bf2474aae4c1f9966246601e29125036"
+      ],
+      "passed_tasks": [
+        "construct_177_0",
+        "construct_177_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_177_1",
+          "topology": "88f39f4d524752b70d24e8218e877ecfcb2dcb129cc233a0601e306f065fe76f",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "return.mixed",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 0,
+      "passed_topology_signatures": [],
+      "passed_tasks": [],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_181_0",
+          "topology": "712c1db304393039fb6571f9bd7cf90c5d522452bcf63d2ac7a4b0dce93ad009",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_181_1",
+          "topology": "d3b1f8af0d287c66ff2a90f5ddabbb4f98c4f40b0be105182a87931bfe847159",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_181_2",
+          "topology": "485da80b487986d932ab0318d6349419cec8d48422cd068e1f569ff006be4102",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "slice.read",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "7cda9dc99dc9cfa10ddbb7fd4602a14472fb0227f129eb7fe409fc8fff37fb1c",
+        "b81c79c0dd32047b09af913a71a6c3c835fc883d9014e02e9daedb84e74bb7aa"
+      ],
+      "passed_tasks": [
+        "construct_189_0",
+        "construct_189_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_189_2",
+          "topology": "4e81c0bd30db439a3b2d1121f189d57e70012e3f0dcb85f9fc5ed248460e6e23",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "slice.write",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "ce161fd639d5e42190267550ce5d5588376e830ef379827759f63d42056bbc92"
+      ],
+      "passed_tasks": [
+        "construct_190_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_190_0",
+          "topology": "b04f95766b089838d31861678918ff10b79d7db3549cbaaa824053d300a798be",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_190_1",
+          "topology": "fbcd943faad7a9e904e2d892310708242df8ce56693929c8a36ee290ef0e5bf7",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "storage.reshape_view",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "31ba25b234803179d3cd463b9d1540ee5e09eba3ac74b2fe48a245e5d9d99070",
+        "9840b446ab90b8e744f1741b42c80214051daff0aa1d5c28d4864258f8dddfad"
+      ],
+      "passed_tasks": [
+        "construct_202_0",
+        "construct_202_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_202_2",
+          "topology": "e68df2b11daeee03ed1b782d56908d5833b98017e233296f0fb96df262de3cc8",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "subscript.write",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "1c7545667e09e1697a10fe40298643a81acdab9660ca2ff4d66abf03765e7b07",
+        "c77ce1028ac2d54d3b16e4f6dcf270347e443473d2b2324e40d419fe395dcace"
+      ],
+      "passed_tasks": [
+        "construct_204_0",
+        "construct_204_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_204_2",
+          "topology": "ede3bddff3497a68f2b389989bfd9fe02fc2cb19e0c74b4b8fe105b364219f4e",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "unary.Not",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 1,
+      "passed_topology_signatures": [
+        "352938c9be79b060223bac425876f61537fef336f9da539cee935bdbb04037d9"
+      ],
+      "passed_tasks": [
+        "construct_206_1"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_206_0",
+          "topology": "b6ccd27c4d6daefdb26b84e7ebe60f7641558113b2f3f4d9661e9c1c6e6e199a",
+          "status": "failed",
+          "failure_layer": "static_check"
+        },
+        {
+          "id": "construct_206_2",
+          "topology": "408fbadf6b73ad4f62d12ed1fdfd5f2cbcdabd273eb732c909a4d5622cba62f1",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    },
+    {
+      "id": "zero_dim",
+      "layer": "construction",
+      "scope": "Structural children score structure only; numeric children require their own output contribution. Synthetic trace negatives are checker tests.",
+      "executable_context_denominator": true,
+      "required_distinct_topologies": 3,
+      "planned_distinct_topologies": 3,
+      "passed_distinct_topologies": 2,
+      "passed_topology_signatures": [
+        "e068447baa44236af8c7d305248a5ec26d16c2a2c4dff3a3914c1b746ce09e4a",
+        "fd70e8490586a95d5ba893d0a8450bc8069d59ad19551081257f1a7165cb67ce"
+      ],
+      "passed_tasks": [
+        "construct_208_0",
+        "construct_208_2"
+      ],
+      "minimum_three_topologies_verified": false,
+      "all_designated_tasks_passed": false,
+      "status": "below_three",
+      "unmet_tasks": [
+        {
+          "id": "construct_208_1",
+          "topology": "58779f13260a42fb0f077bd6f2044b76aa1c78a2b0ccc0422837d7293f05f87b",
+          "status": "failed",
+          "failure_layer": "static_check"
+        }
+      ]
+    }
+  ],
+  "backend_blocked": [
+    {
+      "id": "helper.HE_MaxPad",
+      "layer": "upstream_helper",
+      "scope": "Backend-blocked real bootstrap; mathematical references are not helper execution.",
+      "status": "backend_blocked",
+      "executable_context_denominator": false
+    },
+    {
+      "id": "helper.HE_Max",
+      "layer": "upstream_helper",
+      "scope": "Backend-blocked real bootstrap; mathematical references are not helper execution.",
+      "status": "backend_blocked",
+      "executable_context_denominator": false
+    },
+    {
+      "id": "helper.HE_ReLU",
+      "layer": "upstream_helper",
+      "scope": "Backend-blocked real bootstrap; mathematical references are not helper execution.",
+      "status": "backend_blocked",
+      "executable_context_denominator": false
+    }
+  ],
+  "historical_unconfirmed": [
+    {
+      "evaluation_identity": "52a10d5c8d7eee85321e0cab85a53abb42bbae7badba3071be3e0cb15dc16d80",
+      "group": "free_primary",
+      "id": "free_bench_boundary_0071",
+      "model_sha256": "e6791204fec4fc363156fa959bcf7e64b26caa268d4849979d31979ffa7bd814",
+      "request_id": "d0b29b5b7f370f9fb8e77eaff03e3bdf1d3c83ea8bd47481e923102b3a15f6b1",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-remaining-queue-r131-shard-001"
+    },
+    {
+      "evaluation_identity": "f6c46be3e4d228ab630ed9e0ec76abefc79aa2566438a8ab8ab2881139099518",
+      "group": "free_primary",
+      "id": "free_bench_boundary_0072",
+      "model_sha256": "4d6682b18768fb73ea0477fd01042c0f2c4dc4ad66a03ef06e821618b4958991",
+      "request_id": "b4cf99ff1b5eeb2d151f86b749f161132fccfb6a9667f948c17f6db4ff931053",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-remaining-queue-r134-shard-001"
+    },
+    {
+      "evaluation_identity": "b5f9e4db7f3ae71f2de557c0e5c3a21b39c0f050a8254ce87f4534c8296d43b3",
+      "group": "free_primary",
+      "id": "free_bench_composition_0004",
+      "model_sha256": "90b7c586c536c200d49a28e9699487e1a9f7505a7cab8f263b8212229eb9e5eb",
+      "request_id": "aaf2b3c7ff7d7ecbc79805415be329a683108b51e5cbcd7b6909dc3835b61a1b",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-002"
+    },
+    {
+      "evaluation_identity": "48707c59921263baedf5454bf047b5d73322e44e5842203560fc026c903acf7f",
+      "group": "free_primary",
+      "id": "free_bench_composition_0013",
+      "model_sha256": "c431e0bf3194ed60a2ba5ade04bcf2308bfd5d0f7944328d81e89d4f441e5aeb",
+      "request_id": "d78224e26ab1b8c85a85d6fe0ece4d9f1a7ddc72e9e654f0c77908964b00695f",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-remaining-queue-r131-shard-002"
+    },
+    {
+      "evaluation_identity": "3f34cd2a9228cf5a29a506dfaa3c8ae9772215afa0d6fff184f9964e6931b563",
+      "group": "free_primary",
+      "id": "free_bench_composition_0014",
+      "model_sha256": "4fc0a72569568ad73cac8a824fe9609fde4122f65a2edb6756bfcb46e238a119",
+      "request_id": "063a97ced192b79e29036cfca7cf53b09b9d0b877395e4ead423b6d0836329c6",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-remaining-queue-r134-shard-002"
+    },
+    {
+      "evaluation_identity": "ae1543c40364eae318607eacde54505a5e47ed9ae1712ff85b8101e5206406d9",
+      "group": "free_primary",
+      "id": "free_bench_composition_0070",
+      "model_sha256": "ea85f207e6d482d515508607b3ef2bcbcd302baf04b40a9c14af8fe37922ceee",
+      "request_id": "cc5f9a5c921f84bd045b4343a0d8e8bd9c798f350fd879a303c0138093ee17b6",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-003"
+    },
+    {
+      "evaluation_identity": "809bc41a68bb54493daa3ad1600df8cfd70e32fd6fef60be4e22debbfa97a560",
+      "group": "free_primary",
+      "id": "free_bench_composition_0257",
+      "model_sha256": "edb7d07a373da11fedd5574a21cbf3a37636af23998d01d238dfd97d067ebb51",
+      "request_id": "99e8ba233ddaf02ffa44427f0336d0bb7fb8f7942f2138163e6894f2b2f7624b",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-007"
+    },
+    {
+      "evaluation_identity": "d90b69ba6693aeeae943113faba086755b925c05edf97ce0a9173eda1dff986f",
+      "group": "free_primary",
+      "id": "free_bench_composition_0355",
+      "model_sha256": "01d09fb30a525efc951c328b92d55eb0db21aa62c58fba0953ed1bd6f276b087",
+      "request_id": "9133f9d19daf3a8d4622d9559285a918525f21afab26e7f04c301f65dacc31a7",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-009"
+    },
+    {
+      "evaluation_identity": "76b91b27d8583674a72c18aec42655c58fe62561a47f0ec0f8961e20d6d8370f",
+      "group": "free_primary",
+      "id": "free_bench_graph_0082",
+      "model_sha256": "3fb53ddf6f620744918a698efbcfa419df8d1104fcb1602ca6975aa9e7f994e3",
+      "request_id": "f56e4fdd9c37273ae5217c4022cf1d46c990274209c8716acf4d177bbddd53a2",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-011"
+    },
+    {
+      "evaluation_identity": "4f0b8728b446d0238104bd01fcd344c68024b04a1bb3c8ad9a6e43586439e393",
+      "group": "free_primary",
+      "id": "free_bench_graph_0088",
+      "model_sha256": "914b2118263d8cf9002c03c6791227d3f198dad6b40c02f29201176faf5e2e46",
+      "request_id": "79c703f18136e50244c51961044f0b272cacfe5eab4937b453522a6075155958",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-remaining-queue-r131-shard-011"
+    },
+    {
+      "evaluation_identity": "e1179222f8706508af371f33e524f2f0ddcf1a1435ccfce253af5ca344ee686f",
+      "group": "free_primary",
+      "id": "free_bench_graph_0089",
+      "model_sha256": "3d60fa700c8c066b53db09042af9ccb85219c7832ad7612ad11f17c685bef70c",
+      "request_id": "91774691e12d3b95e0510c5fd7d546e80b7dc0f6ccebc2892b01fd18a57c08ce",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-remaining-queue-r134-shard-011"
+    },
+    {
+      "evaluation_identity": "86233ec5d79c41aa56dc13136f43b92d31edfcccbb96bbab4cfee0dcb8e61c35",
+      "group": "free_primary",
+      "id": "free_bench_graph_0114",
+      "model_sha256": "b73362968454c2e163c32a9736a1c7c1194894bcdf00ed15bf9a9124c74ccc46",
+      "request_id": "15db01b1937a9c19ac7e56f38efc97835afa9d3fabf44435fd61905edcdf7310",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-012"
+    },
+    {
+      "evaluation_identity": "88f9fb2188ffa7162f8311d4ab0391a303421ee1bffcc5ad6092beea08f42be6",
+      "group": "free_primary",
+      "id": "free_bench_graph_0117",
+      "model_sha256": "08089b67ee328b962426d83ba45adaf3e014d7def2f8115da51b170bd4210ee2",
+      "request_id": "867d685bb168514ebf23d633292d61b7655f929eefd40420548a517ae295c8dd",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-remaining-queue-r131-shard-012"
+    },
+    {
+      "evaluation_identity": "c6e6fc51d7a6e17c29513bba3cc43992ce722c1b412d39fb9c282cd8504607a9",
+      "group": "free_primary",
+      "id": "free_bench_graph_0118",
+      "model_sha256": "f93361f30b8eb0b8aff7cfe0358f76ab46dc160759cc18cfa5f7188fd0bd5faf",
+      "request_id": "0b6e84370f74bf413cbb88195adb2b325b8bc3304147bfdee6148c6eda8dae6b",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-remaining-queue-r134-shard-012"
+    },
+    {
+      "evaluation_identity": "d8f9801e877774eff96b7af744df62f9b07205542e93877d2f847a46cc6a6567",
+      "group": "free_primary",
+      "id": "free_bench_graph_0157",
+      "model_sha256": "30f80a7c83f9a160a854e491b957c7d01fbc1aaff5d3c1cab20176340d1b493c",
+      "request_id": "33ceb3b2d76299fb93f15b4c85515a3ac3801e9dc7f6ebb396e4488eed55bbaa",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-013"
+    },
+    {
+      "evaluation_identity": "87a5b475277817ade3c1c315a07d65a12147fe2cf9df91dbed4e00cc8611512a",
+      "group": "free_primary",
+      "id": "free_bench_graph_0162",
+      "model_sha256": "1e0924a1e8837d389f8ade62a88dd48b77e4a3da74629dc4bc08da58914df595",
+      "request_id": "fef21642a3bcf80ba4087161fc40caad9d9bae78b9b9c1e87d8439f97bf61d7f",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-remaining-queue-r131-shard-013"
+    },
+    {
+      "evaluation_identity": "d6d335acd45065cbc7d734fb2b7f07ff9d28fb31d010cacc69d0494fda0660e4",
+      "group": "free_primary",
+      "id": "free_bench_graph_0163",
+      "model_sha256": "6cfd2a59298e72ac37db13d5d17090f1c4192cd5e937457196201592d4f13ca2",
+      "request_id": "a7b094ffee3dfb3eb267a56684eb092a98b7d6b79d3b7507ab80450ac86b875c",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-remaining-queue-r134-shard-013"
+    },
+    {
+      "evaluation_identity": "f85923f67766b2552a07bfbc4f89f0c9e3c058a6975cfe334645594a30b43401",
+      "group": "free_primary",
+      "id": "free_bench_graph_0199",
+      "model_sha256": "ba90e6d6495f448e19994e2341d4714c780a0de501ce7261684a257b9f42cf54",
+      "request_id": "dd191fdc1e6c1a9821ae62c53445090f510ccbb3d242a343734352142d1b6549",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-014"
+    },
+    {
+      "evaluation_identity": "3da499a6f0b1947ff2e7a2f971079cb4d7cfb90b1cca65f5357672fca1b73eed",
+      "group": "free_primary",
+      "id": "free_bench_graph_0204",
+      "model_sha256": "931ace1cd727d436de8850b568d6f8b27a60b6805280d5f4a6d01e65c562e2c3",
+      "request_id": "24328a252ca22aacb687da7ddd194f75fe0bb00de6d182e34906694a4db8161a",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-remaining-queue-r131-shard-014"
+    },
+    {
+      "evaluation_identity": "ba587f32b2f00a144366d02dda89e3d91cb07dd7cba449779bedf789c28c82c9",
+      "group": "free_primary",
+      "id": "free_bench_graph_0205",
+      "model_sha256": "161b7dd8dfdf28330e0a2332bf81472a951eed5a84fd2c4a0cb62f748847a61e",
+      "request_id": "93c5b8aa363b59c7e2eb366eb6ca9045ffcc9df01c1da7e5d960b5d668cd0cc6",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-remaining-queue-r134-shard-014"
+    },
+    {
+      "evaluation_identity": "4e2f3b4555d7df926ea7c935d7a5e983b44554d80f7b8af00692c9eb060b54b9",
+      "group": "free_primary",
+      "id": "free_bench_graph_0242",
+      "model_sha256": "0d7ef398d1d65fcc18baac1e93f44e26be2061b5d19f1b1b9ac6d2b54aba1f0f",
+      "request_id": "8cc5c846bfbe3b0510f89f5c1119aaab34af06bfbf04708b36eacc5c5ded5451",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r121-shard-015"
+    },
+    {
+      "evaluation_identity": "ad7fb5b216cde07e8535a90bd3ca2606c575024dd6108598f6ef16888f5d73b9",
+      "group": "free_primary",
+      "id": "free_bench_graph_0246",
+      "model_sha256": "e64395041a7ef878b328cc9cdf8b2526e6261ce219b866d44827c4f9b53a0950",
+      "request_id": "e428261e8c4b9a22e8cc0efb69620b994e5b9425768717138b1119b4a805fcb7",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-remaining-queue-r131-shard-015"
+    },
+    {
+      "evaluation_identity": "1a429537f8008db011664b65ed40d1da7409193b6dc792115ac52231a8067f10",
+      "group": "free_primary",
+      "id": "free_bench_graph_0247",
+      "model_sha256": "956aad47bc6b0f1ac3dd4190bf0e157610bafb664d9c480a9dd53dad2b78762b",
+      "request_id": "15cb48e1452d6eddcffe409de4c724fa8d6184414380690bd53a376c454e5ba7",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-remaining-queue-r134-shard-015"
+    },
+    {
+      "evaluation_identity": "c9cf35ad0d4e21da3fe5ee4ff6eea81795cba09d20b8694ed559ba2791b70d49",
+      "group": "free_primary",
+      "id": "free_bench_graph_0292",
+      "model_sha256": "3d66772d65c8d8363d6487061ac3c4c6065db9be7c3a3eb88d148e8f4e77c3aa",
+      "request_id": "c59c89f78f0e1dfd625766bf6534e53a7fd84ed59baf64c7917a865baf63face",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-remaining-queue-r131-shard-016"
+    },
+    {
+      "evaluation_identity": "09bbb3e6c5d062cf7899969ee3b4bc00b354c5a5cd1bb1ce7aef61d447f903a4",
+      "group": "free_primary",
+      "id": "free_bench_graph_0293",
+      "model_sha256": "0b120ff88f02b67cb190da44f24b7cbb303e17f20300ae4494f16e16e81b0d0a",
+      "request_id": "724bf7d9124e956bd4442eea6dd86139469790cc51b98e726e90f8a51489a6ed",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-remaining-queue-r134-shard-016"
+    },
+    {
+      "evaluation_identity": "0147b7d443a32c9975744fa0ed59175bf4957aceffd54f233e6c1614b5aa3869",
+      "group": "free_primary",
+      "id": "free_bench_graph_0344",
+      "model_sha256": "42e60286e82ed166386cb378d2358e7ad958ca3ff73a54cd7fb7ffa723f9956e",
+      "request_id": "e7349bb84b1849650ab0e111648ff4a890ad58ca4a6d6abdabe109f7d270a76a",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-017"
+    },
+    {
+      "evaluation_identity": "ecb6ad22197992da968972be5052a24cd80cd75bbf58c2fc39f361bbccb2a27f",
+      "group": "free_primary",
+      "id": "free_bench_graph_0348",
+      "model_sha256": "e76060cf9c500cad495fc72ca762904b88eb999d5a166a22999438c8e87b4cbe",
+      "request_id": "7603f903253021a59832d3234353b1695c67f0929e4e4dd975abda3f5a3ddd73",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-remaining-queue-r131-shard-017"
+    },
+    {
+      "evaluation_identity": "a7fa64917e941c211a006dab54281acd57428cd5b9b52a685d17e14b7025ce61",
+      "group": "free_primary",
+      "id": "free_bench_graph_0349",
+      "model_sha256": "216be1af4cf6706b769e9a935ec0a1429feb58838da902e19d79908239a24a0e",
+      "request_id": "748a1f01802075ff4457c2d576f7dd55221e3dd4e2c915cfcd56fd8890753a40",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-remaining-queue-r134-shard-017"
+    },
+    {
+      "evaluation_identity": "bc10d23bc2d63acc8b0bfd226e40167977fcedce09fda0af689c379d996560fd",
+      "group": "free_primary",
+      "id": "free_bench_helper_0032",
+      "model_sha256": "e156be0aee814237c457e8642ec7242033ecacc2a5294ad3119a6a4516deda80",
+      "request_id": "ec9d32087b3889f50d4077bdfd1cc01572a9492e7d7e691f786668fd8f921392",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-018"
+    },
+    {
+      "evaluation_identity": "a506a1f9f091a8f51d45a3e0e18728538adab2b942e0a36aecc305034e35a482",
+      "group": "free_primary",
+      "id": "free_bench_helper_0033",
+      "model_sha256": "e00eb697a91ac3ebacbc1afedd8c09f785bb7f2edab52130863556df6e2c7a43",
+      "request_id": "9530c255d828366abf3176cea0303e123a97246ec029870ff4274c009dbf576e",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-remaining-queue-r131-shard-018"
+    },
+    {
+      "evaluation_identity": "ca21e6a65e72cda45540fdb74d4b20063748dfea28c37d7089e42b00e9d6424b",
+      "group": "free_primary",
+      "id": "free_bench_helper_0034",
+      "model_sha256": "456e97c440705410f61d74837b5cd635525c27d2dad7a4294468b827e8854b08",
+      "request_id": "1024e57859e3c77c6f695fe1a3c27063bce55968f0d59cefcd98861aed4f8db5",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-remaining-queue-r134-shard-018"
+    },
+    {
+      "evaluation_identity": "255f118abb2ef2a176c51a6cf98327a892553fd5eb374964e540f2e4dcce404b",
+      "group": "free_primary",
+      "id": "free_bench_helper_0089",
+      "model_sha256": "94838c6a3bbed9e13648c834ed214b7977d643d240e5fd90f8ea28be3048d8fd",
+      "request_id": "81f3a7f1a8c14ee28f9c00eb043b553e9f6f339f3de0b46d1d140a8cfff5de01",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-019"
+    },
+    {
+      "evaluation_identity": "a408546d0e491a42affac900f628d0cba58b1b0bab0079b3ee23a9dd1db9c768",
+      "group": "free_primary",
+      "id": "free_bench_primitive_0028",
+      "model_sha256": "64087f0df6ec54cfd0fee4f4c78e92d7ee848e24489afde781a61219203eceb1",
+      "request_id": "01d40c959b5aae005855100e43bdcec92d18f6a74e27e06697975ebe9fb245d4",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-020"
+    },
+    {
+      "evaluation_identity": "57a35e68ad842eebbec9285277949a2f7e6795554839ef7e929f44aa46751380",
+      "group": "free_primary",
+      "id": "free_bench_primitive_0090",
+      "model_sha256": "053cc1d2960a04dd9b19dab9eabff94f071908c6a7b1258096c75f81dc1038c6",
+      "request_id": "dd7e6fc74afaec2e1693c1d22b345fffd01644326d324ad9c7d42ad47573a1c7",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-021"
+    },
+    {
+      "evaluation_identity": "7f8683c4caff8fa152c318a0993fa0d13318bc44b7a8e46a172d58564032231f",
+      "group": "free_primary",
+      "id": "free_bench_primitive_0132",
+      "model_sha256": "aa27f0af631c9284dbf5175ed01f0eefced19d0bb1b2a9c44c35e0a0970b7f4d",
+      "request_id": "05d65e9ea9f6726735856a29b080de5bfadecda577f6757de8818e6be3a2a49e",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-022"
+    },
+    {
+      "evaluation_identity": "5814fd88844e559907cad25cfebb74cf26f4ec0fe878005af23790566e95a6c4",
+      "group": "free_primary",
+      "id": "free_bench_primitive_0191",
+      "model_sha256": "08d80ca29d0516313dba3cdcb6b90e2354c0510ebbcd0c9d20314a4bb167b928",
+      "request_id": "7d830d215ff00470d4a651e7df885ce77fe01b47c5bcb1e4aa9d927abb8fd176",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-023"
+    },
+    {
+      "evaluation_identity": "664f7ae6b8cf090563c28b1bd2bb1780e3e7003a300f1d98e3cd58102cc6b7aa",
+      "group": "free_primary",
+      "id": "free_bench_primitive_0226",
+      "model_sha256": "c72eeaa55588f634b6cce1865855b458742ea5721d9a7f84586d926cbf555ed1",
+      "request_id": "de8b85e82aaec4bff0c7fd1cc3add08f1037551ca2e74e5755035ed760413c70",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-024"
+    },
+    {
+      "evaluation_identity": "fce7335168953883bb583e5a005ac6fb2c0c23d01dc5cf573b0ead9cea07f8e1",
+      "group": "free_supplement",
+      "id": "free_supplement_semantic_context_3a099c13bb07eece89bb59df",
+      "model_sha256": "90775d36af52e73cb5d8802cbbed2c109ff30357983317360cb87aeb3c616f9f",
+      "request_id": "dc88022cf20fe0737f9d6f8dd50ce7adeb7bae13a1e82a9d41bd2020bc8dcc15",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-025"
+    },
+    {
+      "evaluation_identity": "f040bc427bf3dfebe8ece46a4ffc31ac7f1b4bb2686a23951178274674520ee1",
+      "group": "free_supplement",
+      "id": "free_supplement_semantic_context_a369ab072b7e6eed1c6efb9c",
+      "model_sha256": "d5c3b0d314efdda1f47b86ee89acb3d55dc1c508257cca9966f217fc8af76514",
+      "request_id": "e3ee1189c7c32baca4230b5e4052d48430de31fb289487e8151eee733bec7759",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125-shard-026"
+    },
+    {
+      "evaluation_identity": "42e6a8cb9116403655fdf20d50321a67c1d34bfb0617ca13bc8c11c3b5c56556",
+      "group": "free_gap_context",
+      "id": "free_gap_gap_slice6_residual",
+      "model_sha256": "c00468d8b6de9143d4d1f18e7f502fa0f0420be6b5f121b69befcfbf5919881f",
+      "request_id": "535791bd8a07e52445777ad61492e6836047a756ecb9e0379f082c5e3d5c2efe",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-027"
+    },
+    {
+      "evaluation_identity": "2cefef874e47615f71e80f5e1c5e8a27041b7d94ef32e775f470b113bd73dbd2",
+      "group": "directed_construction",
+      "id": "construct_007_1",
+      "model_sha256": "30e0601448a25d8d099c155283e5937ac49f85a401b5efdb508864a90d249bf4",
+      "request_id": "ac8c958d0257592fb587aee12e511a8647fd57d0c37168f1040107e5a2fc22bd",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-028"
+    },
+    {
+      "evaluation_identity": "ea668bb9e94fd207621d5bb2d560e81db61e0fa9d38b00cc21967ee9b8ef4874",
+      "group": "directed_construction",
+      "id": "construct_023_1",
+      "model_sha256": "afd4be9c7d820b88273ce32637447e0797a8aa3250e56e2b3bc8519970fac357",
+      "request_id": "9e530d74eba6914db8e67f75ca2791c44aec5697b81db59fe27d337580e5f27c",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-029"
+    },
+    {
+      "evaluation_identity": "c0fe329f4dc56733f4c820c8876d8179f302ff1e629de2ba8c09407ed82b501f",
+      "group": "directed_construction",
+      "id": "construct_039_1",
+      "model_sha256": "f93361f30b8eb0b8aff7cfe0358f76ab46dc160759cc18cfa5f7188fd0bd5faf",
+      "request_id": "639e5b3c1a37d43cb201c04e3279a860dd72dff15ea0bf80aee56eb0de9540ba",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-030"
+    },
+    {
+      "evaluation_identity": "119fd3951416d78a4dd2e902ed8e8b0b0d859c0ddaa406c800552a1501983e5e",
+      "group": "directed_construction",
+      "id": "construct_055_1",
+      "model_sha256": "4412ef5dc91f7afe23ec928da51c8aab64cfd6d1b1d1dc26c6165dc503b45579",
+      "request_id": "1fa4cd247dd8a796360e3d7488f943031f834f6a059c4d71ba2144cf0662d0c4",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-031"
+    },
+    {
+      "evaluation_identity": "6a53f65fba4f7739de9c5e1bb612ba76d320d08a5f95c81871e9de85e0cac11c",
+      "group": "directed_construction",
+      "id": "construct_071_1",
+      "model_sha256": "4b30f825f2f6e1a566a2b2d523bc1da917149b2bb52acfc41aebe1a33b349a5f",
+      "request_id": "b5392a6b49055e8fd912eda2d8955f9d72d9e469875f20c626288745f6cf6e45",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-032"
+    },
+    {
+      "evaluation_identity": "72c23748a333fe4ab77428d2dda0383ab0a5711dbf17b3b7d1993acd951cf4f7",
+      "group": "directed_construction",
+      "id": "construct_087_1",
+      "model_sha256": "ef226f806d36654ed65df05c3054bc2fc3d39dd82a4e3c042467294aaa4192b6",
+      "request_id": "55304fabd2a24f2533bf2fadba854ef98af3e91c0616d9bd01977202f844286c",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-033"
+    },
+    {
+      "evaluation_identity": "64ac54549ca010c8b6e472a7bb01ac7e96e4645eb9189b383579e7a12b12eb3d",
+      "group": "directed_construction",
+      "id": "construct_103_1",
+      "model_sha256": "eee6a3c164196587449b3058854d3d60244b4eb70afeffd7a30c5c96312a808d",
+      "request_id": "a71faf15e41b9558fcc77c37a291b04bbabf63d18dfcdb01bdae6200fc35ae71",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-034"
+    },
+    {
+      "evaluation_identity": "41118a9f8d765a6c809104a95d25de746789542a6b0bae50ec1c03ef46d3e751",
+      "group": "directed_construction",
+      "id": "construct_119_1",
+      "model_sha256": "67cf5f033bca4399c8168f1724638b6b79e4ac29c97450bb3a4d64b67e6e23a5",
+      "request_id": "4ecca462d16baf7eb3e2f1be311d04f5a822bc636fc5bc8c3ce66a23cafd0ab8",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-035"
+    },
+    {
+      "evaluation_identity": "295c4df03b18f0f9240632646108f9f991fe1e5e565029a4867f575d7cdd498b",
+      "group": "directed_construction",
+      "id": "construct_135_1",
+      "model_sha256": "915c896a81e192eca00728d385fa9e756cf7a31d8922f50abc7b078d0b533a31",
+      "request_id": "7bcc5652f73ce6025a7fd2adc12f7ae9b2ea12e331c61b5ed20c4d7f391f2c0c",
+      "status": "launched_unconfirmed",
+      "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130-shard-036"
+    }
+  ],
+  "stage2_complete": false,
+  "binding": "4063eba064471e8928972ee93d20b08e6e9e3f9ece5330af4e77687417b41202"
+}

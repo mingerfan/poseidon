@@ -1,0 +1,71 @@
+{
+  "all_planned_summary": {
+    "all_planned_task_success_rate": 0.024630541871921183,
+    "all_tasks_audited": false,
+    "audited": 50,
+    "audited_task_success_rate": 1.0,
+    "planned": 2030,
+    "statuses": {
+      "not_run": 1977,
+      "passed": 50,
+      "running_verified": 1,
+      "terminal_pending_audit": 2
+    }
+  },
+  "artifact_bytes": 13524896,
+  "binding": "2fdeca18d4b2b3d7439f5ccf55bf50dd4932704662e1b7e0bc56d003a4000a44",
+  "compared_values": 9932,
+  "current_audited_generations": 51,
+  "current_audited_http_attempts": 52,
+  "format": "poseidon-stage2-v3-first-shard-r120",
+  "limitations": [
+    "Pilot and shard de-duplicated by model/request/runtime task identity",
+    "Incomplete or live tasks are not passes",
+    "Historical c74d evidence not promoted to v3",
+    "Provider usage is not a billing receipt"
+  ],
+  "max_absolute_error": 2.4865673443896785e-08,
+  "parents": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-campaign-summary-r120.json": "5d679f6220aded310d1da019c8aa26f08a1cb52b6c43b8930fff6bfc136c1180",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-paid-queue-r118-shard-000-audit/report.json": "6a06ef6437c5e38cf573eed608fb3d7ea793798ed116f4f9deba8421097873f4",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-paid-queue-r118-shard-000/report.json": "18b0643c23a26138f7561eb109befdb4eea9c3a8c5d37c5dd5d7715e60dde579"
+  },
+  "partition_states": {
+    "backend_blocked": 3,
+    "current_compiler_contexts_passed": 5,
+    "incomplete_agent_contexts": 377,
+    "static_controls_separate": 16
+  },
+  "queue_still_running": true,
+  "runner_exit_note": "Exit 1 reflects reserved_elsewhere pilot claims; independent audit found 44 passed and 4 reservations, no failed tasks.",
+  "runtime_source_sha256": "80738a33351d8c532cd8e4b032de63cc6785d6e5cf8a349f78e52aab5fffd58e",
+  "seconds": 1446.734819712001,
+  "shard": {
+    "attempt_failure_layers": {
+      "complete": 44,
+      "numerical_comparison": 1
+    },
+    "binding": "bf6f8a2de90252fefebf28fc4ed073889a654cf0ced1f919a79932944251d35f",
+    "first_attempt_passed": 43,
+    "generations": 45,
+    "http_attempts": 46,
+    "numerically_correct_attempts": 44,
+    "real_compiled_attempts": 45,
+    "real_executed_attempts": 45,
+    "statuses": {
+      "passed": 44,
+      "reserved_elsewhere": 4
+    },
+    "successful_after_repair": 1,
+    "transport_retries": 1,
+    "usage": {
+      "completion_tokens": 264159,
+      "prompt_cache_hit_tokens": 37504,
+      "prompt_cache_miss_tokens": 501936,
+      "prompt_tokens": 539440,
+      "reasoning_tokens": 258866,
+      "total_tokens": 803599
+    }
+  },
+  "stage2_complete": false
+}

@@ -1,0 +1,27 @@
+{
+  "binding": "d02e26310b67dfcd110a51b879617a08cd33379317cac93255b796b6407a99f1",
+  "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-directed-guidance-proposals-r141",
+  "evidence_report_sha256": "adb9a95d6d5cef696862a900b848011ce931be4f705dfa04dddc685dfa709e98",
+  "format": "poseidon-directed-guidance-offline-check-v1",
+  "new_compilations": 0,
+  "new_encrypted_executions": 0,
+  "new_paid_calls": 0,
+  "original_requests_unchanged": true,
+  "plan_binding": "9fdcedcfbaa116752cd2956fa5935c88823950fc17c2d8854efd4731a0ae5d44",
+  "plan_sha256": "d2da39d8c2b4755ec89427d08927f37777c9db5105d606286c3f68f375da52ce",
+  "production_runtime_sha256": "80738a33351d8c532cd8e4b032de63cc6785d6e5cf8a349f78e52aab5fffd58e",
+  "registered_partitions": 209,
+  "requests_checked": 627,
+  "runtime_integration_complete": false,
+  "stage2_complete": false,
+  "tests": {
+    "failed": 0,
+    "log_sha256": "cc6664611b24c1b1aa50ba706539c1057e273bd09f61825d59daa50f8d055ef7",
+    "passed": 8,
+    "skipped": 0
+  },
+  "tool_sources": {
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/stage2_directed_guidance_proposal.py": "48c15bd967ced476446e9a71f0bf3b1e97ad46bd273bc38c23b6246135a28d7b",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/test_stage2_directed_guidance_proposal.py": "6b0af5099305609cf5b397e69087aecc3a468db70aa5369aa0cb13fddc950aa5"
+  }
+}

@@ -1,0 +1,3844 @@
+{
+  "format": "poseidon-agent-repair-result-r176",
+  "plan_binding": "4d62bd7445111fb7cbf05cc61cbedc7ef64219af754c7fa24aeaf12e31036c83",
+  "planned": 50,
+  "statuses": {
+    "passed": 39,
+    "failed": 11
+  },
+  "rows": [
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": "Transparent ciphertext risk: instruction 41 MulCP uses all-zero Plain register 7; use client-encrypted zero_ct",
+          "executed": false,
+          "failure_layer": "artifact_gate",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 1,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "9128a0d44ffadf881c023bf92a03c3dee82677e74bf09b4bc50f952744225656",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 8,
+        "mae": 2.539775895013348e-11,
+        "max_absolute_error": 5.59486901252626e-11,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "call.values": "executed_operation"
+        },
+        "features": [
+          "call.values"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-call-values",
+        "numeric_features": [
+          "call.values"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-9ssydtal",
+      "first_attempt_passed": false,
+      "generations": 2,
+      "helper_coverage": null,
+      "http_attempts": 2,
+      "id": "construct_083_2",
+      "model_sha256": "1925f47acfd81546da0c072692f584465ddaec15b966833680253b94fac53d79",
+      "provider_status": "passed",
+      "report_sha256": "321ebaca9b9ac96f63fe15bcb339f5214daeb75a153c3347cd31066b4a75aace",
+      "request_id": "df77e2079c55cc8f6724809b6dbc695b3cd83b4c1a83d22d6d9b20d7e1a15f22",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 8,
+        "mae": 2.539775895013348e-11,
+        "max_absolute_error": 5.59486901252626e-11,
+        "max_nonzero_reference_relative_error": 7.13728076640052e-10,
+        "cosine_similarity": 1.0
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing public expression: counter.sequence_operations",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 1,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "ee31dceb40dbe73f90326f0bdbc75ddaaaffc777fbe52f10064395c38ecf0015",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 4,
+        "mae": 3.910503761084261e-10,
+        "max_absolute_error": 4.199888579276001e-10,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "counter.sequence_operations": "executed_operation"
+        },
+        "features": [
+          "counter.sequence_operations"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-counter-sequence_operations",
+        "numeric_features": [
+          "counter.sequence_operations"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-f6qkxdwk",
+      "first_attempt_passed": false,
+      "generations": 2,
+      "helper_coverage": null,
+      "http_attempts": 2,
+      "id": "construct_126_2",
+      "model_sha256": "a2b93f443372aaf2812ee80ed409184592e0713530055de9c62c72403468d30e",
+      "provider_status": "passed",
+      "report_sha256": "8599528088daa29d4cd2aa21f52028242f2aa3ece5825caec7029f7b692a7a1c",
+      "request_id": "d74d6bfafddc1e9dd00efedcfa63e3d6fd6e9267a4260da28ecaceec6ff7abc1",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 4,
+        "mae": 3.910503761084261e-10,
+        "max_absolute_error": 4.199888579276001e-10,
+        "max_nonzero_reference_relative_error": 6.428217854311431e-08,
+        "cosine_similarity": 0.9999999999999998
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Unsupported construction call",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Encoding needs scalar/1D length one or four; explicitly reshape, do not flatten silently",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Unsupported construction call",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 2,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Rotation requires a ciphertext and a provisioned public step",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 3,
+          "status": "failed"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-5jqzg9j5",
+      "first_attempt_passed": false,
+      "generations": 4,
+      "http_attempts": 4,
+      "id": "construct_088_1",
+      "model_sha256": "96c8a7bc13cf0c798f763997e5a5d44bb902507c4c32d5fa0bfff1179ac99d18",
+      "provider_status": "repair_budget_exhausted",
+      "report_sha256": "e6314565526802cd8b8bef1afda152c6aac7a35c9b246aefbbee73791e320092",
+      "request_id": "bb33b79eeadbbb35474467bc1c40ca8c375ef06d81aedd6af16406ac47232035",
+      "status": "failed",
+      "terminal_failure_layer": "static_check",
+      "track": "directed_construction",
+      "completion_failure_layer": "static_check",
+      "follow_up": "保留失败层和全部尝试；本轮不自动追加重试。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "d85889723936195a996691b545c870002dcc5e4fd117c76c6145341dae698983",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 16,
+        "mae": 1.4449715743902714e-11,
+        "max_absolute_error": 4.5553040506352005e-11,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "call.list": "executed_operation"
+        },
+        "features": [
+          "call.list"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-call-list",
+        "numeric_features": [
+          "call.list"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-p6l1h32y",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "construct_054_0",
+      "model_sha256": "1e0924a1e8837d389f8ade62a88dd48b77e4a3da74629dc4bc08da58914df595",
+      "provider_status": "passed",
+      "report_sha256": "07ac97cc5b50778d7b02d7995fd2e8abd62d8692d383d06a2f1d57a0a2917564",
+      "request_id": "73932c8e8acafd01e676b09689e8bfc93d17c4e7b72e42467dac9684759f0d54",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 16,
+        "mae": 1.4449715743902714e-11,
+        "max_absolute_error": 4.5553040506352005e-11,
+        "max_nonzero_reference_relative_error": 4.0064028206110436e-08,
+        "cosine_similarity": 1.0000000000000002
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Read-only or invalid binding",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": true,
+          "diagnostic": "Frozen numerical tolerance failed; inspect reduction/layout/operator semantics",
+          "executed": true,
+          "failure_layer": "numerical_comparison",
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 2,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "919913cf7a812b4e56c953dbfaa775a10a6eaea98d11599c6cde0710830d92a9",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 8,
+        "mae": 8.939813675440519e-12,
+        "max_absolute_error": 4.6620761071092254e-11,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "overlap": "executed_operation"
+        },
+        "features": [
+          "overlap"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-overlap",
+        "numeric_features": [
+          "overlap"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-l_x1lxon",
+      "first_attempt_passed": false,
+      "generations": 3,
+      "helper_coverage": null,
+      "http_attempts": 3,
+      "id": "construct_173_0",
+      "model_sha256": "c7c707ad2441bad62669528d6d91c83a2ffa7ff9cee23dc3681e7cecd217abab",
+      "provider_status": "passed",
+      "report_sha256": "424111516b627f94ae510e22df080f2ac972b6d854088392fa4b657ead5b982b",
+      "request_id": "3ddf8e21a634810925699e7c370f9d4efd39a2194e3dc19b1a5ae7be502d40e6",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 8,
+        "mae": 8.939813675440519e-12,
+        "max_absolute_error": 4.6620761071092254e-11,
+        "max_nonzero_reference_relative_error": 2.0688699437801007e-08,
+        "cosine_similarity": 1.0
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Truth value requires public construction data; cipher/array truth is unsupported",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 1,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "f0769054253db2991278be04090382c6e3ede77fc29fb8e94845f36efa6490a0",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 4,
+        "mae": 7.619978317904494e-08,
+        "max_absolute_error": 7.776829553766962e-08,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "bool.Or": "executed_operation"
+        },
+        "features": [
+          "bool.Or"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-bool-Or",
+        "numeric_features": [
+          "bool.Or"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-xehnwla3",
+      "first_attempt_passed": false,
+      "generations": 2,
+      "helper_coverage": null,
+      "http_attempts": 2,
+      "id": "construct_025_2",
+      "model_sha256": "7debae67f1bf7b50155004c25324d19c3a98783118d30398c4e60da38b33dca2",
+      "provider_status": "passed",
+      "report_sha256": "0a6899fe789f8f7e5fa688827f569b53b548a7ea253a7c4874993a8bf94da920",
+      "request_id": "373da6b84337a3a0ff359863d08abe199fa2994b1104cc0dfe18b39d8a9fe72e",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 4,
+        "mae": 7.619978317904494e-08,
+        "max_absolute_error": 7.776829553766962e-08,
+        "max_nonzero_reference_relative_error": 0.00010617964617409825,
+        "cosine_similarity": 0.9999999999999052
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Hecate Expr has no unary positive operator",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Hecate Expr has no unary positive operator",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 2,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "cdac332503c5ece9e61f9e00b84612f7db2084ea062ba87afb7606eed6e04d78",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 4,
+        "mae": 7.670565135755453e-10,
+        "max_absolute_error": 7.706648340322086e-10,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "fresh.UAdd": "executed_operation"
+        },
+        "features": [
+          "fresh.UAdd"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-fresh-UAdd",
+        "numeric_features": [
+          "fresh.UAdd"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-2cf9pubc",
+      "first_attempt_passed": false,
+      "generations": 3,
+      "helper_coverage": null,
+      "http_attempts": 3,
+      "id": "construct_138_2",
+      "model_sha256": "345b3ccfb4c902327c02ff367e71a2dfd97b7eddcb6b1a40efd12349386af0e5",
+      "provider_status": "passed",
+      "report_sha256": "165ef047ebd21fafe8b93466942883800236f9e4206370145b8cf27be9d4f599",
+      "request_id": "6cbb2fa5d748d825a29538ce3907fcf96cc502176af7cefe73af5f72ec725974",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 4,
+        "mae": 7.670565135755453e-10,
+        "max_absolute_error": 7.706648340322086e-10,
+        "max_nonzero_reference_relative_error": 9.786894261676338e-08,
+        "cosine_similarity": 0.9999999999999998
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing public expression: counter.loop_continues",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": true,
+          "diagnostic": "Frozen numerical tolerance failed; inspect reduction/layout/operator semantics",
+          "executed": true,
+          "failure_layer": "numerical_comparison",
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "compiled": true,
+          "diagnostic": "Frozen numerical tolerance failed; inspect reduction/layout/operator semantics",
+          "executed": true,
+          "failure_layer": "numerical_comparison",
+          "index": 2,
+          "status": "failed"
+        },
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 3,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "b4379adf1e860fb85c98b8cdaac6a95cde444353e3d096df46e31345f87b94b3",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 36,
+        "mae": 7.724298958778794e-10,
+        "max_absolute_error": 5.399115113324804e-09,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "counter.loop_continues": "executed_operation"
+        },
+        "features": [
+          "counter.loop_continues"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-counter-loop_continues",
+        "numeric_features": [
+          "counter.loop_continues"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-_bqog5pz",
+      "first_attempt_passed": false,
+      "generations": 4,
+      "helper_coverage": null,
+      "http_attempts": 4,
+      "id": "construct_113_0",
+      "model_sha256": "0b9b705b910c47f37d0f97f2c4be9df5bc51077d54f670c3ee333a11f5d346c0",
+      "provider_status": "passed",
+      "report_sha256": "eab2cb3b667600235216ab050adfa7d6db793ebf9a61969e9496b2e60e7b34ea",
+      "request_id": "93e419b69ee0f93fe8f6f877a4d8d0580cfdd1370edb0e8f37a5371bbf8adaad",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 36,
+        "mae": 7.724298958778794e-10,
+        "max_absolute_error": 5.399115113324804e-09,
+        "max_nonzero_reference_relative_error": 8.638584181319686e-08,
+        "cosine_similarity": 0.9999999999999999
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "ab7b54ea60545436c98319de4e1e4ed6f47b4df8b6f947a55d9e962679a5a4bb",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 4,
+        "mae": 1.1382417300365155e-09,
+        "max_absolute_error": 1.1734182792100256e-09,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "counter.starred_expansions": "executed_operation"
+        },
+        "features": [
+          "counter.starred_expansions"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-counter-starred_expansions",
+        "numeric_features": [
+          "counter.starred_expansions"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-fcj_in8r",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "construct_131_2",
+      "model_sha256": "1573d6debb4f119eda9a57adf0fd84fe580280cb560b2d9cbc23f17877cf1adc",
+      "provider_status": "passed",
+      "report_sha256": "87502f56b13ad59fc7f219ea437e22ba950f5035d06a365691123674894b60ba",
+      "request_id": "ad6b61d0c9c21983617933029b2f2ba58c298994d80c4f93c381040434828c49",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 4,
+        "mae": 1.1382417300365155e-09,
+        "max_absolute_error": 1.1734182792100256e-09,
+        "max_nonzero_reference_relative_error": 3.528890801796081e-08,
+        "cosine_similarity": 0.9999999999999999
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Truth value requires public construction data; cipher/array truth is unsupported",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing public expression: unary.Not",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Truth value requires public construction data; cipher/array truth is unsupported",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 2,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Read-only or invalid binding",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 3,
+          "status": "failed"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-k6jm79bo",
+      "first_attempt_passed": false,
+      "generations": 4,
+      "http_attempts": 4,
+      "id": "construct_206_2",
+      "model_sha256": "a7a87e72c481b7e79c7b424501df2e6bde47d40bc18aab6d6d0dd5dc6d88fe44",
+      "provider_status": "repair_budget_exhausted",
+      "report_sha256": "0d7a6eba7e784c9f8f93c0b4c81bf0720c6254e9ba873278bf7fd9f543c2ff63",
+      "request_id": "0988fe9044e005107460b75e053dd8def6c2ccacd3c5b4bb94051f028555422f",
+      "status": "failed",
+      "terminal_failure_layer": "static_check",
+      "track": "directed_construction",
+      "completion_failure_layer": "static_check",
+      "follow_up": "保留失败层和全部尝试；本轮不自动追加重试。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "f51cb6f9a35ea09768c4d5db5cefbf4a088982e44390bba1b776272086577295",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 16,
+        "mae": 6.662452402598183e-09,
+        "max_absolute_error": 2.2257185872121e-08,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "call.values": "executed_operation"
+        },
+        "features": [
+          "call.values"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-call-values",
+        "numeric_features": [
+          "call.values"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-sxqjizaa",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "construct_083_1",
+      "model_sha256": "32d8b282d611cd4c88abad456856c1a194e1ffa10d473fb831ba810971312e43",
+      "provider_status": "passed",
+      "report_sha256": "017eb79d4d44f8556d7ffc567625090e11dd5345bb135c015ff78344d4385f6d",
+      "request_id": "47ef1dd52b306b473717cc0192c4dabf0b818800a9d6bc382432da8994380797",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 16,
+        "mae": 6.662452402598183e-09,
+        "max_absolute_error": 2.2257185872121e-08,
+        "max_nonzero_reference_relative_error": 5.324268446127434e-07,
+        "cosine_similarity": 0.9999999999999987
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing public expression: object.named_numeric_constructor",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing public expression: object.named_numeric_constructor",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Unsupported construction call",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 2,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing public expression: object.named_numeric_constructor",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 3,
+          "status": "failed"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-zkue3af1",
+      "first_attempt_passed": false,
+      "generations": 4,
+      "http_attempts": 4,
+      "id": "construct_169_1",
+      "model_sha256": "3020908718e8fe981139a649582495cee30fb4df6db38eced819208c2b41eb74",
+      "provider_status": "repair_budget_exhausted",
+      "report_sha256": "4d46a9df4cc22e3fa720bdbae445198aa6f58ce743865955ff73c4d4ae958dc5",
+      "request_id": "2f20270f3b3ad1df186e593eb0f9b2dffcc0f4179fb3f5443ae50a16e086a865",
+      "status": "failed",
+      "terminal_failure_layer": "static_check",
+      "track": "directed_construction",
+      "completion_failure_layer": "static_check",
+      "follow_up": "保留失败层和全部尝试；本轮不自动追加重试。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Encoding needs scalar/1D length one or four; explicitly reshape, do not flatten silently",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing typed unary operation: fresh.USub",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 2,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "f1dae649c594c1e984456360afafddd3e63a594ad00a985c23721c20227f0a22",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 4,
+        "mae": 1.6651656616073485e-10,
+        "max_absolute_error": 1.718203981870836e-10,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "fresh.USub": "executed_operation"
+        },
+        "features": [
+          "fresh.USub"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-fresh-USub",
+        "numeric_features": [
+          "fresh.USub"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-8af8hza1",
+      "first_attempt_passed": false,
+      "generations": 3,
+      "helper_coverage": null,
+      "http_attempts": 3,
+      "id": "construct_139_1",
+      "model_sha256": "4fa42211eafefe4d18b5e7c3cc73799b5b7c2ad3e15903870a326aef2ddf8b75",
+      "provider_status": "passed",
+      "report_sha256": "2a59debab1c94a5a95c77243c771038042fffbbceff9f3b6b35955b66328acc7",
+      "request_id": "03ce814e9b3f6f05d2ee935bb49fe2a6838378139f8bd5418f4fb41c31f71d26",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 4,
+        "mae": 1.6651656616073485e-10,
+        "max_absolute_error": 1.718203981870836e-10,
+        "max_nonzero_reference_relative_error": 4.01431732797318e-09,
+        "cosine_similarity": 1.0
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Hecate Expr has no unary positive operator",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Hecate Expr has no unary positive operator",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Hecate Expr has no unary positive operator",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 2,
+          "status": "failed"
+        },
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 3,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "69cee1c1464f71ab29dec6c658a8994bfc3dc437f70792b6e66c8758c6e32c85",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 8,
+        "mae": 1.368975437856327e-10,
+        "max_absolute_error": 3.4992492237151396e-10,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "operator.UAdd": "executed_operation"
+        },
+        "features": [
+          "operator.UAdd"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-operator-UAdd",
+        "numeric_features": [
+          "operator.UAdd"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-xobqrwed",
+      "first_attempt_passed": false,
+      "generations": 4,
+      "helper_coverage": null,
+      "http_attempts": 4,
+      "id": "construct_171_2",
+      "model_sha256": "19117702ea47e7df881ea406f1682078e3c627b63bd58beb340d7509d967018e",
+      "provider_status": "passed",
+      "report_sha256": "6841451bb1f1dda917b3db70cb94a3efd6db6b3f60c7d2c71de646c6b63e88d8",
+      "request_id": "0ffc82a7678179f21ac22c90b41f45aa67de9c8b3188a5c48a8ebc7298e8c2a3",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 8,
+        "mae": 1.368975437856327e-10,
+        "max_absolute_error": 3.4992492237151396e-10,
+        "max_nonzero_reference_relative_error": 2.570048926204768e-09,
+        "cosine_similarity": 0.9999999999999999
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "73459513a81092332d52c5df4204df911e6e69878213c316c537652286df41ef",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 24,
+        "mae": 1.558078646576201e-10,
+        "max_absolute_error": 5.883165066222773e-10,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "aug.Mult": "executed_operation"
+        },
+        "features": [
+          "aug.Mult"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-aug-Mult",
+        "numeric_features": [
+          "aug.Mult"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-rlnd8gmp",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "construct_016_0",
+      "model_sha256": "c9bd5ff5b4d090025d54afd43a516024e4763daf6d3b14ed872aa261e5bc2071",
+      "provider_status": "passed",
+      "report_sha256": "36d2c52d9e1510f3096f5eb44a995a874f21620835effa86e4b88ed83bd9ea64",
+      "request_id": "65f314df9a35bb553e9b77493ef50e79f5f54a9cefd2a4b0e04c7648eeb57507",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 24,
+        "mae": 1.558078646576201e-10,
+        "max_absolute_error": 5.883165066222773e-10,
+        "max_nonzero_reference_relative_error": 3.864783049002588e-09,
+        "cosine_similarity": 0.9999999999999998
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "82424848ddcbb139a33d1958691cdac65110104db78c445722fc6e6cc7352438",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 24,
+        "mae": 2.6160503817505407e-08,
+        "max_absolute_error": 1.0649780922411534e-07,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "counter.default_evaluations": "executed_operation"
+        },
+        "features": [
+          "counter.default_evaluations"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-counter-default_evaluations",
+        "numeric_features": [
+          "counter.default_evaluations"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-nmi4t3gm",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "construct_106_1",
+      "model_sha256": "7934372cb30c9a5c970230c6363d60e0a705762d8d6f41cab1be57221eaa9c40",
+      "provider_status": "passed",
+      "report_sha256": "0ef677f4ce23e6cc8661cf0c93161bb140c761ba1e72a2b08096b8d3c2545383",
+      "request_id": "7b02ce674981e0deea4b2d96c9b22be31fd47e420474b415665b3eb302615169",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 24,
+        "mae": 2.6160503817505407e-08,
+        "max_absolute_error": 1.0649780922411534e-07,
+        "max_nonzero_reference_relative_error": 3.2938557364969867e-06,
+        "cosine_similarity": 0.9999999999999967
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing typed unary operation: public_cells",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 1,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "1cfb3661e5c2b544807fda3c6bdaed1294d64942cee8e56f59829fad18497b0b",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 4,
+        "mae": 1.2098556884419333e-10,
+        "max_absolute_error": 2.3386642622469367e-10,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "public_cells": "executed_operation"
+        },
+        "features": [
+          "public_cells"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-public_cells",
+        "numeric_features": [
+          "public_cells"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-vp5o9w69",
+      "first_attempt_passed": false,
+      "generations": 2,
+      "helper_coverage": null,
+      "http_attempts": 2,
+      "id": "construct_176_1",
+      "model_sha256": "dde48c596039370ba4ac4314effcda20e547adcb6fd392642149823579e4e7ef",
+      "provider_status": "passed",
+      "report_sha256": "c0b74aad1f5330ca4a02906ba88b51f201938febdfea4c1fbc95ccece7cc8b2a",
+      "request_id": "d3511348bb46f4f0a1f518ca6b91f6e0a6941d47132758ac197868a59435cfb6",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 4,
+        "mae": 1.2098556884419333e-10,
+        "max_absolute_error": 2.3386642622469367e-10,
+        "max_nonzero_reference_relative_error": 8.419191344088971e-10,
+        "cosine_similarity": 0.9999999999999998
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Hecate Expr has no unary positive operator",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Hecate Expr has no unary positive operator",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 2,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "cdfb6aaeafee044fcbf5436b9fa6d71e823731bd9651f38d69fe9ed1e8845a2a",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 8,
+        "mae": 4.594215914817401e-11,
+        "max_absolute_error": 2.542399624161362e-10,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "operator.UAdd": "executed_operation"
+        },
+        "features": [
+          "operator.UAdd"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-operator-UAdd",
+        "numeric_features": [
+          "operator.UAdd"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-fjt0iwg3",
+      "first_attempt_passed": false,
+      "generations": 3,
+      "helper_coverage": null,
+      "http_attempts": 3,
+      "id": "construct_171_0",
+      "model_sha256": "3ab54d3dd7bd5cf3504dd8dd3b225ec2e824986a2cb82e684958cad6bc278f2e",
+      "provider_status": "passed",
+      "report_sha256": "7e9868e66fd6becbf670dbb176eedeece95850d4992fb53d101593ff0d266807",
+      "request_id": "d9b694e8ad69a057b52f8a71feebe44a6aa17869f307e310a35c580dd4a57e66",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 8,
+        "mae": 4.594215914817401e-11,
+        "max_absolute_error": 2.542399624161362e-10,
+        "max_nonzero_reference_relative_error": 1.257966356082995e-09,
+        "cosine_similarity": 1.0
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Golden ciphertext outputs mismatch",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 1,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "4f1736f0eae34e916ecccc348701b5faf9215965d9b8681076da4a50bc70e1ba",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 4,
+        "mae": 1.2967982590539329e-11,
+        "max_absolute_error": 3.943886883739367e-11,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "features": [
+          "return.mixed"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-native-return-mixed",
+        "numeric_features": [
+          "return.mixed"
+        ],
+        "schema": 2,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-cfirrbho",
+      "first_attempt_passed": false,
+      "generations": 2,
+      "helper_coverage": null,
+      "http_attempts": 2,
+      "id": "construct_181_2",
+      "model_sha256": "6bf112f6c6eac11fe9268cdccaf9586223b4e72d5d399180bf5693f2de005189",
+      "provider_status": "passed",
+      "report_sha256": "81f93f94c180c6e53fee83707164e425bb77ec9b5ef764577a63f7e7f7abfeb0",
+      "request_id": "4f15e4899042fbefbbfbaf012fdc85f330089d66086cc298536fb2d4db1fa92f",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 4,
+        "mae": 1.2967982590539329e-11,
+        "max_absolute_error": 3.943886883739367e-11,
+        "max_nonzero_reference_relative_error": 4.206812675988658e-10,
+        "cosine_similarity": 1.0
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "e19a8fa07f0378b92bd1157a102349952f59308b8c68c61ac1cb2c7619083f62",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 4,
+        "mae": 2.6250751659212535e-09,
+        "max_absolute_error": 2.6659127475014976e-09,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "item.numeric.positional": "executed_operation"
+        },
+        "features": [
+          "item.numeric.positional"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-item-numeric-positional",
+        "numeric_features": [
+          "item.numeric.positional"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-1ofwb1gd",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "construct_149_2",
+      "model_sha256": "0ba25f189fe901728e05040e13e5c1d82097078395c6d9a65bfd316b60bcdcc8",
+      "provider_status": "passed",
+      "report_sha256": "2899ebb997a9803591e50cf736bf57673cbb0eab276248f541428998639dd5a9",
+      "request_id": "dca5e6d2e31e2260374efbdd76e8e4a75b9537334fa7c968df959aeef1cf29e9",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 4,
+        "mae": 2.6250751659212535e-09,
+        "max_absolute_error": 2.6659127475014976e-09,
+        "max_nonzero_reference_relative_error": 8.48808912046195e-08,
+        "cosine_similarity": 0.9999999999999989
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing public expression: counter.sequence_operations",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 1,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "e0a9bd2899ab9dc07ba0c9a32f8529b8cab73063b84914799411fdbfdf0d71f1",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 4,
+        "mae": 1.5763529717660596e-09,
+        "max_absolute_error": 1.581343334056129e-09,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "counter.sequence_operations": "executed_operation"
+        },
+        "features": [
+          "counter.sequence_operations"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-counter-sequence_operations",
+        "numeric_features": [
+          "counter.sequence_operations"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-mz93irav",
+      "first_attempt_passed": false,
+      "generations": 2,
+      "helper_coverage": null,
+      "http_attempts": 2,
+      "id": "construct_126_1",
+      "model_sha256": "a0b1305d28e558b8a0c7064a8ba231c06cb1cf45e00181065770830662ffa142",
+      "provider_status": "passed",
+      "report_sha256": "18eccc6e55c0666afb62cdd1554daaf880e1824057f60a87d02dfac369fd0568",
+      "request_id": "62f262265af2898df70c22cbc2189c833f3a9dc0036239b513d4dd1930f39175",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 4,
+        "mae": 1.5763529717660596e-09,
+        "max_absolute_error": 1.581343334056129e-09,
+        "max_nonzero_reference_relative_error": 3.4104493081146114e-08,
+        "cosine_similarity": 0.9999999999999998
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": "Transparent ciphertext risk: instruction 44 MulCP uses all-zero Plain register 8; use client-encrypted zero_ct",
+          "executed": false,
+          "failure_layer": "artifact_gate",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Equality requires public data, never cipher/array/function",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 2,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "d5de06f27f37825bd2583196527796368cced7221f6c8a137c69f352f028dbd2",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 8,
+        "mae": 3.9745293543322184e-10,
+        "max_absolute_error": 8.509398398588719e-10,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "call.zip": "executed_operation"
+        },
+        "features": [
+          "call.zip"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-call-zip",
+        "numeric_features": [
+          "call.zip"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-d8cswel1",
+      "first_attempt_passed": false,
+      "generations": 3,
+      "helper_coverage": null,
+      "http_attempts": 3,
+      "id": "construct_085_2",
+      "model_sha256": "5ce0b04920e55015d6bce674121f44a999e330db2cb33a7c41b02e93bd507008",
+      "provider_status": "passed",
+      "report_sha256": "ee38e25c9a6e54ba9c450f0ad7e1297b579af6d241426d7bbccb9a953ea0ae29",
+      "request_id": "36850e5d031f4615ae5eb7b2b193b9d020bb634e22bc9af69ec10a72d682cd54",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 8,
+        "mae": 3.9745293543322184e-10,
+        "max_absolute_error": 8.509398398588719e-10,
+        "max_nonzero_reference_relative_error": 4.979213691517057e-07,
+        "cosine_similarity": 0.9999999999999979
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "696bc5ac921cf2247da78c6a758138d6d05a163af5a9c525cc6f06ba376fa612",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 8,
+        "mae": 1.1351458239095696e-11,
+        "max_absolute_error": 2.7721019923987456e-11,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "features": [
+          "return.mixed"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-native-return-mixed",
+        "numeric_features": [
+          "return.mixed"
+        ],
+        "schema": 2,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-m7el0vlc",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "construct_181_0",
+      "model_sha256": "3fb8520454018ef6d95f882e6b2b57932602d6efca021f00c536c6bb783b8a09",
+      "provider_status": "passed",
+      "report_sha256": "490170b8b3c4bbcae50d4d1ae53acf4b0ef2a8ad57a8641e2e666cf4722c6171",
+      "request_id": "ed9309e273d6b91d1fbdd3c7aaa170f1f0491c81863bb2ad7af51ffcfdf8f8f8",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 8,
+        "mae": 1.1351458239095696e-11,
+        "max_absolute_error": 2.7721019923987456e-11,
+        "max_nonzero_reference_relative_error": 2.2884207703157296e-09,
+        "cosine_similarity": 0.9999999999999999
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Read-only or invalid binding",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Encoding needs scalar/1D length one or four; explicitly reshape, do not flatten silently",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "compiled": true,
+          "diagnostic": "Frozen numerical tolerance failed; inspect reduction/layout/operator semantics",
+          "executed": true,
+          "failure_layer": "numerical_comparison",
+          "index": 2,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Read-only or invalid binding",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 3,
+          "status": "failed"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-glx2aljv",
+      "first_attempt_passed": false,
+      "generations": 4,
+      "http_attempts": 4,
+      "id": "construct_063_2",
+      "model_sha256": "e68d14bc96a40d6f4c9c5cc805598933317ca768a0eb50998bab1da187d2fa92",
+      "provider_status": "repair_budget_exhausted",
+      "report_sha256": "e3ec20e9d1ed34e2229f0387ab5ecc143ed574f8724c5ff479bd2b3db3e9cc16",
+      "request_id": "06cfe390fe03ba71c2942663cba89c21586b9855ce6e36d9150acc71de759282",
+      "status": "failed",
+      "terminal_failure_layer": "static_check",
+      "track": "directed_construction",
+      "completion_failure_layer": "static_check",
+      "follow_up": "保留失败层和全部尝试；本轮不自动追加重试。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "c645f7f5ae8a1bd4c8ee7cd2b242df2c18ae5edf5282580ef517bdea120cb133",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 8,
+        "mae": 2.0026869333895914e-10,
+        "max_absolute_error": 4.800155776335524e-10,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "overlap": "executed_operation"
+        },
+        "features": [
+          "overlap"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-overlap",
+        "numeric_features": [
+          "overlap"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-sc7_kjfc",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "construct_173_1",
+      "model_sha256": "12235f03a362e31c97682fb9c82f4990530b6c43ffbd14a78b4110438b9e7472",
+      "provider_status": "passed",
+      "report_sha256": "65c3089430efe13166935b40cdf7cfa3144e9d0c7ed45cc22cd43557a8deb9ee",
+      "request_id": "2dd9dc4b10287e7fed1b8aec544a53d1f4089f94b2046a949c887805071522d2",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 8,
+        "mae": 2.0026869333895914e-10,
+        "max_absolute_error": 4.800155776335524e-10,
+        "max_nonzero_reference_relative_error": 3.0720996968547354e-08,
+        "cosine_similarity": 0.9999999999999999
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Hecate Expr has no unary positive operator",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Hecate Expr has no unary positive operator",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Hecate Expr has no unary positive operator",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 2,
+          "status": "failed"
+        },
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 3,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "1d616a6d31000152b2671052649b1b83895ff6774471d232aa5099b2ac3ecafe",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 4,
+        "mae": 5.074546885995568e-09,
+        "max_absolute_error": 5.147939879934782e-09,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "fresh.UAdd": "executed_operation"
+        },
+        "features": [
+          "fresh.UAdd"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-fresh-UAdd",
+        "numeric_features": [
+          "fresh.UAdd"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-1w5uij4b",
+      "first_attempt_passed": false,
+      "generations": 4,
+      "helper_coverage": null,
+      "http_attempts": 4,
+      "id": "construct_138_0",
+      "model_sha256": "86fa5b2360eb5ca516fa3bcbabf143a63ac01117ade417665008525a2a15ee30",
+      "provider_status": "passed",
+      "report_sha256": "789e6ac87f623b4bc571df45bb2f78a67fe8be78708990da56eccb312ef7e25e",
+      "request_id": "35c86707d1641741df79990c1e650c0717eac9686c3b7f6e905bc20d3c56d998",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 4,
+        "mae": 5.074546885995568e-09,
+        "max_absolute_error": 5.147939879934782e-09,
+        "max_nonzero_reference_relative_error": 1.6221107512759403e-07,
+        "cosine_similarity": 0.9999999999999953
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "c1081a3dae1031cfbdf784b3f795a0c1d4f1921eb4fb7556cc288f54460e76d4",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 4,
+        "mae": 6.959928883221167e-10,
+        "max_absolute_error": 7.098611420897072e-10,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "fresh.USub": "executed_operation"
+        },
+        "features": [
+          "fresh.USub"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-fresh-USub",
+        "numeric_features": [
+          "fresh.USub"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-d7cjk69v",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "construct_139_0",
+      "model_sha256": "8ab76a896540ec3a21cee0f621855f58b18814977521ad058e1a24bdedc42608",
+      "provider_status": "passed",
+      "report_sha256": "634a4920818711d8c321adfd274edb87539e3095ed81f898c4a3583b39b805cf",
+      "request_id": "fd021d42d35ececc8786aa03e26cfe5829e9c8779fc6991c0b07db49f2071b3d",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 4,
+        "mae": 6.959928883221167e-10,
+        "max_absolute_error": 7.098611420897072e-10,
+        "max_nonzero_reference_relative_error": 1.0758637092322942e-08,
+        "cosine_similarity": 0.9999999999999998
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Mapping method receiver must be a local dict",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing public expression: call.clear",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 2,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "643c78199639e3b5edce7e48202e706489ac7b1dab3a571b5db1d3c55d54c1e9",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 16,
+        "mae": 2.3820825184334843e-10,
+        "max_absolute_error": 8.217111713282321e-10,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "call.clear": "executed_operation"
+        },
+        "features": [
+          "call.clear"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-call-clear",
+        "numeric_features": [
+          "call.clear"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-sb284cy5",
+      "first_attempt_passed": false,
+      "generations": 3,
+      "helper_coverage": null,
+      "http_attempts": 3,
+      "id": "construct_034_2",
+      "model_sha256": "3d89be0f92eb700c78eb203cc06823cf952f982668beb2ff77abfc25ba956361",
+      "provider_status": "passed",
+      "report_sha256": "05785cc4577f50a493f71b10f1052a2732700a826ea5521c7f034318f32771cc",
+      "request_id": "55c3081d47c8c92ea0f01f9b217f6ef448f1956edc6be1f2fb867f5c99f611ce",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 16,
+        "mae": 2.3820825184334843e-10,
+        "max_absolute_error": 8.217111713282321e-10,
+        "max_nonzero_reference_relative_error": 3.1279248302595875e-08,
+        "cosine_similarity": 1.0
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "046a902faf77b7b252a7443cf673b17d7570c87e04673b8c34994f0f68d623ba",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 4,
+        "mae": 2.7453889855921787e-12,
+        "max_absolute_error": 3.521682945262228e-12,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "item.numeric.positional": "executed_operation"
+        },
+        "features": [
+          "item.numeric.positional"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-item-numeric-positional",
+        "numeric_features": [
+          "item.numeric.positional"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-jn2cppgc",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "construct_149_0",
+      "model_sha256": "d7f86abeca48f076189840540eaf9b82773b7fb55367df17cdbce5a5aada4342",
+      "provider_status": "passed",
+      "report_sha256": "2ad07361edf90ae6c4adf5095101ce5bc9191dda0f01fbf54721e0080082bb20",
+      "request_id": "b7f4355fce60f65f10e22db106c817a68ce2f0c46eb5b1fab6dd19ebbf515045",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 4,
+        "mae": 2.7453889855921787e-12,
+        "max_absolute_error": 3.521682945262228e-12,
+        "max_nonzero_reference_relative_error": 5.2929927107925326e-11,
+        "cosine_similarity": 0.9999999999999996
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Ciphertext is not public numerical data",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Ciphertext is not public numerical data",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Ciphertext is not public numerical data",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 2,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing typed array arithmetic: zero_dim",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 3,
+          "status": "failed"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-ls8kd_48",
+      "first_attempt_passed": false,
+      "generations": 4,
+      "http_attempts": 4,
+      "id": "construct_208_1",
+      "model_sha256": "eb03244db9842518785ff169631385fb0d093e3f75790a265cb8d5ae3a056f63",
+      "provider_status": "repair_budget_exhausted",
+      "report_sha256": "2c388953aec32dff5b97438f8ec65abde99f198d574f1da46d26871104aaab07",
+      "request_id": "8ff1054ab80868dd16d0765237839a53e401e3aa901b8f827aefa7cce3a6d3af",
+      "status": "failed",
+      "terminal_failure_layer": "static_check",
+      "track": "directed_construction",
+      "completion_failure_layer": "static_check",
+      "follow_up": "保留失败层和全部尝试；本轮不自动追加重试。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Symbolic/Empty left operand does not use object-array broadcasting",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Object array cell must be a symbolic value, Empty, None or bounded real scalar",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing public expression: object.named_numeric_constructor",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 2,
+          "status": "failed"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-fx9nqwe0",
+      "first_attempt_passed": false,
+      "generations": 4,
+      "http_attempts": 4,
+      "id": "construct_169_0",
+      "model_sha256": "2607f3c46662d10bdee8db42809db049ac15a2cbab60faf1703797d51976589a",
+      "provider_status": "provider_failed",
+      "report_sha256": "64031d5ede9bfe8aca1614ba037a52c65308a57d16a00928191b770b9b4e9f1a",
+      "request_id": "1a983d91330e6d09f8e738c30764ae6ce76d5c063e14026d125a74f4d5818c25",
+      "status": "failed",
+      "terminal_failure_layer": "static_check",
+      "track": "directed_construction",
+      "completion_failure_layer": "provider",
+      "provider_failure": {
+        "error": "empty_or_oversized_content",
+        "finish_reason": "stop",
+        "content_characters": 0
+      },
+      "follow_up": "保留失败层和全部尝试；本轮不自动追加重试。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Symbolic/Empty left operand does not use object-array broadcasting",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Symbolic/Empty left operand does not use object-array broadcasting",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Rotation requires a ciphertext and a provisioned public step",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 2,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Symbolic/Empty left operand does not use object-array broadcasting",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 3,
+          "status": "failed"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-k44qg_md",
+      "first_attempt_passed": false,
+      "generations": 4,
+      "http_attempts": 4,
+      "id": "construct_169_2",
+      "model_sha256": "6b996ea855e9f314c7f2f608bdf8840fa4c8d6274286a036e6767f068bfc68db",
+      "provider_status": "repair_budget_exhausted",
+      "report_sha256": "3c2bd78d7ee9a5c4fd49e5d02de5929e48fd8303c3c99db08aa573680d0cda08",
+      "request_id": "bf0baf16c5a769208dd033b604c865a83d31b116767be1a20e6d3a04d55c7d59",
+      "status": "failed",
+      "terminal_failure_layer": "static_check",
+      "track": "directed_construction",
+      "completion_failure_layer": "static_check",
+      "follow_up": "保留失败层和全部尝试；本轮不自动追加重试。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing public expression: cast.float.numeric.legacy",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Unsupported construction call",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 2,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "690a0c3990ec2737f1acc3ef83ef5e15d73e942cf80b292e053d630a3a891a62",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 8,
+        "mae": 1.3897936038988201e-08,
+        "max_absolute_error": 1.9971047406086573e-08,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "cast.float.numeric.legacy": "executed_operation"
+        },
+        "features": [
+          "cast.float.numeric.legacy"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-cast-float-numeric-legacy",
+        "numeric_features": [
+          "cast.float.numeric.legacy"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-1gyiarjr",
+      "first_attempt_passed": false,
+      "generations": 3,
+      "helper_coverage": null,
+      "http_attempts": 3,
+      "id": "construct_088_2",
+      "model_sha256": "b53b6ad1eafe5026575307460d9a42929ab73ff19e9cb362fce572e758a7b6f4",
+      "provider_status": "passed",
+      "report_sha256": "8f240b7b56c3b57c343bb23ca9fc8ee9e518d260d37fc62fc5a8f7ec999539fc",
+      "request_id": "a026408ce0ecfedd89d38fae7966e9e89fb71f356630fc17622aeec13446808c",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 8,
+        "mae": 1.3897936038988201e-08,
+        "max_absolute_error": 1.9971047406086573e-08,
+        "max_nonzero_reference_relative_error": 1.065965696810915e-06,
+        "cosine_similarity": 0.9999999999999764
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "999a6d97509a4b0e4cdef99e5bcc414349d5e8eec82a4efd640038e316fec4ee",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 8,
+        "mae": 4.695241920520815e-09,
+        "max_absolute_error": 5.346017711849171e-09,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "unary.Not": "executed_operation"
+        },
+        "features": [
+          "unary.Not"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-unary-Not",
+        "numeric_features": [
+          "unary.Not"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-8zgy6hqk",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "construct_206_0",
+      "model_sha256": "9d46547fae9315fda97151ccc4aea4097dd5a5f7d7a98d1be737f211da24682c",
+      "provider_status": "passed",
+      "report_sha256": "9ab01bd64712760d6e46da3271743de0f7d82e721306d9d18866bb3d346bf490",
+      "request_id": "36aa27479a0fb2c660be5a226fb406cf49de714df46d2b0824b539e642525bb4",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 8,
+        "mae": 4.695241920520815e-09,
+        "max_absolute_error": 5.346017711849171e-09,
+        "max_nonzero_reference_relative_error": 1.8963393976680633e-07,
+        "cosine_similarity": 0.9999999999999997
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Truth value requires public construction data; cipher/array truth is unsupported",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing public expression: bool.Or",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Ordering requires comparable public scalars/sequences",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 2,
+          "status": "failed"
+        },
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 3,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "2bd71c0b1001e2decb34cf5b5d5a052407faa1445823a38bf005f04e91bc1f9c",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 12,
+        "mae": 3.7243104433759555e-11,
+        "max_absolute_error": 1.0746305234565767e-10,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "bool.Or": "executed_operation"
+        },
+        "features": [
+          "bool.Or"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-bool-Or",
+        "numeric_features": [
+          "bool.Or"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-gt42b_wt",
+      "first_attempt_passed": false,
+      "generations": 4,
+      "helper_coverage": null,
+      "http_attempts": 4,
+      "id": "construct_025_0",
+      "model_sha256": "5b72d5bcc03c7faaa94541dcd6c600f5d2eccf6a29986689d1430da29b77c6dc",
+      "provider_status": "passed",
+      "report_sha256": "c689cdc7e0a5ea41b084c920cb54a773cafcdba6bb7097eccca8250852f1bdac",
+      "request_id": "7d4e8eb4094b0128716f3bc81ca0a95706c2d8c2b04414e271534e3bbcba4da6",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 12,
+        "mae": 3.7243104433759555e-11,
+        "max_absolute_error": 1.0746305234565767e-10,
+        "max_nonzero_reference_relative_error": 1.4883141119526046e-09,
+        "cosine_similarity": 1.0000000000000002
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "889bb12302bf302748573b127eaedfcc9cc27ef603714fc7ce1ffa5b7fdd6c7b",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 4,
+        "mae": 7.752899022357427e-12,
+        "max_absolute_error": 2.5176596918363714e-11,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "public_cells": "executed_operation"
+        },
+        "features": [
+          "public_cells"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-public_cells",
+        "numeric_features": [
+          "public_cells"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-yhsmv0vb",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "construct_176_0",
+      "model_sha256": "6453cbb211378deb8380997f3f750841b96f26e49e1f7088993c6a8953a66fe0",
+      "provider_status": "passed",
+      "report_sha256": "b6d2e0e7b87f627331b056be5f4935e6232d441adfaf01d428d78b62227a1c41",
+      "request_id": "e42cba8899756741057008c1412c52e1f5426b9e3603715c237626091ce21f26",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 4,
+        "mae": 7.752899022357427e-12,
+        "max_absolute_error": 2.5176596918363714e-11,
+        "max_nonzero_reference_relative_error": 3.262886960619937e-10,
+        "cosine_similarity": 0.9999999999999998
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "ff609bfaba8f4593722b42dd7680c81d0ece10ac59855047001681f473b5a4df",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 4,
+        "mae": 1.1440164093823313e-10,
+        "max_absolute_error": 2.153426326145791e-10,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "public_cells": "executed_operation"
+        },
+        "features": [
+          "public_cells"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-public_cells",
+        "numeric_features": [
+          "public_cells"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-phassb6b",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "construct_176_2",
+      "model_sha256": "2d4b076f60a322a66dff473fda1a374da76e2c284c8361bd571a60ea31f5ba9f",
+      "provider_status": "passed",
+      "report_sha256": "f7d95db5e58780e4287740cdb5fe271e4b6c2f6af031a111d7952bea7b560d77",
+      "request_id": "50342ace805093ea91501ba343a580c32136734afab458f1259bb93291a902c7",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 4,
+        "mae": 1.1440164093823313e-10,
+        "max_absolute_error": 2.153426326145791e-10,
+        "max_nonzero_reference_relative_error": 3.082043255932375e-10,
+        "cosine_similarity": 1.0
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "fd8971555bf51fa2e563e01f0ac799aacbf806e79213401424f841ae28ff8f6f",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 4,
+        "mae": 1.0181154759536515e-08,
+        "max_absolute_error": 1.0264679106697372e-08,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "fresh.USub": "executed_operation"
+        },
+        "features": [
+          "fresh.USub"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-fresh-USub",
+        "numeric_features": [
+          "fresh.USub"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-jw5jgywp",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "construct_139_2",
+      "model_sha256": "86d1c65559c55b11b069a1dd046024e31c1ff80b67606146d7ecc16614b8d93f",
+      "provider_status": "passed",
+      "report_sha256": "f5b21f7e14b2782c6849513b4e3d3d26b02879fa9a4f6130455d8e4795b0a5ac",
+      "request_id": "cf8519baedcb1ab3705179ab76ad233da41820aa80176389096f59b473f2377c",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 4,
+        "mae": 1.0181154759536515e-08,
+        "max_absolute_error": 1.0264679106697372e-08,
+        "max_nonzero_reference_relative_error": 1.6264327507009568e-07,
+        "cosine_similarity": 0.9999999999999994
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-1nfmm8kg",
+      "first_attempt_passed": false,
+      "generations": 1,
+      "http_attempts": 1,
+      "id": "construct_122_2",
+      "model_sha256": "e7de431a4df66acf85e6856a4634a1ef7268fdc5cb6bc8a66c4bd7e2149e1dba",
+      "provider_status": "provider_failed",
+      "report_sha256": "e365da8d61a483ffe5390733a5491450d0de3e73700ffd1667bcf574732604d3",
+      "request_id": "ba428e11e590e5c69ac11eca6e15869816088dedfc556ac8f4a43dfd2e189168",
+      "status": "failed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": "provider",
+      "provider_failure": {
+        "error": "transport_tls_failed",
+        "finish_reason": null,
+        "content_characters": null
+      },
+      "follow_up": "保留失败层和全部尝试；本轮不自动追加重试。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Unsupported construction syntax: Is",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Helpers require unannotated positional parameters without defaults or decorators",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing public expression: call.values",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 2,
+          "status": "failed"
+        },
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 3,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "f50a4cdf6c7eeb8cbade2d3a21ec1e8a13d2326f5aa813fa38a6dff89f2cc7f4",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 24,
+        "mae": 1.17840125792067e-08,
+        "max_absolute_error": 5.84732807173971e-08,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "call.values": "executed_operation"
+        },
+        "features": [
+          "call.values"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-call-values",
+        "numeric_features": [
+          "call.values"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-qjqbff0e",
+      "first_attempt_passed": false,
+      "generations": 4,
+      "helper_coverage": null,
+      "http_attempts": 4,
+      "id": "construct_083_0",
+      "model_sha256": "ec262431af2a700c2fb735399eca41cdaa3747e03b96d3cc90cff96c59d9b253",
+      "provider_status": "passed",
+      "report_sha256": "20b983ac245c6672820fc63fdb31334485ea339802437ea081bca674645af7ec",
+      "request_id": "9685894efc7562e9ac7beb3d37110b9d620b0af76c1cc8d2aa929fe9ed06b15a",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 24,
+        "mae": 1.17840125792067e-08,
+        "max_absolute_error": 5.84732807173971e-08,
+        "max_nonzero_reference_relative_error": 3.4190891835857833e-06,
+        "cosine_similarity": 0.9999999999999939
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Call target is not a declared construction function",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Unsupported construction call",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 1,
+          "status": "failed"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-1iwlk9l1",
+      "first_attempt_passed": false,
+      "generations": 3,
+      "http_attempts": 3,
+      "id": "construct_027_1",
+      "model_sha256": "3fb53ddf6f620744918a698efbcfa419df8d1104fcb1602ca6975aa9e7f994e3",
+      "provider_status": "provider_failed",
+      "report_sha256": "96cfe7ef621ce854e0ed00572c341a401a9027fc17ccf58ee69805e32da2e66c",
+      "request_id": "2443fb8f03064df01bd6986e21f762790607fbb6cc9c81b4e9a4e7d2e81c6f81",
+      "status": "failed",
+      "terminal_failure_layer": "static_check",
+      "track": "directed_construction",
+      "completion_failure_layer": "provider",
+      "provider_failure": {
+        "error": "transport_tls_failed",
+        "finish_reason": null,
+        "content_characters": null
+      },
+      "follow_up": "保留失败层和全部尝试；本轮不自动追加重试。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing typed array arithmetic: empty_left",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 1,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "2644bdd54af7e6b72ed273510b5fefe5c3bad5c3a6b8e315526447f0b4707a4a",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 24,
+        "mae": 3.0081504006497755e-10,
+        "max_absolute_error": 1.7603100776638091e-09,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "cipher_pair": "executed_operation",
+          "empty_left": "executed_operation",
+          "rank_broadcast": "executed_operation",
+          "zero_dim": "executed_operation"
+        },
+        "features": [
+          "cipher_pair",
+          "empty_left",
+          "rank_broadcast",
+          "zero_dim"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-composite-array-arithmetic",
+        "numeric_features": [
+          "cipher_pair",
+          "empty_left",
+          "rank_broadcast",
+          "zero_dim"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-_matq_ec",
+      "first_attempt_passed": false,
+      "generations": 2,
+      "helper_coverage": null,
+      "http_attempts": 2,
+      "id": "construct_000_0",
+      "model_sha256": "2ac92cd2e9395d469846bba46e2c332651e58e3bbaa9b8a44eb02435b7d65822",
+      "provider_status": "passed",
+      "report_sha256": "64d2e0f35e1fdeb7f8c0e252621b10ab6ae8f75d927a2d4fed069de27e55f02c",
+      "request_id": "8ddec3e99046bf5c58a8a30b1c172d681e7ad0e4f0602617632fac72e942882f",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 24,
+        "mae": 3.0081504006497755e-10,
+        "max_absolute_error": 1.7603100776638091e-09,
+        "max_nonzero_reference_relative_error": 1.481603670420444e-09,
+        "cosine_similarity": 1.0
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Golden ciphertext outputs mismatch",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Native core arithmetic requires a ciphertext operand",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 2,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "a462a00e88a0f2386b59d4ed401d02a5d7e4eab10eb9fbe468ce84364c91b6a2",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 4,
+        "mae": 2.3165624410056984e-09,
+        "max_absolute_error": 2.3517446740006775e-09,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "features": [
+          "return.mixed"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-native-return-mixed",
+        "numeric_features": [
+          "return.mixed"
+        ],
+        "schema": 2,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-rdo1mm3o",
+      "first_attempt_passed": false,
+      "generations": 3,
+      "helper_coverage": null,
+      "http_attempts": 3,
+      "id": "construct_181_1",
+      "model_sha256": "a888dccb70f93f3b620cd28ca4ba28560dee0046feb6cc0bf2bb669ddaf61789",
+      "provider_status": "passed",
+      "report_sha256": "936de6c0572398aad2aa53bb4e1d8495365a921357a813bc3bbb7a1b11372fe2",
+      "request_id": "f3e75b3f0e58d55d6cbfc2e1bad14cac80bddb9831e0f68273e9631e2679b5fd",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 4,
+        "mae": 2.3165624410056984e-09,
+        "max_absolute_error": 2.3517446740006775e-09,
+        "max_nonzero_reference_relative_error": 1.47761048729933e-07,
+        "cosine_similarity": 0.9999999999999997
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Read-only or invalid binding",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing public expression: event.for_else",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Read-only or invalid binding",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 2,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing public expression: event.for_else",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 3,
+          "status": "failed"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-lyx8dn65",
+      "first_attempt_passed": false,
+      "generations": 4,
+      "http_attempts": 4,
+      "id": "construct_134_0",
+      "model_sha256": "c5b60fce973a59760cf89d494bbaf150d83f6ebd16b28d5705f04ac23746a047",
+      "provider_status": "repair_budget_exhausted",
+      "report_sha256": "cfe27e9d20d697f632b95f20f06dcf862a60f17eb7495c1529926e11e4ce3795",
+      "request_id": "3bd81bb5414350aff6fb229189434349092c385762c88791b24ea541ccf61ed2",
+      "status": "failed",
+      "terminal_failure_layer": "static_check",
+      "track": "directed_construction",
+      "completion_failure_layer": "static_check",
+      "follow_up": "保留失败层和全部尝试；本轮不自动追加重试。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing public expression: counter.sequence_operations",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing public expression: counter.sequence_operations",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 2,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "66af23d92160e91b2faad212b791cf88318ad2e2374f7d4dc8ef3af32871ea3d",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 4,
+        "mae": 1.9037932619259124e-09,
+        "max_absolute_error": 2.0542216538910196e-09,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "counter.sequence_operations": "executed_operation"
+        },
+        "features": [
+          "counter.sequence_operations"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-counter-sequence_operations",
+        "numeric_features": [
+          "counter.sequence_operations"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-35oe6x3w",
+      "first_attempt_passed": false,
+      "generations": 3,
+      "helper_coverage": null,
+      "http_attempts": 3,
+      "id": "construct_126_0",
+      "model_sha256": "3011487c35c8f7e7106940e020cff026eb5f19b1b146ac6fad9f8f7f247e4611",
+      "provider_status": "passed",
+      "report_sha256": "993e8c870e1e591ac52aad5bbc38bf568c0ea26794fa1817eb749dfa853d6021",
+      "request_id": "52ceca4e432b33662094b1e4601cd5405f7d7e6c4602e23cd3e27a1d3f58fbc5",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 4,
+        "mae": 1.9037932619259124e-09,
+        "max_absolute_error": 2.0542216538910196e-09,
+        "max_nonzero_reference_relative_error": 1.1047780710462328e-08,
+        "cosine_similarity": 0.9999999999999998
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "1405ab528ff9d87a2c713457322e83c94ca1c757b19b8f2713614546fa993a69",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 8,
+        "mae": 5.809448355541128e-08,
+        "max_absolute_error": 1.157930860085088e-07,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "call.zip": "executed_operation"
+        },
+        "features": [
+          "call.zip"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-call-zip",
+        "numeric_features": [
+          "call.zip"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-lou74ofk",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "construct_085_1",
+      "model_sha256": "50e46c95fcdf1ccfa3822331e1076137327a12ffa8e28c3baa3404a3f7793a26",
+      "provider_status": "passed",
+      "report_sha256": "6b23ec762773d7e032fd8609b3af3de91633637ad42c4a8c2112162e4d54e7ec",
+      "request_id": "3ab7a5e1e7908b6099f94ae2744f88a186f64e532c0168c9099ba7e0e1cf4861",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 8,
+        "mae": 5.809448355541128e-08,
+        "max_absolute_error": 1.157930860085088e-07,
+        "max_nonzero_reference_relative_error": 4.380535005282762e-05,
+        "cosine_similarity": 0.9999999999999689
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-qipd1079",
+      "first_attempt_passed": false,
+      "generations": 1,
+      "http_attempts": 1,
+      "id": "construct_034_0",
+      "model_sha256": "953b5cd603ebf42211812872b68b9eacf2caef2edec9c908bae5b6431edd5e00",
+      "provider_status": "provider_failed",
+      "report_sha256": "b6a9c176ca07e4406efa504c741570d81179c16978c0a4fa7e044452242c8bfc",
+      "request_id": "f10a564ab14fb96adcd52c246c96061cdda65c53bea55e4253ed70c84b32ca0d",
+      "status": "failed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": "provider",
+      "provider_failure": {
+        "error": "transport_tls_failed",
+        "finish_reason": null,
+        "content_characters": null
+      },
+      "follow_up": "保留失败层和全部尝试；本轮不自动追加重试。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Ciphertext is not public numerical data",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 1,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "c32661bd3fdbe79b4d8572ca0133062d27f3b11a238d017122a4bdf2f77fa9f2",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 8,
+        "mae": 2.768975524198598e-07,
+        "max_absolute_error": 4.982894447058683e-07,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "cipher_pair": "executed_operation",
+          "empty_left": "executed_operation",
+          "rank_broadcast": "executed_operation",
+          "zero_dim": "executed_operation"
+        },
+        "features": [
+          "cipher_pair",
+          "empty_left",
+          "rank_broadcast",
+          "zero_dim"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-composite-array-arithmetic",
+        "numeric_features": [
+          "cipher_pair",
+          "empty_left",
+          "rank_broadcast",
+          "zero_dim"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-tlo_mwjo",
+      "first_attempt_passed": false,
+      "generations": 2,
+      "helper_coverage": null,
+      "http_attempts": 2,
+      "id": "construct_000_2",
+      "model_sha256": "1c25655fa5b2d5c089e589c416950f0e9f2896bffd708451d192d854d2a04cb2",
+      "provider_status": "passed",
+      "report_sha256": "dcd85b48007c68f9f8ca0b083e77e8dbef3b783b7d4b89daab305d625f29931b",
+      "request_id": "6111fc52d9064e82c710c4290ee253ddab459c9f60351f7702592e8912d25133",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 8,
+        "mae": 2.768975524198598e-07,
+        "max_absolute_error": 4.982894447058683e-07,
+        "max_nonzero_reference_relative_error": 4.479267019422139e-06,
+        "cosine_similarity": 0.9999999999998791
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing public expression: item.numeric.positional",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 1,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "ff51d04dfbce3fbf8a1218b137b13879360819656036aa45cde36176dcfe3259",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 4,
+        "mae": 1.8290745247605614e-10,
+        "max_absolute_error": 2.3249462901761553e-10,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "item.numeric.positional": "executed_operation"
+        },
+        "features": [
+          "item.numeric.positional"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-item-numeric-positional",
+        "numeric_features": [
+          "item.numeric.positional"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-b9solcar",
+      "first_attempt_passed": false,
+      "generations": 2,
+      "helper_coverage": null,
+      "http_attempts": 2,
+      "id": "construct_149_1",
+      "model_sha256": "6fe5f8718434fc0a62a17242d6865953af4f906a88bb9d103cb32c5dfa311ba7",
+      "provider_status": "passed",
+      "report_sha256": "22e1e64e6ad28e85acf7a5a3a837172b665c3c8c5f03852f53db868b0fbe0818",
+      "request_id": "51e4bef070461b8c57565dff9d22f2ecc37d87c91031224ed4fafe45457438f0",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 4,
+        "mae": 1.8290745247605614e-10,
+        "max_absolute_error": 2.3249462901761553e-10,
+        "max_nonzero_reference_relative_error": 1.2092027841525963e-07,
+        "cosine_similarity": 0.999999999999998
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "5980d9819572e5c7aa6df6acb571756164ebf2f3e35f2968be0cd579abdef082",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 8,
+        "mae": 2.457799623545309e-10,
+        "max_absolute_error": 4.48058298796461e-10,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "overlap": "executed_operation"
+        },
+        "features": [
+          "overlap"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-overlap",
+        "numeric_features": [
+          "overlap"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-svhcscfr",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "construct_173_2",
+      "model_sha256": "4365b9f959df04d9f7b799af5c45c5e601e8280a0791d7cdfd48739e8890a959",
+      "provider_status": "passed",
+      "report_sha256": "684058f310d665459c2725de3aa24aecf13b5dfc2493e41d423efcf5a98f14b0",
+      "request_id": "30c1642dac719b10145e6201562d783df7f2fd6af00bfb7bfc7895514dcd1ae1",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction",
+      "completion_failure_layer": null,
+      "numerical_summary": {
+        "compared_values": 8,
+        "mae": 2.457799623545309e-10,
+        "max_absolute_error": 4.48058298796461e-10,
+        "max_nonzero_reference_relative_error": 4.093416234709471e-09,
+        "cosine_similarity": 1.0000000000000002
+      },
+      "input_groups": 4,
+      "follow_up": "独立审计通过；保留旧失败，不合并为同版本全量成绩。"
+    }
+  ],
+  "totals": {
+    "generations": 118,
+    "http_attempts": 118,
+    "first_attempt_passed": 16,
+    "successful_after_repair": 23,
+    "real_compiled_attempts": 45,
+    "real_executed_attempts": 43
+  },
+  "parents": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175/plan.json": "065a2672ba20ecb6f0166d6a8b966410e47c7a7d5afb9f6ebc4c04ab0c90ec8b",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175/report.json": "bede1fc83473c326510dad8803a9dbe07a96a515f67218ad0adaba048bcc8a71",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-00-audit/report.json": "92229a2431b2b81b3f3739c32495e2ee7d4a3e322a27a9e345e74f0bdd688820",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-00-audit/construct_083_2.audit.json": "9128a0d44ffadf881c023bf92a03c3dee82677e74bf09b4bc50f952744225656",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-00-audit/construct_126_2.audit.json": "ee31dceb40dbe73f90326f0bdbc75ddaaaffc777fbe52f10064395c38ecf0015",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-5jqzg9j5/report.json": "e6314565526802cd8b8bef1afda152c6aac7a35c9b246aefbbee73791e320092",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-00-audit/construct_054_0.audit.json": "d85889723936195a996691b545c870002dcc5e4fd117c76c6145341dae698983",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-00-audit/construct_173_0.audit.json": "919913cf7a812b4e56c953dbfaa775a10a6eaea98d11599c6cde0710830d92a9",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-01-audit/report.json": "7f8a89e9f912d8a557887fac1396a625d772566ffaf2f25f9669bc37c4cc491e",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-01-audit/construct_025_2.audit.json": "f0769054253db2991278be04090382c6e3ede77fc29fb8e94845f36efa6490a0",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-01-audit/construct_138_2.audit.json": "cdac332503c5ece9e61f9e00b84612f7db2084ea062ba87afb7606eed6e04d78",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-01-audit/construct_113_0.audit.json": "b4379adf1e860fb85c98b8cdaac6a95cde444353e3d096df46e31345f87b94b3",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-01-audit/construct_131_2.audit.json": "ab7b54ea60545436c98319de4e1e4ed6f47b4df8b6f947a55d9e962679a5a4bb",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-k6jm79bo/report.json": "0d7a6eba7e784c9f8f93c0b4c81bf0720c6254e9ba873278bf7fd9f543c2ff63",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-02-audit/report.json": "3da938c473129202be900b1974be8ab4570e37253e38ff0e7a0b07e412352ca1",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-02-audit/construct_083_1.audit.json": "f51cb6f9a35ea09768c4d5db5cefbf4a088982e44390bba1b776272086577295",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-zkue3af1/report.json": "4d46a9df4cc22e3fa720bdbae445198aa6f58ce743865955ff73c4d4ae958dc5",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-02-audit/construct_139_1.audit.json": "f1dae649c594c1e984456360afafddd3e63a594ad00a985c23721c20227f0a22",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-02-audit/construct_171_2.audit.json": "69cee1c1464f71ab29dec6c658a8994bfc3dc437f70792b6e66c8758c6e32c85",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-02-audit/construct_016_0.audit.json": "73459513a81092332d52c5df4204df911e6e69878213c316c537652286df41ef",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-03-audit/report.json": "51a27e4cb85361a2c5b671d8bf8bc6fc9d6acdca6014a82e86cf3de58910411c",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-03-audit/construct_106_1.audit.json": "82424848ddcbb139a33d1958691cdac65110104db78c445722fc6e6cc7352438",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-03-audit/construct_176_1.audit.json": "1cfb3661e5c2b544807fda3c6bdaed1294d64942cee8e56f59829fad18497b0b",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-03-audit/construct_171_0.audit.json": "cdfb6aaeafee044fcbf5436b9fa6d71e823731bd9651f38d69fe9ed1e8845a2a",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-03-audit/construct_181_2.audit.json": "4f1736f0eae34e916ecccc348701b5faf9215965d9b8681076da4a50bc70e1ba",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-03-audit/construct_149_2.audit.json": "e19a8fa07f0378b92bd1157a102349952f59308b8c68c61ac1cb2c7619083f62",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-04-audit/report.json": "0132d72c6380d0ecec33cf1d4b775e002b50d6afb6b3e058d66fb8bb7d6ae698",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-04-audit/construct_126_1.audit.json": "e0a9bd2899ab9dc07ba0c9a32f8529b8cab73063b84914799411fdbfdf0d71f1",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-04-audit/construct_085_2.audit.json": "d5de06f27f37825bd2583196527796368cced7221f6c8a137c69f352f028dbd2",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-04-audit/construct_181_0.audit.json": "696bc5ac921cf2247da78c6a758138d6d05a163af5a9c525cc6f06ba376fa612",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-glx2aljv/report.json": "e3ec20e9d1ed34e2229f0387ab5ecc143ed574f8724c5ff479bd2b3db3e9cc16",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-04-audit/construct_173_1.audit.json": "c645f7f5ae8a1bd4c8ee7cd2b242df2c18ae5edf5282580ef517bdea120cb133",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-05-audit/report.json": "cfbebf4ad1137a45dd11fdd3c35b5bab722ae5aeccd9936f693ae124725d28a2",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-05-audit/construct_138_0.audit.json": "1d616a6d31000152b2671052649b1b83895ff6774471d232aa5099b2ac3ecafe",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-05-audit/construct_139_0.audit.json": "c1081a3dae1031cfbdf784b3f795a0c1d4f1921eb4fb7556cc288f54460e76d4",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-05-audit/construct_034_2.audit.json": "643c78199639e3b5edce7e48202e706489ac7b1dab3a571b5db1d3c55d54c1e9",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-05-audit/construct_149_0.audit.json": "046a902faf77b7b252a7443cf673b17d7570c87e04673b8c34994f0f68d623ba",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-ls8kd_48/report.json": "2c388953aec32dff5b97438f8ec65abde99f198d574f1da46d26871104aaab07",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-06-audit/report.json": "686063366276d053ee4d8ef1b932e3e51ba1c4d8298167da8a1fe23763270dde",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-fx9nqwe0/report.json": "64031d5ede9bfe8aca1614ba037a52c65308a57d16a00928191b770b9b4e9f1a",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-k44qg_md/report.json": "3c2bd78d7ee9a5c4fd49e5d02de5929e48fd8303c3c99db08aa573680d0cda08",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-06-audit/construct_088_2.audit.json": "690a0c3990ec2737f1acc3ef83ef5e15d73e942cf80b292e053d630a3a891a62",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-06-audit/construct_206_0.audit.json": "999a6d97509a4b0e4cdef99e5bcc414349d5e8eec82a4efd640038e316fec4ee",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-06-audit/construct_025_0.audit.json": "2bd71c0b1001e2decb34cf5b5d5a052407faa1445823a38bf005f04e91bc1f9c",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-07-audit/report.json": "1fa8d86de74775917524ba8f860230b04b96e00a6652b17e771efccb57bec626",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-07-audit/construct_176_0.audit.json": "889bb12302bf302748573b127eaedfcc9cc27ef603714fc7ce1ffa5b7fdd6c7b",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-07-audit/construct_176_2.audit.json": "ff609bfaba8f4593722b42dd7680c81d0ece10ac59855047001681f473b5a4df",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-07-audit/construct_139_2.audit.json": "fd8971555bf51fa2e563e01f0ac799aacbf806e79213401424f841ae28ff8f6f",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-1nfmm8kg/report.json": "e365da8d61a483ffe5390733a5491450d0de3e73700ffd1667bcf574732604d3",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-07-audit/construct_083_0.audit.json": "f50a4cdf6c7eeb8cbade2d3a21ec1e8a13d2326f5aa813fa38a6dff89f2cc7f4",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-08-audit/report.json": "3911fe1664ed9ce2796a6fba64cba5e88e64c0aad1e79d77e2a297c1bf2b3875",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-1iwlk9l1/report.json": "96cfe7ef621ce854e0ed00572c341a401a9027fc17ccf58ee69805e32da2e66c",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-08-audit/construct_000_0.audit.json": "2644bdd54af7e6b72ed273510b5fefe5c3bad5c3a6b8e315526447f0b4707a4a",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-08-audit/construct_181_1.audit.json": "a462a00e88a0f2386b59d4ed401d02a5d7e4eab10eb9fbe468ce84364c91b6a2",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-lyx8dn65/report.json": "cfe27e9d20d697f632b95f20f06dcf862a60f17eb7495c1529926e11e4ce3795",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-08-audit/construct_126_0.audit.json": "66af23d92160e91b2faad212b791cf88318ad2e2374f7d4dc8ef3af32871ea3d",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-09-audit/report.json": "fb4a1f3d84d097e0ef2713a1874230f243bd3aebcea5067a7af1e68a339dc6e3",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-09-audit/construct_085_1.audit.json": "1405ab528ff9d87a2c713457322e83c94ca1c757b19b8f2713614546fa993a69",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-qipd1079/report.json": "b6a9c176ca07e4406efa504c741570d81179c16978c0a4fa7e044452242c8bfc",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-09-audit/construct_000_2.audit.json": "c32661bd3fdbe79b4d8572ca0133062d27f3b11a238d017122a4bdf2f77fa9f2",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-09-audit/construct_149_1.audit.json": "ff51d04dfbce3fbf8a1218b137b13879360819656036aa45cde36176dcfe3259",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-repair-r175-shard-09-audit/construct_173_2.audit.json": "5980d9819572e5c7aa6df6acb571756164ebf2f3e35f2968be0cd579abdef082"
+  },
+  "verified_pass_artifact_files": 1668,
+  "queue_finished": true,
+  "queue_failure": null,
+  "seconds": 1240.3236917309987,
+  "source_hashes": {
+    "scripts/baseline/agent-requirements.json": "29c59fa158eb2e12f49e41e63682c3fe3e059e4e10ff5f747e4b5cdd669e9185",
+    "scripts/baseline/agent_credentials.py": "fff2d522955b441ee4f102a3722a9a6d8bb942fd25fb0ad7886b949e1794f8f3",
+    "scripts/baseline/agent_doctor.py": "83043afc94e5bcc45150682f9d4f2fd9dffa0aa91c98718dc2e3197439f058f9",
+    "scripts/baseline/agent_entry_smoke.py": "ec5c99c58d95533ba2c1580c9d4b455447a47779f0cbf330af92be37d3b76dec",
+    "scripts/baseline/agent_response_provenance.py": "1837e43ceb4803bbbe04d475119135dfaeca90e7d170c35ff7032de3c1905c0f",
+    "scripts/baseline/agent_setup.py": "8d7742e1e3a372d3209cb7fb7100da86855cd5d10f738af4ca1ad72641429b9b",
+    "scripts/baseline/approximation_errors.py": "028ba59b864ac858527250e58f8cef72e578cd2e72bf7a6441112e7b4c6cd736",
+    "scripts/baseline/audit_agent_batch.py": "aa63bdfd6654df8453368d8e332fa3e7a1cea3243b85e7dae17b5016629473f6",
+    "scripts/baseline/audit_agent_lineage.py": "0fa9c75b2a84bda5fe1e1fc0b779d5895f34d249fb81cf9bcc68cfe04a89a204",
+    "scripts/baseline/audit_batch_norm_batch.py": "afb3b4e3425bf64785372ccb69aa48db4a4eff338e9f8681b0e1c88606b1765a",
+    "scripts/baseline/audit_concat_batch.py": "e8ed13d5f972eff475e6970981f30c66b757503bfc7187b437769ed0d8023d83",
+    "scripts/baseline/audit_construction_batch.py": "574367550f6b60d68dfb69eecb63d6425dc9ae1900c82895c6ec76ef9a356a6d",
+    "scripts/baseline/audit_dsl_coverage.py": "4badeeb9dd87cd0df60d3ff1d6b1918f999b4f60a25dee155ee31d6d903d27c8",
+    "scripts/baseline/audit_logical_reshape_batch.py": "c658a5c81cd18b60cf166d3846df0739ddba7fa49907b974bbafa9d982f49d43",
+    "scripts/baseline/audit_manual_semantics.py": "1d6a7bed0dc86cc2be2af7c95a39e6c768f2f9c68a14f57453719298da760622",
+    "scripts/baseline/audit_model_capabilities.py": "b1a98623c8d7608ee6e0accf6404f3a012566e3fe0e5db6127c49a947101d913",
+    "scripts/baseline/audit_native_array_batch.py": "ec066f71f0046fd287e335225f56b17fdc51bffe9a3473e2e75e3ba10c75380d",
+    "scripts/baseline/audit_native_function_batch.py": "6bf7ec9f4b45dfbc15d799de55226d204d54ece95b29ac849ba946a157baf1b6",
+    "scripts/baseline/audit_native_star_batch.py": "7a7703ea91cb7e6e6ceb3c83c306535daa27bd645880d94f3305c3df619fa6d6",
+    "scripts/baseline/audit_object_arithmetic_batch.py": "498aa987ce69cc0a21387feddb75de057805f979103599891de97dbf507c10d3",
+    "scripts/baseline/audit_object_unary_batch.py": "1b9c85eb13a863215208c87ff2396ecfd5830dc611eea44755e2eb27fe596e09",
+    "scripts/baseline/audit_recent_construction.py": "af7344ed682dc3bc88772a4bf1a5e71b5886b11a8f5d73affbdf6fccb178eb84",
+    "scripts/baseline/audit_scalar_conversion_batch.py": "c2ca0b45be5973ea34a696511bcccfc78873488757cd90ae04abad5b06a87e19",
+    "scripts/baseline/audit_semantic_benchmark.py": "68ab7806282d08aada5962746e6ba8723bb7688f68c78ae2471181f304661e0e",
+    "scripts/baseline/audit_unified_candidate.py": "1e551db5e000b7068845fa84c9d50a3db205208dc925f4b6caf37b0e156b6613",
+    "scripts/baseline/audit_upstream_helpers.py": "ae8a801fef3dfab3fefdc3d63f6a953e3ca57234c1d99d0aa056bcf9481c7074",
+    "scripts/baseline/batch_norm_ops.py": "63a13790ff21035aa9a1f1b9e71d5c75377ec06dc56aaa3cd8d870b021c0b256",
+    "scripts/baseline/benchmark_bridge.py": "59da66f9ad97cab382b1eb985c1c4f4fb185c0fab142068e14a6ff117b2ec9bb",
+    "scripts/baseline/benchmark_graph.py": "add5943bac0b7f6d93b8e5336e1572f236e42d607804f5683e9ed257bc8304b6",
+    "scripts/baseline/benchmark_math.py": "6209466af3540071d0db77a840a9630ee8bd109df0b184a42e60a03483026bb4",
+    "scripts/baseline/benchmark_runner.py": "2cf7b1890196717fb8f1bdd01d108e998bc4c6d1d5faf5a16312c5072135ee31",
+    "scripts/baseline/benchmark_semantics.py": "88c9b3a1b2866c4a5e27144c6c55001195168ecbab5ec9a96e960eafb53d6435",
+    "scripts/baseline/benchmark_suite.py": "00b0e86d91024ea2e5707436048fed1c920b11f8ef4afa5b605111766a94262c",
+    "scripts/baseline/benchmark_torch.py": "9a91c02356e56c3a363308ec6e224476113214b3f3a43145c565d5e82c239dba",
+    "scripts/baseline/broadcast_fixtures.py": "cf84a85336f076f5fdb5ec5a8fdd396bd7ee42bf51f33c71d3ddff19e528b579",
+    "scripts/baseline/build_agent_cpu.sh": "2a67e4be92d36df7f01f9ba3e4a166968dbdb0f0b56eeb504ad43c00d9aa5b65",
+    "scripts/baseline/build_dacapo_dependencies.sh": "9f6b0b70a645508861fde0217fa4ced37a3e7dca92ee9f527bb9de3267d5af6c",
+    "scripts/baseline/build_hecate_cpp.sh": "721168eff8150085c4720d43c87657500767049d7d982981d209b1f31f105eda",
+    "scripts/baseline/build_poseidon_gpu.py": "a07c6af7dbd22233148ce7dd5f0be7a147c17493e83d52c3a067e28067188a6d",
+    "scripts/baseline/candidate_bundle.py": "7b1eec668f61981a312c0ebc9f107876018e0edcdf26c73eeb40b11f16ec0652",
+    "scripts/baseline/candidate_contract.py": "b94d234e59aa9669cf804e3370bbd8dfc1e94c5a718b80e3d9438a24113e5211",
+    "scripts/baseline/candidate_sandbox.py": "c33031727f815d8871ee4a9697b2910fc62a35bb3096f85ef170fb6286c5addf",
+    "scripts/baseline/candidate_trace.py": "adba9e23116740cd44c576f4cd46c0443a7053ac86886a1d3b1b5fd027bcf4d7",
+    "scripts/baseline/candidate_worker.py": "7392d14928887afc77b6aa903c432398027564cf5958270f339a45749523eb26",
+    "scripts/baseline/capability_combination_cases.py": "35a7ceb35a28dfd60997ba048ec11b93337acfb8e7873d1449a5b1786b154dc8",
+    "scripts/baseline/capability_combinations.py": "6c2481f3543e273bd3d04dddcddc4d99a2412fd2dd2016badf86f0cff8e75bc3",
+    "scripts/baseline/catalog_graph_migration.py": "c5718dbd4d54be2cf8febb1eba05df2331a46df81c9faa4d9008e1586770ef88",
+    "scripts/baseline/chebyshev_lowering.py": "aec21d655d2a3a2d5afdc9b7ae65277b6fda8b534b58b4f7b633a7fd7d95fe10",
+    "scripts/baseline/check_dacapo_environment.py": "3d6b9570306239d638e80f4a5e78659187773ac58c4087b1fe6b0631117ff866",
+    "scripts/baseline/check_hecate_libraries.py": "0530d61ac4b079b4c3205168ec4c1fab174622f4384be6198e0c69e2b6604a40",
+    "scripts/baseline/chunked_input_abi.py": "eeac0f1ecc00a9331cb454c528a48d71630dab79d462d670702004b2a694207f",
+    "scripts/baseline/chunked_model.py": "dac7ed51970b899404b070f21414dc7d2835bb09a3c2044598a41747ae83106c",
+    "scripts/baseline/chunked_model_cases.py": "f24d184f28827e735077ad797bd08242a930fc3b5a241aadbfc36f96679e4b52",
+    "scripts/baseline/cipher_abi.py": "9c3505a82fe3b1922e60e6edddeef8a3134c0d39f468921e51ffb7062ea84cef",
+    "scripts/baseline/compiler_artifact_evidence.py": "23d269549aa9bd254e2ab7a52aa2bd3f8fc6b18329381e94024278d0ffe541f5",
+    "scripts/baseline/compiler_configuration.py": "71e6e90c112f6cb5b09fed02e87ca83adf74092ebaa7090d854a2b4b391dc29b",
+    "scripts/baseline/compiler_evidence_cli.py": "17aeac085b84399743731677bac4bfd370c61524842cabdb2e8f8bf6d431fc27",
+    "scripts/baseline/component_backend.py": "5783f07af874b470a4fdce178e397f0185bf7baf5fe6b8d9246520f29d928d80",
+    "scripts/baseline/component_contract.py": "b70a5322c50aac6b23c15725942c0b64c2446cd14fb42ad493b1f48979380aed",
+    "scripts/baseline/component_control.py": "f3f856b717f90a3163d62a61c4fbc23f9d06fbd7d52e12b3c855fd82e49a3440",
+    "scripts/baseline/component_worker.py": "8d50300c3e28f63f7036beb8e652cce432c99a33430a938892663e0c828ebe05",
+    "scripts/baseline/concat_evidence.py": "d955b12d22a3d98fa97ebb0613590a12755241be40f97e809a68688c02a0a6f9",
+    "scripts/baseline/concat_ops.py": "c65080f4a99be7a918bc0d64cedbc8e8b4668c6e76519149f2c12446c8fcb181",
+    "scripts/baseline/construction-exercises-v1.json": "f08fab3c44ae221de76583f773f3b32846d9f776bc3d65a28402f07d21378d93",
+    "scripts/baseline/construction_calls.py": "5c9fc99056c364324be7796004a29e3e515c15991f95c656c589b5796d039539",
+    "scripts/baseline/construction_evidence.py": "cfc7d553f339d68369d69c77923e11b464ee806378aa94e6ec19dac7af3846aa",
+    "scripts/baseline/construction_exercises.py": "8347f3a9032b2fe8a4258b5a865e0800de94ef8adcc229ba6f00e082ca239d6d",
+    "scripts/baseline/continue_dacapo_cpp.py": "91564173b3dc30a504010b9af343476f9c264df96ddec12e50503e37f73a9c81",
+    "scripts/baseline/cuda-12.5.1.lock.json": "521cd4ae2ac5ee1af679539fee39fc829272eaa87bb20c418dbe3ce4633b1a65",
+    "scripts/baseline/custom_batch_manifest.py": "e1b1c254c0b415c3deb9a8d60e6ae2f82eaeac1203c5f1567dfc733c9ce52784",
+    "scripts/baseline/decorated_functions.py": "cf7a6bd72be9042d19291456dd75e84dfcb038710d688b1dbaa2a000035f372d",
+    "scripts/baseline/deepseek_http_worker.py": "5fc6ffdea2f4dd759b9b0eece712d8cc1dd59c411073bc32c63de801149dc74d",
+    "scripts/baseline/deepseek_network_probe.py": "6556bb7abd95badeef9a715ada78151c181a0c1bc23dd991547421b70cd34787",
+    "scripts/baseline/deepseek_provider.py": "69ee98ec042df813be15264177e3226db273bf1e2becf3e4677d13abad5d55b0",
+    "scripts/baseline/dsl_grammar_coverage.py": "7b720d419048f552c6cbbcc1bd70553f320765d1ec76bf94c996c00afff57525",
+    "scripts/baseline/dsl_semantic_inventory.py": "f247a9ba66d2128a53628626f79a9bfef6ab4437b45e77effbaf861781af9c40",
+    "scripts/baseline/expanded_model_suite.py": "5c5f3159bbf2330c6cc437dc8bc35bf46a1e263dcb03deb1993dee59c04e966f",
+    "scripts/baseline/function_construction.py": "67afa19ffa7b15c07c6f3df85eaff8c1547569bbc9814c6b367d29d91b1ceec7",
+    "scripts/baseline/fx_to_hecate.py": "ad39c1bfbbdb8fac035981b31e5e98ef2be76526902e158475dbf62cbc6d8bb5",
+    "scripts/baseline/hecate_contract.py": "357591763ff9297abf96f874795914886cc00510626aa435055e713312b034c3",
+    "scripts/baseline/hecate_python_env.py": "f70971e07000ec34d45dc66fb4db3378ce4666e6eacbd6ecb708ef01063412ed",
+    "scripts/baseline/hevm_abi.py": "935cb8c6bd321fb05a8dd62db2aef6e3ee6e90c94b8cf403dc9d99da5a6b4a5e",
+    "scripts/baseline/historical_model_analysis.py": "85e2deb33b4ebbcf801bebbc5da07d635837533df1c63e50e924cf209a0e82dd",
+    "scripts/baseline/interrupted_batch.py": "ddbdff5119e01d0ca7e9faf5e6f258607dba6dee3395dce721efcc58051d0a49",
+    "scripts/baseline/layout_guidance_cases.py": "6094d72b54aeb367f2f91c287ac493a3d5292fb37b79cc54816ecc07351a6950",
+    "scripts/baseline/lexical_scope.py": "5f80b879132ca2974a20a48610d13f2037597e1c4aa847fe29037f464f4a7c70",
+    "scripts/baseline/logical_reshape.py": "fbec6dff948aca5bc950ed8b2070fbfd2afdd38b5c28018a6a9d6456dbd043d6",
+    "scripts/baseline/manual_semantic_evidence.py": "0acda694745730212e41ab1de24fb1e1ba796f6852b32e0d41457ffaf5d5f066",
+    "scripts/baseline/model_catalog.py": "ccf3058e2e602f5943d88e35534fd4fab841e3d3e8b578baec9dc81aa7a125ec",
+    "scripts/baseline/model_decomposition.py": "328a23786022c30ffbe531444d8e0211d10fe0dff8a39d8dee65361857abb1b5",
+    "scripts/baseline/model_graph.py": "d2d3d9f503183307aae826c319a25afa9fe41cc14bd263fb6f4d94827bba7fee",
+    "scripts/baseline/model_import_cli.py": "204e44a2b6f3f78cc8697cb739eb2803742e961d671fc1638ee266a51d7815a0",
+    "scripts/baseline/model_semantic_coverage.py": "be91b887e1fe85d9fabcaeb6c5c90a05850d5343a25f87b496c6f0bbcf27b862",
+    "scripts/baseline/multi_input_fixtures.py": "e12e4cac07452daa727ff8d5a876ebfd01eca9cb2499ad60565f6f759ff0a8bd",
+    "scripts/baseline/native-function-exercises-v1.json": "d13dc336918e71360a61a12b462007926c546a6874cdfd5d0fa5320a95b7e575",
+    "scripts/baseline/native_array_alias.py": "d2e7ccd19804de0f670261ba09d17c2dc0bd9eb2f0700efa8080b33036191c5b",
+    "scripts/baseline/native_array_core.py": "e58af49867951c4d283d4337ae0b2351fae472379fea1c573f6209cf0812f80d",
+    "scripts/baseline/native_array_exercises.py": "a7462ea3ff92dfc864bb3c4c16c63f836ff21a40809da131d861dd9c74a6f81a",
+    "scripts/baseline/native_compiler_smoke.py": "34230f8fb1584085562a9c1b5eb26a128a2c8354cccadbabe34261be213b068a",
+    "scripts/baseline/native_execution_slots.py": "9908abc887ebc89c6f5363dd41cab33db06dc9aae982ff3bb6ec3772530f45d4",
+    "scripts/baseline/native_function_core_fixtures.py": "1267657d0a658d673e6e889fb46b4a68cc2654db1486c23b2ededbd16724093c",
+    "scripts/baseline/native_function_exercises.py": "8d9fd370518444571a65154b7e279071c7dc4b562d7ad6d75bf41dcfeaa7ad1c",
+    "scripts/baseline/native_function_rules.py": "3e0c6b06a93afae30d23f7e83dc18e654e373face71ea03d86b5f7ba63e2bbe2",
+    "scripts/baseline/native_public_loops.py": "1485b11b535b1c0adb93083e25e6549c8b513f782108315f3025571641919b84",
+    "scripts/baseline/native_star_exercises.py": "841646f34d9c7052e4dc227e3b286200c484aaafaac1628590ca95932879af90",
+    "scripts/baseline/nix_portable.sh": "891d668025e33544867347cf5b2cae67e9a5fc827807b3802c73b66c18d7decb",
+    "scripts/baseline/object-arithmetic-exercises-v1.json": "6ffd365b458d2f20b109f73aaba1d7e40ecb0a98559eb1f8b1cde868fd2c1aaf",
+    "scripts/baseline/object-unary-exercises-v1.json": "4ea51f41af60e454e4ee4ba076f7089faf04fcc64e04626c8322cac9567eef55",
+    "scripts/baseline/object_arithmetic_exercises.py": "e9be61dbd87bc8067d2c6ef83a251da099428bc9355577d5c9b06a90f2c233af",
+    "scripts/baseline/object_arrays.py": "2e353edc98d529b2ee4995c14516e94ca7d44ee2d8ea44d4edfcd337ea918da6",
+    "scripts/baseline/object_unary_exercises.py": "022c10c4a61782d06bbf66413af929446b28aa741e78d7ca55d975b7b148bc1c",
+    "scripts/baseline/operator_reference.py": "cebc5ee158b1b13a2f7021bb619aacd8369423c794490559bd1d34c26357ea96",
+    "scripts/baseline/packed-native-exercises-v1.json": "5eae99bcefa4e0100736d533694d603ac1afbd9a2592e3eb718b952a036f68d8",
+    "scripts/baseline/packed_composition_cases.py": "929d1946f8259c5e71d99d1297a44b9f4d3920626d7b8749266c7852fd062241",
+    "scripts/baseline/packed_input_abi.py": "eb4deaeb8e0fc0df9628f6c3264f070fbfcdb1fdd0678558fd58063c2793624c",
+    "scripts/baseline/packed_model.py": "1b0fdb1c0c3d26a51ea766626c71b17b8d02a9416ee21e0868dbba828d2806a1",
+    "scripts/baseline/packed_model_cases.py": "cd94ce634d842f0a6dbbe52a9232df03a3e664c3a8aa03e71d6115be580d9fc0",
+    "scripts/baseline/packed_native_cases.py": "eb2a6bab3cb4cf8bb34d77b5ef302824f043f93ac4a32cd0c3b611eacb10ec7e",
+    "scripts/baseline/packed_native_exercise_cases.py": "9562b880a43525809e5f0be2fa9dd8e59c04fb96a1abafa494b93f74cc12108c",
+    "scripts/baseline/packed_native_exercises.py": "6f05502f3de24406309c5433a2673ac7ca8e98efc7c5bf62bff194610f758750",
+    "scripts/baseline/packed_spatial.py": "48d45ac73139807dccaad1bc691d6913bd257d2058bdf88d8b057c01e6df02a8",
+    "scripts/baseline/packed_spatial_cases.py": "cb002c03bb0af855e5ee7d61b23a889d0fccf0dadfeefdf10851f99b972bde98",
+    "scripts/baseline/patches/dacapo-augmented-operand-order.patch": "aa6684514928daad0e2dc052159982bd55b19f009566a292c175624b855db9ad",
+    "scripts/baseline/patches/dacapo-bootstrap-containers.patch": "65778f4bb8435d579edcf8e2d9f077a5614f3e38b9d734d0a35eda2d9a443764",
+    "scripts/baseline/patches/dacapo-concat-layout.patch": "a411e758be10d360f057c96ba217e24d9a4f4ecd64d12ee75a1c5b3c9c15ef02",
+    "scripts/baseline/patches/dacapo-constant-output-path.patch": "0d8d8ed2691aac9bff04bfcf122705d387a990abd8d00242a212c9681695ad33",
+    "scripts/baseline/patches/dacapo-gcc-qualified-casts.patch": "0842f69d5547760b04539a4dd0598efca474fe0ea30d717fcf282ff2ac3c8788",
+    "scripts/baseline/patches/dacapo-minimal-mlir-link.patch": "20967fe04e01aef28881dfd1f194e599d4a22a9ce607b47411db78498cd1d44c",
+    "scripts/baseline/patches/dacapo-native-function-calls.patch": "99e5eef504ea2fc9fd4572e79a2c0db7ff3e3127ef391f2a7b8a523e6034bfa2",
+    "scripts/baseline/patches/dacapo-plaintext-subtraction.patch": "d05b1d57d15932e9e4b09dd07bad2f59949776f26b252cb2296bb0d662322c2c",
+    "scripts/baseline/patches/dacapo-refined-function-input-types.patch": "af175ce740fd93d366ff1f55ce45cd6ebff235d2b80db48325544b5b95e9f6ce",
+    "scripts/baseline/patches/dacapo-seal-runtime-exceptions.patch": "ba2794a739af7c80facc921f569b1a6b9c53c19d8e45f832ad7bb92722d77731",
+    "scripts/baseline/patches/dacapo-unused-mlir-dependencies.patch": "1c3aee382ab7f8888ef63357b6c0fe7772afc0400dd594cc2d9c2ccd09de0ef2",
+    "scripts/baseline/permutation_model_cases.py": "a73e4c921cc29364fed465573c0fe3eb189bcfe97cfdcaca7809713bb3bdee80",
+    "scripts/baseline/plan_dacapo_environment.sh": "b7dfe3f3019f439e881f66f00e8d23ab2a5b6791427137824ba6de359c970a6f",
+    "scripts/baseline/platform-profiles.json": "a8d2032b9cdad3ac67175d11126b55472c9139792575894471c2a1d729f5f622",
+    "scripts/baseline/platform_config.py": "ed6272b5055a7d558e037cc0cada79be955c8c8c8d63fa5314086d0c6142c2f8",
+    "scripts/baseline/poly_dependencies.py": "8372ebc2af51e4708ba44b7b34072c1da324626ba5140b8a8f70caa51f15191b",
+    "scripts/baseline/probe_bootstrap_frontend.py": "7621e6831e9a5f2941d57f7ac9a1ce90d7e4c7ad7518681a4a4f091fcd12a973",
+    "scripts/baseline/probe_checked_native_functions.py": "4b5e00ec8355f76f26fa706dc35aae84b146d7b42d249a0dbfe41b5466a7f571",
+    "scripts/baseline/probe_compiler_configuration_guard.py": "e3fb37450c9109f2c71d037f8fdfe51fe06dc2f88f0d82054a819f43679fc591",
+    "scripts/baseline/probe_deepseek_tls.py": "df949ea874fd414c8de6466346440ddbae325cc5076f8853444c46afc14b212a",
+    "scripts/baseline/probe_frontend_augmented.py": "55fef8bc85e3e3653d0e9d926eb53b6d0582ab2d3edb1ba1c2aa6d2868f87df9",
+    "scripts/baseline/probe_hevm_precision_graphs.py": "00e21dff3530698a574848d6b904b37214e1e2c659db426f6b9a30496f0ce526",
+    "scripts/baseline/probe_hevm_waterline.py": "317fe5a034b5ce0d12c9c125a5291084dba88aab5bdff481fa34125665301292",
+    "scripts/baseline/probe_native_call_boundaries.py": "0fa996793ae584a910007392832c10acf0f2e6e139ab40d126c32d7fcd0c5e96",
+    "scripts/baseline/probe_native_calls.py": "05bff29af4fc7a2e8c4afb47f8c0d518a97c86c1862f0ff5a3db73831ae86ebc",
+    "scripts/baseline/probe_rotation_keys.py": "9c3272ec732b67d09d68c3ffef3dc61c91b9b41f6969514c846ef8ae9caa0d22",
+    "scripts/baseline/probe_seal_rotation_precision.py": "7dea25c57e0cd713ab203453f3b132efc4b1fe7ac3908e19397461401660caa1",
+    "scripts/baseline/probe_upstream_concat.py": "f5328801bf1aac7d4d86dc5301ba41459e4771c578ff1518847925cb36b635d5",
+    "scripts/baseline/provision_cuda.py": "f626eec7187c13bac9093103c1118c5b53869449614a40a29fca9bb72e7e45cd",
+    "scripts/baseline/public_construction.py": "baa15f673ffb81f86c6d0f716237c11340445461be9c277f4562403d1f75bc32",
+    "scripts/baseline/public_numeric.py": "4c48753094a1fec892c22fb9ab9ab412a753c7f1bcacea154a6f838c4f3ce549",
+    "scripts/baseline/public_polynomial.py": "0aa3e3d4bd5658205da48468eb29022b7c710effa0670519f9eaf650c44a1257",
+    "scripts/baseline/public_strings.py": "244dee49f23786b48a43c8e27c9d629a6d5a55a3ba8be7e85410f5a96cc3445c",
+    "scripts/baseline/python_compiler_smoke.py": "73e608a497219ad62bb3ffb821c430a9591ffa6d4e0a2eeb13ea8d7443e46184",
+    "scripts/baseline/rebuild_hecate_frontend.py": "a945a989e81313ea2ff1f4cd2e9d22a96f244445a558d00cf0d6fd2d70049461",
+    "scripts/baseline/rebuild_seal_helpers.py": "c16f2e387c27eb1079eafd37f36606b50a600e40dc5e4aebb71530b2721142e4",
+    "scripts/baseline/rejection_benchmark.py": "406c5c36a41b3b3522618ad25718918f0b9b628917b885c9bf1fc52e474b9527",
+    "scripts/baseline/rejection_benchmark_cli.py": "763328844e1bd68e1325bca3ed47c8da813a91279cf2e3b7235842c05935a343",
+    "scripts/baseline/replay_concat_stability.py": "8ed87ed8ac5432b1e8467830c65e8b5fb6e37cac701aa5c7ba1ae59b20362634",
+    "scripts/baseline/restricted_model_python.py": "ffee6f0b9acb0bfd470b39e30d843267af5d63c66d221121ec4fd371b9a93bfc",
+    "scripts/baseline/result_retention.py": "e07ccd013bd81d30122e133e82222821568a5e1d8769867ccad480abec3798bd",
+    "scripts/baseline/run_adapter_checks.sh": "423c489f6b0ada20dd4d0792943b1ae3ea0ef38861b259704e08f6033118eeb0",
+    "scripts/baseline/run_agent_batch.py": "3312a690c8559156ee060eca536b55364fa145a375c086c36492007d0b533b4c",
+    "scripts/baseline/run_approximation_golden.py": "cdea769eb6113d70af319eefe9ff7c9a0860797a080514c2d67639aff35b78ef",
+    "scripts/baseline/run_batch_norm_goldens.py": "00052bbf7a6fd958e3f9ad9d5fa2ac2bd50741473564c4f4f9c0ad690f9613aa",
+    "scripts/baseline/run_benchmark_shards.py": "819887ad73ab40edc861d0c10eff26df64a22bc1bba3468a152eb7f4870d9cd9",
+    "scripts/baseline/run_broadcast_goldens.py": "d87696aa4632730e2e2dd539aa5583d4911290fbac28a8985b6123e39a9a96ff",
+    "scripts/baseline/run_call_binding_goldens.py": "f134040d23a2cdfcd7c05fd26508934ac8971854a4acd17787a02b6ec193a2f8",
+    "scripts/baseline/run_candidate.py": "5aa5afed93a97d3a4c063d8f41b87ff45c4fb9c42e854fb39a7ccf68a1e8f086",
+    "scripts/baseline/run_checked_native_goldens.py": "153b2e8aef9c0efcbedb40d3c086a8a489df3cc57653f1f70c7a44025952dca1",
+    "scripts/baseline/run_chunked_model_goldens.py": "92bad6fe214de0703ee2c401f0dd2d1c829dd1e30724ca35e65e8063453c71ea",
+    "scripts/baseline/run_chunked_trace_replays.py": "47fcb89d5291d960d48cb0e0b4ad82d6c5745adbcbee6626b58b1d102d43c1b7",
+    "scripts/baseline/run_closure_goldens.py": "86b8f1540e4b7f8620454261137afa5f47928ef6081500b8c433e81a4d3bfaeb",
+    "scripts/baseline/run_concat_axis_goldens.py": "20d0a35c7165e2bf4054c4186a88f3782c1044fc237c4406854a7b04fe2f76e2",
+    "scripts/baseline/run_concat_goldens.py": "3897cdf1b30d9e2ac09c5a8e7b66d7cdf2ae7d98ca001f94991b43478abd3b80",
+    "scripts/baseline/run_construction_retries.py": "f0ad18a286bfd998fedf90dc7bb939d354fbeed7e681874965918aa2338f7ccd",
+    "scripts/baseline/run_cpu_ckks.sh": "0d5a954c4fcfab5d7d5f344995b38877e82c9be01cd78b333c40aa0a608cb881",
+    "scripts/baseline/run_cuda_toolchain_smoke.py": "ea751376c12adca7b6fd3b14cda503496e75ec891fa7f382524f2100d258b069",
+    "scripts/baseline/run_extended_arithmetic_goldens.py": "25db4d7ca78c1c1b9a019ea129e4de19679915744ba8c56168f0bdaadcfb909c",
+    "scripts/baseline/run_function_composition_goldens.py": "719b11f90b098b29ed6a27ad93521633b3fcb7847f3dd1e271db3a2a619fb862",
+    "scripts/baseline/run_function_literal_goldens.py": "5e7c15e0a49cd706b10f83fbc4f3c62037d032c7f03065b1dce3b77174621977",
+    "scripts/baseline/run_gpu_drop_schedule.py": "3d764e1052f907cff17aea3a82a879c506412c0224420ffa63fb847a46518e2a",
+    "scripts/baseline/run_gpu_modswitch_semantics.py": "b5f3ad01aefa588b0d45799c75309b02ded6678eb06eb46a6d7ef34b643f09b1",
+    "scripts/baseline/run_grouped_spatial_goldens.py": "1481f24dcb4de5c48469ba465333ccf6669e902db62c6e1a00e2fe31e5dbddef",
+    "scripts/baseline/run_logical_reshape_goldens.py": "ca278b6f93511f7b3146132f4d10ea2ffc4239f4710c4fda9203a511ede9c430",
+    "scripts/baseline/run_model_batch.py": "1fab5e7c27b86433176b62c68c72ec27dbb31f61110af6409b2f00a4216630b1",
+    "scripts/baseline/run_modswitch_semantics.py": "e80bdd5ac8e4e509c7e70859030283b41f07a1d16cd4ad330ff86bebb439ad91",
+    "scripts/baseline/run_multi_input_goldens.py": "58aa3df4b26ba07b0ee3f5eb6e5c4bfe3678ae3f30c573a324d3769f11050657",
+    "scripts/baseline/run_native_array_arithmetic_goldens.py": "1ecc4b72d78ea79475fc4d5b8626ed2f41c92ebecd89e5dc1295c5b9f4c3168d",
+    "scripts/baseline/run_native_array_exercise_goldens.py": "6dc386af5a0a350a71f75e8a3d9704513a71f2dc2466e9e70cd5a418ba10d39c",
+    "scripts/baseline/run_native_array_goldens.py": "481d21894cb88cd3aa9740376b5f2766f9aa761c52332f32acf521fcca413343",
+    "scripts/baseline/run_native_array_mutation_goldens.py": "54923d4dd383c068a66d44dbb28817f264bc4bfb155a4edcbf75dfa1fe27f8f7",
+    "scripts/baseline/run_native_augmented_goldens.py": "06a2d4dfe9e6b95609a3750e984f9ff1f4284fcf42b90c25b8b27a67eb5aff68",
+    "scripts/baseline/run_native_call_goldens.py": "6682f85d593d8a9a488bcc1a70bed290a79a9d8425a159b5cd7d9be4cadede7c",
+    "scripts/baseline/run_native_function_exercise_goldens.py": "7c67fb3a2db582f2164fc69fd84e43a963f3c1d6c358b9006678b729b2c452ee",
+    "scripts/baseline/run_native_loop_goldens.py": "6fd3874c6b6dc0a5f696cd9e05cd3aa6fae5493266134c5d8d4ce79d0cfa9438",
+    "scripts/baseline/run_native_loop_precision_goldens.py": "59c1a872384797e1ac4fd1981f238126d040216ecf416adad8c87b31b08fedef",
+    "scripts/baseline/run_native_star_exercise_goldens.py": "8783d20165ea6fc9f869d334a5b211439b3b35d1884dbe01c69b0316572baa2c",
+    "scripts/baseline/run_native_starred_goldens.py": "5c0d353be37c100bf004fc461d8f3ff65282356e0f45aa4d5055533e5a112f74",
+    "scripts/baseline/run_object_arithmetic_goldens.py": "e7d5ed563ab69664f6d90e6186ff836806fc4e4647caf49736d45d037f060462",
+    "scripts/baseline/run_object_array_checks.py": "54a77f0b4b6c37dafffc7068cbb686182d967e6295fc80cf5adb47a6aace0816",
+    "scripts/baseline/run_object_array_goldens.py": "f46d3ecf707653cab31c57e51dc5777a5ad79a3e91398f1f28c92cfc777ae882",
+    "scripts/baseline/run_object_unary_goldens.py": "5bfa6775f1ecf804d48dfe5e082926fd7c32c9620c6ca33f80e0d1c0bb0a284e",
+    "scripts/baseline/run_packed_model_goldens.py": "75d3456a69ea9a7c9776457e9a533ec13fb93f10127b0eb89ff510155ed1944c",
+    "scripts/baseline/run_poseidon_cohort_preflight.py": "9292601fe3cd5fa36768139db4ab8fadcaa22a3abcb9b4e64c0c0e27f5bb1f83",
+    "scripts/baseline/run_power_goldens.py": "c650183bf9d387e58d94cc1a7b20e16c06bfec62c30063d8dc0c70343d415d3b",
+    "scripts/baseline/run_public_construction_goldens.py": "70f01ec2599374d8c5c7b7a1fb1137da9cfe4df97018cb31064b2a00b3e4a14a",
+    "scripts/baseline/run_public_control_goldens.py": "38bce7229f9dc4763ec69516f123ee60385cea235f090d334f8ee370ebdc9048",
+    "scripts/baseline/run_public_iteration_goldens.py": "86412b56b0ecf1db9a55c49b979c94e03feb0804ff07fbbbf25f4b68d5d4a8a7",
+    "scripts/baseline/run_public_mapping_checks.py": "9f1899c32927c961c424a81fdee762c224e698eb003f01314d0a173756135319",
+    "scripts/baseline/run_public_number_goldens.py": "b8a02e1e768bdbf33f6da0c153f28b677b6a1e54e735cd7791c08f17075066f4",
+    "scripts/baseline/run_public_polynomial_goldens.py": "c30445e6e91c3ace9503b00df400059a3bd2f81c85e10bc04579b21d1180729c",
+    "scripts/baseline/run_public_sequence_goldens.py": "beacf936b30c50d935b3229c5272991cc7e89b592b56245f77649933d921d2ca",
+    "scripts/baseline/run_public_string_goldens.py": "9a5ca95af0e0c8e7338017490991ebeca2806f854ae06fe300670bff3e56529f",
+    "scripts/baseline/run_rotation_goldens.py": "d9547b0f6f8bb08d6e1be27949e7314c37ae3fc151be2e842835f746513d43bc",
+    "scripts/baseline/run_scalar_conversion_goldens.py": "1023575f73f721088aac36991f01974371a2fd7c47320d06aa74ee3d07c213f7",
+    "scripts/baseline/run_schema3_goldens.py": "d660e1a00222bc881a1bf99001c237c4caef5822e3620e578f36fd58d5f0dc3b",
+    "scripts/baseline/run_spatial_goldens.py": "e9091f915919152153e11d21e6f3137b093c93220e9995aa25597dcb7a509a98",
+    "scripts/baseline/run_wide_linear_goldens.py": "dbd0b0774df0450c9bdb6f45d3babe43caa6d8d4725826545360d1cf75a8c69d",
+    "scripts/baseline/run_zero_goldens.py": "7368fc36f535380829457778dbe15ad517a09161e58affd2561e4daea89c96a8",
+    "scripts/baseline/scalar-conversion-exercises-v1.json": "93f635a60eb8bfdfaf18d046f6e09f145b628a074349a2ba4c936765dcd09c9f",
+    "scripts/baseline/scalar_conversion.py": "c835f2f8b04f8a653113761e296523b11c1956fc5335c41ffee85500cf71e170",
+    "scripts/baseline/scalar_conversion_exercises.py": "4364c107f47425cfc95c2bfe988cf0ecbdcd7099e6f8c88031119c63aef0e795",
+    "scripts/baseline/seal_artifact_gate.py": "190953d291153fe2cbc715cb9f6d44dcf1c8514c5a5684607890f50e1250cce2",
+    "scripts/baseline/seal_cpu_golden.py": "13ad2fc1d1077b02fc71e66ab8d207c1a98d2603bbc4578dc799d4200bc36859",
+    "scripts/baseline/semantic_benchmark_execution.py": "e30a76830320531eb745e15736be13b02db60b1964abd79d6f1c94eed5000d63",
+    "scripts/baseline/spatial_ops.py": "3e1042d8967a94f0a779a710de1ac00a13cff0ef773e82039ad9d25adcb98855",
+    "scripts/baseline/tensor_model_cases.py": "9358c65ac10a55ded1b393e1e0c2469381c02f0ebfcdac7b8cf2dcc88e1b0186",
+    "scripts/baseline/tensor_permutation.py": "7c2f5947fb7385ab259e2875ed1cd5f415384f4f679c93a21badafa6a74eeeb2",
+    "scripts/baseline/test_advanced_agent_manifest.py": "4d7fef93243abba21f1045c65c409f13e3357709ba0179fa7a5a5d507ccab0e2",
+    "scripts/baseline/test_agent_batch.py": "8ca8ba07fc8733bddb8955e82229130dfafede43f64822b7116e92ebf52978cf",
+    "scripts/baseline/test_agent_batch_audit.py": "45ca5efa9eaf913802e457c6ddf6a56b66a014b1abd931ccf49a175ca759ebd3",
+    "scripts/baseline/test_agent_component.py": "0331d9b88b5e6f1a99b642be7cbf9a3a7a4830a1d87b864738963247cf22d235",
+    "scripts/baseline/test_agent_credentials.py": "6fd4734f51719b4ce84ddccb0e902b0fb6455471e35d428cb3c0035e55d4ed66",
+    "scripts/baseline/test_agent_entry.py": "02a5005cfa471ccfabeabc5ade0f01fa25a7338f1c6b56bac44b3b4490cc082a",
+    "scripts/baseline/test_agent_lineage_audit.py": "ac9ec2888b40538298dd5a7f4947df42426eff17ab7317ee9175d323bb88171f",
+    "scripts/baseline/test_agent_setup.py": "83030cca1cc5a6ab12e0f23d9becf235884ea52e976282a3e36b5fc9b032c5ea",
+    "scripts/baseline/test_approximation_errors.py": "7c8c1333b3b4236513f0b543ba50f025d9062d5e2ea6ab91b4b6a1efead9576e",
+    "scripts/baseline/test_batch_norm.py": "f64d055fe3eb86a9f6b5c7817f5cf5a753bd201d459044fc576302367105ce87",
+    "scripts/baseline/test_batch_norm_evidence.py": "75594031dc9c7df2b0b5e7b866358de8aeda62aad1185fd6f00d06a9641d8a01",
+    "scripts/baseline/test_batch_norm_paid.py": "956c26abd694983388ca28553f7615700cf5544ee60c728211a3703fed07ff68",
+    "scripts/baseline/test_batch_reporting.py": "0849e183aeb68d03da69885704cd6e07397d058234ccaad980d761c198d4711b",
+    "scripts/baseline/test_benchmark_execution.py": "6659782b28118384db9761701149cbae9e89369e2ba130ce5b9b1bb07ab7f31c",
+    "scripts/baseline/test_bootstrap_frontend.py": "152d5dba5d4a6c879a6051aecd8d2689098a09bc7dd13bb1535793fe3c9de96b",
+    "scripts/baseline/test_broadcast_semantics.py": "b161d1f3b5cc45d19d2b949d0cc0296470ef842b661b9bf9f4965717ab8853b3",
+    "scripts/baseline/test_candidate_bundle.py": "27a28e6697c5003d5383f13c1cf1eb32ebbc170f53ec623c6b7e4b44d8e98337",
+    "scripts/baseline/test_candidate_pipeline.py": "1ad3f80a2c1f462a875aded806f0dd9a86cd5b1c90aaa80f376012d1e452fb89",
+    "scripts/baseline/test_catalog_graph_migration.py": "0b3809c61cf257142a51598e5a1b9e6663b5c40e442acdd411ce2c99e18b1f22",
+    "scripts/baseline/test_chebyshev_lowering.py": "8f41141f8032dbe36796bcf76eab130b5899bf1a1f0a5784481dc25724c8ea72",
+    "scripts/baseline/test_checked_native_evidence.py": "ceea81928ae4f09e9e5b662241ffd895140a39d9fa3dda95dedd01555da6efa4",
+    "scripts/baseline/test_chunked_model.py": "4d132e8d31538158954b459b8c757f51f3e90f3a9d03099b99db5ef8b39f7f39",
+    "scripts/baseline/test_chunked_model_evidence.py": "b4644e87c439a27d91644a183da7a31e30b0891292f4ae2e17f05bb31635c57b",
+    "scripts/baseline/test_chunked_paid_evidence.py": "768662428fd83143a3976f19e4dfa12501f188dbba8e302b355827222563d738",
+    "scripts/baseline/test_closure_construction.py": "d5dac29a7336a29c6dd3a4139c04e26ede5c598b07491117ebeea6c391ac370d",
+    "scripts/baseline/test_compiler_artifact_evidence.py": "05917c1724d0b527982e4f3620c81e1686fbbd388ba65874ad3fa56285a3033d",
+    "scripts/baseline/test_compiler_configuration.py": "a10a9bfcde210fd299f9667595413a8ef3a1e2fbc0b451228e6496321cc52314",
+    "scripts/baseline/test_concat.py": "7590a145084c3b397c1baaf624609fb50daf5469d782b80370ed78c9da49b262",
+    "scripts/baseline/test_concat_axis_evidence.py": "a8fa055611523fe351e93b644453a9e25efe5a967105d15099e9727dc8db5b9f",
+    "scripts/baseline/test_concat_evidence.py": "80a4965e60599551504ad765b60be4fca8c84f4032ef5fc280e228fcb29b70a3",
+    "scripts/baseline/test_concat_paid.py": "937ed53026c4cb8f60b1bd9033ef19b418a45e5570debaf5e917902e6e3e2177",
+    "scripts/baseline/test_construction_calls.py": "128230cbefec90a2024d8077290c64606318edf279f1d3779d1b99d72dcbbb46",
+    "scripts/baseline/test_construction_exercises.py": "8600e726044e3c99be3efb774e7689b2adbc4f29035d3e1b891db8e021ffcff9",
+    "scripts/baseline/test_coverage_cohorts.py": "0b60a9505dafb48515dcce5ba4bc9c78f7d058a3f39744f278a16353e9a98d19",
+    "scripts/baseline/test_cpp_continuation.py": "b7388fdb6714cd74eb56fa38c3e42418de04df7d1637706cc3e0c22d6f38dd74",
+    "scripts/baseline/test_cuda_provision.py": "e3c83d273476133fe808ca0ea25af01a850db862354504294d2fd01b58cb7d81",
+    "scripts/baseline/test_custom_batch_manifest.py": "7b66d40b74fb1dc3fb41d3421c70f8de1013391e2e54bc8a6db809e933b3f5b2",
+    "scripts/baseline/test_custom_graph_evidence.py": "5ebeeeae96398485828c1ec0b3d1601f0af203dfee14cba794fbe658922b3255",
+    "scripts/baseline/test_decorated_functions.py": "d1dbaa9c3adaaecece0dac7c34a192c347b0c261114431aa90154d661aca6258",
+    "scripts/baseline/test_deepseek_diagnostics.py": "9fc6e286ff6aaf38c5e143a29005d65564d20c392250b06f2378a83b205e2160",
+    "scripts/baseline/test_deepseek_expanded.py": "feb8ee0cd0cea643285b37e8cd2af911938ecbe6014696e53cdeacecfa1a719b",
+    "scripts/baseline/test_deepseek_only_provider.py": "91d8521ebceb08cfd3ccded9be4dbf8a27ade1c63a828048e2f4b6dc9aff4b32",
+    "scripts/baseline/test_deepseek_provider.py": "71f77331d51be35c5fe3fec7d8d9f508eabf5b9c570ebc0b80070450e94a315c",
+    "scripts/baseline/test_deepseek_transport.py": "6ac8badd0c232aa4703ad592605f45e59c7f472c395d6d4fb1ca065c167b6afa",
+    "scripts/baseline/test_dsl_grammar_coverage.py": "e5e7e3160950ae8938661fffd74ce6a3301aa2a6301a9c61040db39f757e5413",
+    "scripts/baseline/test_dsl_semantic_inventory.py": "61cf5915eaf923c099961e0f4043f450560ee5f3017c59e9d9bab68e67581bb3",
+    "scripts/baseline/test_environment_gate.py": "f13631ab6f277724db7fa1d12a3bb618d11bea99118b4120a2521e92a41826fe",
+    "scripts/baseline/test_expanded_suite.py": "0e86676bafebcd4808a843560d672eaf6ad3c60574bc8d6a208ceafc94d2bb25",
+    "scripts/baseline/test_explicit_power.py": "b43e4fd3e68befe5231f931a67e6b05f355598a020e9693f1bb65fb73f4968f2",
+    "scripts/baseline/test_extended_arithmetic.py": "c3d2dbe6b7e883c21b2dec07c850d0b8f0ef78c8702aab2a5106e51d65ef98e6",
+    "scripts/baseline/test_failure_repairs.py": "e5c430f6bc75c52f4163a041dd9e7ac22d330f971b14bf96b6b464ac7b330e28",
+    "scripts/baseline/test_frontend_augmented_ops.py": "802d9108362064e7b5e3e736033d3e91d907db5de7cf95ce9db64f87cb778bc5",
+    "scripts/baseline/test_function_construction.py": "584b962d2ea36e806ffb407cd24b8ed8daeb8c4ce17d3188c96fb1617c05dccd",
+    "scripts/baseline/test_function_literals.py": "ac441cf1979216c6145abe5c1d0fc696125306c9c8ff8b528c85e9c16c4ca2ff",
+    "scripts/baseline/test_fx_to_hecate.py": "af69e642777363409cd5723d59e54deffa139525170fdd903e06144d77132adf",
+    "scripts/baseline/test_golden_selection.py": "18febbb506918818bfd9a25a0ab1149ff1d2d6d022b0a454e64fd291c50737bb",
+    "scripts/baseline/test_gpu_drop_schedule.py": "76140300e674da68a9394a31d6198a951475ca62da784692aacabbeb1aff654a",
+    "scripts/baseline/test_gpu_modswitch_semantics.py": "a8d16139ccb8a4ae15c446569db70bba9f23420ca9b3992896580d24943f86cc",
+    "scripts/baseline/test_grouped_spatial.py": "bfe7e83f5cc0d1be7da62fed07146f3c10002d3468525878620051655768bc83",
+    "scripts/baseline/test_hecate_contract.py": "6288c96af76f6b62e62a4467f69318c7dd02ba335e805fd3ae189d13d6fd9c4e",
+    "scripts/baseline/test_hecate_library_gate.py": "5f07c19a5706517abe0e37c960d141926bc2bc458af7b032a2d764a8e8c71667",
+    "scripts/baseline/test_hevm_precision_graphs.py": "49bded1656ca7ab2b4d494287961994084fe4ceea173c057de3db986f5df12c3",
+    "scripts/baseline/test_hevm_waterline.py": "9e08b5ad3033516a431755248466e56bde952a4cd53b7fced8c3cf17ac80a31a",
+    "scripts/baseline/test_interrupted_batch.py": "49da2bc1412587929196923f7f0aef198127496522d3d09a49dffd89d97f93a7",
+    "scripts/baseline/test_layout_guidance.py": "dc5856bc50681fca55aa1a560224bd73fd5e11a99396d7bedc3d6552c54c8ee7",
+    "scripts/baseline/test_layout_guidance_evidence.py": "e11de2ce60f3d8df42082df0cb3590a8f5f7e25f2ef1bffb7f39418fcac0bcf3",
+    "scripts/baseline/test_logical_reshape.py": "df9ae4a85a837baea02f95652e6c1b687b9c6bb46ac7b1cc8708cded90ed2bf2",
+    "scripts/baseline/test_logical_reshape_evidence.py": "3d1e2363236c6e764a89a10dd6232e7370ae901142144885f56265eb8d4e650f",
+    "scripts/baseline/test_logical_reshape_paid.py": "156e9b9c0199adb1879b932221fa6943be6749f67ec975e5c6dbd2113c47b095",
+    "scripts/baseline/test_loopback_tls_route.py": "48701b015393330d0f7c38ef51f4b3ce1fe71d36d90654900afbf1f9965ac69e",
+    "scripts/baseline/test_manual_semantics.py": "426bf48b74bff6bf98db7a73577d04c41c56b8b77fc51aacdd0b81aa2f9c7526",
+    "scripts/baseline/test_model_decomposition.py": "e43277c4f91d19108cbb309cf87377550eda94e35d755490e2c10ff6aeb4effd",
+    "scripts/baseline/test_model_graph.py": "e78e5fc76d5c21f7443b9976c7886282d7d69aac6f32f605f35df81a1a0d8eeb",
+    "scripts/baseline/test_model_identity_diagnostics.py": "6d571244b4a2ae8fecff29685679a14641e750d704e633111f6934fb2b786a26",
+    "scripts/baseline/test_model_semantic_coverage.py": "e074690fd1ed16d706f9af027b886abfa080dace0191523e02150fa753a35143",
+    "scripts/baseline/test_modswitch_semantics.py": "e50b7eba0e7bbb77be885e6e926f67a7f563214f9859a1dfef69909d8f8729fc",
+    "scripts/baseline/test_multi_input.py": "b49c541adf2109ceb14fb557cd3ca64e04cd926ffd6cd931a37cc0fd76cde2f7",
+    "scripts/baseline/test_multi_input_protocol.py": "a62a837009ca3274e3018d88cfc1014ebe94e48591c1f2f664c1ca745866a150",
+    "scripts/baseline/test_native_agent_contract.py": "dc73a98330f74f2260674557a393ad3d8fd0e5fe5aeb9e8f9fdcc3aa54a2dac9",
+    "scripts/baseline/test_native_arithmetic.py": "47e1b52d4686dce1af9d486d9e70515f51b98092c0a8ea0da27b42a24de3d2da",
+    "scripts/baseline/test_native_array_arithmetic.py": "b4c940c73bf13898b3d9b3131723bf16b58864ac5cb99295f6ad8e2d3118a2cd",
+    "scripts/baseline/test_native_array_arithmetic_evidence.py": "5fe79821ace1fd0e0bec8243d9172553150c59a52c1339170f09edcabf3b2037",
+    "scripts/baseline/test_native_array_core.py": "a46bdf28405a4fa09853d7d2976503ffb3ea046d139f676c0a16d0c8f3f7e617",
+    "scripts/baseline/test_native_array_evidence.py": "ffa0dfc2cbc8fa3d8c77d8de58a846b5be18479d69e273fd51ca23cabe092b00",
+    "scripts/baseline/test_native_array_exercise_evidence.py": "14b212af24184983a0e123396c5d79dc011e4aaaff304b0d78b3ce35ca3b3bf1",
+    "scripts/baseline/test_native_array_exercises.py": "7b12fb8998d2dc6783ba73cb6afbff59310e4bfffa5a4cd69ee2b46b34ffb3a1",
+    "scripts/baseline/test_native_array_mutation.py": "a751ee252683ce4e0730fc29c34636dead812c695a6ac0b7384a9ede6d427fb7",
+    "scripts/baseline/test_native_array_mutation_evidence.py": "99e27524e2eb2e8208ec9421634ab8ccb326078fc88a8d436df0c81c2c547b4c",
+    "scripts/baseline/test_native_augmented_evidence.py": "7d00add1de968c63e45b361e94d1edd4bdbfe2aeda7b2cfce05cccd2806e6cbe",
+    "scripts/baseline/test_native_compiler_artifacts.py": "8ea8d83a168b12a1e9b52cf9d6583214f0e7446e6d42bd21c1a31faaa06641cc",
+    "scripts/baseline/test_native_constant_export.py": "09ad52ed30724df9dec4c2d3c4d1776dc3142404f1e6791a704f2cc1352007e4",
+    "scripts/baseline/test_native_execution_slots.py": "070fad246fc25c32fb7dfbaedd6daf4649b8be75d8452664acf6815761879bb8",
+    "scripts/baseline/test_native_exercise_evidence.py": "4c19aeffc1ebbcdfca19e056e6db00ca551fc404daa2c91f5cc76ce470949b68",
+    "scripts/baseline/test_native_function_calls.py": "6cb5d97592214e19437cc55db94b2988110f80745441d6caa0cf3f0b1f72d4ba",
+    "scripts/baseline/test_native_function_evidence.py": "88ae1ac33f68b2f317e2f1d620151ead5cf42f1f744796fcd0c5f4e7098ae6e0",
+    "scripts/baseline/test_native_function_exercises.py": "9d4e5327d326d44c920649d9e85e9c8d99192c7ff0267d3693c64a68487d2dcd",
+    "scripts/baseline/test_native_function_paid_evidence.py": "7014e45a49606924d24e954a2764b1379e558452cfde05510fa52a1e95852fde",
+    "scripts/baseline/test_native_loop_evidence.py": "1d5c4e9172658e55ce395e3e8a5ccc94536b42c2aa7553eb4f30347fcbabc587",
+    "scripts/baseline/test_native_public_loops.py": "8a169c03dc5c15f37c0d31f6c6a9be27dac713ab09e3ceb946957fe588d6df4b",
+    "scripts/baseline/test_native_scalar_augmented.py": "e7af86cd8b4a2a2c963e8449896edb152ec5337cb5ac97972a5cfa68e5081a71",
+    "scripts/baseline/test_native_star_exercises.py": "e10061b74548cbdcaadacda89302d4a35602fb27e36290c63eaea3e349b7f665",
+    "scripts/baseline/test_native_starred.py": "47c541c2c85db4ee00dea08329d405c96f8ec3485fbc528005fd19b9a1478074",
+    "scripts/baseline/test_native_starred_evidence.py": "19da8fd3d437ed567dc67b2019b21cedc999ca1cfc5b1456e0ea82f208b724b3",
+    "scripts/baseline/test_native_trace_contract.py": "b61029e21c54d0759ae7df2d8bdf4c2a463bc6c6374f4b6eef35a940db8aaa9b",
+    "scripts/baseline/test_nested_nix_launcher.py": "9ec8488f7fce10464e5fc9ef231daae96e84f7bf7c18fb43258eff91547da344",
+    "scripts/baseline/test_nix_dependency_plan.py": "c377385b29391886030252b195ef8e618b53dd4bb1fd098e531023cff02d3f7e",
+    "scripts/baseline/test_object_arithmetic.py": "82341d214e34e8c5f678cd8b874629bfbaa4b34b7152887247f186627d13a44e",
+    "scripts/baseline/test_object_arithmetic_exercises.py": "0fd631323559714c1e3e1eee36414f836ba88c5189f75f998afe0c9499b0530a",
+    "scripts/baseline/test_object_arrays.py": "88c9a545fed4eed7f5bd7f0d5fd38cc69b51ec77e1345b1afd7209d569e2a065",
+    "scripts/baseline/test_object_unary.py": "5df0da649eb5ab38ed15365b1fa9b3b062c5122c3f3da8a973ef5a04be8ae6d0",
+    "scripts/baseline/test_object_unary_evidence.py": "6dd171f32f74c7cdb17f90f4596df32a51c9f92d47b4d2d8f0edf01eac5fd19d",
+    "scripts/baseline/test_object_unary_exercises.py": "d03bfd2a1b4091dbd0eece52b1f0e1de70137487d82d93dab278fd445fd0ed05",
+    "scripts/baseline/test_object_unary_paid_evidence.py": "9009ab36a09dd9d93b702db950055aa841a694ebca6a11f9467e95dc18b1865e",
+    "scripts/baseline/test_packed_composition.py": "090388af6b1260347d49c4fda379d1e104478bb66326ecd04705fdb4293259c4",
+    "scripts/baseline/test_packed_composition_evidence.py": "58563ce222382cb95446a9f80048137f6082e773d9224fe635ed7d93ea191913",
+    "scripts/baseline/test_packed_evidence.py": "39f129d68b253054a5ec4354bf48f7fa6c18fe1c3065cf191ad3bc052e08b370",
+    "scripts/baseline/test_packed_model.py": "286e33ff1c91e35d9ef48a664be818eec0b4da5acad869f0c4937f94eb8e7f49",
+    "scripts/baseline/test_packed_native.py": "46cc48422fe92fbcb2e6572ea708bea890e65260c6c20999bbe28905fcc8f54f",
+    "scripts/baseline/test_packed_native_evidence.py": "2ece19a73961f754db29885e8ac3ff32c7c84a6f5ef7becab8686efe82ec4df7",
+    "scripts/baseline/test_packed_native_exercises.py": "58b8407f27cb276d2b57a11a8497ec2c7ff1c1c9a1f8b0568e55d0404cde752b",
+    "scripts/baseline/test_packed_prefix_lowering.py": "0a9c045b47c3bda7df5ee347191e21929d2ab8cd62bf925d3489eedb55a69efa",
+    "scripts/baseline/test_packed_spatial.py": "c057151fa0389b5b563862e73a944239b7911424071ea4767da8560cc1c7acdf",
+    "scripts/baseline/test_packed_spatial_evidence.py": "e7090777a99fde592cc4e48a020aba5dae38b483d655925bb960ef02d80e3112",
+    "scripts/baseline/test_platform_config.py": "62b7e5010a7fe87095f7d89a4b55a11f614d47b9049229e39ad3c3f0e416ba17",
+    "scripts/baseline/test_portability.py": "3d742c47be99754196ca8f003aa23c3978221a421065170e6fe1e84293437c11",
+    "scripts/baseline/test_poseidon_cohort_preflight.py": "18105a4cd094c1ebc9be669c1908b55ecd4f818b3db547d23c429adedc261b80",
+    "scripts/baseline/test_provider_retries.py": "c98ee265be6a5de72e76379b4f94df4daa6d73480bda093dccb1a5e49258c925",
+    "scripts/baseline/test_public_construction.py": "5a173c8d5df05cf0646e56c69575c2e9b609ca5d5d23040dacf5c1cfc264cf58",
+    "scripts/baseline/test_public_control.py": "1e10c62a31d9f9a98d3f0c800d2253243b9631a6d7e7b7f54335c3e57ab5ea79",
+    "scripts/baseline/test_public_iteration.py": "69911710adc3127f5afb6eb4aac7928bd2a2b121ab1073d2b0768a73f6bf75a4",
+    "scripts/baseline/test_public_mappings.py": "65d5aef204a6ff0ecda8cb0377ebe52701f3dfe828c915cfb121d6a36f601350",
+    "scripts/baseline/test_public_numbers.py": "8cd3a59fccd138a4535b33c4b2b28753814ef59cae6c55217db6ec848b88ecc6",
+    "scripts/baseline/test_public_polynomial.py": "6470acb038bee682d99622173ff6939a97e0fa9c772a311a1e7473d195a86713",
+    "scripts/baseline/test_public_sequences.py": "ad5a53c943be2dc5c19277535fb3a69365a4ab051e109a37ce925d19d0b66b20",
+    "scripts/baseline/test_public_strings.py": "e8f0b80a3306b1b8d8e36d924dd3455087f1afc02be2656dbdafbb900c9b100f",
+    "scripts/baseline/test_python_stage.py": "c0c946b3f6d1f3bc1d1a665343ca2eed19ba33953fe43b1ac61181f9ba648e01",
+    "scripts/baseline/test_recent_agent_manifest.py": "5ed13b53fc489e940c6722bfb94d5c4a033fd461391bc811b880110ca6bd09b3",
+    "scripts/baseline/test_rejection_benchmark.py": "2939025e126bf4d139ed963999e8af25bd81d41ee6b000b26b231c82a80b8100",
+    "scripts/baseline/test_result_retention.py": "86745d88e9ed925c61ed774ff9764d9c5df79a13d93a77ca928f111abf9242e9",
+    "scripts/baseline/test_rotation_contract.py": "7ce3d58effc952cfd42eb5041dcf208ddbebbc3dd5ac2f080a2df45e38782421",
+    "scripts/baseline/test_rotation_precision.py": "243ae5883bce8b6d97f97d07eb9099e40c14fcfc8249c133c7a93def1efc2315",
+    "scripts/baseline/test_scalar_conversion.py": "d322c5ba4d59322539de78c0f9aac8b07efa56391472fba1921f1f27d68c39d8",
+    "scripts/baseline/test_scalar_conversion_evidence.py": "e2f48a7abae660492bf669bb57ad8b7e1423961a9189f37cb398b112276323db",
+    "scripts/baseline/test_scalar_conversion_exercises.py": "b5d53a2ad65fc56a5eee33bb8609487421f2101408977829f71f335441c389b9",
+    "scripts/baseline/test_schema3_graph.py": "2a87b8127e63978bcce1da1e78e774704e3303413ea584c6cde7de3180fb3652",
+    "scripts/baseline/test_seal_cpu_golden.py": "e1351deb535513bbe0fe49c0f6451abebae51689bbd08b1b32200c6ff1caa41b",
+    "scripts/baseline/test_semantic_benchmark.py": "5f498d26b36f66e4deb2f2609878ffea17de14077449a5ce3d374fcc20f526b1",
+    "scripts/baseline/test_semantic_guidance.py": "72b698a616baec4b1336eb1f00f9a6679ce60c497661a9e6c98fcf096343bf17",
+    "scripts/baseline/test_spatial.py": "f345d17f6e7552de4b149f0b9efe7906d53e6128e1d712fac22d59af0a52f22e",
+    "scripts/baseline/test_static_plan_conventions.py": "ddd981bca9c32d9b2f002dd680026bc2da6445931dbf3b82eff200cf2064d319",
+    "scripts/baseline/test_tensor_evidence.py": "575f83a11ff2f8abe7984f844773f09e46f77c4761a5a107f351de1404f58681",
+    "scripts/baseline/test_tensor_models.py": "9a55262fda79e2bbfcba3a17f9fd98576198509219af4be36c85d2de57c8ca1f",
+    "scripts/baseline/test_tensor_permutation.py": "e9a3343e272d94c90c06d62b0196ddcdf36ec15a604fea4f3f7685d5bf1dd8e2",
+    "scripts/baseline/test_tensor_permutation_evidence.py": "e6847031f4f3d2b27d82e2023f6d101970abccb449d646e33c19703bbce306fa",
+    "scripts/baseline/test_transport_diagnostics.py": "ffb6d880bb679f9e5dd3bc1e25d8c7fa58d00fecd72c30e8a40923329708f224",
+    "scripts/baseline/test_typed_witness_repairs.py": "4d7ffed8c3e3b61839c1785d322aa53b4f7b0f6f408d4e6c7808595bf0fa2fbd",
+    "scripts/baseline/test_unified_chunk_layout.py": "20b2e0cc688275a0a32c617e9eaa0e07c9e7fa3e34e9a828037316d4f58e4643",
+    "scripts/baseline/test_unified_composites.py": "915b82b774d93d5a690c18e3f6481f1aeae3903fdc7073aae25e6a57aef5e876",
+    "scripts/baseline/test_unified_constants.py": "67d2dd791fb4fb03557760be9b6e8896fed5c7eb068f1697457e3b00654d408b",
+    "scripts/baseline/test_unified_directed_guidance.py": "06dc270f6c0050af7acbe686e3092ddbf31bbbac87f8770403c8a32858f30482",
+    "scripts/baseline/test_unified_generation_guidance.py": "104de085eb32ac5a76fa410584ed8f9bf8ed5fedf17f0f4020491a245842e32f",
+    "scripts/baseline/test_unified_graph.py": "a7b2bff2d3189bcaca0f0efecaaef297881b674ceecb3b748736af2b1c549f33",
+    "scripts/baseline/test_unified_lambda_binding.py": "b0da2972fc8fcf45b8c5f17eae9b08ad8e8051ee1775c728b1f1b8195d724fab",
+    "scripts/baseline/test_unified_native_coverage.py": "35971ae95cfc9fc425887825474aa0c015dd98919d72c1b1fad3d44232e3e7a2",
+    "scripts/baseline/test_unified_public.py": "31c24c6e0d1fadabfd3899a2e7caff0a715f7598f5397192f42e141dbb6916bd",
+    "scripts/baseline/test_unified_public_arithmetic.py": "3b3febb92824d68ebb4e47c9608995f72d9b74094aaa8787e981105ecd29df4b",
+    "scripts/baseline/test_unified_public_coverage.py": "92ee35fa2d0ddacef0fa31e638474f85076e924e1a8fa062cc854074af61ae54",
+    "scripts/baseline/test_unified_public_storage.py": "eee3d56ff9a6d2afa80c52000e8d0b580330774d5e6dd0fc4e965a8ecb84aee8",
+    "scripts/baseline/test_unified_public_unary.py": "f55c0bff9578f1c026684e78c2fcb01661ee112413082ca5f588a168b16f5351",
+    "scripts/baseline/test_unified_public_views.py": "a2bc9b58f1d2f791a336a833cfae3351a73b6213a5876310b078da9ba9e2729a",
+    "scripts/baseline/test_unified_typed_guidance.py": "5e7cd362b1298c8ffe6683f13b2bf04ccb71fbf29c680055d8d07be745d897f6",
+    "scripts/baseline/test_upstream_candidate_bn.py": "a9d7819a4dfefcab750c14e18706dabc4eabe1862cd3782dfc03ab3efbe48f49",
+    "scripts/baseline/test_upstream_candidate_helpers.py": "f7fa53c69ce2a4ff348503fbba56c0ca56accaa98f8a1594da6ba3b25aeb2766",
+    "scripts/baseline/test_upstream_concat.py": "edb604c878c750e44ff55a31c21a506cdb53a92b4e7ae05b76078c2847abd8da",
+    "scripts/baseline/test_upstream_downsample.py": "319681d6a2881cc3c7c7258fe7be0edf2f7b057b3702865824953783fd2d7254",
+    "scripts/baseline/test_upstream_fused.py": "be2ccff19b5aeef1e8ac171f6894cbf5b4f9c927c7bd14b14c0adcbc5d96c495",
+    "scripts/baseline/test_upstream_helper_coverage.py": "ee3f57fa5dd20839142f17d1eb727a8d0a345d326410ea94f6ee72bccdf75a68",
+    "scripts/baseline/test_upstream_spatial.py": "ca7860eb8a96bdc646795e72ea87b4a337b35932e667daab1d1f025fecd2c2b8",
+    "scripts/baseline/test_upstream_spatial_mapped.py": "699d7b25d2a73ac38179e9ade868d50643cedc0c251a08b9c22554d70fc5cb0f",
+    "scripts/baseline/test_upstream_virtual_chunks.py": "7b90c66bce4fa9514852fa050a8604ce7739f0ed2efdfeda018bdc7d2d632f41",
+    "scripts/baseline/test_upstream_virtual_node.py": "bd73c5274c24657213ac15459b29645eb31584cedb260df1d1c7d49731fa398f",
+    "scripts/baseline/test_upstream_virtual_ring.py": "c6f200182fde26e214d0096a6ffa81f692f83c3d322d866e93b659888657766b",
+    "scripts/baseline/test_validation_adapter.py": "38caf069eb6e391625793623eeca078c7663b1acb3a85debb7250da67341464e",
+    "scripts/baseline/test_wide_linear.py": "d64173beef4812a91f272cda13f7145cd62913f86d840ed24a268e767e747f1f",
+    "scripts/baseline/test_zero_abi.py": "bd4de27e105b0725eabbd46e84135d5b4e796afcc1c81e68c4af3f0c1807afed",
+    "scripts/baseline/trace_translated.py": "7a574073e0002a9bb4087ea8d0cd176e2b37518dbc899e36cf3495d53770bc38",
+    "scripts/baseline/unified_chunk_cases.py": "c44559c96c0b95e3d26033062d905018527660473aa596eafe8ec76504b67d5f",
+    "scripts/baseline/unified_chunk_layout.py": "610b0dc9c04fe83b43377247916e119a1f92f58d05ab3ee32d6751683a5b728f",
+    "scripts/baseline/unified_directed_semantics.py": "f5d07425c81ef10b6ff9ef8c0f5c2235288cae9ab01e322375c243b8a91b29ad",
+    "scripts/baseline/unified_failure_semantics.py": "8b4a38469a790cf1c25219e9ebccb755ec07629fc391429725868703a75556ea",
+    "scripts/baseline/unified_graph_contract.py": "3fd7c4d2a10847f9b7b242f9d995d89e6ecb2d11d3b8a2db584793f14d4c5d18",
+    "scripts/baseline/unified_graph_exercises.py": "905eee103505981980c7b75bf21e0b400708b0ca8d64af0fbe74e1fa0f55eea3",
+    "scripts/baseline/unified_graph_lowering.py": "b2aeb40a77e4fa1b5035efa95b924619e3cd1687c84d909bce7f216d92dcdc06",
+    "scripts/baseline/unified_graph_prepare.py": "1173287891ecfa45e31ab2340bc5a59be9116b26afb1096ca304e52175d274d3",
+    "scripts/baseline/unified_logical_semantics.py": "77007b5a71feae09591284c07513a56fe076ff63b284ca6ed22307933cfe3393",
+    "scripts/baseline/unified_native_coverage.py": "855cdbcdb7d68d6bed2a8fdd8844b547fe72eb7d3e40c618f6ed8131e1bad04c",
+    "scripts/baseline/unified_public_arithmetic.py": "18e56c0c59618c5d7f9235c882442a182de5d39c998ce88853e08fda4e72d79d",
+    "scripts/baseline/unified_public_contract.py": "62759a6e226c2ac86c443d2ac4f2a443da25a16d1f9d19b20d3417ae6c2f4c60",
+    "scripts/baseline/unified_public_coverage.py": "1eb6368a67b37f2f3fe72ee08488cb5f0e59dab8ea68ce0da7bfaf1e073f8c4e",
+    "scripts/baseline/unified_public_exercises.py": "6e1e986f1968fe1e2f0caca4e0b5ab6c3e275498a4c619cfd3401320d198911c",
+    "scripts/baseline/unified_public_interventions.py": "b859c561b044e2d80c9ad100ed9f0f5821b953d213588fbb2d6f852aed150ee5",
+    "scripts/baseline/unified_public_storage.py": "85da60b5fbda877dce24e2d798ec0fa85c96a5805d5be6d589ce8aff7ecd20ec",
+    "scripts/baseline/unified_public_unary.py": "d10cd3580d7e637fae9ae9f3249c348589a659c09a989bb25c286a60f44203dc",
+    "scripts/baseline/unified_public_views.py": "e44ea0b20299a77dfba815db9e62dc12f593abf07c64752d68ed19e850ec3ed6",
+    "scripts/baseline/unified_typed_guidance.py": "ebe071ac7e11127eb3b3f02bb068d02d2dc429337163d3532827396b6359a184",
+    "scripts/baseline/upstream-helpers-v1.json": "9777a190679ca231498869e2f27c19791e45337755665681af6da0f18b8e71dd",
+    "scripts/baseline/upstream_adapters/__init__.py": "dc1f972588c277a1dad19aecff071ae0d30a3fa8944bfd288ac56fe65355e48a",
+    "scripts/baseline/upstream_adapters/batch_norm.py": "36e13cdc3f330cd7c3672ac8e1b7aaf4b781fa36356cefe759c55c8246c48428",
+    "scripts/baseline/upstream_adapters/batch_norm_node.py": "25828670e3bafd698fe052cddaec02f5bf3231501f3a6c5bc0d93406a297fb15",
+    "scripts/baseline/upstream_adapters/chunk_virtual_node.py": "6f1aa8c1f363be0a2e0bf1941190dd34758fc4d093d9373e21f512c2a4201778",
+    "scripts/baseline/upstream_adapters/concat_node.py": "e15db97b77c4c7d45a7d21220204f4ef5a937426c26bd6f41e0a1c660873f784",
+    "scripts/baseline/upstream_adapters/constants.py": "9c80c1fee612cd1dd71de1a3eeb46f9ef0fc9b441f64ffedf7b63cc81b2f7358",
+    "scripts/baseline/upstream_adapters/downsample_node.py": "854c9565c4177d131224a53d840fa6166f672aae376a1a0076bc8374ff53664c",
+    "scripts/baseline/upstream_adapters/fixed_polynomial.py": "a47b1f8580fc010e0e5c5105de423db9d7648e79557766f7ec2dd5477a8382f3",
+    "scripts/baseline/upstream_adapters/fused_conv_bn.py": "ac00b852819b39d09eebff9f150179ee416c9c5bf7d8747493158dd2c73887cd",
+    "scripts/baseline/upstream_adapters/periodic_ring.py": "6daecec1c3c918dcc09e5ee44cf305fb4ce392efb3865f5d6f7071d3488da884",
+    "scripts/baseline/upstream_adapters/scenarios.py": "5086877aa9f87788eb433f35bdb3a8a30c9805c54d977b836ada035491b9af35",
+    "scripts/baseline/upstream_adapters/spatial_mapped.py": "4f2848ba001a4a98f247c5cbb712e1b18f608d78fe91fbb41fb06c4c600bbc76",
+    "scripts/baseline/upstream_adapters/spatial_node.py": "65fc8f396b97def50bc3e082ffecda13902e21574325da33cf6a67c340fa096b",
+    "scripts/baseline/upstream_adapters/test_batch_norm.py": "3bbca8deac66285ea5c57f3c834d41f60ec3035d865aed7a4ad22b6ffcdf52fd",
+    "scripts/baseline/upstream_adapters/test_constants.py": "b2acaea6a8c6c4d0a632af30e4915c105814a3fe9099a110ad8a36bc817864e3",
+    "scripts/baseline/upstream_adapters/test_evidence.py": "0e5468c44c354caecff2063fadb723c432c36a7c1d34e359be895d1efdc326e4",
+    "scripts/baseline/upstream_adapters/virtual_node.py": "b17ebb062ec62209bf2757bda79d4b44bf31aae7393cc4cba3ef65a9ae004e77",
+    "scripts/baseline/upstream_adapters/virtual_ring.py": "5e49efa7821aae2c587858e517cdb36b6410bfaa085ace91489d1149081b9381",
+    "scripts/baseline/upstream_bn_candidate_cases.py": "50d58ad87cc789e64e3c66f19bfec73bd929b080cff77b4ae24911a09074385e",
+    "scripts/baseline/upstream_candidate_cases.py": "ff3169739acce2bf85b693d3b5423d07ec1d5b6a8668f111e339ff9a0ac940b2",
+    "scripts/baseline/upstream_candidate_helpers.py": "1d0b7a06223559f702d03f1d2423e3f63aa21c1e2ed58a38b9171f654bc8c73e",
+    "scripts/baseline/upstream_chunk_cases.py": "b139c7aeab32e91567105c632b4cbe0c03474dd6c0f6c12cec5986c17c422cf4",
+    "scripts/baseline/upstream_concat_cases.py": "106c1e2c42986cc2ab0cc8e9fd8141207e86e42082f07536df9be1cffbfff359",
+    "scripts/baseline/upstream_downsample_cases.py": "535a6dc137105550e076fecea73a3a98dbdeb4742b8454935a6926eb583afc05",
+    "scripts/baseline/upstream_fused_cases.py": "61abdf0552cff97ff6a04b3089685a88d169fdae5818defb7139e6fd28574adc",
+    "scripts/baseline/upstream_helper_benchmark.py": "b7757de0ba89788cdc0a0f1b13bc760cf9fc2c365df8da4744e78714a80e2f94",
+    "scripts/baseline/upstream_helper_coverage.py": "05be54471a3b5ba0e943ce6688ad41f1fbc1638662381259f8a1954cfde7c256",
+    "scripts/baseline/upstream_helper_directed_cases.py": "40246654e4583cbc7b4807ee3ad0c64cb017795e7256c2023bad9e3a8bc48167",
+    "scripts/baseline/upstream_helper_probe.py": "ea11c37a228107d5be01716258e7bc09be5bf32c11fc337199aaf30e112ca794",
+    "scripts/baseline/upstream_spatial_cases.py": "5ea551deaf7e908870c98ec46624663a60e2ea5aaa9709dc774c2f1606ae87e0",
+    "scripts/baseline/upstream_spatial_mapped_cases.py": "1963f6489006a17f95c1846ee65dc3327e792594a6c5505a666b448a56a14073",
+    "scripts/baseline/upstream_virtual_cases.py": "6ee4d03523bf954a47456f107d4b484bee391a504b81240ddfbdfd05fe35cc91",
+    "scripts/baseline/validation_adapter.py": "7ee343f670c3ab27b193fa20f987fa90aa93c089a894f3a1a6713215a7345579",
+    "scripts/baseline/workspace_paths.py": "0d18716f4f49cd5e89449eb0e0f4440afc05aa7b225f48a016e5f19d32dd0468",
+    "scripts/baseline/workspace_paths.sh": "2bff350eda3ccb1a44c13b23576ffe2bff2ce8ae3daf54e45026e94735111d14",
+    "scripts/baseline/zero_evidence.py": "76527736ff94613d091ac08da1aa18e8692f6e01028f2c18711d900f720b0369",
+    "scripts/benchmark.py": "a914809dd2cd6b345f2e92df64c5e0f1eabf7aa85d4acef2e8a7915401b93591",
+    "src/poseidon/tools/dacapo/dacapo-dependencies.nix": "e0da7ff9f2fe3a240c578bc47c6acea9c02392078ab990253786bebe45f32bb0",
+    "src/poseidon/tools/dacapo/dacapo-shell.nix": "561a753d48babddf0e06266335e8f27ccc60c1e1ec5eb96aaaa9985fe8c039af",
+    "src/poseidon/tools/dacapo/dependency-lock.json": "f62e422f0c96775778309b3dfd6252a5c38da7053864ab29cf108a1eb7a9bc1c",
+    "src/poseidon/tools/dacapo/hecate-toolchain-components.json": "4adb3934f97c6ab38e710326b735215ac9c5d77d130f669ba793ddd8c0af22f2",
+    "src/poseidon/tools/dacapo/poly-python-wheels.lock.json": "0f1654e380bbfada3bf4996a6daba437d87bb09b758053faa9aeac9cf6697f17",
+    "src/poseidon/tools/dacapo/python-wheels-aarch64.lock.json": "925da3443d0978e587c7692098e1f62b474f6925dc29067a8a0896459bfb51b1",
+    "src/poseidon/tools/dacapo/python-wheels.lock.json": "d43706d93372b6895e44f017a82b531ec9ab5fa7f0a8bed4e3774ed58d0ced46",
+    "third_party/dacapo/python/hecate/hecate/__init__.py": "6f67ec3852486e75fc467eea7cdadc89953254072a74522038930900f347dd82",
+    "third_party/dacapo/python/hecate/hecate/expr.py": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+    "third_party/dacapo/python/hecate/hecate/runner.py": "25b58772d8abc82c6739757ac41cd1145f0a5bdf778ce288cd3d5ca55661fab4",
+    "third_party/dacapo/python/hecate/setup.py": "908c827371869bd8718c495d2fa5f7aaa0434ad9379ac3485e64fd1693637e95",
+    "third_party/dacapo/python/poly/poly/Func.py": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+    "third_party/dacapo/python/poly/poly/MPCB.py": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+    "third_party/dacapo/python/poly/poly/Poly.py": "0b0815a056c9946b2235b5660fde671bcba2ea2376a078ca8bf3cf91a284bbf7",
+    "third_party/dacapo/python/poly/poly/__init__.py": "f03cd272bdf8b07ee5fca1d76a61d9cbc94fd5243c8731a8e45776d886b61c55",
+    "third_party/dacapo/python/poly/poly/models/AlexNet.py": "bd391b0e2bd17561233677f3769e42c2afafc72cfbb0f9f23c82239bf264c6d4",
+    "third_party/dacapo/python/poly/poly/models/Lenet.py": "06cc34c77b91d427cf77c161c55d060247d8c6c922fb171f53683b2f9d52191e",
+    "third_party/dacapo/python/poly/poly/models/MobileNet.py": "07479c21a7657920c99b08d7017a574be563a55b48f09ee9f247f830e9a9285d",
+    "third_party/dacapo/python/poly/poly/models/ResNet.py": "c72240eb23641314cf07436dfe92561be870b278be9ef9cc35ef9133edeeb2a3",
+    "third_party/dacapo/python/poly/poly/models/SqueezeNet.py": "8f529063f5c0c37f5d4f992d7a8b8635fd40028a46fa978a07f5cb795477c7a9",
+    "third_party/dacapo/python/poly/poly/models/VGG16.py": "ce87bbcdb1e5400619fd0cd9ddfa5df04e418fd94b2f22648a79600cf6c83d05",
+    "third_party/dacapo/python/poly/setup.py": "e75ce034f9137b42b10e70e3cf171f60bb0eda48d51fdfe1e3511f28b3debdb3"
+  },
+  "compiler_files_unchanged": 93,
+  "deferred_compiler_cases": 34,
+  "terminal_failure_layers": {
+    "static_check": 7,
+    "provider": 4
+  },
+  "no_cross_version_best_score": true,
+  "automatic_retry": false,
+  "reporter_sha256": "46b45f5e0a67b472cbd8133b6f1ab6389e2ee127b06e403e277efa2c7db09477",
+  "report_recovery": {
+    "original_reporter_sha256": "f3764ab9f9bb08152f7abba677de74fbec86a7b7792d66a23acd3152c00c4bbd",
+    "reason": "Original aggregator sorted None and string failure-layer keys. Frozen runner/audits preserved; separate recovery reporter classifies terminal provider failures independently of earlier candidate failures.",
+    "new_paid_calls": 0
+  },
+  "remaining_unresolved_tasks": 45,
+  "input_groups": 156,
+  "compared_values": 360,
+  "max_absolute_error": 4.982894447058683e-07,
+  "binding": "00d7a4f3b59a8286e9fa343c2319ff23b08348c9484ace03ffe45e9f35ca9258"
+}

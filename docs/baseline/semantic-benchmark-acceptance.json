@@ -1,0 +1,261 @@
+{
+  "schema": 1,
+  "created_utc": "2026-09-21T09:28:34.489369+00:00",
+  "status": "offline_measurement_complete",
+  "checkout": "/home/lhohy/Code/Poseidon",
+  "platform": "aarch64-linux",
+  "head": "3493c905dd8f4ce8e04211c83b337be243befe14",
+  "uncommitted_changes": true,
+  "paid_api_calls": 0,
+  "commits": 0,
+  "pushes": 0,
+  "pull_requests": 0,
+  "model_set": {
+    "model_set_sha256": "b7c5a1f031171ac5e1d58ebcc084f43a90d61f2be336ea235a054d548ac3ca39",
+    "models": 1200,
+    "unique_signatures": 1200,
+    "topology_groups": 779,
+    "small_models": 1137,
+    "categories": {
+      "boundary": 120,
+      "composition": 360,
+      "graph": 360,
+      "helper": 120,
+      "primitive": 240
+    },
+    "split_counts": {
+      "development": 720,
+      "holdout": 240,
+      "validation": 240
+    }
+  },
+  "plaintext": {
+    "planned": 1200,
+    "passed": 1200,
+    "failed": 0,
+    "skipped": 0,
+    "probes": 19200,
+    "max_reference_error": 7.771561172376096e-16,
+    "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/semantic-v1-plaintext-release/report.json",
+    "report_sha256": "783f0d4729ecf036dd184796e7c0b4a1b749e4c25c4e84b338c06bffeebd9105"
+  },
+  "baseline": {
+    "compiler_configuration": "seal-cpu-eva-w45-v1",
+    "binding": "9d72d36fc0227855a5fdad0122301bc9ffd5b74817192fd982f7023692ee5915",
+    "planned": 1200,
+    "preflight_ready": 1090,
+    "passed": 1088,
+    "failed": 2,
+    "blocked_preflight": 110,
+    "not_run": 0,
+    "skipped": 0,
+    "executable_preflight_success_rate": 0.998165137614679,
+    "all_planned_success_rate": 0.9066666666666666,
+    "seconds": 5450.947337115002,
+    "evidence_bytes": 156709428,
+    "compared_values": 16436,
+    "mae": 1.4532925739078603e-08,
+    "max_absolute_error": 4.248130384851845e-06,
+    "max_individual_process_rss_kib": 1304152,
+    "categories": {
+      "boundary": {
+        "passed": 51,
+        "blocked_preflight": 69
+      },
+      "composition": {
+        "passed": 360
+      },
+      "graph": {
+        "passed": 360
+      },
+      "helper": {
+        "passed": 77,
+        "blocked_preflight": 41,
+        "failed": 2
+      },
+      "primitive": {
+        "passed": 240
+      }
+    },
+    "failures": [
+      {
+        "id": "bench_helper_0040",
+        "status": "failed",
+        "failure_layer": "compiler",
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-m69ieu4b"
+      },
+      {
+        "id": "bench_helper_0044",
+        "status": "failed",
+        "failure_layer": "compiler",
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-41r7elb1"
+      }
+    ],
+    "opcode_counts": {
+      "4": 3583,
+      "65535": 15818,
+      "0": 9803,
+      "9": 15316,
+      "1": 19154,
+      "6": 22824,
+      "8": 2488,
+      "3": 11574,
+      "7": 3311,
+      "2": 1564
+    },
+    "compiler_witnesses": {
+      "rotation": {
+        "opcode": "1",
+        "model": "bench_boundary_0000",
+        "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-i_shmqzi/report.json"
+      },
+      "rescale": {
+        "opcode": "3",
+        "model": "bench_boundary_0000",
+        "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-i_shmqzi/report.json"
+      },
+      "modswitch": {
+        "opcode": "4",
+        "model": "bench_boundary_0000",
+        "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-i_shmqzi/report.json"
+      },
+      "ciphertext_multiply": {
+        "opcode": "8",
+        "model": "bench_boundary_0000",
+        "report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-i_shmqzi/report.json"
+      }
+    },
+    "relinearization_evidence": "Pinned SEAL_HEVM.cpp mulcc calls relinearize_inplace; no distinct HEVM relinearization opcode or function-call trace",
+    "loaded_artifact_hashes": {
+      "runtime_sha256": [
+        "8428c4ed33ad93012f611ca49ca337bfb33031f60104f79ca35db87312414156"
+      ],
+      "frontend_sha256": [
+        "b15f62508bf42ba70436e131be514d4cb38a8aec270e15c1b29d426f597d7926"
+      ],
+      "packed_observer_sha256": [
+        "c2dca6b982cba06c537d8577e1ac0222724e852217a69bb53c28d36701190638"
+      ],
+      "packed_key_helper_sha256": [
+        "18464c17fcaf491c177d544bc9668eeb19e0b01e1e431459bb97e4d3c66531ea"
+      ]
+    }
+  },
+  "directed": {
+    "planned": 606,
+    "contract_bound": 18,
+    "scripted_golden_passed": 18,
+    "failed": 0,
+    "skipped": 0,
+    "blocked_contract": 588,
+    "agent_passed": 0,
+    "features": [
+      "return.matrix",
+      "item.zero",
+      "star.arguments",
+      "loop.augmented",
+      "scalar.augmented",
+      "array.view_inplace"
+    ],
+    "actual_frontend_and_finite_influence_checked": true,
+    "batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/semantic-v1-directed-release"
+  },
+  "upstream_manual_helper": {
+    "helper": "HE_SiLU",
+    "passed": 8,
+    "failed": 0,
+    "compared_values": 176,
+    "max_execution_error": 2.662132474245206e-08,
+    "max_ideal_function_approximation_error": 0.2689129328038613,
+    "compiler_configuration": "seal-cpu-eva-w40-v1",
+    "agent_generated": false,
+    "cohort": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/semantic-v1-silu-eight/runs.json",
+    "cohort_sha256": "28e5ad6efed765f69b0eec056e6742a2028ec00ad8eb33f27e98dcc71584931b",
+    "scope": "Earlier separate manual helper cohort in this implementation; not rebound to current full-baseline task and not summed as new unique models"
+  },
+  "diagnostics_w40": [
+    {
+      "model": "bench_helper_0040",
+      "exit_code": 1,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-q1p_pcpi",
+      "compiler_configuration": "seal-cpu-eva-w40-v1",
+      "included_in_w45_baseline": false,
+      "status": "repair_budget_exhausted",
+      "attempts": [
+        {
+          "status": "failed",
+          "failure_layer": "compiler",
+          "diagnostic": "Isolated compiler failed (exit 1); see compile.log",
+          "compiled": false,
+          "executed": false,
+          "numerically_correct": false
+        }
+      ]
+    },
+    {
+      "model": "bench_helper_0044",
+      "exit_code": 1,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-edmpdv2o",
+      "compiler_configuration": "seal-cpu-eva-w40-v1",
+      "included_in_w45_baseline": false,
+      "status": "repair_budget_exhausted",
+      "attempts": [
+        {
+          "status": "failed",
+          "failure_layer": "compiler",
+          "diagnostic": "Isolated compiler failed (exit 1); see compile.log",
+          "compiled": false,
+          "executed": false,
+          "numerically_correct": false
+        }
+      ]
+    }
+  ],
+  "unit_regression": {
+    "passed": 102,
+    "failed": 0,
+    "skipped": 0,
+    "log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/semantic-v1-unit-release.log",
+    "sha256": "b88a7db84fba8cc98a3257c141f0d5300240db5b73f40a959a247ea3280fb3fa",
+    "includes_mocks": true,
+    "startup_note": "One earlier concurrent Nix invocation failed before tests began; serial locked-environment rerun passed"
+  },
+  "audit": {
+    "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/semantic-v1-audit-release.json",
+    "sha256": "5b8bab7256df35ff87e136f52ba04531a04e51a9a6c21ab9ba20ed9d302602e1",
+    "duplicate_tasks_and_stale_runtime_rejected": true
+  },
+  "numerical_rule": {
+    "atol": 1e-05,
+    "rtol": 0.0001,
+    "elementwise": true,
+    "reference_modified": false
+  },
+  "remaining": [
+    "588 directed tasks require compatible contracts and witnesses",
+    "General cross-ciphertext chunk layout",
+    "Remaining actual upstream helper adapters and packing parity",
+    "Two helper-mathematical-model compiler failures under w45 and w40",
+    "Bootstrap-dependent helper execution",
+    "Separately approved live Agent evaluation"
+  ],
+  "all_dsl_semantics_covered": false,
+  "formal_equivalence_proven": false,
+  "poseidon_gpu_validated": false,
+  "implementation_complete": false,
+  "semantic_extension": "partial",
+  "live_agent_evaluation": "not_run",
+  "unified_input": {
+    "format": "poseidon-model-graph-v1",
+    "operators": 24,
+    "inputs_max": 4,
+    "outputs_max": 4,
+    "total_input_elements_max": 256,
+    "total_output_elements_max": 256,
+    "free_request_preflight_ready": 1194,
+    "free_request_preflight_blocked": 6,
+    "legacy_schema_1_to_5_preserved": true
+  },
+  "regeneration_matches_frozen_models_and_ledger": true,
+  "active_benchmark_processes_at_final_check": 0
+}

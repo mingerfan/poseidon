@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "tests_passed": 7,
+  "failed": 0,
+  "skipped": 0,
+  "exit_code": 0,
+  "positive_controls_passed": 153,
+  "expected_rejections_passed": 153,
+  "canonical_ledger_updated": false,
+  "encrypted_execution": false,
+  "paid_calls": 0,
+  "files": {
+    "scripts/baseline/benchmarks/tools/test_model_partition_rejections.py": "cb205e447ad11f2b57b0ba7acbff3b144b26938fb47301672544ddd00231364a",
+    "scripts/baseline/benchmarks/tools/build_model_partition_rejections.py": "117362e204d1412da5dcd644e9cb84bbf558a14869d18c1f3534c5c96ddc9607",
+    "scripts/baseline/benchmarks/tools/build_model_semantic_contexts.py": "9e1db80408651f175ebc48ea4975c84eac2747f421e99c53e5c27c6e7f6b8a9e",
+    "scripts/baseline/benchmarks/model-rejections-draft-v1/tasks.json": "9c088b40ced1611ea6c3ce85fbc664f96cfeb5ae9aaf8abcfe8c8edd2640ad12"
+  },
+  "log_sha256": "16df789c772bdb9731e5beb4d5b83eed95c299de5890289197b9b340a744bcbc"
+}

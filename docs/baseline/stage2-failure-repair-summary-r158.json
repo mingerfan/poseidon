@@ -1,0 +1,173 @@
+{
+  "format": "poseidon-stage2-failure-repair-summary-r158",
+  "source_sha256": "554edc30c5e96969bf26b06c1f467b40f2d5faee2de855c4bb3305d085f36138",
+  "provider_source_sha256": "f6493518f4bf63c257fb7eab9f9a782a89cf5cf4a16c9006f607976f2c58b69b",
+  "provider": {
+    "planned": 3,
+    "passed": 1,
+    "failed": 2,
+    "provider_failures": 0,
+    "generations": 10,
+    "http_attempts": 10,
+    "seconds": 322.7939073299931,
+    "cases": [
+      {
+        "id": "construct_053_1",
+        "status": "passed",
+        "layer": null,
+        "diagnostic": null
+      },
+      {
+        "id": "construct_127_2",
+        "status": "failed",
+        "layer": "static_check",
+        "diagnostic": "Only permitted method/decorator attributes are allowed"
+      },
+      {
+        "id": "construct_054_1",
+        "status": "failed",
+        "layer": "static_check",
+        "diagnostic": "Missing contributing public expression: call.list"
+      }
+    ]
+  },
+  "offline": {
+    "manual_repairs_passed": 8,
+    "unchanged_generated_source_replays_passed": 2,
+    "base_input_groups": 40,
+    "compared_values": 172,
+    "max_absolute_error": 3.764438307185536e-07,
+    "rows": [
+      {
+        "id": "construct_014_2",
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-h0ebvcph",
+        "report_sha256": "6d56241ab4ac338419950371ee5f1f1bd993a306dcc313ab00017fa198d6b461",
+        "max_absolute_error": 2.4630948952664156e-07,
+        "category": "manual_repair",
+        "request_unchanged": false
+      },
+      {
+        "id": "construct_049_2",
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-kajfqmus",
+        "report_sha256": "7334cf28dd6e1a30ffd49201464e8549257f6da22bc38759a9629f047373bf0a",
+        "max_absolute_error": 3.764438307185536e-07,
+        "category": "manual_repair",
+        "request_unchanged": false
+      },
+      {
+        "id": "construct_054_1",
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-fnd44b7n",
+        "report_sha256": "b5f35dedc6ed4ff1ce645928e104409e1803e57a026e45777b9e5f28fbe64bbe",
+        "max_absolute_error": 8.484912536466105e-08,
+        "category": "unchanged_source_replay",
+        "request_unchanged": false
+      },
+      {
+        "id": "construct_082_1",
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-f9jmjoh3",
+        "report_sha256": "5388891e13e5eb91c9bcd55df7e0add2fc61116116ab64e252a62bd2011aaf28",
+        "max_absolute_error": 1.9306096940736872e-07,
+        "category": "manual_repair",
+        "request_unchanged": false
+      },
+      {
+        "id": "construct_103_0",
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-t6ridpfa",
+        "report_sha256": "f378b435cae7d0e865455d562cafe9686e7ae982c84f00e884df31e3be91bccc",
+        "max_absolute_error": 8.387584740643383e-08,
+        "category": "manual_repair",
+        "request_unchanged": false
+      },
+      {
+        "id": "construct_112_2",
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-60vc7r6v",
+        "report_sha256": "aa3db8f1b5f04992be61a121896a12c38408a4b85d4b4fa0e91de94091cc45b1",
+        "max_absolute_error": 6.61664278922558e-10,
+        "category": "manual_repair",
+        "request_unchanged": false
+      },
+      {
+        "id": "construct_124_0",
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-7ewp87yt",
+        "report_sha256": "33f373c5ef42ec9b93900ba6ae9ec1b0b594d5a972ac1a292d5f6eb227bccde9",
+        "max_absolute_error": 1.0915143788814419e-11,
+        "category": "manual_repair",
+        "request_unchanged": false
+      },
+      {
+        "id": "construct_133_0",
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-24iupo22",
+        "report_sha256": "671ef90397c73c3fb01d7086f50a9345fdeeb985814ac38289d59f555367f9c5",
+        "max_absolute_error": 5.396408930824492e-09,
+        "category": "manual_repair",
+        "request_unchanged": false
+      },
+      {
+        "id": "construct_088_0",
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-1q2lnib1",
+        "report_sha256": "6fea9551ad3aa4563e4d77df20c90cdc7e0278cb3a6e06293c97598f10d1647e",
+        "max_absolute_error": 1.0584249199308005e-07,
+        "category": "manual_repair",
+        "request_unchanged": false
+      },
+      {
+        "id": "construct_079_0",
+        "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-dwv5sxhs",
+        "report_sha256": "a3db89ad2a4f34be9a2bf36572abbc6149609598a12bbc66e107653d5f266e69",
+        "max_absolute_error": 6.712482642807628e-08,
+        "category": "unchanged_source_replay",
+        "request_unchanged": true
+      }
+    ],
+    "not_agent_regeneration": true
+  },
+  "tests": {
+    "passed": 106,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "compatibility": {
+    "old_requests_identical": 2030,
+    "v4_prepared": 2030,
+    "v5_live_evaluated": false
+  },
+  "numerical_diagnosis": {
+    "cases": 7,
+    "max_formula_decryption_error": 1.7132400756203792e-07
+  },
+  "static_review": {
+    "original_failed": 89,
+    "static_now_passes": 1,
+    "remaining_rejected": 88,
+    "contributing_rejections": 31,
+    "other_rejections": 57,
+    "known_checker_scalar_return_gap": "construct_172_2"
+  },
+  "scale": {
+    "tasks": 33,
+    "verified_parent_files": 71,
+    "invalid_artifacts_rejected": 6,
+    "compiler_fixed": false,
+    "new_compilation": false,
+    "new_encrypted_execution": false
+  },
+  "transparent": {
+    "original_rejected_before_runtime": true,
+    "diagnostic": "Transparent ciphertext risk: instruction 26 MulCP uses all-zero Plain register 3; use client-encrypted zero_ct"
+  },
+  "no_cross_version_best_score": true,
+  "installation": false,
+  "commit": false,
+  "push": false,
+  "pr": false,
+  "parents": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-provider-result-r155.json": "4aa9eb24a8ba30d0d9b0b3f05136b6f97a7c4472f10e6cfcef673af5e5c10c90",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-provider-retry-r155/report.json": "0318d41d29ae2a16f6390a78452013c0e4a9b39c776cdd28e19352e7adf90323",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-failure-repairs-r156-v2/report.json": "4bc3527595f5e41a728c10c18d02e3a7449ddc4efd74634eaa2742032f2dd9e2",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-failure-repairs-r157-v3/report.json": "6eb2f5b8644b70645a87aad63185804bf22e7a9f6179c3803cab897d4d510cee",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-recovered-static-r158/report.json": "39584f6c703f7075696076a36f7edc71e943c5ed0ec5c9d242fd6a8739a333a8",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-failure-repairs-regression-r157/report.json": "c19a8c3b61c3d87b6dc745bbec97fd7aa64ad0a982640a88e3d8c63e3bc56b52"
+  },
+  "binding": "4d4a15579c63d3e2632d088f3c4c8268d29d5a9897d3f2227751454019f01306"
+}

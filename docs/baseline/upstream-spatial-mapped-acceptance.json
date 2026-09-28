@@ -1,0 +1,212 @@
+{
+  "actual_compile": true,
+  "actual_decrypt": true,
+  "actual_seal_cpu": true,
+  "branch": "lhy-agent-dsl",
+  "checkout": "/home/lhohy/Code/Poseidon",
+  "commit": false,
+  "compiler_configuration": "seal-cpu-eva-w45-v1",
+  "construction_tasks": 627,
+  "current_corpus_binding_counts": {
+    "HE_Avg": 10,
+    "HE_Conv": 28,
+    "HE_Pool": 17
+  },
+  "default_configuration_changed": false,
+  "downloaded": false,
+  "evidence": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-spatial-r23-chunk-regression/report.json": "ab03903cab60550318c7f46ebc8dbcc17f6d803f4d1216f4cc0e721876640ff8",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-spatial-r23-chunk_regression-compiler-evidence.json": "2f686cb239f540d3d9096bbab9f53dba01c160800f0a274afd4ac286dcf5b283",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-spatial-r23-compatibility.json": "11d91afc258128323d39b0b25bed85cc0c02484c96c06b9a1354f8aee57bee86",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-spatial-r23-frozen-mappings.json": "16a152189f66caa393e74cbd9851bf25ee10ba05aa0af8f262b525aed66379cc",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-spatial-r23-helper-directed/report.json": "da28ad5aab6a6940963446a94bc67df36011a8860dbdcb49862ac6c72c741cca",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-spatial-r23-helper_regression-compiler-evidence.json": "c498fc03fffaf9a4cc9b7a6e52bd1ea1117c70d0b613c17faa47023957ea0f8d",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-spatial-r23-native-compiler-evidence.json": "6a04717070f2e52453907a15c0fc5591a481fcea5b700d74b9d75f404075a536",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-spatial-r23-native-final/report.json": "74a2c38a0b67acd72d871041055838a477a1954ce285f6151989b89bf2c278a5",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-spatial-r23-native/report.json": "1e99d666bee33f13f63193292c32a78bea380ac355969d492f4b002875dd8521",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-spatial-r23-original-corpus-audit.json": "8e415bcbdd520e155446bf926ce0fe1ba716666b0bcd5cb9fab4ec734087a997",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-spatial-r23-plaintext/report.json": "dfed38dbe36a5ef359b0f3455f5514118cfd93ecf2f243c9f39cea8791e7a14c",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-spatial-r23-regression/report.json": "2a9f0ab56341f28493aa565a201f6aa118ff24682af650718c1443030010023e",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-spatial-r23-rejections.json": "62fd67c3c8754ed98eeaed3bdf4dc60883819de09a186d1f08c2a6887551f5b9",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-spatial-r23-unit-final.json": "fd3bd9193e184489c1019edda74779428d7e327c50e41279532d4182099da205",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-spatial-r23-verification-complete.json": "8e03dcf2d39bc8061ff3c189812f624152eb9ae74e588376006c91ded82f37c2",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-spatial-r23-zero-smoke/report.json": "c257ea6c8e26f6d1915c2f64a4b9e91181782ed2908880ba343a7e3b506abd4e"
+  },
+  "fresh_executed_runs": 86,
+  "head": "3493c905dd8f4ce8e04211c83b337be243befe14",
+  "helper_tasks": 29,
+  "holdout_scope": "Two frozen holdout models were inspected and used in manual backend development; this is not an unseen Agent holdout evaluation.",
+  "initial_failed_source_batch": {
+    "blocked": 0,
+    "compared_values": 428,
+    "failed": 15,
+    "max_absolute_error": 1.526380714993107e-07,
+    "passed": 20,
+    "planned": 35,
+    "seconds": 212.77119024000422,
+    "skipped": 0,
+    "source_sha256": "2b15860f01f825da3c7f1e7a55330fc5545dd262bc23249cfaf731cc5d76818c",
+    "weighted_mae": 1.0499839216368643e-08
+  },
+  "initial_failure_layer": "SEAL transparent ciphertext from zero-padded public kernel terms; no security check bypass",
+  "installed": false,
+  "manual_batches": {
+    "upstream-spatial-r23-chunk-regression/report.json": {
+      "blocked": 0,
+      "compared_values": 1456,
+      "failed": 0,
+      "max_absolute_error": 5.88960630931723e-07,
+      "passed": 18,
+      "planned": 18,
+      "seconds": 86.7485135270108,
+      "skipped": 0,
+      "source_sha256": "780bede5e6428cdc6da5f6df2ff6f3266c0903d26eda2dc5bd894b59302ce8f6",
+      "weighted_mae": 1.1001187900743366e-08
+    },
+    "upstream-spatial-r23-helper-directed/report.json": {
+      "compared_values": 432,
+      "failed": 0,
+      "max_absolute_error": 6.790198263360031e-08,
+      "passed": 29,
+      "planned": 29,
+      "seconds": 156.6335195749998,
+      "skipped": 0,
+      "source_sha256": "780bede5e6428cdc6da5f6df2ff6f3266c0903d26eda2dc5bd894b59302ce8f6",
+      "weighted_mae": 4.1599073401944165e-09
+    },
+    "upstream-spatial-r23-native-final/report.json": {
+      "blocked": 0,
+      "compared_values": 1044,
+      "failed": 0,
+      "max_absolute_error": 1.7320826584121818e-07,
+      "passed": 35,
+      "planned": 35,
+      "seconds": 236.48537384600786,
+      "skipped": 0,
+      "source_sha256": "780bede5e6428cdc6da5f6df2ff6f3266c0903d26eda2dc5bd894b59302ce8f6",
+      "weighted_mae": 6.654810971153842e-09
+    },
+    "upstream-spatial-r23-regression/report.json": {
+      "failed": 0,
+      "passed": 2,
+      "seconds": 8.661825578994467,
+      "skipped": 0,
+      "source_sha256": "780bede5e6428cdc6da5f6df2ff6f3266c0903d26eda2dc5bd894b59302ce8f6"
+    },
+    "upstream-spatial-r23-zero-smoke/report.json": {
+      "blocked": 0,
+      "compared_values": 52,
+      "failed": 0,
+      "max_absolute_error": 7.25052268224502e-10,
+      "passed": 2,
+      "planned": 2,
+      "seconds": 12.989351480006007,
+      "skipped": 0,
+      "source_sha256": "780bede5e6428cdc6da5f6df2ff6f3266c0903d26eda2dc5bd894b59302ce8f6",
+      "weighted_mae": 1.784212337232166e-10
+    }
+  },
+  "model_count": 1200,
+  "old_helper_tasks_unchanged": 20,
+  "old_requests_unchanged": 109,
+  "original_spatial_corpus": {
+    "actual_inner_calls": 86,
+    "blocked": 0,
+    "exact_public_zero_eliminations": 264,
+    "failed": 0,
+    "families": {
+      "HE_Avg": 8,
+      "HE_Conv": 8,
+      "HE_Pool": 8
+    },
+    "models_unchanged": true,
+    "passed": 24,
+    "planned": 24,
+    "splits": {
+      "development": 22,
+      "holdout": 2
+    }
+  },
+  "paid_api_calls": 0,
+  "phase": "r23",
+  "plaintext": {
+    "failed": 0,
+    "max_reference_error": 7.771561172376096e-16,
+    "passed": 1200,
+    "planned": 1200,
+    "skipped": 0,
+    "tests": 19200
+  },
+  "pr": false,
+  "profile": "upstream-poly-spatial-mapped-v5",
+  "push": false,
+  "rejection": {
+    "failed": 0,
+    "passed": 48,
+    "scope": "static only"
+  },
+  "rejection_tasks": 48,
+  "remaining": [
+    "nine other helper families (including explicit bootstrap blockers)",
+    "chunk-helper joint layout",
+    "remaining helper parameter/work limits and public-only helper output materialization",
+    "three rule budget cases",
+    "two historical baseline compile failures to revalidate",
+    "w40 precision diagnosis",
+    "final-source full encrypted corpus/627 construction regression",
+    "separately approved paid Agent evaluation"
+  ],
+  "runtime_source_sha256": "780bede5e6428cdc6da5f6df2ff6f3266c0903d26eda2dc5bd894b59302ce8f6",
+  "schema": 1,
+  "security_checks_unchanged": true,
+  "status": "original_spatial_corpus_recovered_overall_goal_incomplete",
+  "suite": "scripts/baseline/benchmarks/semantic-v1-spatial-mapped-r23-final",
+  "tolerance": "abs(actual-reference) <= 1e-5 + 1e-4*abs(reference)",
+  "topology_groups": 779,
+  "unique_model_count_not_claimed": true,
+  "unit": {
+    "agent_calls": 0,
+    "discovered": 203,
+    "errors": 0,
+    "failures": 0,
+    "modules": [
+      "test_benchmark_execution",
+      "test_compiler_artifact_evidence",
+      "test_portability",
+      "test_rejection_benchmark",
+      "test_semantic_benchmark",
+      "test_unified_chunk_layout",
+      "test_unified_composites",
+      "test_unified_constants",
+      "test_unified_graph",
+      "test_unified_lambda_binding",
+      "test_unified_native_coverage",
+      "test_unified_public",
+      "test_unified_public_arithmetic",
+      "test_unified_public_coverage",
+      "test_unified_public_storage",
+      "test_unified_public_unary",
+      "test_unified_public_views",
+      "test_upstream_candidate_bn",
+      "test_upstream_candidate_helpers",
+      "test_upstream_concat",
+      "test_upstream_helper_coverage",
+      "test_upstream_spatial",
+      "test_upstream_spatial_mapped"
+    ],
+    "passed": 198,
+    "runner_sha256": "95e67f8c95678f3863c60ce3b2e60c1ff2931d92b5c99898d3a444eb1a13686a",
+    "skip_count_scope": "includes class-level skips; do not subtract from tests_run",
+    "skip_records": [
+      {
+        "reason": "Historical r18 execution sources differ; use fresh compiler-evidence audit for current source",
+        "test": "setUpClass (test_compiler_artifact_evidence.CompilerEvidenceTests)"
+      }
+    ],
+    "skipped_record_count": 1,
+    "source_sha256": "780bede5e6428cdc6da5f6df2ff6f3266c0903d26eda2dc5bd894b59302ce8f6",
+    "success": true,
+    "tests_run": 198
+  },
+  "x86_retested": false
+}

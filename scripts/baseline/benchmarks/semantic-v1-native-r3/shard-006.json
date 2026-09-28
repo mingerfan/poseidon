@@ -1,0 +1,3559 @@
+{
+  "rows": [
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.125,
+              -0.03125
+            ],
+            [
+              0.09375,
+              -0.09375
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            0.125,
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0168",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c2"
+            ],
+            "op": "add",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "1b86fb5b13dc4b6ed243151b073b40a5268aa56445fba09db2c1408c6660499c",
+      "reference_status": "unverified",
+      "signature": "08a113d1e8259f46edaec6025a0bf4480c37b56611d3d432a6b4e10dcf7294c8",
+      "split": "validation",
+      "topology": "a49d0ffb0e2a7efc7efe77a59da1abc53ea16ee40d46a7a81a84b39071f42274"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.125,
+              -0.03125
+            ],
+            [
+              0.09375,
+              -0.09375
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            0.125,
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0169",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c2"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "25384e6bef5a2c3d6668255eb040decbace423c0deba485729820bf80ca8fd4b",
+      "reference_status": "unverified",
+      "signature": "98bfc52e0b84c36fc743c324fd2abb289eb4b74a4104c6baf40a3c2e42462d0b",
+      "split": "holdout",
+      "topology": "22487672fbc57415dd0ab6561289b5dbbacec67705c504659595697406a7446c"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.125,
+              -0.03125
+            ],
+            [
+              0.09375,
+              -0.09375
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            0.125,
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0170",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c2"
+            ],
+            "op": "multiply",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "8bf59a7a4944b5276d49380eb21dbb9311a3444329b374c8dbb71a9fb2c1d148",
+      "reference_status": "unverified",
+      "signature": "a5832f8da14a1d0f8fd6bcd32eab7dbf0da8a8ded9a0ba623ff570e14fdbd4b0",
+      "split": "validation",
+      "topology": "a9cd1233bf8fc04657109362ff4e00c0e06e3202721ea31811afa6de94046cb2"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.125,
+              -0.03125
+            ],
+            [
+              0.09375,
+              -0.09375
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0171",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {
+              "shape": [
+                1,
+                2
+              ]
+            },
+            "id": "n2",
+            "inputs": [
+              "n1v0"
+            ],
+            "op": "reshape",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "9080500269f6770437153098035a15afc31d8a4ceb7731bfb736465d2c631511",
+      "reference_status": "unverified",
+      "signature": "03eef4cf102d4b19e57ed449363e2f378d41f8334f35224055fe851c3a3d9351",
+      "split": "validation",
+      "topology": "f644528576eab74a3290542b3d8b584a286a37ee0fb730aa707a2c4c16a5911c"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.125,
+              -0.03125
+            ],
+            [
+              0.09375,
+              -0.09375
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ],
+          "c2": [
+            0.0625,
+            -0.125,
+            0.03125,
+            0.015625
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0172",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {
+              "basis": "chebyshev"
+            },
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c2"
+            ],
+            "op": "polynomial",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "3fb8520454018ef6d95f882e6b2b57932602d6efca021f00c536c6bb783b8a09",
+      "reference_status": "unverified",
+      "signature": "f812825d71c45fdde9805bca1b6051a5bc2edb8f3196c438afba4b6baf2c8734",
+      "split": "development",
+      "topology": "712c1db304393039fb6571f9bd7cf90c5d522452bcf63d2ac7a4b0dce93ad009"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.125,
+              -0.03125
+            ],
+            [
+              0.09375,
+              -0.09375
+            ]
+          ],
+          "c1": [
+            0.0625,
+            0.0625
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0173",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n2",
+            "inputs": [
+              "n1v0"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "a888dccb70f93f3b620cd28ca4ba28560dee0046feb6cc0bf2bb669ddaf61789",
+      "reference_status": "unverified",
+      "signature": "d61b4a88f63ff99c8e1ef4d92e80b547a7996bcfee82256f8461e997e777c115",
+      "split": "development",
+      "topology": "d3b1f8af0d287c66ff2a90f5ddabbb4f98c4f40b0be105182a87931bfe847159"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.125,
+              -0.03125
+            ]
+          ],
+          "c1": [
+            0.0625
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0174",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "6bf112f6c6eac11fe9268cdccaf9586223b4e72d5d399180bf5693f2de005189",
+      "reference_status": "unverified",
+      "signature": "a471f95f3c6cf614846a2444732d591b1a365e581309c284a50a7f7009d5fdad",
+      "split": "holdout",
+      "topology": "485da80b487986d932ab0318d6349419cec8d48422cd068e1f569ff006be4102"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0175",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "fb150941c9d88eea7e47ac21c467efd22f556aef33aba6888c56cb9f1e1fb298",
+      "reference_status": "unverified",
+      "signature": "c7ff96ee28190e0189e5369d995542f1d8252c51fc46f1e5c354664fc44c0a0b",
+      "split": "validation",
+      "topology": "c99ee972484408c73891ff48c344a013cfe74394fd8c0c608b9e10abbef11e9b"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0176",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "7e3908fd41757c4d9e093d60431464d006f5566b3a389929a044fb97d5d5c8d3",
+      "reference_status": "unverified",
+      "signature": "bfe5b89314f69c88d2a898555f6ae30dca9a72bb0dd1197a3fcf0c7d9b0f1772",
+      "split": "holdout",
+      "topology": "d8deaefd11459b9c3c6322c8ec8539a6c00ec555bba6e90976299cdad77ff077"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125,
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0177",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "815dfa369022ec2c8e7382f1f874516f683872b0f47cf38d4ae80760cae7e8ff",
+      "reference_status": "unverified",
+      "signature": "026a29188d34608bc29048adcd94a2999b3d11fd46031b41d395d5b265fa67cd",
+      "split": "validation",
+      "topology": "3c0be8f7387d6a019f938fba9de0a56f3d7335b04b53166d3d1f08e2962ac1c7"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125,
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0178",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "9e4fe173ee679108402c792e7613816fe250f890e2ba53cebb7540a89340590d",
+      "reference_status": "unverified",
+      "signature": "07616f6c8be1d833337451df3283317b2bb2207bf5aad6e90466afcd8374d4f5",
+      "split": "validation",
+      "topology": "cdafc2d0a7692cddef381cd71110e502983617e6a24e9879319bf4bf3f60ec00"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125,
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0179",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c0"
+            ],
+            "op": "multiply",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "10c91c82f1ccf570024f702e04c2097edf24e65e8b571b099f88e3c6b7efba24",
+      "reference_status": "unverified",
+      "signature": "43312d3c2347e61d483e29b9aabdd3fbb58202a1b5a6e9e9971bf7af2e088555",
+      "split": "validation",
+      "topology": "0647fff73d24b53d624f96e20ba9e6f26e4c16eb351bcf02ad3e02dd99a63ee0"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0180",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {
+              "shape": [
+                1,
+                2
+              ]
+            },
+            "id": "n2",
+            "inputs": [
+              "n1v0"
+            ],
+            "op": "reshape",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "80f37f0571c5850abf5578e19f55666a240355596cc5a53916b2210fc7652bb9",
+      "reference_status": "unverified",
+      "signature": "73a636c18449c5a5fcb5e71dcee28fa2432ec9c65d0d9a81eae5ed3794996525",
+      "split": "validation",
+      "topology": "a4c1e33f51d597864a059546068809aaa01d419b4aa010d0cf806978111e560c"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.0625,
+            -0.125,
+            0.03125,
+            0.015625
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0181",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {
+              "basis": "chebyshev"
+            },
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c0"
+            ],
+            "op": "polynomial",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "267a1eddda22640e964788e6c293e48786454897af3afebb83678247d3c8cd0d",
+      "reference_status": "unverified",
+      "signature": "d1bfacf4b38de1bd21486f86d26dd60262df3368b678da6036322574596b438c",
+      "split": "development",
+      "topology": "7b9458119cf18e0d9aeec107be3c5c37df1dd6ab0ae708fc716e9dbb0c9b1941"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0182",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n2",
+            "inputs": [
+              "n1v0"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "18493112f0296ed3b4f80126ef60baab3c255d95498185420f4571c53268bf44",
+      "reference_status": "unverified",
+      "signature": "79e4cfbb972e6fcc894a18929e355146529b9bb653c78889bc907a05b52a942a",
+      "split": "holdout",
+      "topology": "626442cf288bba6dfb3e80d3d9a19608d98fc55ff3c3c80417b51320cbe2f496"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              -0.125,
+              -0.03125
+            ]
+          ],
+          "c1": [
+            0.0625
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0183",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c0",
+              "c1"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "37c04737f6210b2a90ac98c460a1590cd6c2a574b07067e519c73203466927db",
+      "reference_status": "unverified",
+      "signature": "08124b054ee5c67455cea222fe189a648a1a8f4a977719835e254b6be9372b85",
+      "split": "validation",
+      "topology": "2d77ba76ee608e7b60154e06e7460fd3f7aba00a2423d89f1ce47e28c33cfcdb"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0184",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "8b33c1cc9fd980c0ef53587bb7872e7a07891276ef65f7c4506b528c4cb0b7d0",
+      "reference_status": "unverified",
+      "signature": "68fe5053952ff3811d8e4192ed54f03c484c57360f7d4c58e5a3603258ff647b",
+      "split": "validation",
+      "topology": "061e8c9e9c1b184a0ae0edd5b3b556c5c9de6998ebb179c0892d70b4cf9e36e5"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125,
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0185",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "4b4eb88786549cd79855e386d260462b7502489d75a745f41f9edae66e3c9dd8",
+      "reference_status": "unverified",
+      "signature": "2f128c0b89f8077c0f5ec8c4b753620d2ac06fdb500c4382be93a367c1bfa809",
+      "split": "holdout",
+      "topology": "f74f4b6a5748bf00d0eb835a76a406f3e93deb93482100135d6bb3e1f5ccfa6a"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125,
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0186",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "5e72dccd4d18aa4f73b960dac587785c5d90645bb0c0404bc4e16ea50b9195e3",
+      "reference_status": "unverified",
+      "signature": "95c8d3986b978786bd78a20610bc81e3fb9c1bbde1d0eb86304dde1777356418",
+      "split": "development",
+      "topology": "58903ebc980a0975136fbee7a4f71fdb20c52a402b25bb42079eb34cfc51f663"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125,
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0187",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c0"
+            ],
+            "op": "multiply",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "b4a282bc76c3586cd672b486584784f0c2d66e3f92b9e5733f26813e56df3a3a",
+      "reference_status": "unverified",
+      "signature": "33cd13cad5511bf19aa230ef7e30fb391134f4ff06feedf8384975b466ef5b92",
+      "split": "development",
+      "topology": "0ee9a125276f8fc1508963559b6046a3e576bf70caf6e3f715016a7b5bf88a67"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0188",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {
+              "shape": [
+                1,
+                2
+              ]
+            },
+            "id": "n2",
+            "inputs": [
+              "n1v0"
+            ],
+            "op": "reshape",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "bae0e73a048621eb30c2e6fcec5b59e97c2ad5eca38f1c11427f64e69464d5d1",
+      "reference_status": "unverified",
+      "signature": "47ac8ae5623ecdba9da9207ef7b5572bec4c2eb5e1c91355c237329e9fb539dc",
+      "split": "development",
+      "topology": "a452848db59d75d40d259660f8838b16b550becdb49081f6b7e6719c4bd75517"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.0625,
+            -0.125,
+            0.03125,
+            0.015625
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0189",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {
+              "basis": "chebyshev"
+            },
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c0"
+            ],
+            "op": "polynomial",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "a5674737858b5e9baeeed3501f0c612ba9e3a6a9a97d4d7ceaad1f897a7a1fdc",
+      "reference_status": "unverified",
+      "signature": "223429d77b310fd7283a56817fa66a2fc66b2ea8045dbee216b68b565e3d1a33",
+      "split": "development",
+      "topology": "5738e0fb5fa75068ec4371e6e8af5c36d03634c56ed52c472ebac1261b002bee"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0190",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n2",
+            "inputs": [
+              "n1v0"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "47779c663274a55e6aac7a7907044e0ed7caabf0f562233251c710ad9bc9973e",
+      "reference_status": "unverified",
+      "signature": "55065052d3dbfa0eed467f97d23a9640306e2fa3a282a59585e41ddc70d38d01",
+      "split": "development",
+      "topology": "2e1a31f6008a4f23b03120181b81575c6ff263d72daf65f08b0e463cc1d0ed4a"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ],
+          "c1": [
+            [
+              -0.125,
+              -0.03125
+            ]
+          ],
+          "c2": [
+            0.0625
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0191",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c1",
+              "c2"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "8a8d7a2a7f59fc46116bbccc4375f1142fff8ba3ff683b49008446d1b2d1d2af",
+      "reference_status": "unverified",
+      "signature": "330e56e945cb0375fae288bf1cb359e5a9941bbbc39ded6488eecc2143547c40",
+      "split": "development",
+      "topology": "53089384ec741faab41c12963e8cfe74e4a271da3ee1cfa09604fafd625efd9e"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0192",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "a97ff776e9000c648d8dbcfb17e1ef30bb62727a6ceea84d8e55fb1c3eb73bc2",
+      "reference_status": "unverified",
+      "signature": "e8ce1ac2a1d9c5fb45e485a42b3a11eb885da23bea70a408952a7699ac6f277d",
+      "split": "development",
+      "topology": "a11fc5decd4de4bd313f0f3a7479ba297881380d27f39714c5a14e5114454e80"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0193",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "cc5134660db43566222fa8ac963fb05eddbe15c4c108278cca50e32387cb237e",
+      "reference_status": "unverified",
+      "signature": "117d31b374d39c0a9a86bcfbf47c7c33cc2bd471465855daffb8cab249e67533",
+      "split": "validation",
+      "topology": "638e24973b3f0c218648318adb23a05e093c343febd50a029bd5831e9795e4cf"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ],
+          "c1": [
+            0.125,
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0194",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c1"
+            ],
+            "op": "add",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "489e0169dae70263ec37f1518ecb676413f1f77781bfcc588b5e1d8845fa01d7",
+      "reference_status": "unverified",
+      "signature": "8643af8b1f2b5e98630b8a426f7ef7a122a6374bb5dedb239f9b326c0bbbc1b2",
+      "split": "holdout",
+      "topology": "d5c264699844c9ecb730f3b410b76d7486194322ddffed3cb44eff51eb415732"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ],
+          "c1": [
+            0.125,
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0195",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c1"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "5c4a00f51d8733a841d157c700218ed2407e3fbdf86af72814ff18768514bc06",
+      "reference_status": "unverified",
+      "signature": "a18c85d0faef8c85e77573ee56b436c04d42e72a89854a5d3f6793addc08f461",
+      "split": "holdout",
+      "topology": "2114aa10d55cf34a30ad00d63a081d9c2735d8ea72c07047a6b0ec351121f3b2"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ],
+          "c1": [
+            0.125,
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0196",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c1"
+            ],
+            "op": "multiply",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "e8436b2387940c0af24118bb4a3fc666680f676cb4609eeaf503f0322b6382cc",
+      "reference_status": "unverified",
+      "signature": "fa3185dbc533a291d61d2e5b9ee418f5a6b0c916ec4876ec1c740d6d8b72cc91",
+      "split": "holdout",
+      "topology": "7cda9dc99dc9cfa10ddbb7fd4602a14472fb0227f129eb7fe409fc8fff37fb1c"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0197",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {
+              "shape": [
+                1,
+                2
+              ]
+            },
+            "id": "n2",
+            "inputs": [
+              "n1v0"
+            ],
+            "op": "reshape",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "bf26fc00bfacae7a66c147955b3e5960dc481ee83f41f82eb3cfd90934dbb85f",
+      "reference_status": "unverified",
+      "signature": "b426b289db02fb278f2412be1443e7d3ec6988c592be2e899de0bdf9188784c4",
+      "split": "holdout",
+      "topology": "b81c79c0dd32047b09af913a71a6c3c835fc883d9014e02e9daedb84e74bb7aa"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ],
+          "c1": [
+            0.0625,
+            -0.125,
+            0.03125,
+            0.015625
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0198",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {
+              "basis": "chebyshev"
+            },
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c1"
+            ],
+            "op": "polynomial",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "7b9568e67a95023930e0ab9cc2a7dd690ade95e90ecec384099ad1bfdf10d93a",
+      "reference_status": "unverified",
+      "signature": "50f2f6aa57348651a272ba103a8f5655ab9b3bbf3abd80af95f5f5dec569e2f8",
+      "split": "development",
+      "topology": "4e81c0bd30db439a3b2d1121f189d57e70012e3f0dcb85f9fc5ed248460e6e23"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0199",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n2",
+            "inputs": [
+              "n1v0"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "2bb5b41ccee6352dac3eb734a16bcdbe0317c2a54000aa3c2887613637af99c3",
+      "reference_status": "unverified",
+      "signature": "0f3f6a76ac14a1f0eeeb9bd1c7391a07a0122484131491fc464dbca41ab76592",
+      "split": "holdout",
+      "topology": "b04f95766b089838d31861678918ff10b79d7db3549cbaaa824053d300a798be"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ],
+          "c1": [
+            [
+              -0.125,
+              -0.03125
+            ]
+          ],
+          "c2": [
+            0.0625
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0200",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "c0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c1",
+              "c2"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "0759ddc0c1708c038e2c85f32e41f6ece01aee7178b1a55d9f49ae655fc8869f",
+      "reference_status": "unverified",
+      "signature": "0ae49116f41060fce09779c47269990363ea75a781c2b513bb5232c85f3482e7",
+      "split": "validation",
+      "topology": "fbcd943faad7a9e904e2d892310708242df8ce56693929c8a36ee290ef0e5bf7"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0201",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "c0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "827cd5f1236b15e652519fef0fccc9bc6ab70114f011a1ac3c9a2c183865e2cd",
+      "reference_status": "unverified",
+      "signature": "6e83e1461c1c6038e89c1a3a51bb09b302f22c55fb0fd60b7c553cbfd8adec80",
+      "split": "validation",
+      "topology": "ce161fd639d5e42190267550ce5d5588376e830ef379827759f63d42056bbc92"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0202",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "c0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "de784f3986afe1f268b6342a900dda3280adbc95c8d1248f6b1589735fe593ce",
+      "reference_status": "unverified",
+      "signature": "0b6f9f8204497501288443accd69327c60143349516793b2e0307e182c27d15f",
+      "split": "validation",
+      "topology": "ea1c69313d77f2f6cadcff9435db6757481a490b580fce2287d25aac8749a5a8"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ],
+          "c1": [
+            0.125,
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0203",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "c0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c1"
+            ],
+            "op": "add",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "8cd48d827e86f6d342a3cffe77306d13082cf0270476e669e9398909aa902a71",
+      "reference_status": "unverified",
+      "signature": "0b6f3bd2dd654e80e270ed27563ca97c92d1a093a77b8bd917bf398f4c471e3c",
+      "split": "development",
+      "topology": "2610a16106e4226f0355bd252c2fecd98bb37dae5efba0135359843ca494df70"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ],
+          "c1": [
+            0.125,
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0204",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "c0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c1"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "f0fcdf1dd6b02b907c1cec169d2f10eae5d5552dc6f0f7baff3634283b39c83f",
+      "reference_status": "unverified",
+      "signature": "2790d16b4598e4550799143233f023eeb26e3f49b37ed88b32b4016d1869c649",
+      "split": "development",
+      "topology": "97dd1e8a8e52d66e5a5d9c53bbbe1dbdde0fd446bdd6120ed19faad47375afe3"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ],
+          "c1": [
+            0.125,
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0205",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "c0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c1"
+            ],
+            "op": "multiply",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "34c67b185f3945f66e04f997590fb0040481a288326b19bed76ddaca0c77f30e",
+      "reference_status": "unverified",
+      "signature": "1c00ed3583bc3292684cda3a0a01d0c3bb938c042fbd6b13219bab15aec83a5b",
+      "split": "development",
+      "topology": "f2e2ff9628683c907b4a1eecfe2182781f70ef3d9e0c65009aaeef517e208828"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0206",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "c0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {
+              "shape": [
+                1,
+                2
+              ]
+            },
+            "id": "n2",
+            "inputs": [
+              "n1v0"
+            ],
+            "op": "reshape",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "797e414d41c7f0aa937420d6df180f199fd09dffa63039f7a1f78d3ecbbd7e47",
+      "reference_status": "unverified",
+      "signature": "51a2cce1673ff7db88e88284bf34957a68a5f6d96dcbde1283e50646eb4bf3c8",
+      "split": "holdout",
+      "topology": "181b6a154410347b61537415bd0503598bd2a6066c4b07fdd2dbbf475eb01794"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ],
+          "c1": [
+            0.0625,
+            -0.125,
+            0.03125,
+            0.015625
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0207",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "c0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {
+              "basis": "chebyshev"
+            },
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c1"
+            ],
+            "op": "polynomial",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "a1361080a4bd1dc8f1a5f37acd0245faf659a1de8b54df703642c6117aee4807",
+      "reference_status": "unverified",
+      "signature": "8142089a49cb844cca3db63d6e571561cf8b920fee4d1d8ee967e04537b67866",
+      "split": "validation",
+      "topology": "617558fdef244c233efa716d271b3a88c96a78bd590a2d7c08bf607d8df9c771"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0208",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "c0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0
+              ],
+              "keepdims": false
+            },
+            "id": "n2",
+            "inputs": [
+              "n1v0"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "8103c9f14656d9ca67f260d07058393a4bd237e04dfe1e770276663431e2c796",
+      "reference_status": "unverified",
+      "signature": "726bbe8ffb4cafdfd459fd0d508ae786576440cd00d89494dd0ae68aae002cfd",
+      "split": "holdout",
+      "topology": "e67c9f8386011ebab3b63c14b87d04a3cb1f376a5d6fc33937784c9c7e7ef467"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ],
+          "c1": [
+            [
+              -0.125,
+              -0.03125
+            ]
+          ],
+          "c2": [
+            0.0625
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0209",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "c0"
+            ],
+            "op": "multiply",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c1",
+              "c2"
+            ],
+            "op": "linear",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "25dbb9232ae409162f3beb1a3d5461fe001a06b1521ffa352ed2a02f358cb822",
+      "reference_status": "unverified",
+      "signature": "3f6f48eb4f249910ce9b98fd23ed4de02dd3fcadd0e76ea9bdb4b2cfe065f925",
+      "split": "holdout",
+      "topology": "6dd6489bd956b00cef169168ace19ddee6ba9b698c7e8af819960fc0ffa320a3"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0210",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "c0"
+            ],
+            "op": "multiply",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "a3307ccd507cdc233b878d1e23593fa067a529cab6337625bbf789d7c7359689",
+      "reference_status": "unverified",
+      "signature": "b5987262d4b0c197bb9bcb9381515d10caffca4096f5fc1b8310720d777390f8",
+      "split": "development",
+      "topology": "b21d433194d8ea8e85fcc78c9fd987afc540273b73e556311b551efdf36cdd0a"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0211",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "c0"
+            ],
+            "op": "multiply",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "8c8cbb1e8575c724f2809e169546b0c0d12e058181fc1b6346a7070d186f9093",
+      "reference_status": "unverified",
+      "signature": "5ca4cfcc0e94d7c275ca3656a80090bc51ab2407a275cb4d88615d52a6bd2a1f",
+      "split": "holdout",
+      "topology": "4ff1a5f139e48c5b3f79e00ae15c2eb4d823828a35d396133f60971ba8cb98c1"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ],
+          "c1": [
+            0.125,
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0212",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "c0"
+            ],
+            "op": "multiply",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c1"
+            ],
+            "op": "add",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "020e26237f18ccd8b24162667bc7984564d0bbb97eaeb9cd78549af34f942c8f",
+      "reference_status": "unverified",
+      "signature": "459a5f0ed91398c0b61a034c5867a8970d73657ac746b7eb56d298a518313862",
+      "split": "validation",
+      "topology": "c23dd9d86c2a67cb16ad0156046652ebfb1a6e2e4cb6da3773b8efdda591d3c7"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ],
+          "c1": [
+            0.125,
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0213",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "c0"
+            ],
+            "op": "multiply",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c1"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "c385460ebbef735a7ac992a9dff3537ff945388c4ef4b532442efc113da73cd4",
+      "reference_status": "unverified",
+      "signature": "58e3ef6cbfe0815643af99a6ba7893b6605a44886fe3eb3c758bc54e70694cc8",
+      "split": "development",
+      "topology": "c17279cd23aba79fab031d403ee1afb5c7cb0a89a4768de5bf01fa4192ba3863"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ],
+          "c1": [
+            0.125,
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0214",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "c0"
+            ],
+            "op": "multiply",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "n1v0",
+              "c1"
+            ],
+            "op": "multiply",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "09a4e7cfc82cc0748efbb813a8992c90c0b25d8a36e15694222ed29d7ddb416f",
+      "reference_status": "unverified",
+      "signature": "3aa0963e694965e591ce6b880bc2feed9368acb4d597b674d1a8a1bb324243d2",
+      "split": "development",
+      "topology": "0b223fb5e4870e4d42b686043b424e0eb260c09384f36d9ead328d2e972cbad8"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "composition",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            0.125
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_composition_0215",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "c0"
+            ],
+            "op": "multiply",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {
+              "shape": [
+                1,
+                2
+              ]
+            },
+            "id": "n2",
+            "inputs": [
+              "n1v0"
+            ],
+            "op": "reshape",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "ec39bae41a6773ee272448611440916d7190170b44ae3d2def785d4e048abebd",
+      "reference_status": "unverified",
+      "signature": "6e105c1130831457dab6230e42c79cff46232d157f8c829f8905b21c1aeba522",
+      "split": "development",
+      "topology": "551212ce0efbe07d09833ac62d34c90c4d11ec7a966b8d6d84955fdcdc9bc355"
+    }
+  ],
+  "version": "poseidon-semantic-benchmark-v1"
+}

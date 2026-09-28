@@ -173,7 +173,8 @@ class SandboxCommandTests(unittest.TestCase):
     def test_resolved_work_root_crosses_clearenv_without_extra_mounts(self):
         cmd = self.sandbox_command()
         index = cmd.index('POSEIDON_WORK_ROOT')
-        self.assertEqual(cmd[index-1:index+2], ['--setenv','POSEIDON_WORK_ROOT',str(WORK)])
+        from workspace_paths import WORK_BASE
+        self.assertEqual(cmd[index-1:index+2], ['--setenv','POSEIDON_WORK_ROOT',str(WORK_BASE)])
         self.assertIn('/app/workspace_paths.py', cmd)
         destinations = [cmd[i+2] for i, word in enumerate(cmd) if word in ('--bind','--ro-bind')]
         self.assertNotIn(str(WORK), destinations)

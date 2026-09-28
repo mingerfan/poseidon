@@ -1,0 +1,1390 @@
+{
+  "agent_stage_complete": false,
+  "api_counts": {
+    "backend_blocked": 14,
+    "execution_partition_mapping_pending": 77,
+    "outside_candidate_computation": 16
+  },
+  "api_dispositions": [
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_fhe_helper",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "symbol": "HE_BN"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_fhe_helper",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "symbol": "HE_MPBN"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_fhe_helper",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "symbol": "HE_Conv"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_fhe_helper",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "symbol": "HE_ConvBN"
+    },
+    {
+      "disposition": "backend_blocked",
+      "reason": "Retain actual unsupported implementation; never substitute decrypt/re-encrypt",
+      "role": "public_fhe_helper",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "symbol": "HE_MaxPad"
+    },
+    {
+      "disposition": "backend_blocked",
+      "reason": "Retain actual unsupported implementation; never substitute decrypt/re-encrypt",
+      "role": "bootstrap_helper_closure",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "symbol": "HE_MaxPad.maximum"
+    },
+    {
+      "disposition": "backend_blocked",
+      "reason": "Retain actual unsupported implementation; never substitute decrypt/re-encrypt",
+      "role": "public_fhe_helper",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "symbol": "HE_Max"
+    },
+    {
+      "disposition": "backend_blocked",
+      "reason": "Retain actual unsupported implementation; never substitute decrypt/re-encrypt",
+      "role": "bootstrap_helper_closure",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "symbol": "HE_Max.maximum"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_fhe_helper",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "symbol": "HE_Avg"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_fhe_helper",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "symbol": "HE_DS"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_fhe_helper",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "symbol": "HE_Pool"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_fhe_helper",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "symbol": "HE_Linear"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_fhe_helper",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "symbol": "HE_ReshapeLinear"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_fhe_helper",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "symbol": "HE_DwConv"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_fhe_helper",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "symbol": "HE_Concat"
+    },
+    {
+      "disposition": "backend_blocked",
+      "reason": "Retain actual unsupported implementation; never substitute decrypt/re-encrypt",
+      "role": "public_fhe_helper",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "symbol": "HE_ReLU"
+    },
+    {
+      "disposition": "backend_blocked",
+      "reason": "Retain actual unsupported implementation; never substitute decrypt/re-encrypt",
+      "role": "bootstrap_helper_closure",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "symbol": "HE_ReLU.sign"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_fhe_helper",
+      "source": "third_party/dacapo/python/poly/poly/Func.py",
+      "source_sha256": "4baeff8c6761eb5633e3c648ce60690ed88afb764d5a6e055919c32dcd23d7db",
+      "symbol": "HE_SiLU"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_integer_shape_utility",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "cint"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_integer_shape_utility",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "fint"
+    },
+    {
+      "disposition": "outside_candidate_computation",
+      "reason": "Default torch.maximum is replaced by HE_Max/HE_MaxPad; distinguish default plaintext hook from bootstrap encrypted path.",
+      "role": "mutable_maximum_hook",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "maximum"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "cipher_rotation_wrapper",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "roll"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "polynomial_factory_and_closure",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "GenPoly"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "polynomial_factory_and_closure",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "GenPoly.polynomial"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "packing_closure_factory",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "shapeClosure"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_tensor_pack_unpack",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "shapeClosure.MultParPack"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_tensor_pack_unpack",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "shapeClosure.OutPack"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_weight_and_mask_transform",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "shapeClosure.ParMultWgt"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_weight_and_mask_transform",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "shapeClosure.DwMultWgt"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "cipher_reduction_dependency",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "shapeClosure.SumSlots"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_weight_and_mask_transform",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "shapeClosure.Selecting"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_weight_and_mask_transform",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "shapeClosure.ParBNConst"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_weight_and_mask_transform",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "shapeClosure.ParInBNConst"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_weight_and_mask_transform",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "shapeClosure.DownSelecting"
+    },
+    {
+      "disposition": "backend_blocked",
+      "reason": "Retain actual unsupported implementation; never substitute decrypt/re-encrypt",
+      "role": "upstream_unimplemented_stub",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "shapeClosure.AvgMidSelecting"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_weight_and_mask_transform",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "shapeClosure.ParMPDA"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_weight_and_mask_transform",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "shapeClosure.ParMPDM"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_weight_and_mask_transform",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "shapeClosure.PoolSelecting"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "cipher_helper_closure",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "shapeClosure.Downsamp"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "cipher_helper_closure",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "shapeClosure.AvgPool"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "cipher_helper_closure",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "shapeClosure.AvgMidPool"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_weight_and_mask_transform",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "shapeClosure.ConcatSelecting"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "cipher_helper_closure",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "shapeClosure.Concat"
+    },
+    {
+      "disposition": "backend_blocked",
+      "reason": "Retain actual unsupported implementation; never substitute decrypt/re-encrypt",
+      "role": "bootstrap_maximum_closure",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "shapeClosure.MaxPool"
+    },
+    {
+      "disposition": "backend_blocked",
+      "reason": "Retain actual unsupported implementation; never substitute decrypt/re-encrypt",
+      "role": "bootstrap_maximum_closure",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "shapeClosure.MaxPoolPad"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "cipher_helper_closure",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "shapeClosure.DwConvBN"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "cipher_helper_closure",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "shapeClosure.MultParBN"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "cipher_helper_closure",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "shapeClosure.MultParConv"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "cipher_helper_closure",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "shapeClosure.MultParConvBN"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_weight_and_mask_transform",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "abstractBN"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "cipher_dense_affine_dependency",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "Linear"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "cipher_dense_affine_dependency",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "BN"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_weight_and_mask_transform",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "Reshape"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_packing_shape_propagation",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "InferShapes"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_packing_shape_propagation",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "CascadeConcat"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_packing_shape_propagation",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "CascadeConv"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_packing_shape_propagation",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "CascadeMax"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_packing_shape_propagation",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "CascadeDS"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "public_packing_shape_propagation",
+      "source": "third_party/dacapo/python/poly/poly/MPCB.py",
+      "source_sha256": "4737a63f0f72c3ba41584453677eed99f3c1e44cad307ad7bf7df37da35a927a",
+      "symbol": "CascadePool"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "fixed_polynomial_factory",
+      "source": "third_party/dacapo/python/poly/poly/Poly.py",
+      "source_sha256": "0b0815a056c9946b2235b5660fde671bcba2ea2376a078ca8bf3cf91a284bbf7",
+      "symbol": "GenPoly"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "standalone_approximation_composition",
+      "source": "third_party/dacapo/python/poly/poly/Poly.py",
+      "source_sha256": "0b0815a056c9946b2235b5660fde671bcba2ea2376a078ca8bf3cf91a284bbf7",
+      "symbol": "sign"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "standalone_approximation_composition",
+      "source": "third_party/dacapo/python/poly/poly/Poly.py",
+      "source_sha256": "0b0815a056c9946b2235b5660fde671bcba2ea2376a078ca8bf3cf91a284bbf7",
+      "symbol": "genRelu6"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "standalone_approximation_composition",
+      "source": "third_party/dacapo/python/poly/poly/Poly.py",
+      "source_sha256": "0b0815a056c9946b2235b5660fde671bcba2ea2376a078ca8bf3cf91a284bbf7",
+      "symbol": "relua"
+    },
+    {
+      "disposition": "backend_blocked",
+      "reason": "Retain actual unsupported implementation; never substitute decrypt/re-encrypt",
+      "role": "bootstrap_maximum_composition",
+      "source": "third_party/dacapo/python/poly/poly/Poly.py",
+      "source_sha256": "0b0815a056c9946b2235b5660fde671bcba2ea2376a078ca8bf3cf91a284bbf7",
+      "symbol": "maxx"
+    },
+    {
+      "disposition": "backend_blocked",
+      "reason": "Retain actual unsupported implementation; never substitute decrypt/re-encrypt",
+      "role": "bootstrap_maximum_composition",
+      "source": "third_party/dacapo/python/poly/poly/Poly.py",
+      "source_sha256": "0b0815a056c9946b2235b5660fde671bcba2ea2376a078ca8bf3cf91a284bbf7",
+      "symbol": "maxx.sign"
+    },
+    {
+      "disposition": "outside_candidate_computation",
+      "reason": "Uses NumPy maximum/sqrt/mean on plaintext; not evidence for encrypted ReLU or sqrt support.",
+      "role": "plaintext_diagnostic_utility",
+      "source": "third_party/dacapo/python/poly/poly/Poly.py",
+      "source_sha256": "0b0815a056c9946b2235b5660fde671bcba2ea2376a078ca8bf3cf91a284bbf7",
+      "symbol": "ReLU"
+    },
+    {
+      "disposition": "outside_candidate_computation",
+      "reason": "Uses NumPy maximum/sqrt/mean on plaintext; not evidence for encrypted ReLU or sqrt support.",
+      "role": "plaintext_diagnostic_utility",
+      "source": "third_party/dacapo/python/poly/poly/Poly.py",
+      "source_sha256": "0b0815a056c9946b2235b5660fde671bcba2ea2376a078ca8bf3cf91a284bbf7",
+      "symbol": "rms"
+    },
+    {
+      "disposition": "outside_candidate_computation",
+      "reason": "Uses NumPy maximum/sqrt/mean on plaintext; not evidence for encrypted ReLU or sqrt support.",
+      "role": "plaintext_diagnostic_utility",
+      "source": "third_party/dacapo/python/poly/poly/Poly.py",
+      "source_sha256": "0b0815a056c9946b2235b5660fde671bcba2ea2376a078ca8bf3cf91a284bbf7",
+      "symbol": "nprelu"
+    },
+    {
+      "disposition": "outside_candidate_computation",
+      "reason": "Owned by trusted tracing lifecycle; generated programs may not choose arbitrary paths or teardown the context.",
+      "role": "trusted_framework_io",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "save"
+    },
+    {
+      "disposition": "backend_blocked",
+      "reason": "Retain actual unsupported implementation; never substitute decrypt/re-encrypt",
+      "role": "bootstrap_frontend_factory",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "unaryFactory"
+    },
+    {
+      "disposition": "backend_blocked",
+      "reason": "Retain actual unsupported implementation; never substitute decrypt/re-encrypt",
+      "role": "bootstrap_frontend_factory",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "unaryFactory.unaryMethod"
+    },
+    {
+      "disposition": "backend_blocked",
+      "reason": "Retain actual unsupported implementation; never substitute decrypt/re-encrypt",
+      "role": "bootstrap_frontend_factory",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "unaryFactory.unaryMethod.apply"
+    },
+    {
+      "disposition": "outside_candidate_computation",
+      "reason": "Trusted dynamic operator installation, not permission for user-defined metaclasses.",
+      "role": "frontend_metaclass_and_operator_factory",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "hecateMetaBase"
+    },
+    {
+      "disposition": "outside_candidate_computation",
+      "reason": "Trusted dynamic operator installation, not permission for user-defined metaclasses.",
+      "role": "frontend_metaclass_and_operator_factory",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "hecateMetaBase.__new__"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "copy_rejection",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "hecateMetaBase.__new__.raiser"
+    },
+    {
+      "disposition": "outside_candidate_computation",
+      "reason": "Trusted dynamic operator installation, not permission for user-defined metaclasses.",
+      "role": "frontend_metaclass_and_operator_factory",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "hecateMetaBinary"
+    },
+    {
+      "disposition": "outside_candidate_computation",
+      "reason": "Trusted dynamic operator installation, not permission for user-defined metaclasses.",
+      "role": "frontend_metaclass_and_operator_factory",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "hecateMetaBinary.__new__"
+    },
+    {
+      "disposition": "outside_candidate_computation",
+      "reason": "Trusted dynamic operator installation, not permission for user-defined metaclasses.",
+      "role": "frontend_metaclass_and_operator_factory",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "hecateMetaBinary.__new__.binaryFactory"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "binary_operand_order",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "hecateMetaBinary.__new__.binaryFactory.binaryMethod"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "binary_operand_order",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "hecateMetaBinary.__new__.binaryFactory.binaryReverseMethod"
+    },
+    {
+      "disposition": "outside_candidate_computation",
+      "reason": "Function mutates self.obj but is never installed; actual __i*__ uses binaryMethod, so do not attribute mutation semantics to this unused definition.",
+      "role": "defined_but_unregistered_inplace",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "hecateMetaBinary.__new__.binaryFactory.binaryInplaceMethod"
+    },
+    {
+      "disposition": "outside_candidate_computation",
+      "reason": "Trusted dynamic operator installation, not permission for user-defined metaclasses.",
+      "role": "frontend_metaclass_and_operator_factory",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "hecateMetaBinary.__new__.innerFactory"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "cipher_negation_implementation",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "hecateMetaBinary.__new__.innerFactory.innerMethod"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "cipher_rotation_implementation",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "hecateMetaBinary.__new__.rotate"
+    },
+    {
+      "disposition": "outside_candidate_computation",
+      "reason": "Finds source location in call stack for trusted frontend; candidate introspection remains rejected.",
+      "role": "trusted_framework_introspection",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "getProperFrame"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "legacy_public_literal_utility",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "recType"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "legacy_public_literal_utility",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "flatten"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "implicit_public_operand_conversion",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "resolveType"
+    },
+    {
+      "disposition": "outside_candidate_computation",
+      "reason": "Wraps frontend object handle; candidates cannot manufacture or mutate raw C++ handles.",
+      "role": "frontend_expression_handle",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "Expr"
+    },
+    {
+      "disposition": "outside_candidate_computation",
+      "reason": "Wraps frontend object handle; candidates cannot manufacture or mutate raw C++ handles.",
+      "role": "frontend_expression_handle",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "Expr.__init__"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "plaintext_expression_constructor",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "Plain"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "plaintext_expression_constructor",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "Plain.__init__"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "empty_accumulator_semantics",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "Empty"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "empty_accumulator_semantics",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "Empty.__init__"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "empty_accumulator_semantics",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "Empty.__add__"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "empty_accumulator_semantics",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "Empty.__radd__"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "empty_accumulator_semantics",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "Empty.__iadd__"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "empty_accumulator_semantics",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "Empty.__sub__"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "empty_accumulator_semantics",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "Empty.__rsub__"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "empty_accumulator_semantics",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "Empty.__isub__"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "native_function_tracing",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "func"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "native_function_tracing",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "func.generateFunc"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "native_function_tracing",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "Func"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "native_function_tracing",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "Func.__init__"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "native_function_tracing",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "Func.eval"
+    },
+    {
+      "disposition": "execution_partition_mapping_pending",
+      "reason": "Map all relevant behavior partitions to real three-context evidence; add only missing tasks",
+      "role": "native_function_tracing",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "Func.__call__"
+    },
+    {
+      "disposition": "outside_candidate_computation",
+      "reason": "Owned by trusted tracing lifecycle; generated programs may not choose arbitrary paths or teardown the context.",
+      "role": "trusted_framework_io",
+      "source": "third_party/dacapo/python/hecate/hecate/expr.py",
+      "source_sha256": "8532a1329f0b7ab45d547a164253076d715faeb069ef19c8cb30c4298e084a53",
+      "symbol": "removeCtxt"
+    }
+  ],
+  "binding": "bcdf7d85738313fb924c2dace44b20f3a02ec400aa77585b3d5eb73bd77dfa82",
+  "execution_policy": {
+    "compiler_jobs": 2,
+    "concurrency": 1,
+    "default": "plan_only",
+    "link_jobs": 1,
+    "max_concurrency": 2,
+    "max_shard_size": 48,
+    "replay_only_same_binding": true
+  },
+  "format": "poseidon-stage2-gap-plan-v1",
+  "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+  "mathematical_deficits": [
+    {
+      "kind": "mathematical_context",
+      "next_action": "Inspect same model's existing helper evidence or repair lowering; preserve original failed task",
+      "required": 3,
+      "requirement": "graph.shared_value",
+      "unresolved_tasks": [
+        {
+          "model_id": "bench_helper_0112",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_272a7136d34733f3_2",
+          "topology": "88152c4928a647b53c561597043e9191f719a1f939e7acab5ecbcd3b4b388e3a"
+        }
+      ],
+      "verified": 2
+    },
+    {
+      "kind": "mathematical_context",
+      "next_action": "Inspect same model's existing helper evidence or repair lowering; preserve original failed task",
+      "required": 3,
+      "requirement": "input.size_bucket.128",
+      "unresolved_tasks": [
+        {
+          "model_id": "bench_boundary_0014",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_bb8d7e61fc102900_0",
+          "topology": "fde0be68d48dc2c3a10ec659160583a492b250cedcf0d48d3d91be327544b000"
+        },
+        {
+          "model_id": "bench_boundary_0032",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_bb8d7e61fc102900_1",
+          "topology": "2735e33c4254029d2265acb05152f6983b4194571519902fe4b25d4b6de42362"
+        },
+        {
+          "model_id": "bench_boundary_0067",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_bb8d7e61fc102900_2",
+          "topology": "5f7b8b0aef8b524c40ab1aed85204b655890753f84e0e5df0fe656b4ec27c7c9"
+        }
+      ],
+      "verified": 0
+    },
+    {
+      "kind": "mathematical_context",
+      "next_action": "Inspect same model's existing helper evidence or repair lowering; preserve original failed task",
+      "required": 3,
+      "requirement": "input.size_bucket.256",
+      "unresolved_tasks": [
+        {
+          "model_id": "bench_boundary_0017",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_431563c549bc0870_0",
+          "topology": "fde0be68d48dc2c3a10ec659160583a492b250cedcf0d48d3d91be327544b000"
+        },
+        {
+          "model_id": "bench_boundary_0035",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_431563c549bc0870_1",
+          "topology": "2735e33c4254029d2265acb05152f6983b4194571519902fe4b25d4b6de42362"
+        },
+        {
+          "model_id": "bench_boundary_0070",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_431563c549bc0870_2",
+          "topology": "5f7b8b0aef8b524c40ab1aed85204b655890753f84e0e5df0fe656b4ec27c7c9"
+        }
+      ],
+      "verified": 0
+    },
+    {
+      "kind": "mathematical_context",
+      "next_action": "Inspect same model's existing helper evidence or repair lowering; preserve original failed task",
+      "required": 3,
+      "requirement": "input.size_bucket.64",
+      "unresolved_tasks": [
+        {
+          "model_id": "bench_boundary_0011",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_dac8f260fdfdd8eb_0",
+          "topology": "fde0be68d48dc2c3a10ec659160583a492b250cedcf0d48d3d91be327544b000"
+        },
+        {
+          "model_id": "bench_boundary_0029",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_dac8f260fdfdd8eb_1",
+          "topology": "2735e33c4254029d2265acb05152f6983b4194571519902fe4b25d4b6de42362"
+        },
+        {
+          "model_id": "bench_boundary_0064",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_dac8f260fdfdd8eb_2",
+          "topology": "5f7b8b0aef8b524c40ab1aed85204b655890753f84e0e5df0fe656b4ec27c7c9"
+        }
+      ],
+      "verified": 0
+    },
+    {
+      "kind": "mathematical_context",
+      "next_action": "Inspect same model's existing helper evidence or repair lowering; preserve original failed task",
+      "required": 3,
+      "requirement": "op.avg_pool2d",
+      "unresolved_tasks": [
+        {
+          "model_id": "bench_helper_0053",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_1d764d69c230e241_2",
+          "topology": "3650821b46d556323cc913212f044ea0a56c8e423940d08d3d646753f613b61a"
+        }
+      ],
+      "verified": 2
+    },
+    {
+      "kind": "mathematical_context",
+      "next_action": "Inspect same model's existing helper evidence or repair lowering; preserve original failed task",
+      "required": 3,
+      "requirement": "op.conv2d",
+      "unresolved_tasks": [
+        {
+          "model_id": "bench_helper_0021",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_ce88f5ae7702ebd0_2",
+          "topology": "ad4f1ce58b3bcd7136846fdb78a37f0dd849a993d15e6c32435fe7b7e121807d"
+        }
+      ],
+      "verified": 2
+    },
+    {
+      "kind": "mathematical_context",
+      "next_action": "Inspect same model's existing helper evidence or repair lowering; preserve original failed task",
+      "required": 3,
+      "requirement": "parameter.avg_pool2d.count_include_pad.true",
+      "unresolved_tasks": [
+        {
+          "model_id": "bench_helper_0053",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_85db069d15e104f1_2",
+          "topology": "3650821b46d556323cc913212f044ea0a56c8e423940d08d3d646753f613b61a"
+        }
+      ],
+      "verified": 2
+    },
+    {
+      "kind": "mathematical_context",
+      "next_action": "Inspect same model's existing helper evidence or repair lowering; preserve original failed task",
+      "required": 3,
+      "requirement": "parameter.avg_pool2d.kernel.[2,2]",
+      "unresolved_tasks": [
+        {
+          "model_id": "bench_helper_0053",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_893b7da24c6569ab_2",
+          "topology": "3650821b46d556323cc913212f044ea0a56c8e423940d08d3d646753f613b61a"
+        }
+      ],
+      "verified": 2
+    },
+    {
+      "kind": "mathematical_context",
+      "next_action": "Inspect same model's existing helper evidence or repair lowering; preserve original failed task",
+      "required": 3,
+      "requirement": "parameter.avg_pool2d.padding.[1,1]",
+      "unresolved_tasks": [
+        {
+          "model_id": "bench_helper_0053",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_52c9ec241c6f5eb1_2",
+          "topology": "3650821b46d556323cc913212f044ea0a56c8e423940d08d3d646753f613b61a"
+        }
+      ],
+      "verified": 2
+    },
+    {
+      "kind": "mathematical_context",
+      "next_action": "Inspect same model's existing helper evidence or repair lowering; preserve original failed task",
+      "required": 3,
+      "requirement": "parameter.avg_pool2d.stride.[2,2]",
+      "unresolved_tasks": [
+        {
+          "model_id": "bench_helper_0053",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_d8687d24095aab3f_2",
+          "topology": "3650821b46d556323cc913212f044ea0a56c8e423940d08d3d646753f613b61a"
+        }
+      ],
+      "verified": 2
+    },
+    {
+      "kind": "mathematical_context",
+      "next_action": "Inspect same model's existing helper evidence or repair lowering; preserve original failed task",
+      "required": 3,
+      "requirement": "parameter.conv2d.dilation.[1,1]",
+      "unresolved_tasks": [
+        {
+          "model_id": "bench_helper_0021",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_8951d4ad32cb630f_2",
+          "topology": "ad4f1ce58b3bcd7136846fdb78a37f0dd849a993d15e6c32435fe7b7e121807d"
+        }
+      ],
+      "verified": 2
+    },
+    {
+      "kind": "mathematical_context",
+      "next_action": "Inspect same model's existing helper evidence or repair lowering; preserve original failed task",
+      "required": 3,
+      "requirement": "parameter.conv2d.groups.1",
+      "unresolved_tasks": [
+        {
+          "model_id": "bench_helper_0021",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_de75c5982f583375_2",
+          "topology": "ad4f1ce58b3bcd7136846fdb78a37f0dd849a993d15e6c32435fe7b7e121807d"
+        }
+      ],
+      "verified": 2
+    },
+    {
+      "kind": "mathematical_context",
+      "next_action": "Inspect same model's existing helper evidence or repair lowering; preserve original failed task",
+      "required": 3,
+      "requirement": "parameter.conv2d.padding.[1,1]",
+      "unresolved_tasks": [
+        {
+          "model_id": "bench_helper_0021",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_74a74c09e40b4c1f_2",
+          "topology": "ad4f1ce58b3bcd7136846fdb78a37f0dd849a993d15e6c32435fe7b7e121807d"
+        }
+      ],
+      "verified": 2
+    },
+    {
+      "kind": "mathematical_context",
+      "next_action": "Inspect same model's existing helper evidence or repair lowering; preserve original failed task",
+      "required": 3,
+      "requirement": "parameter.conv2d.stride.[2,2]",
+      "unresolved_tasks": [
+        {
+          "model_id": "bench_helper_0021",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_7dde7a67ebd4652b_2",
+          "topology": "ad4f1ce58b3bcd7136846fdb78a37f0dd849a993d15e6c32435fe7b7e121807d"
+        }
+      ],
+      "verified": 2
+    },
+    {
+      "kind": "mathematical_context",
+      "next_action": "Inspect same model's existing helper evidence or repair lowering; preserve original failed task",
+      "required": 3,
+      "requirement": "parameter.mean.axes.[-2,-1]",
+      "unresolved_tasks": [
+        {
+          "model_id": "bench_helper_0021",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_92b4a60f4ea1715a_1",
+          "topology": "ad4f1ce58b3bcd7136846fdb78a37f0dd849a993d15e6c32435fe7b7e121807d"
+        },
+        {
+          "model_id": "bench_helper_0053",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_92b4a60f4ea1715a_2",
+          "topology": "3650821b46d556323cc913212f044ea0a56c8e423940d08d3d646753f613b61a"
+        }
+      ],
+      "verified": 1
+    },
+    {
+      "kind": "mathematical_context",
+      "next_action": "Inspect same model's existing helper evidence or repair lowering; preserve original failed task",
+      "required": 3,
+      "requirement": "parameter.slice.start.1",
+      "unresolved_tasks": [
+        {
+          "model_id": "bench_helper_0040",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_67d781cc6c1b4050_0",
+          "topology": "a6ae8104ffbdcb6a6f58f11cd00bdebc9571f6d6c2ea368405bbecbe8e2818c5"
+        },
+        {
+          "model_id": "bench_helper_0044",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_67d781cc6c1b4050_1",
+          "topology": "c6e809740c03065e5f9ce6e3c3c7750289eb501fda39b8445341582788f74fe7"
+        },
+        {
+          "model_id": "bench_helper_0032",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_67d781cc6c1b4050_2",
+          "topology": "64e77570dafc334e9e890126f0a7855c2c142737ad52186b64620a83a2bbd50d"
+        }
+      ],
+      "verified": 0
+    },
+    {
+      "kind": "mathematical_context",
+      "next_action": "Inspect same model's existing helper evidence or repair lowering; preserve original failed task",
+      "required": 3,
+      "requirement": "parameter.slice.step.1",
+      "unresolved_tasks": [
+        {
+          "model_id": "bench_helper_0032",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_6f622d833f22b082_1",
+          "topology": "64e77570dafc334e9e890126f0a7855c2c142737ad52186b64620a83a2bbd50d"
+        },
+        {
+          "model_id": "bench_helper_0036",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_6f622d833f22b082_2",
+          "topology": "f7ac9e4ea976d6fdb3f426fb5ee35d690b99205f37def35db28205b8839d2834"
+        }
+      ],
+      "verified": 1
+    },
+    {
+      "kind": "mathematical_context",
+      "next_action": "Inspect same model's existing helper evidence or repair lowering; preserve original failed task",
+      "required": 3,
+      "requirement": "parameter.slice.stop.1",
+      "unresolved_tasks": [
+        {
+          "model_id": "bench_helper_0032",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_12d116c07405eaf3_0",
+          "topology": "64e77570dafc334e9e890126f0a7855c2c142737ad52186b64620a83a2bbd50d"
+        },
+        {
+          "model_id": "bench_helper_0036",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_12d116c07405eaf3_1",
+          "topology": "f7ac9e4ea976d6fdb3f426fb5ee35d690b99205f37def35db28205b8839d2834"
+        },
+        {
+          "model_id": "semantic_context_331124fd5981bd48a0c2971f",
+          "reason": "AST node limit",
+          "state": "missing_execution_evidence",
+          "task_id": "math_12d116c07405eaf3_2",
+          "topology": "774e5817756c3f4a20e395f820f6c762dff7ab46e3f38d82bf748d5e3fead5aa"
+        }
+      ],
+      "verified": 0
+    },
+    {
+      "kind": "mathematical_context",
+      "next_action": "Inspect same model's existing helper evidence or repair lowering; preserve original failed task",
+      "required": 3,
+      "requirement": "parameter.slice.stop.10",
+      "unresolved_tasks": [
+        {
+          "model_id": "bench_helper_0035",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_8bc60c8e9c1b3dd9_0",
+          "topology": "64e77570dafc334e9e890126f0a7855c2c142737ad52186b64620a83a2bbd50d"
+        },
+        {
+          "model_id": "bench_helper_0039",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_8bc60c8e9c1b3dd9_1",
+          "topology": "f7ac9e4ea976d6fdb3f426fb5ee35d690b99205f37def35db28205b8839d2834"
+        },
+        {
+          "model_id": "semantic_context_89458ebf15d877d81d6b8b2d",
+          "reason": "Deterministic baseline operation budget",
+          "state": "missing_execution_evidence",
+          "task_id": "math_8bc60c8e9c1b3dd9_2",
+          "topology": "774e5817756c3f4a20e395f820f6c762dff7ab46e3f38d82bf748d5e3fead5aa"
+        }
+      ],
+      "verified": 0
+    },
+    {
+      "kind": "mathematical_context",
+      "next_action": "Inspect same model's existing helper evidence or repair lowering; preserve original failed task",
+      "required": 3,
+      "requirement": "parameter.slice.stop.2",
+      "unresolved_tasks": [
+        {
+          "model_id": "bench_helper_0040",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_197ef1cb6a0c706f_1",
+          "topology": "a6ae8104ffbdcb6a6f58f11cd00bdebc9571f6d6c2ea368405bbecbe8e2818c5"
+        },
+        {
+          "model_id": "bench_helper_0044",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_197ef1cb6a0c706f_2",
+          "topology": "c6e809740c03065e5f9ce6e3c3c7750289eb501fda39b8445341582788f74fe7"
+        }
+      ],
+      "verified": 1
+    },
+    {
+      "kind": "mathematical_context",
+      "next_action": "Inspect same model's existing helper evidence or repair lowering; preserve original failed task",
+      "required": 3,
+      "requirement": "parameter.slice.stop.6",
+      "unresolved_tasks": [
+        {
+          "model_id": "bench_helper_0042",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_acf687113b52ce90_1",
+          "topology": "a6ae8104ffbdcb6a6f58f11cd00bdebc9571f6d6c2ea368405bbecbe8e2818c5"
+        },
+        {
+          "model_id": "bench_helper_0046",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_acf687113b52ce90_2",
+          "topology": "c6e809740c03065e5f9ce6e3c3c7750289eb501fda39b8445341582788f74fe7"
+        }
+      ],
+      "verified": 1
+    },
+    {
+      "kind": "mathematical_context",
+      "next_action": "Inspect same model's existing helper evidence or repair lowering; preserve original failed task",
+      "required": 3,
+      "requirement": "parameter.slice.stop.8",
+      "unresolved_tasks": [
+        {
+          "model_id": "bench_helper_0043",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_f1c0d13f1d516bda_1",
+          "topology": "a6ae8104ffbdcb6a6f58f11cd00bdebc9571f6d6c2ea368405bbecbe8e2818c5"
+        },
+        {
+          "model_id": "bench_helper_0047",
+          "reason": null,
+          "state": "missing_execution_evidence",
+          "task_id": "math_f1c0d13f1d516bda_2",
+          "topology": "c6e809740c03065e5f9ce6e3c3c7750289eb501fda39b8445341582788f74fe7"
+        }
+      ],
+      "verified": 1
+    }
+  ],
+  "offline_stage_complete": false,
+  "original_failed_and_blocked_tasks_preserved": true,
+  "paid_calls": 0,
+  "proposed_model_shards": [
+    [
+      "bench_boundary_0011",
+      "bench_boundary_0014",
+      "bench_boundary_0017",
+      "bench_boundary_0029",
+      "bench_boundary_0032",
+      "bench_boundary_0035",
+      "bench_boundary_0064",
+      "bench_boundary_0067",
+      "bench_boundary_0070",
+      "bench_helper_0021",
+      "bench_helper_0032",
+      "bench_helper_0035",
+      "bench_helper_0036",
+      "bench_helper_0039",
+      "bench_helper_0040",
+      "bench_helper_0042",
+      "bench_helper_0043",
+      "bench_helper_0044",
+      "bench_helper_0046",
+      "bench_helper_0047",
+      "bench_helper_0053",
+      "bench_helper_0112",
+      "semantic_context_331124fd5981bd48a0c2971f",
+      "semantic_context_89458ebf15d877d81d6b8b2d"
+    ]
+  ],
+  "provenance": {
+    "audit_sha256": "ffd7a7c48f3da1af1c4464f9d6db4766456097580ad7d82dac8ae189289f4960",
+    "ledger_sha256": "f07d6fbb1f2c55022dcbc421a9e8082b446d3bdc34dff170ebd3f97352fb8851",
+    "runner_sha256": "2707091b6b49f7a56cfcffaaf3dbf13f6ee46e07dc69c82c555742b1c2a0228c"
+  },
+  "verified_directed_partitions": 209,
+  "verified_directed_tasks": 627,
+  "verified_math_partitions": 131
+}

@@ -1,0 +1,930 @@
+{
+  "schema": 1,
+  "revision": "r160",
+  "source_binding": "eecf322a238d6257c8866b6593a679a1f6d2d141077d75d7d1f2b57de28276a9",
+  "parents": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-noncompiler-repairs-r159/report.json": "1766ee5b84aea17d36990febc1e31841b09b4c6b5e093fda089db7f892facb2c",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-single-return-r160/report.json": "1d08af34a9c001ffad92d7e0c7138cad98e32a17cd2922ad85e208bf3306677f",
+    "/home/lhohy/Code/Poseidon/docs/baseline/compiler-blocked-models-r159/index.json": "a5a36e0fa63fc75526c6643a1af1a1fa19029d28f8ee81a09593e9f87c66bb12"
+  },
+  "tests": {
+    "errors": 0,
+    "failed": 0,
+    "run": 115,
+    "skipped": 0
+  },
+  "compiler_files_unchanged": 93,
+  "compiler_modified": false,
+  "new_paid_calls": 0,
+  "new_agent_generation": false,
+  "unchanged_agent_replays": [
+    {
+      "diagnostic": null,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-8gtvtxc9",
+      "failure_layer": null,
+      "id": "construct_040_0",
+      "max_absolute_error": 2.240481689064211e-10,
+      "new_agent_generation": false,
+      "report_sha256": "cc1250ca48656c51ca80b99dbcdad1e475d8e138874984658fa4414f2e40f1ad",
+      "status": "passed",
+      "unchanged_candidate_source": true,
+      "unchanged_request": true
+    },
+    {
+      "diagnostic": null,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-6m3sndak",
+      "failure_layer": null,
+      "id": "construct_130_2",
+      "max_absolute_error": 7.610104603775203e-10,
+      "new_agent_generation": false,
+      "report_sha256": "c7787581cd99e325c681c9f684ebbab723b3a90adb3108114eb8bb82ab8f50b7",
+      "status": "passed",
+      "unchanged_candidate_source": true,
+      "unchanged_request": true
+    }
+  ],
+  "manual_golden": {
+    "binding": "3242d1074dddfe8757d0dea5fbcb0d737f4d6fd5f8592b26347f0ff4b8b40114",
+    "compiler_files_unchanged": 93,
+    "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-eavpinix",
+    "fixture_sha256": "2596d569df9456daa5b414a9ced98e27fa894425b961d12b099fbec9fb8262ee",
+    "manual_golden": true,
+    "new_agent_generation": false,
+    "new_paid_calls": 0,
+    "report_sha256": "ae2b4add285923f5150aca453d1ee42a872f62d17c795873c4fccf989cb45533",
+    "status": "passed"
+  },
+  "static_rechecked": 88,
+  "static_remaining": 86,
+  "contribution_rejections": 30,
+  "other_static_rejections": 56,
+  "compiler_models": 33,
+  "compiler_models_reexecuted": 0,
+  "numerical_tolerance": {
+    "atol": 1e-05,
+    "rtol": 0.0001
+  },
+  "remaining_static_cases": [
+    {
+      "diagnostic": "ValueError: Ciphertext is not public numerical data",
+      "id": "construct_000_0",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-yexokups/attempt-03/response.txt",
+      "original_response_sha256": "9c25b4f8d856c7ccb44e15e453c5d013b214081be289f812464426775c8a11b2",
+      "previous_diagnostic": "Ciphertext is not public numerical data",
+      "request_id": "fe951fbaee03013b8b0f5ff45089a918b234903941d211660ec9ba318ce32d6a",
+      "source_sha256": "b756a1bc01a8cdc1b06022f543c4234ef203b712b4113a7c6fe1091e6b1212fb",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Ciphertext is not public numerical data",
+      "id": "construct_000_1",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-cymrk5wa/attempt-03/response.txt",
+      "original_response_sha256": "2baca1e04a6e295ce123ebb4b024cc17ee0e9cf8ba7db9e2ae3d545baaacbc59",
+      "previous_diagnostic": "Ciphertext is not public numerical data",
+      "request_id": "d0d27b262a45d4e6459dd466ea8c05a50d1b8f3d857b5a5cab80aab777ce2089",
+      "source_sha256": "98570c111c49abf4124a349a4b69227dd188f0e5135f074b44a2d86e83f819bc",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Ciphertext is not public numerical data",
+      "id": "construct_000_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-8n7en99y/attempt-03/response.txt",
+      "original_response_sha256": "ca14d484c7fbd1be0055df79f91b2e48872ee4fdf846970806d8693221cbad3d",
+      "previous_diagnostic": "Ciphertext is not public numerical data",
+      "request_id": "143da23a10282cb2a79b8036f2ab78c9fc29605192cedede175e9bba8870b8c1",
+      "source_sha256": "7d5ac6e6106f62bb124d362d91e2cef0e740f1a4227e950f557b92f8f46d6ab0",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Chebyshev requires a nonempty real coefficient vector",
+      "id": "construct_008_1",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-54yf654q/attempt-03/response.txt",
+      "original_response_sha256": "c2eff7bdd94e4f5dfda81b4abe47d70721e7443ce558bac18be5f53b510f5c85",
+      "previous_diagnostic": "Chebyshev requires a nonempty real coefficient vector",
+      "request_id": "5d6f7570c25e56fe8b3b59f9e5475b79df92040727e26e389c8aa35a30a3b75b",
+      "source_sha256": "2602ffd6df887500d8ba26ddb5247c72eff1cf346b5721d38dcaf04ad5ae123a",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Chebyshev requires a nonempty real coefficient vector",
+      "id": "construct_008_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-q587npba/attempt-03/response.txt",
+      "original_response_sha256": "2ef07531e663f9ef7749af3d426810d53ac8dab16a90025d60d31d0d30e21bba",
+      "previous_diagnostic": "Chebyshev requires a nonempty real coefficient vector",
+      "request_id": "20f745f111b4e9284f4d4afb4eb269b7f90fc89849c80b9503722e48679f2760",
+      "source_sha256": "130a04e98f234ccc29034380d7e465c5d333c2a9b75c2bcf882e8666eff03f4d",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Only golden and at most 16 top-level helper definitions are allowed",
+      "id": "construct_016_0",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-x8558zzi/attempt-03/response.txt",
+      "original_response_sha256": "083cf8d5083b6f71f4cb41b6d0cf21b207c9bcb17be2b95a9edcb2a5d55acb22",
+      "previous_diagnostic": "Only golden and at most 16 top-level helper definitions are allowed",
+      "request_id": "70856d3a9817c94b00c0bd6494142c1e1b172bf6bdd1791e8e42505aa1aba3d3",
+      "source_sha256": "8c087e334d436dcafbd31ba1812962dca6b012ca9cb1522ca54bfb0857c961e3",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Public number must be a finite bounded real",
+      "id": "construct_025_0",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-u0cpf7zr/attempt-03/response.txt",
+      "original_response_sha256": "8cb7b3706f7d32414f12fdaa345d24384fac06e047b67bdc7ac8a6e05d91fed3",
+      "previous_diagnostic": "Public number must be a finite bounded real",
+      "request_id": "0fa4dddbc9a6f47160cc4e2058d192da60bfb4e7266e7bb5faf636413177bc62",
+      "source_sha256": "162bcd83e84578a4c96b6008bed2d997012eb8f83da144dd62c8294d748deed7",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Missing contributing public expression: bool.Or",
+      "id": "construct_025_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-a2uvpiya/attempt-03/response.txt",
+      "original_response_sha256": "fe18ee9dea8d4ec10f2513b5ff74fac1fe96d548168781afe74dfb03ddbd68cf",
+      "previous_diagnostic": "Missing contributing public expression: bool.Or",
+      "request_id": "2ae8997324721c1e5a1ca6c88927244f7f7c7dccd10cd8b768d2be8243502f1c",
+      "source_sha256": "49c902eea5627a17de551ccadc3f9d710ac1d130238328aa83d872d65d284475",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Chebyshev requires a nonempty real coefficient vector",
+      "id": "construct_027_1",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-ob2x1de7/attempt-03/response.txt",
+      "original_response_sha256": "bb73ab64aaef0142cc37f38aabab5bc806b59aa6d00a7f681285aedd69bdb10b",
+      "previous_diagnostic": "Chebyshev requires a nonempty real coefficient vector",
+      "request_id": "d81c8ff19c41c44aa86a63ceed9e4f71469cd30b5633c48035ee9512f5fecc86",
+      "source_sha256": "0d61006b168a12c95e1e995b0e8bbf0d4414414522f78483f541b74eb35f38ac",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Chebyshev requires a nonempty real coefficient vector",
+      "id": "construct_027_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-zk37movj/attempt-03/response.txt",
+      "original_response_sha256": "baa0fbdeec935da6d46c1e0d332e7392ba8339d3363c1de581938a1f37df7663",
+      "previous_diagnostic": "Chebyshev requires a nonempty real coefficient vector",
+      "request_id": "797dc6ff0ffb5afa462ecf84465ae794e7ff8266bd56e420bdb5c7c31bc0f62d",
+      "source_sha256": "ed27d507fa75a7825bb17580d4ea652e4abe945cfc831c53c260afcdfd3b2bd2",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Ragged public array",
+      "id": "construct_034_0",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-0kv2zymz/attempt-03/response.txt",
+      "original_response_sha256": "5e1a9780f8bb736d8b911db8cc1f9870f5a315b9333c1b60d2577baca7ff24de",
+      "previous_diagnostic": "Ragged public array",
+      "request_id": "9aefc4db99500f217e0b0049df6ba18ceaa0cb1eb05c4c4e82442f7fa74be93c",
+      "source_sha256": "46179590252e29ec2cb57ba9485c09134debae56f44fb4b8d45267a1705452ea",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Ragged public array",
+      "id": "construct_034_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-p_jzve8_/attempt-03/response.txt",
+      "original_response_sha256": "08d79520f7f06a0e8bd66c3f4d77dfc01a92b2a82a20aa6b9749cc401b6cb0a6",
+      "previous_diagnostic": "Ragged public array",
+      "request_id": "eef4d451f13548d116cdea04445e12d5f8e2a3287a09fce9a84cc536dc7825c0",
+      "source_sha256": "7ed170de771ff68a3895b568685096186257a326af25f6e48d725cae4f8687cf",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Unsupported construction call",
+      "id": "construct_054_0",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-k7qarbrh/attempt-03/response.txt",
+      "original_response_sha256": "823f1008cb428dca4a6a84da6be652c5398035cd8f7ec26be7c3fd6852d04000",
+      "previous_diagnostic": "Unsupported construction call",
+      "request_id": "5d51c62a21ee7b14b70460d3b5ee2f7fc311f0c1749869c8ed50ac3aaa776360",
+      "source_sha256": "961c12f276e365632078ffa3dce78eff346d20963cf017ee9e8a1564baabbf6f",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Ragged public array",
+      "id": "construct_063_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-_pe4fex1/attempt-03/response.txt",
+      "original_response_sha256": "87b442230afad4377149348a8b8ff5dcc58850e328dfbc63ea02c8277e147489",
+      "previous_diagnostic": "Ragged public array",
+      "request_id": "de0661612fb933159f91d2576bc86e934483a492cd79aab27f3468f3284a5cbd",
+      "source_sha256": "bc899abdbca49e0a727f0f6600d7d98c91da04458ac139339af23e3db48f9284",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Encoding needs scalar/1D length one or four; explicitly reshape, do not flatten silently",
+      "id": "construct_064_0",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-1x9wkeql/attempt-03/response.txt",
+      "original_response_sha256": "34c932fe77de7079ee2b14b38076dfe351933d3cfeb5388f1689a7e797fd0c29",
+      "previous_diagnostic": "Encoding needs scalar/1D length one or four; explicitly reshape, do not flatten silently",
+      "request_id": "64fe56921dac09bf989e050a8b70287c159192409a56c61f3e0b4938357d6d3a",
+      "source_sha256": "bc942fb85d1f943a0033faca2eb97cd58f0940a500de98e7975c34f9a1769691",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Unsupported construction call",
+      "id": "construct_079_1",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-42emx5z3/attempt-03/response.txt",
+      "original_response_sha256": "a869d37029652e144b15f7caf6d96606cccabe78ded387c43affdd08f3726125",
+      "previous_diagnostic": "Unsupported construction call",
+      "request_id": "d2c26199580e3827275fd440a41fd05ad6b41ee032f6f841751c3b040c153559",
+      "source_sha256": "faec61138bc4a68c391a948d481bb613d806d5f125ac81af20a7596e83f4a9e3",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Undefined or unbound local construction value: public_constants",
+      "id": "construct_083_0",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-ynyzqpa0/attempt-03/response.txt",
+      "original_response_sha256": "f3f0131d5a1dff48f0ca9959b30726e44979007d41429e084e467efafdf763d0",
+      "previous_diagnostic": "Undefined or unbound local construction value: public_constants",
+      "request_id": "84fb298ba7173c418174fe9c39b5da55fdf9a85fab54cebdeae3e94cb9cd0bc3",
+      "source_sha256": "e7a7fb18c77e0dd586e762e3ac35a5530902cbd41398c67a9468668f745e1b9c",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Invalid or colliding helper name",
+      "id": "construct_083_1",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-gdd68k_i/attempt-03/response.txt",
+      "original_response_sha256": "01607b6ad19c52cc3979caafe0da4c7745a089d40f0159bb8f5c10b6ab51e703",
+      "previous_diagnostic": "Invalid or colliding helper name",
+      "request_id": "009429e65b64e57b049e3bd6144628fd01007d68ded71672a0e1492296063d71",
+      "source_sha256": "7da25e9f41cf9cb1811921b99380339117dd50220fce2d90d3547c8eedc5aa92",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Missing contributing public expression: call.values",
+      "id": "construct_083_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-7fk_qv8_/attempt-03/response.txt",
+      "original_response_sha256": "06170034cdec231c2c33677ae9d6aef8103013af5299010e3b6ee50d5c3e9276",
+      "previous_diagnostic": "Missing contributing public expression: call.values",
+      "request_id": "9123f6ead0873dd246eb53367fbcaa3fb76d7d98b2f1d65f99c4efb1c1f2eb9f",
+      "source_sha256": "3e80a85db4e12f68ba04bfb0482ac22bce1214c64dbaf7a319a97075100b404a",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Ragged public array",
+      "id": "construct_085_1",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-bkx1rd9s/attempt-03/response.txt",
+      "original_response_sha256": "009f7bdc2355c909299ad02d79e4160249565ca323191c9e94f79efbe97c7a7c",
+      "previous_diagnostic": "Ragged public array",
+      "request_id": "9782c74bff474706922887eb1ce5d50fe7b80eefc11034c84f7150a53ff090d8",
+      "source_sha256": "7e9e40d08b7353b5cb1a98b97a627d0a6f9f4a814135d8f20b358e9f4e9602f8",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Encoding needs scalar/1D length one or four; explicitly reshape, do not flatten silently",
+      "id": "construct_085_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-229n6ebj/attempt-03/response.txt",
+      "original_response_sha256": "36139e947df54f6ed523e23afc626c0488d049680ab262e3ad0015843ddda561",
+      "previous_diagnostic": "Encoding needs scalar/1D length one or four; explicitly reshape, do not flatten silently",
+      "request_id": "2864be2238fd7e917782bc73e499e481c03d044efa75d89726f8e7a35e27ee9f",
+      "source_sha256": "c0f7d53958ef5619a24798fbc0b7651b7184070ed27d1fb2dd21c4354198a182",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Missing contributing public expression: cast.float.numeric.legacy",
+      "id": "construct_088_1",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-mz8hvcn0/attempt-03/response.txt",
+      "original_response_sha256": "b919f157821ca3fb016eaf46afdd88ae97f7d8c0f18f132f74d218d23f04d50d",
+      "previous_diagnostic": "Missing contributing public expression: cast.float.numeric.legacy",
+      "request_id": "603ac9d9ee8d1101a465174f9074e74e17e6c55e92284df9f1512508e72b0810",
+      "source_sha256": "55dc8bc8989dc16da4ed6d414ba793c54a5e15e19b678934db7c599cc2622304",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Ragged public array",
+      "id": "construct_088_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-fmjnl101/attempt-03/response.txt",
+      "original_response_sha256": "97b298bd94fbc9d757b4fb4b352c05b37ade7f71a9c55aa1ec13dd9d95a6d074",
+      "previous_diagnostic": "Ragged public array",
+      "request_id": "746b9157f6f228c4a6b568936a7083307768747a4ec72b14655e78eed144ac48",
+      "source_sha256": "f4e831cb5b1d7bf153033e094cabb5237da23660d55ef1e712ab023e860ad8d4",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Encoding needs scalar/1D length one or four; explicitly reshape, do not flatten silently",
+      "id": "construct_089_0",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-9znd3ce8/attempt-03/response.txt",
+      "original_response_sha256": "455d0952aa7c577c9f346975c33c76c56fb66e5e8ab810fca1abb31512ec4a50",
+      "previous_diagnostic": "Encoding needs scalar/1D length one or four; explicitly reshape, do not flatten silently",
+      "request_id": "a9ba326fd634e620ffc1d047c27b0995796c747391a6f96ce0341a4ed68a1802",
+      "source_sha256": "4d7d262a9a84a3a44d3d4ea506771ae76f872120c903a0a334118ef57a7f0111",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Unsupported construction call",
+      "id": "construct_090_0",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-w4oatq2q/attempt-03/response.txt",
+      "original_response_sha256": "fad6b9213019ce6fa483eadc09ab661b8b66258d7aa29267d4fad6bc76415a9b",
+      "previous_diagnostic": "Unsupported construction call",
+      "request_id": "56123a2ba5af349f841782df365637d6e2b23185d53fd542276cad8e4bdf04d6",
+      "source_sha256": "1e9e796cab42207f891c5cd869bedf95bd3825db906930ac9193ca8ab1874d47",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Unsupported construction call",
+      "id": "construct_090_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-prhe8_qm/attempt-03/response.txt",
+      "original_response_sha256": "a819dd2975da8ee07342ee24edfdd9609b05981f9972dec017f60d00da317a07",
+      "previous_diagnostic": "Unsupported construction call",
+      "request_id": "1cdef15ad22bcb791eb359154c05dc3d1886e67ab8433b380d63596f78319040",
+      "source_sha256": "1f5106f7185aaff3750ceab7c03eef72d3e48ff7e9d50a87a058cfa2519cd03f",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Unsupported construction call",
+      "id": "construct_100_0",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-pr9h7p9m/attempt-03/response.txt",
+      "original_response_sha256": "22a8454599de8d6d5bb07b8cebd20d19134c7bb61c4186228d932e845ef96323",
+      "previous_diagnostic": "Unsupported construction call",
+      "request_id": "b0ed2ee6e90e304bc8cc771e7c20aaef7a254794488d727dd501cb0a8a252e50",
+      "source_sha256": "0bf390fc0bfd516dfc1b03b45c9c3c55207a5e8fee4798af334fa79130310e6c",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Unsupported construction call",
+      "id": "construct_100_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-15t6rbe2/attempt-03/response.txt",
+      "original_response_sha256": "66f408d925a98790d7894333be084ba846fce2d4a398288b7f37ca6fb28ae4e6",
+      "previous_diagnostic": "Unsupported construction call",
+      "request_id": "e878719d798aece36e5afc3e230b58bcef7cd16835dfd8c25d1167a2e1973f51",
+      "source_sha256": "e73c9c5f39e9901f9eb3a18d4b2303e111170ba2b5a8c4334af91186005d34f7",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Only permitted method/decorator attributes are allowed",
+      "id": "construct_106_1",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-6fm8c_2r/attempt-03/response.txt",
+      "original_response_sha256": "8a72e8838bcec94973b312e7883d4fc897e3325f6bfbe6b24d123d8af4956f97",
+      "previous_diagnostic": "Only permitted method/decorator attributes are allowed",
+      "request_id": "4ccb239ac8887a19a1f94ebf81d34c9954c106b4a948a34044259aa1abe429df",
+      "source_sha256": "5db3753aeb12ad5fa2309ff37f50f6abd786d6e00085567049ef5e146bf26b1e",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Unsupported construction call",
+      "id": "construct_106_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-_vtoxjor/attempt-03/response.txt",
+      "original_response_sha256": "424960b8838d26e33f9793810b7d65071d7c689fe1828203cabedd04d6965504",
+      "previous_diagnostic": "Unsupported construction call",
+      "request_id": "0b89c229771208c048d0ffe0ff189d1274d1cca86367e10d2be5ff206657d900",
+      "source_sha256": "745ae75e3dee32968c542a2bb16126d64b95a642167b67827e9f784241307961",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Read-only or invalid binding",
+      "id": "construct_109_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-px8ej1nb/attempt-03/response.txt",
+      "original_response_sha256": "bebbfa76f32266eae0d47e8483d3387de25e6247a8b96f848db5d5622ebabdc9",
+      "previous_diagnostic": "Read-only or invalid binding",
+      "request_id": "0f30de39fac66e4b30c55853fd5db93fee56238a300cc115c55633d20bb66d17",
+      "source_sha256": "db97958647856a501aa311878bcaf9795229fa55f749770bb99d8f424a00f150",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Unsupported construction syntax: ClassDef",
+      "id": "construct_113_0",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-lm4haquk/attempt-03/response.txt",
+      "original_response_sha256": "688db30aeb19a7079a4a6dfd536507e308542d9f0dc6834ffdfa09d2e4b525b8",
+      "previous_diagnostic": "Unsupported construction syntax: ClassDef",
+      "request_id": "b2c5271a0840e386e34ded59cd89f027fa6ec73913655660fc953afd86017d80",
+      "source_sha256": "58f6428ab56e875f95c0edf78386905f67eb4da1e9c49eb7657dc95996a541e8",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Missing contributing public expression: counter.loop_continues",
+      "id": "construct_113_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-18p4cs3x/attempt-03/response.txt",
+      "original_response_sha256": "98f28230eea502611584d1c7024d5fd7de4af5e1589b67a18405e9eef3f3e212",
+      "previous_diagnostic": "Missing contributing public expression: counter.loop_continues",
+      "request_id": "dad2620bb9a5e3b20b20ab89ca844f6e764d24664ec8a28dee42eaa80c0712b6",
+      "source_sha256": "dfe3abda0121dd6c9b9abc6395594a047f03ad6903a823e49c7c28bde0a0b157",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Missing contributing public expression: counter.mapping_views",
+      "id": "construct_116_0",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-_inrggoe/attempt-03/response.txt",
+      "original_response_sha256": "64c311ee1e1d2fae82441a72c107c6d37319159077d4a3b9c526359def794f44",
+      "previous_diagnostic": "Missing contributing public expression: counter.mapping_views",
+      "request_id": "a047d506da48fa5efdcb4935988868a5d35c17ec95276cd659265dd7f48ea046",
+      "source_sha256": "e5c23e6cc3b87279b6f529c850296309b248394c4267a59ee7bcd705b38bab6c",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Missing contributing public expression: counter.mapping_writes",
+      "id": "construct_117_0",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-8_wggpln/attempt-03/response.txt",
+      "original_response_sha256": "68589f912cd1103ee6baa9c1f61333eef81e405d29b4b9f5c86a2737da2d2a4e",
+      "previous_diagnostic": "Missing contributing public expression: counter.mapping_writes",
+      "request_id": "2ff3470b22e31d4900aa5814b82d316dbadcb48f7811443de47a7039433a76ab",
+      "source_sha256": "88ae3317363d61067f2de3355b2769cb7da8c2040e7444110e579a5cdf73cccb",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Missing contributing public expression: counter.mapping_writes",
+      "id": "construct_117_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-zqd4xils/attempt-03/response.txt",
+      "original_response_sha256": "dd78f0fc7ac161c6cac34b48a91f80dc7c650bca452812200bf5db99e84c753f",
+      "previous_diagnostic": "Missing contributing public expression: counter.mapping_writes",
+      "request_id": "c90f7189c7b5bc0f7680c7dd07b216f2a83224f4b4ddc7dabe98f0fd4c79fe01",
+      "source_sha256": "5010b931d2f0bb34d7c21b01b6e30b38b21e3fd9ccae0034112172dd4138775b",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Missing contributing public expression: counter.membership_tests",
+      "id": "construct_118_0",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-2yz4qaz2/attempt-03/response.txt",
+      "original_response_sha256": "74d5749ac93c1fe7d6135a25451697e68f4a308ea49e1dbc997a4ba82a953612",
+      "previous_diagnostic": "Missing contributing public expression: counter.membership_tests",
+      "request_id": "1a2312087e6d817469007bbfbf379c7235067cea449bfe20e7aa97deddfa9a84",
+      "source_sha256": "a3dc9b11994d3909ecf1e716d1c5b0f419685bd1342456c716b247a5dd832b16",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Missing contributing public expression: counter.nonlocal_writes",
+      "id": "construct_119_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-7kxttkj9/attempt-03/response.txt",
+      "original_response_sha256": "8bf74126803dfafc9ca9c84289e27d6732e05137f3f31371ec15b20d5eeb0c7e",
+      "previous_diagnostic": "Missing contributing public expression: counter.nonlocal_writes",
+      "request_id": "711ecf0099dff42264ebaf32e0dc7346657d8ab502725ad698b213fca64ed035",
+      "source_sha256": "c9982558b81cff85c6254392cbb5da8559cedac5bda7f6c21d52344c2441a699",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Missing contributing public expression: counter.public_numeric_operations",
+      "id": "construct_122_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-vg4u4ihm/attempt-03/response.txt",
+      "original_response_sha256": "394068f284d0b9c3f2d3655f791f8e8a1416528b490a33b20482afd019586caa",
+      "previous_diagnostic": "Missing contributing public expression: counter.public_numeric_operations",
+      "request_id": "132fb7e1a3e9c8b69d629e11dee9038e47d8566fc21dee0767bddb2521675459",
+      "source_sha256": "954e13a98878f64451056ac641bd8f67fb3fbd9db1721d830ce553b70121578e",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Only public containers are indexable; ciphertext slots are not",
+      "id": "construct_124_1",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-sao4_mo5/attempt-03/response.txt",
+      "original_response_sha256": "f23b37e1cbe59d6a46164ffb9a844ca18b26c3e278ba60b8fdbb0557d60f7b5e",
+      "previous_diagnostic": "Only public containers are indexable; ciphertext slots are not",
+      "request_id": "b4b2b73539f4def7afac546860afc5670fbf2a2f40a6ceb0e55855405fa9ea50",
+      "source_sha256": "fe49e68e5785fcf09760d02e1ab391553df82b56e8dd9395576963cf18bbafda",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Encoding needs scalar/1D length one or four; explicitly reshape, do not flatten silently",
+      "id": "construct_126_0",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-l4qpc9lo/attempt-03/response.txt",
+      "original_response_sha256": "ea1235e479d96017d03842bb3a444302d66fe9e1029a6171cc9119949692333a",
+      "previous_diagnostic": "Encoding needs scalar/1D length one or four; explicitly reshape, do not flatten silently",
+      "request_id": "39bc218cef13d9f73561beb56a92ff600e97894d18d895d2389d5a8062047ba8",
+      "source_sha256": "72da9141768af76b172e23fa57762d71c5da2e1d8addc23b127e9589ab64ad45",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Only golden and at most 16 top-level helper definitions are allowed",
+      "id": "construct_126_1",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-23s_gofy/attempt-03/response.txt",
+      "original_response_sha256": "d596d6d2f4a473400923d1ba92d27a86f1f2a5baeb227130513d8187b55238d1",
+      "previous_diagnostic": "Only golden and at most 16 top-level helper definitions are allowed",
+      "request_id": "9c9c0ca427c3e84928d35805aa17bcf674fad148abb84c6790b4a58f487a4320",
+      "source_sha256": "b31c7285e6dc2067faea28da7811f5ec7af603744060b37bfd9ba3d23e983bcc",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Only permitted method/decorator attributes are allowed",
+      "id": "construct_126_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-vl72suth/attempt-03/response.txt",
+      "original_response_sha256": "c33a016faf019e057d71bed445dc8063f64452dde3ae7a2d28e688fa7b4eebc1",
+      "previous_diagnostic": "Only permitted method/decorator attributes are allowed",
+      "request_id": "cfa1adb02cafdadb44d8b4b3aa22e97487ced974d28827b9c50445978c460c9d",
+      "source_sha256": "1c763dd9cb4ea9bbf57c1dc1d1847e0c3b1410301b1e99a1995d2a90dc2ca460",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Missing contributing public expression: counter.short_circuits",
+      "id": "construct_127_0",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-9_dfwa6n/attempt-03/response.txt",
+      "original_response_sha256": "be5a3d697287c937c2f8d1b7a49fbce73124d1b88e40b15430b86e17c3bd11cc",
+      "previous_diagnostic": "Missing contributing public expression: counter.short_circuits",
+      "request_id": "943f9deb8cd310cfd7ad476083e63536d408073bb2993f6967435a337c604f85",
+      "source_sha256": "70755ef97c0a73d4705b1febdb744323ce24efad9a4be91ed3d8747637dd33cc",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Missing contributing public expression: counter.slice_writes",
+      "id": "construct_128_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-oawuuojt/attempt-03/response.txt",
+      "original_response_sha256": "4c7073c75b975d7af2f5101f914e3f1cdb91951fa4740a4d6fe949f725079636",
+      "previous_diagnostic": "Missing contributing public expression: counter.slice_writes",
+      "request_id": "68ff2dcf6fa49b85116123994079c5d19621bdacb13d2c6658d9265e4cce7cfe",
+      "source_sha256": "f21b368460a3758c2f2bbaf5f140ec69d8d21ab129f2f3871d4843ac81dd4f78",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Only permitted method/decorator attributes are allowed",
+      "id": "construct_129_0",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-80u2fq_1/attempt-03/response.txt",
+      "original_response_sha256": "ef83c25dd578779b65ad8787199730ad2a8c06f6fc05de50ae94e5cb3f028860",
+      "previous_diagnostic": "Only permitted method/decorator attributes are allowed",
+      "request_id": "1fb53d8c6a2a67cd35fe6f8df1617a63a7eee008e68e3923ac594d34e805fca8",
+      "source_sha256": "1997d47d6efd2b9ceeb2b82ab8780c3e2b2bc5fe89d48576c798417794ee4535",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Missing contributing public expression: counter.sort_key_calls",
+      "id": "construct_129_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-hsp845_b/attempt-03/response.txt",
+      "original_response_sha256": "5657ebb6ba68c4aad9ce67409d578f54f03cf1f9d1fa7274b596dedaeab90577",
+      "previous_diagnostic": "Missing contributing public expression: counter.sort_key_calls",
+      "request_id": "4a08d66fa4ecf77df4aa472596be09f9a5ff4b7d793654badf2b29c304384cb9",
+      "source_sha256": "26419a1e14cabdf8a7cadf4fa3cc2be5ff447ccd6b74a63a8726122f5630fe18",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Missing contributing public expression: counter.sorted_calls",
+      "id": "construct_130_0",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-7jo1ku0r/attempt-03/response.txt",
+      "original_response_sha256": "85571493665f5027214a1b046fa45c23cd312e2fd3eb16ff2f40b9ea0ce5217f",
+      "previous_diagnostic": "Missing contributing public expression: counter.sorted_calls",
+      "request_id": "8a748e7ff19a67211abf38eb0449c66ac4d4f628f964d169f789692d1032680a",
+      "source_sha256": "874aaf8afe1d679889919cde98ce9e8b9d55ed4ea603eabc5089a77481f04d7c",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Missing contributing public expression: counter.starred_expansions",
+      "id": "construct_131_1",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-8jciz3oh/attempt-03/response.txt",
+      "original_response_sha256": "c5ba7c26f7b67f97a3c214593ad3b2f142e274d397affe52f220b8bf00435967",
+      "previous_diagnostic": "Missing contributing public expression: counter.starred_expansions",
+      "request_id": "b51bb33941178360400792e242ae5395e91196a2a633c568bd70209377511773",
+      "source_sha256": "2faaa84961124b049901e0b86aea030d31c1a72f29a0aee57d9b8722348fc790",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Unsupported construction expression: Starred",
+      "id": "construct_131_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-lu4y0jgs/attempt-03/response.txt",
+      "original_response_sha256": "8adfd636c7b77af21d30029112ede3f003ee6fc4beb051ed16526de9d4bf3b3b",
+      "previous_diagnostic": "Unsupported construction expression: Starred",
+      "request_id": "ba2864871ed46e97034aece635d45e431e848b225e511392b7a96c4b94371e15",
+      "source_sha256": "212e432081cacde513ed43077bdcc609c1301ce41cf73d27ab800ef9650582c5",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Missing contributing typed array arithmetic: empty_left",
+      "id": "construct_133_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-h7pf332o/attempt-03/response.txt",
+      "original_response_sha256": "8889ccc64c2faab40879151b1f6b06ebb058385ea943db817664c5f21858a2e3",
+      "previous_diagnostic": "Missing contributing typed array arithmetic: empty_left",
+      "request_id": "6cc2668ed34e13c21be3cf31825ca3ccf322bea6a8a6f039dc802930c2a7ae14",
+      "source_sha256": "3373642ff0cae7333db1005d94c056006c69e1575da3b5bdf9afd4dd6e391a08",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Equality requires public data, never cipher/array/function",
+      "id": "construct_134_0",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-xrk5rfln/attempt-03/response.txt",
+      "original_response_sha256": "262c609c7ecdd8f6afa93da924092869eaca1049cea477a348cd8fd71bb5d45d",
+      "previous_diagnostic": "Equality requires public data, never cipher/array/function",
+      "request_id": "bbb24ec93223425e5025ed66e4fe2f22aba7365d5cf4b443760da9d5b256bf95",
+      "source_sha256": "4a5aca331d6bf8c120b558c9cd4eb0df4095cae818dd37b72cbb803549c30c42",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Read-only or invalid binding",
+      "id": "construct_134_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-pgn3r82m/attempt-03/response.txt",
+      "original_response_sha256": "f200686d796bc148a64482e0936bedf767072db0a5d3d3758292001e057c0de0",
+      "previous_diagnostic": "Read-only or invalid binding",
+      "request_id": "5718abe59aaaca5f8e83186e0669939b9192ceb38a48166bedf9745dee6f43fb",
+      "source_sha256": "67f01360bf6de64b83cdb5c4b281accf0ba4cfd873eaeaa43b4a7fe606b8f9bb",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Ragged public array",
+      "id": "construct_135_1",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-3xbh5sv9/attempt-03/response.txt",
+      "original_response_sha256": "70ad6e8e34972653128262535c026059b020ebd8b383493e0bdd740232c414b8",
+      "previous_diagnostic": "Ragged public array",
+      "request_id": "edd26f574e521def1301c305bce7b5619242779dcc6e5f69e8e6f8bbf5a5441c",
+      "source_sha256": "d3a8bed5ac6c794300a03dc29b1771356cf5a687602fc38de45d27a3dbc3c0de",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Hecate Expr has no unary positive operator",
+      "id": "construct_138_0",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-ix1l4g9h/attempt-03/response.txt",
+      "original_response_sha256": "4a2c3525261a46a42c628ef29b90b928f034ca3348bd9a1cb1ca653717082308",
+      "previous_diagnostic": "Hecate Expr has no unary positive operator",
+      "request_id": "33b5eda2af97328aa8339d4d91ea065b4ce26c87d59ddb3702383cdaec23a03a",
+      "source_sha256": "0f31fdf8975adf8c0df924dfbe34628814afe6860a0f50133df516aaa88a6dcc",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Hecate Expr has no unary positive operator",
+      "id": "construct_138_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-xy01731s/attempt-03/response.txt",
+      "original_response_sha256": "c2b151ae0ec084241c56af3bcb1f95af7c58e15979193165249ea40a6dbcabfe",
+      "previous_diagnostic": "Hecate Expr has no unary positive operator",
+      "request_id": "32926d92925b52afee77972981960a5cb8c7f2e88cd0aad098bb508481ccc135",
+      "source_sha256": "4d7d8570f0d2f9ff342501c1a2d4a3ae06c57f0e56f25f98beb4f310bc26e0c9",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Missing contributing typed unary operation: fresh.USub",
+      "id": "construct_139_0",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-8w_shldi/attempt-03/response.txt",
+      "original_response_sha256": "bd3fbe9ef68c6668f64b538b919cacb45959d393a3e1d2b4c148e27e24cd7254",
+      "previous_diagnostic": "Missing contributing typed unary operation: fresh.USub",
+      "request_id": "da0ec3d2156b67d943bf700f3cb45e27ff6f2975577f469efa94a6207664630a",
+      "source_sha256": "8c6fe4efa426a7015c336a270e5d881a9b8e2c661a0ed26922f1708bea59ee2c",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Missing contributing typed unary operation: fresh.USub",
+      "id": "construct_139_1",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-k7yewt7k/attempt-03/response.txt",
+      "original_response_sha256": "52acf49921d8960f91883ce7b6437565e2eb6b082f8614d4e06154cdea11c287",
+      "previous_diagnostic": "Missing contributing typed unary operation: fresh.USub",
+      "request_id": "9eebf6e0abb83c14fa3bd953309d9fcbd2ed59cf7b8dcfb02a1b2c51a5f23376",
+      "source_sha256": "c2ad12435d544e5aa71e7131dbff3aa4360b1556d5057fc72887460f54ce7ce1",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Missing contributing typed unary operation: fresh.USub",
+      "id": "construct_139_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-nzdzcsss/attempt-03/response.txt",
+      "original_response_sha256": "492227cb350deae9958fdf2b42fa1b23bcbd54485da5638483b7e2e3de3ea44e",
+      "previous_diagnostic": "Missing contributing typed unary operation: fresh.USub",
+      "request_id": "e98a49abdf5cc7dafb948a3d76bdf0ee449b4dfd85f5ea19eb3dab9a7b2be825",
+      "source_sha256": "fbe7384731c55772b3ec5b5b1c53bb112c02c5dcb02bf1e3628550682f0f2e1e",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Encoding needs scalar/1D length one or four; explicitly reshape, do not flatten silently",
+      "id": "construct_148_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-xkntubhr/attempt-03/response.txt",
+      "original_response_sha256": "f5f64445350d166e56c98a3c25ceaf89f2638a567385efb33e623a433d672df9",
+      "previous_diagnostic": "Encoding needs scalar/1D length one or four; explicitly reshape, do not flatten silently",
+      "request_id": "efcff7b28fa54682c342e1cb1768d3814de9c45138af321913366b9cca4ea89c",
+      "source_sha256": "8141242a79a2edbefdbdd2e5b549a7f5a21279dbbd60949d217b00b816d0cdb9",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Rotation requires a ciphertext and a provisioned public step",
+      "id": "construct_149_0",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-dhy6za8k/attempt-03/response.txt",
+      "original_response_sha256": "4181ad809beac177e678dd06cf955bdc5f56c614d466e9d19d31c3c6ed8ecbba",
+      "previous_diagnostic": "Rotation requires a ciphertext and a provisioned public step",
+      "request_id": "6db1ab49a5b2e4ab52022dc1ff5d9049070951287a9f46ffdb3c67b50f01694f",
+      "source_sha256": "65e75c2fd371eb1ea9887a2d6222c7f264e6609662037baa2f3d4f8318a6784b",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Missing contributing public expression: item.numeric.positional",
+      "id": "construct_149_1",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-zv5v4q42/attempt-03/response.txt",
+      "original_response_sha256": "5c85c5e6c52903355e9b41bece966fa1a48d14b86b413d5eb9e2e6b75b082f0f",
+      "previous_diagnostic": "Missing contributing public expression: item.numeric.positional",
+      "request_id": "41a2294939803bb28149ffbac19a0028506ac9f695ccfb31fd39f4e466bd8094",
+      "source_sha256": "7d0a05a5b4082a709e509db20d492f4cd4d3f8d372ed0910b325f36c6354ff75",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Missing contributing public expression: item.numeric.positional",
+      "id": "construct_149_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-m5z9e2is/attempt-03/response.txt",
+      "original_response_sha256": "01e91302e29707f201dac4c573c4db3eda9af97b3013a0f93a46ed5af12e7dbf",
+      "previous_diagnostic": "Missing contributing public expression: item.numeric.positional",
+      "request_id": "aad2d097c9feb6bd9b3fcbc0ee3d9d4c82ee60fc004280311c3f7ddddbed849d",
+      "source_sha256": "937e0550025104b80a9e7d71c5ab4bee17b9357f7ec5743042bf406d788b48c0",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Rotation step must be a signed integer literal",
+      "id": "construct_161_1",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-5mfo8q8h/attempt-03/response.txt",
+      "original_response_sha256": "6f350979a5716f4996e4aa9dfdbc61099eee9363347961f14e5f27441cdc282f",
+      "previous_diagnostic": "Rotation step must be a signed integer literal",
+      "request_id": "723f49def3a861f517e35dad2f3eb92433bb51ef3896cfe6eb09afaef8762f48",
+      "source_sha256": "21e0647ac578c54385cbc8d5ade130038576a96c73b5b01666f6ead3651a8f67",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Missing contributing public expression: node.ListComp",
+      "id": "construct_166_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-vie9ceua/attempt-03/response.txt",
+      "original_response_sha256": "576d7460c3e4d6cabd261e1ba6fd107fb4fa02946225b7b1b2cd90d3a9057a5f",
+      "previous_diagnostic": "Missing contributing public expression: node.ListComp",
+      "request_id": "b8da927cb6785faf4fd81013522a291b5754405617075f79ce71033732d381f1",
+      "source_sha256": "3625253e0c10c927b6224da1455d48e2fcfa4f3dd958842c2ccf31b86dd5b996",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Unsupported construction call",
+      "id": "construct_169_0",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-y5s_f259/attempt-03/response.txt",
+      "original_response_sha256": "3e7a5bc563b8b92bf34cb8818b8ce1868230116484497a638df8ec33ba691755",
+      "previous_diagnostic": "Unsupported construction call",
+      "request_id": "c68e2ecfa0d657d00f826cd2beb0577ad0a654bfcd48cf1476a5a5d9f8459337",
+      "source_sha256": "b414eba96ca2753303d65b3071e77ba6b826e299f8060dfe3895a5acb6c7413a",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Explicit Plain/object-array dispatch requires separate validation",
+      "id": "construct_169_1",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-m5ililnz/attempt-03/response.txt",
+      "original_response_sha256": "1d98d9893a8f813ce54b94cd81089aca94183a0fcce68139ce987581b7e048ab",
+      "previous_diagnostic": "Explicit Plain/object-array dispatch requires separate validation",
+      "request_id": "2cc9bf2388b270b71725a2b7e739bb1d4ff8c967022fd301ca3fb86a9899cb93",
+      "source_sha256": "6fa667e3f122de588a252958a00bc851f0b0b90dc8facb6378dd3c523e7920c2",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Unsupported construction call",
+      "id": "construct_169_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-8j68yhzo/attempt-03/response.txt",
+      "original_response_sha256": "101739d3da4b37150aa5282501cd108b6eab724a9c1ee62218073af6c05736a4",
+      "previous_diagnostic": "Unsupported construction call",
+      "request_id": "cdf97a58f6a617cf1f3fffe61bbef2af01d7862aae97d6110fe8df36367b1814",
+      "source_sha256": "d5355a02b5c9fbcdd2e29ec4df5f2deaf335eacbfe7ae98b85186ba23b5c8847",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Hecate Expr has no unary positive operator",
+      "id": "construct_171_0",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-a3o3h9_9/attempt-03/response.txt",
+      "original_response_sha256": "6913d70d5a9e0ca845f07c66e40c006f9822916abe87e87402677143da6a073f",
+      "previous_diagnostic": "Hecate Expr has no unary positive operator",
+      "request_id": "b9da40d5d577cde0b233a7cde88daf0a835b3462dab1e9234882a1cf40b5f367",
+      "source_sha256": "034aa603ae2a4ac2629af3f27387242227873693adcf360d55c194ceb05886c3",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Hecate Expr has no unary positive operator",
+      "id": "construct_171_1",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-a0rcpi17/attempt-03/response.txt",
+      "original_response_sha256": "0e5b9245fbc63bc2c9d5aff238e521312ff1df72f442b52a9c5063914fa9551c",
+      "previous_diagnostic": "Hecate Expr has no unary positive operator",
+      "request_id": "f3cc8859532acffce107d9701bda2aabcdfda009f4759c7bcafe63a4d25c6b6c",
+      "source_sha256": "79eccb741867f0997b248c5663fedb7e9d17a6b5757677d10878dcc05f471113",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Invalid or colliding helper name",
+      "id": "construct_171_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-1lg59lt_/attempt-03/response.txt",
+      "original_response_sha256": "5d6fa97dbd5319404581842f0563703b2da626318eb8ee036281b833369211df",
+      "previous_diagnostic": "Invalid or colliding helper name",
+      "request_id": "864c3f16ddaac9949ef7ad2a074cc9c9345a75ac0478d291d43252944d946252",
+      "source_sha256": "a3edf015fa138e7acec29f47e1de593fc60f2a6dab450c229610651793e98a32",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Missing contributing typed unary operation: operator.USub",
+      "id": "construct_172_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-3jzhcu08/attempt-03/response.txt",
+      "original_response_sha256": "5af0d846beb970c817b48258310acecad8f20ba90e660a9a55befcaca1996283",
+      "previous_diagnostic": "'float' object is not subscriptable",
+      "request_id": "3369284c9aba667ff2f94f58552f9e93c8dd654242ede0be1a730311a6c57fc1",
+      "source_sha256": "b751be930e71541b3b92baadbefbcdeda4c00a81b097b74981714934deb2d62e",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Missing contributing typed array arithmetic: overlap",
+      "id": "construct_173_0",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-ilrc1zul/attempt-03/response.txt",
+      "original_response_sha256": "b6107475fc4e14fe3ae1a55285b6ff1845a6ac405d17d46752e818ffa942e5e6",
+      "previous_diagnostic": "Missing contributing typed array arithmetic: overlap",
+      "request_id": "267c265af43eed4769aa3811078789c6ad378e5a05cdfc49c6472c8d4e02cbb2",
+      "source_sha256": "096c79f51bb2a208c05ec4c12c85889f43304ac56f81db10cf921863c4de5df5",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Missing contributing typed array arithmetic: overlap",
+      "id": "construct_173_1",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-g81i9cvc/attempt-03/response.txt",
+      "original_response_sha256": "a2050c118786b0e46d325faeaa595d53c8b3db8db22e176d4371ee42e7a69b2f",
+      "previous_diagnostic": "Missing contributing typed array arithmetic: overlap",
+      "request_id": "46e57d13a2f9c9bb8f7f21e19b00032c639a9a127bd433d41c57fd7917ce91fb",
+      "source_sha256": "66906cabf3902c3c7c7c4b0290384a0c3683b44a43dde9ce95a5424ab56793aa",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Missing contributing typed array arithmetic: overlap",
+      "id": "construct_173_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-qflj_moz/attempt-03/response.txt",
+      "original_response_sha256": "f00fc9972ed05d94b6212408ffc1365414f5095b85b6c822d8e21f3652cd4ca2",
+      "previous_diagnostic": "Missing contributing typed array arithmetic: overlap",
+      "request_id": "0935812d9d9f81345e684ccf4fba8b995c84b81d478b387787c04221f865ee80",
+      "source_sha256": "881c60d74920d4f4a669589415b9ab1b877fe64a4efe050ce91be402b7e38ba5",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Only list.append may be a statement call",
+      "id": "construct_176_0",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-vizr9zrk/attempt-03/response.txt",
+      "original_response_sha256": "c730359ee63a3ce2af919eb0eb1a800fb7e8305f539abf77a9363899237d7c16",
+      "previous_diagnostic": "Only list.append may be a statement call",
+      "request_id": "bc1c98dbe543455edbfa999cbbcb6fd0a40796fbdbd9503dc19b0b3bf29a4a30",
+      "source_sha256": "6cb62a95bba6429f82f2f34f59c01acfe0935a790c632f4a35011f261f567cfe",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Missing contributing typed unary operation: public_cells",
+      "id": "construct_176_1",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-te1sosb0/attempt-03/response.txt",
+      "original_response_sha256": "fcc5582b128d2a071e2601baf8990b9ac8ad42f9764dfba1bb1470e199a24c2e",
+      "previous_diagnostic": "Missing contributing typed unary operation: public_cells",
+      "request_id": "865f71e6213e8c4b6b0457bdc191419a1628e4422167d32f95f5ce00957e572c",
+      "source_sha256": "c53dbb60c6dd533650cc456cd8fd4dd3992ba1fd3a5afc22127d026215657b9e",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Only list.append may be a statement call",
+      "id": "construct_176_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-om4y3b0k/attempt-03/response.txt",
+      "original_response_sha256": "3d53f3ab63b4e5cbf1cffce240c5eea5d300099a2413ab6e7bdb0fa78564f99d",
+      "previous_diagnostic": "Only list.append may be a statement call",
+      "request_id": "12693dc23a7a4e59977fea8036075df7d052fc1af460b48209698d81ab8f459d",
+      "source_sha256": "bf1c5878b387d92eea9a1c939899893338b857107e637156697ff455325e5051",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Missing contributing construction feature: return.mixed",
+      "id": "construct_181_0",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-8ee4o19k/attempt-03/response.txt",
+      "original_response_sha256": "63796603b7311ff1ec21a2138befcb2f4bb24d3ee8b26b73c1fcaf9c31184737",
+      "previous_diagnostic": "Missing contributing construction feature: return.mixed",
+      "request_id": "f8ee3b88f389ce02a35752c0250a97073c7a814b5e5df3b0125fee248cd47c79",
+      "source_sha256": "e36b1c5ca80493b53d13de52a961d2b848aeca88c61b920e3576777a291db49a",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Native core arithmetic requires a ciphertext operand",
+      "id": "construct_181_1",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-0wmjkwgq/attempt-03/response.txt",
+      "original_response_sha256": "7efb1676dcdc0cdf2536fe0290ae96a881177b8eca267ca01310157ebe27a220",
+      "previous_diagnostic": "Native core arithmetic requires a ciphertext operand",
+      "request_id": "9cb24363b4ece5bb5b1c9c64cd62c1a0be49213773265db613a4215f090f9da0",
+      "source_sha256": "4a59a2ba5545cc39b85ecfa2eab329103f7f4040930649ea385fd210ab96902c",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Missing contributing construction feature: return.mixed",
+      "id": "construct_181_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-0hu2x4y7/attempt-03/response.txt",
+      "original_response_sha256": "7dc162f2bfd063606036f4e014988e3604d3ebf2921cd85e153fca85ef94cd6d",
+      "previous_diagnostic": "Missing contributing construction feature: return.mixed",
+      "request_id": "f3c3e1bbc579eab46e2506f02e31c69b6027036d4908455bfe028c025845e3fc",
+      "source_sha256": "4980e6ecfbebb5d544d20032e2358745c28425d97715246c9af0051e15e9883a",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Missing contributing public expression: slice.write",
+      "id": "construct_190_0",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-e8dzr5gs/attempt-03/response.txt",
+      "original_response_sha256": "3bb84285bb8ef31468b4355cb6bcf918fa7d26c83731db3175e9c065da68a24a",
+      "previous_diagnostic": "Missing contributing public expression: slice.write",
+      "request_id": "e3dd4bd18017ac48260da64cbfa5fdbf9fdd83adc6c176212aac9737c2d26275",
+      "source_sha256": "73fc33f5dc98c5a4c05a7077e82513d1b601556985934155f15d53dcfe900eee",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Equality requires public data, never cipher/array/function",
+      "id": "construct_206_0",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-bx7mtevu/attempt-03/response.txt",
+      "original_response_sha256": "5f483932f392cf75b6b2768a5b1633991e5aa73911f76c90778d7d21a300cbf5",
+      "previous_diagnostic": "Equality requires public data, never cipher/array/function",
+      "request_id": "664f91655f18d778e03a822fc87efd63325a62a575f5e4d682e6f6cf96a63000",
+      "source_sha256": "0c7631b8637cb5f1622f70b3ae77710d5abff9a1d19372369617e6048e7a88df",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Truth value requires public construction data; cipher/array truth is unsupported",
+      "id": "construct_206_2",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-o879gf5d/attempt-03/response.txt",
+      "original_response_sha256": "2ef8dbf24be33f8166a0d47aedfbbf07e67f0f4b7550a0628659352fbf96b364",
+      "previous_diagnostic": "Truth value requires public construction data; cipher/array truth is unsupported",
+      "request_id": "ba22de8d96f8c77d8e87a400248c696e33525be9da763fdc2dd4bf517d9557fc",
+      "source_sha256": "14c73c82df702001282190af14c9c83728c07f22206b1a5085505282cf7a07e6",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Ciphertext is not public numerical data",
+      "id": "construct_208_1",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-uflf0897/attempt-03/response.txt",
+      "original_response_sha256": "d894c3404f4ab8831dba769f3f5b38e4ed2300d0c676ad9186ccc757fb1983f0",
+      "previous_diagnostic": "Ciphertext is not public numerical data",
+      "request_id": "da22a0a4a0802509a2a5507f6c6de8a80d1f97c8474592fed16bc7b7f34cb5fa",
+      "source_sha256": "16767832220b4a36a5f5918f41dedf301101abd08b447fa4724efcc8242a5ec5",
+      "status": "static_rejected"
+    },
+    {
+      "diagnostic": "ValueError: Flat container limit",
+      "id": "free_bench_helper_0104",
+      "original_response": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-hdtxrr_i/attempt-03/response.txt",
+      "original_response_sha256": "e6028a873d92f690cf6b88a014d997187c177b8432705419fdeece0294ed8892",
+      "previous_diagnostic": "Flat container limit",
+      "request_id": "2d015f7e22368f87df5a8f1dc5f75973ee05ef12c86918b82d843e179b094bda",
+      "source_sha256": "ede1ff32741d5713db2619d810d170f848367579c305eb0a784e6ffa48762cdf",
+      "status": "static_rejected"
+    }
+  ],
+  "binding": "efc29a6898c539e953a44b946622cca4796995e5ee6a3153f2e4689139cd81aa"
+}

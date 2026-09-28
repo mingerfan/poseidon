@@ -16,3 +16,12 @@ target_link_libraries(seal_packed_keys PRIVATE SEAL::seal)
 add_library(seal_packed_metadata SHARED packed_metadata.cpp)
 target_compile_features(seal_packed_metadata PRIVATE cxx_std_17)
 target_link_libraries(seal_packed_metadata PRIVATE SEAL::seal)
+
+# Artifact checker only: separate binary, no rebuild of runtime or key helpers.
+add_library(seal_artifact_parameters SHARED artifact_parameters.cpp)
+target_compile_features(seal_artifact_parameters PRIVATE cxx_std_17)
+target_link_libraries(seal_artifact_parameters PRIVATE SEAL::seal)
+
+add_executable(seal_artifact_scale_probe artifact_scale_probe.cpp)
+target_compile_features(seal_artifact_scale_probe PRIVATE cxx_std_17)
+target_link_libraries(seal_artifact_scale_probe PRIVATE SEAL::seal)

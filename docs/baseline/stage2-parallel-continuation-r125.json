@@ -1,0 +1,43 @@
+{
+  "actual_candidate_pids": [
+    112301,
+    112304,
+    112305,
+    112307,
+    112309,
+    112310,
+    112518,
+    112565,
+    112566,
+    112601
+  ],
+  "authorization": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-preflight-r125/authorization.json",
+  "authorization_sha256": "a0c15f3bd00cb485546bb7866d060d5ae8a244f368637e45e497903ed4c1a3f1",
+  "binding": "4854830243c7e1d10f9c30e7a08c2207a070efddd25a7293acdcdc5e89b4b7ae",
+  "format": "poseidon-parallel-continuation-start-r125",
+  "original_campaign_identities_preserved": 2030,
+  "phase2_complete": false,
+  "planned_shards": 26,
+  "planned_tasks": 1214,
+  "queue_binding": "77079dcc9351f681aeb7f30098e461cf86868504307dcf427e185aaf2f83d49f",
+  "queue_plan": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r125/plan.json",
+  "queue_plan_sha256": "1e140583b224a1cb127327e7516f1356441943f3b7e1c91a8c475b8086532eb7",
+  "request_preflights": [
+    {
+      "cases": 48,
+      "passed": true,
+      "shard": 17
+    },
+    {
+      "cases": 14,
+      "passed": true,
+      "shard": 42
+    }
+  ],
+  "runtime_source_sha256": "80738a33351d8c532cd8e4b032de63cc6785d6e5cf8a349f78e52aab5fffd58e",
+  "session_id": 91737,
+  "tests_failed": 0,
+  "tests_passed": 15,
+  "tests_skipped": 0,
+  "warning": "PIDs and session are observations; verify live before reuse. Source and scheduling files are frozen while queue runs."
+}

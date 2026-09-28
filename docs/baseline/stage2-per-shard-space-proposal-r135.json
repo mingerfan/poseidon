@@ -1,0 +1,151 @@
+{
+  "approved": false,
+  "binding": "503d315f33ecb4d04bc8888b5bfc4360ff0e9351b2fc85fafadf944223a42f93",
+  "cleanup": false,
+  "existing_global_limit_mib": 32768,
+  "existing_per_shard_limit_mib": 1024,
+  "format": "poseidon-per-shard-space-proposal-r135",
+  "free_bytes": 59367366656,
+  "min_free_mib": 4096,
+  "new_downloads": false,
+  "paid_call_limits_unchanged": true,
+  "proposed_global_limit_mib": 32768,
+  "proposed_per_shard_limit_mib": 4096,
+  "reason": "Retain interrupted historical artifacts while allowing one new candidate in each original shard. Every byte remains counted under the already approved 32 GiB global ceiling.",
+  "rows": [
+    {
+      "retained_bytes": 1744465382,
+      "shard": "001"
+    },
+    {
+      "retained_bytes": 1088632665,
+      "shard": "002"
+    },
+    {
+      "retained_bytes": 601193054,
+      "shard": "011"
+    },
+    {
+      "retained_bytes": 599250257,
+      "shard": "012"
+    },
+    {
+      "retained_bytes": 599270814,
+      "shard": "013"
+    },
+    {
+      "retained_bytes": 789396045,
+      "shard": "014"
+    },
+    {
+      "retained_bytes": 598130533,
+      "shard": "015"
+    },
+    {
+      "retained_bytes": 299547627,
+      "shard": "016"
+    },
+    {
+      "retained_bytes": 789577863,
+      "shard": "017"
+    },
+    {
+      "retained_bytes": 991130781,
+      "shard": "018"
+    },
+    {
+      "retained_bytes": 490994343,
+      "shard": "019"
+    },
+    {
+      "retained_bytes": 300964587,
+      "shard": "020"
+    },
+    {
+      "retained_bytes": 397985052,
+      "shard": "021"
+    },
+    {
+      "retained_bytes": 397469793,
+      "shard": "022"
+    },
+    {
+      "retained_bytes": 4229705,
+      "shard": "024"
+    },
+    {
+      "retained_bytes": 587228518,
+      "shard": "025"
+    },
+    {
+      "retained_bytes": 299575692,
+      "shard": "026"
+    },
+    {
+      "retained_bytes": 490130890,
+      "shard": "027"
+    },
+    {
+      "retained_bytes": 925624,
+      "shard": "028"
+    },
+    {
+      "retained_bytes": 298222423,
+      "shard": "029"
+    },
+    {
+      "retained_bytes": 298216822,
+      "shard": "030"
+    },
+    {
+      "retained_bytes": 298219464,
+      "shard": "031"
+    },
+    {
+      "retained_bytes": 974707,
+      "shard": "032"
+    },
+    {
+      "retained_bytes": 298259977,
+      "shard": "033"
+    },
+    {
+      "retained_bytes": 298273115,
+      "shard": "034"
+    },
+    {
+      "retained_bytes": 393533696,
+      "shard": "035"
+    },
+    {
+      "retained_bytes": 298087594,
+      "shard": "036"
+    },
+    {
+      "retained_bytes": 0,
+      "shard": "037"
+    },
+    {
+      "retained_bytes": 0,
+      "shard": "038"
+    },
+    {
+      "retained_bytes": 0,
+      "shard": "039"
+    },
+    {
+      "retained_bytes": 0,
+      "shard": "040"
+    },
+    {
+      "retained_bytes": 0,
+      "shard": "041"
+    },
+    {
+      "retained_bytes": 0,
+      "shard": "042"
+    }
+  ],
+  "source_runtime_changes": false,
+  "total_retained_bytes": 14562228533
+}

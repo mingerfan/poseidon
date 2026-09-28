@@ -1,0 +1,3088 @@
+{
+  "authoritative_ledger": false,
+  "binding_sha256": "ae17e121b6db99a3e0c2a8776984ef267aa1847d388dee3c154984c5ddb03041",
+  "contexts_per_requirement": 3,
+  "distinct_execution_records": 7,
+  "examples": {
+    "compiler.modswitch": [
+      {
+        "actual_encrypted_execution_recorded": true,
+        "all_input_proof": false,
+        "artifact_hashes": {
+          "_hecate_golden.cst": "b6acab0eadf6a7cadbef7c84ca355f8068aa98e63866e44961bd5c8a3fb9474d",
+          "_hecate_golden.cst.upstream-original": "b6acab0eadf6a7cadbef7c84ca355f8068aa98e63866e44961bd5c8a3fb9474d",
+          "arrays.npz": "79b80a2448f93efa78f5c43d7e7335b2d8f2da9b93e03aff117f1117e7ba60ac",
+          "candidate_trace.mlir": "fbba6005686b6e98aeff8643007f7008e1b3d0ea622e6aec8a97a2c960cba04e",
+          "constant-layout.json": "b5f5a123d4e43cc0b718a45a6962960dfafc4192431f17e785f36d9085be0f0d",
+          "lowered._hecate_golden.hevm": "b8ed41d85865ae07f80ce656ff5cbd7b68712daa443e9d84c871da3ef28eb150",
+          "lowered.ckks.mlir": "e32dc9c9b76bfb29a3a8ce66824b0d8b49214d6b8a9a5531ecf58b780fdb4dbb",
+          "lowered.earth.mlir": "6f670ba3900ce2d03326194459c1366602b107482d736f11eb5309bbaa8df57b",
+          "lowered.mlir": "74060ab9b2be6d61a76fb155f23b35e5b331cb2727221646334bf7f168bb06d8",
+          "native-array-mutation-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-augmented-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-call-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-function-plan.json": "70c4931c447ceaeb654f328fb13502486aa59fec2c15f19e77213bd2bd299647",
+          "trace-evidence.json": "197a78fec8f1c7e4cd44294cd0f5821b8a2b547e46bd005aec118c99a2da59a5",
+          "upstream-calls.json": "6bc3c5497e07aceb6b78d589384da9fc0fa6b7b41207d854ef7736b1f6dc17c1"
+        },
+        "compiler_evidence": {
+          "artifact_operations": 14,
+          "level_transitions": [
+            {
+              "destination": 1,
+              "index": 0,
+              "inputs": [
+                {
+                  "level": 13,
+                  "producer": "arg1",
+                  "scale": 45
+                }
+              ],
+              "moduli_dropped": 6,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 7,
+                "nominal_modulus_minus_scale_bits": 375,
+                "producer": 0,
+                "scale": 45
+              }
+            },
+            {
+              "destination": 3,
+              "index": 11,
+              "inputs": [
+                {
+                  "level": 13,
+                  "producer": "arg0",
+                  "scale": 45
+                }
+              ],
+              "moduli_dropped": 8,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 5,
+                "nominal_modulus_minus_scale_bits": 255,
+                "producer": 11,
+                "scale": 45
+              }
+            },
+            {
+              "destination": 1,
+              "index": 31,
+              "inputs": [
+                {
+                  "level": 13,
+                  "producer": "arg0",
+                  "scale": 45
+                }
+              ],
+              "moduli_dropped": 11,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 75,
+                "producer": 31,
+                "scale": 45
+              }
+            },
+            {
+              "destination": 7,
+              "index": 36,
+              "inputs": [
+                {
+                  "level": 5,
+                  "nominal_modulus_minus_scale_bits": 210,
+                  "producer": 30,
+                  "scale": 90
+                }
+              ],
+              "moduli_dropped": 1,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 150,
+                "producer": 36,
+                "scale": 90
+              }
+            },
+            {
+              "destination": 10,
+              "index": 49,
+              "inputs": [
+                {
+                  "level": 5,
+                  "nominal_modulus_minus_scale_bits": 210,
+                  "producer": 42,
+                  "scale": 90
+                }
+              ],
+              "moduli_dropped": 1,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 150,
+                "producer": 49,
+                "scale": 90
+              }
+            },
+            {
+              "destination": 4,
+              "index": 57,
+              "inputs": [
+                {
+                  "level": 5,
+                  "nominal_modulus_minus_scale_bits": 210,
+                  "producer": 16,
+                  "scale": 90
+                }
+              ],
+              "moduli_dropped": 2,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 90,
+                "producer": 57,
+                "scale": 90
+              }
+            },
+            {
+              "destination": 0,
+              "index": 80,
+              "inputs": [
+                {
+                  "level": 13,
+                  "producer": "arg0",
+                  "scale": 45
+                }
+              ],
+              "moduli_dropped": 10,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 135,
+                "producer": 80,
+                "scale": 45
+              }
+            },
+            {
+              "destination": 7,
+              "index": 90,
+              "inputs": [
+                {
+                  "level": 5,
+                  "nominal_modulus_minus_scale_bits": 210,
+                  "producer": 85,
+                  "scale": 90
+                }
+              ],
+              "moduli_dropped": 1,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 150,
+                "producer": 90,
+                "scale": 90
+              }
+            },
+            {
+              "destination": 3,
+              "index": 122,
+              "inputs": [
+                {
+                  "level": 5,
+                  "nominal_modulus_minus_scale_bits": 255,
+                  "producer": 12,
+                  "scale": 45
+                }
+              ],
+              "moduli_dropped": 2,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 135,
+                "producer": 122,
+                "scale": 45
+              }
+            },
+            {
+              "destination": 8,
+              "index": 132,
+              "inputs": [
+                {
+                  "level": 5,
+                  "nominal_modulus_minus_scale_bits": 210,
+                  "producer": 127,
+                  "scale": 90
+                }
+              ],
+              "moduli_dropped": 1,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 150,
+                "producer": 132,
+                "scale": 90
+              }
+            },
+            {
+              "destination": 5,
+              "index": 163,
+              "inputs": [
+                {
+                  "level": 5,
+                  "nominal_modulus_minus_scale_bits": 210,
+                  "producer": 30,
+                  "scale": 90
+                }
+              ],
+              "moduli_dropped": 2,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 90,
+                "producer": 163,
+                "scale": 90
+              }
+            },
+            {
+              "destination": 6,
+              "index": 168,
+              "inputs": [
+                {
+                  "level": 5,
+                  "nominal_modulus_minus_scale_bits": 210,
+                  "producer": 26,
+                  "scale": 90
+                }
+              ],
+              "moduli_dropped": 1,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 150,
+                "producer": 168,
+                "scale": 90
+              }
+            },
+            {
+              "destination": 11,
+              "index": 180,
+              "inputs": [
+                {
+                  "level": 4,
+                  "nominal_modulus_minus_scale_bits": 165,
+                  "producer": 63,
+                  "scale": 75
+                }
+              ],
+              "moduli_dropped": 1,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 105,
+                "producer": 180,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 12,
+              "index": 201,
+              "inputs": [
+                {
+                  "level": 4,
+                  "nominal_modulus_minus_scale_bits": 165,
+                  "producer": 105,
+                  "scale": 75
+                }
+              ],
+              "moduli_dropped": 1,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 105,
+                "producer": 201,
+                "scale": 75
+              }
+            }
+          ]
+        },
+        "evidence_relative_to_results": "candidate-replay-2feqm_wh",
+        "model_id": "chunk_helper_0",
+        "model_sha256": "534a372c4fdbc90af0f4039e2abca34c31e01e855fc6131f2314f86aff1e8d35",
+        "new_encrypted_execution": false,
+        "positive_numerical_values": 28,
+        "report_sha256": "924c5bef9d7a40346022b0cbb6d8be8f126cb3c6f9f9a2a91277083e623069b0",
+        "request_id": "d57cc54d9ad3feec8ffa0683b02cba556049020f03d4e0d35c1fecadce368932",
+        "requirement": "compiler.modswitch",
+        "topology": "99e020f8d09100ebc16cc9838425f07fe1652eb2a9d3f1807fb480ac545685a2"
+      },
+      {
+        "actual_encrypted_execution_recorded": true,
+        "all_input_proof": false,
+        "artifact_hashes": {
+          "_hecate_golden.cst": "61c0fde0c4d60368d09799c764919e81e7da24fde20d79f1b3538f3718139615",
+          "_hecate_golden.cst.upstream-original": "61c0fde0c4d60368d09799c764919e81e7da24fde20d79f1b3538f3718139615",
+          "arrays.npz": "3b64a17d87b735df1014e60648bfe729c5857492bde1d12e407395b27935cd1e",
+          "candidate_trace.mlir": "539a72ab7d224d0d3b9ea528cb8e0e1098928936efd2f03cd72287a2f32a5d5c",
+          "constant-layout.json": "f3c320022887353979b50d9ee89ae7f191104782178202def44672d085a42541",
+          "lowered._hecate_golden.hevm": "ae2c802e8fc2cf2522642c3b5b856984d8e138fb435600e38df650067ed8146c",
+          "lowered.ckks.mlir": "e8130325de41b90f91c0f88cf0d7d68ed9a0aa30cbf5468b4efa1f7508d63698",
+          "lowered.earth.mlir": "4b6c805ed3e0ec6ee33430248df3f1e5273fdbbc4d3a929e933752f79e53b7ef",
+          "lowered.mlir": "8a439bcd36fb143eb959539ee980d6c5d9c74a31c046a9a96ff4ac11151b02be",
+          "native-array-mutation-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-augmented-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-call-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-function-plan.json": "1890b95879b1d3df0899bf536cea292006915db6aa65e72e7c73bcd3b68dc00c",
+          "trace-evidence.json": "3f6d41bd3cde9ed74dc9faacc170965a3c4dcb8285ef802d8e24e449ad171eaf",
+          "upstream-calls.json": "e0a76a5b0d6e48d20318686d69745ad7c87fe51dfb9271fb97edb75582b610e6"
+        },
+        "compiler_evidence": {
+          "artifact_operations": 2,
+          "level_transitions": [
+            {
+              "destination": 1,
+              "index": 0,
+              "inputs": [
+                {
+                  "level": 13,
+                  "producer": "arg1",
+                  "scale": 45
+                }
+              ],
+              "moduli_dropped": 10,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 135,
+                "producer": 0,
+                "scale": 45
+              }
+            },
+            {
+              "destination": 0,
+              "index": 4,
+              "inputs": [
+                {
+                  "level": 13,
+                  "producer": "arg0",
+                  "scale": 45
+                }
+              ],
+              "moduli_dropped": 11,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 75,
+                "producer": 4,
+                "scale": 45
+              }
+            }
+          ]
+        },
+        "evidence_relative_to_results": "candidate-replay-xe3jv3v4",
+        "model_id": "chunk_helper_4",
+        "model_sha256": "bcc610b2b661c8495d92a8a102f7ab602c9766af2f539477f9843b7d888413e9",
+        "new_encrypted_execution": false,
+        "positive_numerical_values": 24,
+        "report_sha256": "ec34b8740495d5ed6ec4a15485960705049f5af426b1e70e9763e1b0024f0aee",
+        "request_id": "0a3d4d770ded71bc81dd1e87ef15fbc5d15281bb5be7339c1fb507acc84f6866",
+        "requirement": "compiler.modswitch",
+        "topology": "ba4c6e4d2166d9aad92f73a397e887d86dcc2e6b1c5e11eb335e1e7daa972b5d"
+      },
+      {
+        "actual_encrypted_execution_recorded": true,
+        "all_input_proof": false,
+        "artifact_hashes": {
+          "_hecate_golden.cst": "f33f56f8ac5440395deef3a8ae23ed05d608669f68e9b6c72be17a3e78994c2c",
+          "_hecate_golden.cst.upstream-original": "f33f56f8ac5440395deef3a8ae23ed05d608669f68e9b6c72be17a3e78994c2c",
+          "arrays.npz": "0debc127f3d5e76fa351732a0448cd681c9abe65eb7476742d2c3e08fa9cf8cb",
+          "candidate_trace.mlir": "0b9959559e271a246c00da905b1017b27412faaa4ec7309d3757a7739d4b5868",
+          "constant-layout.json": "54242a9d52424a2f0ba8f50e996f881692b4c8cf6c0caccb9e16699c2210615b",
+          "lowered._hecate_golden.hevm": "c7d6e4fae3cdaa79f909cf9f52dfe69b7617daf8a9e0db4fb6743714216a997f",
+          "lowered.ckks.mlir": "dad84b4bab10b29fdf4126afab13d940eb010b7d4f1b0da2a1c7fc50f9a93f15",
+          "lowered.earth.mlir": "b864a552e02a49e8a4187723246964747d5b1f6f76675d8a36f3f3f31fef1316",
+          "lowered.mlir": "069946754fc09230928570bc283615142f96a2f09acace713c1bda20f938aae9",
+          "native-array-mutation-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-augmented-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-call-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-function-plan.json": "8b3160aed4830e581a76fcdb3eda29c932e9a10d90ce983180778ae7312d1c4b",
+          "trace-evidence.json": "bea4c7a38b2ff82908245ff1bf323eca23f4201696c1e9136d15959d9a03e0b5",
+          "upstream-calls.json": "96588e7c1c43a78e41048d276352dcee0a067efe00a0f893d8a15b49355e19bd"
+        },
+        "compiler_evidence": {
+          "artifact_operations": 23,
+          "level_transitions": [
+            {
+              "destination": 5,
+              "index": 1,
+              "inputs": [
+                {
+                  "level": 13,
+                  "producer": "arg0",
+                  "scale": 45
+                }
+              ],
+              "moduli_dropped": 5,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 8,
+                "nominal_modulus_minus_scale_bits": 435,
+                "producer": 1,
+                "scale": 45
+              }
+            },
+            {
+              "destination": 8,
+              "index": 9,
+              "inputs": [
+                {
+                  "level": 13,
+                  "producer": "arg1",
+                  "scale": 45
+                }
+              ],
+              "moduli_dropped": 5,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 8,
+                "nominal_modulus_minus_scale_bits": 435,
+                "producer": 9,
+                "scale": 45
+              }
+            },
+            {
+              "destination": 7,
+              "index": 19,
+              "inputs": [
+                {
+                  "level": 13,
+                  "producer": "arg2",
+                  "scale": 45
+                }
+              ],
+              "moduli_dropped": 5,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 8,
+                "nominal_modulus_minus_scale_bits": 435,
+                "producer": 19,
+                "scale": 45
+              }
+            },
+            {
+              "destination": 15,
+              "index": 27,
+              "inputs": [
+                {
+                  "level": 13,
+                  "producer": "arg3",
+                  "scale": 45
+                }
+              ],
+              "moduli_dropped": 5,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 8,
+                "nominal_modulus_minus_scale_bits": 435,
+                "producer": 27,
+                "scale": 45
+              }
+            },
+            {
+              "destination": 1,
+              "index": 54,
+              "inputs": [
+                {
+                  "level": 13,
+                  "producer": "arg1",
+                  "scale": 45
+                }
+              ],
+              "moduli_dropped": 6,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 7,
+                "nominal_modulus_minus_scale_bits": 375,
+                "producer": 54,
+                "scale": 45
+              }
+            },
+            {
+              "destination": 0,
+              "index": 93,
+              "inputs": [
+                {
+                  "level": 13,
+                  "producer": "arg0",
+                  "scale": 45
+                }
+              ],
+              "moduli_dropped": 6,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 7,
+                "nominal_modulus_minus_scale_bits": 375,
+                "producer": 93,
+                "scale": 45
+              }
+            },
+            {
+              "destination": 3,
+              "index": 97,
+              "inputs": [
+                {
+                  "level": 13,
+                  "producer": "arg3",
+                  "scale": 45
+                }
+              ],
+              "moduli_dropped": 6,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 7,
+                "nominal_modulus_minus_scale_bits": 375,
+                "producer": 97,
+                "scale": 45
+              }
+            },
+            {
+              "destination": 2,
+              "index": 130,
+              "inputs": [
+                {
+                  "level": 13,
+                  "producer": "arg2",
+                  "scale": 45
+                }
+              ],
+              "moduli_dropped": 6,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 7,
+                "nominal_modulus_minus_scale_bits": 375,
+                "producer": 130,
+                "scale": 45
+              }
+            },
+            {
+              "destination": 15,
+              "index": 149,
+              "inputs": [
+                {
+                  "level": 7,
+                  "nominal_modulus_minus_scale_bits": 330,
+                  "producer": 129,
+                  "scale": 90
+                }
+              ],
+              "moduli_dropped": 2,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 5,
+                "nominal_modulus_minus_scale_bits": 210,
+                "producer": 149,
+                "scale": 90
+              }
+            },
+            {
+              "destination": 13,
+              "index": 154,
+              "inputs": [
+                {
+                  "level": 7,
+                  "nominal_modulus_minus_scale_bits": 330,
+                  "producer": 148,
+                  "scale": 90
+                }
+              ],
+              "moduli_dropped": 1,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 6,
+                "nominal_modulus_minus_scale_bits": 270,
+                "producer": 154,
+                "scale": 90
+              }
+            },
+            {
+              "destination": 2,
+              "index": 159,
+              "inputs": [
+                {
+                  "level": 7,
+                  "nominal_modulus_minus_scale_bits": 330,
+                  "producer": 73,
+                  "scale": 90
+                }
+              ],
+              "moduli_dropped": 1,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 6,
+                "nominal_modulus_minus_scale_bits": 270,
+                "producer": 159,
+                "scale": 90
+              }
+            },
+            {
+              "destination": 12,
+              "index": 164,
+              "inputs": [
+                {
+                  "level": 7,
+                  "nominal_modulus_minus_scale_bits": 330,
+                  "producer": 113,
+                  "scale": 90
+                }
+              ],
+              "moduli_dropped": 1,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 6,
+                "nominal_modulus_minus_scale_bits": 270,
+                "producer": 164,
+                "scale": 90
+              }
+            },
+            {
+              "destination": 8,
+              "index": 169,
+              "inputs": [
+                {
+                  "level": 7,
+                  "nominal_modulus_minus_scale_bits": 330,
+                  "producer": 129,
+                  "scale": 90
+                }
+              ],
+              "moduli_dropped": 3,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 150,
+                "producer": 169,
+                "scale": 90
+              }
+            },
+            {
+              "destination": 17,
+              "index": 175,
+              "inputs": [
+                {
+                  "level": 7,
+                  "nominal_modulus_minus_scale_bits": 330,
+                  "producer": 174,
+                  "scale": 90
+                }
+              ],
+              "moduli_dropped": 1,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 6,
+                "nominal_modulus_minus_scale_bits": 270,
+                "producer": 175,
+                "scale": 90
+              }
+            },
+            {
+              "destination": 0,
+              "index": 185,
+              "inputs": [
+                {
+                  "level": 7,
+                  "nominal_modulus_minus_scale_bits": 330,
+                  "producer": 180,
+                  "scale": 90
+                }
+              ],
+              "moduli_dropped": 1,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 6,
+                "nominal_modulus_minus_scale_bits": 270,
+                "producer": 185,
+                "scale": 90
+              }
+            },
+            {
+              "destination": 12,
+              "index": 239,
+              "inputs": [
+                {
+                  "level": 7,
+                  "nominal_modulus_minus_scale_bits": 330,
+                  "producer": 238,
+                  "scale": 90
+                }
+              ],
+              "moduli_dropped": 1,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 6,
+                "nominal_modulus_minus_scale_bits": 270,
+                "producer": 239,
+                "scale": 90
+              }
+            },
+            {
+              "destination": 10,
+              "index": 249,
+              "inputs": [
+                {
+                  "level": 7,
+                  "nominal_modulus_minus_scale_bits": 330,
+                  "producer": 244,
+                  "scale": 90
+                }
+              ],
+              "moduli_dropped": 1,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 6,
+                "nominal_modulus_minus_scale_bits": 270,
+                "producer": 249,
+                "scale": 90
+              }
+            },
+            {
+              "destination": 3,
+              "index": 316,
+              "inputs": [
+                {
+                  "level": 5,
+                  "nominal_modulus_minus_scale_bits": 225,
+                  "producer": 311,
+                  "scale": 75
+                }
+              ],
+              "moduli_dropped": 1,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 165,
+                "producer": 316,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 2,
+              "index": 333,
+              "inputs": [
+                {
+                  "level": 5,
+                  "nominal_modulus_minus_scale_bits": 225,
+                  "producer": 332,
+                  "scale": 75
+                }
+              ],
+              "moduli_dropped": 1,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 165,
+                "producer": 333,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 10,
+              "index": 348,
+              "inputs": [
+                {
+                  "level": 4,
+                  "nominal_modulus_minus_scale_bits": 165,
+                  "producer": 291,
+                  "scale": 75
+                }
+              ],
+              "moduli_dropped": 1,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 105,
+                "producer": 348,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 14,
+              "index": 353,
+              "inputs": [
+                {
+                  "level": 5,
+                  "nominal_modulus_minus_scale_bits": 225,
+                  "producer": 295,
+                  "scale": 75
+                }
+              ],
+              "moduli_dropped": 1,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 165,
+                "producer": 353,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 16,
+              "index": 358,
+              "inputs": [
+                {
+                  "level": 5,
+                  "nominal_modulus_minus_scale_bits": 225,
+                  "producer": 299,
+                  "scale": 75
+                }
+              ],
+              "moduli_dropped": 1,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 165,
+                "producer": 358,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 9,
+              "index": 360,
+              "inputs": [
+                {
+                  "level": 5,
+                  "nominal_modulus_minus_scale_bits": 225,
+                  "producer": 303,
+                  "scale": 75
+                }
+              ],
+              "moduli_dropped": 2,
+              "opcode": 4,
+              "operation": "modswitch",
+              "output": {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 105,
+                "producer": 360,
+                "scale": 75
+              }
+            }
+          ]
+        },
+        "evidence_relative_to_results": "candidate-replay-7jfea3gt",
+        "model_id": "chunk_helper_6",
+        "model_sha256": "376cf20b5df459cf3aaf7b16847823246cec5d0dc25dd470891fbafb8fff6231",
+        "new_encrypted_execution": false,
+        "positive_numerical_values": 12,
+        "report_sha256": "08b2da14d98c25864dce593e2493768500f05714384de6f4684e005c30b4a912",
+        "request_id": "f74499c4e70b14a9cf640662167e89a99b2a69cca8d433663da08bae9e694bbb",
+        "requirement": "compiler.modswitch",
+        "topology": "271b4819c12d55c1f569931995f0723a635b3ff28d0ef5ceca0cff79f221835a"
+      }
+    ],
+    "compiler.relinearization": [
+      {
+        "actual_encrypted_execution_recorded": true,
+        "all_input_proof": false,
+        "artifact_hashes": {
+          "_hecate_golden.cst": "551c8a3f8ddddaa689583616dedaf322d1e6bfc669320bc50a16c4e3e5be9f98",
+          "_hecate_golden.cst.upstream-original": "551c8a3f8ddddaa689583616dedaf322d1e6bfc669320bc50a16c4e3e5be9f98",
+          "arrays.npz": "79b80a2448f93efa78f5c43d7e7335b2d8f2da9b93e03aff117f1117e7ba60ac",
+          "candidate_trace.mlir": "d59755a159903d7994ecc2c61bdc506014026ca81da60fd34425e066b91e2e79",
+          "constant-layout.json": "27c3d775b62413a94706b05b2e048558211cc99d8242e3b4c00326102f63080d",
+          "lowered._hecate_golden.hevm": "10b63969c60f8f4813af95476be2262fc565afb5b3c2f9ddc888edf108769c9c",
+          "lowered.ckks.mlir": "11296ba0bfd58556f3bdff9b3aca6f8fa5a3db17c77a78b8cd12b7f02c9fabcd",
+          "lowered.earth.mlir": "e28d50ff8700ed7ef956b29f8d7d07c3b358de23f8db7d5a484ef9edef57587e",
+          "lowered.mlir": "59ed62e53d0160165630d8425d6ffbdc0a855dce54728d077101537d86fd72ca",
+          "native-array-mutation-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-augmented-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-call-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-function-plan.json": "5c6ac63beecfa76a392860a7aad611a0a304a09372ee865df8acf3f7ac200b79",
+          "trace-evidence.json": "6a166c50bb9eedc40e68cd473c089d2746dad2ac2e55c74529595c391900bbb0",
+          "upstream-calls.json": "4ee2be40b90461cabaad169cffd09ad4d363eeb7f96f0bbdb7236ff0314e76f2"
+        },
+        "compiler_evidence": {
+          "evidence_scope": "fused operation in artifact and pinned runtime source plus observed compact outputs",
+          "explicit_standalone_opcode": false,
+          "fused_mulcc_operations": 1,
+          "output_ciphertext_polynomials": 2,
+          "per_operation_runtime_observed": false,
+          "pinned_runtime_source_sha256": "3a5dfb8751d176e50fb66f88feaa7351470b6ea6e226fa022e12c7e2aebd3332",
+          "runtime_binary_sha256": "8428c4ed33ad93012f611ca49ca337bfb33031f60104f79ca35db87312414156"
+        },
+        "evidence_relative_to_results": "candidate-replay-5s15ixv8",
+        "model_id": "chunk_helper_8",
+        "model_sha256": "4297a170c829e12e3ae365368e7e75a9cdb1c5438d0f5f2fe127f2d3edb67f8d",
+        "new_encrypted_execution": false,
+        "positive_numerical_values": 12,
+        "report_sha256": "141f45bbae7693442935653bd1abb6d33e8ed6523fdaed23749e5e10e6e0540e",
+        "request_id": "a82c24af188ed66b068072e8475b24ad1349bd1ff4b12e7f74aedd46185f44e9",
+        "requirement": "compiler.relinearization",
+        "topology": "df2dc260bbd36ed1d08fb575d902e050b8997383f8b086ce2cd58b65409816c2"
+      },
+      {
+        "actual_encrypted_execution_recorded": true,
+        "all_input_proof": false,
+        "artifact_hashes": {
+          "_hecate_golden.cst": "61c0fde0c4d60368d09799c764919e81e7da24fde20d79f1b3538f3718139615",
+          "_hecate_golden.cst.upstream-original": "61c0fde0c4d60368d09799c764919e81e7da24fde20d79f1b3538f3718139615",
+          "arrays.npz": "3b64a17d87b735df1014e60648bfe729c5857492bde1d12e407395b27935cd1e",
+          "candidate_trace.mlir": "3bfad19a12b40060ddb56f6c4b0aec3a1f89c4cee33b219c1de6e8a6a2918491",
+          "constant-layout.json": "f3c320022887353979b50d9ee89ae7f191104782178202def44672d085a42541",
+          "lowered._hecate_golden.hevm": "0aebffa81ad7685a911aae04e74e26e29c5fead2a09b759bdbb54308589f317e",
+          "lowered.ckks.mlir": "ffd5f96f9fd06916bdb2d067ecbe6a47d9a3e0e52e53a302666157fb0ff2acfa",
+          "lowered.earth.mlir": "d04b6094e54bef80341efc5be8eb1108265fb0c1be7959d98ded341fa4f0e55b",
+          "lowered.mlir": "f7f68d13a50f7c2287d572f84802c7d797b71f3653f9bc710048f6a70b7fac37",
+          "native-array-mutation-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-augmented-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-call-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-function-plan.json": "db711992cc30f6e0696ef1494ac279d1eabe878043b6af7d6b92883b9565f0a9",
+          "trace-evidence.json": "2880782122f4a9725de52a3f93200af73b4aacb41db9d1411d969b783b608f2d",
+          "upstream-calls.json": "b90a8a54dd32dfa0fd0e62eae1673f55fe749217d10e18dc2d916b0b38a9ecdf"
+        },
+        "compiler_evidence": {
+          "evidence_scope": "fused operation in artifact and pinned runtime source plus observed compact outputs",
+          "explicit_standalone_opcode": false,
+          "fused_mulcc_operations": 2,
+          "output_ciphertext_polynomials": 2,
+          "per_operation_runtime_observed": false,
+          "pinned_runtime_source_sha256": "3a5dfb8751d176e50fb66f88feaa7351470b6ea6e226fa022e12c7e2aebd3332",
+          "runtime_binary_sha256": "8428c4ed33ad93012f611ca49ca337bfb33031f60104f79ca35db87312414156"
+        },
+        "evidence_relative_to_results": "candidate-replay-yjrs9bhi",
+        "model_id": "chunk_helper_10",
+        "model_sha256": "3d1dfd28993a630f6024d3636e7426f90b9eccbc82de1873f9081bb683e371b5",
+        "new_encrypted_execution": false,
+        "positive_numerical_values": 24,
+        "report_sha256": "d60e5d9a965ec30dc6307913182e8f5a7be0fa321e88473226cb9ef0c46125c0",
+        "request_id": "48e3525be0040bdab5b994a28da96156b0a1d1b2fa0395b1114db9f7dfe9653f",
+        "requirement": "compiler.relinearization",
+        "topology": "d2a301eb3b5c2fe4dec35c03ec2041a4b104a405c38a5fa00bd3dfca2152b143"
+      },
+      {
+        "actual_encrypted_execution_recorded": true,
+        "all_input_proof": false,
+        "artifact_hashes": {
+          "_hecate_golden.cst": "f33f56f8ac5440395deef3a8ae23ed05d608669f68e9b6c72be17a3e78994c2c",
+          "_hecate_golden.cst.upstream-original": "f33f56f8ac5440395deef3a8ae23ed05d608669f68e9b6c72be17a3e78994c2c",
+          "arrays.npz": "0debc127f3d5e76fa351732a0448cd681c9abe65eb7476742d2c3e08fa9cf8cb",
+          "candidate_trace.mlir": "6f3296df84fe4324a7a2f3a27606f58fb9b7c4a7615bc764bab536549513b57c",
+          "constant-layout.json": "54242a9d52424a2f0ba8f50e996f881692b4c8cf6c0caccb9e16699c2210615b",
+          "lowered._hecate_golden.hevm": "5b68fd16f949d68aeaae2270e01c1bf132f87e35b32c6ac630189e029cc98e4e",
+          "lowered.ckks.mlir": "0b372264aa17bcb25545d33510c8d8fac0248fef57b22db0be9dc54a875f6a4d",
+          "lowered.earth.mlir": "5319ec02ef4640b4dfed7a37f4d8ffe5b1db77de4b938a82368a45b94d90e3ec",
+          "lowered.mlir": "eff5b617ae0f65035ac845ff39e754f10255a50d3389594ef27579a97920eb9f",
+          "native-array-mutation-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-augmented-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-call-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-function-plan.json": "ad56a4e098f3a9b55e8e4bd0bd4b61381641344426ec4d63fe32f74b3ec1bb57",
+          "trace-evidence.json": "2663021ea4c244748112889387e13fa01b0d7c9092d97fc48f093518d861d324",
+          "upstream-calls.json": "936a179ebc110261ebe025b8e97ba5668b92d2d553cdb5abe7cfb293373a0fda"
+        },
+        "compiler_evidence": {
+          "evidence_scope": "fused operation in artifact and pinned runtime source plus observed compact outputs",
+          "explicit_standalone_opcode": false,
+          "fused_mulcc_operations": 1,
+          "output_ciphertext_polynomials": 2,
+          "per_operation_runtime_observed": false,
+          "pinned_runtime_source_sha256": "3a5dfb8751d176e50fb66f88feaa7351470b6ea6e226fa022e12c7e2aebd3332",
+          "runtime_binary_sha256": "8428c4ed33ad93012f611ca49ca337bfb33031f60104f79ca35db87312414156"
+        },
+        "evidence_relative_to_results": "candidate-replay-yc8fm3rh",
+        "model_id": "chunk_helper_12",
+        "model_sha256": "787ffc53cc94a6105979479edaee8d1c9152240958f1b2a38318339b9946a4b8",
+        "new_encrypted_execution": false,
+        "positive_numerical_values": 12,
+        "report_sha256": "f9ae2ce3c54444faa41eb6954d9e14721190e8d49faa72980959be9ee83e2e9d",
+        "request_id": "08db5dd1174bba845c561f74509d372a8a82795667773b2a88b5f2480e7e1589",
+        "requirement": "compiler.relinearization",
+        "topology": "856a44a454e9761df96a50e11923fe7665c3ec26b0fcccb1601c255da0a9f8f1"
+      }
+    ],
+    "compiler.rescale": [
+      {
+        "actual_encrypted_execution_recorded": true,
+        "all_input_proof": false,
+        "artifact_hashes": {
+          "_hecate_golden.cst": "b6acab0eadf6a7cadbef7c84ca355f8068aa98e63866e44961bd5c8a3fb9474d",
+          "_hecate_golden.cst.upstream-original": "b6acab0eadf6a7cadbef7c84ca355f8068aa98e63866e44961bd5c8a3fb9474d",
+          "arrays.npz": "79b80a2448f93efa78f5c43d7e7335b2d8f2da9b93e03aff117f1117e7ba60ac",
+          "candidate_trace.mlir": "fbba6005686b6e98aeff8643007f7008e1b3d0ea622e6aec8a97a2c960cba04e",
+          "constant-layout.json": "b5f5a123d4e43cc0b718a45a6962960dfafc4192431f17e785f36d9085be0f0d",
+          "lowered._hecate_golden.hevm": "b8ed41d85865ae07f80ce656ff5cbd7b68712daa443e9d84c871da3ef28eb150",
+          "lowered.ckks.mlir": "e32dc9c9b76bfb29a3a8ce66824b0d8b49214d6b8a9a5531ecf58b780fdb4dbb",
+          "lowered.earth.mlir": "6f670ba3900ce2d03326194459c1366602b107482d736f11eb5309bbaa8df57b",
+          "lowered.mlir": "74060ab9b2be6d61a76fb155f23b35e5b331cb2727221646334bf7f168bb06d8",
+          "native-array-mutation-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-augmented-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-call-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-function-plan.json": "70c4931c447ceaeb654f328fb13502486aa59fec2c15f19e77213bd2bd299647",
+          "trace-evidence.json": "197a78fec8f1c7e4cd44294cd0f5821b8a2b547e46bd005aec118c99a2da59a5",
+          "upstream-calls.json": "6bc3c5497e07aceb6b78d589384da9fc0fa6b7b41207d854ef7736b1f6dc17c1"
+        },
+        "compiler_evidence": {
+          "artifact_operations": 27,
+          "level_transitions": [
+            {
+              "destination": 1,
+              "index": 5,
+              "inputs": [
+                {
+                  "level": 7,
+                  "nominal_modulus_minus_scale_bits": 285,
+                  "producer": 4,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 6,
+                "nominal_modulus_minus_scale_bits": 285,
+                "producer": 5,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 1,
+              "index": 9,
+              "inputs": [
+                {
+                  "level": 6,
+                  "nominal_modulus_minus_scale_bits": 240,
+                  "producer": 8,
+                  "scale": 120
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 5,
+                "nominal_modulus_minus_scale_bits": 240,
+                "producer": 9,
+                "scale": 60
+              }
+            },
+            {
+              "destination": 7,
+              "index": 40,
+              "inputs": [
+                {
+                  "level": 4,
+                  "nominal_modulus_minus_scale_bits": 105,
+                  "producer": 39,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 105,
+                "producer": 40,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 9,
+              "index": 47,
+              "inputs": [
+                {
+                  "level": 5,
+                  "nominal_modulus_minus_scale_bits": 165,
+                  "producer": 46,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 165,
+                "producer": 47,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 10,
+              "index": 53,
+              "inputs": [
+                {
+                  "level": 4,
+                  "nominal_modulus_minus_scale_bits": 105,
+                  "producer": 52,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 105,
+                "producer": 53,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 11,
+              "index": 62,
+              "inputs": [
+                {
+                  "level": 5,
+                  "nominal_modulus_minus_scale_bits": 165,
+                  "producer": 61,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 165,
+                "producer": 62,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 10,
+              "index": 67,
+              "inputs": [
+                {
+                  "level": 3,
+                  "nominal_modulus_minus_scale_bits": 45,
+                  "producer": 66,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 45,
+                "producer": 67,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 9,
+              "index": 71,
+              "inputs": [
+                {
+                  "level": 4,
+                  "nominal_modulus_minus_scale_bits": 120,
+                  "producer": 70,
+                  "scale": 120
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 120,
+                "producer": 71,
+                "scale": 60
+              }
+            },
+            {
+              "destination": 1,
+              "index": 89,
+              "inputs": [
+                {
+                  "level": 5,
+                  "nominal_modulus_minus_scale_bits": 165,
+                  "producer": 88,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 165,
+                "producer": 89,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 7,
+              "index": 94,
+              "inputs": [
+                {
+                  "level": 4,
+                  "nominal_modulus_minus_scale_bits": 105,
+                  "producer": 93,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 105,
+                "producer": 94,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 12,
+              "index": 104,
+              "inputs": [
+                {
+                  "level": 5,
+                  "nominal_modulus_minus_scale_bits": 165,
+                  "producer": 103,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 165,
+                "producer": 104,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 7,
+              "index": 109,
+              "inputs": [
+                {
+                  "level": 3,
+                  "nominal_modulus_minus_scale_bits": 45,
+                  "producer": 108,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 45,
+                "producer": 109,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 1,
+              "index": 113,
+              "inputs": [
+                {
+                  "level": 4,
+                  "nominal_modulus_minus_scale_bits": 120,
+                  "producer": 112,
+                  "scale": 120
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 120,
+                "producer": 113,
+                "scale": 60
+              }
+            },
+            {
+              "destination": 9,
+              "index": 131,
+              "inputs": [
+                {
+                  "level": 5,
+                  "nominal_modulus_minus_scale_bits": 165,
+                  "producer": 130,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 165,
+                "producer": 131,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 8,
+              "index": 136,
+              "inputs": [
+                {
+                  "level": 4,
+                  "nominal_modulus_minus_scale_bits": 105,
+                  "producer": 135,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 105,
+                "producer": 136,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 3,
+              "index": 145,
+              "inputs": [
+                {
+                  "level": 5,
+                  "nominal_modulus_minus_scale_bits": 165,
+                  "producer": 144,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 165,
+                "producer": 145,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 8,
+              "index": 150,
+              "inputs": [
+                {
+                  "level": 3,
+                  "nominal_modulus_minus_scale_bits": 45,
+                  "producer": 149,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 45,
+                "producer": 150,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 3,
+              "index": 154,
+              "inputs": [
+                {
+                  "level": 4,
+                  "nominal_modulus_minus_scale_bits": 120,
+                  "producer": 153,
+                  "scale": 120
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 120,
+                "producer": 154,
+                "scale": 60
+              }
+            },
+            {
+              "destination": 5,
+              "index": 167,
+              "inputs": [
+                {
+                  "level": 3,
+                  "nominal_modulus_minus_scale_bits": 45,
+                  "producer": 166,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 45,
+                "producer": 167,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 6,
+              "index": 172,
+              "inputs": [
+                {
+                  "level": 4,
+                  "nominal_modulus_minus_scale_bits": 105,
+                  "producer": 171,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 105,
+                "producer": 172,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 4,
+              "index": 179,
+              "inputs": [
+                {
+                  "level": 5,
+                  "nominal_modulus_minus_scale_bits": 165,
+                  "producer": 178,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 165,
+                "producer": 179,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 11,
+              "index": 184,
+              "inputs": [
+                {
+                  "level": 3,
+                  "nominal_modulus_minus_scale_bits": 60,
+                  "producer": 183,
+                  "scale": 120
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 60,
+                "producer": 184,
+                "scale": 60
+              }
+            },
+            {
+              "destination": 4,
+              "index": 188,
+              "inputs": [
+                {
+                  "level": 4,
+                  "nominal_modulus_minus_scale_bits": 120,
+                  "producer": 187,
+                  "scale": 120
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 120,
+                "producer": 188,
+                "scale": 60
+              }
+            },
+            {
+              "destination": 0,
+              "index": 200,
+              "inputs": [
+                {
+                  "level": 5,
+                  "nominal_modulus_minus_scale_bits": 165,
+                  "producer": 199,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 165,
+                "producer": 200,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 12,
+              "index": 205,
+              "inputs": [
+                {
+                  "level": 3,
+                  "nominal_modulus_minus_scale_bits": 60,
+                  "producer": 204,
+                  "scale": 120
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 60,
+                "producer": 205,
+                "scale": 60
+              }
+            },
+            {
+              "destination": 0,
+              "index": 209,
+              "inputs": [
+                {
+                  "level": 4,
+                  "nominal_modulus_minus_scale_bits": 120,
+                  "producer": 208,
+                  "scale": 120
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 120,
+                "producer": 209,
+                "scale": 60
+              }
+            },
+            {
+              "destination": 0,
+              "index": 227,
+              "inputs": [
+                {
+                  "level": 3,
+                  "nominal_modulus_minus_scale_bits": 60,
+                  "producer": 226,
+                  "scale": 120
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 60,
+                "producer": 227,
+                "scale": 60
+              }
+            }
+          ]
+        },
+        "evidence_relative_to_results": "candidate-replay-2feqm_wh",
+        "model_id": "chunk_helper_0",
+        "model_sha256": "534a372c4fdbc90af0f4039e2abca34c31e01e855fc6131f2314f86aff1e8d35",
+        "new_encrypted_execution": false,
+        "positive_numerical_values": 28,
+        "report_sha256": "924c5bef9d7a40346022b0cbb6d8be8f126cb3c6f9f9a2a91277083e623069b0",
+        "request_id": "d57cc54d9ad3feec8ffa0683b02cba556049020f03d4e0d35c1fecadce368932",
+        "requirement": "compiler.rescale",
+        "topology": "99e020f8d09100ebc16cc9838425f07fe1652eb2a9d3f1807fb480ac545685a2"
+      },
+      {
+        "actual_encrypted_execution_recorded": true,
+        "all_input_proof": false,
+        "artifact_hashes": {
+          "_hecate_golden.cst": "61c0fde0c4d60368d09799c764919e81e7da24fde20d79f1b3538f3718139615",
+          "_hecate_golden.cst.upstream-original": "61c0fde0c4d60368d09799c764919e81e7da24fde20d79f1b3538f3718139615",
+          "arrays.npz": "3b64a17d87b735df1014e60648bfe729c5857492bde1d12e407395b27935cd1e",
+          "candidate_trace.mlir": "539a72ab7d224d0d3b9ea528cb8e0e1098928936efd2f03cd72287a2f32a5d5c",
+          "constant-layout.json": "f3c320022887353979b50d9ee89ae7f191104782178202def44672d085a42541",
+          "lowered._hecate_golden.hevm": "ae2c802e8fc2cf2522642c3b5b856984d8e138fb435600e38df650067ed8146c",
+          "lowered.ckks.mlir": "e8130325de41b90f91c0f88cf0d7d68ed9a0aa30cbf5468b4efa1f7508d63698",
+          "lowered.earth.mlir": "4b6c805ed3e0ec6ee33430248df3f1e5273fdbbc4d3a929e933752f79e53b7ef",
+          "lowered.mlir": "8a439bcd36fb143eb959539ee980d6c5d9c74a31c046a9a96ff4ac11151b02be",
+          "native-array-mutation-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-augmented-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-call-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-function-plan.json": "1890b95879b1d3df0899bf536cea292006915db6aa65e72e7c73bcd3b68dc00c",
+          "trace-evidence.json": "3f6d41bd3cde9ed74dc9faacc170965a3c4dcb8285ef802d8e24e449ad171eaf",
+          "upstream-calls.json": "e0a76a5b0d6e48d20318686d69745ad7c87fe51dfb9271fb97edb75582b610e6"
+        },
+        "compiler_evidence": {
+          "artifact_operations": 1,
+          "level_transitions": [
+            {
+              "destination": 1,
+              "index": 11,
+              "inputs": [
+                {
+                  "level": 3,
+                  "nominal_modulus_minus_scale_bits": 45,
+                  "producer": 10,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 45,
+                "producer": 11,
+                "scale": 75
+              }
+            }
+          ]
+        },
+        "evidence_relative_to_results": "candidate-replay-xe3jv3v4",
+        "model_id": "chunk_helper_4",
+        "model_sha256": "bcc610b2b661c8495d92a8a102f7ab602c9766af2f539477f9843b7d888413e9",
+        "new_encrypted_execution": false,
+        "positive_numerical_values": 24,
+        "report_sha256": "ec34b8740495d5ed6ec4a15485960705049f5af426b1e70e9763e1b0024f0aee",
+        "request_id": "0a3d4d770ded71bc81dd1e87ef15fbc5d15281bb5be7339c1fb507acc84f6866",
+        "requirement": "compiler.rescale",
+        "topology": "ba4c6e4d2166d9aad92f73a397e887d86dcc2e6b1c5e11eb335e1e7daa972b5d"
+      },
+      {
+        "actual_encrypted_execution_recorded": true,
+        "all_input_proof": false,
+        "artifact_hashes": {
+          "_hecate_golden.cst": "f33f56f8ac5440395deef3a8ae23ed05d608669f68e9b6c72be17a3e78994c2c",
+          "_hecate_golden.cst.upstream-original": "f33f56f8ac5440395deef3a8ae23ed05d608669f68e9b6c72be17a3e78994c2c",
+          "arrays.npz": "0debc127f3d5e76fa351732a0448cd681c9abe65eb7476742d2c3e08fa9cf8cb",
+          "candidate_trace.mlir": "0b9959559e271a246c00da905b1017b27412faaa4ec7309d3757a7739d4b5868",
+          "constant-layout.json": "54242a9d52424a2f0ba8f50e996f881692b4c8cf6c0caccb9e16699c2210615b",
+          "lowered._hecate_golden.hevm": "c7d6e4fae3cdaa79f909cf9f52dfe69b7617daf8a9e0db4fb6743714216a997f",
+          "lowered.ckks.mlir": "dad84b4bab10b29fdf4126afab13d940eb010b7d4f1b0da2a1c7fc50f9a93f15",
+          "lowered.earth.mlir": "b864a552e02a49e8a4187723246964747d5b1f6f76675d8a36f3f3f31fef1316",
+          "lowered.mlir": "069946754fc09230928570bc283615142f96a2f09acace713c1bda20f938aae9",
+          "native-array-mutation-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-augmented-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-call-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-function-plan.json": "8b3160aed4830e581a76fcdb3eda29c932e9a10d90ce983180778ae7312d1c4b",
+          "trace-evidence.json": "bea4c7a38b2ff82908245ff1bf323eca23f4201696c1e9136d15959d9a03e0b5",
+          "upstream-calls.json": "96588e7c1c43a78e41048d276352dcee0a067efe00a0f893d8a15b49355e19bd"
+        },
+        "compiler_evidence": {
+          "artifact_operations": 51,
+          "level_transitions": [
+            {
+              "destination": 11,
+              "index": 35,
+              "inputs": [
+                {
+                  "level": 8,
+                  "nominal_modulus_minus_scale_bits": 345,
+                  "producer": 34,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 7,
+                "nominal_modulus_minus_scale_bits": 345,
+                "producer": 35,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 5,
+              "index": 52,
+              "inputs": [
+                {
+                  "level": 8,
+                  "nominal_modulus_minus_scale_bits": 345,
+                  "producer": 51,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 7,
+                "nominal_modulus_minus_scale_bits": 345,
+                "producer": 52,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 14,
+              "index": 67,
+              "inputs": [
+                {
+                  "level": 8,
+                  "nominal_modulus_minus_scale_bits": 345,
+                  "producer": 66,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 7,
+                "nominal_modulus_minus_scale_bits": 345,
+                "producer": 67,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 17,
+              "index": 69,
+              "inputs": [
+                {
+                  "level": 8,
+                  "nominal_modulus_minus_scale_bits": 345,
+                  "producer": 68,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 7,
+                "nominal_modulus_minus_scale_bits": 345,
+                "producer": 69,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 7,
+              "index": 76,
+              "inputs": [
+                {
+                  "level": 8,
+                  "nominal_modulus_minus_scale_bits": 345,
+                  "producer": 75,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 7,
+                "nominal_modulus_minus_scale_bits": 345,
+                "producer": 76,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 6,
+              "index": 92,
+              "inputs": [
+                {
+                  "level": 8,
+                  "nominal_modulus_minus_scale_bits": 345,
+                  "producer": 91,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 7,
+                "nominal_modulus_minus_scale_bits": 345,
+                "producer": 92,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 16,
+              "index": 109,
+              "inputs": [
+                {
+                  "level": 8,
+                  "nominal_modulus_minus_scale_bits": 345,
+                  "producer": 108,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 7,
+                "nominal_modulus_minus_scale_bits": 345,
+                "producer": 109,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 8,
+              "index": 115,
+              "inputs": [
+                {
+                  "level": 8,
+                  "nominal_modulus_minus_scale_bits": 345,
+                  "producer": 114,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 7,
+                "nominal_modulus_minus_scale_bits": 345,
+                "producer": 115,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 9,
+              "index": 123,
+              "inputs": [
+                {
+                  "level": 8,
+                  "nominal_modulus_minus_scale_bits": 345,
+                  "producer": 122,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 7,
+                "nominal_modulus_minus_scale_bits": 345,
+                "producer": 123,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 12,
+              "index": 125,
+              "inputs": [
+                {
+                  "level": 8,
+                  "nominal_modulus_minus_scale_bits": 345,
+                  "producer": 124,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 7,
+                "nominal_modulus_minus_scale_bits": 345,
+                "producer": 125,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 15,
+              "index": 137,
+              "inputs": [
+                {
+                  "level": 8,
+                  "nominal_modulus_minus_scale_bits": 345,
+                  "producer": 136,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 7,
+                "nominal_modulus_minus_scale_bits": 345,
+                "producer": 137,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 10,
+              "index": 144,
+              "inputs": [
+                {
+                  "level": 8,
+                  "nominal_modulus_minus_scale_bits": 345,
+                  "producer": 143,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 7,
+                "nominal_modulus_minus_scale_bits": 345,
+                "producer": 144,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 15,
+              "index": 153,
+              "inputs": [
+                {
+                  "level": 5,
+                  "nominal_modulus_minus_scale_bits": 165,
+                  "producer": 152,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 165,
+                "producer": 153,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 13,
+              "index": 158,
+              "inputs": [
+                {
+                  "level": 6,
+                  "nominal_modulus_minus_scale_bits": 225,
+                  "producer": 157,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 5,
+                "nominal_modulus_minus_scale_bits": 225,
+                "producer": 158,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 2,
+              "index": 163,
+              "inputs": [
+                {
+                  "level": 6,
+                  "nominal_modulus_minus_scale_bits": 225,
+                  "producer": 162,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 5,
+                "nominal_modulus_minus_scale_bits": 225,
+                "producer": 163,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 12,
+              "index": 168,
+              "inputs": [
+                {
+                  "level": 6,
+                  "nominal_modulus_minus_scale_bits": 225,
+                  "producer": 167,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 5,
+                "nominal_modulus_minus_scale_bits": 225,
+                "producer": 168,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 8,
+              "index": 173,
+              "inputs": [
+                {
+                  "level": 4,
+                  "nominal_modulus_minus_scale_bits": 105,
+                  "producer": 172,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 105,
+                "producer": 173,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 17,
+              "index": 179,
+              "inputs": [
+                {
+                  "level": 6,
+                  "nominal_modulus_minus_scale_bits": 225,
+                  "producer": 178,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 5,
+                "nominal_modulus_minus_scale_bits": 225,
+                "producer": 179,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 3,
+              "index": 184,
+              "inputs": [
+                {
+                  "level": 7,
+                  "nominal_modulus_minus_scale_bits": 285,
+                  "producer": 183,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 6,
+                "nominal_modulus_minus_scale_bits": 285,
+                "producer": 184,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 0,
+              "index": 189,
+              "inputs": [
+                {
+                  "level": 6,
+                  "nominal_modulus_minus_scale_bits": 225,
+                  "producer": 188,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 5,
+                "nominal_modulus_minus_scale_bits": 225,
+                "producer": 189,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 7,
+              "index": 193,
+              "inputs": [
+                {
+                  "level": 7,
+                  "nominal_modulus_minus_scale_bits": 285,
+                  "producer": 192,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 6,
+                "nominal_modulus_minus_scale_bits": 285,
+                "producer": 193,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 17,
+              "index": 195,
+              "inputs": [
+                {
+                  "level": 7,
+                  "nominal_modulus_minus_scale_bits": 285,
+                  "producer": 194,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 6,
+                "nominal_modulus_minus_scale_bits": 285,
+                "producer": 195,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 6,
+              "index": 199,
+              "inputs": [
+                {
+                  "level": 7,
+                  "nominal_modulus_minus_scale_bits": 285,
+                  "producer": 198,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 6,
+                "nominal_modulus_minus_scale_bits": 285,
+                "producer": 199,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 3,
+              "index": 201,
+              "inputs": [
+                {
+                  "level": 7,
+                  "nominal_modulus_minus_scale_bits": 285,
+                  "producer": 200,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 6,
+                "nominal_modulus_minus_scale_bits": 285,
+                "producer": 201,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 1,
+              "index": 204,
+              "inputs": [
+                {
+                  "level": 7,
+                  "nominal_modulus_minus_scale_bits": 285,
+                  "producer": 203,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 6,
+                "nominal_modulus_minus_scale_bits": 285,
+                "producer": 204,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 0,
+              "index": 209,
+              "inputs": [
+                {
+                  "level": 5,
+                  "nominal_modulus_minus_scale_bits": 180,
+                  "producer": 208,
+                  "scale": 120
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 180,
+                "producer": 209,
+                "scale": 60
+              }
+            },
+            {
+              "destination": 17,
+              "index": 213,
+              "inputs": [
+                {
+                  "level": 6,
+                  "nominal_modulus_minus_scale_bits": 240,
+                  "producer": 212,
+                  "scale": 120
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 5,
+                "nominal_modulus_minus_scale_bits": 240,
+                "producer": 213,
+                "scale": 60
+              }
+            },
+            {
+              "destination": 3,
+              "index": 217,
+              "inputs": [
+                {
+                  "level": 6,
+                  "nominal_modulus_minus_scale_bits": 240,
+                  "producer": 216,
+                  "scale": 120
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 5,
+                "nominal_modulus_minus_scale_bits": 240,
+                "producer": 217,
+                "scale": 60
+              }
+            },
+            {
+              "destination": 1,
+              "index": 221,
+              "inputs": [
+                {
+                  "level": 6,
+                  "nominal_modulus_minus_scale_bits": 240,
+                  "producer": 220,
+                  "scale": 120
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 5,
+                "nominal_modulus_minus_scale_bits": 240,
+                "producer": 221,
+                "scale": 60
+              }
+            },
+            {
+              "destination": 12,
+              "index": 243,
+              "inputs": [
+                {
+                  "level": 6,
+                  "nominal_modulus_minus_scale_bits": 225,
+                  "producer": 242,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 5,
+                "nominal_modulus_minus_scale_bits": 225,
+                "producer": 243,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 2,
+              "index": 248,
+              "inputs": [
+                {
+                  "level": 7,
+                  "nominal_modulus_minus_scale_bits": 285,
+                  "producer": 247,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 6,
+                "nominal_modulus_minus_scale_bits": 285,
+                "producer": 248,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 10,
+              "index": 253,
+              "inputs": [
+                {
+                  "level": 6,
+                  "nominal_modulus_minus_scale_bits": 225,
+                  "producer": 252,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 5,
+                "nominal_modulus_minus_scale_bits": 225,
+                "producer": 253,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 12,
+              "index": 257,
+              "inputs": [
+                {
+                  "level": 7,
+                  "nominal_modulus_minus_scale_bits": 285,
+                  "producer": 256,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 6,
+                "nominal_modulus_minus_scale_bits": 285,
+                "producer": 257,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 14,
+              "index": 261,
+              "inputs": [
+                {
+                  "level": 7,
+                  "nominal_modulus_minus_scale_bits": 285,
+                  "producer": 260,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 6,
+                "nominal_modulus_minus_scale_bits": 285,
+                "producer": 261,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 2,
+              "index": 265,
+              "inputs": [
+                {
+                  "level": 7,
+                  "nominal_modulus_minus_scale_bits": 285,
+                  "producer": 264,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 6,
+                "nominal_modulus_minus_scale_bits": 285,
+                "producer": 265,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 16,
+              "index": 267,
+              "inputs": [
+                {
+                  "level": 7,
+                  "nominal_modulus_minus_scale_bits": 285,
+                  "producer": 266,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 6,
+                "nominal_modulus_minus_scale_bits": 285,
+                "producer": 267,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 9,
+              "index": 270,
+              "inputs": [
+                {
+                  "level": 7,
+                  "nominal_modulus_minus_scale_bits": 285,
+                  "producer": 269,
+                  "scale": 135
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 6,
+                "nominal_modulus_minus_scale_bits": 285,
+                "producer": 270,
+                "scale": 75
+              }
+            },
+            {
+              "destination": 10,
+              "index": 275,
+              "inputs": [
+                {
+                  "level": 5,
+                  "nominal_modulus_minus_scale_bits": 180,
+                  "producer": 274,
+                  "scale": 120
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 180,
+                "producer": 275,
+                "scale": 60
+              }
+            },
+            {
+              "destination": 14,
+              "index": 279,
+              "inputs": [
+                {
+                  "level": 6,
+                  "nominal_modulus_minus_scale_bits": 240,
+                  "producer": 278,
+                  "scale": 120
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 5,
+                "nominal_modulus_minus_scale_bits": 240,
+                "producer": 279,
+                "scale": 60
+              }
+            },
+            {
+              "destination": 16,
+              "index": 283,
+              "inputs": [
+                {
+                  "level": 6,
+                  "nominal_modulus_minus_scale_bits": 240,
+                  "producer": 282,
+                  "scale": 120
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 5,
+                "nominal_modulus_minus_scale_bits": 240,
+                "producer": 283,
+                "scale": 60
+              }
+            },
+            {
+              "destination": 9,
+              "index": 287,
+              "inputs": [
+                {
+                  "level": 6,
+                  "nominal_modulus_minus_scale_bits": 240,
+                  "producer": 286,
+                  "scale": 120
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 5,
+                "nominal_modulus_minus_scale_bits": 240,
+                "producer": 287,
+                "scale": 60
+              }
+            },
+            {
+              "destination": 1,
+              "index": 309,
+              "inputs": [
+                {
+                  "level": 4,
+                  "nominal_modulus_minus_scale_bits": 120,
+                  "producer": 308,
+                  "scale": 120
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 120,
+                "producer": 309,
+                "scale": 60
+              }
+            },
+            {
+              "destination": 17,
+              "index": 315,
+              "inputs": [
+                {
+                  "level": 5,
+                  "nominal_modulus_minus_scale_bits": 180,
+                  "producer": 314,
+                  "scale": 120
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 180,
+                "producer": 315,
+                "scale": 60
+              }
+            },
+            {
+              "destination": 3,
+              "index": 320,
+              "inputs": [
+                {
+                  "level": 4,
+                  "nominal_modulus_minus_scale_bits": 120,
+                  "producer": 319,
+                  "scale": 120
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 120,
+                "producer": 320,
+                "scale": 60
+              }
+            },
+            {
+              "destination": 0,
+              "index": 325,
+              "inputs": [
+                {
+                  "level": 5,
+                  "nominal_modulus_minus_scale_bits": 180,
+                  "producer": 324,
+                  "scale": 120
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 180,
+                "producer": 325,
+                "scale": 60
+              }
+            },
+            {
+              "destination": 1,
+              "index": 329,
+              "inputs": [
+                {
+                  "level": 5,
+                  "nominal_modulus_minus_scale_bits": 180,
+                  "producer": 328,
+                  "scale": 120
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 180,
+                "producer": 329,
+                "scale": 60
+              }
+            },
+            {
+              "destination": 2,
+              "index": 335,
+              "inputs": [
+                {
+                  "level": 4,
+                  "nominal_modulus_minus_scale_bits": 120,
+                  "producer": 334,
+                  "scale": 120
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 120,
+                "producer": 335,
+                "scale": 60
+              }
+            },
+            {
+              "destination": 17,
+              "index": 337,
+              "inputs": [
+                {
+                  "level": 5,
+                  "nominal_modulus_minus_scale_bits": 180,
+                  "producer": 336,
+                  "scale": 120
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 4,
+                "nominal_modulus_minus_scale_bits": 180,
+                "producer": 337,
+                "scale": 60
+              }
+            },
+            {
+              "destination": 1,
+              "index": 366,
+              "inputs": [
+                {
+                  "level": 4,
+                  "nominal_modulus_minus_scale_bits": 120,
+                  "producer": 365,
+                  "scale": 120
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 120,
+                "producer": 366,
+                "scale": 60
+              }
+            },
+            {
+              "destination": 17,
+              "index": 371,
+              "inputs": [
+                {
+                  "level": 4,
+                  "nominal_modulus_minus_scale_bits": 120,
+                  "producer": 370,
+                  "scale": 120
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 3,
+                "nominal_modulus_minus_scale_bits": 120,
+                "producer": 371,
+                "scale": 60
+              }
+            },
+            {
+              "destination": 8,
+              "index": 384,
+              "inputs": [
+                {
+                  "level": 3,
+                  "nominal_modulus_minus_scale_bits": 60,
+                  "producer": 383,
+                  "scale": 120
+                }
+              ],
+              "opcode": 3,
+              "operation": "rescale",
+              "output": {
+                "level": 2,
+                "nominal_modulus_minus_scale_bits": 60,
+                "producer": 384,
+                "scale": 60
+              }
+            }
+          ]
+        },
+        "evidence_relative_to_results": "candidate-replay-7jfea3gt",
+        "model_id": "chunk_helper_6",
+        "model_sha256": "376cf20b5df459cf3aaf7b16847823246cec5d0dc25dd470891fbafb8fff6231",
+        "new_encrypted_execution": false,
+        "positive_numerical_values": 12,
+        "report_sha256": "08b2da14d98c25864dce593e2493768500f05714384de6f4684e005c30b4a912",
+        "request_id": "f74499c4e70b14a9cf640662167e89a99b2a69cca8d433663da08bae9e694bbb",
+        "requirement": "compiler.rescale",
+        "topology": "271b4819c12d55c1f569931995f0723a635b3ff28d0ef5ceca0cff79f221835a"
+      }
+    ],
+    "compiler.rotation_keys": [
+      {
+        "actual_encrypted_execution_recorded": true,
+        "all_input_proof": false,
+        "artifact_hashes": {
+          "_hecate_golden.cst": "b6acab0eadf6a7cadbef7c84ca355f8068aa98e63866e44961bd5c8a3fb9474d",
+          "_hecate_golden.cst.upstream-original": "b6acab0eadf6a7cadbef7c84ca355f8068aa98e63866e44961bd5c8a3fb9474d",
+          "arrays.npz": "79b80a2448f93efa78f5c43d7e7335b2d8f2da9b93e03aff117f1117e7ba60ac",
+          "candidate_trace.mlir": "fbba6005686b6e98aeff8643007f7008e1b3d0ea622e6aec8a97a2c960cba04e",
+          "constant-layout.json": "b5f5a123d4e43cc0b718a45a6962960dfafc4192431f17e785f36d9085be0f0d",
+          "lowered._hecate_golden.hevm": "b8ed41d85865ae07f80ce656ff5cbd7b68712daa443e9d84c871da3ef28eb150",
+          "lowered.ckks.mlir": "e32dc9c9b76bfb29a3a8ce66824b0d8b49214d6b8a9a5531ecf58b780fdb4dbb",
+          "lowered.earth.mlir": "6f670ba3900ce2d03326194459c1366602b107482d736f11eb5309bbaa8df57b",
+          "lowered.mlir": "74060ab9b2be6d61a76fb155f23b35e5b331cb2727221646334bf7f168bb06d8",
+          "native-array-mutation-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-augmented-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-call-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-function-plan.json": "70c4931c447ceaeb654f328fb13502486aa59fec2c15f19e77213bd2bd299647",
+          "trace-evidence.json": "197a78fec8f1c7e4cd44294cd0f5821b8a2b547e46bd005aec118c99a2da59a5",
+          "upstream-calls.json": "6bc3c5497e07aceb6b78d589384da9fc0fa6b7b41207d854ef7736b1f6dc17c1"
+        },
+        "compiler_evidence": {
+          "actual_key_file_verified": true,
+          "required_steps": [
+            1,
+            2
+          ]
+        },
+        "evidence_relative_to_results": "candidate-replay-2feqm_wh",
+        "model_id": "chunk_helper_0",
+        "model_sha256": "534a372c4fdbc90af0f4039e2abca34c31e01e855fc6131f2314f86aff1e8d35",
+        "new_encrypted_execution": false,
+        "positive_numerical_values": 28,
+        "report_sha256": "924c5bef9d7a40346022b0cbb6d8be8f126cb3c6f9f9a2a91277083e623069b0",
+        "request_id": "d57cc54d9ad3feec8ffa0683b02cba556049020f03d4e0d35c1fecadce368932",
+        "requirement": "compiler.rotation_keys",
+        "topology": "99e020f8d09100ebc16cc9838425f07fe1652eb2a9d3f1807fb480ac545685a2"
+      },
+      {
+        "actual_encrypted_execution_recorded": true,
+        "all_input_proof": false,
+        "artifact_hashes": {
+          "_hecate_golden.cst": "f33f56f8ac5440395deef3a8ae23ed05d608669f68e9b6c72be17a3e78994c2c",
+          "_hecate_golden.cst.upstream-original": "f33f56f8ac5440395deef3a8ae23ed05d608669f68e9b6c72be17a3e78994c2c",
+          "arrays.npz": "0debc127f3d5e76fa351732a0448cd681c9abe65eb7476742d2c3e08fa9cf8cb",
+          "candidate_trace.mlir": "0b9959559e271a246c00da905b1017b27412faaa4ec7309d3757a7739d4b5868",
+          "constant-layout.json": "54242a9d52424a2f0ba8f50e996f881692b4c8cf6c0caccb9e16699c2210615b",
+          "lowered._hecate_golden.hevm": "c7d6e4fae3cdaa79f909cf9f52dfe69b7617daf8a9e0db4fb6743714216a997f",
+          "lowered.ckks.mlir": "dad84b4bab10b29fdf4126afab13d940eb010b7d4f1b0da2a1c7fc50f9a93f15",
+          "lowered.earth.mlir": "b864a552e02a49e8a4187723246964747d5b1f6f76675d8a36f3f3f31fef1316",
+          "lowered.mlir": "069946754fc09230928570bc283615142f96a2f09acace713c1bda20f938aae9",
+          "native-array-mutation-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-augmented-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-call-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-function-plan.json": "8b3160aed4830e581a76fcdb3eda29c932e9a10d90ce983180778ae7312d1c4b",
+          "trace-evidence.json": "bea4c7a38b2ff82908245ff1bf323eca23f4201696c1e9136d15959d9a03e0b5",
+          "upstream-calls.json": "96588e7c1c43a78e41048d276352dcee0a067efe00a0f893d8a15b49355e19bd"
+        },
+        "compiler_evidence": {
+          "actual_key_file_verified": true,
+          "required_steps": [
+            1,
+            2
+          ]
+        },
+        "evidence_relative_to_results": "candidate-replay-7jfea3gt",
+        "model_id": "chunk_helper_6",
+        "model_sha256": "376cf20b5df459cf3aaf7b16847823246cec5d0dc25dd470891fbafb8fff6231",
+        "new_encrypted_execution": false,
+        "positive_numerical_values": 12,
+        "report_sha256": "08b2da14d98c25864dce593e2493768500f05714384de6f4684e005c30b4a912",
+        "request_id": "f74499c4e70b14a9cf640662167e89a99b2a69cca8d433663da08bae9e694bbb",
+        "requirement": "compiler.rotation_keys",
+        "topology": "271b4819c12d55c1f569931995f0723a635b3ff28d0ef5ceca0cff79f221835a"
+      },
+      {
+        "actual_encrypted_execution_recorded": true,
+        "all_input_proof": false,
+        "artifact_hashes": {
+          "_hecate_golden.cst": "7899b596738d69a704d9eadbce8db283770ed383daec088c8c402d0e0adc26ad",
+          "_hecate_golden.cst.upstream-original": "7899b596738d69a704d9eadbce8db283770ed383daec088c8c402d0e0adc26ad",
+          "arrays.npz": "40d8557d15d5287fc445c5823f890672c36f9cefdd958975bc7842f374ae5e51",
+          "candidate_trace.mlir": "5d6c7d54dc9fb0c5c8ab0e36bd3250cf6cd7581d920635dd11f7a9fe2270baed",
+          "constant-layout.json": "70de3b889196b011411f539fb4800ab064003f4663ebd32dc272958d8140625b",
+          "lowered._hecate_golden.hevm": "d53ebb3972d07acaba54839975f9f87b24ee60da172238f1c9d9426569f88de4",
+          "lowered.ckks.mlir": "1405afb195d5c42a015c54a081644d17537009864df8f8de06798dbde68b9943",
+          "lowered.earth.mlir": "7286fc0f2b52568c014e4b2a5a1d5b10e7862368e48524717972ba4ec71d2aa8",
+          "lowered.mlir": "f89fcdbb9381639d9266a4ebe33a3de7d0a5794e385cda867d0be32386dce53f",
+          "native-array-mutation-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-augmented-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-call-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-function-plan.json": "9f2d4d5791fb94cbb7a622633ee70e834bd5cb2dcb7a188c7ccab600bae81bf9",
+          "trace-evidence.json": "9b2ebee8fafdbc6be05c596ecee7b5c0365103253ddfd863139843f0a4a3f4f5",
+          "upstream-calls.json": "11444fdbaa63c75998e39f3881bff582336e8e207ddeb2326e6a091bb294932e"
+        },
+        "compiler_evidence": {
+          "actual_key_file_verified": true,
+          "required_steps": [
+            1,
+            2
+          ]
+        },
+        "evidence_relative_to_results": "candidate-replay-d3rsb12y",
+        "model_id": "chunk_helper_7",
+        "model_sha256": "46a41e79a3758f4006c226b12a78420ae2d4fae4d6a4a36782c7f5998afc3887",
+        "new_encrypted_execution": false,
+        "positive_numerical_values": 44,
+        "report_sha256": "b5aeec005e1914ea3660d82cff4224ffbc2020d560242e7f7b651255ae69a7a3",
+        "request_id": "023f14207caf2b71be022876d2551d2b62d85a6d31ca0b640fd42f491a69c6b2",
+        "requirement": "compiler.rotation_keys",
+        "topology": "4adfbe960388d9f211ab36a503180b8d3470ab31541843df18fa0116bf605fb2"
+      }
+    ],
+    "compiler.security_parameters": [
+      {
+        "actual_encrypted_execution_recorded": true,
+        "all_input_proof": false,
+        "artifact_hashes": {
+          "_hecate_golden.cst": "b6acab0eadf6a7cadbef7c84ca355f8068aa98e63866e44961bd5c8a3fb9474d",
+          "_hecate_golden.cst.upstream-original": "b6acab0eadf6a7cadbef7c84ca355f8068aa98e63866e44961bd5c8a3fb9474d",
+          "arrays.npz": "79b80a2448f93efa78f5c43d7e7335b2d8f2da9b93e03aff117f1117e7ba60ac",
+          "candidate_trace.mlir": "fbba6005686b6e98aeff8643007f7008e1b3d0ea622e6aec8a97a2c960cba04e",
+          "constant-layout.json": "b5f5a123d4e43cc0b718a45a6962960dfafc4192431f17e785f36d9085be0f0d",
+          "lowered._hecate_golden.hevm": "b8ed41d85865ae07f80ce656ff5cbd7b68712daa443e9d84c871da3ef28eb150",
+          "lowered.ckks.mlir": "e32dc9c9b76bfb29a3a8ce66824b0d8b49214d6b8a9a5531ecf58b780fdb4dbb",
+          "lowered.earth.mlir": "6f670ba3900ce2d03326194459c1366602b107482d736f11eb5309bbaa8df57b",
+          "lowered.mlir": "74060ab9b2be6d61a76fb155f23b35e5b331cb2727221646334bf7f168bb06d8",
+          "native-array-mutation-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-augmented-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-call-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-function-plan.json": "70c4931c447ceaeb654f328fb13502486aa59fec2c15f19e77213bd2bd299647",
+          "trace-evidence.json": "197a78fec8f1c7e4cd44294cd0f5821b8a2b547e46bd005aec118c99a2da59a5",
+          "upstream-calls.json": "6bc3c5497e07aceb6b78d589384da9fc0fa6b7b41207d854ef7736b1f6dc17c1"
+        },
+        "compiler_evidence": {
+          "actual_generated_parameters": {
+            "data_modulus_count": 13,
+            "execution_abi": "periodic-packed-v1",
+            "modulus_bits": [
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60
+            ],
+            "modulus_values": [
+              "1152921504581419009",
+              "1152921504581877761",
+              "1152921504583647233",
+              "1152921504585547777",
+              "1152921504586530817",
+              "1152921504589938689",
+              "1152921504592429057",
+              "1152921504592822273",
+              "1152921504593412097",
+              "1152921504595640321",
+              "1152921504595968001",
+              "1152921504597016577",
+              "1152921504598720513",
+              "1152921504606584833"
+            ],
+            "parameters_set": true,
+            "polynomial_degree": 32768,
+            "rotation_steps": [
+              1,
+              2
+            ],
+            "seal_version": "4.0.0",
+            "security_check": "tc128",
+            "slot_period": 4,
+            "slots": 16384
+          },
+          "profile_sha256": "ab53faeac14298e846a4ea8e9b2cbfaef4469a6b03ba25b80f37c79387fd246e"
+        },
+        "evidence_relative_to_results": "candidate-replay-2feqm_wh",
+        "model_id": "chunk_helper_0",
+        "model_sha256": "534a372c4fdbc90af0f4039e2abca34c31e01e855fc6131f2314f86aff1e8d35",
+        "new_encrypted_execution": false,
+        "positive_numerical_values": 28,
+        "report_sha256": "924c5bef9d7a40346022b0cbb6d8be8f126cb3c6f9f9a2a91277083e623069b0",
+        "request_id": "d57cc54d9ad3feec8ffa0683b02cba556049020f03d4e0d35c1fecadce368932",
+        "requirement": "compiler.security_parameters",
+        "topology": "99e020f8d09100ebc16cc9838425f07fe1652eb2a9d3f1807fb480ac545685a2"
+      },
+      {
+        "actual_encrypted_execution_recorded": true,
+        "all_input_proof": false,
+        "artifact_hashes": {
+          "_hecate_golden.cst": "61c0fde0c4d60368d09799c764919e81e7da24fde20d79f1b3538f3718139615",
+          "_hecate_golden.cst.upstream-original": "61c0fde0c4d60368d09799c764919e81e7da24fde20d79f1b3538f3718139615",
+          "arrays.npz": "3b64a17d87b735df1014e60648bfe729c5857492bde1d12e407395b27935cd1e",
+          "candidate_trace.mlir": "539a72ab7d224d0d3b9ea528cb8e0e1098928936efd2f03cd72287a2f32a5d5c",
+          "constant-layout.json": "f3c320022887353979b50d9ee89ae7f191104782178202def44672d085a42541",
+          "lowered._hecate_golden.hevm": "ae2c802e8fc2cf2522642c3b5b856984d8e138fb435600e38df650067ed8146c",
+          "lowered.ckks.mlir": "e8130325de41b90f91c0f88cf0d7d68ed9a0aa30cbf5468b4efa1f7508d63698",
+          "lowered.earth.mlir": "4b6c805ed3e0ec6ee33430248df3f1e5273fdbbc4d3a929e933752f79e53b7ef",
+          "lowered.mlir": "8a439bcd36fb143eb959539ee980d6c5d9c74a31c046a9a96ff4ac11151b02be",
+          "native-array-mutation-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-augmented-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-call-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-function-plan.json": "1890b95879b1d3df0899bf536cea292006915db6aa65e72e7c73bcd3b68dc00c",
+          "trace-evidence.json": "3f6d41bd3cde9ed74dc9faacc170965a3c4dcb8285ef802d8e24e449ad171eaf",
+          "upstream-calls.json": "e0a76a5b0d6e48d20318686d69745ad7c87fe51dfb9271fb97edb75582b610e6"
+        },
+        "compiler_evidence": {
+          "actual_generated_parameters": {
+            "data_modulus_count": 13,
+            "execution_abi": "periodic-packed-v1",
+            "modulus_bits": [
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60
+            ],
+            "modulus_values": [
+              "1152921504581419009",
+              "1152921504581877761",
+              "1152921504583647233",
+              "1152921504585547777",
+              "1152921504586530817",
+              "1152921504589938689",
+              "1152921504592429057",
+              "1152921504592822273",
+              "1152921504593412097",
+              "1152921504595640321",
+              "1152921504595968001",
+              "1152921504597016577",
+              "1152921504598720513",
+              "1152921504606584833"
+            ],
+            "parameters_set": true,
+            "polynomial_degree": 32768,
+            "rotation_steps": [
+              1,
+              2
+            ],
+            "seal_version": "4.0.0",
+            "security_check": "tc128",
+            "slot_period": 4,
+            "slots": 16384
+          },
+          "profile_sha256": "ab53faeac14298e846a4ea8e9b2cbfaef4469a6b03ba25b80f37c79387fd246e"
+        },
+        "evidence_relative_to_results": "candidate-replay-xe3jv3v4",
+        "model_id": "chunk_helper_4",
+        "model_sha256": "bcc610b2b661c8495d92a8a102f7ab602c9766af2f539477f9843b7d888413e9",
+        "new_encrypted_execution": false,
+        "positive_numerical_values": 24,
+        "report_sha256": "ec34b8740495d5ed6ec4a15485960705049f5af426b1e70e9763e1b0024f0aee",
+        "request_id": "0a3d4d770ded71bc81dd1e87ef15fbc5d15281bb5be7339c1fb507acc84f6866",
+        "requirement": "compiler.security_parameters",
+        "topology": "ba4c6e4d2166d9aad92f73a397e887d86dcc2e6b1c5e11eb335e1e7daa972b5d"
+      },
+      {
+        "actual_encrypted_execution_recorded": true,
+        "all_input_proof": false,
+        "artifact_hashes": {
+          "_hecate_golden.cst": "f33f56f8ac5440395deef3a8ae23ed05d608669f68e9b6c72be17a3e78994c2c",
+          "_hecate_golden.cst.upstream-original": "f33f56f8ac5440395deef3a8ae23ed05d608669f68e9b6c72be17a3e78994c2c",
+          "arrays.npz": "0debc127f3d5e76fa351732a0448cd681c9abe65eb7476742d2c3e08fa9cf8cb",
+          "candidate_trace.mlir": "0b9959559e271a246c00da905b1017b27412faaa4ec7309d3757a7739d4b5868",
+          "constant-layout.json": "54242a9d52424a2f0ba8f50e996f881692b4c8cf6c0caccb9e16699c2210615b",
+          "lowered._hecate_golden.hevm": "c7d6e4fae3cdaa79f909cf9f52dfe69b7617daf8a9e0db4fb6743714216a997f",
+          "lowered.ckks.mlir": "dad84b4bab10b29fdf4126afab13d940eb010b7d4f1b0da2a1c7fc50f9a93f15",
+          "lowered.earth.mlir": "b864a552e02a49e8a4187723246964747d5b1f6f76675d8a36f3f3f31fef1316",
+          "lowered.mlir": "069946754fc09230928570bc283615142f96a2f09acace713c1bda20f938aae9",
+          "native-array-mutation-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-augmented-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-call-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "native-function-plan.json": "8b3160aed4830e581a76fcdb3eda29c932e9a10d90ce983180778ae7312d1c4b",
+          "trace-evidence.json": "bea4c7a38b2ff82908245ff1bf323eca23f4201696c1e9136d15959d9a03e0b5",
+          "upstream-calls.json": "96588e7c1c43a78e41048d276352dcee0a067efe00a0f893d8a15b49355e19bd"
+        },
+        "compiler_evidence": {
+          "actual_generated_parameters": {
+            "data_modulus_count": 13,
+            "execution_abi": "periodic-packed-v1",
+            "modulus_bits": [
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60,
+              60
+            ],
+            "modulus_values": [
+              "1152921504581419009",
+              "1152921504581877761",
+              "1152921504583647233",
+              "1152921504585547777",
+              "1152921504586530817",
+              "1152921504589938689",
+              "1152921504592429057",
+              "1152921504592822273",
+              "1152921504593412097",
+              "1152921504595640321",
+              "1152921504595968001",
+              "1152921504597016577",
+              "1152921504598720513",
+              "1152921504606584833"
+            ],
+            "parameters_set": true,
+            "polynomial_degree": 32768,
+            "rotation_steps": [
+              1,
+              2
+            ],
+            "seal_version": "4.0.0",
+            "security_check": "tc128",
+            "slot_period": 4,
+            "slots": 16384
+          },
+          "profile_sha256": "ab53faeac14298e846a4ea8e9b2cbfaef4469a6b03ba25b80f37c79387fd246e"
+        },
+        "evidence_relative_to_results": "candidate-replay-7jfea3gt",
+        "model_id": "chunk_helper_6",
+        "model_sha256": "376cf20b5df459cf3aaf7b16847823246cec5d0dc25dd470891fbafb8fff6231",
+        "new_encrypted_execution": false,
+        "positive_numerical_values": 12,
+        "report_sha256": "08b2da14d98c25864dce593e2493768500f05714384de6f4684e005c30b4a912",
+        "request_id": "f74499c4e70b14a9cf640662167e89a99b2a69cca8d433663da08bae9e694bbb",
+        "requirement": "compiler.security_parameters",
+        "topology": "271b4819c12d55c1f569931995f0723a635b3ff28d0ef5ceca0cff79f221835a"
+      }
+    ]
+  },
+  "kind": "verified_compiler_context_bindings",
+  "new_encrypted_executions": 0,
+  "paid_calls": 0,
+  "requirements": 5,
+  "runner_sha256": "cf74afe20eefb264b0fc821d65b89134b465cec21a2d87b7b41797d7b4cba516",
+  "runtime_source_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+  "schema": 1,
+  "scope": "Previously executed artifacts, runtime-source inference and observed final ciphertext metadata; not per-instruction tracing",
+  "source_audit_relative_to_results": "upstream-chunks-r29-compiler-evidence.json",
+  "source_audit_sha256": "eb60538794ca8aab7876397e1edc5e1eeefbe20e1640142e89df2a4c0d023a86"
+}

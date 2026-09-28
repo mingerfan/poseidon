@@ -1,0 +1,526 @@
+{
+  "all_designated_tasks_passed": 57,
+  "binding": "8125c9df7faed1b1a51da10ca1df15cd16b8507a260537d9442aad392292fbef",
+  "evidence": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-progress-r138.json": {
+      "binding": "b15a0b8b81cdc2ab2c507cbb99aa224c58d753001793ab722c0222c280916441",
+      "sha256": "24e9907c4e8a35ff3166eec0730db53c32d809e05ddf059895f7da3a9f50e7f0"
+    },
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-distinct-contexts-r138.json": {
+      "binding": "3bcfc71f77b4b9e6110f60fe2823440a46bac3838ef6167df28aec5229446217",
+      "sha256": "6a1a52f01422df14452dd944f0eb1e188009df1857cd50b3827cd6a1563e7690"
+    }
+  },
+  "executable_partitions": 377,
+  "format": "poseidon-stage2-progress-review-v1",
+  "groups": {
+    "directed_construction": {
+      "all_planned_task_success_rate": 0.0,
+      "all_tasks_audited": false,
+      "audited": 0,
+      "audited_task_success_rate": null,
+      "planned": 627,
+      "statuses": {
+        "launched_unconfirmed": 9,
+        "not_run": 605,
+        "running_verified": 5,
+        "terminal_pending_audit": 8
+      }
+    },
+    "directed_fixed_polynomial": {
+      "all_planned_task_success_rate": 0.0,
+      "all_tasks_audited": false,
+      "audited": 0,
+      "audited_task_success_rate": null,
+      "planned": 21,
+      "statuses": {
+        "not_run": 21
+      }
+    },
+    "directed_helper": {
+      "all_planned_task_success_rate": 0.0,
+      "all_tasks_audited": false,
+      "audited": 0,
+      "audited_task_success_rate": null,
+      "planned": 60,
+      "statuses": {
+        "not_run": 60
+      }
+    },
+    "free_gap_context": {
+      "all_planned_task_success_rate": 0.0,
+      "all_tasks_audited": false,
+      "audited": 0,
+      "audited_task_success_rate": null,
+      "planned": 30,
+      "statuses": {
+        "launched_unconfirmed": 1,
+        "not_run": 4,
+        "terminal_pending_audit": 25
+      }
+    },
+    "free_primary": {
+      "all_planned_task_success_rate": 0.8016666666666666,
+      "all_tasks_audited": false,
+      "audited": 1014,
+      "audited_task_success_rate": 0.9487179487179487,
+      "planned": 1200,
+      "statuses": {
+        "failed": 52,
+        "launched_unconfirmed": 37,
+        "not_run": 72,
+        "passed": 962,
+        "running_verified": 4,
+        "terminal_pending_audit": 73
+      }
+    },
+    "free_supplement": {
+      "all_planned_task_success_rate": 0.532608695652174,
+      "all_tasks_audited": false,
+      "audited": 58,
+      "audited_task_success_rate": 0.8448275862068966,
+      "planned": 92,
+      "statuses": {
+        "failed": 9,
+        "launched_unconfirmed": 2,
+        "not_run": 2,
+        "passed": 49,
+        "running_verified": 1,
+        "terminal_pending_audit": 29
+      }
+    }
+  },
+  "insufficient_remaining_designated_contexts": [
+    {
+      "failed_or_unconfirmed": [
+        {
+          "failure_layer": "provider",
+          "id": "free_bench_helper_0000",
+          "status": "failed",
+          "topology": "ba4c6e4d2166d9aad92f73a397e887d86dcc2e6b1c5e11eb335e1e7daa972b5d"
+        }
+      ],
+      "id": "input.rank.2",
+      "passed_distinct_topologies": 2,
+      "possible_with_remaining_designated_tasks": 2
+    },
+    {
+      "failed_or_unconfirmed": [
+        {
+          "failure_layer": "provider",
+          "id": "free_bench_primitive_0022",
+          "status": "failed",
+          "topology": "254e6786285e55a2d16eeb26671128bd3672217ed11f12293801bbad554f19ad"
+        }
+      ],
+      "id": "op.avg_pool1d",
+      "passed_distinct_topologies": 2,
+      "possible_with_remaining_designated_tasks": 2
+    },
+    {
+      "failed_or_unconfirmed": [
+        {
+          "failure_layer": "provider",
+          "id": "free_bench_helper_0000",
+          "status": "failed",
+          "topology": "ba4c6e4d2166d9aad92f73a397e887d86dcc2e6b1c5e11eb335e1e7daa972b5d"
+        }
+      ],
+      "id": "op.batch_norm",
+      "passed_distinct_topologies": 2,
+      "possible_with_remaining_designated_tasks": 2
+    },
+    {
+      "failed_or_unconfirmed": [
+        {
+          "failure_layer": null,
+          "id": "free_supplement_semantic_context_a369ab072b7e6eed1c6efb9c",
+          "status": "launched_unconfirmed",
+          "topology": "3fbddeb8138a90ca7c48186cc262ce53c19b07052c94c5b89aa56d2d2545dd59"
+        }
+      ],
+      "id": "op.transpose",
+      "passed_distinct_topologies": 1,
+      "possible_with_remaining_designated_tasks": 2
+    },
+    {
+      "failed_or_unconfirmed": [
+        {
+          "failure_layer": "provider",
+          "id": "free_supplement_semantic_context_2b98e0c9b6b34bc86db8b2d2",
+          "status": "failed",
+          "topology": "4784c6021af8afe400f57aaedc4609f8277b84c879c08b2d1d51146a4b60cc2c"
+        },
+        {
+          "failure_layer": "provider",
+          "id": "free_supplement_semantic_context_2bb6160ab533ed6b0c5246a5",
+          "status": "failed",
+          "topology": "91c13af6282df54bdcf924ebdcb7d4ce425e829c8f30e5e290532b52721a922c"
+        }
+      ],
+      "id": "output.count.4",
+      "passed_distinct_topologies": 1,
+      "possible_with_remaining_designated_tasks": 1
+    },
+    {
+      "failed_or_unconfirmed": [
+        {
+          "failure_layer": null,
+          "id": "free_bench_primitive_0028",
+          "status": "launched_unconfirmed",
+          "topology": "3013c7c910baff5ad327c6562d92f7257f32e0e2c740297146e0aae6fbf226a7"
+        }
+      ],
+      "id": "overload.subtract.public.length1",
+      "passed_distinct_topologies": 2,
+      "possible_with_remaining_designated_tasks": 2
+    },
+    {
+      "failed_or_unconfirmed": [
+        {
+          "failure_layer": "provider",
+          "id": "free_bench_primitive_0022",
+          "status": "failed",
+          "topology": "254e6786285e55a2d16eeb26671128bd3672217ed11f12293801bbad554f19ad"
+        }
+      ],
+      "id": "parameter.avg_pool1d.count_include_pad.false",
+      "passed_distinct_topologies": 1,
+      "possible_with_remaining_designated_tasks": 2
+    },
+    {
+      "failed_or_unconfirmed": [
+        {
+          "failure_layer": "provider",
+          "id": "free_bench_primitive_0022",
+          "status": "failed",
+          "topology": "254e6786285e55a2d16eeb26671128bd3672217ed11f12293801bbad554f19ad"
+        }
+      ],
+      "id": "parameter.avg_pool1d.kernel.[2]",
+      "passed_distinct_topologies": 1,
+      "possible_with_remaining_designated_tasks": 2
+    },
+    {
+      "failed_or_unconfirmed": [
+        {
+          "failure_layer": "provider",
+          "id": "free_bench_primitive_0022",
+          "status": "failed",
+          "topology": "254e6786285e55a2d16eeb26671128bd3672217ed11f12293801bbad554f19ad"
+        }
+      ],
+      "id": "parameter.avg_pool1d.padding.[0]",
+      "passed_distinct_topologies": 1,
+      "possible_with_remaining_designated_tasks": 2
+    },
+    {
+      "failed_or_unconfirmed": [
+        {
+          "failure_layer": "provider",
+          "id": "free_bench_primitive_0022",
+          "status": "failed",
+          "topology": "254e6786285e55a2d16eeb26671128bd3672217ed11f12293801bbad554f19ad"
+        }
+      ],
+      "id": "parameter.avg_pool1d.stride.[1]",
+      "passed_distinct_topologies": 2,
+      "possible_with_remaining_designated_tasks": 2
+    },
+    {
+      "failed_or_unconfirmed": [
+        {
+          "failure_layer": "provider",
+          "id": "free_bench_helper_0000",
+          "status": "failed",
+          "topology": "ba4c6e4d2166d9aad92f73a397e887d86dcc2e6b1c5e11eb335e1e7daa972b5d"
+        }
+      ],
+      "id": "parameter.batch_norm.eps.1e-05",
+      "passed_distinct_topologies": 2,
+      "possible_with_remaining_designated_tasks": 2
+    },
+    {
+      "failed_or_unconfirmed": [
+        {
+          "failure_layer": "provider",
+          "id": "free_supplement_semantic_context_028fc08aab1c621935c14c4f",
+          "status": "failed",
+          "topology": "3130321bcb1ff18d7a6b1d8f2d3fd92c893727b1243274e5a8dfefd4e0bac677"
+        }
+      ],
+      "id": "parameter.conv1d.padding.[1]",
+      "passed_distinct_topologies": 2,
+      "possible_with_remaining_designated_tasks": 2
+    },
+    {
+      "failed_or_unconfirmed": [
+        {
+          "failure_layer": null,
+          "id": "free_supplement_semantic_context_3a099c13bb07eece89bb59df",
+          "status": "launched_unconfirmed",
+          "topology": "bc2227bc9818082ae0902b5740f61db154a76cc9e26eb5a99d1c50672ad5c240"
+        }
+      ],
+      "id": "parameter.mean.axes.[0,1]",
+      "passed_distinct_topologies": 2,
+      "possible_with_remaining_designated_tasks": 2
+    },
+    {
+      "failed_or_unconfirmed": [
+        {
+          "failure_layer": "provider",
+          "id": "free_supplement_semantic_context_296e38c64724df7ae8b60562",
+          "status": "failed",
+          "topology": "855bd975f4ca1ce278afa62cb3690094b0edb153586df736f2312366353bedfd"
+        }
+      ],
+      "id": "parameter.mean.axes.[2]",
+      "passed_distinct_topologies": 2,
+      "possible_with_remaining_designated_tasks": 2
+    },
+    {
+      "failed_or_unconfirmed": [
+        {
+          "failure_layer": "provider",
+          "id": "free_supplement_semantic_context_392c5f2e7cea508aea2f019d",
+          "status": "failed",
+          "topology": "6e933b7e02d809eaedccd48f2ab5daf01c2e3e1e372315e050cdfbd61b44a0bd"
+        }
+      ],
+      "id": "parameter.reshape.shape.[5]",
+      "passed_distinct_topologies": 2,
+      "possible_with_remaining_designated_tasks": 2
+    },
+    {
+      "failed_or_unconfirmed": [
+        {
+          "failure_layer": "provider",
+          "id": "free_bench_primitive_0086",
+          "status": "failed",
+          "topology": "d5804387ad1e9ca5725dea7ef73351e98282d544c9f1a8295804cd4b4547e13a"
+        }
+      ],
+      "id": "parameter.rotate.step.-1",
+      "passed_distinct_topologies": 2,
+      "possible_with_remaining_designated_tasks": 2
+    },
+    {
+      "failed_or_unconfirmed": [
+        {
+          "failure_layer": "provider",
+          "id": "free_bench_primitive_0089",
+          "status": "failed",
+          "topology": "d54a774edcea3c979062f41a88151911e16eff207961a8500660e49305f9d212"
+        },
+        {
+          "failure_layer": "provider",
+          "id": "free_supplement_semantic_context_275052929856886b31304246",
+          "status": "failed",
+          "topology": "645bdc44c4670386c350f0ff0479443cf348fdf210acdb4c11de3d12f767d014"
+        }
+      ],
+      "id": "parameter.slice.stop.5",
+      "passed_distinct_topologies": 0,
+      "possible_with_remaining_designated_tasks": 1
+    },
+    {
+      "failed_or_unconfirmed": [
+        {
+          "failure_layer": "provider",
+          "id": "free_supplement_semantic_context_a0085d9cf7d506e9215a1742",
+          "status": "failed",
+          "topology": "5d0f8e078f437a525673550ebb5ae8b77bf32d6801ac65da12d414c43cbbdfc8"
+        }
+      ],
+      "id": "parameter.slice.stop.7",
+      "passed_distinct_topologies": 2,
+      "possible_with_remaining_designated_tasks": 2
+    },
+    {
+      "failed_or_unconfirmed": [
+        {
+          "failure_layer": "provider",
+          "id": "free_bench_primitive_0189",
+          "status": "failed",
+          "topology": "073abe103e39783c5aefbc282f9e3cc0eb2f5a03beeeda8418b97a2f66367a6e"
+        }
+      ],
+      "id": "parameter.split.sections.[1,2]",
+      "passed_distinct_topologies": 2,
+      "possible_with_remaining_designated_tasks": 2
+    },
+    {
+      "failed_or_unconfirmed": [
+        {
+          "failure_layer": null,
+          "id": "free_bench_primitive_0090",
+          "status": "launched_unconfirmed",
+          "topology": "1568d075ba0462cd0cf25795e9834c5746022335f85f558d223467be444d69e4"
+        }
+      ],
+      "id": "parameter.split.sections.[1,4]",
+      "passed_distinct_topologies": 2,
+      "possible_with_remaining_designated_tasks": 2
+    },
+    {
+      "failed_or_unconfirmed": [
+        {
+          "failure_layer": null,
+          "id": "free_bench_graph_0348",
+          "status": "launched_unconfirmed",
+          "topology": "c6f4ae9d8f588b522760df27c47cea1a2863b24eb7aa3c8719fc9e445367dc62"
+        }
+      ],
+      "id": "parameter.split.sections.[1,5]",
+      "passed_distinct_topologies": 1,
+      "possible_with_remaining_designated_tasks": 2
+    },
+    {
+      "failed_or_unconfirmed": [
+        {
+          "failure_layer": "provider",
+          "id": "free_bench_primitive_0164",
+          "status": "failed",
+          "topology": "15bae11436150ed8c1da2f6f38728083c8ab9c3898b765ad31e1254c9f6505a0"
+        }
+      ],
+      "id": "parameter.transpose.dim1.1",
+      "passed_distinct_topologies": 2,
+      "possible_with_remaining_designated_tasks": 2
+    },
+    {
+      "failed_or_unconfirmed": [
+        {
+          "failure_layer": null,
+          "id": "construct_007_1",
+          "status": "launched_unconfirmed",
+          "topology": "a99b8cc3863156ba66c64810b481176f85f06d7bd90ed90a2d61f5d879b2a9e9"
+        }
+      ],
+      "id": "attr.coef",
+      "passed_distinct_topologies": 0,
+      "possible_with_remaining_designated_tasks": 2
+    },
+    {
+      "failed_or_unconfirmed": [
+        {
+          "failure_layer": null,
+          "id": "construct_023_1",
+          "status": "launched_unconfirmed",
+          "topology": "12dca48d1119bd4c665105e799461ba204e79d6e1ae57bc22e4b55ce2fdc242a"
+        }
+      ],
+      "id": "binary.Sub",
+      "passed_distinct_topologies": 0,
+      "possible_with_remaining_designated_tasks": 2
+    },
+    {
+      "failed_or_unconfirmed": [
+        {
+          "failure_layer": null,
+          "id": "construct_039_1",
+          "status": "launched_unconfirmed",
+          "topology": "8d215c5f98d854f35feeb8247892a80aeb8839f164e8555e768881bc634230a9"
+        }
+      ],
+      "id": "call.empty_return",
+      "passed_distinct_topologies": 0,
+      "possible_with_remaining_designated_tasks": 2
+    },
+    {
+      "failed_or_unconfirmed": [
+        {
+          "failure_layer": null,
+          "id": "construct_055_1",
+          "status": "launched_unconfirmed",
+          "topology": "24b408909ec63baa20fb893f0db012ec81eb25582063cf260a2210ee6030e6fe"
+        }
+      ],
+      "id": "call.log2",
+      "passed_distinct_topologies": 0,
+      "possible_with_remaining_designated_tasks": 2
+    },
+    {
+      "failed_or_unconfirmed": [
+        {
+          "failure_layer": null,
+          "id": "construct_071_1",
+          "status": "launched_unconfirmed",
+          "topology": "053e6f535946c990ce6c936926d8eb9e9dc5e81f550f27925774a2eaa0574d70"
+        }
+      ],
+      "id": "call.rsplit",
+      "passed_distinct_topologies": 0,
+      "possible_with_remaining_designated_tasks": 2
+    },
+    {
+      "failed_or_unconfirmed": [
+        {
+          "failure_layer": null,
+          "id": "construct_087_1",
+          "status": "launched_unconfirmed",
+          "topology": "37a8e2b958ce1dc5dd7843f8a181c1a688631720d42e81a843d8685691cd7457"
+        }
+      ],
+      "id": "cast.float.default",
+      "passed_distinct_topologies": 0,
+      "possible_with_remaining_designated_tasks": 2
+    },
+    {
+      "failed_or_unconfirmed": [
+        {
+          "failure_layer": null,
+          "id": "construct_103_1",
+          "status": "launched_unconfirmed",
+          "topology": "616ae9fafafc23a05672f65b4bb7348e16dd730a1755801e73fd553764964d15"
+        }
+      ],
+      "id": "counter.closure_instances",
+      "passed_distinct_topologies": 0,
+      "possible_with_remaining_designated_tasks": 2
+    },
+    {
+      "failed_or_unconfirmed": [
+        {
+          "failure_layer": null,
+          "id": "construct_119_1",
+          "status": "launched_unconfirmed",
+          "topology": "b335e937447ca6a3c8b26790bd9dc0e646c7a433f7069f76fb1aa2d3a6675c1a"
+        }
+      ],
+      "id": "counter.nonlocal_writes",
+      "passed_distinct_topologies": 0,
+      "possible_with_remaining_designated_tasks": 2
+    },
+    {
+      "failed_or_unconfirmed": [
+        {
+          "failure_layer": null,
+          "id": "construct_135_1",
+          "status": "launched_unconfirmed",
+          "topology": "91e6be2161260c37db5814b3edaab68425fd9fb025cce147a2b754ea502c700d"
+        }
+      ],
+      "id": "event.while_else",
+      "passed_distinct_topologies": 0,
+      "possible_with_remaining_designated_tasks": 2
+    }
+  ],
+  "live_queue_paid_activity_continues": true,
+  "minimum_three_topologies_verified": 65,
+  "new_tests_run": false,
+  "qualification": "This is an Agent successful-context metric under the frozen designated-task mapping, separate from completing the evaluation and from historical offline engineering acceptance. Failed tasks remain failed; no replacement, automatic retry or new paid scope is authorized by this report.",
+  "review_new_paid_calls": 0,
+  "runtime_code_modified": false,
+  "runtime_source_sha256": "80738a33351d8c532cd8e4b032de63cc6785d6e5cf8a349f78e52aab5fffd58e",
+  "stage2_complete": false,
+  "task_statuses": {
+    "failed": 61,
+    "launched_unconfirmed": 49,
+    "not_run": 764,
+    "passed": 1011,
+    "running_verified": 10,
+    "terminal_pending_audit": 135
+  }
+}

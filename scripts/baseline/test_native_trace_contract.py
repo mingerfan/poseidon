@@ -14,9 +14,16 @@ class TraceEvidenceTests(unittest.TestCase):
         main = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == 'main')
         calls = [n for n in ast.walk(main) if isinstance(n, ast.Call)
                  and isinstance(n.func, ast.Name) and n.func.id == 'save_trace']
-        self.assertEqual({n.args[2].value for n in calls}, {
-            'validated_native_AST_to_Hecate_functions', 'validated_AST_to_Hecate_objects'})
         self.assertEqual(len(calls), 2)
+        literal=[n.args[2] for n in calls if type(n.args[2]) is ast.Constant]
+        conditional=[n.args[2] for n in calls if type(n.args[2]) is ast.IfExp]
+        self.assertEqual(len(literal),1);self.assertEqual(len(conditional),1)
+        self.assertEqual(literal[0].value,'validated_native_AST_to_Hecate_functions')
+        branch=conditional[0]
+        self.assertIs(type(branch.test),ast.Name);self.assertEqual(branch.test.id,'public_unified')
+        self.assertIs(type(branch.body),ast.Constant);self.assertIs(type(branch.orelse),ast.Constant)
+        self.assertEqual(branch.body.value,'validated_public_AST_normalization_to_Hecate_objects')
+        self.assertEqual(branch.orelse.value,'validated_AST_to_Hecate_objects')
 
     def test_protocol_and_no_success_evidence_when_save_fails(self):
         hc = Mock()

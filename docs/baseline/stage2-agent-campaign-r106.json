@@ -1,0 +1,24 @@
+{
+  "format": "poseidon-stage2-campaign-tooling-r106-v1",
+  "runtime_source_sha256": "c74d21106c1e509ad75d4e59828b07093af6284fc0cd67793711958e5807f8ad",
+  "definitions_report": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-campaign-definition-r106/report.json",
+  "definitions_report_sha256": "d20cf75607d579e086a75d838a5024d37ed82076dfcaff63f2e02756b22491b9",
+  "tests": {
+    "passed": 9,
+    "failed": 0,
+    "skipped": 0,
+    "log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-campaign-definition-r106/tests-final.log",
+    "log_sha256": "6f6ad2476748f1b76e45c381d15e086a9bc4d61350c7c90c041a875e64bb7de6"
+  },
+  "tools": {
+    "scripts/baseline/benchmarks/tools/stage2_agent_campaign.py": "3da2851776d009c94fcf14b4686bfc353a94ddb9a4cdb805500e514ef02cd8c0",
+    "scripts/baseline/benchmarks/tools/test_stage2_agent_campaign.py": "daf9d6d03348eee0a40ddd2c6203a49a2d4d5192cf2fc78764cd4b274a1efe97"
+  },
+  "scope": "Definitions and offline planner tests. Full 2030 request preparation not yet run; no dispatch implementation claimed.",
+  "production_changed": false,
+  "paid_calls": 0,
+  "new_compile": false,
+  "new_encrypted_execution": false,
+  "stage2_complete": false,
+  "binding": "f11e6ff69a187cc765e055170720f50c481c716f7375b3b3a2f7370ab434375b"
+}

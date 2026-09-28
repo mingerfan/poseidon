@@ -6,6 +6,11 @@ ZERO_ARGUMENT = {'dsl_name': ZERO_NAME, 'kind': 'encrypted_zero', 'source': 'tru
 
 
 def has_zero_argument(layout):
+    from unified_graph_contract import ABI, validate_layout as validate_unified
+    from unified_chunk_layout import ABI as CHUNK_ABI
+    if layout.get('execution_abi') in (ABI,CHUNK_ABI):
+        validate_unified(layout)
+        return True
     if 'execution_abi' in layout:
         from packed_input_abi import validate_layout
         validate_layout(layout)
@@ -20,6 +25,11 @@ def has_zero_argument(layout):
 
 
 def logical_input_names(layout):
+    from unified_graph_contract import ABI, validate_layout as validate_unified
+    from unified_chunk_layout import ABI as CHUNK_ABI
+    if layout.get('execution_abi') in (ABI,CHUNK_ABI):
+        validate_unified(layout)
+        return tuple(s['dsl_name'] for s in layout['inputs'])
     if 'execution_abi' in layout:
         from packed_input_abi import validate_layout
         validate_layout(layout)
@@ -39,12 +49,21 @@ def physical_input_names(layout):
 
 
 def execution_options(layout):
+    # logical_inputs is the existing runtime count of model ciphertext arguments.
+    # For chunks, additionally bind the distinct logical tensor count explicitly.
+    from unified_chunk_layout import ABI as CHUNK_ABI
+    extra={'logical_tensor_count':len(layout['logical_inputs'])} if layout.get('execution_abi')==CHUNK_ABI else {}
     return dict(expected_inputs=len(physical_input_names(layout)),
                 logical_inputs=len(logical_input_names(layout)),
-                encrypted_zero_input=has_zero_argument(layout),**artifact_options(layout))
+                encrypted_zero_input=has_zero_argument(layout),**extra,**artifact_options(layout))
 
 
 def artifact_options(layout):
+    from unified_graph_contract import ABI, validate_layout as validate_unified
+    from unified_chunk_layout import ABI as CHUNK_ABI
+    if layout.get('execution_abi') in (ABI,CHUNK_ABI):
+        validate_unified(layout)
+        return dict(execution_abi=layout['execution_abi'],input_period=layout['input_slot_period'])
     if 'execution_abi' not in layout:
         return {}
     from packed_input_abi import gate_options

@@ -1,0 +1,74 @@
+{
+  "id": "free_bench_helper_0112",
+  "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-3ps_nudm",
+  "source": "real Agent; original responses retained",
+  "compiler_changed": false,
+  "configuration": {
+    "schema": 1,
+    "name": "seal-cpu-eva-w45-v1",
+    "backend": "upstream_SEAL_HEVM_CPU",
+    "pipeline": "eva",
+    "ckks_config_sha256": "ab53faeac14298e846a4ea8e9b2cbfaef4469a6b03ba25b80f37c79387fd246e",
+    "waterline": 45,
+    "identity_sha256": "b37bb8a8942013637366a241389a087cd0562c3e7c3d0b8326f701b73406bf46"
+  },
+  "attempts": [
+    {
+      "attempt": 0,
+      "status": "failed",
+      "diagnostic": "Invalid level/scale: output[0] remaining_level=1, log2_scale=75; requires 1<=level<=13 and 1<=scale<min(180,60*level)=60",
+      "response_sha256": "bcf6e5e30f0f545eeead97fd8176bba69d1c55b5969c96f9aa10828a06d38d26",
+      "syntax_multiplications": 237,
+      "syntax_additions": 48,
+      "artifact_gate": null,
+      "max_absolute_error": null
+    },
+    {
+      "attempt": 1,
+      "status": "passed",
+      "diagnostic": null,
+      "response_sha256": "f9110935deff165591207db03affbe18400bb992ad08670962f5d64c35b6b496",
+      "syntax_multiplications": 143,
+      "syntax_additions": 142,
+      "artifact_gate": {
+        "arg_scale": [
+          45,
+          45
+        ],
+        "arg_level": [
+          13,
+          13
+        ],
+        "res_scale": [
+          75
+        ],
+        "res_level": [
+          2
+        ],
+        "res_dst": [
+          4
+        ],
+        "initial_level": 13,
+        "ciphertext_buffers": 51,
+        "plaintext_buffers": 87,
+        "opcode_counts": {
+          "65535": 136,
+          "4": 71,
+          "6": 141,
+          "8": 72,
+          "0": 87,
+          "7": 25,
+          "3": 108,
+          "2": 1,
+          "9": 77
+        },
+        "rotation_steps": [],
+        "bootstrap_rejected": true,
+        "execution_validated": false
+      },
+      "max_absolute_error": 3.2515878878314197e-10
+    }
+  ],
+  "explanation": "Scale 75 is invalid at remaining_level=1 (bound 60), but valid at remaining_level=2 (bound 120). The source changed; the gate and compiler did not.",
+  "final_audit_status": "awaiting independent shard audit"
+}

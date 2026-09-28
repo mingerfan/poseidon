@@ -1,0 +1,12 @@
+{
+  "id": "construct_088_1",
+  "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-uf9as_hb",
+  "original_agent_status": "failed",
+  "cause": "Reused the first Linear bias 0.0625 in the second Linear; its frozen bias is 0.03125.",
+  "predicted_actual_minus_reference": 0.03125,
+  "max_residual_after_bias_correction": 8.948138910391812e-08,
+  "manual_change": "Only second linear2 call bias arguments change to the frozen values; original response retained.",
+  "manual_job": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-noncompiler-r177/followup-construct-088-1/job.json",
+  "manual_fhe_status": "not_run_while_live_batch_holds_Nix_environment",
+  "paid_calls": 0
+}

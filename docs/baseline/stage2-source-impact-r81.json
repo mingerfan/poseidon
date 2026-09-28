@@ -1,0 +1,54 @@
+{
+  "added_files": [
+    "scripts/baseline/candidate_bundle.py",
+    "scripts/baseline/model_decomposition.py",
+    "scripts/baseline/model_import_cli.py",
+    "scripts/baseline/operator_reference.py",
+    "scripts/baseline/restricted_model_python.py",
+    "scripts/baseline/test_candidate_bundle.py",
+    "scripts/baseline/test_model_decomposition.py",
+    "scripts/baseline/test_nested_nix_launcher.py"
+  ],
+  "archive_sha256": "3b9320d7add48a5e5aafdaedfd0c7b24349ba90cd13f589bd5e6401049e3e7cd",
+  "binding": "c280154747008b6edf19f47be82ad04824e42ed8fda76b18bffdc85da0e3a204",
+  "changed_test_files": [
+    "scripts/baseline/test_packed_prefix_lowering.py"
+  ],
+  "current_runtime_fhe_reexecution_claimed": false,
+  "current_runtime_sha256": "82500f2cb2aedee033e90feb609bcc3d79eb40342466b018a384039ad168065b",
+  "format": "poseidon-stage2-source-impact-v1",
+  "historical_plan_sha256": "ef89d023b0fd51024b0cc8f3fa616caf0343f201768bd9f047e4448fafec368f",
+  "historical_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+  "historical_source_archive": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/benchmark-r30-resource-pilot/source.tar.gz",
+  "new_encrypted_executions": 0,
+  "old_passes_remain_historical": true,
+  "paid_calls": 0,
+  "regression": {
+    "failed": 0,
+    "passed": 103,
+    "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/benchmark-r50-revision-regression/report.json",
+    "sha256": "bbf3a240c8ac6cbff20a1932a98a526b519a18f9eb4a3d66544c450cc9ec46e1",
+    "skipped": 1
+  },
+  "reviewed_changes": [
+    {
+      "after_sha256": "f8e341e49a0d86f01c2cfa79f9e3ef7f8306520edada8393400c1faf0c5c7719",
+      "before_sha256": "08e6c5450646d04d9322a04ff599fd7680809d7d159b828d8ee76b171e27af9e",
+      "path": "scripts/baseline/run_candidate.py",
+      "reviewed_changes": 1,
+      "scope": "Only exact pinned pure-shell reuse; same inside(args), credential cleanup remains unchanged. Fake-key branch regression is not paid API evidence."
+    },
+    {
+      "after_sha256": "b2aeb40a77e4fa1b5035efa95b924619e3cd1687c84d909bce7f216d92dcdc06",
+      "before_sha256": "1973f74b696162f2aa2fc0a02d5b06eef49a61087392e831ee580c61f6fe5404",
+      "path": "scripts/baseline/unified_graph_lowering.py",
+      "reviewed_changes": 1,
+      "scope": "Only known rejection-trigger fallback widened; normal successful generation and existing fallback arithmetic unchanged. Newly reachable paths have separate r48/r58/r78 evidence."
+    }
+  ],
+  "runner_sha256": "ecf347f53453c02d18714b7676c457dac37d6d92ce81c18d8c8199afea45444b",
+  "unchanged_frontend_and_runtime_binaries": true,
+  "unchanged_frontend_contracts": true,
+  "unchanged_reference_and_sandbox": true,
+  "unchanged_runtime_files": 464
+}

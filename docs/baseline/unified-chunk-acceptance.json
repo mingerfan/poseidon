@@ -1,0 +1,124 @@
+{
+  "schema": 1,
+  "stage": "unified-chunk-r21",
+  "checkout": "/home/lhohy/Code/Poseidon",
+  "platform": "aarch64-linux",
+  "branch": "lhy-agent-dsl",
+  "head": "3493c905dd8f4ce8e04211c83b337be243befe14",
+  "source_sha256": "a9ddedce3bbb253b9f9a28b02e797933a42522dbc68ba08982c5862863d3749d",
+  "frozen_release": "scripts/baseline/benchmarks/semantic-v1-chunk-r21",
+  "models": 1200,
+  "topology_groups": 779,
+  "ordinary_directed_tasks": 627,
+  "helper_directed_tasks": 11,
+  "rejection_tasks": 48,
+  "chunk_binding": {
+    "abi": "unified-chunked-inputs-v1",
+    "logical_inputs_max": 4,
+    "logical_outputs_max": 4,
+    "total_input_elements_max": 256,
+    "total_output_elements_max": 256,
+    "model_ciphertexts_max": 4,
+    "output_ciphertexts_max": 4,
+    "auxiliary_zero_ciphertexts": 1,
+    "allowed_periods": [
+      4,
+      8,
+      16,
+      32,
+      64,
+      128,
+      256
+    ],
+    "encrypted_test_periods": [
+      4,
+      8,
+      64
+    ]
+  },
+  "unit": {
+    "discovered_methods": 109,
+    "tests_run": 104,
+    "passed": 98,
+    "failed": 0,
+    "individual_skipped": 6,
+    "skipped_classes": 1,
+    "methods_in_skipped_class": 5,
+    "note": "unittest reports skipped=7: six methods plus one class; class has five historical-source-dependent methods",
+    "skip_reasons": [
+      "skipped 'Historical r18 execution sources differ; use fresh compiler-evidence audit for current source'",
+      "test_new_requests_real_trace_compile_execute_and_old_failure_preserved (test_compiler_configuration.CompilerConfigurationEvidenceTests) ... skipped 'requires explicit45 native-loop batch'",
+      "test_worker_rejected_before_keys_or_hevm_execution (test_compiler_configuration.CompilerConfigurationGuardEvidenceTests) ... skipped 'requires real sandbox rejection probes'",
+      "test_legacy_request_unchanged_and_explicit40_has_distinct_identity (test_compiler_configuration.CompilerLegacyCompatibilityEvidenceTests) ... skipped 'requires fresh legacy40 and explicit40 real executions'",
+      "test_numerical_fault_and_recovery_are_real_encrypted_runs (test_candidate_pipeline.CandidateEvidenceTests) ... skipped 'requires actual isolated candidate replay run'",
+      "test_private_reference_and_artifact_integrity (test_candidate_pipeline.CandidateEvidenceTests) ... skipped 'requires actual isolated candidate replay run'",
+      "test_real_sandbox_probe_and_no_agent_claim (test_candidate_pipeline.CandidateEvidenceTests) ... skipped 'requires actual isolated candidate replay run'"
+    ]
+  },
+  "chunk": {
+    "planned": 18,
+    "passed": 18,
+    "failed": 0,
+    "skipped": 0,
+    "values": 1456,
+    "max_absolute_error": 3.0404824534480124e-07,
+    "mae": 7.386978787713678e-09,
+    "seconds": 85.71209018300578,
+    "manual_not_agent": true
+  },
+  "legacy": {
+    "passed": 2,
+    "failed": 0,
+    "compiler_configuration": "seal-cpu-eva-w45-v1"
+  },
+  "helpers": {
+    "passed": 11,
+    "failed": 0,
+    "values": 172,
+    "max_absolute_error": 1.3098357241728592e-08
+  },
+  "compiler": {
+    "audited": 31,
+    "numerical_passed": 31,
+    "numerical_failed": 0,
+    "counts": {
+      "compiler.modswitch": 31,
+      "compiler.relinearization": 6,
+      "compiler.rescale": 27,
+      "compiler.rotation_keys": 25,
+      "compiler.security_parameters": 31
+    }
+  },
+  "old_requests_byte_identical": 35,
+  "old_shards_and_tasks_identical": true,
+  "request_survey": {
+    "models": 1200,
+    "accepted_bindings": 8180,
+    "minimum_period_counts": {
+      "4": 1093,
+      "64": 19,
+      "8": 50,
+      "16": 20,
+      "32": 18
+    },
+    "scope": "layout_and_request_only"
+  },
+  "actual_compile": true,
+  "actual_seal_cpu": true,
+  "actual_decrypt": true,
+  "agent_calls": 0,
+  "installs": false,
+  "downloads": false,
+  "git_publication": false,
+  "x86_retested": false,
+  "default_w40_precision_resolved": false,
+  "evidence_sha256": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/unified-chunk-r21/report.json": "3e4be3741319afbc4d94cb33a4426b09ec3a570d04d85f50015f16dbb9187769",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/unified-chunk-r21-regression/report.json": "49b31481cd47961639cdda6cc4becb84b1179b642cbc486ef12ae2371ea0b5c6",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/unified-chunk-r21-helper-regression/report.json": "0c96ae0474853bacc62dad33c49b982053e2dca951c45e66f2a46842bd617a6b",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/unified-chunk-r21-compiler-evidence.json": "e700eac7da3a4b1dad208b6e2f3213f5d5d6a93d3e75c7e23977e0f08bc6f842",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/unified-chunk-r21-compatibility-final.json": "4382f20a7849f1ca08a615a560d2ef03ad7b5f8e460c797f2b09da5dbd301570",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/unified-chunk-r21-layout-survey.json": "39c4f057f229693b9a42751812f42b1a5eb45fce9045d809ea04222f9eedf114",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/unified-chunk-r21-unit-final.log": "730a30988663ab38ccaaf3eb1d1d029f81410ff440f22ffc899c77fb29c722dd"
+  }
+}

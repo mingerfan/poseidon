@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "kind": "supplemental_math_context_static_acceptance",
+  "source_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+  "runtime_unchanged": true,
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "scripts/baseline/benchmarks/tools/test_model_semantic_contexts.py",
+    "-v"
+  ],
+  "exit_code": 0,
+  "tests_passed": 10,
+  "failed": 0,
+  "skipped": 0,
+  "files": {
+    "scripts/baseline/benchmarks/model-contexts-draft-v1/tasks.json": "b248f7ed22e80be965f077e5750b666cf4bc64239553b30564df820834eb3e1e",
+    "scripts/baseline/benchmarks/tools/build_model_semantic_contexts.py": "9e1db80408651f175ebc48ea4975c84eac2747f421e99c53e5c27c6e7f6b8a9e",
+    "scripts/baseline/benchmarks/tools/test_model_semantic_contexts.py": "332ae5f9d32ed5df165b6a07611a3f6df5650fa357f6e1b455b71293a079ada7"
+  },
+  "test_log_sha256": "357cf3b08d8f5a943a51292ab489bf802a03c2322c89565201a060b98a3f5b7e",
+  "requirements": 153,
+  "tasks": 459,
+  "supplementary_models": 92,
+  "original_models": 1200,
+  "added_to_original_count": false,
+  "canonical_ledger_updated": false,
+  "dual_reference": "not_run",
+  "encrypted_execution": false,
+  "paid_api_calls": 0,
+  "supplemental_splits": {
+    "development": 90,
+    "validation": 2
+  }
+}

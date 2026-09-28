@@ -1,0 +1,92 @@
+{
+  "all_designated_tasks_passed": 120,
+  "artifact_gate_case": {
+    "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-tlx23986",
+    "id": "free_bench_helper_0119",
+    "proof": [
+      {
+        "attempt": 2,
+        "compiled": true,
+        "diagnosis": "Result scale 75 violates the gate requirement scale < 60 at result level 1.",
+        "executed": false,
+        "hevm_sha256": "e8ef3006fad4565ae35978bf99ba3d5f42f55ce72637ce01f6cb4e52c3eb7664",
+        "result_level": [
+          1
+        ],
+        "result_scale": [
+          75
+        ]
+      },
+      {
+        "attempt": 3,
+        "compiled": true,
+        "diagnosis": "Result scale 75 violates the gate requirement scale < 60 at result level 1.",
+        "executed": false,
+        "hevm_sha256": "690ddfd2992932644f726080517a033f3010a671fb472cd058aec3b441cd38a2",
+        "result_level": [
+          1
+        ],
+        "result_scale": [
+          75
+        ]
+      }
+    ]
+  },
+  "binding": "e4204bd08f4a52e002781eaa5d84e29dd558f46fcd7029e9728ce7ff2dc172c2",
+  "directed_construction": {
+    "all_planned_task_success_rate": 0.019138755980861243,
+    "all_tasks_audited": false,
+    "audited": 22,
+    "audited_task_success_rate": 0.5454545454545454,
+    "planned": 627,
+    "statuses": {
+      "failed": 10,
+      "launched_unconfirmed": 9,
+      "not_run": 381,
+      "passed": 12,
+      "running_verified": 10,
+      "terminal_pending_audit": 205
+    }
+  },
+  "executable_partitions": 377,
+  "format": "poseidon-stage2-free-track-checkpoint-v1",
+  "free_track": {
+    "fully_evaluated": false,
+    "historical_interrupted_unconfirmed": 40,
+    "new_resume_tasks_remaining": 0,
+    "planned": 1322,
+    "qualification": "All current free-track continuation tasks are terminal/audited. Forty historical interrupted cases are still unconfirmed and receive no pass credit.",
+    "statuses": {
+      "failed": 92,
+      "launched_unconfirmed": 40,
+      "passed": 1190
+    },
+    "successful_attempts": {
+      "after_semantic_repair": 71,
+      "first_semantic_attempt": 1119
+    }
+  },
+  "live_queue_paid_activity_continues": true,
+  "minimum_three_topologies_verified": 133,
+  "new_compilations": 0,
+  "new_encrypted_executions": 0,
+  "new_paid_calls": 0,
+  "parents": {
+    "/home/lhohy/Code/Poseidon/scripts/baseline/seal_artifact_gate.py": "bc2d0723cdab4e54f7fd75e176d45f775efe96b05c5a4019944be4d95513e69b",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-tlx23986/attempt-02/output/lowered._hecate_golden.hevm": "e8ef3006fad4565ae35978bf99ba3d5f42f55ce72637ce01f6cb4e52c3eb7664",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-tlx23986/attempt-03/output/lowered._hecate_golden.hevm": "690ddfd2992932644f726080517a033f3010a671fb472cd058aec3b441cd38a2",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-tlx23986/report.json": "c7ab8d32ac3ea36e672026070775534bf1583b96a9cedc4f3b1a4cfe38f7f5e2",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-progress-r143.json": "a74462a01972681581e27d04fef3d938f962eba6d077efa5a51c37da5e98b461",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-distinct-contexts-r143.json": "594fd5c9c26d8cd2cea15012118638fcfd4fc9943a896276ed5784f8f6a29af0"
+  },
+  "runtime_source_sha256": "80738a33351d8c532cd8e4b032de63cc6785d6e5cf8a349f78e52aab5fffd58e",
+  "stage2_complete": false,
+  "task_statuses": {
+    "failed": 102,
+    "launched_unconfirmed": 49,
+    "not_run": 462,
+    "passed": 1202,
+    "running_verified": 10,
+    "terminal_pending_audit": 205
+  }
+}

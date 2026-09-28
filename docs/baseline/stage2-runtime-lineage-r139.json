@@ -1,0 +1,81 @@
+{
+  "added_files": [
+    {
+      "path": "scripts/baseline/test_unified_generation_guidance.py",
+      "sha256": "104de085eb32ac5a76fa410584ed8f9bf8ed5fedf17f0f4020491a245842e32f"
+    },
+    {
+      "path": "scripts/baseline/unified_logical_semantics.py",
+      "sha256": "77007b5a71feae09591284c07513a56fe076ff63b284ca6ed22307933cfe3393"
+    }
+  ],
+  "binding": "7d86f0a90527680943b06ac60837c1f4629ae57c136d4d7c9219fed8b346bd4f",
+  "changed_files": [
+    {
+      "before_sha256": "c1a99e7e9dd0d139992c966b37e8ff2abde31e0674eda77a219770bd2e08a9c6",
+      "current_sha256": "538e890966670a86b886f25542671c3207e104bee1292c2c51466e22b4583e96",
+      "path": "scripts/baseline/candidate_sandbox.py"
+    },
+    {
+      "before_sha256": "6688cea48d7f0e0d5edd7156bca542aaabcc8b1b1a56b7ec48796533466528c4",
+      "current_sha256": "4b19c44f9946afb5a01222a871658655ab61d74cffac1910784fda147cc22500",
+      "path": "scripts/baseline/run_candidate.py"
+    },
+    {
+      "before_sha256": "1fbd5f8c86a069f69d824ed24122459cd3f1289f32c6830f4426e73256bfa6ee",
+      "current_sha256": "4f8816cbe4d6c4d6fc208ddae4d87824b6cd55151b6f7e9551bfc378e48ea35f",
+      "path": "scripts/baseline/unified_graph_contract.py"
+    }
+  ],
+  "current_runtime_sha256": "80738a33351d8c532cd8e4b032de63cc6785d6e5cf8a349f78e52aab5fffd58e",
+  "format": "poseidon-stage2-runtime-lineage-review-v1",
+  "historical_runtime_sha256": "3e857c649bb4c95a63a272d3ec187405da991dfa7513ced0f39431bba3b58b88",
+  "inference": "The changed-file boundary is limited to launcher/generation contract/trusted sandbox module wiring. Existing numerical references, construction contribution checks, artifact gates and compiler configuration files have identical hashes.",
+  "limitations": [
+    "Not a new execution of historical encrypted cases.",
+    "Retained regression and compatibility fixtures are finite evidence, not proof for every possible request."
+  ],
+  "new_compilations": 0,
+  "new_encrypted_executions": 0,
+  "new_paid_calls": 0,
+  "new_pass_credit": 0,
+  "new_tests_run": 0,
+  "parents": {
+    "/home/lhohy/Code/Poseidon/docs/baseline/stage2-contract-linkage-r90.json": "e33c8ad9ecfed0d82a3213f6b65e97e232cbefa767e4ff416d037db4f202ade4",
+    "/home/lhohy/Code/Poseidon/docs/baseline/stage2-logical-guidance-r116.json": "15e8d9c52fda8fc94880455f176a4c732f4542e2d2521988283c73629ebf71a9",
+    "/home/lhohy/Code/Poseidon/docs/baseline/stage2-offline-acceptance-r94.json": "455bf2d0d552b43d8fab8492c50a9cadc9cb98c36ccfabc2bb18c32210034a04",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-logical-guidance-r116/compatibility-after-sandbox-fix.json": "cf8f173259dc83b2b4adc731e35c5b3e2884549642da37b84d94384001a3e02e",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-logical-guidance-r116/tests-after-sandbox-fix.log": "20307f0b058127c1bab1e508ffb25e8c2568d74d64ebddd7859f90fc3d76f863",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-math-guidance-offline-r116-fixed/report.json": "0ed8e54dd8dcffb88a278ba6f6cae094ff6d621971dd9560b1a0834b5d9fa01c",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-math-pilot-prepare-r117-ready/plan.json": "eccb9c5d12619041e16afd8ce4d45d2daed5de5053a03b3a6d29aa7c5cdc2094",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-math-pilot-prepare-r117-ready/report.json": "c7eebd1b48533b69d99d5fbf24a37ad710edb58f11b5576d43f067ff76e99cea",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-math-pilot-r117-authorization.json": "136a4ac253d542b4446b68aa57b7733258fe92df67f4e42b0a63e518831fa357",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-runtime-c74d-before-r116/manifest.json": "50a4dba7aab63ade18f5b4eb60de60dcd4b53b9c5003731a8e51714bf2396222"
+  },
+  "removed_files": [],
+  "retained_regression_tests": {
+    "failed": 0,
+    "passed": 23,
+    "skipped": 0
+  },
+  "retained_scripted_fhe_replays": {
+    "agent_generation": false,
+    "failed": 0,
+    "new_paid_calls": 0,
+    "passed": 2,
+    "skipped": 0
+  },
+  "source_inspection_scope": "Exact manifest comparison and hash verification of retained r116 compatibility/regression inputs. No historical pass is rebound to a new source version.",
+  "stage2_complete": false,
+  "unchanged_critical_checks": [
+    "scripts/baseline/benchmark_math.py",
+    "scripts/baseline/benchmark_torch.py",
+    "scripts/baseline/unified_native_coverage.py",
+    "scripts/baseline/unified_public_coverage.py",
+    "scripts/baseline/upstream_helper_coverage.py",
+    "scripts/baseline/seal_artifact_gate.py",
+    "scripts/baseline/compiler_configuration.py"
+  ],
+  "unchanged_source_files": 473,
+  "verified_compatibility_fixture_count": 2030
+}

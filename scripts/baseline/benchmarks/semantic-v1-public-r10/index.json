@@ -1,0 +1,170 @@
+{
+  "agent_calls": 0,
+  "agent_status": "not_run",
+  "categories": {
+    "boundary": 120,
+    "composition": 360,
+    "graph": 360,
+    "helper": 120,
+    "primitive": 240
+  },
+  "coverage_sha256": "2c272d306bda7b3382dde94da389ffe4c9939ea44856d3dd07700e1de2e6406f",
+  "encrypted_execution": false,
+  "legacy_overlap_sha256": "84cd789a60f69828ee311c7df1b0273b9f94a81b276e6111ea00e11ebc56f999",
+  "model_set_sha256": "b7c5a1f031171ac5e1d58ebcc084f43a90d61f2be336ea235a054d548ac3ca39",
+  "models": 1200,
+  "reference_status": "not_run",
+  "shards": [
+    {
+      "cases": 48,
+      "file": "shard-000.json",
+      "sha256": "d8a1d65f3e9c41cb0655fc8134e93ebca2d9dfa2189319eb975eada54844771b"
+    },
+    {
+      "cases": 48,
+      "file": "shard-001.json",
+      "sha256": "50f5ba2e4849470a40e7bf8e06f3616050e1930a6f4fadc9fbe62aaffc7232aa"
+    },
+    {
+      "cases": 48,
+      "file": "shard-002.json",
+      "sha256": "fdccea4e160194dfde1f085047058d8ffa08616d29651bf0ec28a9274401b1b1"
+    },
+    {
+      "cases": 48,
+      "file": "shard-003.json",
+      "sha256": "8407c14c4d827227c1924a1facfb2b7a1681f57f360ce659c9f86c85a6e32829"
+    },
+    {
+      "cases": 48,
+      "file": "shard-004.json",
+      "sha256": "649fea9fe7af1a28cdbb20225e769048f29bb355955ea969ae483849e180434c"
+    },
+    {
+      "cases": 48,
+      "file": "shard-005.json",
+      "sha256": "c99ee356034cd917ff32513f9000a5a9844dc23d2da93221308318024f458bb3"
+    },
+    {
+      "cases": 48,
+      "file": "shard-006.json",
+      "sha256": "ee77b1b21155079fcd4ed613cda262f387fca4ce9a43d6cad8c551185a452d23"
+    },
+    {
+      "cases": 48,
+      "file": "shard-007.json",
+      "sha256": "511e78ac862fdca6d9bbeb6cff7afd65d521e46b0db393b3f1f14461d6b284a3"
+    },
+    {
+      "cases": 48,
+      "file": "shard-008.json",
+      "sha256": "be56956bd7cc550a6f67bd32db02ced826aa38e51f93e3b448ab1e90e7a851ca"
+    },
+    {
+      "cases": 48,
+      "file": "shard-009.json",
+      "sha256": "02f0ca3defab8690068b746654d1e9754a6ebb457463b0799553a9f83e3e5e08"
+    },
+    {
+      "cases": 48,
+      "file": "shard-010.json",
+      "sha256": "b6c01713c9f401e4a02f953891311d3fa2d8af3c3ff3bb5ce79deda8edb50960"
+    },
+    {
+      "cases": 48,
+      "file": "shard-011.json",
+      "sha256": "f9de1e4a3b94f53c23214ac0ce5894ac232c3b89292f322d7894c5649a708114"
+    },
+    {
+      "cases": 48,
+      "file": "shard-012.json",
+      "sha256": "7fd17caa3d7c0b059a12e8fa781bae3b0aa62f3c5dedcdfca35d2a18da9b0c8d"
+    },
+    {
+      "cases": 48,
+      "file": "shard-013.json",
+      "sha256": "afc1892ab57ed3018410e3131dc0a7bf7fa193e49ea85bb99b5b1f14a25265c1"
+    },
+    {
+      "cases": 48,
+      "file": "shard-014.json",
+      "sha256": "116d8f51886bfea89eacf3e87f07af45ffbb16eaf53fcce9e03437753af80deb"
+    },
+    {
+      "cases": 48,
+      "file": "shard-015.json",
+      "sha256": "bd45b9905eca08d266c2b95a9b80b202b503eb8adc45c1084845d57c656e3af8"
+    },
+    {
+      "cases": 48,
+      "file": "shard-016.json",
+      "sha256": "3216c8791ed480c9b8cecbae7fb51d68cc7be0df892eda85b652cad2a54df3c1"
+    },
+    {
+      "cases": 48,
+      "file": "shard-017.json",
+      "sha256": "141cd345f4d98c6e5d27b15f90829dfb7866af76e3fc9f53265a979afa34334c"
+    },
+    {
+      "cases": 48,
+      "file": "shard-018.json",
+      "sha256": "8dce9bab6703ab2dc89c9b8b854764e0675cb553effe55a32547e8a5877d1076"
+    },
+    {
+      "cases": 48,
+      "file": "shard-019.json",
+      "sha256": "1d35d0882c68abb9b410ed70d63d9678e2a172e24d498e26b5fdf3bcfe9c7365"
+    },
+    {
+      "cases": 48,
+      "file": "shard-020.json",
+      "sha256": "e403bb1613fd6ebea7a627dd7a9bb23f6c1ca7bb2994fe60e2533305281d5850"
+    },
+    {
+      "cases": 48,
+      "file": "shard-021.json",
+      "sha256": "d7dbb64f8c3e71c804bf555de48bdc649844903729b24ad78374de2ccbededa6"
+    },
+    {
+      "cases": 48,
+      "file": "shard-022.json",
+      "sha256": "aa325a50bee6dcc84a4957b55866247864994213b15e7159bf90ada4ca0dc4ba"
+    },
+    {
+      "cases": 48,
+      "file": "shard-023.json",
+      "sha256": "9a099e6674fb324c101013d3aa5b392c33bf5fb6d171add08dad1dd30f9c9110"
+    },
+    {
+      "cases": 48,
+      "file": "shard-024.json",
+      "sha256": "6fa9691f0dedfa5e8edae92d85067b15f246586e0e3f899adca665b4780e0bf1"
+    }
+  ],
+  "small_models": 1137,
+  "source_hashes": {
+    "scripts/baseline/benchmark_bridge.py": "59da66f9ad97cab382b1eb985c1c4f4fb185c0fab142068e14a6ff117b2ec9bb",
+    "scripts/baseline/benchmark_graph.py": "add5943bac0b7f6d93b8e5336e1572f236e42d607804f5683e9ed257bc8304b6",
+    "scripts/baseline/benchmark_math.py": "6209466af3540071d0db77a840a9630ee8bd109df0b184a42e60a03483026bb4",
+    "scripts/baseline/benchmark_runner.py": "3d594d3f5950d8167e6873bc9b012584ed4df4a846158f3a18ec1493bdcd9f53",
+    "scripts/baseline/benchmark_semantics.py": "9e502849082c9f737bcf6a5ab6542e516f8e7b6386f4eba63e4febcf4bd3122c",
+    "scripts/baseline/benchmark_suite.py": "00b0e86d91024ea2e5707436048fed1c920b11f8ef4afa5b605111766a94262c",
+    "scripts/baseline/benchmark_torch.py": "9a91c02356e56c3a363308ec6e224476113214b3f3a43145c565d5e82c239dba",
+    "scripts/baseline/unified_graph_exercises.py": "9ae13ace7313a85e54aa507b3f042939da4563b5fe660ed778aa93212a74f96e",
+    "scripts/baseline/unified_public_exercises.py": "54671be8964aabe0e0b89488a86e900870014c87bebdbf538838a4bf6b9b6bfe",
+    "scripts/benchmark.py": "23b3e33fb0bd6b8dbbfdf951ec012c5d0350f067fa402a26d51545f007dc029f",
+    "third_party/dacapo/python/poly/poly/data/coeffStr.txt": "30fc9ac1244dedb9985d248046eb8e498f4e8a1616e08329afd258ad912ec701",
+    "third_party/dacapo/python/poly/poly/data/sgn151527.txt": "944cd56c292a8bfd2b6fc62af72b025faf60f4e862329ae443e27c007ee6b244",
+    "third_party/dacapo/python/poly/poly/data/tree15.txt": "9962d3bb1245e55dd3fd98686fe50ff53c695aa89dd8d508074cc3754a7c66fa",
+    "third_party/dacapo/python/poly/poly/data/tree27.txt": "97bbb1d3ddf8c43a654d7322cd310830101b536360fa0fad5d9d452d5a5f8477",
+    "third_party/dacapo/python/poly/poly/data/treeStr.txt": "c8fd9cb979aca6c4d36d0bfe779d6d16aff3ea6b0fd2f18b37baa85b8c2dd0fd"
+  },
+  "split_counts": {
+    "development": 720,
+    "holdout": 240,
+    "validation": 240
+  },
+  "topology_groups": 779,
+  "unique_signatures": 1200,
+  "version": "poseidon-semantic-benchmark-v1"
+}

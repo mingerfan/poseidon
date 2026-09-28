@@ -53,6 +53,8 @@ CONTRACT_ROTATIONS['hecate-native-functions-v4'] = (-3,-2,-1,1,2,3)
 CONTRACT_ROTATIONS['hecate-native-functions-v5'] = (-3,-2,-1,1,2,3)
 CONTRACT_ROTATIONS['hecate-native-functions-v6'] = (-3,-2,-1,1,2,3)
 CONTRACT_ROTATIONS['hecate-native-functions-v7'] = (-3,-2,-1,1,2,3)
+UNIFIED_FLAT_CONTRACT = "hecate-unified-flat-v1"
+CONTRACT_ROTATIONS[UNIFIED_FLAT_CONTRACT] = packed_rotations(256)
 CONTRACT_ROTATIONS[PACKED_CONTRACT] = packed_rotations(256)
 CONTRACT_ROTATIONS[PACKED_NATIVE_CONTRACT] = packed_rotations(256)
 
@@ -66,7 +68,7 @@ def validate_function(source, public_constants, expected_outputs=1, *, contract=
     inferred here: period remains conservative and output slot binding external.
     """
     require(type(contract) is str and contract in CONTRACT_ROTATIONS, "Unknown Hecate contract")
-    packed=contract in (PACKED_CONTRACT,PACKED_NATIVE_CONTRACT)
+    packed=contract in (PACKED_CONTRACT,PACKED_NATIVE_CONTRACT,UNIFIED_FLAT_CONTRACT)
     require(type(slot_period) is int and (packed or slot_period==4),'Slot period requires packed contract')
     allowed_rotations=packed_rotations(slot_period) if packed else CONTRACT_ROTATIONS[contract]
     if contract in ('hecate-native-functions-v1','hecate-native-functions-v2','hecate-native-functions-v3','hecate-native-functions-v4','hecate-native-functions-v5','hecate-native-functions-v6','hecate-native-functions-v7',PACKED_NATIVE_CONTRACT):
@@ -126,7 +128,7 @@ def validate_function(source, public_constants, expected_outputs=1, *, contract=
                    2 <= len(input_names) <= 4 if contract == 'hecate-function-v3' else tuple(input_names) == ('x',))
     if extended and not zero_input:
         valid_arity = 1 <= len(input_names) <= 4 and tuple(input_names) == ('x', 'y', 'z', 't')[:len(input_names)]
-    if packed:
+    if packed and contract!=UNIFIED_FLAT_CONTRACT:
         valid_arity=tuple(input_names) in (('x',),('x','zero_ct'))
     require(valid_arity,
             "Input signature incompatible with contract version")

@@ -1,0 +1,1204 @@
+{
+  "binding": "6420f8ae8d6d07299f0b9d3c63686ba894c4ed7c9e3ef0681be06b26ea1df175",
+  "candidate_outputs_modified": false,
+  "confirmed": [
+    "Native return.zero requires a non-golden helper return with object-array ndim zero; returning a numeric zero or a positive-rank array is not this feature.",
+    "The inspected array.storage candidate returns scalar/positive-rank storage instead of the required zero-dimensional helper result.",
+    "The inspected attr.shape candidate accesses encrypted Expr parameters directly; the declared metadata capability applies to public numeric/object storage.",
+    "The array.storage aggregate request lists child identifiers but omits the already registered per-child prose definitions."
+  ],
+  "diagnostic_counts": {
+    "'float' object is not subscriptable": 3,
+    "Call target is not a declared construction function": 4,
+    "Chebyshev requires a nonempty real coefficient vector": 4,
+    "Ciphertext is not public numerical data": 8,
+    "Encoding needs scalar/1D length one or declared period; explicitly reshape": 3,
+    "Encoding needs scalar/1D length one or four; explicitly reshape, do not flatten silently": 5,
+    "Equality requires public data, never cipher/array/function": 3,
+    "Frozen numerical tolerance failed; inspect reduction/layout/operator semantics": 3,
+    "Helpers require unannotated positional parameters without defaults or decorators": 4,
+    "Invalid or colliding helper name": 4,
+    "Missing contributing construction feature: return.matrix": 4,
+    "Missing contributing construction feature: return.zero": 6,
+    "Missing contributing public expression: attr.domain": 2,
+    "Missing contributing public expression: attr.size": 1,
+    "Missing contributing public expression: bool.And": 2,
+    "Missing contributing public expression: bool.Or": 2,
+    "Missing contributing public expression: call.enumerate": 3,
+    "Missing contributing public expression: call.full": 1,
+    "Missing contributing public expression: call.sorted": 2,
+    "Missing contributing public expression: counter.container_writes": 4,
+    "Missing contributing typed array arithmetic: inplace.Add": 1,
+    "Missing contributing typed array arithmetic: zero_dim": 1,
+    "Missing contributing typed unary operation: boolean_cells": 2,
+    "Native core arithmetic requires a ciphertext operand": 1,
+    "Native returns require flat Expr cells or object arrays": 1,
+    "Object array metadata requires object array": 3,
+    "Object full/empty require positional shape/fill and dtype=object": 1,
+    "Only list.append may be a statement call": 1,
+    "Only permitted method/decorator attributes are allowed": 6,
+    "Ordering requires comparable public scalars/sequences": 9,
+    "Ragged public array": 11,
+    "Read-only or invalid binding": 1,
+    "Rotation requires a ciphertext and a provisioned public step": 1,
+    "Sort keys must be public, never cipher/plain symbolic operands": 1,
+    "String receiver must be public, never cipher/array": 3,
+    "Symbolic/Empty left operand does not use object-array broadcasting": 1,
+    "Truth value requires public construction data; cipher/array truth is unsupported": 1,
+    "Unary object ufunc accepts one positional argument; no out/dtype/where": 1,
+    "Undefined or unbound local construction value: c0": 3,
+    "Undefined or unbound local construction value: float": 1,
+    "Undefined or unbound local construction value: hc": 1,
+    "Unsupported construction call": 14,
+    "Unsupported construction syntax: BitAnd": 2,
+    "Unsupported construction syntax: Is": 1,
+    "item is an array operation, not a ciphertext/Plain Expr operation": 1
+  },
+  "failed_attempt_layers": {
+    "numerical_comparison": 3,
+    "static_check": 134
+  },
+  "focus": [
+    {
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-e7gy6keh",
+      "inspected_attempts": [
+        0,
+        3
+      ],
+      "raw_responses_retained": true,
+      "request_sha256": "6754248749777bec32f59d282038a1723c6a44dcd15bc555beb34e24005c80c3"
+    },
+    {
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-ykcv3z4n",
+      "inspected_attempts": [
+        0,
+        3
+      ],
+      "raw_responses_retained": true,
+      "request_sha256": "08aca59f358fe2dce69df9505df50b9b239eab5002feb34a70c08e2bf0aeac4b"
+    }
+  ],
+  "format": "poseidon-directed-candidate-diagnostic-review-v1",
+  "inference": "Missing per-child explanations may contribute to candidate misunderstandings, but the observed answers still violate the current contract; no checker defect or fix effectiveness has been established.",
+  "new_compilations": 0,
+  "new_encrypted_executions": 0,
+  "new_paid_calls": 0,
+  "parents": {
+    "/home/lhohy/Code/Poseidon/scripts/baseline/native_array_exercises.py": "a7462ea3ff92dfc864bb3c4c16c63f836ff21a40809da131d861dd9c74a6f81a",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/unified_graph_contract.py": "4f8816cbe4d6c4d6fc208ddae4d87824b6cd55151b6f7e9551bfc378e48ea35f",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/unified_graph_exercises.py": "905eee103505981980c7b75bf21e0b400708b0ca8d64af0fbe74e1fa0f55eea3",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/unified_native_coverage.py": "c4eda97d53ad80b7bf34ca491b375dc7cbdc96f7e5d0a7dc4022dcc85697453e",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/unified_public_exercises.py": "6e1e986f1968fe1e2f0caca4e0b5ab6c3e275498a4c619cfd3401320d198911c",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-144anq2p/report.json": "5bca19cda8e5f5dd9a399920b9cbee690d8ad3f4ed41b8c23b97150e28863981",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-2hlfsasb/report.json": "e81ac6f1268c350272ce469d89fb16f30952a115611923ac61de16aece39c3fd",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-5knegrz4/report.json": "7907e18cde8cc5b586920b369297c34bb7b7e75a7b44f30bf5974f6821b1fa68",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-8j5sg3wx/report.json": "1ac8f37c6605ef2f0067bc6391be95dda403b9702d4945c1a77e429a1cd688b4",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-9i2rf1xb/report.json": "0b9eb9511d76e39a8db1cc4fcbf77126cd61b209feb3a933de9fd4eb3bd430ca",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-9oiqc60e/report.json": "e38302a746c4218dea9159a62bbc4725c4d8e09b8ca5e491982583fe48d04a75",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-9whr1quf/report.json": "d46cec17c62a7b8915cf57957e395800cbeb7a1b9c876eb80a226a15bb1a5bf2",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-a2gzt1um/report.json": "3ecd1835ef11f112da424d1e09e762545ff6aa6ce4e78de5ccd676625e4bc21b",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-b5tv1ht4/report.json": "fcbbcd556a2d80e8d6600aa973541fb4e504211b588b8915914c74898cb7f7bb",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-e7gy6keh/attempt-00/response.txt": "37001088323dd1f52fc0719de0dcb7d26d4ed3d4b47c9d022cf7a87465b5e370",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-e7gy6keh/attempt-03/response.txt": "1a15d250778851a420d4e5a62c3194880fe58187db2dd487e13c79b715da32ad",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-e7gy6keh/report.json": "c0e179bf1a69d49ceb07af6c0e224676d0275ab4db375fe94a97575df2feed19",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-e7gy6keh/request.json": "6754248749777bec32f59d282038a1723c6a44dcd15bc555beb34e24005c80c3",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-fhsmk3wc/report.json": "c2c14e3ac65ac4cd250803e8efa8f885da373f60b249669e6c51ac62de0e2136",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-i_lsbudc/report.json": "d4923248c6aa2d1573aafa3ae180bea6029056b420c92d63747957cba2dad2d6",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-igsnc1kc/report.json": "f7056f1893bbc6bb27a880a19ec450f46c99acc50c81bffa95a53b401683d461",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-iqt6b6j3/report.json": "1f45ac78852059be2f7368c2513f727cdca254f34262c227a3d2257d9cd61288",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-jo07ywuq/report.json": "948816bb8fdc2d343a251d62d8cedadd8559df10a4235e0f08da7d3350b3d17b",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-jr3g8pu0/report.json": "89044dc6b7d41ec4e6cabfa8b028cab7c09ef08b5ea1535ae5a0e709d2941b49",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-jtjhx7qa/report.json": "9bf361eb0ea7ea051afdd6c565d46906f11ab1a125d037905dd9927e7fda8e17",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-k298qdkt/report.json": "41182e004a4070ffeb240ea1a302e09de5722515363129bd1aa2bba6b91951ca",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-lsserrky/report.json": "4905215bd020fc87f463b375290bc87a39c64fb8e18fbbd2dc581cbe5f978d98",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-mbigx8yw/report.json": "2960ef6fb3fa7eb791525bc2a30c1301fedb8f9ab8f23db58ac95e8421fa48d6",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-mdm81c7u/report.json": "e2098e0948703f7e34b62f2a489c2fff6a644c70bda00c86210ef50d6b03a10e",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-nzyenvvj/report.json": "02702434421a23346707ab9f11697f7b53e7da271fccee2d493172cb74fa0d17",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-o70e_wog/report.json": "3b0fa2291a16168b571b9905dca2c78d19356df81ec6447d0c5b8d9624e8959c",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-o86vq6qh/report.json": "b228246d5bc6b35da5b65b42a4e754bae0c40d5c50acc4d6be13b85efe488b86",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-qr0b9rjv/report.json": "47a282ac8b8359d8a46fb64676b6d513286423d55036d6cf0a0e85f89c0e21c3",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-qt_b35x0/report.json": "186a28b0d97e287ba21b570186a545d9a31eb04b985e346aeca914a23e965643",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-r31nimot/report.json": "62e792c9fb6c32f2723dafa8e7545d881b999ebbcd4f96e97db1ffd38a6355e4",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-r940_03k/report.json": "fa0ce2f54e9bf5501b1acf6e8185858c158b5e4a79539f4b04e7b09c60fea986",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-swbuvcuj/report.json": "04efdcc05a0fb9a2063f45e2828605f90c7852cb78e9a7f0e8054efcc9c96bab",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-sxtga6bw/report.json": "6ad5835992f9acf6f32d60e5c6e26fc227b7f1fae74a3fdd66cc47c04aca398b",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-tkr_a4ee/report.json": "e6389fdc42832a1e3ad66c3bdd386ff302785bf3f704af4d59070342ebb11203",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-ur4n3o_f/report.json": "48c48182bfa9d3acc7de09bcab2f8417df3e012cb77e262bf2c0e9f8c348656a",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-w0s80wzd/report.json": "c562807f8f18d48b88b0518ccb3193e1e523d0f543fee85cf16cfbadd12b2ca0",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-wshhaydt/report.json": "716536e8367af5c6d4a9e0b9813799a8cb9c7b5186331a1d136d8c4c15404eb7",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-xguph1lo/report.json": "545b74628257a90b5a159be4313386b9bf7abb7fd2605b05da3486da7cfbe4d8",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-xxelw299/report.json": "525d0feea1993cb2ef41638d1759b584bd6a5adb6a3ff86bd01a21e5bd57c646",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-y4w97blt/report.json": "1c11ae11bec07291bbf435756a2ef434268d3ad8957023dfb64602cc4008cfac",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-yb4og42f/report.json": "fbbed290d1b95501e39db6ff0697de322c086555a7d43fb049979f4125719798",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-ykcv3z4n/attempt-00/response.txt": "7ba7f3ada67876e9bbfb2774fbe87cca572c2c4fcc273a1c909a5f3d815e3eb8",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-ykcv3z4n/attempt-03/response.txt": "6e0bb2f31eeb7791dcc23451905e6d2c8acd32f58626933baf7aaf7262403b98",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-ykcv3z4n/report.json": "a0d0d8cdb0f64beac6083feae594b4297b830c6dba3bb9d383b5139f3a0befda",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-ykcv3z4n/request.json": "08aca59f358fe2dce69df9505df50b9b239eab5002feb34a70c08e2bf0aeac4b",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-yr5zxbq5/report.json": "59f7a83743139c5b429a34cf4110824ff2a6e479429c7a86f0d66d43b149d17f",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-z_on0pb4/report.json": "aac23426b7a699c6508ac4b5b337b39eea938f7afe724b964347f045decbf672",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-v7-r130/index.json": "d245198c5c7989c2ac74e65714c9c7ec2861339aacb809c4efe51491bbf0df5f"
+  },
+  "production_source_modified": false,
+  "proposed_follow_up": "After the frozen queue reaches a safe boundary, prepare a new explicitly versioned request guidance mode that includes existing native child semantics and public receiver/type constraints. Preserve old request hashes and do not expose golden DSL recipes. Validate offline before requesting any fresh paid evaluation.",
+  "rows": [
+    {
+      "attempts": [
+        {
+          "diagnostic": "Symbolic/Empty left operand does not use object-array broadcasting",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Missing contributing typed array arithmetic: zero_dim",
+          "index": 1,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Frozen numerical tolerance failed; inspect reduction/layout/operator semantics",
+          "index": 2,
+          "layer": "numerical_comparison"
+        },
+        {
+          "diagnostic": "Ciphertext is not public numerical data",
+          "index": 3,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-144anq2p",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_000_0",
+      "runner_status": "repair_budget_exhausted"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "item is an array operation, not a ciphertext/Plain Expr operation",
+          "index": 0,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-swbuvcuj",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_000_1",
+      "runner_status": "provider_failed"
+    },
+    {
+      "attempts": [],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-w0s80wzd",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_000_2",
+      "runner_status": "provider_failed"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Missing contributing typed array arithmetic: inplace.Add",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Rotation requires a ciphertext and a provisioned public step",
+          "index": 1,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-b5tv1ht4",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_001_1",
+      "runner_status": "provider_failed"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Missing contributing construction feature: return.zero",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Missing contributing construction feature: return.zero",
+          "index": 1,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Missing contributing construction feature: return.zero",
+          "index": 2,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Missing contributing construction feature: return.zero",
+          "index": 3,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-e7gy6keh",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_003_0",
+      "runner_status": "repair_budget_exhausted"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Missing contributing construction feature: return.matrix",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Missing contributing construction feature: return.matrix",
+          "index": 1,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Missing contributing construction feature: return.zero",
+          "index": 2,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Missing contributing construction feature: return.matrix",
+          "index": 3,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-r940_03k",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_003_1",
+      "runner_status": "repair_budget_exhausted"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Missing contributing construction feature: return.matrix",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Native returns require flat Expr cells or object arrays",
+          "index": 1,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Missing contributing construction feature: return.zero",
+          "index": 2,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Native core arithmetic requires a ciphertext operand",
+          "index": 3,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-k298qdkt",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_003_2",
+      "runner_status": "repair_budget_exhausted"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Ragged public array",
+          "index": 0,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-xguph1lo",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_004_0",
+      "runner_status": "provider_failed"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Missing contributing public expression: attr.domain",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Undefined or unbound local construction value: c0",
+          "index": 1,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Chebyshev requires a nonempty real coefficient vector",
+          "index": 2,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Chebyshev requires a nonempty real coefficient vector",
+          "index": 3,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-fhsmk3wc",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_008_1",
+      "runner_status": "repair_budget_exhausted"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Missing contributing public expression: attr.domain",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Unsupported construction call",
+          "index": 1,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Only permitted method/decorator attributes are allowed",
+          "index": 2,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Chebyshev requires a nonempty real coefficient vector",
+          "index": 3,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-mbigx8yw",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_008_2",
+      "runner_status": "repair_budget_exhausted"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Ciphertext is not public numerical data",
+          "index": 0,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-9i2rf1xb",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_012_1",
+      "runner_status": "provider_failed"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Ciphertext is not public numerical data",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Ciphertext is not public numerical data",
+          "index": 1,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Ciphertext is not public numerical data",
+          "index": 2,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Ciphertext is not public numerical data",
+          "index": 3,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-ykcv3z4n",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_012_2",
+      "runner_status": "repair_budget_exhausted"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Object array metadata requires object array",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Missing contributing public expression: attr.size",
+          "index": 1,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Object array metadata requires object array",
+          "index": 2,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Object array metadata requires object array",
+          "index": 3,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-qt_b35x0",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_013_2",
+      "runner_status": "repair_budget_exhausted"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Ragged public array",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Ordering requires comparable public scalars/sequences",
+          "index": 1,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Missing contributing public expression: bool.And",
+          "index": 2,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Truth value requires public construction data; cipher/array truth is unsupported",
+          "index": 3,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-iqt6b6j3",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_024_0",
+      "runner_status": "repair_budget_exhausted"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Ragged public array",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Ordering requires comparable public scalars/sequences",
+          "index": 1,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Ordering requires comparable public scalars/sequences",
+          "index": 2,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Missing contributing public expression: bool.And",
+          "index": 3,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-o70e_wog",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_024_2",
+      "runner_status": "repair_budget_exhausted"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Ordering requires comparable public scalars/sequences",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Ordering requires comparable public scalars/sequences",
+          "index": 1,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Equality requires public data, never cipher/array/function",
+          "index": 2,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Missing contributing public expression: bool.Or",
+          "index": 3,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-9whr1quf",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_025_0",
+      "runner_status": "repair_budget_exhausted"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Ordering requires comparable public scalars/sequences",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Ordering requires comparable public scalars/sequences",
+          "index": 1,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Encoding needs scalar/1D length one or four; explicitly reshape, do not flatten silently",
+          "index": 2,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Equality requires public data, never cipher/array/function",
+          "index": 3,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-8j5sg3wx",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_025_1",
+      "runner_status": "repair_budget_exhausted"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Ordering requires comparable public scalars/sequences",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Missing contributing public expression: bool.Or",
+          "index": 1,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Ordering requires comparable public scalars/sequences",
+          "index": 2,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Equality requires public data, never cipher/array/function",
+          "index": 3,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-sxtga6bw",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_025_2",
+      "runner_status": "repair_budget_exhausted"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Missing contributing typed unary operation: boolean_cells",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Only list.append may be a statement call",
+          "index": 1,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Missing contributing typed unary operation: boolean_cells",
+          "index": 2,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Unary object ufunc accepts one positional argument; no out/dtype/where",
+          "index": 3,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-nzyenvvj",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_026_0",
+      "runner_status": "repair_budget_exhausted"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Invalid or colliding helper name",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Chebyshev requires a nonempty real coefficient vector",
+          "index": 1,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Call target is not a declared construction function",
+          "index": 2,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Call target is not a declared construction function",
+          "index": 3,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-9oiqc60e",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_027_1",
+      "runner_status": "repair_budget_exhausted"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Call target is not a declared construction function",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Ciphertext is not public numerical data",
+          "index": 1,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Ciphertext is not public numerical data",
+          "index": 2,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Call target is not a declared construction function",
+          "index": 3,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-a2gzt1um",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_027_2",
+      "runner_status": "repair_budget_exhausted"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Missing contributing public expression: call.enumerate",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Unsupported construction call",
+          "index": 1,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Missing contributing public expression: call.enumerate",
+          "index": 2,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Missing contributing public expression: call.enumerate",
+          "index": 3,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-igsnc1kc",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_040_0",
+      "runner_status": "repair_budget_exhausted"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "'float' object is not subscriptable",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "'float' object is not subscriptable",
+          "index": 1,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Frozen numerical tolerance failed; inspect reduction/layout/operator semantics",
+          "index": 2,
+          "layer": "numerical_comparison"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-mdm81c7u",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_040_1",
+      "runner_status": "provider_failed"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Unsupported construction call",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "'float' object is not subscriptable",
+          "index": 1,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Unsupported construction call",
+          "index": 2,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Unsupported construction call",
+          "index": 3,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-wshhaydt",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_040_2",
+      "runner_status": "repair_budget_exhausted"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Helpers require unannotated positional parameters without defaults or decorators",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Undefined or unbound local construction value: c0",
+          "index": 1,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Missing contributing public expression: call.full",
+          "index": 2,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Helpers require unannotated positional parameters without defaults or decorators",
+          "index": 3,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-i_lsbudc",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_045_1",
+      "runner_status": "repair_budget_exhausted"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Helpers require unannotated positional parameters without defaults or decorators",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Unsupported construction call",
+          "index": 1,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Unsupported construction call",
+          "index": 2,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Unsupported construction call",
+          "index": 3,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-2hlfsasb",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_045_2",
+      "runner_status": "repair_budget_exhausted"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "String receiver must be public, never cipher/array",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Undefined or unbound local construction value: hc",
+          "index": 1,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Invalid or colliding helper name",
+          "index": 2,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Helpers require unannotated positional parameters without defaults or decorators",
+          "index": 3,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-jr3g8pu0",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_060_0",
+      "runner_status": "repair_budget_exhausted"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Only permitted method/decorator attributes are allowed",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "String receiver must be public, never cipher/array",
+          "index": 1,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Only permitted method/decorator attributes are allowed",
+          "index": 2,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Unsupported construction call",
+          "index": 3,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-5knegrz4",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_060_1",
+      "runner_status": "repair_budget_exhausted"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Unsupported construction syntax: BitAnd",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Invalid or colliding helper name",
+          "index": 1,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Ragged public array",
+          "index": 2,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Frozen numerical tolerance failed; inspect reduction/layout/operator semantics",
+          "index": 3,
+          "layer": "numerical_comparison"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-qr0b9rjv",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_074_2",
+      "runner_status": "repair_budget_exhausted"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Read-only or invalid binding",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Missing contributing public expression: call.sorted",
+          "index": 1,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Missing contributing public expression: call.sorted",
+          "index": 2,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Sort keys must be public, never cipher/plain symbolic operands",
+          "index": 3,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-yr5zxbq5",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_075_1",
+      "runner_status": "repair_budget_exhausted"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Unsupported construction call",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Encoding needs scalar/1D length one or declared period; explicitly reshape",
+          "index": 1,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "String receiver must be public, never cipher/array",
+          "index": 2,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Ragged public array",
+          "index": 3,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-jo07ywuq",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_076_0",
+      "runner_status": "repair_budget_exhausted"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Ragged public array",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Invalid or colliding helper name",
+          "index": 1,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Ragged public array",
+          "index": 2,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Ragged public array",
+          "index": 3,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-jtjhx7qa",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_087_2",
+      "runner_status": "repair_budget_exhausted"
+    },
+    {
+      "attempts": [],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-yb4og42f",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_088_0",
+      "runner_status": "provider_failed"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Unsupported construction call",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Encoding needs scalar/1D length one or four; explicitly reshape, do not flatten silently",
+          "index": 1,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-r31nimot",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_088_1",
+      "runner_status": "provider_failed"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Undefined or unbound local construction value: c0",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Encoding needs scalar/1D length one or four; explicitly reshape, do not flatten silently",
+          "index": 1,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Encoding needs scalar/1D length one or four; explicitly reshape, do not flatten silently",
+          "index": 2,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Encoding needs scalar/1D length one or four; explicitly reshape, do not flatten silently",
+          "index": 3,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-xxelw299",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_088_2",
+      "runner_status": "repair_budget_exhausted"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Ragged public array",
+          "index": 0,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-y4w97blt",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_089_0",
+      "runner_status": "provider_failed"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Unsupported construction call",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Unsupported construction call",
+          "index": 1,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Unsupported construction call",
+          "index": 2,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Undefined or unbound local construction value: float",
+          "index": 3,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-tkr_a4ee",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_090_0",
+      "runner_status": "repair_budget_exhausted"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Unsupported construction syntax: Is",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Ragged public array",
+          "index": 1,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-ur4n3o_f",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_104_1",
+      "runner_status": "provider_failed"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Encoding needs scalar/1D length one or declared period; explicitly reshape",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Unsupported construction syntax: BitAnd",
+          "index": 1,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Ragged public array",
+          "index": 2,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Encoding needs scalar/1D length one or declared period; explicitly reshape",
+          "index": 3,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-lsserrky",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_104_2",
+      "runner_status": "repair_budget_exhausted"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Object full/empty require positional shape/fill and dtype=object",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Missing contributing public expression: counter.container_writes",
+          "index": 1,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Only permitted method/decorator attributes are allowed",
+          "index": 2,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Only permitted method/decorator attributes are allowed",
+          "index": 3,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-o86vq6qh",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_105_0",
+      "runner_status": "repair_budget_exhausted"
+    },
+    {
+      "attempts": [
+        {
+          "diagnostic": "Missing contributing public expression: counter.container_writes",
+          "index": 0,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Missing contributing public expression: counter.container_writes",
+          "index": 1,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Missing contributing public expression: counter.container_writes",
+          "index": 2,
+          "layer": "static_check"
+        },
+        {
+          "diagnostic": "Only permitted method/decorator attributes are allowed",
+          "index": 3,
+          "layer": "static_check"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-z_on0pb4",
+      "formal_status_not_reclassified": true,
+      "group": "directed_construction",
+      "id": "construct_105_2",
+      "runner_status": "repair_budget_exhausted"
+    }
+  ],
+  "runner_failure_counts": {
+    "provider_failed": 10,
+    "repair_budget_exhausted": 31
+  },
+  "runtime_source_sha256": "80738a33351d8c532cd8e4b032de63cc6785d6e5cf8a349f78e52aab5fffd58e",
+  "scope": "Runner-level diagnostic snapshot, not independent per-case acceptance. No failed or pending result is converted to passed.",
+  "stage2_complete": false
+}

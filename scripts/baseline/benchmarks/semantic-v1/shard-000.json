@@ -1,0 +1,3136 @@
+{
+  "rows": [
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0000",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              4
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              2,
+              2
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              1,
+              2,
+              2
+            ]
+          },
+          {
+            "name": "input3",
+            "shape": [
+              1,
+              1,
+              2,
+              2
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1"
+            ],
+            "op": "square",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "input2"
+            ],
+            "op": "square",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n3",
+            "inputs": [
+              "input3"
+            ],
+            "op": "square",
+            "outputs": [
+              "n3v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          },
+          {
+            "name": "output1",
+            "value": "n1v0"
+          },
+          {
+            "name": "output2",
+            "value": "n2v0"
+          },
+          {
+            "name": "output3",
+            "value": "n3v0"
+          }
+        ]
+      },
+      "model_sha256": "3ea7b0abe84b93f6e6afd939aa7a061ea12de970740816e0fc4207dcc7587d48",
+      "reference_status": "unverified",
+      "signature": "0d9e93aea658447ae490e7111acc3fd1c7713097d1cff7f26375c1da853b1f0b",
+      "split": "development",
+      "topology": "3de95f855a5b81d290ddcb68d04246e9d4ecd6dd7b32e8a8662e5c6f32097216"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0001",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              64
+            ]
+          },
+          {
+            "name": "input1",
+            "shape": [
+              64
+            ]
+          },
+          {
+            "name": "input2",
+            "shape": [
+              64
+            ]
+          },
+          {
+            "name": "input3",
+            "shape": [
+              64
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "input1"
+            ],
+            "op": "square",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n2",
+            "inputs": [
+              "input2"
+            ],
+            "op": "square",
+            "outputs": [
+              "n2v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n3",
+            "inputs": [
+              "input3"
+            ],
+            "op": "square",
+            "outputs": [
+              "n3v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          },
+          {
+            "name": "output1",
+            "value": "n1v0"
+          },
+          {
+            "name": "output2",
+            "value": "n2v0"
+          },
+          {
+            "name": "output3",
+            "value": "n3v0"
+          }
+        ]
+      },
+      "model_sha256": "cca5f33757958320f937d31f1ad6583a11bff1ba269b9ab364045da6f3b582d2",
+      "reference_status": "unverified",
+      "signature": "4f12ddd436a2aa360ea74d5a6ded7238145db0760260ddb2bceda2da721e4e6e",
+      "split": "development",
+      "topology": "3de95f855a5b81d290ddcb68d04246e9d4ecd6dd7b32e8a8662e5c6f32097216"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0002",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "n0v0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "546b6ded067fc23c6b6cacec3e11b84e1b10be61d1e99f8368eff8a35d91a45e",
+      "reference_status": "unverified",
+      "signature": "1fdd9c1089546f1e461e1f06c0684b9a8b99a1de9ed0a3011a882ef38f4e261b",
+      "split": "development",
+      "topology": "fde0be68d48dc2c3a10ec659160583a492b250cedcf0d48d3d91be327544b000"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0003",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              5
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "n0v0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "6add51bf2c8e519918089cd44fd034c8c32b47c8abea409525ba2bc6ac75dfa5",
+      "reference_status": "unverified",
+      "signature": "f6bac917bf69dfd0cf9f890a48b81eeed00c2877f2c11a55f2cdc3a0dcca3c30",
+      "split": "development",
+      "topology": "fde0be68d48dc2c3a10ec659160583a492b250cedcf0d48d3d91be327544b000"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0004",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              7
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "n0v0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "81adb344f985a8470e2727f258fc700c28ae63d99eabf0fdc0cde671ac2b24eb",
+      "reference_status": "unverified",
+      "signature": "a4c04c47c89b9c748f7ce1b73330e293f8e8186cce6814104215e834404aa494",
+      "split": "development",
+      "topology": "fde0be68d48dc2c3a10ec659160583a492b250cedcf0d48d3d91be327544b000"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0005",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              9
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "n0v0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "200d6b71f14708e9c04e8d8ac3ca96204569ae2d3f1c23f22b88e9838df2fa09",
+      "reference_status": "unverified",
+      "signature": "e24e15bc72ffea2dfe393d8822e19894acf63d9279448d39e38f1b1fca11689f",
+      "split": "development",
+      "topology": "fde0be68d48dc2c3a10ec659160583a492b250cedcf0d48d3d91be327544b000"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0006",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              15
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "n0v0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "2d61377f9d110eac541da111df9e1fae379090f914e5d24f42e284d7526fe3f4",
+      "reference_status": "unverified",
+      "signature": "681ca87b5d5d6e091ed78ffe731eb9543da63e9406af7bada174b2020f0add9c",
+      "split": "development",
+      "topology": "fde0be68d48dc2c3a10ec659160583a492b250cedcf0d48d3d91be327544b000"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0007",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              16
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "n0v0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "f426523a10e91b0059efc683d1b8cd25365205c0fbf8c506b0ecda8a16a5aefc",
+      "reference_status": "unverified",
+      "signature": "5ccd17a25510be9f6d028209a2d3ab1beab59d0a04634ed4cce716978c933aab",
+      "split": "development",
+      "topology": "fde0be68d48dc2c3a10ec659160583a492b250cedcf0d48d3d91be327544b000"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0008",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              17
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "n0v0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "13a0bc0516a568cd5b4ac9f68398bddc110c82cdec3871090ee01b272e4ce6dd",
+      "reference_status": "unverified",
+      "signature": "62e415876b876bcb3a43ace9576757211d2cefd37c44b6a3f7c440bb34e5e57c",
+      "split": "development",
+      "topology": "fde0be68d48dc2c3a10ec659160583a492b250cedcf0d48d3d91be327544b000"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0009",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              31
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "n0v0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "5a822a3eaf1379d1827b26e928a3a7faf18e1098a3254dcd6a83828ed5d91904",
+      "reference_status": "unverified",
+      "signature": "61a225184400f6c22b0b6d136061220f7664cd1f62e58ebfe6cd71d46e9dd9d3",
+      "split": "development",
+      "topology": "fde0be68d48dc2c3a10ec659160583a492b250cedcf0d48d3d91be327544b000"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0010",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              32
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "n0v0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "8a0bd4b275f589c3807cff6b94768e94568b0a042c670732035bae1cd4fabaac",
+      "reference_status": "unverified",
+      "signature": "88f2f6975c909f1d46b492b7c36c980be7eb637e1fac8732be2c2a79453b77fb",
+      "split": "development",
+      "topology": "fde0be68d48dc2c3a10ec659160583a492b250cedcf0d48d3d91be327544b000"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0011",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              33
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "n0v0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "d32589f18249898ebf48c77e7696c6b613eeb1d1fdf89a30fd7fcde3d2431cb8",
+      "reference_status": "unverified",
+      "signature": "b8f5a64f786e02b449f64128ade5608db480fd439fe37c56a6972c26ac80b986",
+      "split": "development",
+      "topology": "fde0be68d48dc2c3a10ec659160583a492b250cedcf0d48d3d91be327544b000"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0012",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              63
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "n0v0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "56d885ff706c75ecb640b398400face41b0d86596093485cc4577549e0869b5d",
+      "reference_status": "unverified",
+      "signature": "a1e7a75056bf8294b02edf95957b7907d878ddcd6a06bae013817d36b1e45840",
+      "split": "development",
+      "topology": "fde0be68d48dc2c3a10ec659160583a492b250cedcf0d48d3d91be327544b000"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0013",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              64
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "n0v0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "648c2398af51c14b9c08d577577a5d9c1b75d86d465bcba64d00bcbc4d70fa1c",
+      "reference_status": "unverified",
+      "signature": "f026fec4d3b63c508179ec86593af7d7d9658d20f8a1770d0b846fdb3dcea965",
+      "split": "development",
+      "topology": "fde0be68d48dc2c3a10ec659160583a492b250cedcf0d48d3d91be327544b000"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0014",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              65
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "n0v0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "87169c404d56726afef75c58685c3ecd0bc396ba8bdaac82292e8178234c1e92",
+      "reference_status": "unverified",
+      "signature": "fcc61395454763de1498d24a76f7868b0a2c7e9a746de55223f952be33e0ac5a",
+      "split": "development",
+      "topology": "fde0be68d48dc2c3a10ec659160583a492b250cedcf0d48d3d91be327544b000"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0015",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              127
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "n0v0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "f8bd939ade3135489120813ccb029fced9ef8b630837bbae505b71d30331fc09",
+      "reference_status": "unverified",
+      "signature": "8c20378fcb59db72f9a0e615f7fa637e232efbc33ff08294efa032b10beb09e2",
+      "split": "development",
+      "topology": "fde0be68d48dc2c3a10ec659160583a492b250cedcf0d48d3d91be327544b000"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0016",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              128
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "n0v0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "aed5aa94075404e91856161df987d28a28ddd68e9738c56a33245c0b51cccd28",
+      "reference_status": "unverified",
+      "signature": "e1e5ff0a57440b4e18024bd4554a7eb39fe7925133c57e12b30525a31fdd9b17",
+      "split": "development",
+      "topology": "fde0be68d48dc2c3a10ec659160583a492b250cedcf0d48d3d91be327544b000"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0017",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              129
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "n0v0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "9471de74a0f729eb0140bc74cb0a870e40aa1c9ac25bf36061a9d3b79660f7ba",
+      "reference_status": "unverified",
+      "signature": "6501d209354d04313b61d7457215ada350be0afd7553f501859346f56f59e3d8",
+      "split": "development",
+      "topology": "fde0be68d48dc2c3a10ec659160583a492b250cedcf0d48d3d91be327544b000"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0018",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              255
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "n0v0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "f34f66868980acd45e6c886e6998c0824f7ce333dc4ff7a304bae5662485fa5a",
+      "reference_status": "unverified",
+      "signature": "9add00d0de66b3eea0775e989c0d2e0956b52faa68a9be4d207a4b34758a3747",
+      "split": "development",
+      "topology": "fde0be68d48dc2c3a10ec659160583a492b250cedcf0d48d3d91be327544b000"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0019",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              256
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "negate",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {},
+            "id": "n1",
+            "inputs": [
+              "n0v0",
+              "n0v0"
+            ],
+            "op": "subtract",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "b65601bb64d2a871f41d7a94623095cdacd8b5eb644034f2afb5cefd67c9f34b",
+      "reference_status": "unverified",
+      "signature": "2dedb32ff88c9a8fa4bdbc065095a7f2e7727030da28a2e2c1d464e885a12e87",
+      "split": "development",
+      "topology": "fde0be68d48dc2c3a10ec659160583a492b250cedcf0d48d3d91be327544b000"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0020",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              1
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n0v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n0v0"
+          }
+        ]
+      },
+      "model_sha256": "b8b0093d732a3ff9af488fdc8a7c5da2d1e2fbe9c44b113065e7a805d75956df",
+      "reference_status": "unverified",
+      "signature": "c7c7d9039bc7e1b8752372acca603fd8b57e8cf36ce47ba12c84c853dd5b54e4",
+      "split": "development",
+      "topology": "7ab83dd3d86789ff5f5c34889b1fb941ee4e603662e9b5922a872ec71a785cd3"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0021",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              5
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "step": -2
+            },
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "rotate",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "a4e1b6636c53b820e521d60388fcb3f263bb6324078e5353cdfd7d5c19923c77",
+      "reference_status": "unverified",
+      "signature": "5e870a03e42990d13f8e6e1865afecaf034fe1aee47e6234664ccc718142d595",
+      "split": "development",
+      "topology": "2735e33c4254029d2265acb05152f6983b4194571519902fe4b25d4b6de42362"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0022",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              7
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "step": -2
+            },
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "rotate",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "bda59e76048a8d840f28098dd3d9f77a4cc078a107255da89c3728e780538205",
+      "reference_status": "unverified",
+      "signature": "eb98c3f835eda6238e56841cbbb7df65a95a6abc8de65daa30a7986b9902d88b",
+      "split": "development",
+      "topology": "2735e33c4254029d2265acb05152f6983b4194571519902fe4b25d4b6de42362"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0023",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              9
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "step": -2
+            },
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "rotate",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "24ad6250d3156791839a64c2ec0e1e6c078064463d33cd55447d3ccf95c0b1c6",
+      "reference_status": "unverified",
+      "signature": "02f6f3b0894851ff073d970d651dafac666b60f2bc8971f9fe8b23f97146c418",
+      "split": "development",
+      "topology": "2735e33c4254029d2265acb05152f6983b4194571519902fe4b25d4b6de42362"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0024",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              15
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "step": -2
+            },
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "rotate",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "7d0fbbbf95d0f67d4680ba26cfb02c957f0acdfc2ee8fa0140435b8412f999b3",
+      "reference_status": "unverified",
+      "signature": "5b725a3159b4c111350f92a59a856fcccc91bff1877fc4fcf5169217c66ef4fb",
+      "split": "development",
+      "topology": "2735e33c4254029d2265acb05152f6983b4194571519902fe4b25d4b6de42362"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0025",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              16
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "step": -2
+            },
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "rotate",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "76e4b89398d0802f140f48fe8e2133c5d6e8557a818826fe1259ec2bb3ad4e2a",
+      "reference_status": "unverified",
+      "signature": "1652ad7141c1744905d50048713ef9766becf38c06dffdaf4c4ff46d1342afc9",
+      "split": "development",
+      "topology": "2735e33c4254029d2265acb05152f6983b4194571519902fe4b25d4b6de42362"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0026",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              17
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "step": -2
+            },
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "rotate",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "69de7be1e834c4e9ad745929ea3b76ce7e8af816c8cdb17f7772c1df0f5f2a8a",
+      "reference_status": "unverified",
+      "signature": "47970c046e8da6f1c98c78a008a3392947f447a6d5c4ebd5aca74d84145acc37",
+      "split": "development",
+      "topology": "2735e33c4254029d2265acb05152f6983b4194571519902fe4b25d4b6de42362"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0027",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              31
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "step": -2
+            },
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "rotate",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "fa4cd84b3dc25056de1fd49ae45100074deccd2687365e6c044d7a03fe623a40",
+      "reference_status": "unverified",
+      "signature": "b9f9235e99a0bc97c6830c5ef0b31580fce1c2e0815d80be4483ba622fb6bc82",
+      "split": "development",
+      "topology": "2735e33c4254029d2265acb05152f6983b4194571519902fe4b25d4b6de42362"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0028",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              32
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "step": -2
+            },
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "rotate",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "f3968d9ad403ad50fcb2f8c4f36af8bdcb3c86da50328c78f3bad5e4f16f6e1b",
+      "reference_status": "unverified",
+      "signature": "7c6fe964c35fb4dd4e0484a300c58c3775ac3936f366a56afabce6ea1c6d7910",
+      "split": "development",
+      "topology": "2735e33c4254029d2265acb05152f6983b4194571519902fe4b25d4b6de42362"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0029",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              33
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "step": -2
+            },
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "rotate",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "ae09e7c6c304d87a5081fa02f1324b4ffb280a821505fa3321bc9777e4c2062e",
+      "reference_status": "unverified",
+      "signature": "8504760d86dc66e5f199a86c1ef45c86b5635d998eb46d93062b4ff923c958d6",
+      "split": "development",
+      "topology": "2735e33c4254029d2265acb05152f6983b4194571519902fe4b25d4b6de42362"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0030",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              63
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "step": -2
+            },
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "rotate",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "efe56bee1351f06a4029d84e2aaec9528fc6ce969ca4b66df77e0db4630d6c90",
+      "reference_status": "unverified",
+      "signature": "6302c87ed233ac315bc2608278bd0ed9d80c24610cb97b6d2a349d2f912d8090",
+      "split": "development",
+      "topology": "2735e33c4254029d2265acb05152f6983b4194571519902fe4b25d4b6de42362"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0031",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              64
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "step": -2
+            },
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "rotate",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "6201f44aa1f8bc59ca5c67ca164ac8ad89be8b35a8eb9254758d110c5e7a6601",
+      "reference_status": "unverified",
+      "signature": "27cb8f0e81f97a79c5c41dfdcf615b9bbe7b3588b898bd5f02d4a199d7edffcc",
+      "split": "development",
+      "topology": "2735e33c4254029d2265acb05152f6983b4194571519902fe4b25d4b6de42362"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0032",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              65
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "step": -2
+            },
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "rotate",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "93fff14c24dc29f8db16ac57465e468cdc32e21c0e8d34d93ff96285d14b9b99",
+      "reference_status": "unverified",
+      "signature": "c71e065b74c6a145351b7e1e10606439a93d4ac52342edf7af1adb60a8fc6a79",
+      "split": "development",
+      "topology": "2735e33c4254029d2265acb05152f6983b4194571519902fe4b25d4b6de42362"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0033",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              127
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "step": -2
+            },
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "rotate",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "62fd7b56ac96571b17a187e619c8e0318173faca908d94a17299a47b7c58fbbd",
+      "reference_status": "unverified",
+      "signature": "79a37c2ff4e93e36bde2fd74deaed5442bf0449980fb2a78b40b662569c9586c",
+      "split": "development",
+      "topology": "2735e33c4254029d2265acb05152f6983b4194571519902fe4b25d4b6de42362"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0034",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              128
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "step": -2
+            },
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "rotate",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "ba9efd5875fe98d6529bf9b6986725e826ec3111f24cad9e53a09bcae7fb6880",
+      "reference_status": "unverified",
+      "signature": "be3ba1ddf334ceb1fd79e379d010287e6d81832fa48fa5da5382adf502ccae53",
+      "split": "development",
+      "topology": "2735e33c4254029d2265acb05152f6983b4194571519902fe4b25d4b6de42362"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0035",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              129
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "step": -2
+            },
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "rotate",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "398ae55dbaaa52971a03481571790b53209c611d839c2ab35f4cc9cf218fbd98",
+      "reference_status": "unverified",
+      "signature": "92ae20563a020c8ce21f429b8d30dbf4994b56457677c36e1aefbcdfdd81667f",
+      "split": "development",
+      "topology": "2735e33c4254029d2265acb05152f6983b4194571519902fe4b25d4b6de42362"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0036",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              255
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "step": -2
+            },
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "rotate",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "96633c41ec999e68fc9e76f2e004ac0560c058d74c1d8fae1f10e1d055b84df0",
+      "reference_status": "unverified",
+      "signature": "029f40dec3c6e8997bf1b93a442d9dc9fb2183ce311efb160d2fad941b9e2290",
+      "split": "development",
+      "topology": "2735e33c4254029d2265acb05152f6983b4194571519902fe4b25d4b6de42362"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {},
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0037",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              256
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0"
+            ],
+            "op": "square",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "step": -2
+            },
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "rotate",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "61323d490298b0089138430821f0ec4e95a3b7a55197ada97820b6d322607374",
+      "reference_status": "unverified",
+      "signature": "dd4716c645aab9005271f8dba56ed2da1ed8484cc5dcdd8c381d2dde2aee1207",
+      "split": "development",
+      "topology": "2735e33c4254029d2265acb05152f6983b4194571519902fe4b25d4b6de42362"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              [
+                [
+                  0.125
+                ]
+              ]
+            ]
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0038",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                2
+              ],
+              "keepdims": false
+            },
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "59b396b63295ca88cce254f73affba9d9199df3522e962ee5d7560d72f5818cd",
+      "reference_status": "unverified",
+      "signature": "9aaa90b9e538276e94bfba7f2c8aba246b58d9b536a80786e04e7fd3136a2fad",
+      "split": "development",
+      "topology": "a4eb5e96f4ef9120a4dc78d9d39de117f39e479bde13485d4a9c7753186d511e"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              [
+                [
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125
+                ]
+              ]
+            ]
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0039",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              1,
+              1,
+              5
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                2
+              ],
+              "keepdims": false
+            },
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "78e94996ef141cdde8c18dc52f7057f9743b81e01e203e6f1b6fb34cf0b92bc3",
+      "reference_status": "unverified",
+      "signature": "024b25d104c26011b784eb219c827582b65b635fa5fd29306941eb8ae97eb146",
+      "split": "development",
+      "topology": "a4eb5e96f4ef9120a4dc78d9d39de117f39e479bde13485d4a9c7753186d511e"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              [
+                [
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125
+                ]
+              ]
+            ]
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0040",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              1,
+              1,
+              7
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                2
+              ],
+              "keepdims": false
+            },
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "fad70c6df7ffe749f081e899bd4332252c85411477dbce7945b3e756f6648187",
+      "reference_status": "unverified",
+      "signature": "6dd3cd95c5b09cb561fe7798135cdfc7b5b62a002ccca6c7e81a69d8ebaf7ec1",
+      "split": "development",
+      "topology": "a4eb5e96f4ef9120a4dc78d9d39de117f39e479bde13485d4a9c7753186d511e"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              [
+                [
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125
+                ]
+              ]
+            ]
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0041",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              1,
+              1,
+              9
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                2
+              ],
+              "keepdims": false
+            },
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "6c39d59106f4fabf2ac80170a7eb92197822490a8900b0e6afc30230cffa476d",
+      "reference_status": "unverified",
+      "signature": "7d531de425f41dee9b6a624c4bf0ed27506a2951420114f06b6d18ee88ebec90",
+      "split": "development",
+      "topology": "a4eb5e96f4ef9120a4dc78d9d39de117f39e479bde13485d4a9c7753186d511e"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              [
+                [
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125
+                ]
+              ]
+            ]
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0042",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              1,
+              1,
+              15
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                2
+              ],
+              "keepdims": false
+            },
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "d4db6cf235b3b442141d5990a06178be2c51a26e1700fd51d5adad4701440388",
+      "reference_status": "unverified",
+      "signature": "173dc4a13e7432bcbbbf173b582c799c62a426591e7b810e2ee5730c9a70bccc",
+      "split": "development",
+      "topology": "a4eb5e96f4ef9120a4dc78d9d39de117f39e479bde13485d4a9c7753186d511e"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              [
+                [
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125
+                ]
+              ]
+            ]
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0043",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              1,
+              1,
+              16
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                2
+              ],
+              "keepdims": false
+            },
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n1v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n1v0"
+          }
+        ]
+      },
+      "model_sha256": "995400adf33cabbad7c43e9d72fc37bee4719a5de9581e9afefaf2cf85d7d5f0",
+      "reference_status": "unverified",
+      "signature": "032b0436e0fa1406782800547f5172f481771f8b4379fbf7fb555c83d33c24d2",
+      "split": "development",
+      "topology": "a4eb5e96f4ef9120a4dc78d9d39de117f39e479bde13485d4a9c7753186d511e"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              [
+                [
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125
+                ]
+              ]
+            ]
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0044",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              1,
+              1,
+              17
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                2
+              ],
+              "keepdims": false
+            },
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0,
+                1,
+                2
+              ],
+              "keepdims": false
+            },
+            "id": "n2",
+            "inputs": [
+              "n1v0"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "ded3af853ae7b8bbea137971cbffb3536d9adbdaebcc7befecc836ae856f58af",
+      "reference_status": "unverified",
+      "signature": "b28aa0b6ae2edd708001f242ceeabcad0310adaf54037606a58a51088349cac4",
+      "split": "development",
+      "topology": "03b481d494effb1a3dbd97e9e854294901da57841d87351fb4b7ac6f5380aea8"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              [
+                [
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125
+                ]
+              ]
+            ]
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0045",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              1,
+              1,
+              31
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                2
+              ],
+              "keepdims": false
+            },
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0,
+                1,
+                2
+              ],
+              "keepdims": false
+            },
+            "id": "n2",
+            "inputs": [
+              "n1v0"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "0ccd7274e08aa34cafef32b580dcbb53ef8c7014ee36d9289339a57e6a007d43",
+      "reference_status": "unverified",
+      "signature": "a10b772117684a6abfd7462b6dff57aeeb18f6a313b0dc7cec992b1eb3558ec3",
+      "split": "development",
+      "topology": "03b481d494effb1a3dbd97e9e854294901da57841d87351fb4b7ac6f5380aea8"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              [
+                [
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125
+                ]
+              ]
+            ]
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0046",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              1,
+              1,
+              32
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                2
+              ],
+              "keepdims": false
+            },
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0,
+                1,
+                2
+              ],
+              "keepdims": false
+            },
+            "id": "n2",
+            "inputs": [
+              "n1v0"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "dd36d57a042a15175daef294d535a6f04aa1a9690b4bdd89fd4c4a865ba3c7c2",
+      "reference_status": "unverified",
+      "signature": "3c74d1fc67eb331fc83e0ef471edb327646b3a97994a841a6916c260e43e12dd",
+      "split": "development",
+      "topology": "03b481d494effb1a3dbd97e9e854294901da57841d87351fb4b7ac6f5380aea8"
+    },
+    {
+      "agent_status": "unverified",
+      "category": "boundary",
+      "metadata": {},
+      "model": {
+        "constants": {
+          "c0": [
+            [
+              [
+                [
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125,
+                  0.125
+                ]
+              ]
+            ]
+          ]
+        },
+        "format": "poseidon-model-graph-v1",
+        "id": "bench_boundary_0047",
+        "inputs": [
+          {
+            "name": "input0",
+            "shape": [
+              1,
+              1,
+              1,
+              33
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "attrs": {},
+            "id": "n0",
+            "inputs": [
+              "input0",
+              "c0"
+            ],
+            "op": "add",
+            "outputs": [
+              "n0v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                2
+              ],
+              "keepdims": false
+            },
+            "id": "n1",
+            "inputs": [
+              "n0v0"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n1v0"
+            ]
+          },
+          {
+            "attrs": {
+              "axes": [
+                0,
+                1,
+                2
+              ],
+              "keepdims": false
+            },
+            "id": "n2",
+            "inputs": [
+              "n1v0"
+            ],
+            "op": "mean",
+            "outputs": [
+              "n2v0"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "value": "n2v0"
+          }
+        ]
+      },
+      "model_sha256": "9321c55a7b8ffd8f21f99e41d4dd716912e83b9b0ae04549e32b616207b571b9",
+      "reference_status": "unverified",
+      "signature": "694bb3e09fae237248199b96145b28be4c3422be79d43353552a04bf4afb0b33",
+      "split": "development",
+      "topology": "03b481d494effb1a3dbd97e9e854294901da57841d87351fb4b7ac6f5380aea8"
+    }
+  ],
+  "version": "poseidon-semantic-benchmark-v1"
+}

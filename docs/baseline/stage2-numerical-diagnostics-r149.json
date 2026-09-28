@@ -1,0 +1,90 @@
+{
+  "format": "poseidon-numerical-diagnosis-summary-r149",
+  "diagnostic": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-numerical-failures-r149.json",
+  "diagnostic_sha256": "3e76d44a6b5719f79c5fa5f86ae5ffc21f1985840e609b9c9469520c0964d116",
+  "diagnostic_binding": "47a9b981eb67549b21995d9270bf7e934115727a1bb430aaaec43c7f41824422",
+  "cases": [
+    {
+      "id": "construct_052_1",
+      "failure_kind": "rotation_reduction",
+      "explanation": "P=4 with two logical entries: rotate(2) reads padding, yielding z/2 instead of the broadcast mean.",
+      "manual_vs_decrypted_max_absolute_error": 1.3288688099910573e-07,
+      "manual_vs_reference_max_absolute_error": 0.5
+    },
+    {
+      "id": "construct_063_2",
+      "failure_kind": "rotation_diagonals",
+      "explanation": "Composed Linear weights are valid; C1 and C3 are paired with the opposite positive rotation offsets.",
+      "manual_vs_decrypted_max_absolute_error": 2.1558859142345455e-09,
+      "manual_vs_reference_max_absolute_error": 0.0087890625
+    },
+    {
+      "id": "construct_074_2",
+      "failure_kind": "rotation_placement",
+      "explanation": "Positive offsets 3/4/5 place slot-zero outputs at 5/4/3 in P=8, reversing the stacked Linear outputs.",
+      "manual_vs_decrypted_max_absolute_error": 4.3345105282810437e-10,
+      "manual_vs_reference_max_absolute_error": 0.01953125
+    },
+    {
+      "id": "construct_097_1",
+      "failure_kind": "rotation_split_concat",
+      "explanation": "Final masks select original slots [3,0,0], including padding, instead of logical split/concat order [1,2,0].",
+      "manual_vs_decrypted_max_absolute_error": 2.1233194249041568e-08,
+      "manual_vs_reference_max_absolute_error": 0.109375
+    },
+    {
+      "id": "construct_107_2",
+      "failure_kind": "rotation_placement",
+      "explanation": "Concatenating length-three inputs in P=8 needs a right shift by three; positive rotate(3) moves in the other direction.",
+      "manual_vs_decrypted_max_absolute_error": 5.6929211345035924e-11,
+      "manual_vs_reference_max_absolute_error": 0.125
+    },
+    {
+      "id": "construct_109_2",
+      "failure_kind": "polynomial_degree_and_padding",
+      "explanation": "Shift direction is correct, but the Horner sequence starts with y*c3 and yields degree four instead of three; polynomial padding also contaminates the first stacked output by 1/16.",
+      "manual_vs_decrypted_max_absolute_error": 9.533924573423835e-08,
+      "manual_vs_reference_max_absolute_error": 0.0625
+    },
+    {
+      "id": "construct_112_2",
+      "failure_kind": "rotation_and_padding",
+      "explanation": "Second branch rotates in the wrong direction, and the unmasked polynomial creates nonzero values in padding.",
+      "manual_vs_decrypted_max_absolute_error": 2.019028971789183e-10,
+      "manual_vs_reference_max_absolute_error": 0.9375
+    },
+    {
+      "id": "construct_118_0",
+      "failure_kind": "padding_polynomial",
+      "explanation": "Mean and second-branch placement are correct; first-branch polynomial padding adds 1/16 to the second stacked branch. The second named output is correct.",
+      "manual_vs_decrypted_max_absolute_error": 7.668905531443837e-08,
+      "manual_vs_reference_max_absolute_error": 0.0625
+    },
+    {
+      "id": "construct_119_2",
+      "failure_kind": "rotation_placement",
+      "explanation": "Both branches are masked, but positive rotate(3) places the second branch in slots 5/6/7, not 3/4/5.",
+      "manual_vs_decrypted_max_absolute_error": 4.572164621907682e-08,
+      "manual_vs_reference_max_absolute_error": 0.203125
+    },
+    {
+      "id": "construct_152_2",
+      "failure_kind": "rotation_linear",
+      "explanation": "Using rotate(1) for both rows reads padding in row one rather than the required first input cell.",
+      "manual_vs_decrypted_max_absolute_error": 2.1945490563668457e-11,
+      "manual_vs_reference_max_absolute_error": 0.09375
+    }
+  ],
+  "reviewed_cases": 10,
+  "manual_predictions_match_all": true,
+  "maximum_prediction_error": 1.3288688099910573e-07,
+  "frozen_runtime_unchanged": true,
+  "new_paid_calls": 0,
+  "new_compilations": 0,
+  "new_encrypted_executions": 0,
+  "new_task_passes": 0,
+  "original_failures_preserved": true,
+  "limitation": "Human-derived finite diagnostic formulas, not an independent DSL interpreter or a proof for arbitrary inputs. Matches explain observed failures without changing references or awarding passes.",
+  "stage2_complete": false,
+  "binding": "3f5703e9bce2a05e3553699b5a7c579d6e83a5a5ab0ef6e0efc1e809a77690f9"
+}

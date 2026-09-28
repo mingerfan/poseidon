@@ -42,7 +42,7 @@ def features(kind,node,facts):
     out={('binary.' if kind=='object_binary' else 'inplace.')+type(node.op).__name__}
     if facts['overlapping']:out.add('overlap')
     if facts['empty_left']:out.add('empty_left')
-    if facts['cipher_pair']:out.add('cipher_pair')
+    if facts['cipher_pair'] and type(node.op) is ast.Mult:out.add('cipher_pair')
     if kind=='object_binary':
         result=facts['result_shape']
         if not result:out.add('zero_dim')

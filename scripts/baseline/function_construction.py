@@ -81,8 +81,28 @@ def normalize(source, constants, expected_outputs=1, *, input_names=('x',), clos
               call_binding=False, public_iteration=False, function_literals=False, public_sequences=False,
               public_numbers=False, public_control=False, public_strings=False, public_polynomial=False,
               object_arrays=False, public_mappings=False, observe=None, object_arithmetic=False,
-              scalar_conversion=False, object_unary=False, _unary_probe=None):
+              scalar_conversion=False, object_unary=False, _unary_probe=None, _object_probe=None, _storage_probe=None,
+              flat_contract="hecate-function-v5", slot_period=4, observe_counters=False):
+    from hecate_contract import UNIFIED_FLAT_CONTRACT
+    from packed_input_abi import rotations
+    require(flat_contract in ("hecate-function-v5",UNIFIED_FLAT_CONTRACT),"Unknown construction flat contract")
+    unified=flat_contract==UNIFIED_FLAT_CONTRACT
+    require(type(slot_period) is int and (unified or slot_period==4),"Legacy construction requires period 4")
+    allowed_rotations=rotations(slot_period) if unified else (-3,-2,-1,1,2,3)
+    constant_limit=256 if unified else 128
     # Trusted diagnostic only; never exposed to candidate code or request flags.
+    if _storage_probe is not None:
+        require(unified and type(_storage_probe) is dict and set(_storage_probe)=={'span','kind'} and
+                type(_storage_probe['span']) is list and len(_storage_probe['span'])==4 and
+                all(type(v) is int and 0<=v<=10000000 for v in _storage_probe['span']) and
+                _storage_probe['kind'] in ('numeric_constructor_result','allocation_shape','copy_alias','view_detach'),
+                'Invalid trusted storage probe')
+    if _object_probe is not None:
+        require(unified and type(_object_probe) is dict and set(_object_probe)=={'span','kind'} and
+                type(_object_probe['span']) is list and len(_object_probe['span'])==4 and
+                all(type(v) is int and 0<=v<=10000000 for v in _object_probe['span']) and
+                _object_probe['kind'] in ('cipher_pair','empty_as_zero','all_results','sequential_overlap'),
+                'Invalid trusted object arithmetic probe')
     if _unary_probe is not None:
         require(object_unary and type(_unary_probe) is dict and
                 set(_unary_probe)=={'span','kind'} and
@@ -247,7 +267,7 @@ def normalize(source, constants, expected_outputs=1, *, input_names=('x',), clos
     header.body = [ast.Return(value=ast.List(elts=[ast.Name(id=input_names[0], ctx=ast.Load())
                    for _ in range(expected_outputs)], ctx=ast.Load()))] if input_names else []
     validate_function(ast.unparse(ast.fix_missing_locations(ast.Module(body=[header], type_ignores=[]))),
-                      constants, expected_outputs, contract='hecate-function-v5', input_names=input_names)
+                      constants, expected_outputs, contract=flat_contract, input_names=input_names, slot_period=slot_period)
     globals_ = {name: Value(name, 'plain') for name in constants}
     globals_.update(functions)
     bindings = dict(globals_)
@@ -273,7 +293,14 @@ def normalize(source, constants, expected_outputs=1, *, input_names=('x',), clos
     emitted = []
     derived = {}
     derived_names = {}
-    counters = dict(steps=0, loop_iterations=0, public_branches=0, container_writes=0,
+    active_nodes=[]
+    class ObservedCounters(dict):
+        def __setitem__(self,key,value):
+            before=self.get(key,0)
+            super().__setitem__(key,value)
+            if observe_counters and observe is not None and active_nodes and key not in ("steps","max_call_depth","public_branches","comprehension_iterations","sequence_slices","object_elementwise_operations","object_inplace_operations","object_unary_operations","scalar_conversions","legacy_array_scalar_conversions","array_item_calls") and value>before:
+                observe(("resource_counter",active_nodes[-1],dict(counter=key,before=before,after=value)))
+    counters = ObservedCounters(steps=0, loop_iterations=0, public_branches=0, container_writes=0,
                     helper_calls=0, max_call_depth=0)
     if closures:
         counters.update(closure_instances=0, nonlocal_writes=0)
@@ -450,10 +477,10 @@ def normalize(source, constants, expected_outputs=1, *, input_names=('x',), clos
         if public_numbers and type(value) is not Value:
             if type(value) in (list,tuple):
                 value = numeric.array(public_data(value))
-            data = numeric.encoding(value)
+            data = numeric.encoding(value,slot_period=slot_period)
             key = json.dumps(data,allow_nan=False,separators=(',',':'))
             if key not in derived_names:
-                require(len(constants)+len(derived) < 128, 'Derived constant count limit')
+                require(len(constants)+len(derived) < constant_limit, 'Derived constant count limit')
                 number = len(derived)
                 name = 'derived'+str(number)
                 while name in taken:
@@ -466,6 +493,25 @@ def normalize(source, constants, expected_outputs=1, *, input_names=('x',), clos
         require(type(value) is Value, 'Arithmetic literals/containers are not ciphertext operands; use named constants')
         return ast.Name(id=value.name, ctx=ast.Load())
 
+    def object_probe_kind():
+        if _object_probe is None or not active_nodes:return None
+        node=active_nodes[-1]
+        return _object_probe['kind'] if _object_probe['span']==[
+            getattr(node,k,0) for k in ('lineno','col_offset','end_lineno','end_col_offset')] else None
+
+    def object_apply(op,left,right):
+        kind=object_probe_kind()
+        if kind=='empty_as_zero' and type(left) is objects.Empty:
+            return binary(op,0,right)
+        result=binary(op,left,right)
+        pair=(type(op) is ast.Mult and type(left) is Value and left.kind=='cipher' and
+              type(right) is Value and right.kind=='cipher')
+        if kind=='all_results' or kind=='cipher_pair' and pair:
+            if type(result) is Value and result.kind=='plain':
+                return Value(ref(numeric.binary(ast.Add(),public_data(result),1)).id,'plain')
+            return binary(ast.Add(),result,1)
+        return result
+
     def binary(op, left, right):
         if object_arithmetic and any(type(v) is objects.ObjectArray for v in (left,right)):
             # Expr on the LEFT resolves the entire ndarray as Plain; it does
@@ -476,7 +522,7 @@ def normalize(source, constants, expected_outputs=1, *, input_names=('x',), clos
                     'Explicit Plain/object-array dispatch requires separate validation')
             counters['object_array_operations'] += 1
             counters['object_elementwise_operations'] += 1
-            return objects.elementwise(op,left,right,binary)
+            return objects.elementwise(op,left,right,object_apply)
         if object_arrays and any(type(v) is objects.Empty for v in (left,right)):
             counters['empty_operations'] += 1
             def resolve(value):
@@ -533,6 +579,19 @@ def normalize(source, constants, expected_outputs=1, *, input_names=('x',), clos
                 type(right) is Value and 'cipher' in (left.kind, right.kind),
                 'Ciphertext arithmetic needs named cipher/plain values')
         return emit(ast.BinOp(left=ref(left), op=op, right=ref(right)))
+
+
+    def object_storage_result(node,operation,source,result):
+        if not unified:return result
+        facts=objects.storage_facts(source,result,operation)
+        if observe is not None:observe(('object_storage',node,facts))
+        if _storage_probe is not None and _storage_probe['span']==[
+                node.lineno,node.col_offset,node.end_lineno,node.end_col_offset]:
+            if _storage_probe['kind']=='copy_alias' and operation=='copy':
+                return objects.wrap(source.data)
+            if _storage_probe['kind']=='view_detach' and operation in ('reshape','transpose') and facts['shares_storage']:
+                return objects.copy(result)
+        return result
 
 
     def object_unary_value(op, value, node):
@@ -677,12 +736,12 @@ def normalize(source, constants, expected_outputs=1, *, input_names=('x',), clos
         for key,value in keywords.items():
             mapping_insert(target,key,value,depth+1)
 
-    def mapping_invoke(name, receiver, values, keywords, depth):
+    def mapping_invoke(name, receiver, values, keywords, depth, node):
         counters['mapping_calls'] += 1
         if name == 'copy' and type(receiver) is objects.ObjectArray:
             require(not values and not keywords,'Object copy takes no arguments')
             counters['object_array_operations'] += 1
-            return objects.copy(receiver)
+            return object_storage_result(node,'copy',receiver,objects.copy(receiver))
         require(type(receiver) is dict,'Mapping method receiver must be a local dict')
         if name == 'update':
             mapping_update(receiver,values,keywords,depth+1)
@@ -759,6 +818,13 @@ def normalize(source, constants, expected_outputs=1, *, input_names=('x',), clos
         return result
 
     def expression(node, depth=0):
+        active_nodes.append(node)
+        try:
+            return expression_inner(node,depth)
+        finally:
+            active_nodes.pop()
+
+    def expression_inner(node, depth=0):
         if observe is not None:
             observe(node)
         tick(depth)
@@ -770,7 +836,7 @@ def normalize(source, constants, expected_outputs=1, *, input_names=('x',), clos
             if node.attr in ('T','size','ndim'):
                 value = expression(node.value,depth+1)
                 require(type(value) is objects.ObjectArray,'Object array metadata requires object array')
-                return (objects.transpose(value) if node.attr == 'T' else
+                return (object_storage_result(node,'transpose',value,objects.transpose(value)) if node.attr == 'T' else
                         value.data.size if node.attr == 'size' else len(value.shape))
         if public_polynomial and type(node) is ast.Attribute:
             if public_np_path(node) in ('double','float64'):
@@ -914,7 +980,7 @@ def normalize(source, constants, expected_outputs=1, *, input_names=('x',), clos
                         keywords[key] = value
                     require(len(keywords) <= 128,'Mapping keyword count limit')
                 counters['keyword_arguments'] += len(keywords)
-                return mapping_invoke(node.func.attr,receiver,values,keywords,depth+1)
+                return mapping_invoke(node.func.attr,receiver,values,keywords,depth+1,node)
             empty_call = object_arrays and (
                 type(node.func) is ast.Name and node.func.id == 'Empty' or
                 type(node.func) is ast.Attribute and type(node.func.value) is ast.Name and
@@ -941,16 +1007,23 @@ def normalize(source, constants, expected_outputs=1, *, input_names=('x',), clos
                     require(set(keywords) == {'dtype'} and keywords['dtype'] is objects.OBJECT and
                             len(values) == (2 if attr == 'full' else 1),
                             'Object full/empty require positional shape/fill and dtype=object')
-                    return objects.full(*values) if attr == 'full' else objects.empty(*values)
+                    result=objects.full(*values) if attr=='full' else objects.empty(*values)
+                    if attr=='empty' and unified and observe is not None:
+                        observe(('object_allocation',node,dict(shape=list(result.shape),dtype='object',initial_cells='None')))
+                    if (attr=='empty' and _storage_probe is not None and _storage_probe['kind']=='allocation_shape' and
+                            _storage_probe['span']==[node.lineno,node.col_offset,node.end_lineno,node.end_col_offset]):
+                        require(result.shape,'Allocation witness requires positive rank')
+                        result=objects.empty((result.shape[0]+1,)+result.shape[1:])
+                    return result
                 if constructor and attr == 'concatenate':
                     require(len(values) == 1 and set(keywords) <= {'axis'},'Concatenate requires arrays and optional axis')
                     return objects.concatenate(values[0],**keywords)
                 require(type(receiver) is objects.ObjectArray and not keywords,'Object method requires object array; use array.transpose(...), not np.transpose(...)')
                 if attr == 'copy':
                     require(not values,'Object copy takes no arguments')
-                    return objects.copy(receiver)
+                    return object_storage_result(node,'copy',receiver,objects.copy(receiver))
                 require(attr == 'transpose','Unsupported object array method')
-                return objects.transpose(receiver,None if not values else values[0] if len(values) == 1 else tuple(values))
+                return object_storage_result(node,'transpose',receiver,objects.transpose(receiver,None if not values else values[0] if len(values) == 1 else tuple(values)))
             if public_polynomial and public_np_path(node.func) in (*polynomial.UFUNCS,'Chebyshev'):
                 path = public_np_path(node.func)
                 require(all(type(n) is not ast.Starred for n in node.args),
@@ -1045,7 +1118,20 @@ def normalize(source, constants, expected_outputs=1, *, input_names=('x',), clos
                         return result
                     is_float64 = dtype == 'float64' or (public_polynomial and dtype is polynomial.FLOAT64)
                     require(dtype is None or is_float64, 'Only inferred real or explicit float64 array dtype')
-                    return numeric.array(public_data(values[0]) if object_arrays else values[0],floating=is_float64)
+                    result=numeric.array(public_data(values[0]) if object_arrays else values[0],floating=is_float64)
+                    marker=None
+                    if node.keywords:
+                        dtype_node=node.keywords[0].value
+                        if (type(dtype_node) is ast.Attribute and type(dtype_node.value) is ast.Name and
+                                dtype_node.value.id=='np' and dtype_node.attr in ('double','float64') and is_float64):
+                            marker=dtype_node.attr
+                    if unified and observe is not None:
+                        observe(('numeric_constructor',node,dict(shape=list(result.shape),floating=result.floating,
+                                                               explicit_float64=is_float64,direct_marker=marker)))
+                    if (_storage_probe is not None and _storage_probe['kind']=='numeric_constructor_result' and
+                            _storage_probe['span']==[node.lineno,node.col_offset,node.end_lineno,node.end_col_offset]):
+                        result=numeric.binary(ast.Add(),result,1)
+                    return result
                 if object_arrays and type(receiver) is objects.ObjectArray:
                     require(not node.keywords,'Object reshape/flatten require positional arguments')
                     counters['object_array_operations'] += 1
@@ -1053,7 +1139,7 @@ def normalize(source, constants, expected_outputs=1, *, input_names=('x',), clos
                         require(not values,'Object flatten takes no arguments')
                         return objects.flatten(receiver)
                     require(attr == 'reshape' and values,'Object reshape requires shape')
-                    return objects.reshape(receiver,values[0] if len(values) == 1 else tuple(values))
+                    return object_storage_result(node,'reshape',receiver,objects.reshape(receiver,values[0] if len(values) == 1 else tuple(values)))
                 if object_arrays:
                     values = [public_data(value) for value in values]
                 require(type(receiver) is numeric.Array and not node.keywords, 'Array method requires public array and positional arguments')
@@ -1216,7 +1302,7 @@ def normalize(source, constants, expected_outputs=1, *, input_names=('x',), clos
                     'Only rotate is an expression method')
             value = expression(node.func.value, depth+1)
             step = integer(expression(node.args[0], depth+1))
-            require(type(value) is Value and value.kind == 'cipher' and step in CONTRACT_ROTATIONS['hecate-function-v5'],
+            require(type(value) is Value and value.kind == 'cipher' and step in allowed_rotations,
                     'Rotation requires a ciphertext and a provisioned public step')
             return emit(ast.Call(func=ast.Attribute(value=ref(value), attr='rotate', ctx=ast.Load()),
                                  args=[ast.Constant(value=step)], keywords=[]))
@@ -1252,6 +1338,7 @@ def normalize(source, constants, expected_outputs=1, *, input_names=('x',), clos
                 require(key in container or len(container) < 128, 'Mapping length limit')
                 no_cycle(container, value)
                 container[key] = value
+                if public_mappings:counters['mapping_writes'] += 1
                 counters['container_writes'] += 1
                 return
             require(type(container) is list, 'Only a mutable local list supports item assignment')
@@ -1280,6 +1367,14 @@ def normalize(source, constants, expected_outputs=1, *, input_names=('x',), clos
             raise ValueError('Unsupported construction assignment target')
 
     def block(statements, depth=0):
+        for statement in statements:
+            active_nodes.append(statement)
+            try:
+                block_one([statement],depth)
+            finally:
+                active_nodes.pop()
+
+    def block_one(statements, depth=0):
         for statement in statements:
             if observe is not None:
                 observe(statement)
@@ -1341,7 +1436,8 @@ def normalize(source, constants, expected_outputs=1, *, input_names=('x',), clos
                         facts=objects.arithmetic_facts(left,right) if observe is not None else None
                         require(not (type(right) is Value and right.kind == 'plain'),
                                 'Explicit Plain/object-array dispatch requires separate validation')
-                        result = objects.elementwise(statement.op,left,right,binary,inplace=True)
+                        result = objects.elementwise(statement.op,left,right,object_apply,inplace=True,
+                            _probe_sequential=object_probe_kind()=="sequential_overlap")
                         counters['object_inplace_operations'] += 1
                         if observe is not None:
                             observe(('object_inplace',statement,facts))
@@ -1361,7 +1457,8 @@ def normalize(source, constants, expected_outputs=1, *, input_names=('x',), clos
                     facts=objects.arithmetic_facts(left,right) if observe is not None else None
                     require(not (type(right) is Value and right.kind == 'plain'),
                             'Explicit Plain/object-array dispatch requires separate validation')
-                    result = objects.elementwise(statement.op,left,right,binary,inplace=True)
+                    result = objects.elementwise(statement.op,left,right,object_apply,inplace=True,
+                            _probe_sequential=object_probe_kind()=="sequential_overlap")
                     counters['object_inplace_operations'] += 1
                     counters['object_array_operations'] += 1
                     if observe is not None:
@@ -1463,12 +1560,13 @@ def normalize(source, constants, expected_outputs=1, *, input_names=('x',), clos
     header.body = emitted + [ast.Return(value=ret)]
     normalized = ast.unparse(ast.fix_missing_locations(ast.Module(body=[header], type_ignores=[])))+'\n'
     effective = dict(constants,**derived)
-    checked = validate_function(normalized, effective, expected_outputs, contract='hecate-function-v5', input_names=input_names)
+    checked = validate_function(normalized, effective, expected_outputs, contract=flat_contract, input_names=input_names, slot_period=slot_period)
     metadata = dict(schema=16 if object_unary else 15 if scalar_conversion else 14 if object_arithmetic else 13 if public_mappings else 12 if object_arrays else 11 if public_polynomial else 10 if public_strings else 9 if public_control else 8 if public_numbers else 7 if public_sequences else 6 if function_literals else 5 if public_iteration else 4 if call_binding else 3 if closures else 2,
                     function_definitions=len(helpers) if closures else len(functions), **counters,
                     source_sha256=hashlib.sha256(source.encode()).hexdigest(),
                     normalized_sha256=hashlib.sha256(normalized.encode()).hexdigest(),
                     candidate_python_executed=False, constants_changed=False)
+    if unified:metadata.update(flat_contract=flat_contract,slot_period=slot_period)
     result = dict(source=normalized, check=checked, construction=metadata)
     if public_numbers:
         metadata.update(derived_constant_count=len(derived),

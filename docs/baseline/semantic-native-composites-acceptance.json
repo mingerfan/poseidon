@@ -1,0 +1,213 @@
+{
+  "accepted_date": "2026-09-22",
+  "actual_compilation": true,
+  "actual_decryption": true,
+  "actual_seal_execution": true,
+  "actual_upstream_helper_execution": false,
+  "agent_calls": 0,
+  "all_dsl_semantics_covered": false,
+  "binding_counts": {
+    "native_partitions": 43,
+    "native_tasks": 129,
+    "public_partitions": 156,
+    "public_tasks": 468,
+    "unbound_tasks": 9
+  },
+  "branch": "lhy-agent-dsl",
+  "checkout": "/home/lhohy/Code/Poseidon",
+  "commits": 0,
+  "composites": {
+    "array.reshape_transpose": [
+      "reshape.rank4",
+      "transpose",
+      "unpack.rows"
+    ],
+    "array.storage": [
+      "return.matrix",
+      "return.zero",
+      "index.zero",
+      "item.zero",
+      "return.mixed"
+    ],
+    "native.call": [
+      "call.two_cipher_arguments",
+      "call.public_argument",
+      "call.nested",
+      "call.forward"
+    ],
+    "native.return": [
+      "call.scalar_cipher",
+      "call.tuple_multi",
+      "call.plain_return",
+      "call.empty_return"
+    ],
+    "native.starred": [
+      "star.arguments",
+      "star.array",
+      "star.call_result",
+      "star.flatten_matrix",
+      "star.list",
+      "star.mixed",
+      "star.multiple",
+      "star.reverse",
+      "star.tuple",
+      "star.empty"
+    ]
+  },
+  "current": {
+    "compared_values": 232,
+    "counts": {
+      "blocked_contract": 9,
+      "blocked_rule_preflight": 3,
+      "not_run": 573,
+      "passed": 21
+    },
+    "evidence_bytes": 3597328,
+    "failed": 0,
+    "inputs": {
+      "1": 12,
+      "2": 5,
+      "3": 2,
+      "4": 2
+    },
+    "max_absolute_error": 5.718569497936699e-07,
+    "mixed": 6,
+    "numeric_only": 14,
+    "outputs": {
+      "1": 15,
+      "2": 5,
+      "3": 1
+    },
+    "passed": 21,
+    "periods": {
+      "4": 21
+    },
+    "seconds": 132.4552574690024,
+    "skipped": 0,
+    "structural_only": 1,
+    "weighted_mae": 1.5598877701776773e-08
+  },
+  "downloads": 0,
+  "evidence_hashes": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/native-composite-initial-unit.log": "e8b05093e531bec0599373d11a25bf4cd9c26bd8b19d29eddd6ae24ce0e61fb0",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/native-composite-r11-execution/audit.json": "4ce2d8137fb8ba1e721c8de0d681d6e6af62dc5e150c9e504f5d29cee2facfbd",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/native-composite-r11-execution/coordinator-plan.json": "77e83d92d68000b367239419554af0db0413319be003a47dc4460d1d222c259f",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/native-composite-r11-execution/final-state.json": "cde221d715b430405d39260cfea6ef62efdd1cb7d3ac0971e808ce3595debfa1",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/native-composite-r11-execution/frozen-source.tar.gz": "7c83cdafe96d3f7314ebdf83e41dadc8eb3da8045d4248bc50f1800d8fc4cef0",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/native-composite-r11-execution/native-boundaries.log": "87af5e8650c5abd22582533b04d4ad9e5de8f7d84de3991788a33a9dafe31da5",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/native-composite-r11-execution/native42-replay.json": "d169285429835b1bc879033d55d14eb5db1bac4809f8af678b1e33949a5555e9",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/native-composite-r11-final/native-boundaries.log": "25270c1c311d2dbee532ffea2b66a0e0801a0ad20ad3807dce94e251b765e719",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/native-composite-r11-validated/unit.log": "8293ac86da0b58eb6e061d31884e8cf142daa5cce3ef15cd9637f73fecfe8784",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/native-composite-r11/unit.log": "e13c5b56764c74d80b4b19547f03ef7476e4a581949a41587aeea6b160efa557",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/native-composite-r12-plaintext/report.json": "96c577cb6fda47dbc14150f845fcb683bbcff144045da6b51b8f32010b1a02a5",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/native-composite-r12/audit.json": "6475cdde9f342009ab6ae2e80ae8718cb15a639deb8e387053e514741de0afe9",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/native-composite-r12/coordinator-plan.json": "5d9f71f75c22ec54978efcefcaa089a72f8c26cd9f7e50db4bdd64aedc61e430",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/native-composite-r12/final-state.json": "100967e724ee92773d071aa4079145d4bf3c562964f5f7e3ef474ea928819eb2",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/native-composite-r12/frozen-source.tar.gz": "a136cfb96fd9c5bf2480e02e34d02c1ea38d9b55ee8fb64f30a23dfbad193366",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/native-composite-r12/native15-replay.json": "c8c4bbd671e3726ebdbd7d2a6555228c4454ffe7bb4953449d37fc354628d2d2",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/native-composite-r12/native15/report.json": "04c48367e0b0cb2129c2d3b5e17d0d892fbf63d4afe4014820f85f86d144586c",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/native-composite-r12/public6-replay.json": "5c88935ff6d8e454064856542b0ea4388be37067bd883d2a3d6991b216a7f237",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/native-composite-r12/public6/report.json": "7c85fe8154960b175ea3c11a675d46b003df253254503a5d3015739477126da3",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/native-composite-r12/unit.log": "9525ec652c2a15af946893b08881fe16d9c294dea9f6fbdf0e8a4e200cbe6ac1",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/native-composite-second-unit.log": "60aeb8066eb4ef6859104996f99e135881c298213afb696c9dcc03840dc7b7c6"
+  },
+  "formal_equivalence_proven": false,
+  "head": "3493c905dd8f4ce8e04211c83b337be243befe14",
+  "installs": 0,
+  "model_set_sha256": "b7c5a1f031171ac5e1d58ebcc084f43a90d61f2be336ea235a054d548ac3ca39",
+  "native_boundary_tests": {
+    "actual_native_frontend_tests": 18,
+    "failed": 0,
+    "frontend_library_sha256": "b15f62508bf42ba70436e131be514d4cb38a8aec270e15c1b29d426f597d7926",
+    "offline_contract_tests": 1,
+    "passed": 19,
+    "skipped": 0,
+    "source_files_unchanged_in_r12": true,
+    "source_revision": "r11",
+    "total": 19
+  },
+  "plaintext": {
+    "agent_calls": 0,
+    "approximation_is_not_execution_error": true,
+    "binding": "f1fd5092fb6c88e76235516f2152eebd47760e8296ee7ddcccff1e15a7863b81",
+    "encrypted_execution": false,
+    "failed": 0,
+    "max_reference_error": 7.771561172376096e-16,
+    "passed": 1200,
+    "planned": 1200,
+    "seconds": 3.2181316974165384,
+    "skipped": 0,
+    "tests": 19200
+  },
+  "platform": "aarch64-linux",
+  "prior_r11": {
+    "failed": 1,
+    "failure": {
+      "candidate_status": "repair_budget_exhausted",
+      "diagnostic": "/app/decorated_functions.py:334:0: error: 'earth.mul' op failed to infer returned types\n/app/decorated_functions.py:334:0: note: see current operation: %127 = \"earth.mul\"(%125, %126) : (tensor<1x!earth.ci<45 * 13>>, tensor<1x!earth.pl<45 * 13>>) -> tensor<1x!earth.ci<0 * 0>>\n",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-wag2xtt7",
+      "failure_layer": "compiler",
+      "files": {
+        "arrays.npz": "de49deb7eda9faac3c8ecfc1ae85c2cf2bfb8c708bdbd8957882ddca8b6aa784",
+        "attempt-00/candidate.py": "28326984c42b7ac49bddbbe56a1e41062ed51cda7d725cb7b5ce9f3ed0129699",
+        "attempt-00/compile.log": "22d72009bce1572737a562c61f606f65b7c45dbbb32980c407aff247a074d3a0",
+        "attempt-00/feedback.json": "aa5096cacda3965c4ffeccb1c883a8ef75b26bfc9cb2ccc08e154d50cf808485",
+        "attempt-00/output/_hecate_composite0_coverage_helper.cst": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+        "attempt-00/output/_hecate_composite1_coverage_helper.cst": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+        "attempt-00/output/_hecate_composite2_coverage_helper.cst": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+        "attempt-00/output/_hecate_composite2_coverage_parts.cst": "fb9749c8ef38773cb539d2461e7507978eb77d456737cca81060081ec5b93ab9",
+        "attempt-00/output/_hecate_composite3_coverage_helper.cst": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+        "attempt-00/output/_hecate_composite4_coverage_helper.cst": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+        "attempt-00/output/_hecate_composite5_coverage_helper.cst": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+        "attempt-00/output/_hecate_composite6_coverage_helper.cst": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+        "attempt-00/output/_hecate_composite7_coverage_helper.cst": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+        "attempt-00/output/_hecate_composite8_coverage_helper.cst": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+        "attempt-00/output/_hecate_composite9_coverage_helper.cst": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+        "attempt-00/output/_hecate_golden.cst": "98151408aa0543c645edb93981bcb03a40a7cfccf16be6ac74b8a5523e5af5a7",
+        "attempt-00/output/candidate_trace.mlir": "6163f00e47d02f96b0098dc191e59c9b24b19b676897d2235cdc78ef3849ed4c",
+        "attempt-00/output/native-array-events.json": "48ea65d49f84d054409b18e915bf84785b8a0c199f8cb1685008a5394b5db880",
+        "attempt-00/output/native-array-mutation-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "attempt-00/output/native-augmented-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "attempt-00/output/native-call-events.json": "3c2bde0e9cb0127338a637e5346fa127c057c23ae158ebf691102c9c494e74ea",
+        "attempt-00/output/native-function-plan.json": "db3cb67ae2ad8964a3463cc67852a2bf6caff2760ebdc9b482f950000f13c3f0",
+        "attempt-00/output/native-star-events.json": "edfbffe7cedb77f11922a4130f5e0971e3b36ebff70484859e3820818d242aa7",
+        "attempt-00/output/trace-evidence.json": "65d0ebc7888bdce51b5ab8a13c89be755d2c7bef10c9eec63ab593d6daf17c58",
+        "attempt-00/report.json": "94be957bc47d9b5dd12852cb3aa5ec90941eec4697dd78e623b98fb6be83a4b2",
+        "attempt-00/response.txt": "338730ca64e7219d6062bfd0260d6cfd40b9bb4f385236264c7f120f774e50da",
+        "attempt-00/trace-payload.json": "a966a055d1a65c432dbd643280ea8b429736b59f007eb6f5326b6473b574b81e",
+        "attempt-00/trace.log": "dd688917dfb3429a7d43ee4703f7309b97e449ace28617177caee761a6603df9",
+        "key-cleanup-outcome.json": "9f814799be4121c994c8d50e659d752bd329970cef4520c9b6b63bc12bba6eb7",
+        "key-cleanup.json": "2864b55f864d8cab781ff95389815527f7151babc4ad266e291393baec7f5f9b",
+        "logical-bindings.json": "26269501864d8538ff682d6324e10c1e047a858ca0ad88ec2315f4aaeed9d634",
+        "model-structure.txt": "7805b47c1587c1443a077784b27e27309d9673a04fb36896c372fc892964f7f6",
+        "model.json": "d31f7d6532d836cb21931c2773241934635ac8422eec4e42c20b407243e3a53d",
+        "parameters.json": "66682b0ca95a40411bc44f25b6d39fe5f4146dd2e413d79c16ba7024c9fff6fb",
+        "private-sentinel.txt": "183dfd75ab3380e80c052fa2542fd260bff19faafe9482c4b1d55f5f90610174",
+        "probe-payload.json": "273065e9a2db00e69b5c6fb7cd7d3feaba6d0b7ee44b3e65171bebbdd0f190f9",
+        "probe.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "probe/probe.json": "1fe73da9e381f9eefe7fddcf6391b00b98cdfb34a2346cbf8a2bb122458e0976",
+        "report.json": "db18cd60a86c5beb96cc0e29e06ebb947f63097f2cbbf580089d71af4d74d9aa",
+        "request.json": "94ed337e4745b34ce5d03e9e0c14dcb0f0e787bcab24df8336ee06e7b022408b",
+        "rule-answer.py": "28326984c42b7ac49bddbbe56a1e41062ed51cda7d725cb7b5ce9f3ed0129699",
+        "weights.npz": "edac6df873aac7508aff383ebd58f7554275181b98db756fb8ef0aca63c514ed"
+      },
+      "status": "failed",
+      "task_id": "construct_157_0"
+    },
+    "passed": 41,
+    "source_sha256": "2e7860cf209aa705cbd7db00c9a6b28df9ade707343fde858d77eca6ca72ac7b",
+    "status": "Preserved historical failed batch; 15 composite tasks rechecked with new parallel fixtures, 27 old native regressions retain old source identity"
+  },
+  "prs": 0,
+  "pushes": 0,
+  "release": "semantic-v1-composite-r12",
+  "source_sha256": "a51b805953f293521e9bcdd44c952edf1623d15750e33056dcce72415cd309c1",
+  "unit": {
+    "failed": 0,
+    "passed": 112,
+    "skip_reason": "Three opt-in native object-arithmetic frontend tests lacked their isolated opt-in flag; not counted as pass",
+    "skipped": 3,
+    "total": 115
+  },
+  "x86_retested": false
+}

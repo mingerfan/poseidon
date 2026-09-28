@@ -33,7 +33,14 @@ def cells(value):
     return value[1] if type(value) is tuple else (value,)
 
 
-def _analyze(source, constants, expected_outputs, input_names, *, arrays=False, starred_calls=False, array_arithmetic=False, public_loops=False, scalar_augmented=False, array_mutation=False, slot_period=None):
+def _analyze(source, constants, expected_outputs, input_names, *, arrays=False, starred_calls=False, array_arithmetic=False, public_loops=False, scalar_augmented=False, array_mutation=False, slot_period=None, upstream_helpers=False, upstream_request=None):
+    require(type(upstream_helpers) is bool, "Invalid upstream capability flag")
+    if upstream_helpers:
+        from upstream_candidate_helpers import dispatch_specs
+        builtins = dispatch_specs(upstream_request)
+    else:
+        require(upstream_request is None,"Unexpected upstream request")
+        builtins = {}
     packed = slot_period is not None
     if packed:
         from packed_input_abi import rotations
@@ -56,6 +63,7 @@ def _analyze(source, constants, expected_outputs, input_names, *, arrays=False, 
             len(set(input_names)) == len(input_names), 'Invalid input names')
     require(type(constants) is dict and len(constants) <= (256 if packed else 128), 'Constant registry limit')
     reserved = {'hc','np','object'} if arrays else {'hc'}
+    reserved.update(builtins)
     if public_loops: reserved.add('range')
     require(not (set(input_names) & reserved), 'Reserved native input name')
     for name, value in constants.items():
@@ -72,7 +80,7 @@ def _analyze(source, constants, expected_outputs, input_names, *, arrays=False, 
     loop_plan = None
     if public_loops:
         from native_public_loops import expand
-        tree,loop_plan = expand(tree,constants,scalar_augmented=scalar_augmented)
+        tree,loop_plan = expand(tree,constants,scalar_augmented=scalar_augmented,upstream_helpers=upstream_helpers,upstream_request=upstream_request)
     require(1 <= len(tree.body) <= 17 and all(type(n) is ast.FunctionDef for n in tree.body),
             'Only native function declarations allowed')
     nodes = {n.name:n for n in tree.body}
@@ -86,8 +94,10 @@ def _analyze(source, constants, expected_outputs, input_names, *, arrays=False, 
                 not a.defaults and not a.kw_defaults and not node.returns and not node.type_comment and
                 all(p.annotation is None for p in a.args), 'Native core parameters must be unannotated positional names')
         names = [p.arg for p in a.args]
-        require(len(names) <= 16 and len(set(names)) == len(names) and
-                all(IDENTIFIER.fullmatch(n) and n not in nodes and n not in reserved and n not in constants for n in names),
+        require(len(names) <= 16,
+                f'Native function parameter limit: {name} declares {len(names)} parameters; maximum 16')
+        require(len(set(names)) == len(names), 'Duplicate native function parameter names')
+        require(all(IDENTIFIER.fullmatch(n) and n not in nodes and n not in reserved and n not in constants for n in names),
                 'Invalid or colliding parameter name')
         require(len(node.decorator_list) == 1, 'Exactly one hc.func decorator required')
         d = node.decorator_list[0]
@@ -102,6 +112,7 @@ def _analyze(source, constants, expected_outputs, input_names, *, arrays=False, 
         signatures[name] = dict(parameters=names, kinds=kinds, signature=signature)
     require(signatures['golden']['parameters'] == list(input_names) and
             signatures['golden']['kinds'] == ('c',)*len(input_names), 'Golden input ABI mismatch')
+    upstream_sites = []
     active = set(); summaries = {}; order = []; augmentations = []; mutations = []; mutation_cost = 0
 
     def analyze(name):
@@ -146,7 +157,8 @@ def _analyze(source, constants, expected_outputs, input_names, *, arrays=False, 
                 if array_arithmetic and storage.is_array(operand):
                     value = storage.arithmetic_type(operand)
                     spend(max(1,len(value[1])) if storage.is_array(value) else 1); return value
-                require(operand == 'c', 'Native negation requires ciphertext')
+                require(operand == 'c', 'Native negation requires ciphertext; a bound Plain cannot be negated here. '
+                        'Negate the ciphertext expression instead, preserving the mathematical result.')
                 spend(); return 'c'
             if type(n) is ast.BinOp and type(n.op) in (ast.Add,ast.Sub,ast.Mult):
                 a, b = expression(n.left,depth+1), expression(n.right,depth+1)
@@ -166,7 +178,7 @@ def _analyze(source, constants, expected_outputs, input_names, *, arrays=False, 
                         or starred_calls and type(n.func) is ast.Name), 'Positional calls only')
                 if type(n.func) is ast.Name:
                     target = n.func.id
-                    require(target in nodes and target != 'golden', 'Unknown or forbidden callee')
+                    require(target in set(nodes) | set(builtins) and target != 'golden', 'Unknown or forbidden callee')
                     values = []
                     for argument in n.args:
                         if type(argument) is ast.Starred:
@@ -185,6 +197,14 @@ def _analyze(source, constants, expected_outputs, input_names, *, arrays=False, 
                             values.append(expression(argument, depth+1))
                         require(len(values) <= 16, 'Expanded native argument count bound')
                     values = tuple(values)
+                    if target in builtins:
+                        spec=builtins[target]
+                        require(values == tuple(spec['parameters']), 'Upstream call requires one ciphertext Expr')
+                        upstream_sites.append(dict(caller=name,callee=target,
+                            span=[n.lineno,n.col_offset,n.end_lineno,n.end_col_offset]))
+                        rotations.update(spec['rotations'])
+                        spend(spec['work'])
+                        return spec['result']
                     require(values == signatures[target]['kinds'], 'Native call argument type/count mismatch')
                     callee = analyze(target); edges.append(target); rotations.update(callee['rotation_steps'])
                     spend(callee['expanded_cost']+1)
@@ -280,22 +300,27 @@ def _analyze(source, constants, expected_outputs, input_names, *, arrays=False, 
     if packed:
         plan['packed_binding']=dict(slot_period=slot_period,rotation_steps=list(allowed_rotations),
                                     output_limit=16,constant_limit=256)
+    if upstream_helpers: plan["upstream_calls"]=upstream_sites
     return nodes, plan
 
 
-def validate(source, constants, expected_outputs=1, *, input_names=('x',), arrays=False, starred_calls=False, array_arithmetic=False, public_loops=False, scalar_augmented=False, array_mutation=False, slot_period=None):
-    return _analyze(source, constants, expected_outputs, input_names, arrays=arrays,starred_calls=starred_calls,array_arithmetic=array_arithmetic,public_loops=public_loops,scalar_augmented=scalar_augmented,array_mutation=array_mutation,slot_period=slot_period)[1]
+def validate(source, constants, expected_outputs=1, *, input_names=('x',), arrays=False, starred_calls=False, array_arithmetic=False, public_loops=False, scalar_augmented=False, array_mutation=False, slot_period=None, upstream_helpers=False, upstream_request=None):
+    return _analyze(source, constants, expected_outputs, input_names, arrays=arrays,starred_calls=starred_calls,array_arithmetic=array_arithmetic,public_loops=public_loops,scalar_augmented=scalar_augmented,array_mutation=array_mutation,slot_period=slot_period,upstream_helpers=upstream_helpers,upstream_request=upstream_request)[1]
 
 
-def register(source, constants, frontend, expected_outputs=1, *, input_names=('x',), observe=None, arrays=False, observe_storage=None, starred_calls=False, array_arithmetic=False, public_loops=False, observe_starred=None, scalar_augmented=False, observe_augmented=None, array_mutation=False, observe_mutation=None, slot_period=None):
+def register(source, constants, frontend, expected_outputs=1, *, input_names=('x',), observe=None, arrays=False, observe_storage=None, starred_calls=False, array_arithmetic=False, public_loops=False, observe_starred=None, scalar_augmented=False, observe_augmented=None, array_mutation=False, observe_mutation=None, slot_period=None, upstream_helpers=False, observe_upstream=None, upstream_request=None, observe_upstream_binding=None):
     """Trusted harness only: validate all code before touching the supplied native frontend.
 
     Each wrapper is trusted Python; candidate functions remain inert AST nodes.
     The caller owns sandboxing, input manifests, frontend lifetime and hc.save.
     """
     arrays = arrays or starred_calls or array_arithmetic or public_loops or scalar_augmented or array_mutation
-    nodes, plan = _analyze(source, constants, expected_outputs, input_names, arrays=arrays,starred_calls=starred_calls,array_arithmetic=array_arithmetic,public_loops=public_loops,scalar_augmented=scalar_augmented,array_mutation=array_mutation,slot_period=slot_period)
+    nodes, plan = _analyze(source, constants, expected_outputs, input_names, arrays=arrays,starred_calls=starred_calls,array_arithmetic=array_arithmetic,public_loops=public_loops,scalar_augmented=scalar_augmented,array_mutation=array_mutation,slot_period=slot_period,upstream_helpers=upstream_helpers,upstream_request=upstream_request)
     public = copy.deepcopy(constants); functions = {}
+    trusted = {}
+    if upstream_helpers:
+        from upstream_candidate_helpers import load
+        trusted = load(frontend,upstream_request,observe_upstream_binding)
 
     def make_body(node):
         parameters = tuple(plan['functions'][node.name]['parameters'])
@@ -348,6 +373,12 @@ def register(source, constants, frontend, expected_outputs=1, *, input_names=('x
                                 arguments.extend(value)
                             else:
                                 arguments.append(value)
+                        if n.func.id in trusted:
+                            result=trusted[n.func.id](*arguments)
+                            if observe_upstream is not None:
+                                observe_upstream(dict(caller=node.name,callee=n.func.id,
+                                    span=[n.lineno,n.col_offset,n.end_lineno,n.end_col_offset],actual_upstream=True))
+                            return result
                         result = functions[n.func.id](*arguments)
                         if observe_starred is not None and any(type(a) is ast.Starred for a in n.args):
                             from native_star_exercises import trace_record

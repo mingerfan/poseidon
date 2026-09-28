@@ -1,0 +1,20 @@
+{
+  "binding": "22e7ee48c00e2f74bba89f00e801628e533d7010ac4ab1a756d802e0dfa60ca1",
+  "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-distinct-contexts-r133.json",
+  "evidence_sha256": "8e14b36308a97115b3a103cf635f091a4c1ec39aae20130648e1d9a1e0817556",
+  "fixture_test_scope": "Count unique frozen topology groups; reject mutated/missing evidence; keep skip/blocked/failed separate",
+  "format": "poseidon-distinct-context-tool-acceptance-v1",
+  "new_compilations": 0,
+  "new_encrypted_executions": 0,
+  "new_paid_calls": 0,
+  "stage2_complete": false,
+  "test_sha256": "7dd08a453305216d58c8f21f6a744e921d8575305ec9200cff5019127243347d",
+  "test_source": "scripts/baseline/benchmarks/tools/test_stage2_context_coverage.py",
+  "tests": {
+    "failed": 0,
+    "passed": 8,
+    "skipped": 0
+  },
+  "tool": "scripts/baseline/benchmarks/tools/audit_stage2_context_coverage.py",
+  "tool_sha256": "2ec52a238b41c2f7388c534dcdef4c649f069712b209d3f160c2492556996726"
+}

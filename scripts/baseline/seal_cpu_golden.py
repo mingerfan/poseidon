@@ -72,7 +72,7 @@ def worker(case, directory, keys):
 
 
 def execute_artifact(directory, keys, selectors, *, rotation_steps=(1, 2), expected_inputs=1,
-                     logical_inputs=None, encrypted_zero_input=False, execution_abi=None, input_period=4):
+                     logical_inputs=None, encrypted_zero_input=False, execution_abi=None, input_period=4,logical_tensor_count=None):
     """Shared real-runtime driver; selectors index result ciphertexts then slots."""
     # Bound native failures; process exit frees a VM with no upstream destroy API.
     resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
@@ -81,6 +81,8 @@ def execute_artifact(directory, keys, selectors, *, rotation_steps=(1, 2), expec
     import numpy as np
     raw = (directory / "lowered._hecate_golden.hevm").read_bytes()
     cst = (directory / "_hecate_golden.cst").read_bytes()
+    from seal_artifact_gate import verify_parameter_file
+    public_parameters = verify_parameter_file(keys/"parm.seal", KEY_BUILD/"libseal_artifact_parameters.so")
     gate = inspect_artifacts(raw, cst, rotation_steps=rotation_steps, expected_inputs=expected_inputs,
                              execution_abi=execution_abi,input_period=input_period)
     packed=execution_abi is not None
@@ -90,6 +92,9 @@ def execute_artifact(directory, keys, selectors, *, rotation_steps=(1, 2), expec
     logical_inputs = expected_inputs if logical_inputs is None else logical_inputs
     require(type(logical_inputs) is int and 1 <= logical_inputs <= 4 and type(encrypted_zero_input) is bool and
             expected_inputs == logical_inputs + int(encrypted_zero_input), 'Logical/auxiliary ciphertext count mismatch')
+    from unified_chunk_layout import ABI as CHUNK_ABI
+    require((execution_abi==CHUNK_ABI and type(logical_tensor_count) is int and 1<=logical_tensor_count<=logical_inputs)
+            or (execution_abi!=CHUNK_ABI and logical_tensor_count is None),"Logical tensor/chunk count mismatch")
     input_shape = (4, input_period) if logical_inputs == 1 else (4, logical_inputs, input_period)
     require(inputs.shape == input_shape and np.isfinite(inputs).all(), "Unexpected golden input")
     batches = inputs[:, None, :] if logical_inputs == 1 else inputs
@@ -142,18 +147,20 @@ def execute_artifact(directory, keys, selectors, *, rotation_steps=(1, 2), expec
         observer.inspect_cipher_integrity.restype = ctypes.c_int
     zero_fingerprints = []
 
-    def metadata(vm, register, expected_level, expected_scale):
+    def metadata(vm, register, expected_level, expected_scale, predicted_scale=None):
         level, scale, polys = ctypes.c_uint64(), ctypes.c_double(), ctypes.c_uint64()
         require(observer.describe_cipher(lib.getCtxt(vm, register), ctypes.byref(level),
                     ctypes.byref(scale), ctypes.byref(polys)) == 0, "Metadata observation failed")
         require(math.isfinite(scale.value) and scale.value > 0, "Invalid runtime scale")
         log_scale = math.log2(scale.value)
-        require(level.value == expected_level and abs(log_scale - expected_scale) <= 1e-6,
+        require(level.value == expected_level and scale.value == (math.ldexp(1.0,expected_scale) if predicted_scale is None else predicted_scale),
                 "Runtime level/scale differs from compiler metadata")
         require(polys.value == 2, "Expected compact two-polynomial ciphertext (including relinearization)")
         return dict(data_modulus_count=level.value, log2_scale=log_scale, polynomials=polys.value)
     begin = time.monotonic()
+    require(digest(keys/"parm.seal")==public_parameters["parm_sha256"],"Public parameters changed before VM load")
     vm = lib.initFullVM(os.fsencode(keys))
+    require(digest(keys/"parm.seal")==public_parameters["parm_sha256"],"Public parameters changed during VM load")
     require(bool(vm), "Native VM initialization returned null")
     lib.load(vm, cpath, hpath)
     os.close(hfd)
@@ -181,13 +188,14 @@ def execute_artifact(directory, keys, selectors, *, rotation_steps=(1, 2), expec
         slots = np.zeros((len(gate["res_dst"]), 16384), dtype=np.float64)
         for index in range(len(slots)):
             observation["outputs"].append(metadata(vm, gate["res_dst"][index], gate["res_level"][index],
-                                                     gate["res_scale"][index]))
+                                                     gate["res_scale"][index], gate["propagated_outputs"][index]["scale"]))
             lib.decrypt_result(vm, index, slots[index].ctypes.data_as(doubles))
         output.append(np.array([slots[i, j] for i, j in selectors], dtype=np.float64))
         observations.append(observation)
     np.save(directory / "decrypted.npy", np.stack(output), allow_pickle=False)
     evidence = dict(platform_identity=identity(), mapped_libraries=loaded_libraries(),
         backend="upstream_SEAL_HEVM_CPU", encrypted_execution=True,
+        public_parameter_binding=public_parameters, artifact_gate_version=gate["gate_version"],
         rotation_key_check={"actual_key_file_verified": True, "required_steps": gate["rotation_steps"]},
         bootstrap_executed=False, input_batches=len(inputs), ciphertext_metadata=observations,
         encrypted_input_count=expected_inputs,
@@ -198,6 +206,11 @@ def execute_artifact(directory, keys, selectors, *, rotation_steps=(1, 2), expec
         evidence['auxiliary_encrypted_zero'] = dict(logical_input_count=logical_inputs, index=logical_inputs,
             fresh_per_batch=True, nontransparent=True, binding='trusted_client_public_key_encryption',
             ciphertext_fingerprints=zero_fingerprints)
+    if execution_abi==CHUNK_ABI:
+        evidence['logical_tensor_count']=logical_tensor_count
+        evidence['model_chunk_count']=logical_inputs
+        evidence['auxiliary_encrypted_zero']['model_chunk_count']=logical_inputs
+        evidence['auxiliary_encrypted_zero']['logical_input_count']=logical_tensor_count
     if packed:
         evidence.update(execution_abi=execution_abi,input_slot_period=input_period)
     dump(directory / 'execution.json', evidence)
@@ -290,7 +303,7 @@ def main():
         report["key_configure_command"] = configure
         require(logged(configure, result / "key-configure.log", env=env) == 0, "Key helper configure failed")
         require(logged(["cmake", "--build", str(key_build), "-j2",
-                        "--target", "seal_golden_keys", "seal_golden_metadata"], result / "key-build.log", env=env) == 0,
+                        "--target", "seal_golden_keys", "seal_golden_metadata", "seal_artifact_parameters"], result / "key-build.log", env=env) == 0,
                 "Key helper build failed")
         report["metadata_observer_sha256"] = digest(key_build / "libseal_golden_metadata.so")
         keys = result / "private-keys"

@@ -1,0 +1,49 @@
+{
+  "active_queue": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-queue-r130",
+  "active_queue_binding": "3a630832bf1be2174dcbca13bb8fcc96e8b1d824f456218b2cfc39c287eb8a04",
+  "active_session": 14278,
+  "audited_generations": 843,
+  "audited_http_attempts": 912,
+  "binding": "025fdc4076abf6e6f2ff95e2c1e4ea5dc09d6cdb01de8c1ccc259e087dfd829b",
+  "cause": "Byte counter descended into a transient private-keys directory concurrently removed by existing cleanup; FileNotFoundError stopped queue",
+  "fix": "Versioned scandir counter tolerates disappearance only; preserves other I/O errors, byte limits, old bindings and directory-link policy",
+  "format": "poseidon-artifact-race-recovery-r130",
+  "integration_checks": {
+    "identities_unchanged": 2030,
+    "new_counter_used_by_queue_and_runner": true,
+    "tampering_rejected": 5
+  },
+  "maximum_new_generations": 2936,
+  "maximum_new_http_attempts": 11744,
+  "offline_tests": {
+    "failed": 0,
+    "passed": 8,
+    "skipped": 0
+  },
+  "planned_new_cases": 734,
+  "pure_nix_request_preflight_passed": [
+    27,
+    42
+  ],
+  "runtime_source_sha256": "80738a33351d8c532cd8e4b032de63cc6785d6e5cf8a349f78e52aab5fffd58e",
+  "semantic_partitions": {
+    "backend_blocked": 3,
+    "current_compiler_contexts_passed": 5,
+    "designated_contexts_passed": 25,
+    "incomplete_agent_contexts": 352,
+    "static_controls_separate": 16
+  },
+  "stage2_complete": false,
+  "statuses": {
+    "failed": 48,
+    "launched_unconfirmed": 19,
+    "not_run": 1222,
+    "passed": 741
+  },
+  "summary_binding": "ce2386f0ab93083e77b1cd50eded19658e5a165e698959d47b937f6f02889656",
+  "summary_path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-parallel-summary-r130.json",
+  "summary_sha256": "d6bb3ff361e2a0e4bbddfea7b29dea0ef191089b7a2e152bca21eb2943c39a51",
+  "supplement47_authorization_remains_valid": true,
+  "supplement47_queue_r127_needs_successor_and_fixed_accounting": true,
+  "uncertain_calls_not_retried": 19
+}

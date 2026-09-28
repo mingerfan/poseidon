@@ -1,0 +1,29 @@
+{
+  "agent_calls": 0,
+  "compared_values_across_disjoint_tasks": 3868,
+  "counts": {
+    "baseline": {
+      "blocked_preflight": 110,
+      "not_run": 679,
+      "passed": 411
+    },
+    "free_agent": {
+      "not_run": 1200
+    },
+    "plaintext": {
+      "passed": 1200
+    }
+  },
+  "directed_counts": {
+    "not_run": 627
+  },
+  "max_absolute_error": 8.705916358930921e-07,
+  "report_sha256": "440def9291cb512d1575ad1b0e22ef2c90c7b7e5401870b4f99143b8be1db1df",
+  "snapshot_scope": {
+    "completed_shards": 10,
+    "full_batch_still_running": true,
+    "not_final": true
+  },
+  "evidence_directory": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/benchmark-r35-partial-audit",
+  "status": "interim_not_final"
+}

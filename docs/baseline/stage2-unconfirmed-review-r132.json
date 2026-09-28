@@ -1,0 +1,20 @@
+{
+  "binding": "7c06056964ca601e35ab5106b0b88fdb2f16436f88bed19d73af7bda42d74587",
+  "calls_marked_in_flight": 24,
+  "cases_with_response": 0,
+  "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-unconfirmed-review-r132.json",
+  "evidence_binding": "cb2b4b585e962dbbee27d5f473021501fc2b0196b8a7b60390e35891ff50d68e",
+  "evidence_sha256": "a1c1f6d2d436145e8dde5194ddf80cda8b28ae399db77ab489981396e07de64e",
+  "format": "poseidon-stopped-unconfirmed-call-review-v1",
+  "limitation": "Stopped local process does not establish provider cancellation, billing or successful FHE. No replay, no claim reset, no terminal-status rewrite.",
+  "new_compilations": 0,
+  "new_encrypted_executions": 0,
+  "new_paid_calls": 0,
+  "new_passes": 0,
+  "recorded_generations": 25,
+  "recorded_http_attempts": 30,
+  "retained_states": {
+    "running": 29
+  },
+  "stopped_cases": 29
+}

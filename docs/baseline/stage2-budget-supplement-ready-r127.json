@@ -1,0 +1,30 @@
+{
+  "binding": "824d0741d2aa4204ea5787ec5279f98d56b2ac3938def63b4bf393dfd8b4f666",
+  "current_paid_queue_session": 91737,
+  "current_queue_provider_statuses_of_failed_rows": {
+    "provider_failed": 9
+  },
+  "format": "poseidon-approved-budget-supplement-preflight-r127",
+  "maximum_new_generations": 188,
+  "maximum_new_http_attempts": 752,
+  "new_encrypted_executions": 0,
+  "paid_calls_from_this_preflight": 0,
+  "paid_execution_additional_seconds_less_than": 21600,
+  "pinned_nix_cli_preflight": "pending_after_current_queue_finishes",
+  "prepared_cases": 47,
+  "prepared_shards": 6,
+  "queue_binding": "632f4cf37776433794a8ebc9ecaddd907f2320b3f9c7e88ff64f54580e7920b5",
+  "queue_plan": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-budget-supplement-queue-r127/plan.json",
+  "queue_plan_sha256": "07e32504010f13185d3f6340f03ce34b6676090819b3a1e0ba5dcf54c1cf6586",
+  "real_predecessor_guard": "Predecessor still active; do not launch supplement",
+  "runtime_source_sha256": "80738a33351d8c532cd8e4b032de63cc6785d6e5cf8a349f78e52aab5fffd58e",
+  "stage2_complete": false,
+  "tests": {
+    "failed": 0,
+    "log": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-budget-supplement-preflight-r127/tests.log",
+    "passed": 17,
+    "sha256": "16ebc9d4f3fae24abd650441a8e461ec42f1dc139198b905120baa21a78f046d",
+    "skipped": 0
+  },
+  "total_time_including_bounded_audit_and_launch": 23936.439317252996
+}

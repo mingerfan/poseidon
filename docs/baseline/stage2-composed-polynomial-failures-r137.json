@@ -1,0 +1,231 @@
+{
+  "binding": "7c507a732cbe3b281240aae60fdb06c14649efeb208c296933046a5a08337957",
+  "cases": [
+    {
+      "compiler_failures": [
+        {
+          "configured_bound_rhs": 780,
+          "inferred_bound_lhs": 855,
+          "lhs": {
+            "level": 13,
+            "scale": 75,
+            "shape": 1,
+            "type": "ci"
+          },
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-dzjbirxb/attempt-01/compile.log",
+          "rhs": {
+            "level": 13,
+            "scale": 75,
+            "shape": 1,
+            "type": "ci"
+          },
+          "scale_level_capacity_condition": false,
+          "shape_and_level_match": true
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-dzjbirxb",
+      "formal_pass_credit": false,
+      "id": "free_bench_helper_0035",
+      "polynomials": [
+        {
+          "basis": "chebyshev",
+          "coefficient_count": 16,
+          "node": "n7"
+        },
+        {
+          "basis": "chebyshev",
+          "coefficient_count": 16,
+          "node": "n8"
+        },
+        {
+          "basis": "chebyshev",
+          "coefficient_count": 28,
+          "node": "n9"
+        }
+      ],
+      "request_id": "2b90281021a7b650a3d0ae92cc2e93627a6df03aca8a450db2745d1fdfe32fc7",
+      "static_failures": [
+        {
+          "attempt": 0,
+          "diagnostic": "c/p signature mismatch"
+        },
+        {
+          "attempt": 2,
+          "diagnostic": "Native core arithmetic requires a ciphertext operand"
+        },
+        {
+          "attempt": 3,
+          "diagnostic": "Invalid or colliding parameter name"
+        }
+      ],
+      "terminal_failure_layer": "static_check"
+    },
+    {
+      "compiler_failures": [
+        {
+          "configured_bound_rhs": 780,
+          "inferred_bound_lhs": 810,
+          "lhs": {
+            "level": 12,
+            "scale": 90,
+            "shape": 1,
+            "type": "ci"
+          },
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-35dhphhk/attempt-00/compile.log",
+          "rhs": {
+            "level": 12,
+            "scale": 45,
+            "shape": 1,
+            "type": "ci"
+          },
+          "scale_level_capacity_condition": false,
+          "shape_and_level_match": true
+        },
+        {
+          "configured_bound_rhs": 780,
+          "inferred_bound_lhs": 810,
+          "lhs": {
+            "level": 12,
+            "scale": 90,
+            "shape": 1,
+            "type": "ci"
+          },
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-35dhphhk/attempt-03/compile.log",
+          "rhs": {
+            "level": 12,
+            "scale": 45,
+            "shape": 1,
+            "type": "ci"
+          },
+          "scale_level_capacity_condition": false,
+          "shape_and_level_match": true
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-35dhphhk",
+      "formal_pass_credit": false,
+      "id": "free_bench_helper_0036",
+      "polynomials": [
+        {
+          "basis": "chebyshev",
+          "coefficient_count": 16,
+          "node": "n8"
+        },
+        {
+          "basis": "chebyshev",
+          "coefficient_count": 16,
+          "node": "n9"
+        },
+        {
+          "basis": "chebyshev",
+          "coefficient_count": 28,
+          "node": "n10"
+        }
+      ],
+      "request_id": "a23e3b0b18ed52b816833fc9bae98d6a7b3e777d18f9b703de7ccb2926af7d9e",
+      "static_failures": [
+        {
+          "attempt": 1,
+          "diagnostic": "Native core arithmetic requires a ciphertext operand"
+        },
+        {
+          "attempt": 2,
+          "diagnostic": "Flat container limit"
+        }
+      ],
+      "terminal_failure_layer": "compiler"
+    },
+    {
+      "compiler_failures": [
+        {
+          "configured_bound_rhs": 780,
+          "inferred_bound_lhs": 810,
+          "lhs": {
+            "level": 12,
+            "scale": 90,
+            "shape": 1,
+            "type": "ci"
+          },
+          "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-sqkp0yu3/attempt-03/compile.log",
+          "rhs": {
+            "level": 12,
+            "scale": 45,
+            "shape": 1,
+            "type": "ci"
+          },
+          "scale_level_capacity_condition": false,
+          "shape_and_level_match": true
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-sqkp0yu3",
+      "formal_pass_credit": false,
+      "id": "free_bench_helper_0037",
+      "polynomials": [
+        {
+          "basis": "chebyshev",
+          "coefficient_count": 16,
+          "node": "n8"
+        },
+        {
+          "basis": "chebyshev",
+          "coefficient_count": 16,
+          "node": "n9"
+        },
+        {
+          "basis": "chebyshev",
+          "coefficient_count": 28,
+          "node": "n10"
+        }
+      ],
+      "request_id": "367f68c950e3c2594e2b873bb2b5bde8a15cbc41fd4ca4e32098519f2b17e8fd",
+      "static_failures": [
+        {
+          "attempt": 0,
+          "diagnostic": "Undefined value"
+        },
+        {
+          "attempt": 1,
+          "diagnostic": "Native core arithmetic requires a ciphertext operand"
+        },
+        {
+          "attempt": 2,
+          "diagnostic": "Flat container limit"
+        }
+      ],
+      "terminal_failure_layer": "compiler"
+    }
+  ],
+  "confirmed": [
+    "All three original candidates exhausted their existing repair allowance.",
+    "Four retained compiler attempts fail the Earth multiplication scale/level capacity condition under the exact frozen SEAL profile.",
+    "Terminal failure layers remain distinct: helper_0035 static_check; helper_0036 and helper_0037 compiler.",
+    "The mathematical graphs contain successive Chebyshev polynomials with 16,16,28 coefficients."
+  ],
+  "follow_up": "Retain original responses and failures. Group any future targeted diagnostic work after the current frozen queue; no implicit paid retry or profile changes.",
+  "format": "poseidon-campaign-failure-group-v1",
+  "inference": "These share the capacity symptom of the two earlier recorded composed-polynomial failures; this does not establish that their mathematical models are impossible.",
+  "modifications": [
+    "diagnostic document only"
+  ],
+  "new_compilations": 0,
+  "new_encrypted_executions": 0,
+  "new_paid_calls": 0,
+  "new_passes": 0,
+  "parents": {
+    "/home/lhohy/Code/Poseidon/third_party/dacapo/lib/Dialect/Earth/IR/EarthDialect.cpp": "f022d4668e0bfac7e9389a54573836c66422dbd015fc857804f14ec6d3bd6a9c",
+    "/home/lhohy/Code/Poseidon/third_party/dacapo/profiled_SEAL_CPU.json": "ab53faeac14298e846a4ea8e9b2cbfaef4469a6b03ba25b80f37c79387fd246e",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-35dhphhk/attempt-00/compile.log": "272f6c4a6c13b5ffc3062b27e56c6d3c2f982953e8ea30d65344f29ddeefa050",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-35dhphhk/attempt-03/compile.log": "8420b94602c59892679f6446e86b18d899c908f057fc5539e10b51e75d9246e9",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-35dhphhk/model.json": "749e82b1d278d7d798736da99fdf7b8ae1afffd745aa2efc75f635bd92acafc2",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-35dhphhk/report.json": "8e7a2858a2ad185f5a9252a15264d5dd3f3a6d4b9f5119723adaefc38a4ad106",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-dzjbirxb/attempt-01/compile.log": "5b1519532a90a8fc706a70cb0c483e9350ad7c02ef0bb37697ef567760cfef8c",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-dzjbirxb/model.json": "91aecdb76b34c60b393c64d0526734c24cd13ed8ff085cf2b4508065dcd2c4ad",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-dzjbirxb/report.json": "f25d95ad7ecc9550579cd47186f4b19d85a9ba60c801abf08b64d18ee29cec31",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-sqkp0yu3/attempt-03/compile.log": "8420b94602c59892679f6446e86b18d899c908f057fc5539e10b51e75d9246e9",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-sqkp0yu3/model.json": "3769a5b871c9f5304882c351f7368c2335df4c13b0970ddb718d408a2874305e",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-sqkp0yu3/report.json": "bc2133700eb9616a2f9f27a0ef7cbd9acecee47c1874b2b8f53a62bafae1bfe7"
+  },
+  "runtime_source_sha256": "80738a33351d8c532cd8e4b032de63cc6785d6e5cf8a349f78e52aab5fffd58e",
+  "unconfirmed": [
+    "Whether a different legal generated DSL evaluation fits this same frozen compiler profile."
+  ]
+}

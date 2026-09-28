@@ -1,0 +1,106 @@
+{
+  "schema": 1,
+  "phase": "chebyshev_capacity_r28",
+  "status": "bounded_diagnosis_complete_overall_plan_incomplete",
+  "checkout": "/home/lhohy/Code/Poseidon",
+  "branch": "lhy-agent-dsl",
+  "head": "3493c905dd8f4ce8e04211c83b337be243befe14",
+  "runtime_source_sha256": "9a2ee4fd66e51c06fe22a87bbb8418f94d2d3330269e2b7dbb51fde999b70251",
+  "unit": {
+    "errors": 0,
+    "failed": 0,
+    "passed": 8,
+    "run": 8,
+    "skipped": 0
+  },
+  "encrypted_passed": 3,
+  "compiler_failed": 2,
+  "execution_skipped": 0,
+  "actual_compile": true,
+  "actual_seal_cpu": true,
+  "actual_decrypt": true,
+  "compiler_artifacts_audited": 3,
+  "positive_rows": [
+    {
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-mjnzj1y1",
+      "exit_code": 0,
+      "id": "balanced_degree_2",
+      "status": "passed"
+    },
+    {
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-90id2xya",
+      "exit_code": 0,
+      "id": "balanced_degree_7",
+      "status": "passed"
+    },
+    {
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-o88q1nfh",
+      "exit_code": 0,
+      "id": "balanced_degree_15",
+      "status": "passed"
+    }
+  ],
+  "failures": [
+    {
+      "id": "bench_helper_0040",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-wu7zdczx",
+      "candidate_sha256": "7642abef2f9a71148c4d39c200c9f940a247ad73db82386d4151c7290858031a",
+      "compile_log_sha256": "52810e5aad5017448d0d294a706756b143b68512506c0bb530068f69ae589904",
+      "observed_types": [
+        "ci<90 * 12>",
+        "pl<45 * 12>"
+      ],
+      "candidate_matches_probe": true,
+      "candidate_differs_from_default": true,
+      "compiled": false,
+      "executed": false
+    },
+    {
+      "id": "bench_helper_0044",
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-9bxr_0ge",
+      "candidate_sha256": "141be6752042afcb2359cfd2724b8c06b47e46e34a50e9483dd4a44193bd3736",
+      "compile_log_sha256": "982c8b4d728adeb549473121f6bc9888e517b9b7b23c327c9bb999cb7ea7e183",
+      "observed_types": [
+        "ci<90 * 12>",
+        "pl<45 * 12>"
+      ],
+      "candidate_matches_probe": true,
+      "candidate_differs_from_default": true,
+      "compiled": false,
+      "executed": false
+    }
+  ],
+  "compared_values": 12,
+  "max_absolute_error": 5.501591543444206e-10,
+  "balanced_generator_opt_in_only": true,
+  "default_candidate_generation_unchanged": true,
+  "coefficients_truncated": false,
+  "reference_changed": false,
+  "security_parameters_changed": false,
+  "tolerance": "abs(actual-reference) <= 1e-5 + 1e-4*abs(reference)",
+  "paid_api_calls": 0,
+  "installed": false,
+  "downloaded": false,
+  "commit": false,
+  "push": false,
+  "pr": false,
+  "evidence": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/chebyshev-r28-balanced/report.json": "3b91e4510a6440686e335968509e211dbb0e98439e8f702dfbe529aadddd3640",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/chebyshev-r28-positive/report.json": "7c073bc8e1021ebc379cd5929fb16668ce5af0ae14607fee83dab126e1384146",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/chebyshev-r28-positive/unit.json": "994def733a9e54ab2a5bd65e3d5944d9c4c31556453689c5664822ab48d6d9c5",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/chebyshev-r28-compiler-evidence.json": "22f025aff3fa12adcda6edca25b946c80854761e0481739aa0127ce9be20d58e"
+  },
+  "source_archive": {
+    "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/chebyshev-r28-source.tar.gz",
+    "sha256": "55715ca1cd316b7152b12005c467e0feeb0a1e76547bd8d5ec6d46eaa4e5d81c"
+  },
+  "conclusion": "Two tested exact expressions fail the fixed compiler capacity guard. This is not a proof that every equivalent DSL program fails.",
+  "remaining": [
+    "chunk/helper joint layout",
+    "bootstrap helper execution",
+    "other parameter/resource boundaries",
+    "w40 precision diagnosis",
+    "final-source full corpus and 627 construction encrypted runs",
+    "separately approved paid Agent evaluation"
+  ]
+}

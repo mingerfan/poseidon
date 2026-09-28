@@ -1,0 +1,457 @@
+{
+  "binding": "796097fa261ad80576a35e8595b09795bfacd089f0c33a1d9dee2e104dae08d8",
+  "current_runtime_sha256": "3e857c649bb4c95a63a272d3ec187405da991dfa7513ced0f39431bba3b58b88",
+  "format": "poseidon-recovered-helper-contexts-v1",
+  "historical_reference_verifier_sha256": "75b102b717e73e209fa3cf0363766a2a731497385e90ec39b5daececf46afb03",
+  "ledger_sha256": "f07d6fbb1f2c55022dcbc421a9e8082b446d3bdc34dff170ebd3f97352fb8851",
+  "new_ciphertext_executions": 0,
+  "original_batch": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-virtual-r26-verified-helper-directed",
+  "original_frozen_task_count": 60,
+  "original_plan_sha256": "be6f0a65fe6f965a43f792aa0f2b0c666cdfa26755985fc93104e931c7b19ab0",
+  "original_report_sha256": "40d0b5eb3c01f3e52da9df4985d4b22bd516fed61b1e6b9e3090c4f0575ff14e",
+  "paid_calls": 0,
+  "recovered_tasks": 3,
+  "rows": [
+    {
+      "actual_frontend_and_return_contribution_verified": true,
+      "comparison": {
+        "absolute_error": [
+          [
+            1.4273887627425097e-10,
+            5.0822401842509635e-12
+          ],
+          [
+            5.3316920323176475e-11,
+            1.5025203303764556e-12
+          ],
+          [
+            4.646066864566478e-11,
+            4.151914922978506e-12
+          ],
+          [
+            7.037898042128177e-11,
+            1.4159562411464321e-11
+          ]
+        ],
+        "actual": [
+          [
+            -0.12499968764508261,
+            -0.1249996874972615
+          ],
+          [
+            0.04166614578392262,
+            -0.4583313541830128
+          ],
+          [
+            0.37369735518689884,
+            -0.08519749838171334
+          ],
+          [
+            0.37499781244602715,
+            -0.6249971875352531
+          ]
+        ],
+        "atol": 1e-05,
+        "compared_values": 8,
+        "cosine_similarity": 1.0,
+        "elementwise_pass": [
+          [
+            true,
+            true
+          ],
+          [
+            true,
+            true
+          ],
+          [
+            true,
+            true
+          ],
+          [
+            true,
+            true
+          ]
+        ],
+        "mae": 4.222396043918053e-11,
+        "max_absolute_error": 1.4273887627425097e-10,
+        "max_nonzero_reference_relative_error": 1.2796220829123085e-09,
+        "nonzero_reference_count": 8,
+        "passed": true,
+        "reference": [
+          [
+            -0.12499968750234373,
+            -0.12499968750234373
+          ],
+          [
+            0.04166614583723954,
+            -0.4583313541815103
+          ],
+          [
+            0.37369735514043817,
+            -0.08519749837756142
+          ],
+          [
+            0.3749978125164061,
+            -0.6249971875210936
+          ]
+        ],
+        "relative_error": [
+          [
+            1.1419138649572594e-09,
+            4.065802311830317e-11
+          ],
+          [
+            1.2796220829123085e-09,
+            3.2782403312984373e-12
+          ],
+          [
+            1.2432699350575957e-10,
+            4.8732826691446625e-11
+          ],
+          [
+            1.876783759057333e-10,
+            2.265540180688643e-11
+          ]
+        ],
+        "rtol": 0.0001
+      },
+      "current_contract_accepted": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-qnnvgfnd",
+      "files": {
+        "arrays.npz": "1943c87f3615274338baf7ec9799a7a51c64fcbaf52bcc55938f22cac46ce3a0",
+        "attempt-00/candidate.py": "ecd3df882d7b0741d089ef8c79ea0346de701f38737cc430e643ef5cbf7d6ee8",
+        "attempt-00/compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "attempt-00/execute.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "attempt-00/feedback.json": "e5dea5088aead6acd3b03a2e046663a1d43d1336974a9bf80666ec67dbc06d48",
+        "attempt-00/output/_hecate_golden.cst": "dbbe92432c364ca41d6da9152f6c3bdfa5a0520d182e67e5b4b402bee123223c",
+        "attempt-00/output/_hecate_golden.cst.upstream-original": "dbbe92432c364ca41d6da9152f6c3bdfa5a0520d182e67e5b4b402bee123223c",
+        "attempt-00/output/arrays.npz": "2ce82782eae6b52afda85d29f4b138d11608e1a62504f0d494b5748c3c64da64",
+        "attempt-00/output/candidate_trace.mlir": "57d2c936145e7c450920a7c0514544c6c6ffec077f10ae82ad181da7ad64f2eb",
+        "attempt-00/output/constant-layout.json": "4b9b469a165963dc751cf56925dd1335d308d3ba7c882559359f277622dfd259",
+        "attempt-00/output/decrypted.npy": "6f2edb3816a6cc61d38efa7c1b33d0595fb70607fe3f249eb8b989f59331269a",
+        "attempt-00/output/execution.json": "774b4efc5c881bb8aa09162d5bfb871b14b976cf51dada0707ff8af4f1c83df4",
+        "attempt-00/output/lowered._hecate_golden.hevm": "9b195baf16235ffa8cd9a3be7a70b928a1578571a983ef07336062dd3527acf2",
+        "attempt-00/output/lowered.ckks.mlir": "1f502f571829ddcba97672cf5998fb1da811916d8d2101289e21c19568bd10d7",
+        "attempt-00/output/lowered.earth.mlir": "405d71281e07b74f4dc582311ab6645be70da2a0f4f64ed85c3d61fb1951b874",
+        "attempt-00/output/lowered.mlir": "ebe22961e355d9c77802929b7d4ef90c7314355d8f6bb565b29d4452287d579c",
+        "attempt-00/output/native-array-mutation-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "attempt-00/output/native-augmented-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "attempt-00/output/native-call-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "attempt-00/output/native-function-plan.json": "e2dd08044711e3add9697ca1c4dc564315c11f6f74327975a673144b4f5ffeb2",
+        "attempt-00/output/trace-evidence.json": "7b39b85552b6b699ae0d6f4aab8b3cebd1ff104a8e5c5e500217aed64c3f879e",
+        "attempt-00/output/upstream-calls.json": "c21b8a9637ac31716bf6c3fad3be28cbf660a166de6e3a0d9b23c74583dbd51b",
+        "attempt-00/report.json": "b3c0746d05176e309c6cf4725e0983ad8d2fa240d494430d421c3d26f3750c72",
+        "attempt-00/response.txt": "c3187fe4d4d9ce10d67b7aed2827a8919993a5c353dee571bff484804a1dddbd",
+        "attempt-00/trace-payload.json": "1e8b7dc1b28af31b3124ae0f3609e640b7eb2c10e4d7bcaed5a43a5a7aec2659",
+        "attempt-00/trace.log": "5e5972f471a4ed028b4b2355c59d50a444d7ab29f6939602756912069fb5365c",
+        "key-cleanup-outcome.json": "017c5ed1a1ab9c7b723a5b3056791e1d88617342d77bf5426c3a08b07d18e254",
+        "key-cleanup.json": "dd9887b46e36e711d5e0a970b742c8dbab82612b93547372f4043dccd4bd69b2",
+        "logical-bindings.json": "ae781366eebb8199d79ebc885478213a634f87ae20d54d6a987434fc27780190",
+        "model-structure.txt": "7805b47c1587c1443a077784b27e27309d9673a04fb36896c372fc892964f7f6",
+        "model.json": "8353e8fdbcf4e150e7326776999b32a565c8089d8ca5e27cee971714f3c41c78",
+        "parameters.json": "66682b0ca95a40411bc44f25b6d39fe5f4146dd2e413d79c16ba7024c9fff6fb",
+        "private-sentinel.txt": "183dfd75ab3380e80c052fa2542fd260bff19faafe9482c4b1d55f5f90610174",
+        "probe-payload.json": "8bd3a1b53f18b1515e268975958c9f143adcaaa09e0b38e1639a4271195cdbed",
+        "probe.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "probe/probe.json": "1fe73da9e381f9eefe7fddcf6391b00b98cdfb34a2346cbf8a2bb122458e0976",
+        "report.json": "49578ace05f14172742d506ba09348d2e7f8404c86a3c27f9600f0897e769b2a",
+        "request.json": "a63b3fec3c9d92ecdf0c7ded85b8be3c0b146aaaf22ad37ea33eaf341d2b5848",
+        "rule-answer.py": "be25a9a3d4291c5c94bba9d6bde151e88e227821fa82213ea36770bda8b044ce",
+        "weights.npz": "7fcfc25f421dbd936fdd819afc1d6c538be8f0871734993bf7e3f301d69883a3"
+      },
+      "historical_ciphertext_execution": true,
+      "historical_runtime_sha256": "fe1c6a9c5a9103d2866fe17604c6eac48383295fb729e67eee4fd8bd23ad2808",
+      "independently_rechecked_reference": true,
+      "model_sha256": "89c0a33e646d077abdef0cfe2a60d45cab2527a68eb4d5cc530673cd98d94ebd",
+      "new_ciphertext_execution": false,
+      "report_sha256": "49578ace05f14172742d506ba09348d2e7f8404c86a3c27f9600f0897e769b2a",
+      "required_helpers": [
+        "HE_MPBN0"
+      ],
+      "task_id": "upstream_bench_helper_0008",
+      "task_sha256": "1cd84ac7e3ff672c3e120fcf14eb6be0f08540342f28157564189cc3cc3dba38",
+      "topology": "ba4c6e4d2166d9aad92f73a397e887d86dcc2e6b1c5e11eb335e1e7daa972b5d"
+    },
+    {
+      "actual_frontend_and_return_contribution_verified": true,
+      "comparison": {
+        "absolute_error": [
+          [
+            1.8096855278204593e-07
+          ],
+          [
+            1.811508485438651e-07
+          ],
+          [
+            1.7938722114696493e-07
+          ],
+          [
+            1.8011009362065011e-07
+          ]
+        ],
+        "actual": [
+          [
+            -0.06250018096855278
+          ],
+          [
+            -0.041666847817515215
+          ],
+          [
+            0.06466235390167112
+          ],
+          [
+            0.03124981988990638
+          ]
+        ],
+        "atol": 1e-05,
+        "compared_values": 4,
+        "cosine_similarity": 0.9999999999939845,
+        "elementwise_pass": [
+          [
+            true
+          ],
+          [
+            true
+          ],
+          [
+            true
+          ],
+          [
+            true
+          ]
+        ],
+        "mae": 1.8040417902338152e-07,
+        "max_absolute_error": 1.811508485438651e-07,
+        "max_nonzero_reference_relative_error": 5.763522995860804e-06,
+        "nonzero_reference_count": 4,
+        "passed": true,
+        "reference": [
+          [
+            -0.0625
+          ],
+          [
+            -0.04166666666666667
+          ],
+          [
+            0.06466253328889227
+          ],
+          [
+            0.03125
+          ]
+        ],
+        "relative_error": [
+          [
+            2.895496844512735e-06
+          ],
+          [
+            4.3476203650527614e-06
+          ],
+          [
+            2.7742065153172724e-06
+          ],
+          [
+            5.763522995860804e-06
+          ]
+        ],
+        "rtol": 0.0001
+      },
+      "current_contract_accepted": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-ws9nffc8",
+      "files": {
+        "arrays.npz": "d90f9efbd37c85b0ff7c59aca0827e7d373fd23ae69b799be5f21b5e4f5f144c",
+        "attempt-00/candidate.py": "6e5bfa6b8864a8e6415306521562bf47aef583b96541526f7bb5bf13f451228d",
+        "attempt-00/compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "attempt-00/execute.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "attempt-00/feedback.json": "13f16e4f90c052acdd885b6ac595f59f38e045b6175579df9e5230dafd026815",
+        "attempt-00/output/_hecate_golden.cst": "b6d91ce5ab87cbb4cc871972bc1275070f41821a882a070b8d095a1315bdb529",
+        "attempt-00/output/_hecate_golden.cst.upstream-original": "b6d91ce5ab87cbb4cc871972bc1275070f41821a882a070b8d095a1315bdb529",
+        "attempt-00/output/arrays.npz": "2ce82782eae6b52afda85d29f4b138d11608e1a62504f0d494b5748c3c64da64",
+        "attempt-00/output/candidate_trace.mlir": "2315086e825971743f861c3d548ea96ce7917c31b4966c2af09e02b6e228a6a1",
+        "attempt-00/output/constant-layout.json": "07f1fad39c7829c220d759cfb32a97e20a211adb2bd835d228acf01be8b44964",
+        "attempt-00/output/decrypted.npy": "cddb8c69f8ab30e9018479f37e12ad71c75b1f8fd74e877de9fd6fe04c248f2f",
+        "attempt-00/output/execution.json": "b741a8c712a885eae27e1469f4b0619e412d178f2b0c125c7da0c59916d195ca",
+        "attempt-00/output/lowered._hecate_golden.hevm": "359eb83f1e8dc921a124ed6cc91367b288528e494a57340d60b116036d837c4a",
+        "attempt-00/output/lowered.ckks.mlir": "b7841cd52ad832283eef8c1fc46795afb493d6fc36db24c4df221a0850c3e804",
+        "attempt-00/output/lowered.earth.mlir": "a446eff1b6aac8481d66a8bf6c7bb13d491b6a514ac5fbca736a981027eadcd9",
+        "attempt-00/output/lowered.mlir": "a8b1dc185f9d89cea0f8486b8cd5e62cc088730098e53e17b34feb4638646519",
+        "attempt-00/output/native-array-mutation-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "attempt-00/output/native-augmented-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "attempt-00/output/native-call-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "attempt-00/output/native-function-plan.json": "3095ad481055193b2602fe2e2a65ccbe638e2a4e181109e68f7fd2b4c14c9a7f",
+        "attempt-00/output/trace-evidence.json": "fdc4faaf58d68cf1909f88e51c9541d457ee1f23bb36d418302ab2ee79014584",
+        "attempt-00/output/upstream-calls.json": "448f80fe02bea96193ca85526cbcb0d90b8cd571e13d8e0bf2041bf7f598b430",
+        "attempt-00/report.json": "42ddb70fe37b7b12ea07f11b870da795aa7137cc17740416c0d50c8f64be0f21",
+        "attempt-00/response.txt": "1c6114b98758ba0b0db15def9e9c132bac25c86563a17d022a0d1e6124ccbc5f",
+        "attempt-00/trace-payload.json": "98012a64d2eb9a09700e928a7af6dc95407b2c9e4e66111f41522dfc68c60cd6",
+        "attempt-00/trace.log": "5e5972f471a4ed028b4b2355c59d50a444d7ab29f6939602756912069fb5365c",
+        "key-cleanup-outcome.json": "c397db24b8dd92e930f05676d448cd79cb627a2dc1a9381cf86fd791205a5ed0",
+        "key-cleanup.json": "832687b79ca74601288600bde34384297a7b17b9843b9dd2649ae63a2b10d2fb",
+        "logical-bindings.json": "87ad6b957dbecd5c5563e4b73f7e21938c0ab294d15753be38383e22d8f94d0d",
+        "model-structure.txt": "7805b47c1587c1443a077784b27e27309d9673a04fb36896c372fc892964f7f6",
+        "model.json": "bf8784b20d15cdb60cb8f6b1fd5557c15d3e20d161b32e6adad6e8946dc24d09",
+        "parameters.json": "66682b0ca95a40411bc44f25b6d39fe5f4146dd2e413d79c16ba7024c9fff6fb",
+        "private-sentinel.txt": "183dfd75ab3380e80c052fa2542fd260bff19faafe9482c4b1d55f5f90610174",
+        "probe-payload.json": "44bf0724f10e1161d282fae514f246079af6828b93cb0b762a97a63a65aa7cc2",
+        "probe.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "probe/probe.json": "1fe73da9e381f9eefe7fddcf6391b00b98cdfb34a2346cbf8a2bb122458e0976",
+        "report.json": "fd8e4d6f0104248c1c4b549f7791009e7bd3c7f3085e9f7d8cb8a62d5737ca9b",
+        "request.json": "7519ff427c2d87f9e29ba2e393022a0d8e46cb3956aa97df45983f36d500f0a3",
+        "rule-answer.py": "a70ff337ad691577c2952f4695dfe506d40ae4744b73ee5c075d01f7f25a3353",
+        "weights.npz": "13d43be8c684d3bfb4d8a20f24e251fbb31271f4d1e77516fc5491736bece10f"
+      },
+      "historical_ciphertext_execution": true,
+      "historical_runtime_sha256": "fe1c6a9c5a9103d2866fe17604c6eac48383295fb729e67eee4fd8bd23ad2808",
+      "independently_rechecked_reference": true,
+      "model_sha256": "84fe5fbb4b29f093364ed4f1690d3a21735b264dbc16f6562ebcaf3d216004d1",
+      "new_ciphertext_execution": false,
+      "report_sha256": "fd8e4d6f0104248c1c4b549f7791009e7bd3c7f3085e9f7d8cb8a62d5737ca9b",
+      "required_helpers": [
+        "HE_Linear0"
+      ],
+      "task_id": "upstream_bench_helper_0072",
+      "task_sha256": "2caa3f65187aa30578fd4f83f8681f6c4ca4c0a0e18b2593aedfe2a1452a91be",
+      "topology": "68c6aa6d808e8a219c12e2a2049145399956f13fe02cff76d164428aec015db0"
+    },
+    {
+      "actual_frontend_and_return_contribution_verified": true,
+      "comparison": {
+        "absolute_error": [
+          [
+            4.196040890164232e-07
+          ],
+          [
+            4.232788466257409e-07
+          ],
+          [
+            4.246438165822486e-07
+          ],
+          [
+            4.2322536097927355e-07
+          ]
+        ],
+        "actual": [
+          [
+            0.06250041960408902
+          ],
+          [
+            0.0416670899455133
+          ],
+          [
+            -0.06466210864507568
+          ],
+          [
+            -0.03124957677463902
+          ]
+        ],
+        "atol": 1e-05,
+        "compared_values": 4,
+        "cosine_similarity": 0.9999999999669571,
+        "elementwise_pass": [
+          [
+            true
+          ],
+          [
+            true
+          ],
+          [
+            true
+          ],
+          [
+            true
+          ]
+        ],
+        "mae": 4.2268802830092156e-07,
+        "max_absolute_error": 4.246438165822486e-07,
+        "max_nonzero_reference_relative_error": 1.3543211551336753e-05,
+        "nonzero_reference_count": 4,
+        "passed": true,
+        "reference": [
+          [
+            0.0625
+          ],
+          [
+            0.04166666666666667
+          ],
+          [
+            -0.06466253328889227
+          ],
+          [
+            -0.03125
+          ]
+        ],
+        "relative_error": [
+          [
+            6.713665424262771e-06
+          ],
+          [
+            1.015869231901778e-05
+          ],
+          [
+            6.567076713265639e-06
+          ],
+          [
+            1.3543211551336753e-05
+          ]
+        ],
+        "rtol": 0.0001
+      },
+      "current_contract_accepted": true,
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/candidate-replay-pl0calfn",
+      "files": {
+        "arrays.npz": "e4e7e8ee9fa897eafeddbb787efa53ac2866cb5e9beaa9e1fdbc5b499dae0d7f",
+        "attempt-00/candidate.py": "2d8a86366dab5e4e2b76fe1ffbf16e634e5c20ba1da707b927b9df9fa59afeea",
+        "attempt-00/compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "attempt-00/execute.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "attempt-00/feedback.json": "0d6556ea144ca69070c199ebf0ce24952b14c1615d97027c8b593cf97cc31298",
+        "attempt-00/output/_hecate_golden.cst": "b6d91ce5ab87cbb4cc871972bc1275070f41821a882a070b8d095a1315bdb529",
+        "attempt-00/output/_hecate_golden.cst.upstream-original": "b6d91ce5ab87cbb4cc871972bc1275070f41821a882a070b8d095a1315bdb529",
+        "attempt-00/output/arrays.npz": "2ce82782eae6b52afda85d29f4b138d11608e1a62504f0d494b5748c3c64da64",
+        "attempt-00/output/candidate_trace.mlir": "f9a4bf79190df4c44ddc048c3278dffb1af692c38906b9b8808987ececa086c5",
+        "attempt-00/output/constant-layout.json": "07f1fad39c7829c220d759cfb32a97e20a211adb2bd835d228acf01be8b44964",
+        "attempt-00/output/decrypted.npy": "62695ddb8763badec5a0676ca4891b2f86b497e7144a2d886d763c3cfeea20b0",
+        "attempt-00/output/execution.json": "79a4a9ba846478762983816b67f5dec64fc79d16124dd89777eb9af243767a1c",
+        "attempt-00/output/lowered._hecate_golden.hevm": "623e177d5342454ab53e5281f0a4aa85cc038ae69febb50c3c59ba8db1fc54fe",
+        "attempt-00/output/lowered.ckks.mlir": "ce2fffbddd7ae34a47cf706e9aec0fdec084b64b0e89f8733c585a79acfc9eff",
+        "attempt-00/output/lowered.earth.mlir": "cd256e0853ab085d30fe472d3ab43ea2b1cb0c63962f89b1d1bc9cb5e7a83d01",
+        "attempt-00/output/lowered.mlir": "03b92a859070ff30c65c3a946cb396ba4e3192d146b8cf413c333bd0d544071b",
+        "attempt-00/output/native-array-mutation-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "attempt-00/output/native-augmented-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "attempt-00/output/native-call-events.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "attempt-00/output/native-function-plan.json": "1b652b3a03a2bd1719a8f2f2d41ee6ee5f970f736165db8e422c117d06288b0d",
+        "attempt-00/output/trace-evidence.json": "315981487453128764cbfa03a2d8386c40972a079caff5930a8ab2e9ba7127d4",
+        "attempt-00/output/upstream-calls.json": "01bcb38868923b0bf424e97c637cb319cd25259497db8b2c0307f9dcfe88783f",
+        "attempt-00/report.json": "639cb23993896f5158cdc88baa9140a45eff3633acbd408857a1806630356eea",
+        "attempt-00/response.txt": "d770a550c1c7689b237d60f5c805c7147eeef2d47a866d545767562065b607fa",
+        "attempt-00/trace-payload.json": "5262e632d2cec14d8f1c802c6450e4f6a13e3f400abdc2d936b92f9581d58d68",
+        "attempt-00/trace.log": "f8c2ba58428708835f922377dfb26ece35044861176a7718c85d631c78fc7bce",
+        "key-cleanup-outcome.json": "43b75749bdb07cbe9a43872215a3d5605532b84fa2445f54eb4ed8557259ea59",
+        "key-cleanup.json": "7bf2e6fbfbb13a8316498b6d25aa4acbde9f26a4c6dcb442d30b6ace1d5df530",
+        "logical-bindings.json": "6af6e9f52f44fa5f78df4529cf6f369d8acb3ba7e94c5ef0715338443f59f613",
+        "model-structure.txt": "7805b47c1587c1443a077784b27e27309d9673a04fb36896c372fc892964f7f6",
+        "model.json": "54079a661dff7800c2116f7fd998ee4511ccb3f951702e642d91a0bf09cec445",
+        "parameters.json": "66682b0ca95a40411bc44f25b6d39fe5f4146dd2e413d79c16ba7024c9fff6fb",
+        "private-sentinel.txt": "183dfd75ab3380e80c052fa2542fd260bff19faafe9482c4b1d55f5f90610174",
+        "probe-payload.json": "c9dee4e177145046ecd943b2dffab7f0522bd616ae20725795c0eab7cbc19146",
+        "probe.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "probe/probe.json": "1fe73da9e381f9eefe7fddcf6391b00b98cdfb34a2346cbf8a2bb122458e0976",
+        "report.json": "8af8b0146e390227920c9b76810ebb817a15a474b575a591daf711ef6a7a29fd",
+        "request.json": "1ac671692e0be0f40631a198b3516ac3a05f3d9037686b994b14786c6cdf7ef7",
+        "rule-answer.py": "88a84fec31f3e2fde1cf79200b61aaa2610afa4cf9d40fa735fb7628c4cce748",
+        "weights.npz": "13d43be8c684d3bfb4d8a20f24e251fbb31271f4d1e77516fc5491736bece10f"
+      },
+      "historical_ciphertext_execution": true,
+      "historical_runtime_sha256": "fe1c6a9c5a9103d2866fe17604c6eac48383295fb729e67eee4fd8bd23ad2808",
+      "independently_rechecked_reference": true,
+      "model_sha256": "970d6e07be80c6fdcecec2c66417525a200e324f3df2cf4e86bb324b2a1c5696",
+      "new_ciphertext_execution": false,
+      "report_sha256": "8af8b0146e390227920c9b76810ebb817a15a474b575a591daf711ef6a7a29fd",
+      "required_helpers": [
+        "HE_ReshapeLinear0"
+      ],
+      "task_id": "upstream_bench_helper_0080",
+      "task_sha256": "7ee58ebe715410d30b27b7c9e32c5ab01f1c6d69386f23df3e4fa193684f5f85",
+      "topology": "271b4819c12d55c1f569931995f0723a635b3ff28d0ef5ceca0cff79f221835a"
+    }
+  ],
+  "runner_sha256": "b2823c466da98ef814dd750b8042c7a9f9c73b76af39e77e830f24011ba6d463"
+}

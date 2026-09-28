@@ -1,0 +1,201 @@
+{
+  "all_agent_tasks_passed": false,
+  "binding": "607a7be474674418dfcd4b77f256a0b39b8a8b26d3822fb0739faf35e0c8155f",
+  "continuing_research_and_backend_gaps": [
+    "Agent success gaps and static/compiler/numerical/provider failures remain genuine benchmark findings.",
+    "No same-current-runtime full 2030-task replay is claimed.",
+    "Real bootstrap remains unavailable; GPU and arbitrary Python are outside this milestone.",
+    "Stage 3 operator decomposition/Python/MLP/RMSNorm/Attention is not completed by this acceptance.",
+    "Further paid repair batches require separate approval; historical billing uncertainty remains."
+  ],
+  "corpus": {
+    "dual_reference_passed": 1200,
+    "legacy_anchors": 96,
+    "models": 1200,
+    "probes": 19200,
+    "small_models": 1137,
+    "split_counts": {
+      "development": 720,
+      "holdout": 240,
+      "validation": 240
+    },
+    "topology_groups": 779,
+    "unique_signatures": 1200
+  },
+  "current_runtime_sha256": "f6493518f4bf63c257fb7eab9f9a782a89cf5cf4a16c9006f607976f2c58b69b",
+  "definition": "The revised plan defines separate offline engineering acceptance and real Agent evaluation. Completed evaluation reports failures; it is not a requirement that every generated candidate succeed.",
+  "format": "poseidon-stage2-milestone-acceptance-r152",
+  "full_agent_semantic_success_coverage": false,
+  "milestone_offline_engineering_complete": true,
+  "milestone_paid_evaluation_complete": true,
+  "new_compilations": 0,
+  "new_encrypted_executions": 0,
+  "new_paid_calls": 0,
+  "offline_requirement_counts": {
+    "accepted_current_static": 16,
+    "accepted_historical_artifact": 5,
+    "accepted_historical_construction": 209,
+    "accepted_historical_helper": 15,
+    "accepted_historical_numeric": 153,
+    "backend_blocked": 3
+  },
+  "original_agent_three_topology_success": {
+    "denominator": 377,
+    "scope": "Original r145 source; recovery variants are not merged into a current-version score",
+    "verified": 239
+  },
+  "original_evidence_unchanged": true,
+  "original_outcomes": {
+    "failed": 289,
+    "launched_unconfirmed": 49,
+    "passed": 1692
+  },
+  "parents": {
+    "/home/lhohy/Code/Poseidon/docs/baseline/stage2-acceptance-r152.md": "20bf94842324955994c9a054374111141a852b131c4e736e31d8c72956630cae",
+    "/home/lhohy/Code/Poseidon/docs/baseline/stage2-directed-guidance-acceptance-r146.json": "947be46870be183411a912715df8dc798a8a34d1b359b514e997db3ef4673910",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/recheck_stage2_evaluations_r152.py": "22aa329419d058db05893a04bbb77e1429cd667d3b35d2832c246f1159f39f11",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/recheck_stage2_joint_r152.py": "edcea5929c1e1317efc0900e9987b9d8addf62015a8ce5e773312608db58280d",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/recheck_stage2_offline_r152.py": "b9e62163fbd63df71f7876bae01f06fa2384c0d3c8bde0366a577ac0684d7820",
+    "/home/lhohy/Code/Poseidon/scripts/baseline/benchmarks/tools/run_final_regression_r152.py": "11bc709da9512c30ae22f5ac210805d107a62e597b61cc90e093979981d965f0",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-distinct-contexts-r145.json": "3588f5bcef7c4d49c3427f6f255e95e115544f92d1bbfcb8d98f597300ae3e62",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-evaluation-journal-r152.json": "b475854d42014de23e68f8deea93993e57487df985dc243ec3dfbc623d854402",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-final-regression-r152/report.json": "650c4fb5457e45036f1359269b594a88864ce54e75bd0525939f6c3972f32ba3",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-offline-revalidation-r152.json": "aa6d8b0919c2e99f775d207bad2ce17af432cd1a38dabb55c9726ab96d82e743",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-recovery-aggregate-r150.json": "8546455faa1ce5338b9a3c00096cb0ba8147f986169695d7701007659bb0e930",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-recovery-queue-r148/plan.json": "989dc3eb2639d8e269c19ff31056dfea3b618f8e63f9c37ca8851de72ffe0fe9",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-recovery-queue-r148/report.json": "17ab43106912c655b4b674b3d2f077c62e693e7acbe093eb89759485fbe357fb"
+  },
+  "recovery_cohorts": {
+    "explicit_v4_pilot": {
+      "failed": 1,
+      "passed": 4
+    },
+    "interrupted_recovery": {
+      "failed": 5,
+      "passed": 44
+    }
+  },
+  "recovery_outcomes": {
+    "failed": 6,
+    "passed": 48
+  },
+  "required_work_remaining_in_defined_milestones": [],
+  "requirements": [
+    {
+      "evidence": "offline.corpus",
+      "id": "model_corpus",
+      "requirement": "1200 unique models, fixed topology split, size partitions, 96 separate anchors",
+      "status": "verified_with_stated_scope"
+    },
+    {
+      "evidence": "offline.corpus",
+      "id": "independent_references",
+      "requirement": "Two references and 16 deterministic probes per model; approximation/reference semantics remain separate",
+      "status": "verified_with_stated_scope"
+    },
+    {
+      "evidence": "offline.requirements + offline.upstream_api",
+      "id": "versioned_semantic_inventory",
+      "requirement": "401 requirements and 107 API dispositions, source basis, contracts, positives, negatives and blockers",
+      "status": "verified_with_stated_scope"
+    },
+    {
+      "evidence": "offline.requirements[*].contexts",
+      "id": "three_contexts",
+      "requirement": "Each executable offline semantic partition has at least three distinct topology contexts",
+      "status": "verified_with_stated_scope"
+    },
+    {
+      "evidence": "offline.validated_historical_execution_directories",
+      "id": "real_fhe",
+      "requirement": "973 retained execution directories and 36835 files revalidated; no mock substituted",
+      "status": "verified_with_stated_scope"
+    },
+    {
+      "evidence": "offline.requirements",
+      "id": "construct_contribution",
+      "requirement": "209 construction partitions distinguish numeric, mixed and structural acceptance with counterexamples",
+      "status": "verified_with_stated_scope"
+    },
+    {
+      "evidence": "offline.helper_tasks + offline.fixed_polynomial_candidates",
+      "id": "upstream_helpers",
+      "requirement": "60 helper tasks and 21 fixed polynomial tasks retain real invocation and contribution evidence",
+      "status": "verified_with_stated_scope"
+    },
+    {
+      "evidence": "offline.requirements + offline.upstream_api",
+      "id": "bootstrap_boundary",
+      "requirement": "HE_ReLU/HE_Max/HE_MaxPad blocked; 107 API sub-classifications retained, not counted as passes",
+      "status": "verified_with_stated_scope"
+    },
+    {
+      "evidence": "offline.requirements + journal.compiler_partitions",
+      "id": "compiler_artifacts",
+      "requirement": "5 compiler partitions retain distinct artifact/runtime/metadata evidence, including Agent artifacts",
+      "status": "verified_with_stated_scope"
+    },
+    {
+      "evidence": "compatibility + tests",
+      "id": "schema_and_request_compatibility",
+      "requirement": "Old interfaces retained; 2030 exact old requests verified; current targeted regression passed",
+      "status": "verified_with_stated_scope"
+    },
+    {
+      "evidence": "offline.historical_source_lineage",
+      "id": "layout_reference_safety",
+      "requirement": "No changes to mathematical references, contribution checkers, artifact gates or compiler configuration",
+      "status": "verified_with_stated_scope"
+    },
+    {
+      "evidence": "journal.groups",
+      "id": "paid_free_evaluation",
+      "requirement": "1200 main, 92 supplemental and 30 context task IDs all have audited outcomes",
+      "status": "verified_with_stated_scope"
+    },
+    {
+      "evidence": "journal.groups",
+      "id": "paid_directed_evaluation",
+      "requirement": "627 construction, 60 helper and 21 polynomial task IDs all have audited outcomes",
+      "status": "verified_with_stated_scope"
+    },
+    {
+      "evidence": "journal.rows",
+      "id": "no_best_of_rebinding",
+      "requirement": "Old failures/interrupted claims kept; 49 recovery outcomes and 5 new-guidance variants explicitly separate",
+      "status": "verified_with_stated_scope"
+    },
+    {
+      "evidence": "offline + journal + recovery",
+      "id": "numerical_gate",
+      "requirement": "Frozen absolute/relative gate with elementwise results and retained comparison metrics",
+      "status": "verified_with_stated_scope"
+    },
+    {
+      "evidence": "queue + terminal + recovery",
+      "id": "bounded_execution",
+      "requirement": "Approved queues, per-candidate sandboxing, <=48/shard and global concurrency/call bounds preserved",
+      "status": "verified_with_stated_scope"
+    },
+    {
+      "evidence": "offline + tests",
+      "id": "current_rejection_regression",
+      "requirement": "153 model negatives and 48 static controls rechecked, 36 focused tests passed",
+      "status": "verified_with_stated_scope"
+    },
+    {
+      "evidence": "docs/baseline/stage2-acceptance-r152.md",
+      "id": "reproducible_handoff",
+      "requirement": "Chinese report, frozen ledger, per-version journal and fresh-output verification commands delivered",
+      "status": "verified_with_stated_scope"
+    }
+  ],
+  "runner_sha256": "faf491954efd4a7923ea24734610a2ed88cd0888fad124b3443f856fcddc3e32",
+  "stage2_complete": true,
+  "stage2_defined_milestones_complete": true,
+  "tests": {
+    "failed": 0,
+    "passed": 36,
+    "skipped": 0
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "audit_report_sha256": "c0b9a37ea873802400d8484a6ef8cd9c61e246eb8cdfeb24afc226ccdabb4596",
+  "directed_denominator": 627,
+  "evaluation": "manual_directed_not_Agent",
+  "mixed": 6,
+  "native_failed": 0,
+  "native_independent_reference_trace_reaudit": "pending_full_chain",
+  "native_pipeline_passed": 129,
+  "native_report_bindings_audited": true,
+  "numeric": 114,
+  "paid_calls": 0,
+  "public_planned": 498,
+  "public_status": "running",
+  "schema": 1,
+  "source_runtime_sha256": "9e8981a59439b096230afc1dbcbc9af21182d2371f8fec7422c41da2b82b1781",
+  "structural_only": 9,
+  "summary_sha256": "8b02f84698cb13254b0ca39adb205f807127a45d96f31c79d1065327be623c09"
+}

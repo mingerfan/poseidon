@@ -1,0 +1,30 @@
+{
+  "aggregate_artifact_mib": 32768,
+  "binding": "cfe889f4d073924b761ac1bd5bae5eaa2ff0b78d29c9497766816dedecb4b924",
+  "confirmed_cause": "Each child revalidated the entire queue before starting its local cumulative clock. The parent counted that startup against remaining_seconds + 60, then cancelled siblings.",
+  "earliest_remaining_seconds": 99.7871655929921,
+  "fix": "Whole-queue verification remains in the trusted parent. An immutable admission proof binds every shard. Child validates its own request, source, proof, direct parent process and exact queue command. Local preflight now consumes the shard clock.",
+  "format": "poseidon-cumulative-startup-repair-r134",
+  "limits_changed": false,
+  "new_dependency": false,
+  "per_shard_artifact_mib": 1024,
+  "planned_never_claimed_tasks": 1148,
+  "prepared_index": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-remaining-campaign-prepared-r134/index.json",
+  "previous_queue": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-remaining-queue-r131",
+  "previous_queue_seconds": 729.1977514470054,
+  "previous_report_sha256": "5451034a03b5101ac97f86c9d8775972863d59ea519de9778d691d5f949493f4",
+  "reset_elapsed_time": false,
+  "retained_case_results": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-startup-stopped-summary-r133.json",
+  "retained_case_results_sha256": "3c35492feb6e65865428326f3d37d58d0aaa65b98621c509f12790b366258de4",
+  "retried_uncertain_calls": 0,
+  "shards": 33,
+  "stage2_complete": false,
+  "symptom": "TimeoutError: Child time boundary",
+  "tests": {
+    "admission_and_clock_passed": 10,
+    "failed": 0,
+    "scope": "local fixtures and simulated parent identity; not an encrypted end-to-end test",
+    "skipped": 0
+  },
+  "validation": "Pinned-environment checks and live cumulative-stop behavior still pending"
+}

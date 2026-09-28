@@ -1,178 +1,165 @@
-# Agent 使用说明
+# Poseidon Agent
 
-## 启动方式
+将小型模型转换为 Hecate DSL，并通过编译和同态计算检查结果。生成的程序包可以保存、重放，也可以交给宿主应用使用。
 
-以下命令默认在 **Ubuntu x86_64 终端**、项目根目录下运行。需要 Python 3.10 或更新版本、项目固定版本的编译依赖及 Dacapo 子模块。本文只说明 Ubuntu 本地运行。
+当前执行后端是 **SEAL CPU**，支持 Ubuntu x86_64 和 ARM64。Agent 用于模型转换与部署准备。
 
-ARM Ubuntu 使用启动器参数 `--platform aarch64-linux`，或设置 `POSEIDON_PLATFORM=aarch64-linux`。已通过的原生离线 CPU 验收范围及依赖准备见[双平台说明](../docs/baseline/linux-platforms.md)。平台参数不自动安装依赖。
+## 功能范围
 
-### 首次准备依赖
+| 模型或计算 | 支持范围 |
+|---|---|
+| 全连接网络 | Linear、展平后接 Linear、使用平方或多项式激活的小型 MLP |
+| 卷积小网络 | Conv1d/Conv2d、平均池化、固定统计量 BatchNorm 及其组合 |
+| 多分支网络 | 残差连接、分叉、共享中间结果、多输入融合、多输出 |
+| 张量运算 | 加减乘、归约、拼接、切片、形状变换和旋转 |
+| 非线性计算 | 显式多项式；SiLU 等近似需要给定系数或选择对应接口 |
 
-在 Ubuntu 项目根目录先运行 `python3 -B scripts/setup_agent.py --platform auto --plan`。
-此命令只显示按架构选择的依赖计划；确认预算后才执行下载和构建。
-详细步骤和 requirements 导出见[依赖准备与构建](../docs/baseline/agent-setup.md)。
+推荐输入是 **JSON 计算图**。输入形状固定，权重公开，待计算的数据加密。图内最多 4 个输入、4 个输出、64 个节点；输入和输出分别最多 256 个元素。实际可运行的深度还受编译配置限制。
 
-### 配置 API key
+Python 输入通过静态解析转换为 JSON 计算图，支持的函数和算子见下方输入说明。
 
-在项目根目录创建 `.env`，格式参考根目录的 `.env.example`。已有 `.env` 时只编辑需要的字段，不覆盖原文件。
+[模型格式与算子](../docs/baseline/supported-inputs-models-configurations.md) · [Python 与高层算子输入](../docs/baseline/operator-decomposition-and-python.md)
 
-```dotenv
-DEEPSEEK_API_KEY=替换为你的DeepSeek密钥
-```
+## 环境要求
 
-当前只支持 DeepSeek，密钥只需配置在这一个文件中。不要提交 `.env`，也不要把路径配置写入其中。
+运行环境为 Ubuntu 22.04。以下命令在仓库根目录执行。
 
-### 检查环境
+系统依赖：Python 3.10 以上、Git、curl、bash、GNU timeout、flock、sha256sum 和 bubblewrap。
+
+| 依赖 | 版本 |
+|---|---|
+| LLVM / MLIR | 18.1.2 |
+| GCC / SEAL / GSL | 13.2.0 / 4.0.0 / 3.1.0 |
+| Python / NumPy | 3.10.14 / 1.25.2 |
+| PyTorch | x86：2.0.1+cpu；ARM64：2.0.1 CPU |
+
+C++ 和 Python 依赖由 Nix 和锁文件管理。[完整依赖说明](../docs/baseline/agent-setup.md)
+
+## 安装与构建
+
+获取源码：
 
 ```bash
-python3 scripts/agent.py --backend local doctor
+git clone --branch lhy-agent-dsl https://github.com/mingerfan/poseidon.git
+cd poseidon
 ```
 
-`doctor` 只检查平台、依赖路径和工具是否存在，不表示编译或密态执行已通过，也不会自动安装依赖。
-
-依赖准备好后，可先运行不调用 API 的单例自测：
+查看本机架构对应的构建计划：
 
 ```bash
-python3 scripts/agent.py --backend local candidate -- \
+python3 -B scripts/setup_agent.py --platform auto --plan
+```
+
+下载依赖、初始化子模块并构建：
+
+```bash
+python3 -B scripts/setup_agent.py --platform auto \
+  --work-root "$HOME/poseidon-work" \
+  --apply --init-submodule \
+  --download-budget-mib 3072 --disk-budget-gib 40 \
+  --self-test
+```
+
+示例设置下载预算为 3 GiB、磁盘预算为 40 GiB。构建并发为 2，链接并发为 1；缓存和日志保存在工作目录。
+
+运行时选择平台：
+
+```bash
+export POSEIDON_WORK_ROOT="$HOME/poseidon-work"
+export POSEIDON_PLATFORM=aarch64-linux
+# x86 Ubuntu 将上一行改为：export POSEIDON_PLATFORM=x86_64-linux
+```
+
+`--platform auto` 仅用于安装器。运行器采用上面的环境变量，或显式的 `--platform` 参数。
+
+## 环境验证
+
+```bash
+python3 -B scripts/agent.py --backend local doctor
+
+python3 -B scripts/agent.py --backend local candidate -- \
   --case scripts/baseline/cases/linear-example.json --self-test
 ```
 
-`--self-test` 使用脚本化候选验证检查链路，不代表真实 Agent 生成测试。
+`doctor` 检查环境；`--self-test` 使用内置候选完成本地编译、加密计算和结果比较。
 
-### 单个模型
-
-```bash
-python3 scripts/agent.py --backend local candidate -- \
-  --case scripts/baseline/cases/linear-example.json \
-  --live --provider deepseek --model deepseek-flash \
-  --reasoning-effort high --api-timeout 1200 \
-  --max-repairs 3 --provider-retries 3 --stream
-```
-
-`--live` 会产生付费 API 调用；`--deepseek` 是同一开关的别名。改用自己的模型时，将 `--case` 替换为模型 JSON 路径。
-
-### 批量运行
-
-使用下文的 `manifest.json`，先查看批次，不调用 API：
+多输入、多输出示例：
 
 ```bash
-python3 scripts/agent.py --backend local batch -- \
-  --case-manifest manifest.json --plan
+python3 -B scripts/agent.py --backend local candidate -- \
+  --case scripts/baseline/cases/unified-two-input-two-output.json \
+  --self-test --compiler-configuration seal-cpu-eva-w45-v1
 ```
 
-确认后启动付费批次：
+## DSL 生成
+
+在仓库根目录的 `.env` 中配置 DeepSeek API 密钥：
+
+```dotenv
+DEEPSEEK_API_KEY=<api-key>
+```
+
+检查模型并准备生成请求：
 
 ```bash
-python3 scripts/agent.py --backend local batch -- \
-  --case-manifest manifest.json \
-  --live --provider deepseek --model deepseek-flash \
-  --jobs 10 --reasoning-effort high --api-timeout 1200 \
-  --provider-retries 3 --stream
+python3 -B scripts/agent.py --backend local candidate -- \
+  --case model.json --prepare \
+  --compiler-configuration seal-cpu-eva-w45-v1
 ```
 
-未传 `--case-manifest` 时使用内置模型批次。
+通过 DeepSeek API 生成 DSL：
 
-### 路径与常用选项
-
-- `candidate` / `batch` 前面是启动器参数，`--` 后面是运行器参数；后面的相对文件路径均按 **Ubuntu 项目根目录** 解析。
-- 工作目录默认是当前用户的 `~/poseidon-work`。可在启动器参数中添加 `--work-root '/data/poseidon-work'`，或设置 `POSEIDON_WORK_ROOT`；该设置不会自动搬移或安装依赖。
-- `--timeout` 放在 `candidate` / `batch` 前，控制整个任务的期限，默认 43200 秒；`--api-timeout` 放在后，控制单次 API 请求期限。
-- `--dry-run` 放在 `candidate` / `batch` 前，仅显示启动命令，不启动任务。
-- `--loopback-proxy-port 6478` 放在 `--` 后，仅在代理确实监听于当前 Ubuntu 的本地端口时使用。
-- `candidate` 模式下，将 `--live` 替换为 `--prepare` 可只准备模型请求，不调用 API。
-- 输入 schema 5、需要 native helper / 数组 / 公开循环构造时，可显式添加 `--native-array-mutation --compiler-configuration seal-cpu-eva-w45-v1`；其他构造模式需按入口帮助选择，不要任意混用。
-- 完整参数：`python3 scripts/agent.py --help`、`python3 scripts/agent.py --backend local candidate -- --help`、`python3 scripts/agent.py --backend local batch -- --help`。
-
-## 接受的输入
-
-完整的逐 schema 算子矩阵、模型族、六种预设配置和专项目录见
-[支持的输入、模型与配置清单](../docs/baseline/supported-inputs-models-configurations.md)。
-
-`--case` 接收 **JSON 模型描述文件**，不是自然语言、任意 `model.py`、ONNX、`.pt` 或 pickle 文件。模型采用静态 shape、公开固定权重、加密输入；算子和尺寸须在下述范围内。
-
-### 单个模型的格式
-
-| `schema` | 输入内容 | 输入范围 |
-|---|---|---|
-| 1 | 内置模型的 `family` 和 `configuration` | 8 类模型，每类配置编号 0–5 |
-| 2 | 自定义单输入静态计算图 | 一个输入，4 个逻辑元素 |
-| 3 | 自定义多输入静态计算图 | 2–4 个独立加密输入，每个输入 4 个逻辑元素 |
-| 4 | 自定义分块输入计算图 | 一个 rank 1–4 的逻辑张量，总元素数 5–16 |
-| 5 | 自定义可变周期 packing 计算图 | 一个 rank 1–4 的逻辑张量，总元素数 1–256 |
-
-Schema 1 的 `family` 可取 `affine`、`polynomial`、`linear`、`mlp2`、`mlp3`、`fanout`、`residual`、`flatten_linear`。`id` 必须为 `family-configuration`，例如：
-
-```json
-{
-  "schema": 1,
-  "id": "linear-1",
-  "family": "linear",
-  "configuration": 1
-}
+```bash
+python3 -B scripts/agent.py --backend local candidate -- \
+  --case model.json --live --provider deepseek --model deepseek-flash \
+  --reasoning-effort high --stream \
+  --api-timeout 1200 --max-tokens 384000 \
+  --max-repairs 3 --provider-retries 3 \
+  --compiler-configuration seal-cpu-eva-w45-v1
 ```
 
-### 自定义模型示例
+`--model` 和 `--max-tokens` 指定模型与输出上限。生成和修复使用同一个模型，最多修复 3 轮；任务结束后返回结果或失败原因。
 
-将以下内容保存为执行端项目目录下的 `model.json`，然后使用 `--case model.json`：
+`model.json` 使用[统一图格式](../docs/baseline/supported-inputs-models-configurations.md)。已有 schema 1–5 文件仍可从这个 CLI 运行。
 
-```json
-{
-  "schema": 5,
-  "id": "matrix-affine",
-  "input_shape": [2, 3],
-  "constants": {
-    "gain": [0.5],
-    "bias": [0.375]
-  },
-  "nodes": [
-    {"id": "scaled", "op": "multiply", "inputs": ["x", "gain"]},
-    {"id": "result", "op": "add", "inputs": ["scaled", "bias"]}
-  ],
-  "output": "result"
-}
+## 结果与程序包
+
+运行器会输出结果目录，里面包含生成的 DSL、编译产物、错误日志和数值报告。目录位于工作目录的 `results/`；ARM 的实际工作目录是 `$POSEIDON_WORK_ROOT/platforms/aarch64-linux`。
+
+CLI 成功表示：程序通过检查、编译，并在四组测试输入上完成真实 SEAL 计算及数值比较。误差条件为：
+
+```text
+abs(actual - reference) <= 1e-5 + 1e-4 * abs(reference)
 ```
 
-字段含义：
+将通过验收的结果导出：
 
-- `id`：模型标识；批量输入中不能重复。
-- `input_shape`：单个逻辑输入的固定 shape，元素数为各维度的乘积。
-- `constants`：公开的有限实数标量或矩形数组，包括权重、偏置等。
-- `nodes`：按依赖顺序排列的算子列表；`inputs` 引用输入名、常量名或先前节点名。单输入图的输入名为 `x`。
-- `output`：最终输出引用。
-- Schema 3 用 `inputs: [{"name": "left", "shape": [4]}, {"name": "right", "shape": [4]}]` 替代 `input_shape`，节点按声明的名字引用不同输入。
+```bash
+python3 -B scripts/dsl_bundle.py export \
+  --evidence /absolute/path/to/result \
+  --output /absolute/path/to/new-program
 
-Schema 5 接受的算子名为：`add`、`subtract`、`multiply`、`negate`、`square`、`power`、`linear`、`flatten`、`reshape`、`permute`、`transpose`、`batch_norm`、`concat`、`conv1d`、`conv2d`、`avg_pool1d`、`avg_pool2d`。其他 schema 的允许集合和布局限制不同，不能直接套用整个列表。
-
-算子附加字段按算子确定，例如 `linear` 使用 `weight`、`bias` 引用公开常量，`power` 使用 `exponent`，`reshape` 使用 `shape`，`permute` 使用 `dims`。可参考同目录下的 [模型案例](baseline/cases/)。
-
-主要输入限制：
-
-- `power` 只接受指数 2 或 4；不自动将 ReLU、SiLU、MaxPool 等替换成多项式。
-- Schema 5 最多 64 个图节点、32 个公开常量条目；常量和生成程序另有大小限制。
-- Schema 5 的 packed 逐元素输出最多 256 个逻辑元素；Linear、Conv、concat 等 scalar-neuron 布局最多 16 个输出密文，不能据此假设任意 batch 或输出尺寸都被接受。
-- shape、broadcast、通道、卷积窗口及分支合并的布局必须满足对应算子的检查；不接受动态 shape 或依赖加密数据的分支。
-- 模型 JSON 不接收任意测试输入数组；现有运行器为模型构造固定的零输入、有符号输入、固定种子随机输入和边界输入。
-
-### 批量输入格式
-
-将以下内容保存为 `manifest.json`，交给 `--case-manifest`：
-
-```json
-{
-  "schema": 1,
-  "cases": [
-    {
-      "schema": 5,
-      "id": "square-four",
-      "input_shape": [4],
-      "constants": {},
-      "nodes": [
-        {"id": "squared", "op": "square", "inputs": ["x"]}
-      ],
-      "output": "squared"
-    }
-  ]
-}
+python3 -B scripts/dsl_bundle.py replay \
+  --bundle /absolute/path/to/new-program --execute
 ```
 
-批次外层 `schema: 1` 是清单格式版本，不是模型版本。`cases` 中须放入 1–96 个完整的 schema 2/3/4/5 自定义模型对象，不接受文件路径列表或 schema 1 的内置模型引用；每个模型 `id` 唯一，清单文件不超过 1 MiB。
+程序包包含 `candidate.py`、模型、公开权重、请求和配置清单。重放使用匹配的源码和 SDK。`replay` 默认检查文件完整性，`--execute` 启用重新编译与验收。
+
+## 应用集成
+
+应用接口提供 `submit → status → result`，并支持取消、预算控制和相同请求的程序包复用。宿主在独立 worker 中调用 `run` 执行任务。
+
+默认返回经过数值验收的程序包；可显式选择仅编译验收，结果会标明等级。接口用法见[应用集成](../docs/baseline/application-agent-component-v1.md)。
+
+## 开发与测试
+
+- [模型集与 Benchmark](../docs/baseline/semantic-benchmark-v1.md)：1200 个去重小模型、自由生成和定向构造测试。
+- [开发文档目录](../docs/README.md)：接口、编译配置和验收记录。
+- [示例模型](baseline/cases/)。
+
+命令行参数：
+
+```bash
+python3 -B scripts/agent.py --help
+python3 -B scripts/agent.py --backend local candidate -- --help
+```

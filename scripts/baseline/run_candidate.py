@@ -4,6 +4,7 @@
 Accepts preset schema-1 cases or user-defined schema-2/3 graphs, not arbitrary Python.
 """
 from platform_config import identity, require_python_packages
+from component_control import QualificationCancelled
 import argparse
 import ast
 import json
@@ -13,7 +14,7 @@ import shlex
 import sys
 import tempfile
 
-from candidate_contract import (MAX_BYTES, ReplayProvider, make_request, strict_json,
+from candidate_contract import (MAX_BYTES, ReplayProvider, make_request, strict_json, trace_payload_json,
                                 validate_candidate, run_feedback_loop, request_rotations, request_input_names)
 from hecate_python_env import ROOT, WORK, VENV, digest, enter_nix
 from python_compiler_smoke import BUILD, SOURCE, logged
@@ -71,7 +72,9 @@ def print_outcome(report):
         print(f"Provider failure: {safe}", flush=True)
 
 
-def inside(args):
+def inside(args, *, expected_request=None, report_sink=None, validation_level="numerical"):
+    require(validation_level in ("numerical", "compiled"), "Validation level")
+    require(validation_level == "numerical" or not args.deepseek, "Compile-only uses explicit component qualification")
     # Remove the credential from the process environment before native children.
     # Only the HTTPS transport retains it and passes it to its worker over stdin.
     api_key = os.environ.pop("DEEPSEEK_API_KEY", "") if args.deepseek else ""
@@ -88,17 +91,21 @@ def inside(args):
     result = Path(tempfile.mkdtemp(prefix="agent-deepseek-" if args.deepseek else "candidate-replay-",
                                    dir=WORK / "results"))
     print(f"Candidate evidence: {result}", flush=True)
-    report = dict(platform_identity=identity(), status="running", provider="deepseek_api" if args.deepseek else "scripted_replay", agent_calls=0,
+    report = dict(validation_level=validation_level, platform_identity=identity(), status="running", provider="deepseek_api" if args.deepseek else "scripted_replay", agent_calls=0,
                   backend="upstream_SEAL_HEVM_CPU", poseidon_gpu_validated=False, attempts=[],
+                  parameter_observer_sha256=digest(KEY_BUILD/"libseal_artifact_parameters.so"),
+                  parameter_observer_source_sha256=digest(ROOT/"scripts/baseline/seal_keys/artifact_parameters.cpp"),
                   metadata_observer_sha256=digest(KEY_BUILD / 'libseal_golden_metadata.so'),
                   metadata_observer_source_sha256=digest(ROOT / 'scripts/baseline/seal_keys/metadata.cpp'),
                   artifact_replay_only=not args.deepseek, llm_generation_validated=False,
                   source_hashes={p.name: digest(p) for p in [SCRIPT, *[ROOT / "scripts/baseline" / x for x in
                       (*sandbox.MODULES, "candidate_sandbox.py", "fx_to_hecate.py", "run_model_batch.py",
-                       "deepseek_provider.py", "deepseek_http_worker.py", "model_graph.py", "model_catalog.py", "chunked_model.py", "packed_model.py", "logical_reshape.py", "packed_spatial.py",
-                       "batch_norm_ops.py", "concat_ops.py", "tensor_permutation.py", "multi_input_fixtures.py", "native_execution_slots.py")]]},
+                       "deepseek_provider.py", "deepseek_http_worker.py", "component_control.py", "validation_adapter.py", "earth_failure_diagnostic.py", "model_graph.py", "model_catalog.py", "chunked_model.py", "packed_model.py", "logical_reshape.py", "packed_spatial.py",
+                       "unified_chunk_layout.py", "unified_graph_lowering.py", "unified_graph_prepare.py", "benchmark_math.py", "benchmark_torch.py", "batch_norm_ops.py", "concat_ops.py", "tensor_permutation.py", "multi_input_fixtures.py", "native_execution_slots.py")]]},
                   native_resources=dict(concurrency=NATIVE_CONCURRENCY, acquisitions=0, wait_seconds=0.0))
+    helper_environment = None
     def native_run(*positional, **keywords):
+        if helper_environment is not None: keywords["helpers"] = True
         with native_slot(WORK / 'cache/agent-native-slots', metrics=report['native_resources']):
             return sandbox.run(*positional, **keywords)
     provider = None
@@ -106,47 +113,106 @@ def inside(args):
     phase = "model_description"
     try:
         descriptor = read_json(args.case)
-        validate_descriptor(descriptor)
-        if descriptor['schema']==5:
+        from benchmark_graph import FORMAT
+        unified = descriptor.get('format') == FORMAT
+        if unified:
+            from benchmark_graph import validate
+            validate(descriptor)
+        else:
+            validate_descriptor(descriptor)
+        if unified or descriptor.get('schema')==5:
             report['packed_observer_sha256']=digest(KEY_BUILD/'libseal_packed_metadata.so')
             report['packed_observer_source_sha256']=digest(ROOT/'scripts/baseline/seal_keys/packed_metadata.cpp')
             report['packed_key_helper_sha256']=digest(KEY_BUILD/'seal_packed_keys')
             report['packed_key_source_sha256']=digest(ROOT/'scripts/baseline/seal_keys/packed_keys.cpp')
         dump(result / "model.json", descriptor)
         phase = "model_reference"
-        model, shape = prepare_case(descriptor, result)
-        phase = "fx_translation"
-        payload = translate(model, shape)
-        chosen_name = getattr(args, 'compiler_configuration', None)
-        compiler_config = configuration(chosen_name, digest(PROFILE)) if chosen_name is not None else None
-        waterline = compiler_config['waterline'] if compiler_config is not None else WATERLINE
-        request = make_request(payload, descriptor, digest(PROFILE), str(model),
-                               compiler_configuration=compiler_config,
-                               extended_arithmetic=getattr(args, 'extended_arithmetic', False),
-                               public_construction=getattr(args, 'public_construction', False),
-                               function_composition=getattr(args, 'function_composition', False),
-                               closures=getattr(args, 'closures', False),
-                               call_binding=getattr(args, 'call_binding', False),
-                               public_iteration=getattr(args, 'public_iteration', False),
-                               function_literals=getattr(args, 'function_literals', False),
-                               public_sequences=getattr(args, 'public_sequences', False),
-                               public_numbers=getattr(args, 'public_numbers', False),
-                               public_control=getattr(args, 'public_control', False),
-                               public_strings=getattr(args, 'public_strings', False),
-                               public_polynomial=getattr(args, 'public_polynomial', False),
-                               object_arrays=getattr(args, 'object_arrays', False),
-                               public_mappings=getattr(args, 'public_mappings', False),
-                               object_arithmetic=getattr(args, 'object_arithmetic', False),
-                               scalar_conversion=getattr(args, 'scalar_conversion', False),
-                               object_unary=getattr(args, 'object_unary', False),
-                               native_functions=getattr(args, 'native_functions', False),
-                               native_arrays=getattr(args, 'native_arrays', False),
-                               native_starred=getattr(args, 'native_starred', False),
-                               native_array_arithmetic=getattr(args, 'native_array_arithmetic', False),
-                               native_public_loops=getattr(args, 'native_public_loops', False),
-                               native_scalar_augmented=getattr(args, 'native_scalar_augmented', False),
-                               native_array_mutation=getattr(args, 'native_array_mutation', False),
-                               construction_exercise=getattr(args, 'construction_exercise', None))
+        if unified:
+            legacy_flags=("extended_arithmetic","public_construction","function_composition","closures",
+                "call_binding","public_iteration","function_literals","public_sequences","object_unary",
+                "scalar_conversion","object_arithmetic","public_mappings","object_arrays","public_polynomial",
+                "public_strings","public_control","public_numbers","native_functions","native_arrays",
+                "native_starred","native_array_arithmetic","native_public_loops","native_scalar_augmented",
+                "native_array_mutation")
+            require(not any(getattr(args,key,False) for key in legacy_flags),
+                    "Unified graph uses its own versioned construction contract; legacy flags cannot be combined")
+            from unified_graph_prepare import prepare_case as prepare_unified
+            require(getattr(args, 'construction_exercise', None) is None,
+                    'Unified directed tasks require a bound witness profile; not legacy exercise IDs')
+            from unified_graph_contract import prepare as make_unified_request
+            chosen_name = getattr(args, 'compiler_configuration', None)
+            compiler_config = configuration(chosen_name, digest(PROFILE)) if chosen_name is not None else None
+            waterline = compiler_config['waterline'] if compiler_config is not None else WATERLINE
+            phase = 'model_reference'
+            model = prepare_unified(descriptor, result,getattr(args,"unified_chunk_period",None))
+            phase = 'request_preparation'
+            request = make_unified_request(descriptor, digest(PROFILE), compiler_config,
+                                           getattr(args,"unified_exercise",None),
+                                           construction_profile="hecate-unified-public-v1" if getattr(args,"unified_profile","native")=="public-v1" else None,
+                                           constant_policy=expected_request["constant_origins"].get("policy") if expected_request is not None else None,
+                                           helper_profile=getattr(args,"unified_helpers",None),
+                                           helper_exercise=getattr(args,"unified_helper_exercise",None),
+                                           chunk_period=getattr(args,"unified_chunk_period",None),
+                                           generation_guidance=getattr(args,"unified_guidance",None),
+                                           capability_composition=getattr(args,"capability_composition",None))
+            if "upstream_helpers" in request:
+                from upstream_candidate_helpers import verify_sources
+                from poly_dependencies import verify as verify_dependency
+                helper_environment=dict(sources=verify_sources(),dependency=verify_dependency())
+                report['upstream_helper_environment']=helper_environment
+            payload = {'hecate_source': ''}
+            # An unavailable rule answer must not prevent request preparation or live synthesis.
+            try:
+                from unified_graph_lowering import candidate_source
+                payload['hecate_source'],report['rule_baseline_lowering'] = candidate_source(request)
+                report['rule_baseline_status'] = 'generated_not_executed'
+            except ValueError as error:
+                report['rule_baseline_status'] = 'unavailable'
+                report['rule_baseline_error'] = str(error)
+        else:
+            require(getattr(args,"capability_composition",None) is None,"Composition requires unified graph")
+            require(getattr(args,"unified_guidance",None) is None,"Generation guidance requires unified graph")
+            require(getattr(args,"unified_chunk_period",None) is None,"Chunk layout requires unified graph")
+            require(not getattr(args,"unified_helper_exercise",None),"Directed helpers require unified graph")
+            require(getattr(args,"unified_helpers",None) is None,"Upstream helpers require unified graph")
+            require(getattr(args,"unified_profile","native")=="native","Unified profile requires unified graph")
+            require(not getattr(args,"unified_exercise",None),"Unified exercise requires unified graph")
+            model, shape = prepare_case(descriptor, result)
+            phase = "fx_translation"
+            payload = translate(model, shape)
+            chosen_name = getattr(args, 'compiler_configuration', None)
+            compiler_config = configuration(chosen_name, digest(PROFILE)) if chosen_name is not None else None
+            waterline = compiler_config['waterline'] if compiler_config is not None else WATERLINE
+            request = make_request(payload, descriptor, digest(PROFILE), str(model),
+                                   compiler_configuration=compiler_config,
+                                   extended_arithmetic=getattr(args, 'extended_arithmetic', False),
+                                   public_construction=getattr(args, 'public_construction', False),
+                                   function_composition=getattr(args, 'function_composition', False),
+                                   closures=getattr(args, 'closures', False),
+                                   call_binding=getattr(args, 'call_binding', False),
+                                   public_iteration=getattr(args, 'public_iteration', False),
+                                   function_literals=getattr(args, 'function_literals', False),
+                                   public_sequences=getattr(args, 'public_sequences', False),
+                                   public_numbers=getattr(args, 'public_numbers', False),
+                                   public_control=getattr(args, 'public_control', False),
+                                   public_strings=getattr(args, 'public_strings', False),
+                                   public_polynomial=getattr(args, 'public_polynomial', False),
+                                   object_arrays=getattr(args, 'object_arrays', False),
+                                   public_mappings=getattr(args, 'public_mappings', False),
+                                   object_arithmetic=getattr(args, 'object_arithmetic', False),
+                                   scalar_conversion=getattr(args, 'scalar_conversion', False),
+                                   object_unary=getattr(args, 'object_unary', False),
+                                   native_functions=getattr(args, 'native_functions', False),
+                                   native_arrays=getattr(args, 'native_arrays', False),
+                                   native_starred=getattr(args, 'native_starred', False),
+                                   native_array_arithmetic=getattr(args, 'native_array_arithmetic', False),
+                                   native_public_loops=getattr(args, 'native_public_loops', False),
+                                   native_scalar_augmented=getattr(args, 'native_scalar_augmented', False),
+                                   native_array_mutation=getattr(args, 'native_array_mutation', False),
+                                   construction_exercise=getattr(args, 'construction_exercise', None))
+        if expected_request is not None:
+            from benchmark_graph import canonical
+            require(canonical(request) == canonical(expected_request), "Component request reconstruction mismatch")
         # Shapes/modules are public model semantics, not the deterministic DSL answer.
         (result / "model-structure.txt").write_text(str(model))
         dump(result / "request.json", request)
@@ -156,6 +222,7 @@ def inside(args):
         fixed = read_json(SOURCE / "fixtures.json")
         report.update(request_id=request["request_id"], tolerance={k: fixed[k] for k in ("atol", "rtol")},
                       compiler_profile_sha256=digest(PROFILE), waterline=waterline,
+                      compiler_sha256=digest(BUILD / "bin/hecate-opt"),
                       runtime_sha256=digest(BUILD / "lib/libSEAL_HEVM.so"),
                       frontend_sha256=digest(BUILD / "lib/libHecateFrontend.so"),
                       frontend_source_sha256=digest(ROOT / "third_party/dacapo/tools/frontend.cpp"),
@@ -192,15 +259,23 @@ def inside(args):
         phase = "key_setup"
         keys = result / "private-keys"
         keys.mkdir(mode=0o700)
+        key_stat = keys.stat()
+        key_directory_identity = (key_stat.st_dev, key_stat.st_ino)
         key_command=([str(KEY_BUILD/'seal_packed_keys'),str(keys),str(request['layout']['input_slot_period'])]
-                     if descriptor['schema']==5 else [str(KEY_BUILD/'seal_golden_keys'),str(keys),
+                     if unified or descriptor.get('schema')==5 else [str(KEY_BUILD/'seal_golden_keys'),str(keys),
                                                       *[str(s) for s in request_rotations(request)]])
         with native_slot(WORK / 'cache/agent-native-slots', metrics=report['native_resources']):
             require(logged(key_command, result / "parameters.json", 120) == 0,
                     "Key setup failed")
         report["parameters"] = read_json(result / "parameters.json")
         phase = "response_input"
-        if args.self_test:
+        if args.self_test and unified:
+            require(report['rule_baseline_status'] == 'generated_not_executed',
+                    'Unified deterministic baseline unavailable; not an Agent failure')
+            candidate = dict(schema=1,request_id=request['request_id'],hecate_source=payload['hecate_source'])
+            responses = [json.dumps(candidate)]
+            report['scenario'] = 'unified deterministic baseline through isolated candidate pipeline; not Agent inference'
+        elif args.self_test:
             require(descriptor.get("family") == "linear", "Scripted fault test requires catalog Linear")
             candidate = dict(schema=1, request_id=request["request_id"], hecate_source=payload["hecate_source"])
             wrong = dict(candidate, hecate_source=candidate["hecate_source"].replace("rotate(1)", "rotate(2)"))
@@ -220,13 +295,22 @@ def inside(args):
         phase = "feedback_loop"
 
         def verify_frozen():
-            if descriptor['schema']==5:
+            require(digest(KEY_BUILD/"libseal_artifact_parameters.so")==report["parameter_observer_sha256"],
+                    "Parameter observer changed during execution")
+            require(digest(ROOT/"scripts/baseline/seal_keys/artifact_parameters.cpp")==report["parameter_observer_source_sha256"],
+                    "Parameter observer source changed during execution")
+            if helper_environment is not None:
+                require(dict(sources=verify_sources(),dependency=verify_dependency())==helper_environment,
+                        "Helper source/dependency changed during execution")
+            if unified or descriptor.get('schema')==5:
                 require(digest(KEY_BUILD/'libseal_packed_metadata.so')==report['packed_observer_sha256'] and
                         digest(KEY_BUILD/'seal_packed_keys')==report['packed_key_helper_sha256'],
                         'Packed verification/key helper changed during execution')
             require(all((result / k).is_file() and digest(result / k) == v for k, v in frozen.items()),
                     "Immutable reference/request/weights changed")
             require(digest(PROFILE) == report["compiler_profile_sha256"], "Compiler profile changed")
+            require(digest(BUILD / "bin/hecate-opt") == report["compiler_sha256"], "Compiler binary changed")
+            require(digest(BUILD / "lib/libSEAL_HEVM.so") == report["runtime_sha256"], "Runtime binary changed")
             verify_execution_configuration(request, digest(PROFILE), waterline)
             require(report.get('compiler_configuration') == compiler_config and report['waterline'] == waterline,
                     'Compiler configuration report changed')
@@ -236,134 +320,12 @@ def inside(args):
             require(digest(ROOT / 'third_party/dacapo/python/hecate/hecate/expr.py') == report['frontend_python_sha256'],
                     'Frontend Python changed')
 
-        def evaluate(raw, index):
-            item = dict(index=index, status="failed", parsed=False, source_parsed=False, checked=False, compiled=False,
-                        executed=False, numerically_correct=False)
-            report["attempts"].append(item)
-            attempt = result / f"attempt-{index:02d}"
-            attempt.mkdir()
-            output = attempt / "output"
-            output.mkdir()
-            stage = "response_parse"
-            artifact_hashes = {}
-            try:
-                verify_frozen()
-                candidate = strict_json(raw)
-                item["parsed"] = True
-                stage = "source_parse"
-                require(type(candidate) is dict and type(candidate.get("hecate_source")) is str,
-                        "Missing Hecate source string")
-                require(len(candidate["hecate_source"].encode()) <= 65536, "Source size limit")
-                ast.parse(candidate["hecate_source"])
-                item["source_parsed"] = True
-                stage = "static_check"
-                item["static_check"] = validate_candidate(candidate, request)
-                item["checked"] = True
-                trace_payload = attempt / "trace-payload.json"
-                dump(trace_payload, dict(request=request, candidate=candidate))
-                frozen[str(trace_payload.relative_to(result))] = digest(trace_payload)
-                (attempt / "candidate.py").write_text(candidate["hecate_source"])
-                stage = "dsl_trace"
-                code = native_run(trace_payload, output, [str(VENV / "bin/python"), "/app/candidate_trace.py"],
-                                   attempt / "trace.log")
-                require(code == 0, f"Isolated Hecate tracing failed (exit {code}); see trace.log")
-                item["trace"] = read_json(output / "trace-evidence.json")
-                if request['task']=='hecate-periodic-packed-native-synthesis-v2':
-                    from packed_native_exercises import verify_trace_coverage
-                    records={key:read_json(output/file) for key,file in (
-                        ('storage','native-array-events.json'),('star','native-star-events.json'),
-                        ('augmented','native-augmented-events.json'),('mutation','native-array-mutation-events.json'))}
-                    item['packed_native_coverage']=verify_trace_coverage(
-                        item['static_check']['construction_exercise'],records)
-                if request['task'] == 'hecate-native-function-synthesis-v2':
-                    from native_function_exercises import verify_trace_coverage
-                    item['native_call_coverage'] = verify_trace_coverage(
-                        item['static_check']['construction_exercise'], read_json(output/'native-call-events.json'))
-                if request['task'] == 'hecate-native-function-synthesis-v4':
-                    from native_array_exercises import verify_trace_coverage
-                    item['native_array_coverage'] = verify_trace_coverage(
-                        item['static_check']['construction_exercise'], read_json(output/'native-array-events.json'))
-                if request['task'] == 'hecate-native-function-synthesis-v8':
-                    from native_star_exercises import verify_trace_coverage
-                    item['native_star_coverage'] = verify_trace_coverage(
-                        item['static_check']['construction_exercise'], read_json(output/'native-star-events.json'))
-                stage = "compiler"
-                command = ["/hecate-opt", "/out/candidate_trace.mlir", "--eva", "--ckks-config=/profile.json",
-                           f"--waterline={waterline}", "--enable-debug-printer", "--mlir-disable-threading",
-                           "--verify-each", "-o", "/out/lowered.mlir"]
-                item["compile_command"] = command
-                code = native_run(trace_payload, output, command, attempt / "compile.log")
-                require(code == 0, f"Isolated compiler failed (exit {code}); see compile.log")
-                item["compiled"] = True
-                stage = "artifact_gate"
-                hevm, cst = output / "lowered._hecate_golden.hevm", output / "_hecate_golden.cst"
-                require(hevm.stat().st_size <= 1024**2 and cst.stat().st_size <= 1024**2, "Artifact size limit")
-                from cipher_abi import artifact_options
-                item["artifact_gate"] = inspect_artifacts(hevm.read_bytes(), cst.read_bytes(),
-                                                          rotation_steps=request_rotations(request),
-                                                          expected_inputs=len(request_input_names(request)),
-                                                          **artifact_options(request['layout']))
-                require(len(item["artifact_gate"]["res_dst"]) == request["layout"]["output_ciphertexts"],
-                        "Artifact return count mismatch")
-                verify_artifact_configuration(request, item['artifact_gate'], digest(PROFILE))
-                with np.load(result / "arrays.npz", allow_pickle=False) as data:
-                    # Runtime sees only inputs, never the plaintext reference.
-                    np.savez(output / "arrays.npz", inputs=data["inputs"])
-                artifact_hashes = {p.name: digest(p) for p in output.iterdir() if p.is_file()}
-                stage = "seal_runtime"
-                code = native_run(trace_payload, output, [str(VENV / "bin/python"), "/app/candidate_worker.py", "execute"],
-                                   attempt / "execute.log", 150, keys)
-                require(code == 0, f"Isolated SEAL execution failed (exit {code}); see execute.log")
-                item.update(executed=True, execution=read_json(output / "execution.json"))
-                stage = "numerical_comparison"
-                with np.load(result / "arrays.npz", allow_pickle=False) as data:
-                    item["comparison"] = compare(np.load(output / "decrypted.npy", allow_pickle=False),
-                                                 data["reference"], fixed["atol"], fixed["rtol"])
-                    if 'execution_abi' in request['layout'] and len(request['layout']['output_shape'])>1:
-                        from packed_input_abi import decode_output
-                        logical=np.load(output/'decrypted-logical.npy',allow_pickle=False)
-                        expected=decode_output(np.load(output/'decrypted.npy',allow_pickle=False),request['layout'])
-                        require(np.array_equal(logical,expected) and logical.shape==data['reference_logical'].shape,
-                                'Logical output shape/order differs from declared binding')
-                        item['logical_output_shape']=list(logical.shape[1:])
-                        item['logical_output_sha256']=digest(output/'decrypted-logical.npy')
-                require(item["comparison"]["passed"], "Frozen numerical tolerance failed; inspect reduction/layout/operator semantics")
-                item.update(status="passed", numerically_correct=True)
-            except Exception as error:
-                category = ("candidate" if stage in ("response_parse", "source_parse", "static_check", "numerical_comparison")
-                            else "pipeline_unclassified")
-                if isinstance(error, (OSError, TimeoutError)):
-                    category = "infrastructure"
-                item.update(failure_layer=stage, diagnostic=str(error)[:2000], category=category)
-            finally:
-                try:
-                    verify_frozen()
-                    require(all(digest(output / n) == h for n, h in artifact_hashes.items()), "Compiled artifact/input mutated")
-                except Exception as error:
-                    item.update(status="failed", failure_layer="integrity", category="integrity",
-                                diagnostic=str(error), numerically_correct=False)
-                item["artifact_hashes"] = artifact_hashes
-                dump(attempt / "report.json", item)
-            # Feedback deliberately excludes reference/inputs/actual vectors and host paths.
-            feedback = dict(status=item["status"], layer=item.get("failure_layer", "complete"),
-                            category=item.get("category"), diagnostic=item.get("diagnostic", "All numerical checks passed"))
-            for private_path, label in ((str(result), "<run>"), (str(ROOT), "<source>"), (str(WORK), "<work>")):
-                feedback["diagnostic"] = feedback["diagnostic"].replace(private_path, label)
-            if "comparison" in item:
-                feedback["numerical_summary"] = {k: item["comparison"][k] for k in
-                                                ("mae", "max_absolute_error", "compared_values", "passed")}
-            # Compiler/frontend text is untrusted diagnostic data, never an instruction
-            # or executable repair command. Runtime logs may mention key handling and
-            # are deliberately not included in the public feedback envelope.
-            log_name = {"dsl_trace": "trace.log", "compiler": "compile.log"}.get(item.get("failure_layer"))
-            if log_name and (attempt / log_name).is_file():
-                with (attempt / log_name).open("rb") as log:
-                    log.seek(max(0, (attempt / log_name).stat().st_size - 4000))
-                    diagnostic = log.read(4000).decode("utf-8", errors="replace")
-                for private_path, label in ((str(result), "<run>"), (str(ROOT), "<source>"), (str(WORK), "<work>")):
-                    diagnostic = diagnostic.replace(private_path, label)
-                feedback["tool_diagnostic"] = dict(trust="untrusted_tool_output", text=diagnostic)
-            return feedback
+        from validation_adapter import CandidateValidationAdapter, ValidationContext
+        validation = CandidateValidationAdapter(ValidationContext(
+            result=result, request=request, report=report, frozen=frozen, fixed=fixed,
+            waterline=waterline, keys=keys, unified=unified,
+            native_run=native_run, verify_frozen=verify_frozen, validation_level=validation_level))
+        evaluate = validation.evaluate
 
         def record(index, raw, feedback):
             attempt = result / f"attempt-{index:02d}"
@@ -375,10 +337,13 @@ def inside(args):
 
         report["loop"] = run_feedback_loop(request, provider, evaluate, record, max_repairs=args.max_repairs)
         report["status"] = report["loop"]["status"]
-        if args.self_test:
+        if args.self_test and not unified:
             observed = [a.get("failure_layer", "complete") for a in report["attempts"]]
             require(observed == ["response_parse", "numerical_comparison", "complete"], "Fault scenario did not reach expected gates")
         return 0 if report["status"] == "passed" else 1
+    except (KeyboardInterrupt, QualificationCancelled):
+        report.update(status="cancelled", failure_layer=phase, diagnostic="Host cancelled qualification")
+        return 130
     except Exception as error:
         category = "input" if phase in ("model_description", "model_reference", "fx_translation", "response_input") else "infrastructure"
         report.update(status=category + "_failed", failure_layer=phase, diagnostic=str(error))
@@ -394,10 +359,13 @@ def inside(args):
         if (result / 'private-keys').exists():
             from result_retention import cleanup_run
             try:
-                cleaned = cleanup_run(result, WORK / 'results')
+                cleaned = cleanup_run(result, WORK / 'results',
+                                      key_directory_identity=locals().get('key_directory_identity'))
                 print(f"Key cleanup: {cleaned['bytes']} bytes", flush=True)
             except (OSError, ValueError) as error:
                 print(f"Key cleanup deferred: {type(error).__name__}", flush=True)
+        if report_sink is not None:
+            report_sink(report, result)
 
 
 def parse_args(argv=None):
@@ -443,6 +411,16 @@ def parse_args(argv=None):
     parser.add_argument('--native-scalar-augmented', action='store_true', help='Opt-in scalar native +=, -= and *= rebinding')
     parser.add_argument('--native-array-mutation', action='store_true', help='Opt-in alias-aware native ndarray inplace operations')
     parser.add_argument('--scalar-conversion', action='store_true')
+    from unified_graph_exercises import SPECS
+    from unified_public_exercises import SPECS as PUBLIC_SPECS
+    parser.add_argument("--unified-exercise",choices=sorted(set(SPECS)|set(PUBLIC_SPECS)))
+    parser.add_argument("--unified-helper-exercise",action="append",help="Require contributing actual helper; repeat for multiple bound callees")
+    parser.add_argument("--unified-helpers",choices=("upstream-poly-silu-v1","upstream-poly-bn-silu-v2","upstream-poly-concat-bn-silu-v3","upstream-poly-spatial-v4","upstream-poly-spatial-mapped-v5","upstream-poly-fused-spatial-v6","upstream-poly-downsample-v7","upstream-poly-virtual-prefix-v8","upstream-poly-chunked-virtual-v9","upstream-poly-fixed-polynomials-v10"),help="Opt-in hash-locked actual upstream helpers; native construction with optional directed exercise")
+    parser.add_argument("--unified-chunk-period",type=int,choices=(4,8,16,32,64,128,256),help="Opt-in versioned chunk ABI; retains four model chunks and four output chunks")
+    parser.add_argument("--capability-composition",choices=("native-bn-directed-v1",))
+    parser.add_argument("--unified-profile",choices=("native","public-v1"),default="native")
+    parser.add_argument("--unified-guidance",choices=("explicit-v1","explicit-v2","explicit-v3","explicit-v4","explicit-v5","explicit-v6","explicit-v7","explicit-v8","explicit-v9"),
+                        help="Opt-in public ABI guidance and precise static feedback; omission preserves old request hashes")
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--prepare", action="store_true", help="Export public request without inference/execution")
     mode.add_argument("--self-test", action="store_true", help="Scripted faults/answer, NOT Agent-generated repairs")
@@ -474,6 +452,13 @@ def parse_args(argv=None):
 def forward_options(args):
     options = ["--case", str(args.case.resolve()), "--max-repairs", str(args.max_repairs)]
     options += compiler_options(args)
+    if getattr(args,"capability_composition",None):options += ["--capability-composition",args.capability_composition]
+    if getattr(args,"unified_guidance",None):options += ["--unified-guidance",args.unified_guidance]
+    if getattr(args,"unified_chunk_period",None) is not None:options += ["--unified-chunk-period",str(args.unified_chunk_period)]
+    if getattr(args,"unified_profile","native")!="native":options += ["--unified-profile",args.unified_profile]
+    for name in getattr(args,"unified_helper_exercise",None) or []:options += ["--unified-helper-exercise",name]
+    if getattr(args,"unified_helpers",None):options += ["--unified-helpers",args.unified_helpers]
+    if getattr(args,"unified_exercise",None):options += ["--unified-exercise",args.unified_exercise]
     if getattr(args, 'native_starred', False):
         options += ['--native-starred']
     if getattr(args, 'native_array_arithmetic', False):
@@ -563,6 +548,12 @@ def main():
             return 2
         try:
             from deepseek_provider import generation_deadline
+            # A benchmark child may already run in the exact pinned pure shell.
+            # Re-entering nix-portable here would deadlock on the parent's
+            # exclusive launcher lock. Keep credential loading/cleanup here,
+            # then call the same trusted execution path in this environment.
+            if os.environ.get("IN_NIX_SHELL") == "pure" and Path(sys.prefix) == VENV:
+                return inside(args)
             return enter_nix(command, seconds=1800 + generation_deadline(args.api_timeout, args.max_repairs + 1, args.provider_retries),
                              keep_env=("DEEPSEEK_API_KEY",))
         finally:

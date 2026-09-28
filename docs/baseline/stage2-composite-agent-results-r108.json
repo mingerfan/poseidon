@@ -1,0 +1,634 @@
+{
+  "attempt_failure_layers": {
+    "complete": 4,
+    "numerical_comparison": 1,
+    "static_check": 23
+  },
+  "binding": "4486a947266b1cdaccb552044d30a89da24a1a5513edb65db49e4e3101d92265",
+  "first_attempt_passed": 1,
+  "format": "poseidon-stage2-agent-pilot-independent-audit-v1",
+  "generations": 28,
+  "http_attempts": 28,
+  "limitations": [
+    "Retained API ledger is not a billing receipt or provider-signed proof",
+    "Earlier attempt failure layers remain separate from terminal failure layers"
+  ],
+  "new_encrypted_executions": 0,
+  "new_paid_calls": 0,
+  "numerically_correct_attempts": 4,
+  "parents": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-0neao13s/attempt-00/feedback.json": "142ab669813e840365f7402a69a6b064a377cb94ffb08416df371fdbb2753cd5",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-0neao13s/attempt-00/response.txt": "eab5e9d3aa7f0a07654fa495f332fd57b353d683631f9ef1bdfca1aa0636e4a9",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-0neao13s/attempt-01/feedback.json": "90f26488df5cfb417686ad53abc81e858c5e83cc305e0b891ea56be5b650eaf9",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-0neao13s/attempt-01/response.txt": "b31ede07ffb68bc4b876f1f1c9752ffc0ece3b5e9c8b28ad48e3e788e7b5c26b",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-0neao13s/report.json": "f2316e6009f5466ae25a0c6c54fd6b01bd44ff949244aab3604b2715dd7d37e0",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-3uk5drhw/attempt-00/feedback.json": "fd43d7c79ffaa8c7a6dfef61a5d86bd6994a39536d72be1462fce35a695a6650",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-3uk5drhw/attempt-00/response.txt": "97ce21d9a90c95995cfa06740d782580890d52c86cf9b872e81b97587122a88e",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-3uk5drhw/attempt-01/feedback.json": "f2341cd7c2bb3ee6fe128f200c722345fe185834a65cb6f5a85fb14177bc2dd6",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-3uk5drhw/attempt-01/response.txt": "a83394a4cb652c3b55c3af0c2b67322a56c7e35aeb73fc9c1d20559e9904bc8f",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-3uk5drhw/attempt-02/feedback.json": "c613f7a0495a59e53bc0dbc7bd370cbd07e4a592aa9cbae07bf3d96bdb8f35a9",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-3uk5drhw/attempt-02/response.txt": "138222bffaf305fd14ab13bd07a66983f7756f3c1e687740afa40584525ece47",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-3uk5drhw/attempt-03/feedback.json": "84987f011ea7455ee9dd4a7e9d5d03109fdfacc48ad1748a7c5b6c553279d503",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-3uk5drhw/attempt-03/response.txt": "5f56927b09d75f697d770568e34a42d10f7af558a740b030d834328dc3631e1b",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-3uk5drhw/report.json": "92cb29eb64264343f7cca9a99ccfcd7473864448aa5759e8bc14462284ff502e",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-5v03a943/attempt-00/feedback.json": "1689a71625b8efae1808358f4262bc822c2b5de7dbfdc1499be6afa35dd277c6",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-5v03a943/attempt-00/response.txt": "fc4a2cfca087a7eefe55c41e4f37ea2633f354d4498dec9909ea1af324cca159",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-5v03a943/report.json": "b8c5f1177daa2260eb30c4f9c27b210ff08dbc84f4fb3bec9a522e206fe9a903",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-_jtf3nae/attempt-00/feedback.json": "fd43d7c79ffaa8c7a6dfef61a5d86bd6994a39536d72be1462fce35a695a6650",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-_jtf3nae/attempt-00/response.txt": "71abef884b2b5d37869af8573874698c4d9fbfa5c1fb3995ccb07d05641b4185",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-_jtf3nae/attempt-01/feedback.json": "fd43d7c79ffaa8c7a6dfef61a5d86bd6994a39536d72be1462fce35a695a6650",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-_jtf3nae/attempt-01/response.txt": "0fa665c611d164196605af689423bfea5aef346609787f88904a488f46c0555a",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-_jtf3nae/attempt-02/feedback.json": "8aba09856648c29586fda33e9655f5ad8b30108d8def32373012c9dd31b7f19e",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-_jtf3nae/attempt-02/response.txt": "d80293e839ee222da3eb2f79ebae4f3daee5203cd52d116ee20c476380d403ef",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-_jtf3nae/attempt-03/feedback.json": "fd43d7c79ffaa8c7a6dfef61a5d86bd6994a39536d72be1462fce35a695a6650",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-_jtf3nae/attempt-03/response.txt": "ddf6aa020e87f8acb54b6f85e8aa3377efa29c5540e4df46e3e5a7fa93e6f9a5",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-_jtf3nae/report.json": "5c1bd9212fc65f9297ee80ff67b22218c153b6faadecf078835a6aa671d7c812",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-bo1smva8/attempt-00/feedback.json": "44567c11e30e4ecc7be2e60d3e670e680be4d0c3a61d3066259e7912e95b765d",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-bo1smva8/attempt-00/response.txt": "d90fa3affddfa3ddf506510cc8d55a85e7559a19e295c880d2f92243fe5ff6ff",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-bo1smva8/attempt-01/feedback.json": "9187c68d3adb373c4e621e5632e00ac4d4d77f3bb7ec14c8311b1e9cd093d8dd",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-bo1smva8/attempt-01/response.txt": "d0eae53217737924e6272a073f6d4bf7bbf897f1f781cf40a9bc9fbb617aeaea",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-bo1smva8/attempt-02/feedback.json": "44567c11e30e4ecc7be2e60d3e670e680be4d0c3a61d3066259e7912e95b765d",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-bo1smva8/attempt-02/response.txt": "1cdd78f9ed97395c40a7be40e6f4bfcd1df460aef75fd42cd9c5637205297ae1",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-bo1smva8/attempt-03/feedback.json": "44567c11e30e4ecc7be2e60d3e670e680be4d0c3a61d3066259e7912e95b765d",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-bo1smva8/attempt-03/response.txt": "53592742257e9730efe2498c52e88583d3b5c44713ccfff688973edc93caaddd",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-bo1smva8/report.json": "4306906fbf5c4a232b2bec11049ece423fdaff61e23abfd46d67c87a40cab92b",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-dep_mpqy/attempt-00/feedback.json": "dc9319b52ea2ccda9c3ed95d4cda737366303ae5172bdebf1c91db3a995ab966",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-dep_mpqy/attempt-00/response.txt": "161f48d1552aeb4fb6d6aed35fd67471743ef1906fceb466374a2cfaf4d0c5a0",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-dep_mpqy/attempt-01/feedback.json": "9f658a3cd3319fbbb787991005ccfaf118da610d3acad9b2703ccad6e74b1640",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-dep_mpqy/attempt-01/response.txt": "a0e7c0a09e1d54a6628c6afeadda21d0607093cb2c08b3fed756505e60612406",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-dep_mpqy/attempt-02/feedback.json": "abd3685cc91e069ff9ba1db6ed373c191bc1cb875c9ce77144dce7a156f737b7",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-dep_mpqy/attempt-02/response.txt": "b8f559eb8121544e42f0495e6fdfff9ef79ff4e68c14d734ed4f53b6e0c893c5",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-dep_mpqy/report.json": "473860132e1115e5c7115be6845ecf88338b7395bb2eeee048121df3cd679222",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-dla2dlkj/attempt-00/feedback.json": "142ab669813e840365f7402a69a6b064a377cb94ffb08416df371fdbb2753cd5",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-dla2dlkj/attempt-00/response.txt": "047f6b15565e60c107245f72728653e6c5472513bb0713a86ae1da00ae9cad4f",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-dla2dlkj/attempt-01/feedback.json": "dc9319b52ea2ccda9c3ed95d4cda737366303ae5172bdebf1c91db3a995ab966",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-dla2dlkj/attempt-01/response.txt": "db1196cfbc46c1c953a7c7e5050b83d57a7e97ebb88e3d448bf4ac1e2909ef49",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-dla2dlkj/attempt-02/feedback.json": "142ab669813e840365f7402a69a6b064a377cb94ffb08416df371fdbb2753cd5",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-dla2dlkj/attempt-02/response.txt": "9ab4c767156c8bf02f3a7aa623fd04c1d6d179207e2c335fefef50b56c8de66b",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-dla2dlkj/attempt-03/feedback.json": "10f79b955661792eee632b4e73a4180375dfdb9eca70f53a53ca8cb45f21b89a",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-dla2dlkj/attempt-03/response.txt": "ba28055406323cafd1a2b29d054afee26aae9114ca54e7a869de23324977b234",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-dla2dlkj/report.json": "10e4f55525c7bfd76800623c0912d5697987e0630b2a4cd44c25ab246e09c17b",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-qa7wu55s/attempt-00/feedback.json": "2b97c0a939981ebb5e9834b89d51bc9c3abcb995b343ee1667adb304c2df62e8",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-qa7wu55s/attempt-00/response.txt": "fa09b618e2371b1302749fc736e5780dadf5bf73c6cc2296df4223a21cb6e920",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-qa7wu55s/attempt-01/feedback.json": "e8f628d07fa94c87ce0ee33d35dfe3e20fe382790f251e4f8a47c7c30aa027fc",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-qa7wu55s/attempt-01/response.txt": "d54dbb4d453c54a6d5a117be648a1095e121291c3add08af17e68da26c8a10d4",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-qa7wu55s/report.json": "4836a7be191a5ba0421559dceaf9237c3f6b4e20d8d722281071183c8d275662",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-sw758q2b/attempt-00/feedback.json": "84987f011ea7455ee9dd4a7e9d5d03109fdfacc48ad1748a7c5b6c553279d503",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-sw758q2b/attempt-00/response.txt": "31c698496294674a07008c017d048e83a2c4adcded241c8539ff675acf91e64f",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-sw758q2b/attempt-01/feedback.json": "19f31f1e9aa3d00aaa4a1139278bc40832765da82339a53cac3f86ef9ad1687b",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-sw758q2b/attempt-01/response.txt": "f3fc6f4289a0ecfd9f6bf2ae9ef4cf75c1ac86b88f0c2adaa5f339fa651e6771",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-sw758q2b/attempt-02/feedback.json": "84987f011ea7455ee9dd4a7e9d5d03109fdfacc48ad1748a7c5b6c553279d503",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-sw758q2b/attempt-02/response.txt": "86a8a54dd0e8eedcf53a0a7aeacd138ee62c4acb6909531fe541a42a7a8bf4f3",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-sw758q2b/attempt-03/feedback.json": "fd43d7c79ffaa8c7a6dfef61a5d86bd6994a39536d72be1462fce35a695a6650",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-sw758q2b/attempt-03/response.txt": "e8e54c7f3b8e964c96e57e3bc0ce885e369ceb8ed333448e3f0c2acebbae6344",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-sw758q2b/report.json": "7512bec2d7b3eb7f7a4b9f67d0a978801485d743a24bf3cc275cfd094eb3bb7d",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-composite-agent-r105-live/plan.json": "3c51a3901bb954d60eaec6c2a16485eaf8c830615b6b7cfd3710b7c15185fc91",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-composite-agent-r105-live/report.json": "e26e264b1296497150261c7c649ea5783dc94ee6fed28823151b1125fd1185b1"
+  },
+  "plan_binding": "2acf5d336c6e8bbb7f64c3a8a402b8f3a5d8cc1ae79b9ce9965f1a1de835af0d",
+  "planned": 9,
+  "real_compiled_attempts": 5,
+  "real_executed_attempts": 5,
+  "rows": [
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Ciphertext is not public numerical data",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Rotation requires a ciphertext and a provisioned public step",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Ciphertext is not public numerical data",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 2,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing typed array arithmetic: empty_left",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 3,
+          "status": "failed"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-sw758q2b",
+      "first_attempt_passed": false,
+      "generations": 4,
+      "http_attempts": 4,
+      "id": "construct_000_0",
+      "model_sha256": "2ac92cd2e9395d469846bba46e2c332651e58e3bbaa9b8a44eb02435b7d65822",
+      "provider_status": "repair_budget_exhausted",
+      "report_sha256": "7512bec2d7b3eb7f7a4b9f67d0a978801485d743a24bf3cc275cfd094eb3bb7d",
+      "request_id": "596e4fa8507f2ab0d576a5ec7b68dd57701fe27df4933881086fb85094dd647d",
+      "status": "failed",
+      "terminal_failure_layer": "static_check",
+      "track": "directed_construction"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing typed array arithmetic: empty_left",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing typed array arithmetic: zero_dim",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "item is an array operation, not a ciphertext/Plain Expr operation",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 2,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Ciphertext is not public numerical data",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 3,
+          "status": "failed"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-3uk5drhw",
+      "first_attempt_passed": false,
+      "generations": 4,
+      "http_attempts": 4,
+      "id": "construct_000_1",
+      "model_sha256": "1a762144cc930226ff929be0a12a672f4f535337401c804e180d4b58997074ac",
+      "provider_status": "repair_budget_exhausted",
+      "report_sha256": "92cb29eb64264343f7cca9a99ccfcd7473864448aa5759e8bc14462284ff502e",
+      "request_id": "0bd76c3dc85676fde434af6dd168b5a1db775940016f9f9ac444e3d0c6311de4",
+      "status": "failed",
+      "terminal_failure_layer": "static_check",
+      "track": "directed_construction"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing typed array arithmetic: empty_left",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing typed array arithmetic: empty_left",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Symbolic/Empty left operand does not use object-array broadcasting",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 2,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing typed array arithmetic: empty_left",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 3,
+          "status": "failed"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-_jtf3nae",
+      "first_attempt_passed": false,
+      "generations": 4,
+      "http_attempts": 4,
+      "id": "construct_000_2",
+      "model_sha256": "1c25655fa5b2d5c089e589c416950f0e9f2896bffd708451d192d854d2a04cb2",
+      "provider_status": "repair_budget_exhausted",
+      "report_sha256": "5c1bd9212fc65f9297ee80ff67b22218c153b6faadecf078835a6aa671d7c812",
+      "request_id": "8070710850c8fb65acb33c5ef102b9b8ab1553ff88e525564d6b2a3ceae13e0e",
+      "status": "failed",
+      "terminal_failure_layer": "static_check",
+      "track": "directed_construction"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing typed array arithmetic: inplace.Add",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Explicit Plain/object-array dispatch requires separate validation",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing typed array arithmetic: inplace.Add",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 2,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing typed array arithmetic: inplace.Mult",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 3,
+          "status": "failed"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-dla2dlkj",
+      "first_attempt_passed": false,
+      "generations": 4,
+      "http_attempts": 4,
+      "id": "construct_001_0",
+      "model_sha256": "5e1e438af7dc41a5a2f81b4ef98409716641e00184d1feb75f160c69b9da360e",
+      "provider_status": "repair_budget_exhausted",
+      "report_sha256": "10e4f55525c7bfd76800623c0912d5697987e0630b2a4cd44c25ab246e09c17b",
+      "request_id": "a1c5909e6e995fcfebbdf31322eed07625f3e0b85b1041b5ecadf94dea047c33",
+      "status": "failed",
+      "terminal_failure_layer": "static_check",
+      "track": "directed_construction"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing typed array arithmetic: inplace.Add",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 1,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "cb88c38ba9bd9cad29437de48cebeac3c195e7991c2146c6dd071e0b483bdd4f",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 16,
+        "mae": 2.031708725867145e-08,
+        "max_absolute_error": 4.7290390714493924e-08,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "inplace.Add": "executed_operation",
+          "inplace.Mult": "executed_operation",
+          "inplace.Sub": "executed_operation",
+          "object.overlap_mult": "executed_operation",
+          "overlap": "executed_operation"
+        },
+        "features": [
+          "inplace.Add",
+          "inplace.Sub",
+          "inplace.Mult",
+          "overlap",
+          "object.overlap_mult"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-composite-array-mutation",
+        "numeric_features": [
+          "inplace.Add",
+          "inplace.Sub",
+          "inplace.Mult",
+          "overlap",
+          "object.overlap_mult"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-0neao13s",
+      "first_attempt_passed": false,
+      "generations": 2,
+      "helper_coverage": null,
+      "http_attempts": 2,
+      "id": "construct_001_1",
+      "model_sha256": "b3b91ddddf648b14c6decc43aef99ee8b8b3bfef62e2ed73443ac4749b9cae0f",
+      "provider_status": "passed",
+      "report_sha256": "f2316e6009f5466ae25a0c6c54fd6b01bd44ff949244aab3604b2715dd7d37e0",
+      "request_id": "38d7b6db5740c132a9d277aa5c0d284abd34bd12319f4c98b2fe5049754195ea",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Explicit Plain/object-array dispatch requires separate validation",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Missing contributing typed array arithmetic: object.overlap_mult",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 2,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "fb837b183f675437ebbc9861f1235b6d2fa6433a482549872bca3f9f6148980c",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 16,
+        "mae": 4.0980196867844954e-08,
+        "max_absolute_error": 1.626184600034275e-07,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "inplace.Add": "executed_operation",
+          "inplace.Mult": "executed_operation",
+          "inplace.Sub": "executed_operation",
+          "object.overlap_mult": "executed_operation",
+          "overlap": "executed_operation"
+        },
+        "features": [
+          "inplace.Add",
+          "inplace.Sub",
+          "inplace.Mult",
+          "overlap",
+          "object.overlap_mult"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-composite-array-mutation",
+        "numeric_features": [
+          "inplace.Add",
+          "inplace.Sub",
+          "inplace.Mult",
+          "overlap",
+          "object.overlap_mult"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-dep_mpqy",
+      "first_attempt_passed": false,
+      "generations": 3,
+      "helper_coverage": null,
+      "http_attempts": 3,
+      "id": "construct_001_2",
+      "model_sha256": "7f80213b69f591d78e7b96eeeb1783156879a7de3222a35371adf308ceb41685",
+      "provider_status": "passed",
+      "report_sha256": "473860132e1115e5c7115be6845ecf88338b7395bb2eeee048121df3cd679222",
+      "request_id": "6e811cfc8a31c747fcd22f79bc35f142962cdee8ffd0e3576b8a2cb572aae44f",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "Encoding needs scalar/1D length one or four; explicitly reshape, do not flatten silently",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": true,
+          "diagnostic": "Frozen numerical tolerance failed; inspect reduction/layout/operator semantics",
+          "executed": true,
+          "failure_layer": "numerical_comparison",
+          "index": 1,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Encoding needs scalar/1D length one or four; explicitly reshape, do not flatten silently",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 2,
+          "status": "failed"
+        },
+        {
+          "compiled": false,
+          "diagnostic": "Encoding needs scalar/1D length one or four; explicitly reshape, do not flatten silently",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 3,
+          "status": "failed"
+        }
+      ],
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-bo1smva8",
+      "first_attempt_passed": false,
+      "generations": 4,
+      "http_attempts": 4,
+      "id": "construct_004_0",
+      "model_sha256": "4bbbd5b58c07f271c0694325081a66c416ab2718d84da54ec293198bb94f5d08",
+      "provider_status": "repair_budget_exhausted",
+      "report_sha256": "4306906fbf5c4a232b2bec11049ece423fdaff61e23abfd46d67c87a40cab92b",
+      "request_id": "dcba81885e6bd1a5772646089045ff020faa20f7b8de612b8f7653214f029381",
+      "status": "failed",
+      "terminal_failure_layer": "static_check",
+      "track": "directed_construction"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 0,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "a359c9f52eea6769a740cf3e99cb696f9f3bde7722bc9d6d6a772c8dcce6eed2",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 16,
+        "mae": 9.334833186167451e-08,
+        "max_absolute_error": 2.669851819625535e-07,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "storage.copy_independence": "object_storage_alias_distinction",
+          "storage.reshape_view": "object_storage_alias_distinction",
+          "storage.transpose_view": "object_storage_alias_distinction"
+        },
+        "features": [
+          "storage.copy_independence",
+          "storage.reshape_view",
+          "storage.transpose_view"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-composite-array-view_copy",
+        "numeric_features": [
+          "storage.copy_independence",
+          "storage.reshape_view",
+          "storage.transpose_view"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-5v03a943",
+      "first_attempt_passed": true,
+      "generations": 1,
+      "helper_coverage": null,
+      "http_attempts": 1,
+      "id": "construct_004_1",
+      "model_sha256": "c5fcb27ebfcafc835337c0cfe1f50d359c1f5c2b87cc08756bd5073de1e23a29",
+      "provider_status": "passed",
+      "report_sha256": "b8c5f1177daa2260eb30c4f9c27b210ff08dbc84f4fb3bec9a522e206fe9a903",
+      "request_id": "afdd24af7c9520c5227ea6e7c118dfedf6fb35c08242d3e5c479b39e8a9679f1",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction"
+    },
+    {
+      "attempts": [
+        {
+          "compiled": false,
+          "diagnostic": "'float' object is not subscriptable",
+          "executed": false,
+          "failure_layer": "static_check",
+          "index": 0,
+          "status": "failed"
+        },
+        {
+          "compiled": true,
+          "diagnostic": null,
+          "executed": true,
+          "failure_layer": "complete",
+          "index": 1,
+          "status": "passed"
+        }
+      ],
+      "audit_sha256": "7bdf3b996493be54eddad7d070980b124fe03d88437fd58123ffdf13b9c38ef7",
+      "comparison": {
+        "atol": 1e-05,
+        "compared_values": 16,
+        "mae": 6.129269556903443e-08,
+        "max_absolute_error": 1.9314130628167447e-07,
+        "rtol": 0.0001
+      },
+      "construction_coverage": {
+        "actual_frontend_checked": true,
+        "all_input_semantic_proof": false,
+        "evidence_scopes": {
+          "storage.copy_independence": "object_storage_alias_distinction",
+          "storage.reshape_view": "object_storage_alias_distinction",
+          "storage.transpose_view": "object_storage_alias_distinction"
+        },
+        "features": [
+          "storage.copy_independence",
+          "storage.reshape_view",
+          "storage.transpose_view"
+        ],
+        "finite_influence_checked": true,
+        "id": "unified-public-composite-array-view_copy",
+        "numeric_features": [
+          "storage.copy_independence",
+          "storage.reshape_view",
+          "storage.transpose_view"
+        ],
+        "per_invocation_proof": false,
+        "schema": 1,
+        "structural_features": [],
+        "structural_only": false
+      },
+      "evidence": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-qa7wu55s",
+      "first_attempt_passed": false,
+      "generations": 2,
+      "helper_coverage": null,
+      "http_attempts": 2,
+      "id": "construct_004_2",
+      "model_sha256": "15991f3fd3121103867d8e7992bd39cc9ba50fc93ebcead039d6e27e64d62040",
+      "provider_status": "passed",
+      "report_sha256": "4836a7be191a5ba0421559dceaf9237c3f6b4e20d8d722281071183c8d275662",
+      "request_id": "6f20bdef432e545e52a2e1f8a534d18c11bd6b9884a33d90f2eb303952a59a40",
+      "status": "passed",
+      "terminal_failure_layer": null,
+      "track": "directed_construction"
+    }
+  ],
+  "runner_sha256": "9215374043782144a93942526f05fd84fc8269216dec161e81474247dfc3819b",
+  "scope": "One frozen campaign shard; reservations/interruptions/failed tasks are not passes",
+  "source_sha256": "c74d21106c1e509ad75d4e59828b07093af6284fc0cd67793711958e5807f8ad",
+  "stage2_complete": false,
+  "statuses": {
+    "failed": 5,
+    "passed": 4
+  },
+  "successful_after_repair": 3,
+  "tracks": {
+    "directed_construction": {
+      "failed": 5,
+      "passed": 4
+    }
+  },
+  "transport_retries": 0,
+  "usage": {
+    "completion_tokens": 550756,
+    "prompt_cache_hit_tokens": 65024,
+    "prompt_cache_miss_tokens": 34779,
+    "prompt_tokens": 99803,
+    "reasoning_tokens": 538077,
+    "total_tokens": 650559
+  }
+}

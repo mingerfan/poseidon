@@ -1,0 +1,43 @@
+{
+  "format": "poseidon-operator-graph-v1",
+  "id": "gap_capacity64_negate",
+  "inputs": [
+    {
+      "name": "x",
+      "shape": [
+        64
+      ]
+    }
+  ],
+  "constants": {},
+  "nodes": [
+    {
+      "id": "base",
+      "op": "square",
+      "inputs": [
+        "x"
+      ],
+      "attrs": {},
+      "outputs": [
+        "base_v"
+      ]
+    },
+    {
+      "id": "context",
+      "op": "negate",
+      "inputs": [
+        "base_v"
+      ],
+      "attrs": {},
+      "outputs": [
+        "y"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "output",
+      "value": "y"
+    }
+  ]
+}

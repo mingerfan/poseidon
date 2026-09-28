@@ -1,0 +1,61 @@
+{
+  "binding": "7f5dc67b019f63577afe0dc0339f4c6fd717c12b4698b2fb28dad84a94db7412",
+  "compiler_partitions": {
+    "remaining": [
+      "rescale",
+      "relinearization"
+    ],
+    "satisfied": 3
+  },
+  "current_campaign_audited": {
+    "audited": 25,
+    "failed": 6,
+    "passed": 19,
+    "planned": 2030
+  },
+  "format": "poseidon-campaign-bookkeeping-acceptance-r111-v1",
+  "independent_checkpoint": {
+    "failed": 1,
+    "generations": 35,
+    "http_attempts": 35,
+    "not_run": 32,
+    "numerical_passes": 15,
+    "passed": 15,
+    "planned": 48,
+    "real_compiled_attempts": 34,
+    "real_executed_attempts": 15
+  },
+  "parents": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-r111-checkpoint-016-audit/report.json": "3af73fe974b32d471f48b910beb0e89acfb1eff05c9294878622c325969f6cc3",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-r111-resume-authorization.json": "bdb520ae2bf70a791122b68e953bdda136639b98ea6b62028464b3430aef403c",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-agent-campaign-r111-shard-000/recovery.json": "67d0573d68ddbb8cc673e65a857c2fbb76ba75bbb86950588623115ad610cab2",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-campaign-request-gate-r111/summary-at-resume.json": "435728656b8820e6d91e5788db49c5cc2e30fe11d16471e9d9db5a99ecbe384c",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-campaign-request-gate-r111/test_campaign_live_state.py.log": "694ef3fda1139b8f7d10cbf38d39b3aa6b29ea1075acb0f5c52ef92b3b64ba68",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-campaign-request-gate-r111/test_campaign_summary.py.log": "6549f6f4ff69c8cea20155f71af976a094bce4fab3fcf3dc424997d042a68858",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-campaign-request-gate-r111/test_current_agent_compiler.py.log": "79ba217cf46bad7b0afda704d37bb71224911a67f3869914f3d83249f8b480bb",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-campaign-request-gate-r111/tests.log": "f4a71d49c2c793204a61166d42b67aa1e029e17cc16dedf7af44d680a8416c2d"
+  },
+  "recovery_encrypted_executions": 0,
+  "recovery_paid_calls": 0,
+  "repaired_layer": "campaign request bookkeeping; frozen 193268-byte request exceeded legacy 131072-byte reader",
+  "resumed_plan_binding": "e566ce933ecf46fbb3f968971799fc2d14096b8f5ce09beaf1177e934a391b1a",
+  "resumed_scope": "Only original free_bench_boundary_0016..0047, no completed task repeated",
+  "runtime_source_sha256": "c74d21106c1e509ad75d4e59828b07093af6284fc0cd67793711958e5807f8ad",
+  "sources": {
+    "scripts/baseline/benchmarks/tools/audit_current_agent_compiler.py": "55a76895581a2945203fc38ad6ef81a5975a0053d384747efed00a9125f74f4d",
+    "scripts/baseline/benchmarks/tools/audit_stage2_campaign_shard_v2.py": "5338d4ca97658e3b841988d83b809be9a13ea4968d454802b22523a042b18e26",
+    "scripts/baseline/benchmarks/tools/campaign_request_files.py": "216e2af0a34bfa2a872d2456b1f9a5b50d3b6008fa688f7c1f9f5971ebb26cab",
+    "scripts/baseline/benchmarks/tools/recover_campaign_terminal.py": "259bcaeba3587505cc5e18d9495c00dd44afff3ad9b573f2597d3aba8538b427",
+    "scripts/baseline/benchmarks/tools/run_stage2_agent_campaign_v2.py": "8d6b6999d5c464f06489b03e22bee6c386d62f2c0c49dd28b74b04c50a6f1d1b",
+    "scripts/baseline/benchmarks/tools/summarize_agent_campaign.py": "bad438f75ca44cffaaa10265398451e2109cd7a5b83c65d8a0d9dbac52b5d5c8",
+    "scripts/baseline/benchmarks/tools/test_campaign_request_files.py": "002ca615b1846ab2d7982921321233e3b8d0243efc5189251beb924ea95f42d1",
+    "scripts/baseline/benchmarks/tools/test_campaign_summary.py": "ebc0d8ddb1b1bde767ea768bb44272a7cc7dcd340dcd37f58ab8976a675570ea",
+    "scripts/baseline/benchmarks/tools/test_current_agent_compiler.py": "b0468a104d1af4b77abf4c7e80b33f0f4600739ed3aa92c07d28d6b0cb59b246"
+  },
+  "stage2_complete": false,
+  "tests": {
+    "failed": 0,
+    "passed": 34,
+    "skipped": 0
+  }
+}

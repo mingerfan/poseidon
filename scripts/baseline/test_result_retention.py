@@ -44,6 +44,30 @@ class RetentionTests(unittest.TestCase):
             self.assertEqual((run/'model.json').read_text(),'{}')
             with self.assertRaises(ValueError): plan_run(root,root)
 
+    def test_cancelled_partial_and_empty_keys_require_live_ownership(self):
+        for empty in (False, True):
+            with tempfile.TemporaryDirectory() as folder:
+                root=Path(folder);run=self.fixture(root);keys=run/"private-keys"
+                keys.chmod(0o700)
+                (run/"report.json").write_text(json.dumps(dict(status="cancelled",failure_layer="key_setup")))
+                (run/"parameters.json").write_text("")
+                if empty:
+                    for key in keys.iterdir():key.unlink()
+                else:
+                    (keys/"sec.seal").write_bytes(b"partial")
+                with self.assertRaises((ValueError, json.JSONDecodeError)):cleanup_run(run,root)
+                info=keys.stat()
+                with self.assertRaises(ValueError):
+                    cleanup_run(run,root,key_directory_identity=(info.st_dev,info.st_ino+1))
+                cleanup_run(run,root,key_directory_identity=(info.st_dev,info.st_ino))
+                self.assertFalse(keys.exists())
+                self.assertTrue(json.loads((run/"key-cleanup-outcome.json").read_text())["complete"])
+    def test_retrospective_cancelled_complete_metadata(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root=Path(folder);run=self.fixture(root)
+            (run/"report.json").write_text('{"status":"cancelled","failure_layer":"key_setup"}')
+            cleanup_run(run,root)
+            self.assertFalse((run/"private-keys").exists())
     def test_shared_hardlinked_keys_preserved(self):
         with tempfile.TemporaryDirectory() as folder:
             root=Path(folder); run=self.fixture(root)

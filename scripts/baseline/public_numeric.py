@@ -135,11 +135,14 @@ def reshape(value, shape):
     return Array(tuple(shape),value.values,value.floating)
 
 
-def encoding(value):
-    """Explicit boundary: current verified Hecate ABI is scalar/1D period-four."""
+def encoding(value, *, slot_period=4):
+    """Explicit scalar/1D encoding boundary; legacy callers retain period four."""
+    from packed_input_abi import rotations
+    rotations(slot_period)
     if type(value) is Array:
-        require(len(value.shape) <= 1 and len(value.values) in (1,4),
-                'Encoding needs scalar/1D length one or four; explicitly reshape, do not flatten silently')
+        require(len(value.shape) <= 1 and len(value.values) in (1,slot_period),
+                'Encoding needs scalar/1D length one or four; explicitly reshape, do not flatten silently' if slot_period==4 else
+                'Encoding needs scalar/1D length one or declared period; explicitly reshape')
         data=list(value.values)
     else:
         data=number(value)

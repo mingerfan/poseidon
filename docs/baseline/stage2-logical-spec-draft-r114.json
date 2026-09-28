@@ -1,0 +1,61 @@
+{
+  "active_runtime_changed": false,
+  "binding": "3703246d21ee625ea9565945a14c0bf208a6ea220f61c9debfe0a0cf512e3340",
+  "confirmed": "Request specifies physical ciphertext rotate and logical shapes, but omits a formula for graph rotation over logical element count",
+  "draft_sources": {
+    "scripts/baseline/benchmarks/tools/logical_model_spec_draft.py": "a6414da52ad506fa72b9f25e2cc24cedf560a6f2d17d752f0e71387a19b63d02",
+    "scripts/baseline/benchmarks/tools/test_logical_model_spec_draft.py": "44ffb94090d9842efaaa967817dd165abf07e12bb18d7adc591fd4cb5c2dd245"
+  },
+  "format": "poseidon-logical-spec-draft-r114-v1",
+  "hypothesis": "Explicit public mathematical graph semantics may reduce interpretation errors and repair calls; not yet tested by paid A/B evaluation",
+  "new_fhe_executions": 0,
+  "new_paid_calls": 0,
+  "observed": {
+    "attempts": [
+      {
+        "failure_layer": "numerical_comparison",
+        "index": 0,
+        "max_absolute_error": 0.9999999999999999
+      },
+      {
+        "failure_layer": "numerical_comparison",
+        "index": 1,
+        "max_absolute_error": 1.0000000000201854
+      },
+      {
+        "failure_layer": null,
+        "index": 2,
+        "max_absolute_error": 7.621737685425956e-10
+      }
+    ],
+    "case": "free_bench_boundary_0030",
+    "generations": 3,
+    "logical_shape": [
+      1,
+      63
+    ],
+    "period": 64,
+    "preliminary_status": "passed_pending_batch_independent_audit",
+    "step": -2
+  },
+  "parents": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-441j_9cp/report.json": "a91b1f7bbc9197c2e42a0cbf8d14080a346b789c2df505bb21e103083fc39a33",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/agent-deepseek-441j_9cp/request.json": "cd611d3bda0fb3d34a1160486d86f92bb96057d0213007a229cfa96377c42c84",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/stage2-logical-spec-draft-r114/tests.log": "dd4a185b1a87030bc256940195488e209531320b34e66c1696741ade2a564d0e"
+  },
+  "source_snapshot": {
+    "scripts/baseline/benchmark_graph.py": "add5943bac0b7f6d93b8e5336e1572f236e42d607804f5683e9ed257bc8304b6",
+    "scripts/baseline/benchmark_math.py": "6209466af3540071d0db77a840a9630ee8bd109df0b184a42e60a03483026bb4",
+    "scripts/baseline/benchmark_torch.py": "9a91c02356e56c3a363308ec6e224476113214b3f3a43145c565d5e82c239dba",
+    "scripts/baseline/run_candidate.py": "0e12c8bff3dfc041952977719de028089f1ad271d529c8f95232416133515a46",
+    "scripts/baseline/test_unified_generation_guidance.py": "b9d8f6610810b378637360b475c97af20ec3dbe053c143bcaf0e77a920848444",
+    "scripts/baseline/unified_graph_contract.py": "016d276327fa7608f17a31b6d9857dacda921c2a5ffaba1ab73477369cf38a4b"
+  },
+  "specification_operators": 24,
+  "stage2_complete": false,
+  "tests": {
+    "failed": 0,
+    "passed": 6,
+    "skipped": 0
+  }
+}

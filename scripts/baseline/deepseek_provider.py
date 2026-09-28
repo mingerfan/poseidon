@@ -28,6 +28,12 @@ RETRY_DELAYS = (5, 15, 30)
 def retryable_failure(code, diagnostics):
     # Retry only incomplete transport, never malformed content, credentials,
     # certificates, quota errors, refusals or changed model/usage contracts.
+    if code == 'transport_tls_failed':
+        # Only an observed EOF during connection establishment. Never retry
+        # certificate, MAC, protocol or response-content failures as TLS EOF.
+        return (diagnostics.get('stage') == 'connect'
+                and diagnostics.get('tls_error') == 'unexpected_eof'
+                and diagnostics.get('tls_reason') in (None, 'UNEXPECTED_EOF_WHILE_READING'))
     if code == 'transport_invalid_stream':
         return diagnostics.get('stream_error') == 'missing_done'
     return code in {'transport_timeout', 'transport_socket_timeout',
@@ -119,6 +125,15 @@ class Config:
 
 
 def public_request(request):
+    if type(request) is dict and request.get("task")=="hecate-unified-graph-synthesis-v1":
+        from unified_graph_contract import validate_request
+        try:
+            validate_request(request)
+        except (ValueError,TypeError,KeyError,IndexError):
+            raise ProviderError("request_contract_changed") from None
+        # The unified validator checks the exact data-only field set, immutable
+        # metadata, layout, constants, construction contract and request hash.
+        return copy.deepcopy(request)
     fields = {"schema", "task", "model", "fx_graph", "public_constants", "constant_origins", "layout",
               "rules", "response_schema", "compiler_profile_sha256", "privacy", "request_id"}
     check(type(request) is dict and fields <= set(request) <= fields | {"model_structure", "semantic_guidance", "construction_exercise", "compiler_configuration"},
@@ -133,7 +148,7 @@ def public_request(request):
           and request["response_schema"] == RESPONSE_SCHEMA
           and type(request["schema"]) is int and request["schema"] == 1, "request_contract_changed")
     check(valid_semantic_guidance(request), 'request_contract_changed')
-    if request.get('task') in ('hecate-chunked-input-synthesis-v1','hecate-periodic-packed-synthesis-v1','hecate-periodic-packed-native-synthesis-v1','hecate-periodic-packed-native-synthesis-v2'):
+    if request.get('task') in ('hecate-unified-graph-synthesis-v1','hecate-chunked-input-synthesis-v1','hecate-periodic-packed-synthesis-v1','hecate-periodic-packed-native-synthesis-v1','hecate-periodic-packed-native-synthesis-v2'):
         from candidate_contract import request_input_names
         request_input_names(request)
     if 'construction_exercise' in request:
@@ -285,6 +300,7 @@ class DeepSeekProvider:
         self._failed = False
         self.generation_attempts = 0
         self.on_attempt = None  # Trusted caller checkpoint, never provider content.
+        self.before_attempt = None  # Trusted host reservation before any HTTP attempt.
 
     def generate(self, request, feedback_history):
         check(self._transport is not None, "network_disabled_no_transport")
@@ -332,6 +348,8 @@ class DeepSeekProvider:
             self.on_attempt()
 
     def _attempt(self, body, retry):
+        if self.before_attempt is not None:
+            self.before_attempt()
         self.request_attempts += 1
         if self._transport.is_live:
             # Attempt count, not proof of server receipt, inference success or billing.

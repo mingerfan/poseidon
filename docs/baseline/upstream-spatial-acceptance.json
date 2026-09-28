@@ -1,0 +1,490 @@
+{
+  "actual_compile": true,
+  "actual_decrypt": true,
+  "actual_seal_cpu": true,
+  "added_fixture_blocks": [
+    {
+      "id": "conv_1_2_2_3_2",
+      "reason": [
+        {
+          "helper": "spatial",
+          "node_id": "n0",
+          "reason": "Upstream HE_Conv output register indexing exceeds virtual-ring capacity"
+        }
+      ],
+      "status": "blocked"
+    },
+    {
+      "id": "conv_1_4_4_3_2",
+      "reason": [
+        {
+          "helper": "spatial",
+          "node_id": "n0",
+          "reason": "Upstream HE_Conv output register indexing exceeds virtual-ring capacity"
+        }
+      ],
+      "status": "blocked"
+    },
+    {
+      "id": "avg_2_4_4_3_1",
+      "reason": [
+        {
+          "helper": "spatial",
+          "node_id": "n0",
+          "reason": "Upstream HE_Avg stride-one multi-channel indexing is not equivalent"
+        }
+      ],
+      "status": "blocked"
+    },
+    {
+      "id": "avg_3_2_4_3_1",
+      "reason": [
+        {
+          "helper": "spatial",
+          "node_id": "n0",
+          "reason": "Upstream HE_Avg stride-one multi-channel indexing is not equivalent"
+        }
+      ],
+      "status": "blocked"
+    }
+  ],
+  "branch": "lhy-agent-dsl",
+  "checkout": "/home/lhohy/Code/Poseidon",
+  "commit": false,
+  "compiler_configuration": "seal-cpu-eva-w45-v1",
+  "construction_tasks": 627,
+  "corpus_eligibility_only": {
+    "HE_Pool": 5
+  },
+  "default_configuration_changed": false,
+  "diagnostics_retained": [
+    {
+      "index_errors": 2,
+      "layer": "public_vector_helper",
+      "numeric_failures": 2,
+      "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-spatial-r22-vectors-initial.log",
+      "resolution": "four parameter cases remain explicitly blocked"
+    },
+    {
+      "layer": "manual_fixture_source_serialization",
+      "path": "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-spatial-r22-frozen-corpus/failure.json",
+      "resolution": "separate v2 runner uses actual newline characters; original failure and archive retained"
+    }
+  ],
+  "downloaded": false,
+  "evidence": {
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-spatial-r22-chunk-regression/report.json": "eacc11c812a9e5c38a0825e19aecc7d7d20c1f97c0f64cf8ccbfd8bd0dc7980b",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-spatial-r22-compatibility.json": "f3450581618a8091c03e89f9982ca0f33f7b594f23cf06afc1aea192cc62c6e1",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-spatial-r22-frozen-compiler-evidence.json": "a773798bcf2686a384876ef910317a95598002824ba15948a30068b9a8660a1b",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-spatial-r22-frozen-corpus-validated/report.json": "d980ff7bc349b6ccf6eef03914ca401026835ffd0c3dd684a4406ed311acb09f",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-spatial-r22-frozen-mappings.json": "7ea54182537cb57fae73233f1eea79ec95f5f15f8b0ba11803140c2c3870947d",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-spatial-r22-helper-directed/report.json": "a3b89810264040fbe3a2a5237805322de2199179918a1940a96d43d2975865c0",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-spatial-r22-native-compiler-evidence.json": "6231ab9d27885b47ec6bb8d844bc74f266d08de55f32ae4b1420cc5ba002ced6",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-spatial-r22-native-initial/report.json": "67e7aaab58fb5630620aa2e02a69e57e476e7d77e58789aa76f7432e1e70ada7",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-spatial-r22-plaintext/report.json": "0b7e4b4bc7b8d252134be315311f8534fe09dc98c73c6c5d382c46e8409b011c",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-spatial-r22-regression-compiler-evidence.json": "cb52e9bce97991d6304d7bf986ae96f6768cd182ac4acd9fb3b8e43e3eb3b5c4",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-spatial-r22-regression/report.json": "22903896cdb7e8705f7739a9f9cdc5294abf50cf89b7ee9b7756602c54690add",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-spatial-r22-rejections.json": "786e4b971278d02af090ab0749af804955a770cc732271f2b733fb56fc737a68",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-spatial-r22-unit-final.json": "09c54bb406ac452e9dc78d79aca10a77c00cf816fb82cff4f09eb4555bb29c88",
+    "/home/lhohy/poseidon-work/platforms/aarch64-linux/results/upstream-spatial-r22-verification-complete.json": "3b401bd3059fd41854d9c627bc19b6d636e9c330eb2ea546d04b2ba846addfe7"
+  },
+  "executed_runs": 74,
+  "frozen_corpus_blocks": [
+    {
+      "id": "bench_helper_0016",
+      "reason": [
+        {
+          "helper": "spatial",
+          "node_id": "n0",
+          "reason": "Spatial helper requires power-of-two spatial dimensions"
+        }
+      ],
+      "status": "blocked"
+    },
+    {
+      "id": "bench_helper_0017",
+      "reason": [
+        {
+          "helper": "spatial",
+          "node_id": "n0",
+          "reason": "HE_Conv odd kernels up to 3"
+        }
+      ],
+      "status": "blocked"
+    },
+    {
+      "id": "bench_helper_0018",
+      "reason": [
+        {
+          "helper": "spatial",
+          "node_id": "n1",
+          "reason": "Spatial helper requires power-of-two spatial dimensions"
+        }
+      ],
+      "status": "blocked"
+    },
+    {
+      "id": "bench_helper_0019",
+      "reason": [
+        {
+          "helper": "spatial",
+          "node_id": "n1",
+          "reason": "HE_Conv odd kernels up to 3"
+        }
+      ],
+      "status": "blocked"
+    },
+    {
+      "id": "bench_helper_0020",
+      "reason": [
+        {
+          "helper": "spatial",
+          "node_id": "n0",
+          "reason": "Spatial helper requires power-of-two spatial dimensions"
+        }
+      ],
+      "status": "blocked"
+    },
+    {
+      "id": "bench_helper_0021",
+      "reason": [
+        {
+          "helper": "spatial",
+          "node_id": "n0",
+          "reason": "HE_Conv odd kernels up to 3"
+        },
+        {
+          "helper": "spatial",
+          "node_id": "n1",
+          "reason": "Spatial helper requires power-of-two spatial dimensions"
+        }
+      ],
+      "status": "blocked"
+    },
+    {
+      "id": "bench_helper_0022",
+      "reason": [
+        {
+          "helper": "spatial",
+          "node_id": "n1",
+          "reason": "Spatial helper requires power-of-two spatial dimensions"
+        }
+      ],
+      "status": "blocked"
+    },
+    {
+      "id": "bench_helper_0023",
+      "reason": [
+        {
+          "helper": "spatial",
+          "node_id": "n1",
+          "reason": "HE_Conv odd kernels up to 3"
+        },
+        {
+          "helper": "spatial",
+          "node_id": "n2",
+          "reason": "Spatial helper requires power-of-two spatial dimensions"
+        }
+      ],
+      "status": "blocked"
+    },
+    {
+      "id": "bench_helper_0048",
+      "reason": [
+        {
+          "helper": "spatial",
+          "node_id": "n0",
+          "reason": "Spatial helper requires power-of-two spatial dimensions"
+        }
+      ],
+      "status": "blocked"
+    },
+    {
+      "id": "bench_helper_0049",
+      "reason": [
+        {
+          "helper": "spatial",
+          "node_id": "n0",
+          "reason": "HE_Avg kernel/padding/divisor"
+        }
+      ],
+      "status": "blocked"
+    },
+    {
+      "id": "bench_helper_0050",
+      "reason": [
+        {
+          "helper": "spatial",
+          "node_id": "n1",
+          "reason": "Spatial helper requires power-of-two spatial dimensions"
+        }
+      ],
+      "status": "blocked"
+    },
+    {
+      "id": "bench_helper_0051",
+      "reason": [
+        {
+          "helper": "spatial",
+          "node_id": "n1",
+          "reason": "HE_Avg kernel/padding/divisor"
+        }
+      ],
+      "status": "blocked"
+    },
+    {
+      "id": "bench_helper_0052",
+      "reason": [
+        {
+          "helper": "spatial",
+          "node_id": "n0",
+          "reason": "Spatial helper requires power-of-two spatial dimensions"
+        }
+      ],
+      "status": "blocked"
+    },
+    {
+      "id": "bench_helper_0053",
+      "reason": [
+        {
+          "helper": "spatial",
+          "node_id": "n0",
+          "reason": "HE_Avg kernel/padding/divisor"
+        },
+        {
+          "helper": "spatial",
+          "node_id": "n1",
+          "reason": "Spatial helper requires power-of-two spatial dimensions"
+        }
+      ],
+      "status": "blocked"
+    },
+    {
+      "id": "bench_helper_0054",
+      "reason": [
+        {
+          "helper": "spatial",
+          "node_id": "n1",
+          "reason": "Spatial helper requires power-of-two spatial dimensions"
+        }
+      ],
+      "status": "blocked"
+    },
+    {
+      "id": "bench_helper_0055",
+      "reason": [
+        {
+          "helper": "spatial",
+          "node_id": "n1",
+          "reason": "HE_Avg kernel/padding/divisor"
+        },
+        {
+          "helper": "spatial",
+          "node_id": "n2",
+          "reason": "Spatial helper requires power-of-two spatial dimensions"
+        }
+      ],
+      "status": "blocked"
+    },
+    {
+      "id": "bench_helper_0064",
+      "reason": [
+        {
+          "helper": "spatial",
+          "node_id": "n0",
+          "reason": "Spatial helper requires power-of-two spatial dimensions"
+        }
+      ],
+      "status": "blocked"
+    },
+    {
+      "id": "bench_helper_0066",
+      "reason": [
+        {
+          "helper": "spatial",
+          "node_id": "n1",
+          "reason": "Spatial helper requires power-of-two spatial dimensions"
+        }
+      ],
+      "status": "blocked"
+    },
+    {
+      "id": "bench_helper_0068",
+      "reason": [
+        {
+          "helper": "spatial",
+          "node_id": "n0",
+          "reason": "Spatial helper requires power-of-two spatial dimensions"
+        }
+      ],
+      "status": "blocked"
+    },
+    {
+      "id": "bench_helper_0070",
+      "reason": [
+        {
+          "helper": "spatial",
+          "node_id": "n1",
+          "reason": "Spatial helper requires power-of-two spatial dimensions"
+        }
+      ],
+      "status": "blocked"
+    }
+  ],
+  "frozen_helper_models_executed": [
+    "bench_helper_0065",
+    "bench_helper_0067",
+    "bench_helper_0069",
+    "bench_helper_0071"
+  ],
+  "head": "3493c905dd8f4ce8e04211c83b337be243befe14",
+  "helper_tasks": 20,
+  "installed_dependencies": false,
+  "manual_batches": {
+    "upstream-spatial-r22-chunk-regression/report.json": {
+      "blocked": 0,
+      "compared_values": 1456,
+      "failed": 0,
+      "max_absolute_error": 2.151595108913058e-06,
+      "passed": 18,
+      "planned": 18,
+      "seconds": 86.64026676698995,
+      "skipped": 0,
+      "source_sha256": "9f53b74c3d6f0c93c5d284e8680df39074ec112c36fcd9cb82209f7fd1f65161",
+      "weighted_mae": 1.3406054793246509e-08
+    },
+    "upstream-spatial-r22-frozen-corpus-validated/report.json": {
+      "blocked": 20,
+      "compared_values": 24,
+      "failed": 0,
+      "max_absolute_error": 3.0397910059954484e-08,
+      "passed": 4,
+      "planned": 24,
+      "seconds": 19.600706395998714,
+      "skipped": 0,
+      "source_sha256": "9f53b74c3d6f0c93c5d284e8680df39074ec112c36fcd9cb82209f7fd1f65161",
+      "weighted_mae": 1.0085702282954785e-08
+    },
+    "upstream-spatial-r22-helper-directed/report.json": {
+      "compared_values": 340,
+      "failed": 0,
+      "max_absolute_error": 1.7006715620615251e-07,
+      "passed": 20,
+      "planned": 20,
+      "seconds": 95.36272660498798,
+      "skipped": 0,
+      "source_sha256": "9f53b74c3d6f0c93c5d284e8680df39074ec112c36fcd9cb82209f7fd1f65161",
+      "weighted_mae": 5.990750075357532e-09
+    },
+    "upstream-spatial-r22-native-initial/report.json": {
+      "blocked": 4,
+      "compared_values": 1124,
+      "failed": 0,
+      "max_absolute_error": 1.5182950226233505e-07,
+      "passed": 30,
+      "planned": 34,
+      "seconds": 147.8235756320064,
+      "skipped": 0,
+      "source_sha256": "9f53b74c3d6f0c93c5d284e8680df39074ec112c36fcd9cb82209f7fd1f65161",
+      "weighted_mae": 3.6721066487523757e-09
+    },
+    "upstream-spatial-r22-regression/report.json": {
+      "failed": 0,
+      "passed": 2,
+      "seconds": 8.626831586007029,
+      "skipped": 0,
+      "source_sha256": "9f53b74c3d6f0c93c5d284e8680df39074ec112c36fcd9cb82209f7fd1f65161"
+    }
+  },
+  "model_count": 1200,
+  "new_helper_families": [
+    "HE_Conv",
+    "HE_Avg",
+    "HE_Pool"
+  ],
+  "old_helper_tasks_unchanged": 11,
+  "old_requests_unchanged": 35,
+  "paid_api_calls": 0,
+  "phase": "r22",
+  "physical_degree": 32768,
+  "physical_slots": 16384,
+  "plaintext": {
+    "failed": 0,
+    "max_reference_error": 7.771561172376096e-16,
+    "passed": 1200,
+    "planned": 1200,
+    "skipped": 0,
+    "tests": 19200
+  },
+  "pr": false,
+  "profile": "upstream-poly-spatial-v4",
+  "push": false,
+  "rejection": {
+    "failed": 0,
+    "passed": 48,
+    "scope": "static validators",
+    "skipped": 0
+  },
+  "rejection_tasks": 48,
+  "remaining": [
+    "20 original spatial helper cases blocked",
+    "nine other upstream helper families",
+    "chunk-helper joint layout",
+    "three rule work-budget blockers",
+    "two historical baseline compile failures",
+    "w40 precision diagnosis",
+    "final-source full encrypted corpus and 627 construction regression",
+    "separately approved paid Agent evaluation"
+  ],
+  "runtime_source_sha256": "9f53b74c3d6f0c93c5d284e8680df39074ec112c36fcd9cb82209f7fd1f65161",
+  "schema": 1,
+  "status": "bounded_spatial_helper_acceptance_complete_overall_plan_incomplete",
+  "suite": "scripts/baseline/benchmarks/semantic-v1-spatial-r22",
+  "tolerance": "abs(actual-reference) <= 1e-5 + 1e-4*abs(reference)",
+  "topology_groups": 779,
+  "unique_model_count_not_claimed": true,
+  "unit": {
+    "agent_calls": 0,
+    "discovered": 195,
+    "errors": 0,
+    "failures": 0,
+    "modules": [
+      "test_benchmark_execution",
+      "test_compiler_artifact_evidence",
+      "test_portability",
+      "test_rejection_benchmark",
+      "test_semantic_benchmark",
+      "test_unified_chunk_layout",
+      "test_unified_composites",
+      "test_unified_constants",
+      "test_unified_graph",
+      "test_unified_lambda_binding",
+      "test_unified_native_coverage",
+      "test_unified_public",
+      "test_unified_public_arithmetic",
+      "test_unified_public_coverage",
+      "test_unified_public_storage",
+      "test_unified_public_unary",
+      "test_unified_public_views",
+      "test_upstream_candidate_bn",
+      "test_upstream_candidate_helpers",
+      "test_upstream_concat",
+      "test_upstream_helper_coverage",
+      "test_upstream_spatial"
+    ],
+    "passed": 190,
+    "runner_sha256": "fc6d95e747493f8a9f55f8598c06075dea7cb2c434b110c38bf3756aea6ab9af",
+    "skip_count_scope": "includes class-level skips; do not subtract from tests_run",
+    "skip_records": [
+      {
+        "reason": "Historical r18 execution sources differ; use fresh compiler-evidence audit for current source",
+        "test": "setUpClass (test_compiler_artifact_evidence.CompilerEvidenceTests)"
+      }
+    ],
+    "skipped_record_count": 1,
+    "source_sha256": "9f53b74c3d6f0c93c5d284e8680df39074ec112c36fcd9cb82209f7fd1f65161",
+    "success": true,
+    "tests_run": 190
+  },
+  "x86_retested": false
+}
