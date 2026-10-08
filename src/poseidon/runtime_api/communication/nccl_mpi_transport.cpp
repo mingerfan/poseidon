@@ -93,6 +93,31 @@ int NcclMpiTransport::Request::completion_device() const
     return state_->cuda_device_id;
 }
 
+bool NcclMpiTransport::Request::collect_completed()
+{
+    const auto event = completion_event();
+    std::lock_guard<std::mutex> lock(state_->wait_mutex);
+    if (state_->waited)
+    {
+        return true;
+    }
+    NcclMpiTransport::check_cuda(
+        cudaSetDevice(state_->cuda_device_id), "cudaSetDevice NCCL collect");
+    ncclResult_t asynchronous = ncclSuccess;
+    NcclMpiTransport::check_nccl(
+        ncclCommGetAsyncError(state_->communicator, &asynchronous),
+        "ncclCommGetAsyncError");
+    NcclMpiTransport::check_nccl(asynchronous, "NCCL asynchronous request");
+    const auto status = cudaEventQuery(event);
+    if (status == cudaErrorNotReady)
+    {
+        return false;
+    }
+    NcclMpiTransport::check_cuda(status, "cudaEventQuery NCCL request");
+    state_->waited = true;
+    return true;
+}
+
 void NcclMpiTransport::Request::wait()
 {
     if (!state_)

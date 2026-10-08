@@ -257,11 +257,11 @@ PoseidonGpuValue download(PoseidonGpuApi &api, fhegpu::ValueId id,
     output_desc.place = action.destinations.front();
     auto handle = api.communicate_async(action, {value}, {output_desc});
     auto outputs = api.wait(handle);
-    if (outputs.size() != 1)
+    if (outputs.size() != 1 || !outputs.front())
     {
         throw std::runtime_error("GPU result download produced the wrong output count");
     }
-    return std::move(outputs.front());
+    return std::move(*outputs.front());
 }
 
 struct PlanStats

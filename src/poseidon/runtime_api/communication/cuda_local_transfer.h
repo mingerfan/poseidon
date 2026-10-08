@@ -50,6 +50,7 @@ public:
 
     cudaEvent_t completion_event() const;
     int completion_device() const;
+    bool collect_completed();
     void wait();
 
 private:

@@ -801,6 +801,37 @@ public:
         }
     }
 
+    bool collect_completed()
+    {
+        std::lock_guard<std::mutex> lock(wait_mutex_);
+        if (waited_)
+        {
+            return true;
+        }
+        if (transfer_request_)
+        {
+            waited_ = transfer_request_->collect_completed();
+        }
+#ifdef POSEIDON_RUNTIME_GPU_NCCL
+        else if (nccl_request_)
+        {
+            waited_ = nccl_request_->collect_completed();
+        }
+#endif
+        else
+        {
+            gpu::gpu_check_cuda(cudaSetDevice(cuda_device_id_), "cudaSetDevice");
+            const auto status = cudaEventQuery(event());
+            if (status == cudaErrorNotReady)
+            {
+                return false;
+            }
+            gpu::gpu_check_cuda(status, "cudaEventQuery");
+            waited_ = true;
+        }
+        return waited_;
+    }
+
     void wait()
     {
         std::lock_guard<std::mutex> lock(wait_mutex_);
@@ -914,6 +945,13 @@ struct PoseidonGpuApi::CommHandle::State
         nccl_output_requests;
 #endif
     bool waited = false;
+};
+
+struct PoseidonGpuApi::InFlightWork
+{
+    std::shared_ptr<PoseidonGpuValue::ReadyEvent> completion;
+    std::vector<Value> values;
+    std::vector<std::shared_ptr<void>> resources;
 };
 
 PoseidonGpuApi::CommHandle::CommHandle() = default;
@@ -1407,39 +1445,51 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
             }
 
             gpu::GpuCiphertextData output;
-            auto &native = *resources->second;
-            device.evaluator->bootstrap(
-                require_ciphertext(inputs, 0),
-                native.bootstrap_data,
-                *native.relin_keys,
-                *native.galois_keys,
-                native.workspace,
-                output);
-            if (output.meta.q_count != q_count_for_level(attrs.target_level) ||
-                output.meta.component_count !=
-                    static_cast<std::size_t>(attrs.target_components) ||
-                output.meta.scale != exact_scale(attrs.target_scale_log2))
+            std::optional<Value> result;
+            try
             {
-                throw std::runtime_error(
-                    "Poseidon GPU native Boot output does not match RuntimePlan metadata "
-                    "(actual q_count=" + std::to_string(output.meta.q_count) +
-                    ", components=" +
-                    std::to_string(output.meta.component_count) +
-                    ", scale=" + std::to_string(output.meta.scale) +
-                    "; expected q_count=" +
-                    std::to_string(q_count_for_level(attrs.target_level)) +
-                    ", components=" +
-                    std::to_string(attrs.target_components) +
-                    ", scale=" +
-                    std::to_string(exact_scale(attrs.target_scale_log2)) + ")");
-            }
+                auto &native = *resources->second;
+                device.evaluator->bootstrap(
+                    require_ciphertext(inputs, 0),
+                    native.bootstrap_data,
+                    *native.relin_keys,
+                    *native.galois_keys,
+                    native.workspace,
+                    output);
+                if (output.meta.q_count != q_count_for_level(attrs.target_level) ||
+                    output.meta.component_count !=
+                        static_cast<std::size_t>(attrs.target_components) ||
+                    output.meta.scale != exact_scale(attrs.target_scale_log2))
+                {
+                    throw std::runtime_error(
+                        "Poseidon GPU native Boot output does not match RuntimePlan metadata "
+                        "(actual q_count=" + std::to_string(output.meta.q_count) +
+                        ", components=" +
+                        std::to_string(output.meta.component_count) +
+                        ", scale=" + std::to_string(output.meta.scale) +
+                        "; expected q_count=" +
+                        std::to_string(q_count_for_level(attrs.target_level)) +
+                        ", components=" +
+                        std::to_string(attrs.target_components) +
+                        ", scale=" +
+                        std::to_string(exact_scale(attrs.target_scale_log2)) + ")");
+                }
 
-            auto result = Value::from_device_ciphertext(std::move(output));
-            result.ready_ = PoseidonGpuValue::ReadyEvent::record(
-                device.cuda_device_id);
-            retain_in_flight(inputs);
-            retain_in_flight({result});
-            return result;
+                result.emplace(Value::from_device_ciphertext(std::move(output)));
+                result->ready_ = PoseidonGpuValue::ReadyEvent::record(
+                    device.cuda_device_id);
+                auto retained = inputs;
+                retained.push_back(*result);
+                retain_in_flight(result->ready_, retained);
+                collect_completed();
+                return std::move(*result);
+            }
+            catch (...)
+            {
+                (void)cudaSetDevice(device.cuda_device_id);
+                (void)cudaStreamSynchronize(gpu::gpu_execution_stream());
+                throw;
+            }
         }
 
         require_host_place(op.place, "Poseidon GPU decrypt_reencrypt Boot", mpi_rank_);
@@ -1486,143 +1536,147 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
     gpu::GpuCiphertextData output;
     std::vector<std::shared_ptr<void>> temporaries;
 
-    switch (op.kind)
+    std::optional<Value> result;
+    try
     {
-    case fhegpu::ComputeKind::AddCC:
-        device.evaluator->add(require_ciphertext(inputs, 0), require_ciphertext(inputs, 1),
-                              output);
-        break;
-    case fhegpu::ComputeKind::AddCP:
-        device.evaluator->add_plain(require_ciphertext(inputs, 0),
-                                    require_plaintext(inputs, 1), output);
-        break;
-    case fhegpu::ComputeKind::SubCC:
-        device.evaluator->sub(require_ciphertext(inputs, 0), require_ciphertext(inputs, 1),
-                              output);
-        break;
-    case fhegpu::ComputeKind::SubCP:
-        device.evaluator->sub_plain(require_ciphertext(inputs, 0),
-                                    require_plaintext(inputs, 1), output);
-        break;
-    case fhegpu::ComputeKind::MulCC:
-        device.evaluator->multiply(require_ciphertext(inputs, 0),
-                                   require_ciphertext(inputs, 1), output);
-        break;
-    case fhegpu::ComputeKind::MulCP:
-        device.evaluator->multiply_plain(require_ciphertext(inputs, 0),
-                                         require_plaintext(inputs, 1), output);
-        break;
-    case fhegpu::ComputeKind::Negate:
-        device.evaluator->negate(require_ciphertext(inputs, 0), output);
-        break;
-    case fhegpu::ComputeKind::Rotate:
-    {
-        const auto &input = require_ciphertext(inputs, 0);
-        if (galois_keys_ == nullptr)
+        switch (op.kind)
         {
-            throw std::runtime_error("Poseidon GPU Rotate requires GaloisKeys");
-        }
-        const auto steps = available_rotation_steps(
-            context_, *galois_keys_, std::get<fhegpu::RotateAttrs>(op.attrs).steps);
-        if (steps.empty())
+        case fhegpu::ComputeKind::AddCC:
+            device.evaluator->add(require_ciphertext(inputs, 0), require_ciphertext(inputs, 1),
+                                  output);
+            break;
+        case fhegpu::ComputeKind::AddCP:
+            device.evaluator->add_plain(require_ciphertext(inputs, 0),
+                                        require_plaintext(inputs, 1), output);
+            break;
+        case fhegpu::ComputeKind::SubCC:
+            device.evaluator->sub(require_ciphertext(inputs, 0), require_ciphertext(inputs, 1),
+                                  output);
+            break;
+        case fhegpu::ComputeKind::SubCP:
+            device.evaluator->sub_plain(require_ciphertext(inputs, 0),
+                                        require_plaintext(inputs, 1), output);
+            break;
+        case fhegpu::ComputeKind::MulCC:
+            device.evaluator->multiply(require_ciphertext(inputs, 0),
+                                       require_ciphertext(inputs, 1), output);
+            break;
+        case fhegpu::ComputeKind::MulCP:
+            device.evaluator->multiply_plain(require_ciphertext(inputs, 0),
+                                             require_plaintext(inputs, 1), output);
+            break;
+        case fhegpu::ComputeKind::Negate:
+            device.evaluator->negate(require_ciphertext(inputs, 0), output);
+            break;
+        case fhegpu::ComputeKind::Rotate:
         {
-            device.evaluator->rotate(
-                input, 0, galois_keys_for(device, input.meta.q_count), output);
+            const auto &input = require_ciphertext(inputs, 0);
+            if (galois_keys_ == nullptr)
+            {
+                throw std::runtime_error("Poseidon GPU Rotate requires GaloisKeys");
+            }
+            const auto steps = available_rotation_steps(
+                context_, *galois_keys_, std::get<fhegpu::RotateAttrs>(op.attrs).steps);
+            if (steps.empty())
+            {
+                device.evaluator->rotate(
+                    input, 0, galois_keys_for(device, input.meta.q_count), output);
+                break;
+            }
+
+            temporaries.reserve(steps.size());
+            std::shared_ptr<gpu::GpuCiphertextData> next;
+            const gpu::GpuCiphertextData *source = &input;
+            for (int step : steps)
+            {
+                next = std::make_shared<gpu::GpuCiphertextData>();
+                temporaries.push_back(next);
+                device.evaluator->rotate(
+                    *source, step, galois_keys_for(device, input.meta.q_count), *next);
+                source = next.get();
+            }
+            output = std::move(*next);
+            temporaries.pop_back();
             break;
         }
+        case fhegpu::ComputeKind::Rescale:
+        {
+            if (!max_rescale_levels_per_op_)
+            {
+                throw std::runtime_error("Poseidon GPU Api preflight was not completed");
+            }
+            const auto attrs = std::get<fhegpu::RescaleAttrs>(op.attrs);
+            const auto &input = require_ciphertext(inputs, 0);
+            const auto context_data = context_.crt_context()->get_context_data(input.meta.parms_id);
+            if (context_data == nullptr)
+            {
+                throw std::invalid_argument("Poseidon GPU Rescale input has an unknown parms_id");
+            }
+            const int input_level = static_cast<int>(context_data->level());
+            const int drop_count = input_level - attrs.target_level;
+            if (drop_count <= 0 || drop_count > *max_rescale_levels_per_op_)
+            {
+                throw std::invalid_argument("Poseidon GPU Rescale target level is unsupported");
+            }
 
-        std::vector<std::shared_ptr<gpu::GpuCiphertextData>> intermediates;
-        intermediates.reserve(steps.size());
-        const gpu::GpuCiphertextData *source = &input;
-        for (int step : steps)
-        {
-            auto next = std::make_shared<gpu::GpuCiphertextData>();
-            device.evaluator->rotate(
-                *source, step, galois_keys_for(device, input.meta.q_count), *next);
-            source = next.get();
-            intermediates.push_back(std::move(next));
+            temporaries.reserve(static_cast<std::size_t>(drop_count));
+            std::shared_ptr<gpu::GpuCiphertextData> next;
+            const gpu::GpuCiphertextData *source = &input;
+            for (int dropped = 0; dropped < drop_count; ++dropped)
+            {
+                next = std::make_shared<gpu::GpuCiphertextData>();
+                temporaries.push_back(next);
+                device.evaluator->rescale(*source, *next);
+                source = next.get();
+            }
+            next->meta.scale = exact_scale(attrs.target_scale_log2);
+            output = std::move(*next);
+            temporaries.pop_back();
+            break;
         }
-        output = std::move(*intermediates.back());
-        intermediates.pop_back();
-        for (auto &intermediate : intermediates)
+        case fhegpu::ComputeKind::Relinearize:
         {
-            temporaries.push_back(std::move(intermediate));
+            const auto &input = require_ciphertext(inputs, 0);
+            if (relin_keys_ == nullptr)
+            {
+                throw std::runtime_error("Poseidon GPU Relinearize requires RelinKeys");
+            }
+            device.evaluator->relinearize(input, relin_keys_for(device, input.meta.q_count),
+                                          output);
+            break;
         }
-        break;
-    }
-    case fhegpu::ComputeKind::Rescale:
-    {
-        if (!max_rescale_levels_per_op_)
+        case fhegpu::ComputeKind::ModSwitch:
         {
-            throw std::runtime_error("Poseidon GPU Api preflight was not completed");
+            const auto attrs = std::get<fhegpu::ModSwitchAttrs>(op.attrs);
+            if (attrs.target_level < 0)
+            {
+                throw std::invalid_argument("Poseidon GPU ModSwitch target level is negative");
+            }
+            const auto parms_id =
+                context_.crt_context()->parms_id_map().at(
+                    static_cast<std::uint32_t>(attrs.target_level));
+            device.evaluator->drop_modulus(
+                require_ciphertext(inputs, 0), output, parms_id);
+            break;
         }
-        const auto attrs = std::get<fhegpu::RescaleAttrs>(op.attrs);
-        const auto &input = require_ciphertext(inputs, 0);
-        const auto context_data = context_.crt_context()->get_context_data(input.meta.parms_id);
-        if (context_data == nullptr)
-        {
-            throw std::invalid_argument("Poseidon GPU Rescale input has an unknown parms_id");
-        }
-        const int input_level = static_cast<int>(context_data->level());
-        const int drop_count = input_level - attrs.target_level;
-        if (drop_count <= 0 || drop_count > *max_rescale_levels_per_op_)
-        {
-            throw std::invalid_argument("Poseidon GPU Rescale target level is unsupported");
+        case fhegpu::ComputeKind::Boot:
+            throw std::logic_error("Poseidon GPU Boot reached Device dispatch");
         }
 
-        std::vector<std::shared_ptr<gpu::GpuCiphertextData>> intermediates;
-        intermediates.reserve(static_cast<std::size_t>(drop_count));
-        const gpu::GpuCiphertextData *source = &input;
-        for (int dropped = 0; dropped < drop_count; ++dropped)
-        {
-            auto next = std::make_shared<gpu::GpuCiphertextData>();
-            device.evaluator->rescale(*source, *next);
-            source = next.get();
-            intermediates.push_back(std::move(next));
-        }
-        intermediates.back()->meta.scale = exact_scale(attrs.target_scale_log2);
-        output = std::move(*intermediates.back());
-        intermediates.pop_back();
-        for (auto &intermediate : intermediates)
-        {
-            temporaries.push_back(std::move(intermediate));
-        }
-        break;
+        result.emplace(Value::from_device_ciphertext(std::move(output)));
+        result->ready_ = PoseidonGpuValue::ReadyEvent::record(device.cuda_device_id);
+        auto retained = inputs;
+        retained.push_back(*result);
+        retain_in_flight(result->ready_, retained, temporaries);
+        collect_completed();
+        return std::move(*result);
     }
-    case fhegpu::ComputeKind::Relinearize:
+    catch (...)
     {
-        const auto &input = require_ciphertext(inputs, 0);
-        if (relin_keys_ == nullptr)
-        {
-            throw std::runtime_error("Poseidon GPU Relinearize requires RelinKeys");
-        }
-        device.evaluator->relinearize(input, relin_keys_for(device, input.meta.q_count),
-                                      output);
-        break;
+        (void)cudaSetDevice(device.cuda_device_id);
+        (void)cudaStreamSynchronize(gpu::gpu_execution_stream());
+        throw;
     }
-    case fhegpu::ComputeKind::ModSwitch:
-    {
-        const auto attrs = std::get<fhegpu::ModSwitchAttrs>(op.attrs);
-        if (attrs.target_level < 0)
-        {
-            throw std::invalid_argument("Poseidon GPU ModSwitch target level is negative");
-        }
-        const auto parms_id =
-            context_.crt_context()->parms_id_map().at(
-                static_cast<std::uint32_t>(attrs.target_level));
-        device.evaluator->drop_modulus(
-            require_ciphertext(inputs, 0), output, parms_id);
-        break;
-    }
-    case fhegpu::ComputeKind::Boot:
-        throw std::logic_error("Poseidon GPU Boot reached Device dispatch");
-    }
-
-    auto result = Value::from_device_ciphertext(std::move(output));
-    result.ready_ = PoseidonGpuValue::ReadyEvent::record(device.cuda_device_id);
-    retain_in_flight(inputs, std::move(temporaries));
-    retain_in_flight({result});
-    return result;
 }
 
 PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_async(
@@ -1667,7 +1721,6 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_async(
 
     const auto &source_place = action.sources.front();
     const auto &input = local_inputs.front();
-    retain_in_flight(local_inputs);
     if (source_place.kind == fhegpu::PlaceKind::Host)
     {
             require_host_place(source_place, "Poseidon GPU communication source",
@@ -1854,6 +1907,8 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_async(
                 Value::from_device_ciphertext(std::move(output)));
         }
     }
+    retain_communication(state, local_inputs);
+    collect_completed();
     return handle;
 }
 
@@ -1963,7 +2018,6 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_distributed(
                     "distributed GPU source value is on the wrong CUDA device");
             }
         }
-        retain_in_flight(local_inputs);
     }
 
     CommHandle handle;
@@ -2199,6 +2253,8 @@ PoseidonGpuApi::CommHandle PoseidonGpuApi::communicate_distributed(
         }
         throw;
     }
+    retain_communication(state, local_inputs);
+    collect_completed();
     return handle;
 }
 #endif
@@ -2227,31 +2283,17 @@ PoseidonGpuApi::posted_outputs(CommHandle &handle)
         }
         if (!output->ready_)
         {
-            if (state.requests[slot])
-            {
-                output->ready_ = PoseidonGpuValue::ReadyEvent::transfer(
-                    state.requests[slot]);
-            }
-#ifdef POSEIDON_RUNTIME_GPU_NCCL
-            else if (slot < state.nccl_output_requests.size() &&
-                     state.nccl_output_requests[slot])
-            {
-                output->ready_ = PoseidonGpuValue::ReadyEvent::nccl(
-                    state.nccl_output_requests[slot]);
-            }
-#endif
-            else
-            {
-                throw std::logic_error(
-                    "Poseidon GPU posted output has no completion request");
-            }
+            throw std::logic_error(
+                "Poseidon GPU posted output has no completion request");
         }
-        result[slot].emplace(*output);
+        result[slot].emplace(std::move(*output));
+        output.reset();
     }
     return result;
 }
 
-std::vector<PoseidonGpuApi::Value> PoseidonGpuApi::wait(CommHandle &handle)
+std::vector<std::optional<PoseidonGpuApi::Value>>
+PoseidonGpuApi::wait(CommHandle &handle)
 {
     if (!handle.state_)
     {
@@ -2262,7 +2304,6 @@ std::vector<PoseidonGpuApi::Value> PoseidonGpuApi::wait(CommHandle &handle)
     {
         throw std::runtime_error("Poseidon GPU communication handle was already waited");
     }
-    static_cast<void>(posted_outputs(handle));
     for (auto &request : state.requests)
     {
         if (!request)
@@ -2313,18 +2354,7 @@ std::vector<PoseidonGpuApi::Value> PoseidonGpuApi::wait(CommHandle &handle)
             deferred);
     }
 
-    std::vector<Value> outputs;
-    outputs.reserve(state.outputs.size());
-    for (auto &output : state.outputs)
-    {
-        if (!output)
-        {
-            continue;
-        }
-        outputs.push_back(std::move(*output));
-        output.reset();
-    }
-    retain_in_flight(outputs);
+    auto outputs = std::move(state.outputs);
     for (auto &request : state.requests)
     {
         request.reset();
@@ -2338,6 +2368,7 @@ std::vector<PoseidonGpuApi::Value> PoseidonGpuApi::wait(CommHandle &handle)
     state.source_staging.reset();
 #endif
     state.deferred_outputs.clear();
+    collect_completed();
     return outputs;
 }
 
@@ -2715,23 +2746,88 @@ const PoseidonGpuApi::DeviceState &PoseidonGpuApi::device_state(
 }
 
 void PoseidonGpuApi::retain_in_flight(
+    std::shared_ptr<PoseidonGpuValue::ReadyEvent> completion,
     const std::vector<Value> &values,
-    std::vector<std::shared_ptr<void>> resources)
+    const std::vector<std::shared_ptr<void>> &resources)
 {
-    resources.reserve(resources.size() + values.size());
-    for (const auto &value : values)
-    {
-        std::visit(
-            [&](const auto &storage) {
-                resources.push_back(storage);
-            },
-            value.storage_);
-    }
     std::lock_guard<std::mutex> lock(in_flight_mutex_);
-    for (auto &resource : resources)
+    in_flight_work_.push_back(
+        {std::move(completion), values, resources});
+}
+
+void PoseidonGpuApi::retain_communication(
+    CommHandle::State &state, const std::vector<Value> &local_inputs)
+{
+    for (std::size_t slot = 0; slot < state.outputs.size(); ++slot)
     {
-        in_flight_resources_.push_back(std::move(resource));
+        std::shared_ptr<PoseidonGpuValue::ReadyEvent> completion;
+        if (state.requests[slot])
+        {
+            completion = PoseidonGpuValue::ReadyEvent::transfer(state.requests[slot]);
+        }
+#ifdef POSEIDON_RUNTIME_GPU_NCCL
+        else if (slot < state.nccl_output_requests.size() &&
+                 state.nccl_output_requests[slot])
+        {
+            completion = PoseidonGpuValue::ReadyEvent::nccl(
+                state.nccl_output_requests[slot]);
+        }
+#endif
+        if (!completion)
+        {
+            continue;
+        }
+        auto retained = local_inputs;
+        if (state.outputs[slot])
+        {
+            state.outputs[slot]->ready_ = completion;
+            retained.push_back(*state.outputs[slot]);
+        }
+        retain_in_flight(std::move(completion), retained);
     }
+#ifdef POSEIDON_RUNTIME_GPU_NCCL
+    if (state.source_staging)
+    {
+        state.source_staging->ready_ = PoseidonGpuValue::ReadyEvent::transfer(
+            state.source_staging_request);
+    }
+    for (const auto &request : state.nccl_requests)
+    {
+        // Receives were retained above. Send-only ranks still own their data
+        // until every individual send has completed.
+        if (local_inputs.empty())
+        {
+            continue;
+        }
+        auto retained = local_inputs;
+        if (state.source_staging)
+        {
+            retained.push_back(*state.source_staging);
+        }
+        retain_in_flight(PoseidonGpuValue::ReadyEvent::nccl(request),
+                         retained);
+    }
+    state.source_staging.reset();
+#endif
+}
+
+void PoseidonGpuApi::collect_completed()
+{
+    std::lock_guard<std::mutex> lock(in_flight_mutex_);
+    in_flight_work_.erase(
+        std::remove_if(in_flight_work_.begin(), in_flight_work_.end(),
+                       [](auto &work) { return work.completion->collect_completed(); }),
+        in_flight_work_.end());
+}
+
+void PoseidonGpuApi::drain()
+{
+    std::lock_guard<std::mutex> lock(in_flight_mutex_);
+    for (auto &work : in_flight_work_)
+    {
+        work.completion->wait();
+    }
+    in_flight_work_.clear();
 }
 
 void PoseidonGpuApi::synchronize_device(int cuda_device_id) const

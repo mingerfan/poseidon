@@ -277,14 +277,18 @@ int main(int argc, char **argv)
                 "NCCL receive output was not published before wait");
         }
         auto outputs = api.wait(handle);
+        if (outputs.size() != 1 || outputs.front())
+        {
+            throw std::runtime_error("wait repeated a posted NCCL result");
+        }
 
         if (rank == 1)
         {
-            if (outputs.size() != 1)
+            if (!posted.front())
             {
                 throw std::runtime_error("destination rank returned wrong output count");
             }
-            const auto &received = outputs.front().device_ciphertext();
+            const auto &received = posted.front()->device_ciphertext();
             if (received.fields_.size() != 1 || received.fields_.front().size() == 0)
             {
                 throw std::runtime_error("destination ciphertext field is empty");
@@ -307,7 +311,7 @@ int main(int argc, char **argv)
                 }
             }
         }
-        else if (!outputs.empty())
+        else if (posted.front())
         {
             throw std::runtime_error("non-destination rank returned an output");
         }

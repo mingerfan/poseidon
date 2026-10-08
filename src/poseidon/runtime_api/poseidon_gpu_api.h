@@ -195,9 +195,12 @@ public:
     CommHandle communicate_async(const fhegpu::CommAction &action,
                                  const std::vector<Value> &local_inputs,
                                  const std::vector<fhegpu::ValueDesc> &output_descs);
-    // One slot per action output. Present values carry their CUDA dependency.
+    // One slot per action output; each value is moved out exactly once.
+    // Present device values carry their CUDA dependency.
     std::vector<std::optional<Value>> posted_outputs(CommHandle &handle);
-    std::vector<Value> wait(CommHandle &handle);
+    std::vector<std::optional<Value>> wait(CommHandle &handle);
+    void collect_completed();
+    void drain();
     void synchronize(Value &value);
     void preflight(std::string_view plan_source_sha256, bool skip_artifact_digest_checks,
                    const fhegpu::TargetConfig &target,
@@ -220,8 +223,12 @@ private:
                                        const std::vector<Value> &local_inputs,
                                        const std::vector<fhegpu::ValueDesc> &output_descs);
 #endif
-    void retain_in_flight(const std::vector<Value> &values,
-                          std::vector<std::shared_ptr<void>> resources = {});
+    struct InFlightWork;
+    void retain_in_flight(std::shared_ptr<PoseidonGpuValue::ReadyEvent> completion,
+                          const std::vector<Value> &values,
+                          const std::vector<std::shared_ptr<void>> &resources = {});
+    void retain_communication(CommHandle::State &state,
+                              const std::vector<Value> &local_inputs);
     void synchronize_device(int cuda_device_id) const;
     void synchronize_all_devices() const;
     std::size_t q_count_for_level(int level) const;
@@ -251,7 +258,7 @@ private:
     int mpi_world_size_ = 1;
     std::vector<int> device_counts_;
     std::vector<int> rank_to_node_;
-    std::vector<std::shared_ptr<void>> in_flight_resources_;
+    std::vector<InFlightWork> in_flight_work_;
     std::mutex in_flight_mutex_;
 };
 

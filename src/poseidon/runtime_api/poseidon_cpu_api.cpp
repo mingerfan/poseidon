@@ -267,6 +267,7 @@ struct PoseidonCpuApi::CommState
     };
 
     fhegpu::TransferId id = 0;
+    std::size_t output_count = 0;
     std::uint64_t send_size = 0;
     std::vector<poseidon_byte> send_bytes;
     std::vector<Send> sends;
@@ -651,6 +652,7 @@ PoseidonCpuApi::CommHandle PoseidonCpuApi::communicate_async(
 
         auto state = std::make_shared<CommState>();
         state->id = action.id;
+        state->output_count = action.outputs.size();
         state->trace = mpi_->trace;
         state->receives.reserve(action.destinations.size());
         if (source_local)
@@ -725,7 +727,7 @@ PoseidonCpuApi::CommHandle PoseidonCpuApi::communicate_async(
     throw std::runtime_error("Poseidon CPU Api does not support communication");
 }
 
-std::vector<PoseidonCpuApi::Value> PoseidonCpuApi::wait(CommHandle &handle)
+std::vector<std::optional<PoseidonCpuApi::Value>> PoseidonCpuApi::wait(CommHandle &handle)
 {
     if (handle.state == nullptr)
     {
@@ -786,11 +788,10 @@ std::vector<PoseidonCpuApi::Value> PoseidonCpuApi::wait(CommHandle &handle)
         std::sort(completed.begin(), completed.end(),
                   [](const auto &left, const auto &right) { return left.first < right.first; });
 
-        std::vector<Value> outputs;
-        outputs.reserve(completed.size());
+        std::vector<std::optional<Value>> outputs(handle.state->output_count);
         for (auto &entry : completed)
         {
-            outputs.push_back(std::move(entry.second));
+            outputs.at(entry.first).emplace(std::move(entry.second));
         }
         const auto wait_finish = TraceClock::now();
         handle.state->wait_nanoseconds = elapsed_nanoseconds(wait_start, wait_finish);
@@ -825,6 +826,9 @@ std::vector<PoseidonCpuApi::Value> PoseidonCpuApi::wait(CommHandle &handle)
                 << handle.state->deserialize_nanoseconds << '\n';
             handle.state->trace->flush();
         }
+        std::vector<poseidon_byte>().swap(handle.state->send_bytes);
+        handle.state->sends.clear();
+        handle.state->receives.clear();
         return outputs;
     }
 #endif

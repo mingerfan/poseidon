@@ -22,6 +22,18 @@ or communication operation inserts `cudaStreamWaitEvent` into its own stream;
 the CPU does not wait for the payload. Host materialization and the final drain
 use the blocking request wait so asynchronous CUDA/NCCL errors are surfaced.
 
+`posted_outputs` and `wait` preserve all `action.outputs` slots as optional
+values. Each local result is moved out once; `wait` leaves previously posted
+and remote slots empty. Communication state retains completion requests, not
+copies of delivered values. Completed CUDA requests release pinned staging
+while keeping their dependency events usable.
+
+The GPU API retains inputs, outputs, and computation temporaries per completion
+event. `collect_completed()` releases finished work without waiting for pending
+work. Runtime calls `drain()` after waiting for every communication handle, so
+computations outside the final outputs' dependency chains also finish before
+the run returns. Runtime then clears its own values and communication state.
+
 In `PerDeviceWorkers` mode, same-rank D2D copies are submitted by the source
 worker, H2D copies by the destination worker, and D2H copies by the source
 worker. One dedicated issuer thread per MPI rank submits cross-rank NCCL actions

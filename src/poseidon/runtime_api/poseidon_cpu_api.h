@@ -7,6 +7,7 @@
 #include "runtime/plan.hpp"
 
 #include <memory>
+#include <optional>
 #include <string>
 #include <string_view>
 #include <variant>
@@ -83,7 +84,9 @@ public:
     CommHandle communicate_async(const fhegpu::CommAction &action,
                                  const std::vector<Value> &local_inputs,
                                  const std::vector<fhegpu::ValueDesc> &output_descs);
-    std::vector<Value> wait(CommHandle &handle);
+    std::vector<std::optional<Value>> wait(CommHandle &handle);
+    void collect_completed() {}
+    void drain() {}
     void synchronize(Value &value);
     void preflight(std::string_view plan_source_sha256, bool skip_artifact_digest_checks,
                    const fhegpu::TargetConfig &target, const fhegpu::OperatorSpec &operator_spec,

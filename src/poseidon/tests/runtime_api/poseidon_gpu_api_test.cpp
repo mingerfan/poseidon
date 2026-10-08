@@ -5,6 +5,7 @@
 #include "poseidon/gpu/gpu_uploader.h"
 #include "poseidon/keygenerator.h"
 #include "poseidon/runtime_api/poseidon_gpu_api.h"
+#include "poseidon/runtime_api/communication/cuda_local_transfer.h"
 #include "runtime/runtime.hpp"
 
 #include <cuda_runtime_api.h>
@@ -388,7 +389,8 @@ PoseidonGpuValue transfer_value(PoseidonGpuApi &api, fhegpu::TransferId id,
     auto outputs = api.wait(handle);
     require(outputs.size() == 1, "Transfer returned the wrong output count");
     require_rejected([&] { (void)api.wait(handle); }, "already waited");
-    return std::move(outputs.front());
+    require(outputs.front().has_value(), "Transfer omitted its output");
+    return std::move(*outputs.front());
 }
 
 void test_transfer_posts_completion_event(
@@ -448,6 +450,9 @@ void test_transfer_posts_completion_event(
     auto posted = api.posted_outputs(handle);
     require(posted.size() == 1 && posted.front().has_value(),
             "H2D transfer did not publish its device output");
+    auto second_post = api.posted_outputs(handle);
+    require(second_post.size() == 1 && !second_post.front(),
+            "H2D output was published twice");
 
     auto consumed = api.compute(negate, {*posted.front()});
     require(watchdog.finish_post(),
@@ -455,8 +460,8 @@ void test_transfer_posts_completion_event(
     api.synchronize(consumed);
 
     auto completed = api.wait(handle);
-    require(completed.size() == 1,
-            "completed H2D transfer returned the wrong output count");
+    require(completed.size() == 1 && !completed.front(),
+            "wait delivered the already posted H2D output again");
 
     const fhegpu::ValueDesc host_desc{
         1, fhegpu::ValueKind::Ciphertext, host_place(), kContextId,
@@ -468,8 +473,118 @@ void test_transfer_posts_completion_event(
     auto host_posted = api.posted_outputs(download);
     require(host_posted.size() == 1 && !host_posted.front(),
             "D2H transfer published Host data before completion");
-    require(api.wait(download).size() == 1,
+    auto host_completed = api.wait(download);
+    require(host_completed.size() == 1 && host_completed.front(),
             "completed D2H transfer returned the wrong output count");
+}
+
+
+void test_async_memory_cleanup(const poseidon::PoseidonContext &context,
+                               poseidon::KeyGenerator &key_generator,
+                               const RmmPoolScope &pool)
+{
+    PoseidonGpuApi api(kContextId, context, kDeviceId);
+    poseidon::PublicKey public_key;
+    key_generator.create_public_key(public_key);
+    poseidon::Encryptor encryptor(context, public_key);
+    poseidon::CKKSEncoder encoder(context);
+    poseidon::Plaintext plain;
+    encoder.encode(std::vector<double>{1.0, -2.0},
+                   std::ldexp(1.0, kDefaultScaleLog2), plain);
+    poseidon::Ciphertext cipher;
+    encryptor.encrypt(plain, cipher);
+    fhegpu::ComputeOp negate;
+    negate.kind = fhegpu::ComputeKind::Negate;
+    negate.place = device_place();
+    negate.inputs = {1};
+    negate.output = 2;
+    // Materialize evaluator tables before comparing live object bytes.
+    {
+        auto input = transfer_value(api, 80,
+            PoseidonGpuValue::from_host_ciphertext(cipher),
+            fhegpu::ValueKind::Ciphertext, host_place(), device_place());
+        auto output = api.compute(negate, {input});
+        api.drain();
+    }
+    api.collect_completed();
+    const auto baseline = pool.allocated_bytes();
+    for (int iteration = 0; iteration < 3; ++iteration)
+    {
+        std::optional<PoseidonGpuValue> input(transfer_value(api, 81 + iteration,
+            PoseidonGpuValue::from_host_ciphertext(cipher),
+            fhegpu::ValueKind::Ciphertext, host_place(), device_place()));
+        const auto input_bytes = pool.allocated_bytes();
+        CudaHostGate gate;
+        require(cudaSetDevice(kDeviceId) == cudaSuccess, "cudaSetDevice failed");
+        require(cudaLaunchHostFunc(cudaStreamPerThread, wait_for_cuda_host_gate,
+                                   &gate) == cudaSuccess, "compute gate failed");
+        CudaGateWatchdog watchdog(gate);
+        std::optional<PoseidonGpuValue> output(api.compute(negate, {*input}));
+        const auto submitted_bytes = pool.allocated_bytes();
+        require(submitted_bytes > input_bytes, "Negate did not allocate an output");
+        input.reset();
+        output.reset();
+        api.collect_completed();
+        require(pool.allocated_bytes() == submitted_bytes,
+                "unfinished computation lost its input or output storage");
+        require(watchdog.finish_post(), "collect_completed waited for computation");
+        api.drain();
+        require(pool.allocated_bytes() == baseline,
+                "completed computation still retains GPU object storage");
+    }
+    // A posted transfer result may be discarded while its copy is pending.
+    const fhegpu::ValueDesc desc{
+        1, fhegpu::ValueKind::Ciphertext, device_place(), kContextId,
+        static_cast<int>(cipher.level()), kDefaultScaleLog2,
+        cipher.is_ntt_form(), static_cast<int>(cipher.size())};
+    CudaHostGate gate;
+    require(cudaSetDevice(kDeviceId) == cudaSuccess, "cudaSetDevice failed");
+    require(cudaLaunchHostFunc(cudaStreamPerThread, wait_for_cuda_host_gate,
+                               &gate) == cudaSuccess, "transfer gate failed");
+    CudaGateWatchdog watchdog(gate);
+    auto handle = api.communicate_async(
+        transfer_action(85, fhegpu::ValueKind::Ciphertext, host_place(), device_place()),
+        {PoseidonGpuValue::from_host_ciphertext(cipher)}, {desc});
+    auto posted = api.posted_outputs(handle);
+    require(posted.front().has_value(), "upload was not posted");
+    const auto pending_bytes = pool.allocated_bytes();
+    posted.clear();
+    api.collect_completed();
+    require(pool.allocated_bytes() == pending_bytes && pending_bytes > baseline,
+            "unfinished transfer lost its output storage");
+    require(watchdog.finish_post(), "collect_completed waited for transfer");
+    auto completed = api.wait(handle);
+    require(completed.size() == 1 && !completed.front(), "upload was delivered twice");
+    require(pool.allocated_bytes() == baseline,
+            "communication handle retains a delivered GPU result");
+}
+
+void test_transfer_staging_cleanup()
+{
+    namespace comm = poseidon::runtime_api::communication;
+    comm::CudaLocalTransfer transfer({kDeviceId});
+    auto buffer = poseidon::gpu::GpuPlaintextData::allocate_single_device(16, 1, kDeviceId);
+    auto staging = std::make_shared<comm::PinnedHostBuffer>(16 * sizeof(poseidon::gpu::GpuWord));
+    std::weak_ptr<comm::PinnedHostBuffer> observer = staging;
+    CudaHostGate gate;
+    require(cudaSetDevice(kDeviceId) == cudaSuccess, "cudaSetDevice failed");
+    require(cudaLaunchHostFunc(cudaStreamPerThread, wait_for_cuda_host_gate,
+                               &gate) == cudaSuccess, "staging gate failed");
+    CudaGateWatchdog watchdog(gate);
+    auto request = transfer.copy_host_to_device_async(
+        staging, buffer.fields_.front().data(), staging->size(), kDeviceId);
+    staging.reset();
+    require(!request.collect_completed() && !observer.expired(),
+            "unfinished upload released its pinned staging buffer");
+    require(watchdog.finish_post(), "transfer collection waited for upload");
+    require(cudaEventSynchronize(request.completion_event()) == cudaSuccess,
+            "upload event synchronization failed");
+    require(request.collect_completed() && observer.expired(),
+            "completed upload retained pinned staging through its request");
+    // The dependency event remains usable after its buffer is collected.
+    request.wait();
+    require(cudaStreamWaitEvent(cudaStreamPerThread, request.completion_event(), 0) == cudaSuccess,
+            "collected transfer lost its dependency event");
 }
 
 
@@ -874,6 +989,98 @@ void test_host_decrypt_reencrypt_boot(
     };
     require_rejected(
         [&] { (void)api.compute(native, {refreshed}); }, "native Boot");
+}
+
+void test_runtime_drains_unreturned_work(
+    const poseidon::PoseidonContext &context,
+    poseidon::KeyGenerator &key_generator,
+    const fhegpu::LoadedOperatorSpec &spec,
+    const RmmPoolScope &pool)
+{
+    class ObservedApi : public PoseidonGpuApi
+    {
+    public:
+        using PoseidonGpuApi::PoseidonGpuApi;
+        bool drained = false;
+        CudaHostGate *gate = nullptr;
+        Value compute(const fhegpu::ComputeOp &op, const std::vector<Value> &inputs)
+        {
+            if (gate)
+            {
+                require(cudaSetDevice(kDeviceId) == cudaSuccess, "cudaSetDevice failed");
+                require(cudaLaunchHostFunc(cudaStreamPerThread, wait_for_cuda_host_gate,
+                                           gate) == cudaSuccess, "runtime gate failed");
+            }
+            return PoseidonGpuApi::compute(op, inputs);
+        }
+        void drain()
+        {
+            PoseidonGpuApi::drain();
+            drained = true;
+        }
+    };
+    ObservedApi api(kContextId, context, kDeviceId);
+    poseidon::PublicKey public_key;
+    key_generator.create_public_key(public_key);
+    poseidon::Encryptor encryptor(context, public_key);
+    poseidon::CKKSEncoder encoder(context);
+    poseidon::Plaintext plain;
+    encoder.encode(std::vector<double>{1.0, -2.0},
+                   std::ldexp(1.0, kDefaultScaleLog2), plain);
+    poseidon::Ciphertext cipher;
+    encryptor.encrypt(plain, cipher);
+    const int level = static_cast<int>(cipher.level());
+    const int components = static_cast<int>(cipher.size());
+    fhegpu::RuntimePlan plan;
+    plan.plan_id = 90;
+    plan.target = make_target(spec);
+    plan.values = {
+        {0, fhegpu::ValueKind::Ciphertext, host_place(), kContextId, level,
+         kDefaultScaleLog2, true, components},
+        {1, fhegpu::ValueKind::Ciphertext, device_place(), kContextId, level,
+         kDefaultScaleLog2, true, components},
+        {2, fhegpu::ValueKind::Ciphertext, device_place(), kContextId, level,
+         kDefaultScaleLog2, true, components}};
+    plan.external_inputs = {0};
+    plan.initialization = {{0, transfer_action(
+        91, fhegpu::ValueKind::Ciphertext, host_place(), device_place())}};
+    plan.final_outputs = {0}; // Device work has no dependency on this Host output.
+    plan.execution = {{1, fhegpu::ComputeOp{
+        fhegpu::ComputeKind::Negate, {1}, 2, device_place(), {}}}};
+    const auto baseline = pool.allocated_bytes();
+    auto host = PoseidonGpuValue::from_host_ciphertext(cipher);
+    {
+        auto device = transfer_value(api, 90, host, fhegpu::ValueKind::Ciphertext,
+                                     host_place(), device_place());
+        {
+            auto warmup = api.compute(std::get<fhegpu::ComputeOp>(plan.execution.front().body), {device});
+            api.drain();
+        }
+    }
+    for (auto mode : {fhegpu::DeviceExecutionMode::Sequential,
+                      fhegpu::DeviceExecutionMode::PerDeviceWorkers})
+    {
+        fhegpu::SequentialRuntime<ObservedApi> runtime(0, 1, 1, api, mode);
+        for (int iteration = 0; iteration < 3; ++iteration)
+        {
+            CudaHostGate gate;
+            CudaGateWatchdog watchdog(gate);
+            api.gate = &gate;
+            api.drained = false;
+            auto artifact = runtime.run({plan, kPlanSha}, {spec, std::nullopt, false},
+                                        {{0, host}});
+            api.gate = nullptr;
+            require(api.drained, "Runtime did not drain submitted work");
+            require(!watchdog.finish_post(),
+                    "Runtime returned before unrelated Device work completed");
+            require(cudaStreamQuery(cudaStreamPerThread) == cudaSuccess,
+                    "Runtime left an unreturned computation running");
+            require(artifact.values.size() == 1 && artifact.values.count(0) == 1,
+                    "Runtime final output changed");
+        }
+    }
+    require(pool.allocated_bytes() == baseline,
+            "Runtime retained intermediate objects between completed runs");
 }
 
 void test_runtime_add_plain(PoseidonGpuApi &api, const poseidon::PoseidonContext &context,
@@ -1370,6 +1577,12 @@ int main()
                  [&] {
                      test_transfer_posts_completion_event(context, key_generator);
                  });
+        run_test("async computation and transfer storage cleanup",
+                 [&] { test_async_memory_cleanup(context, key_generator, rmm_pool); });
+        run_test("completed transfer releases pinned staging", test_transfer_staging_cleanup);
+        run_test("Runtime drains work outside final output dependencies",
+                 [&] { test_runtime_drains_unreturned_work(
+                     context, key_generator, loaded_spec, rmm_pool); });
         run_test("device mapping rejects invalid CUDA device lists",
                  [&] { test_device_mapping_rejections(context, device_count); });
         {

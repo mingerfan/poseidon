@@ -312,6 +312,27 @@ int CudaTransferRequest::completion_device() const
     return state_->completion.device;
 }
 
+bool CudaTransferRequest::collect_completed()
+{
+    const auto event = completion_event();
+    std::lock_guard<std::mutex> lock(state_->wait_mutex);
+    if (state_->waited)
+    {
+        return true;
+    }
+    check_cuda(cudaSetDevice(state_->completion.device),
+               "CUDA transfer cudaSetDevice");
+    const auto status = cudaEventQuery(event);
+    if (status == cudaErrorNotReady)
+    {
+        return false;
+    }
+    check_cuda(status, "CUDA transfer cudaEventQuery");
+    state_->waited = true;
+    state_->staging.reset();
+    return true;
+}
+
 void CudaTransferRequest::wait()
 {
     if (!state_ || !state_->completion_recorded ||
@@ -329,6 +350,7 @@ void CudaTransferRequest::wait()
     check_cuda(cudaEventSynchronize(state_->completion.value),
                "CUDA transfer cudaEventSynchronize");
     state_->waited = true;
+    state_->staging.reset();
 }
 
 int CudaLocalTransfer::visible_device_count()
