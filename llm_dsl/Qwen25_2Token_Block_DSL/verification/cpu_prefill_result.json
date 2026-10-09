@@ -1,0 +1,176 @@
+{
+  "backend": "Poseidon CPU CKKS",
+  "bootstrap_config": {
+    "cache_matrices": true,
+    "chain_squares": true,
+    "coeff_to_slot_step": 1,
+    "degree": 48,
+    "double_angle": 8,
+    "eval_scale_bits": 58,
+    "k": 512,
+    "log_message_ratio": 9,
+    "log_n": 16,
+    "max_abs_error": 0.001,
+    "output_level": 5,
+    "p_bits": [
+      60,
+      60
+    ],
+    "q_bits": [
+      52,
+      43,
+      43,
+      43,
+      43,
+      43,
+      43,
+      43,
+      43,
+      58,
+      58,
+      58,
+      58,
+      58,
+      58,
+      58,
+      58,
+      58,
+      58,
+      58,
+      58,
+      58,
+      58,
+      58,
+      58,
+      58,
+      58,
+      60,
+      60,
+      60
+    ],
+    "rotation_mode": "naf",
+    "scale_bits": 43
+  },
+  "bootstrap_count": 103,
+  "candidate_sha256": "3f5e636a3c282ba47f123de7ee2c5e878ae54a2d3dbb2d52ec566c01b256b9c9",
+  "decrypt_reencrypt_count": 0,
+  "diagnostic_decryption_used_for_feedback": false,
+  "initial_level": 8,
+  "initial_scale_bits": 43,
+  "kernel_sha256": "f987c2dc6d0661381828e2911df352d8cb1f8fc3de3b2db8ec582031823e1f75",
+  "native_hecate_or_runtimeplan": false,
+  "p_bits": [
+    60,
+    60
+  ],
+  "poly_degree": 65536,
+  "power_of_two_rotation_keys": true,
+  "probe_kind": "two_token_fullsize_block_pilot",
+  "q_bits": [
+    52,
+    43,
+    43,
+    43,
+    43,
+    43,
+    43,
+    43,
+    43,
+    58,
+    58,
+    58,
+    58,
+    58,
+    58,
+    58,
+    58,
+    58,
+    58,
+    58,
+    58,
+    58,
+    58,
+    58,
+    58,
+    58,
+    58,
+    60,
+    60,
+    60
+  ],
+  "rotation_key_count": 30,
+  "secret_hamming_weight": 43690,
+  "security_parameter_check": "tc128",
+  "source_sha256": {
+    "ops.py": "da174d81af7cd3ebc67938b2a1167b5852e08f1d60acc47dbd5165c37c47af9a",
+    "qwen_layers.py": "f987c2dc6d0661381828e2911df352d8cb1f8fc3de3b2db8ec582031823e1f75",
+    "qwen_model.py": "a3d64b339622022215786fbaef42d4cc3aca1cc0fb9ef36ba15181dc188c6e2a",
+    "qwen_nonlinear.py": "6036e5ce683354497c9d6ca17d9408bd4adcb6304a456b70a500da1e8d949760"
+  },
+  "status": "completed",
+  "synthetic_weights": true,
+  "programs": [
+    {
+      "accuracy_passed": true,
+      "available_rescale_depth": 8,
+      "constants_rounded_to_zero": [
+        {
+          "constant": -6.148927521000867e-16,
+          "node": 48691
+        },
+        {
+          "constant": 6.832141690000964e-16,
+          "node": 48699
+        },
+        {
+          "constant": -3.0744637605004334e-16,
+          "node": 48708
+        },
+        {
+          "constant": -6.490534605500916e-16,
+          "node": 48716
+        },
+        {
+          "constant": -3.4160708450004843e-17,
+          "node": 48727
+        },
+        {
+          "constant": -6.148927521000867e-16,
+          "node": 100661
+        },
+        {
+          "constant": 6.832141690000964e-16,
+          "node": 100670
+        },
+        {
+          "constant": -3.0744637605004334e-16,
+          "node": 100680
+        },
+        {
+          "constant": -6.490534605500916e-16,
+          "node": 100688
+        },
+        {
+          "constant": -3.4160708450004843e-17,
+          "node": 100699
+        }
+      ],
+      "elapsed_ms_including_validation_decryption": 35598143.174749,
+      "final_level": 0,
+      "final_max_abs_error_vs_function": 0.00040365166993099473,
+      "final_max_abs_output_tail": 2.2276698242107383e-07,
+      "max_abs_error_threshold": 0.001,
+      "max_scale_snap_relative": 1.624229094554508e-06,
+      "modswitch_limb_drops": 468,
+      "name": "qwen_block_prefill",
+      "required_rescale_depth_without_bootstrap": 59,
+      "rescale_count": 44905,
+      "status": "passed"
+    }
+  ],
+  "omitted": [
+    "per-node history",
+    "per-bootstrap history",
+    "decrypted_output stored separately as NPY"
+  ]
+}
