@@ -1,0 +1,23 @@
+{
+  "rsqrt": {
+    "method": "newton_rsqrt",
+    "domain": [
+      3.7225003325147554e-05,
+      0.0016316197579726577
+    ],
+    "iterations": 7,
+    "function": "rsqrt",
+    "evaluation": "residual",
+    "refinement_steps": 2
+  },
+  "softmax": {
+    "method": "normalize_square",
+    "centered_bound": 2,
+    "squarings": 0,
+    "reciprocal_iterations": 8,
+    "max_length": 32,
+    "exp_degree": 20,
+    "exp_bound": 2,
+    "intermediate_iterations": null
+  }
+}

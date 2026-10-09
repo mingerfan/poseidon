@@ -1,0 +1,30 @@
+{
+  "examples/benchmarks/QwenAttention.py": {
+    "sha256": "e31b2e131738e3e007944b046851c86d7dda95cc16d2ac17f2a1305ff6608225",
+    "bytes": 3080
+  },
+  "examples/benchmarks/QwenRMSNorm.py": {
+    "sha256": "1f63c959978ec822e4f206aa35e09d39aff8d3e312d93c9fd7d0575c679524f4",
+    "bytes": 1418
+  },
+  "examples/benchmarks/qwen_layer_profiles.json": {
+    "sha256": "e3d00ad3b1ca2d01a940dbe761bacc20403fc222e5f580df492e3a15fee65424",
+    "bytes": 486
+  },
+  "python/hecate/hecate/qwen_layers.py": {
+    "sha256": "f987c2dc6d0661381828e2911df352d8cb1f8fc3de3b2db8ec582031823e1f75",
+    "bytes": 21564
+  },
+  "python/hecate/hecate/qwen_nonlinear.py": {
+    "sha256": "6036e5ce683354497c9d6ca17d9408bd4adcb6304a456b70a500da1e8d949760",
+    "bytes": 9650
+  },
+  "python/hecate/hecate/ops.py": {
+    "sha256": "da174d81af7cd3ebc67938b2a1167b5852e08f1d60acc47dbd5165c37c47af9a",
+    "bytes": 5772
+  },
+  "README.md": {
+    "sha256": "31489f4b8f7bd68e098cf424a5f14829eac259342ac9faac0fc2f29dffa3c602",
+    "bytes": 3745
+  }
+}
