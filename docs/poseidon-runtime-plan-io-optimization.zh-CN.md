@@ -2,7 +2,13 @@
 
 2026-10-10。面向 DaCapo 导出器、ckks-runtime 读取器和 Poseidon 执行入口的后续实现方案。
 
-实施状态：阶段 A–C 已实现，采用严格单遍 SAX、逐记录 typed plan 构建、增量 SHA-256、紧凑流式导出、manifest 写流和 staging 发布。代码、测试、完整 V2/V3 元数据测量及四卡 Qwen 导出证据见 [I/O 优化验收记录](../test-results/runtime-plan-io-188-20261010/README.md)。元数据加载峰值已低于 16 GiB；180 秒时间目标仍需继续优化。阶段 D 的压缩入口与 bundle pack、阶段 E 的二进制容器仍按下述预算和协议条件另行推进。
+实施状态：阶段 A–C 已实现，采用严格单遍 SAX、逐记录 typed plan 构建、增量 SHA-256、紧凑流式导出、manifest 写流和 staging 发布。代码、测试、完整 V2/V3 元数据测量及四卡 Qwen 导出证据见 [I/O 优化验收记录](../test-results/runtime-plan-io-188-20261010/README.md)。元数据加载峰值已低于 16 GiB；180 秒时间目标仍需继续优化。阶段 D 的 bundle pack 已实现并支持显式预算下的 raw 内存驻留，见[pack 验收记录](../test-results/runtime-bundle-pack-188-20261011/README.md)；压缩入口和阶段 E 的二进制容器继续按下述条件推进。
+
+原始四卡 JSON 的 31.03 MB/s 是端到端加载速度：读取 1.82 秒，解析与 typed plan 构建 213.89 秒，增量 SHA-256 55.88 秒，总计 271.59 秒。CPU 解析和对象分配是主要瓶颈；该数字不表示磁盘带宽。合并权重文件不会消除 JSON 的解析时间，后续应减少逐记录临时 DOM、字段查找与分配，或采用阶段 E 的二进制计划。
+
+pack 将 784,750 个 `.bin` 合并为一个 `data.bin`，以 content ID、offset 和长度索引。默认保持一个文件句柄按范围读取；显式设置 `BundleReadOptions.resident_byte_limit` 后顺序预载整个 raw pack，后续从不可变内存范围取数据。新导出默认 pack，旧布局可通过 `--runtime-plan-bundle-format=files` 保留；已有产物可用合并工具转换，无需重跑编译器。存储协议、兼容条件和工具用法见[明文数据包存储 V2](../third_party/ckks-runtime/docs/runtime-plan/v2/plaintext-bundle.md)。
+
+Poseidon CPU/GPU MLP 执行入口可设置 `POSEIDON_RUNTIME_BUNDLE_RESIDENT_BYTES=17179869184`，提供 16 GiB raw 驻留上限；未设置或为零时按文件 offset 读取。预算不包含计划、索引、解码 slot 或 RNS 对象；独立 rank 进程各占一份。在 V3 中 raw pack 持续驻留，Encode/Fence 仍控制解码和 RNS 生命周期；V1/V2 计划完成 eager load 后释放 raw 缓冲并保留本地 slot。超预算或旧 V1 bundle 请求驻留直接报错。
 
 当前 Qwen 已达到千万级指令规模。应先消除 JSON 解析中的平方级扫描，再同时改造生成端和读取端，减少完整对象树、大字符串、重复遍历和小文件访问。近期保留现有 JSON 语义，采用紧凑、流式的读写方式；压缩用于归档与传输。分块二进制格式作为后续选项，根据修复后的启动时间和内存预算决定是否实施。
 

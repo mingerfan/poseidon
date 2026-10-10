@@ -10,6 +10,7 @@
 #include "runtime/operator_spec_reader.hpp"
 #include "runtime/runtime.hpp"
 #include "runtime/verifier.hpp"
+#include "runtime_bundle_options.h"
 
 #include <nlohmann/json.hpp>
 
@@ -474,7 +475,8 @@ int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
     }
     fhegpu::SequentialRuntime<PoseidonCpuApi> runtime(rank, world_size, 0, *api);
     const fhegpu::RuntimeResources resources{
-        loaded_spec, std::filesystem::path(paths[2]), false};
+        loaded_spec, std::filesystem::path(paths[2]), false,
+        runtime_bundle_options_from_env()};
     const auto artifact = runtime.run(loaded_plan, resources, inputs);
 
     if (loaded_plan.plan.final_outputs.size() != 1)

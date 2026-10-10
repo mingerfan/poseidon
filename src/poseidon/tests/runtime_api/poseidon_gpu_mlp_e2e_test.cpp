@@ -10,6 +10,7 @@
 #include "runtime/operator_spec_reader.hpp"
 #include "runtime/runtime.hpp"
 #include "runtime/verifier.hpp"
+#include "runtime_bundle_options.h"
 
 #include <nlohmann/json.hpp>
 
@@ -528,7 +529,8 @@ int main(int argc, char **argv)
                            : fhegpu::DeviceExecutionMode::Sequential,
             device_worker_count);
         const fhegpu::RuntimeResources resources{
-            loaded_spec, std::filesystem::path(argv[3]), false};
+            loaded_spec, std::filesystem::path(argv[3]), false,
+            runtime_bundle_options_from_env()};
         std::unordered_map<fhegpu::ValueId, PoseidonGpuValue> inputs;
         inputs.emplace(input_id,
                        PoseidonGpuValue::from_host_ciphertext(std::move(input_cipher)));
@@ -607,6 +609,8 @@ int main(int argc, char **argv)
               {"bundle_read_calls", artifact.timing.bundle_read_calls},
               {"bundle_read_seconds", artifact.timing.bundle_read_nanoseconds * 1e-9},
               {"bundle_read_bytes", artifact.timing.bundle_read_bytes},
+              {"bundle_resident_bytes", artifact.timing.bundle_resident_bytes},
+              {"bundle_resident_load_seconds", artifact.timing.bundle_resident_load_nanoseconds * 1e-9},
               {"raw_peak_bytes", artifact.timing.raw_peak_bytes},
               {"fence_calls", artifact.timing.fence_calls},
               {"fence_seconds", artifact.timing.fence_nanoseconds * 1e-9},
