@@ -1,0 +1,15 @@
+Test project /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-plaintext-runtime
+    Start 1: runtime_tests
+1/5 Test #1: runtime_tests ....................   Passed    0.05 sec
+    Start 2: runtime_plan_json_tests
+2/5 Test #2: runtime_plan_json_tests ..........   Passed    0.01 sec
+    Start 3: runtime_plan_memory_tests
+3/5 Test #3: runtime_plan_memory_tests ........   Passed    0.01 sec
+    Start 4: runtime_release_tests
+4/5 Test #4: runtime_release_tests ............   Passed    0.12 sec
+    Start 5: thread_trace_tests
+5/5 Test #5: thread_trace_tests ...............   Passed    0.00 sec
+
+100% tests passed out of 5
+
+Total Test time (real) =   0.19 sec

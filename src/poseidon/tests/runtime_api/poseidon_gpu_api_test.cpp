@@ -1279,6 +1279,74 @@ void test_runtime_add_plain(PoseidonGpuApi &api, const poseidon::PoseidonContext
     }
 }
 
+// Compare eager encoding with online uploads, then V3 online encoding/Fence.
+void test_runtime_plaintext_batches(const poseidon::PoseidonContext &context,
+                                   poseidon::KeyGenerator &key_generator,
+                                   const fhegpu::LoadedOperatorSpec &spec)
+{
+    PoseidonGpuApi api(kContextId, context, kDeviceId);
+    poseidon::PublicKey public_key;
+    key_generator.create_public_key(public_key);
+    poseidon::CKKSEncoder encoder(context);
+    poseidon::Encryptor encryptor(context, public_key);
+    poseidon::Decryptor decryptor(context, key_generator.secret_key());
+    poseidon::Plaintext plain;
+    encoder.encode(std::vector<double>{1, 2, 3, 4}, std::ldexp(1.0, kDefaultScaleLog2), plain);
+    poseidon::Ciphertext cipher;
+    encryptor.encrypt(plain, cipher);
+    const int level = static_cast<int>(cipher.level());
+    const auto base = make_add_plain_plan(spec, level);
+    const auto input = PoseidonGpuValue::from_host_ciphertext(cipher);
+    for (bool online_encode : {false, true})
+    for (auto mode : {fhegpu::DeviceExecutionMode::Sequential,
+                      fhegpu::DeviceExecutionMode::PerDeviceWorkers}) {
+        auto plan = base;
+        plan.format_version = online_encode ? 3 : 2;
+        plan.values = {base.values[0], base.values[2], base.values[5]};
+        plan.initialization = {base.initialization[1]};
+        plan.execution.clear();
+        fhegpu::ValueId previous = 2;
+        for (int batch = 0; batch < 3; ++batch) {
+            const fhegpu::ValueId weight = 10 + batch * 3, uploaded = weight + 1, output = weight + 2;
+            for (auto entry : {base.values[1], base.values[3], base.values[4]}) {
+                entry.id = entry.kind == fhegpu::ValueKind::Ciphertext ? output :
+                    entry.place.kind == fhegpu::PlaceKind::Host ? weight : uploaded;
+                plan.values.push_back(entry);
+            }
+            auto encoding = std::get<fhegpu::EncodeOp>(base.initialization[0].body);
+            encoding.output = weight;
+            (online_encode ? plan.execution : plan.initialization).push_back({0, encoding});
+            auto upload = std::get<fhegpu::CommAction>(base.initialization[2].body);
+            upload.id = 10 + batch; upload.inputs = {weight}; upload.outputs = {uploaded};
+            plan.execution.push_back({0, upload});
+            plan.execution.push_back({0, fhegpu::ReleaseOp{weight}});
+            plan.execution.push_back({0, fhegpu::ComputeOp{fhegpu::ComputeKind::AddCP,
+                {previous, uploaded}, output, device_place(), {}}});
+            plan.execution.push_back({0, fhegpu::ReleaseOp{uploaded}});
+            plan.execution.push_back({0, fhegpu::ReleaseOp{previous}});
+            if (online_encode) plan.execution.push_back({0, fhegpu::FenceOp{}});
+            previous = output;
+        }
+        std::get<fhegpu::CommAction>(plan.finalization[0].body).inputs = {previous};
+        plan.finalization.push_back({0, fhegpu::ReleaseOp{previous}});
+        std::size_t ordinal = 0;
+        for (auto *phase : {&plan.initialization, &plan.execution, &plan.finalization})
+            for (auto &instruction : *phase) instruction.ordinal = ordinal++;
+        fhegpu::SequentialRuntime<PoseidonGpuApi> runtime(0, 1, 1, api, mode);
+        auto result = runtime.run({plan, kPlanSha}, {spec, std::nullopt, false}, {{0, input}});
+        const auto &output = result.values.at(5).value;
+        api.validate_value(output, base.values[5]);
+        poseidon::Plaintext decoded;
+        decryptor.decrypt(output.host_ciphertext(), decoded);
+        std::vector<std::complex<double>> slots;
+        encoder.decode(decoded, slots);
+        const std::vector<double> expected{2.5, -1, 9, 13};
+        for (std::size_t i = 0; i < expected.size(); ++i)
+            require(std::abs(slots[i] - expected[i]) < 1e-4,
+                    "batched plaintext numerical mismatch");
+    }
+}
+
 void test_runtime_add_ciphertexts(PoseidonGpuApi &api,
                                   const poseidon::PoseidonContext &context,
                                   poseidon::KeyGenerator &key_generator,
@@ -1939,6 +2007,8 @@ int main()
                      context, key_generator, loaded_spec, rmm_pool); });
         run_test("Runtime Release during unfinished computation and transfer",
                  [&] { test_runtime_release(context, key_generator, loaded_spec, rmm_pool); });
+        run_test("online uploads and V3 plaintext batches in both execution modes",
+                 [&] { test_runtime_plaintext_batches(context, key_generator, loaded_spec); });
         run_test("GPU AddCP/SubCP/Rotate reuse chains",
                  [&] { test_runtime_reuse(context, key_generator, loaded_spec, rmm_pool); });
         run_test("device mapping rejects invalid CUDA device lists",

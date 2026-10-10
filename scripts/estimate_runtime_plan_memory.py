@@ -58,7 +58,7 @@ def estimate(plan: dict, spec: dict, scenario: str = "as_written") -> dict:
     """
     if scenario not in SCENARIOS:
         raise ValueError(f"unknown scenario: {scenario}")
-    if plan["format_version"] not in (1, 2):
+    if plan["format_version"] not in (1, 2, 3):
         raise ValueError("only RuntimePlan V1 and proposed V2 are supported")
     degree = spec["context"]["poly_degree"]
     if type(degree) is not int or degree <= 0:
@@ -144,6 +144,10 @@ def estimate(plan: dict, spec: dict, scenario: str = "as_written") -> dict:
             kind = op["kind"]
             if plan["format_version"] == 1 and (kind == "release" or "reuse_input" in op):
                 raise ValueError("Release and reuse_input require V2")
+            if kind == "fence":
+                if plan["format_version"] < 3:
+                    raise ValueError("Fence requires V3")
+                continue  # This report assumes completion after every instruction.
             if kind == "release":
                 v = op["value"]
                 if v in roots:
