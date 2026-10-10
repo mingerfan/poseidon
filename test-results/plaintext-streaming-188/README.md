@@ -43,3 +43,20 @@ configured cumulative workspace reservations. It excludes key/parameter storage,
 unmeasured temporary workspace, encoder workspace, pool reservation and
 fragmentation; it must not be read as a total GPU memory guarantee. Full compile,
 actual device fit and complete numerical success are reported separately.
+
+The complete Qwen24 compile/export succeeded in 1,248.74 seconds with 93.26 GiB
+peak RSS; see `qwen24-compiler-report.json`. The generated V3 JSON is
+8,756,201,335 bytes. Its `.streaming.json` estimates 22,353 batches and
+1,325,109 encodes. This full experiment predates the extra overflow guards and
+`distinct_encode_definitions`/`reencodes` counters added in DaCapo `e473cfb`.
+Those follow-up changes passed `compiler-final-tests.log` without repeating the
+full-model compilation.
+
+The full runtime smoke reached its 600-second wall limit and was terminated by
+the supervisor (603.84 seconds including cleanup, exit -15). Peak Host RSS was
+15.01 GiB; all four device-memory samples remained zero and no output artifact
+was produced. See `qwen24-runtime-smoke-report.json` and
+`qwen24-runtime-samples.jsonl`. This does not establish GPU fit or full-model
+numerical correctness, and is not evidence of a CUDA OOM. The unchanged strict
+JSON callback parser scans the parent array on every object end, a separate
+startup scalability issue; no function-level profile was captured in this run.
