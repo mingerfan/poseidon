@@ -39,6 +39,19 @@ raw 时间包含内存分配、顺序读取和关闭文件。此测量紧接合�
 
 默认 reader 保持一个 pack 文件句柄，通过 offset 读取；驻留模式一次加载 raw pack，之后从内存范围取数据。实际执行按需读取某个 blob 时仍检查内容和有限 float64 值，预载阶段不做全量 blob 哈希扫描。
 
+## 逐文件读取与 pack 的一次对照
+
+随后用同一个小型 C++ 程序比较两种布局，均将同一份 14,701,969,408 字节载荷读入未初始化的连续 raw 缓冲。索引准备在计时外；计时包含缓冲分配、路径和文件长度访问、open/read/EOF 检查/close。逐文件模式按原 manifest 顺序访问 784,750 个 `.bin`，与转换后 pack 中的内容顺序一致；pack 模式以 8 MiB 块连续读取。两种模式均不解码、不计算 blob 哈希。
+
+| 模式 | raw 读取时间 | 十进制吞吐 |
+| --- | ---: | ---: |
+| 逐文件加载 | 18.97 秒 | 775 MB/s |
+| pack 连续加载 | 10.56 秒 | 1,392 MB/s |
+
+本次 pack 吞吐为逐文件的 **1.80 倍**，读取时间减少 **44.3%**；两者进程峰值 RSS 均约 13.75 GiB。[逐文件结果](raw-read-files.json)、[pack 结果](raw-read-pack.json)、[C++ 程序](raw-io-comparison.cpp)和[运行脚本](run-raw-comparison.py)保留供复现。命令在远端工作目录执行 `python3 run-raw-comparison.py`，编译采用 `g++ -std=c++17 -O2 -DNDEBUG`，两个测量依次以 nice 10 运行，先 files 后 pack，仅各一次。
+
+这是共享服务器、缓存未控制的单次 raw I/O 对照；不是完整旧/新 runtime 的启动对照。逐文件模式也将数据放入同样大小的 resident 缓冲，以隔离文件组织的影响；真实旧 reader 的单 blob 临时分配、解码、摘要与 Encode 未纳入测量。缓存和磁盘状态变化时比例会变化，不能将 1.80 倍外推为全模型或推理加速。驻留后的访问无需磁盘读取，但仍有按需解码和 Encode 成本。
+
 ## 命令与产物位置
 
 远端工作目录 `/home/xuming/poseidon-runtime-io-20261010`：
