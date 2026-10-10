@@ -972,8 +972,24 @@ void test_host_decrypt_reencrypt_boot(
         "poseidon-gpu-host-boot-test",
         fhegpu::BootImplementation::DecryptReencrypt,
     };
-    auto refreshed = api.compute(
-        boot, {PoseidonGpuValue::from_host_ciphertext(std::move(input_cipher))});
+    auto host_input = PoseidonGpuValue::from_host_ciphertext(std::move(input_cipher));
+    auto refreshed = api.compute(boot, {host_input});
+    auto runtime_boot = boot;
+    runtime_boot.inputs = {50}; runtime_boot.output = 51;
+    fhegpu::RuntimePlan boot_plan;
+    boot_plan.format_version = 3;
+    boot_plan.target = make_target(boot_spec);
+    boot_plan.values = {
+        {50, fhegpu::ValueKind::Ciphertext, host_place(), kContextId, input_level, kDefaultScaleLog2, true, 2},
+        {51, fhegpu::ValueKind::Ciphertext, host_place(), kContextId, output_level, kDefaultScaleLog2, true, 2},
+        {52, fhegpu::ValueKind::Plaintext, host_place(), kContextId, output_level, kDefaultScaleLog2, true, 1}};
+    boot_plan.external_inputs = {50}; boot_plan.final_outputs = {51};
+    boot_plan.execution = {{0, fhegpu::EncodeOp{fhegpu::InlineEncodePayload{{1.0}}, 52}},
+                          {1, fhegpu::ReleaseOp{52}}, {2, runtime_boot}, {3, fhegpu::FenceOp{}}};
+    fhegpu::SequentialRuntime<PoseidonGpuApi> boot_runtime(0, 1, 1, api,
+        fhegpu::DeviceExecutionMode::PerDeviceWorkers);
+    const auto boot_result = boot_runtime.run({boot_plan, kPlanSha}, {boot_spec, std::nullopt, false}, {{50, host_input}});
+    refreshed = boot_result.values.at(51).value;
     api.validate_value(
         refreshed,
         {50, fhegpu::ValueKind::Ciphertext, host_place(), kContextId,
@@ -1891,9 +1907,9 @@ void test_runtime_reuse(const poseidon::PoseidonContext &context,
 
 void test_two_gpu_runtime_plan(const poseidon::PoseidonContext &context,
                                poseidon::KeyGenerator &key_generator,
-                               const fhegpu::LoadedOperatorSpec &loaded_spec)
+                               const fhegpu::LoadedOperatorSpec &loaded_spec,
+                               int second_device_id = 1)
 {
-    constexpr int second_device_id = 1;
     RmmPoolScope second_device_pool(second_device_id);
     PoseidonGpuApi api(kContextId, context,
                        std::vector<int>{second_device_id, kDeviceId});
@@ -1932,10 +1948,30 @@ void test_two_gpu_runtime_plan(const poseidon::PoseidonContext &context,
     std::size_t ordinal = 0;
     for (auto *phase : {&release_plan.initialization, &release_plan.execution, &release_plan.finalization})
         for (auto &instruction : *phase) instruction.ordinal = ordinal++;
+    auto streaming = ordinary;
+    streaming.format_version = 3;
+    auto second_weight = ordinary.values[1]; second_weight.id = 11;
+    streaming.values.push_back(second_weight);
+    auto second_encode = std::get<fhegpu::EncodeOp>(ordinary.initialization[0].body);
+    second_encode.output = 11;
+    auto second_upload = std::get<fhegpu::CommAction>(ordinary.initialization[2].body);
+    second_upload.id = 40; second_upload.inputs = {11}; second_upload.outputs = {5};
+    second_upload.destinations = {device_place(1)};
+    streaming.initialization = {ordinary.initialization[1]};
+    streaming.execution = {
+        {0, ordinary.initialization[0].body}, {0, ordinary.initialization[2].body},
+        {0, fhegpu::ReleaseOp{1}}, {0, ordinary.execution[0].body},
+        {0, fhegpu::ReleaseOp{4}}, {0, fhegpu::FenceOp{}},
+        {0, second_encode}, {0, second_upload}, {0, fhegpu::ReleaseOp{11}},
+        {0, ordinary.execution[1].body}, {0, fhegpu::ReleaseOp{5}},
+        {0, fhegpu::FenceOp{}}, {0, ordinary.execution[2].body}, {0, ordinary.execution[3].body}};
+    ordinal = 0;
+    for (auto *phase : {&streaming.initialization, &streaming.execution, &streaming.finalization})
+        for (auto &instruction : *phase) instruction.ordinal = ordinal++;
     const fhegpu::RuntimeResources resources{loaded_spec, std::nullopt, false};
     std::unordered_map<fhegpu::ValueId, PoseidonGpuValue> inputs;
     inputs.emplace(0, PoseidonGpuValue::from_host_ciphertext(std::move(input_cipher)));
-    for (const auto &plan : {ordinary, release_plan})
+    for (const auto &plan : {ordinary, release_plan, streaming})
     {
         for (auto mode : {fhegpu::DeviceExecutionMode::Sequential,
                           fhegpu::DeviceExecutionMode::PerDeviceWorkers})
@@ -2064,6 +2100,9 @@ int main()
             std::cout << "[SKIP] two-GPU RuntimePlan requires two CUDA devices\n";
         }
 
+        if (device_count >= 4)
+            run_test("GPU0/GPU3 cross-batch shared weight and ciphertext",
+                [&] { test_two_gpu_runtime_plan(context, key_generator, loaded_spec, 3); });
         std::cout << tests_run << " Poseidon GPU Runtime Api tests passed\n";
         return 0;
     }

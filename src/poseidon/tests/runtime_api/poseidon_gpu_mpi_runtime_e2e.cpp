@@ -10,6 +10,7 @@
 #include "runtime/json_plan_reader.hpp"
 #include "runtime/operator_spec_reader.hpp"
 #include "runtime/runtime.hpp"
+#include "poseidon/runtime_api/communication/cuda_local_transfer.h"
 #include "runtime/verifier.hpp"
 #include "mpi_gpu_runtime_common.hpp"
 
@@ -25,6 +26,7 @@
 #include <fstream>
 #include <iostream>
 #include <memory>
+#include <map>
 #include <numeric>
 #include <optional>
 #include <set>
@@ -96,8 +98,12 @@ public:
     void begin() { counter_->push_counters(); }
     Json end(int rank, int index) {
         auto bytes = counter_->pop_counters().first;
+        if (cudaSetDevice(device_) != cudaSuccess) throw std::runtime_error("memory sample device selection failed");
+        std::size_t free = 0, total = 0;
+        if (cudaMemGetInfo(&free, &total) != cudaSuccess) throw std::runtime_error("CUDA memory sample failed");
         return {{"rank", rank}, {"index", index}, {"peak_increment_bytes", bytes.peak},
-                {"allocation_bytes", bytes.total}, {"net_change_bytes", bytes.value}, {"active_bytes", active()}};
+                {"allocation_bytes", bytes.total}, {"net_change_bytes", bytes.value}, {"active_bytes", active()},
+                {"pool_reserved_bytes", pool_->pool_size()}, {"cuda_free_bytes", free}, {"cuda_total_bytes", total}};
     }
 private:
     int device_;
@@ -169,7 +175,8 @@ void count_phase(const std::vector<fhegpu::Instruction> &phase,
             ++stats.release_instructions;
             continue;
         }
-        if (std::holds_alternative<fhegpu::EncodeOp>(instruction.body))
+        if (std::holds_alternative<fhegpu::EncodeOp>(instruction.body) ||
+            std::holds_alternative<fhegpu::FenceOp>(instruction.body))
         {
             continue;
         }
@@ -396,7 +403,7 @@ int main(int argc, char **argv)
             std::any_of(plan.target.device_counts.begin(),
                         plan.target.device_counts.end(),
                         [](int count) { return count <= 0; }) ||
-            plan.external_inputs.size() != 1 || plan.final_outputs.size() != 1)
+            plan.external_inputs.empty() || plan.final_outputs.empty())
         {
             throw std::runtime_error(
                 "RuntimePlan topology and input/output arity do not match the MPI run");
@@ -502,34 +509,36 @@ int main(int argc, char **argv)
             if (!expected_file) throw std::runtime_error("cannot open expected output");
             expected_file >> expected;
         }
-        const fhegpu::ValueId input_id = plan.external_inputs.front();
-        const auto &input_desc = find_value(plan, input_id);
-        if (input_desc.kind != fhegpu::ValueKind::Ciphertext ||
-            input_desc.place.kind != fhegpu::PlaceKind::Host)
-        {
-            throw std::runtime_error(
-                "generic MPI runner requires one Host ciphertext input");
-        }
+        if (options.expected_output && plan.final_outputs.size() != 1)
+            throw std::runtime_error("a single-output oracle cannot validate multiple outputs");
         std::unordered_map<fhegpu::ValueId, PoseidonGpuValue> inputs;
-        if (input_desc.place.rank == rank)
-        {
-            poseidon::CKKSEncoder encoder(context);
-            poseidon::Plaintext plaintext;
-            const std::vector<double> input{
-                1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-            encoder.encode(
-                input,
-                context.crt_context()->parms_id_map().at(
-                    static_cast<std::uint32_t>(input_desc.level)),
-                std::ldexp(1.0, input_desc.scale_log2), plaintext);
-            poseidon::Encryptor encryptor(context, *public_key);
-            poseidon::Ciphertext ciphertext;
-            encryptor.encrypt(plaintext, ciphertext);
-            inputs.emplace(
-                input_id,
-                PoseidonGpuValue::from_host_ciphertext(std::move(ciphertext)));
+        for (const auto input_id : plan.external_inputs) {
+            const auto &input_desc = find_value(plan, input_id);
+            if (input_desc.kind != fhegpu::ValueKind::Ciphertext ||
+                input_desc.place.kind != fhegpu::PlaceKind::Host)
+            {
+                throw std::runtime_error(
+                    "generic runner requires Host ciphertext inputs");
+            }
+            if (input_desc.place.rank == rank)
+            {
+                poseidon::CKKSEncoder encoder(context);
+                poseidon::Plaintext plaintext;
+                const std::vector<double> input{
+                    1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+                encoder.encode(
+                    input,
+                    context.crt_context()->parms_id_map().at(
+                        static_cast<std::uint32_t>(input_desc.level)),
+                    std::ldexp(1.0, input_desc.scale_log2), plaintext);
+                poseidon::Encryptor encryptor(context, *public_key);
+                poseidon::Ciphertext ciphertext;
+                encryptor.encrypt(plaintext, ciphertext);
+                inputs.emplace(
+                    input_id,
+                    PoseidonGpuValue::from_host_ciphertext(std::move(ciphertext)));
+            }
         }
-
         std::optional<std::filesystem::path> bundle_dir;
         if (options.bundle_text != "-")
         {
@@ -563,8 +572,9 @@ int main(int argc, char **argv)
         }
 
         Json iteration_memory = Json::array();
+        Json streaming_timing = Json::array();
         Json numerical_checks = Json::array();
-        std::vector<std::complex<double>> first_output;
+        std::map<fhegpu::ValueId, std::vector<std::complex<double>>> first_outputs;
         std::vector<int64_t> memory_baseline;
         for (const auto &counter : memory) memory_baseline.push_back(counter->active());
         std::vector<double> local_online_seconds;
@@ -582,44 +592,54 @@ int main(int argc, char **argv)
             for (const auto &counter : memory) counter->begin();
             {
             const auto artifact = runtime.run(loaded_plan, resources, inputs);
-            const auto output_id = plan.final_outputs.front();
-            auto output_desc = find_value(plan, output_id);
-            if (output_desc.place.rank == rank) {
-                auto output = artifact.values.at(output_id).value;
-                if (output_desc.place.kind == fhegpu::PlaceKind::Device) {
-                    fhegpu::CommAction transfer;
-                    transfer.id = 1000000000ULL + index;
-                    transfer.kind = fhegpu::CommKind::Transfer;
-                    transfer.inputs = {output_id}; transfer.outputs = {output_id};
-                    transfer.sources = {output_desc.place};
-                    transfer.destinations = {{fhegpu::PlaceKind::Host, rank, 0}};
-                    transfer.output_types = {fhegpu::ValueKind::Ciphertext};
-                    output_desc.place = transfer.destinations.front();
-                    auto handle = api->communicate_async(transfer, {output}, {output_desc});
-                    auto downloaded = api->wait(handle);
-                    if (downloaded.size() != 1 || !downloaded.front()) throw std::runtime_error("numerical check download failed");
-                    output = std::move(*downloaded.front());
+            streaming_timing.push_back({{"encode_calls", artifact.timing.encode_calls},
+                {"encode_seconds", artifact.timing.encode_nanoseconds * 1e-9},
+                {"bundle_read_calls", artifact.timing.bundle_read_calls},
+                {"bundle_read_seconds", artifact.timing.bundle_read_nanoseconds * 1e-9},
+                {"bundle_read_bytes", artifact.timing.bundle_read_bytes},
+                {"raw_peak_bytes", artifact.timing.raw_peak_bytes},
+                {"fences", artifact.timing.fence_calls},
+                {"fence_seconds", artifact.timing.fence_nanoseconds * 1e-9}});
+            for (const auto output_id : plan.final_outputs) {
+                auto output_desc = find_value(plan, output_id);
+                if (output_desc.place.rank == rank) {
+                    auto output = artifact.values.at(output_id).value;
+                    if (output_desc.place.kind == fhegpu::PlaceKind::Device) {
+                        fhegpu::CommAction transfer;
+                        transfer.id = 1000000000ULL + index;
+                        transfer.kind = fhegpu::CommKind::Transfer;
+                        transfer.inputs = {output_id}; transfer.outputs = {output_id};
+                        transfer.sources = {output_desc.place};
+                        transfer.destinations = {{fhegpu::PlaceKind::Host, rank, 0}};
+                        transfer.output_types = {fhegpu::ValueKind::Ciphertext};
+                        output_desc.place = transfer.destinations.front();
+                        auto handle = api->communicate_async(transfer, {output}, {output_desc});
+                        auto downloaded = api->wait(handle);
+                        if (downloaded.size() != 1 || !downloaded.front()) throw std::runtime_error("numerical check download failed");
+                        output = std::move(*downloaded.front());
+                    }
+                    poseidon::Decryptor decryptor(context, *secret_key);
+                    poseidon::CKKSEncoder encoder(context);
+                    poseidon::Plaintext plaintext;
+                    decryptor.decrypt(output.host_ciphertext(), plaintext);
+                    std::vector<std::complex<double>> slots; encoder.decode(plaintext, slots);
+                    for (const auto &slot : slots)
+                        if (!std::isfinite(slot.real()) || !std::isfinite(slot.imag()))
+                            throw std::runtime_error("non-finite numerical output");
+                    auto &first_output = first_outputs[output_id];
+                    if (first_output.empty()) first_output = slots;
+                    double repeat_error = 0, expected_error = 0;
+                    for (size_t i = 0; i < slots.size(); ++i) repeat_error = std::max(repeat_error, std::abs(slots[i] - first_output.at(i)));
+                    if (repeat_error > 1e-4) throw std::runtime_error("repeated output changed");
+                    if (!expected.is_null()) {
+                        const auto &indices = expected.at("indices"), &values = expected.at("values");
+                        if (indices.size() != values.size() || indices.empty()) throw std::runtime_error("invalid numerical oracle");
+                        for (size_t i = 0; i < indices.size(); ++i)
+                            expected_error = std::max(expected_error, std::abs(slots.at(indices[i].get<size_t>()) - values[i].get<double>()));
+                        if (expected_error > expected.at("absolute_tolerance").get<double>()) throw std::runtime_error("output differs from numerical oracle");
+                    }
+                    numerical_checks.push_back({{"output_id", std::to_string(output_id)}, {"iteration", index + 1}, {"repeat_max_error", repeat_error}, {"expected_max_error", expected_error}});
                 }
-                poseidon::Decryptor decryptor(context, *secret_key);
-                poseidon::CKKSEncoder encoder(context);
-                poseidon::Plaintext plaintext;
-                decryptor.decrypt(output.host_ciphertext(), plaintext);
-                std::vector<std::complex<double>> slots; encoder.decode(plaintext, slots);
-                for (const auto &slot : slots)
-                    if (!std::isfinite(slot.real()) || !std::isfinite(slot.imag()))
-                        throw std::runtime_error("non-finite numerical output");
-                if (first_output.empty()) first_output = slots;
-                double repeat_error = 0, expected_error = 0;
-                for (size_t i = 0; i < slots.size(); ++i) repeat_error = std::max(repeat_error, std::abs(slots[i] - first_output.at(i)));
-                if (repeat_error > 1e-4) throw std::runtime_error("repeated output changed");
-                if (!expected.is_null()) {
-                    const auto &indices = expected.at("indices"), &values = expected.at("values");
-                    if (indices.size() != values.size() || indices.empty()) throw std::runtime_error("invalid numerical oracle");
-                    for (size_t i = 0; i < indices.size(); ++i)
-                        expected_error = std::max(expected_error, std::abs(slots.at(indices[i].get<size_t>()) - values[i].get<double>()));
-                    if (expected_error > expected.at("absolute_tolerance").get<double>()) throw std::runtime_error("output differs from numerical oracle");
-                }
-                numerical_checks.push_back({{"iteration", index + 1}, {"repeat_max_error", repeat_error}, {"expected_max_error", expected_error}});
             }
             local_online_seconds.push_back(
                 static_cast<double>(artifact.timing.online_execution_nanoseconds) *
@@ -635,9 +655,16 @@ int main(int argc, char **argv)
             iteration_memory.push_back({{"iteration", index + 1}, {"devices", std::move(devices)}});
         }
         Json decoded_output = Json::array();
-        for (const auto &slot : first_output) decoded_output.push_back({slot.real(), slot.imag()});
+        // Preserve the old single-output report. Multi-output smoke runs report
+        // finite/repeat checks per output, without implying a model oracle.
+        if (first_outputs.size() == 1)
+            for (const auto &slot : first_outputs.begin()->second)
+                decoded_output.push_back({slot.real(), slot.imag()});
         write_report(options.report_path.string() + ".rank" + std::to_string(rank) + ".checks.json",
                      {{"rank", rank}, {"memory_measurement", "Active RMM allocations, including cached keys/parameters in the warmup baseline; pool reservation is excluded."},
+                      {"streaming_timing", streaming_timing},
+                      {"pinned_live_bytes", poseidon::runtime_api::communication::PinnedHostBuffer::live_bytes()},
+                      {"pinned_process_peak_bytes", poseidon::runtime_api::communication::PinnedHostBuffer::peak_bytes()},
                       {"memory_baseline_bytes", memory_baseline}, {"iterations", iteration_memory}, {"numerical_checks", numerical_checks}, {"decoded_output", decoded_output}, {"oracle_provided", !expected.is_null()}});
 
         std::vector<double> gathered;

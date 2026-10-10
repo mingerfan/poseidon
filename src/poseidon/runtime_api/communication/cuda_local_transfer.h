@@ -31,6 +31,9 @@ public:
     void *data() noexcept;
     const void *data() const noexcept;
     std::size_t size() const noexcept;
+    // Process-wide transfer staging counters (thread safe, excluding other CUDA users).
+    static std::size_t live_bytes() noexcept;
+    static std::size_t peak_bytes() noexcept;
 
 private:
     void *data_ = nullptr;

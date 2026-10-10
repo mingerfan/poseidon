@@ -5,6 +5,7 @@
 #include <cuda_runtime_api.h>
 
 #include <algorithm>
+#include <atomic>
 #include <mutex>
 #include <stdexcept>
 #include <string>
@@ -15,6 +16,8 @@ namespace poseidon::runtime_api::communication
 {
 namespace
 {
+
+std::atomic<std::size_t> pinned_live{0}, pinned_peak{0};
 
 void check_cuda(cudaError_t status, const char *what)
 {
@@ -107,6 +110,10 @@ PinnedHostBuffer::PinnedHostBuffer(std::size_t bytes) : bytes_(bytes)
         throw std::invalid_argument("CUDA pinned Host buffer must be non-empty");
     }
     check_cuda(cudaMallocHost(&data_, bytes_), "CUDA transfer cudaMallocHost");
+    const auto live = pinned_live.fetch_add(bytes_, std::memory_order_relaxed) + bytes_;
+    auto peak = pinned_peak.load(std::memory_order_relaxed);
+    while (peak < live && !pinned_peak.compare_exchange_weak(peak, live, std::memory_order_relaxed)) {}
+
 }
 
 PinnedHostBuffer::~PinnedHostBuffer()
@@ -114,8 +121,12 @@ PinnedHostBuffer::~PinnedHostBuffer()
     if (data_ != nullptr)
     {
         (void)cudaFreeHost(data_);
+        pinned_live.fetch_sub(bytes_, std::memory_order_relaxed);
     }
 }
+
+std::size_t PinnedHostBuffer::live_bytes() noexcept { return pinned_live.load(std::memory_order_relaxed); }
+std::size_t PinnedHostBuffer::peak_bytes() noexcept { return pinned_peak.load(std::memory_order_relaxed); }
 
 void *PinnedHostBuffer::data() noexcept
 {

@@ -1,0 +1,14 @@
+fatal runtime error: reason=injected Encode failure plan_id=19791515590413388 plan_source_sha256=sha256:test local_rank=0 api=TrackingApi op_ordinal=8 op=Encode output=13
+fatal runtime error: reason=injected Encode failure plan_id=19791515590413388 plan_source_sha256=sha256:test local_rank=0 api=TrackingApi op_ordinal=8 op=Encode output=13
+fatal runtime error: reason=injected Encode failure plan_id=19791515590413388 plan_source_sha256=sha256:test local_rank=0 api=TrackingApi
+fatal runtime error: reason=injected Encode failure plan_id=19791515590413388 plan_source_sha256=sha256:test local_rank=0 api=TrackingApi
+[PASS] V3 streaming, Fence reclamation, deferred outputs and CPU failure
+[PASS] 20000 transfers and 625 Fence boundaries in each execution mode
+fatal runtime error: reason=AllValuesAfterRun is incompatible with Release/reuse_input plan_id=19791515590413388 plan_source_sha256=sha256:test local_rank=0 api=TrackingApi op_ordinal=3 op=Release value_id=1
+[PASS] cross-phase counts, repeated operands and repeated runs
+[PASS] Release before split Replicate submissions
+fatal runtime error: reason=injected second-send failure plan_id=19791515590413388 plan_source_sha256=sha256:test local_rank=0 api=TrackingApi
+[PASS] failed submission preserves source
+[PASS] abandoned posted/pending outputs in both execution modes
+[PASS] Mock multi-device and multi-rank Release fanout
+ALL 7 RELEASE TEST GROUPS PASSED

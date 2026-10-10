@@ -1,0 +1,32 @@
+{
+  "assumption": "Batch-start live RNS objects plus all batch allocations; Release returns no credit before Fence. External inputs remain retained. No raw cache.",
+  "batches": 22353,
+  "encodes": 1325109,
+  "excluded": [
+    "keys",
+    "parameter tables",
+    "unmeasured operator workspace",
+    "allocator pools and fragmentation",
+    "encoder workspace",
+    "object metadata"
+  ],
+  "format_version": 1,
+  "gpu_budget_bytes": 25769803776,
+  "host_budget_bytes": 4294967296,
+  "object_peak_bytes_host_then_gpu": [
+    2919235584,
+    21745369088,
+    25769803776,
+    22273851392,
+    23233298432
+  ],
+  "pinned_budget_bytes": 536870912,
+  "pinned_peak_bytes": 536870912,
+  "prefetch_bytes": 268435456,
+  "raw_budget_bytes": 1048576,
+  "raw_peak_bytes": 524288,
+  "total_device_memory_bound": false,
+  "upload_bytes": 11555878993920,
+  "uploads": 1332419,
+  "workspace_bytes_per_op": 16777216
+}

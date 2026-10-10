@@ -16,6 +16,7 @@
 #include "poseidon/runtime_api/communication/nccl_mpi_transport.h"
 #endif
 #include "poseidon/runtime_api/rotation_key_basis.h"
+#include "runtime/thread_trace.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -466,6 +467,7 @@ gpu::GpuPlaintextData prepare_plaintext_upload(
     staging = std::make_shared<communication::PinnedHostBuffer>(
         checked_mul_size(word_count, sizeof(gpu::GpuWord),
                          "GPU plaintext upload byte size overflow"));
+    const auto packing_start = fhegpu::ThreadTrace::enabled() ? fhegpu::ThreadTrace::timestamp_ns() : 0;
     auto *packed = static_cast<gpu::GpuWord *>(staging->data());
     for (std::size_t index = 0; index < word_count; ++index)
     {
@@ -473,6 +475,9 @@ gpu::GpuPlaintextData prepare_plaintext_upload(
             source.data()[index],
             "GPU asynchronous plaintext upload residue does not fit in GpuWord");
     }
+    if (fhegpu::ThreadTrace::enabled())
+        fhegpu::ThreadTrace::record_duration("upload.packing", staging.get(), packing_start,
+                                             fhegpu::ThreadTrace::timestamp_ns());
     return destination;
 }
 
@@ -505,6 +510,7 @@ gpu::GpuCiphertextData prepare_ciphertext_upload(
     staging = std::make_shared<communication::PinnedHostBuffer>(
         checked_mul_size(word_count, sizeof(gpu::GpuWord),
                          "GPU ciphertext upload byte size overflow"));
+    const auto packing_start = fhegpu::ThreadTrace::enabled() ? fhegpu::ThreadTrace::timestamp_ns() : 0;
     auto *packed = static_cast<gpu::GpuWord *>(staging->data());
     for (std::size_t component = 0; component < source.size(); ++component)
     {
@@ -516,6 +522,9 @@ gpu::GpuCiphertextData prepare_ciphertext_upload(
                 "GPU asynchronous ciphertext upload residue does not fit in GpuWord");
         }
     }
+    if (fhegpu::ThreadTrace::enabled())
+        fhegpu::ThreadTrace::record_duration("upload.packing", staging.get(), packing_start,
+                                             fhegpu::ThreadTrace::timestamp_ns());
     return destination;
 }
 

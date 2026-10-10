@@ -1,0 +1,2 @@
+PASS runner=poseidon_gpu_mpi_runtime_e2e world=1 mode=local device_counts=4 online_average_seconds=0.445116 cross_rank_communication=0
+report=/home/xuming/poseidon-plaintext-streaming-models/memory/4gpu-stream-per_device_workers.json

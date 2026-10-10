@@ -1,0 +1,109 @@
+{
+  "iterations": [
+    {
+      "devices": [
+        {
+          "active_bytes": 284561656,
+          "allocation_bytes": 963444736,
+          "cuda_free_bytes": 33217183744,
+          "cuda_total_bytes": 34079899648,
+          "index": 0,
+          "net_change_bytes": 0,
+          "peak_increment_bytes": 82280448,
+          "pool_reserved_bytes": 536870912,
+          "rank": 0
+        }
+      ],
+      "iteration": 1
+    },
+    {
+      "devices": [
+        {
+          "active_bytes": 284561656,
+          "allocation_bytes": 963444736,
+          "cuda_free_bytes": 33217183744,
+          "cuda_total_bytes": 34079899648,
+          "index": 0,
+          "net_change_bytes": 0,
+          "peak_increment_bytes": 81100800,
+          "pool_reserved_bytes": 536870912,
+          "rank": 0
+        }
+      ],
+      "iteration": 2
+    },
+    {
+      "devices": [
+        {
+          "active_bytes": 284561656,
+          "allocation_bytes": 963444736,
+          "cuda_free_bytes": 33217183744,
+          "cuda_total_bytes": 34079899648,
+          "index": 0,
+          "net_change_bytes": 0,
+          "peak_increment_bytes": 82280448,
+          "pool_reserved_bytes": 536870912,
+          "rank": 0
+        }
+      ],
+      "iteration": 3
+    }
+  ],
+  "memory_baseline_bytes": [
+    284561656
+  ],
+  "memory_measurement": "Active RMM allocations, including cached keys/parameters in the warmup baseline; pool reservation is excluded.",
+  "numerical_checks": [
+    {
+      "expected_max_error": 0.0,
+      "iteration": 1,
+      "repeat_max_error": 0.0
+    },
+    {
+      "expected_max_error": 0.0,
+      "iteration": 2,
+      "repeat_max_error": 0.0
+    },
+    {
+      "expected_max_error": 0.0,
+      "iteration": 3,
+      "repeat_max_error": 0.0
+    }
+  ],
+  "oracle_provided": false,
+  "pinned_live_bytes": 0,
+  "pinned_process_peak_bytes": 5013504,
+  "rank": 0,
+  "streaming_timing": [
+    {
+      "bundle_read_bytes": 1280000,
+      "bundle_read_calls": 100,
+      "bundle_read_seconds": 0.021397992,
+      "encode_calls": 121,
+      "encode_seconds": 0.308176651,
+      "fence_seconds": 0.39720121700000005,
+      "fences": 5,
+      "raw_peak_bytes": 25600
+    },
+    {
+      "bundle_read_bytes": 1280000,
+      "bundle_read_calls": 100,
+      "bundle_read_seconds": 0.019243350000000003,
+      "encode_calls": 121,
+      "encode_seconds": 0.279992974,
+      "fence_seconds": 0.361536797,
+      "fences": 5,
+      "raw_peak_bytes": 25600
+    },
+    {
+      "bundle_read_bytes": 1280000,
+      "bundle_read_calls": 100,
+      "bundle_read_seconds": 0.019254949,
+      "encode_calls": 121,
+      "encode_seconds": 0.276321786,
+      "fence_seconds": 0.359993449,
+      "fences": 5,
+      "raw_peak_bytes": 25600
+    }
+  ]
+}
