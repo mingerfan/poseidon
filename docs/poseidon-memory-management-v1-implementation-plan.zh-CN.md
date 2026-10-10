@@ -6,7 +6,7 @@
 
 预取暂时不做。权重什么时候上传，继续沿用现在的安排。这次也不加入为预取准备的 `wait=true`、双权重窗口和队列等待机制。
 
-后续的权重按需编码、分批上传和提前上传，另见[源码能力评估与实施方案](poseidon-plaintext-prefetch-implementation-plan.zh-CN.md)。
+后续的权重按需编码、分批上传和提前上传，另见[分批读取和上传权重：目的与后续任务](poseidon-plaintext-prefetch-implementation-plan.zh-CN.md)。
 
 ## 1 做完之后是什么样
 

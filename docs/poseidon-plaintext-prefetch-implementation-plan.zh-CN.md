@@ -1,337 +1,231 @@
-# 权重明文按需编码、分批上传和提前上传实施方案
+# 让完整模型分批读取和上传权重：目的与后续实现任务
 
-状态：源码能力调查与后续任务方案，**尚未实现本文提出的新 Pass、V3 或 Fence**。
+**这项工作的目的：让 GPU 只放接下来要用的少量权重，用完一批，再换下一批。**
+这样才有机会把完整 24 层模型放到四张 32 GiB GPU 上运行。
 
-评估日期：2026-10-10。基线为 Poseidon `3b911694`（`integration/runtime-gpu`）、
-ckks-runtime `641e2ee`（`integration/source`）、DaCapo `a5bae92`
-（`integration/multi`）。本地与 188Server 的 `/home/xuming/poseidon` 使用这组代码。
-部分早期设计文档的实现状态已落后于源码；本文按当前执行器、Verifier 和 GPU API 判断。
+本文是后续实现方案。**分批权重调度、新版计划格式 V3 和 Fence 都还没有实现；完整模型也还没有在 GPU 上跑通。**
 
-## 1. 结论与实现目标
+## 先说明现在为什么会占这么多内存
 
-**现有设施已经能在执行阶段上传一部分明文，再继续计算，再上传下一部分。**
-Transfer 不限于初始化，GPU API 已有异步 H2D、独立拷贝流、完成事件和异步对象保活。
-对一个能够预先把明文编码放进主机内存的小模型，只推迟 Transfer，主要是编译器调度工作。
+目前编译出的计划，会在计算开始前，把所有需要的权重编码并上传。这里的“编码”是把普通数字变成 CKKS 运算需要的多项式表示，大小会明显增加。不能用原始权重文件的大小判断编码后是否放得进显存。
 
-**完整 Qwen 的有界权重流水还需要修改编译器、计划协议和 Runtime。** 原因是：
+这次完整 Qwen 的原始去重数据约为 14.70 GB，但当前计划的内存估算是：
 
-1. Encode 被强制放进初始化；只推迟上传，会让所有编码后的 RNS 明文堆在主机。
-2. bundle 加载器启动时读入本 rank 所需的全部原始载荷，没有有界按需缓存。
-3. `PerDeviceWorkers` 拒绝在线 Encode，也拒绝 Host Compute；当前 Qwen 计划包含 Host Boot。
-4. Runtime 和 GPU API 可以快速连续提交异步任务；Release 后，GPU 尚在使用的对象仍占内存。
-   当前没有为权重预取设置驻留预算、提交窗口或预算不足时的阻塞机制。
-5. 异步 H2D 不等于已经获得计算重叠。当前 H2D 会等待目标执行流上的事件，具体时机可能
-   让上传排在已提交计算之后。
-
-目标是显式编译出“少量初始权重 + 执行阶段按窗编码/上传 + 最后使用后释放”。
-先交付可证明内存受限的版本，再优化预取距离和计算重叠。不要同时重做 boot 插入、
-CKKS 参数、矩阵布局、placement 或模型数学逻辑。
-
-## 2. 当前源码支持什么
-
-| 能力 | 当前状态 | 对这项工作的含义 |
-| --- | --- | --- |
-| execution 中的 Transfer | 已支持 | 可以表达计算途中上传，不必增加一个 Prefetch 数据算子 |
-| execution 中本 rank 的 Host→Device Transfer | 顺序模式和设备 worker 的本机通信路径已有支持 | 多卡上传并非必须全在初始化 |
-| 异步 H2D、pinned staging、完成事件 | 已支持 | 复用现有 CUDA 搬运，不另写一套复制代码 |
-| 消费者等待输入事件 | 已支持 | 未完成的上传结果可以先发布句柄，计算流按事件等待 |
-| Release、使用次数和在途对象保活 | 已支持 | 延迟释放的正确性设施可以复用；不代表已有内存预算保证 |
-| execution 中 Encode | V1/V2 Verifier 禁止 | 顺序执行分派虽然认识 Encode，合法计划仍无法使用它 |
-| 设备 worker 中 Encode / Host Compute | 明确拒绝 | 并行在线编码及当前 Host Boot 都需要新增 Host 任务执行路径 |
-| blob 按需读取和有界缓存 | 没有 | 现有 `slots_by_content` 在启动时装入所需数据，并保留到本次运行结束 |
-| 编译器权重使用区间、预取窗口、预算调度 | 没有 | 当前每个源值/目的地共用一个 Transfer，放在生产者后面 |
-| 并行/在途显存上界 | 没有 | 现有报告按指令完成后再执行下一条估算，不能作为硬上限 |
-
-源码入口如下，后续实现应先读这些函数：
-
-- [Runtime](../third_party/ckks-runtime/runtime/runtime.hpp)：`run`、`load_bundle`、
-  `execute_encode`、`execute_communication`、`compile_parallel_phase`、
-  `local_communication_worker`、`execute_device_parallel_phases`、`execute_release`。
-- [Verifier](../third_party/ckks-runtime/runtime/verifier.cpp)：Encode 阶段限制、SSA 定义/使用、
-  Release 与 `reuse_input` 检查；[JSON reader](../third_party/ckks-runtime/runtime/json_plan_reader.cpp)
-  目前只接受版本 1/2。
-- [bundle 加载器](../third_party/ckks-runtime/runtime/plaintext_bundle.cpp)及
-  [接口](../third_party/ckks-runtime/runtime/plaintext_bundle.hpp)：当前一次性构建 `slots_by_content`。
-- [GPU API](../src/poseidon/runtime_api/poseidon_gpu_api.cpp)：`encode_plaintext`、
-  `prepare_plaintext_upload`、`communicate_async`、`posted_outputs`、`retain_communication`、
-  `retain_in_flight`、`collect_completed`、`drain`。
-- [CUDA 搬运](../src/poseidon/runtime_api/communication/cuda_local_transfer.cpp)：
-  `copy_host_to_device_async`、`record_execution_ready`；消费者等待在 GPU API 的
-  `ReadyEvent::wait_on_execution_stream`。
-- [通信生成](../third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/MaterializeCommunication.cpp)：
-  `isInitializationValue`、`TransferDemand`、`materialize`。
-- [计划布局](../third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/RuntimePlanUtils.cpp)：
-  `isRuntimeInitialization`、`buildRuntimePlanLayout`。当前所有 Encode 都被归入初始化。
-- [JSON 导出](../third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/EmitRuntimePlan.cpp)：
-  Encode 分支直接写入 `initialization`。
-- [Release 规划](../third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/PlanRuntimeMemory.cpp)、
-  [内存估算](../third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/EstimateRuntimeMemory.cpp)、
-  [流水线注册](../third_party/ckks-runtime/third_party/dacapo/tools/optimizer.cpp)：新调度必须进入这些公共路径。
-
-## 3. 这次完整模型暴露的问题
-
-基线是合成权重、完整 24 层、两 token prefill、完整 LM head 和 96 个 KV 输出。
-默认配置中的 512 是结构上界，本次只编译了位置 0/1。已有单卡/四卡计划都带 Release/reuse，
-并已做单位明文消除和 Encode CSE。
-
-| 当前计划 | 全部 RNS 对象峰值 | 单独计算密文存活峰值 |
+| 计划 | 每卡明文、密文对象的峰值 | 如果只看密文 |
 | --- | --- | --- |
 | 单卡 | 8.08 TiB | 192.87 GiB |
-| 四卡，每卡 | 2.65、2.52、2.40、2.24 TiB | 8.69、16.70、11.37、9.42 GiB |
+| 四卡 | 2.65、2.52、2.40、2.24 TiB | 8.69、16.70、11.37、9.42 GiB |
 
-这些是顺序完成假设下的对象估算，排除密钥、参数表、工作区、暂存、缓存、内存池保留和对齐等。
-完整模型尚未在 CKKS/GPU 上执行。四卡密文估算说明值得继续实现权重流水，不能据此承诺四张
-32 GiB V100 已能运行。单卡在保持当前计算顺序和密文存活区间时，仅去掉权重峰值也装不下。
+这些数字没有包括密钥、算子临时内存等，而且假设上一条指令完成后才执行下一条。因此，它们是对象大小估算，不能作为实际总显存的保证。
 
-原始去重后的 bundle 为 14.70 GB；它与编码后的 RNS 权重大小是两件事。N=65536 时，
-40 个 q limb、无 p limb 的一份 GPU 明文为 `65536 × 40 × 4 = 10 MiB`，同形状 Host
-明文为 20 MiB，H2D packed staging 又需要约 10 MiB。计费必须使用实际 q/p limb，不能
-按短 payload 的元素数估算编码后的明文；前缀掩码仍占完整多项式。
+**四卡值得继续做的原因**是：四卡的密文估算最多约 16.70 GiB，剩下的空间有可能容纳少量权重和其他必要数据。具体够不够，要实现后实测。单卡的密文就有约 193 GiB，保持当前计算安排时，仅分批上传权重仍然装不下。
 
-结果证据见 [最新完整编译记录](../test-results/qwen24-dacapo-188-20261010/README.md)及
-[最新摘要](../test-results/qwen24-dacapo-188-20261010/unit-plaintext/summary.json)。大产物在：
+## 要把运行方式改成什么样
+
+目前的方式可以理解为：
+
+```text
+读取全部权重 → 编码全部权重 → 上传全部权重 → 开始计算
+```
+
+希望改成：
+
+```text
+第一批：读取需要的权重 → 编码 → 上传 → 计算 → 用完释放 → 等这批完成
+第二批：读取需要的权重 → 编码 → 上传 → 计算 → 用完释放 → 等这批完成
+……
+```
+
+“一批”是编译器根据内存容量划出的一段任务，可以小于一层。不能假设一整层一定放得下。
+
+在一批任务里面，还可以提前准备稍后要用的权重。例如 GPU 正在用 w0 计算时，CPU 编码 w1，并尝试把 w1 上传到 GPU。这样，GPU 算完 w0 后就少等一会儿。这就是本文说的**提前上传**。
+
+分批解决“能不能装下”，提前上传解决“少等多久”。先把分批版本做正确，再优化等待时间。
+
+## Fence 到底有什么用
+
+Fence 在这里相当于一条“等这一批做完，再提交下一批”的指令。它主要防止 CPU 把任务提交得太快，导致 GPU 上同时积压太多份权重。
+
+为什么已经有 Release（释放指令），还需要等待？因为 CPU 走到 Release 时，GPU 可能还没有算完：
+
+1. CPU 提交“用 w0 计算”的任务，很快就往下走。
+2. CPU 遇到 `Release(w0)`，表示后续计划不会再用 w0。
+3. GPU 此时可能仍在使用 w0。为了保证正确，现有 API 会继续保留这份数据。
+4. 如果 CPU 随即又上传很多份新权重，旧的尚未真正释放，新的又占了显存，还是可能爆内存。
+
+所以，**“后面不再用了”和“GPU 已经用完了”是两件事**。Release 表达前者，Fence 等待后者，并让已完成任务占着的旧内存可以回收、复用。
+
+例如只允许少量权重同时占用显存时，计划可以安排成：
+
+```text
+读取、编码、上传 w0 / w1
+用 w0 / w1 完成这一批计算
+Release(w0 / w1)       ← 后续不再用这两份权重
+Fence                 ← 等计算、上传完成，清理旧引用
+读取、编码、上传 w2 / w3
+继续下一批计算
+```
+
+没有这个边界，CPU 可能已经提交到 w100，而 GPU 还在处理 w0。分批后，CPU 必须先等当前这批完成，才能继续提交下一批。
+
+现有 CUDA 事件已经负责“上传完成后，计算才能读取这份权重”。**Fence 额外负责限制提前提交多少任务**，两者用途不同。
+
+Fence 不会自动释放后面还要用的密文或输出，也不会改变计算结果。跨批次还需要的数据必须保留。内存池也可能保留空闲块供后面复用，所以回收对象后，进程显示的显存不一定立刻下降。
+
+这是首版比较简单的办法，会在批次之间损失一些并行机会。以后可以改成：某份数据真正用完、空出足够内存，就放行下一次上传；届时可以减少整批等待。
+
+## 现有代码能做多少，还差什么
+
+**已有上传能力可以复用，但编译器和运行时还没有把它们组合成完整的分批方案。**
+
+| 现在已有的能力 | 还缺少的部分 |
+| --- | --- |
+| 可以在计算途中执行 Host→GPU Transfer（上传） | 编译器目前通常把权重上传安排在初始化 |
+| 异步上传、上传完成事件、计算等待事件 | 没有按内存容量限制连续提交多少任务 |
+| 用完后的 Release，以及 GPU 完成前保留数据 | 没有批次结束时等待并回收的 Fence |
+| 顺序执行器认识 Encode（编码） | 当前 V1/V2 计划校验不允许在计算途中编码 |
+| 可以读取权重数据包 bundle | 当前启动时读入所需原始数据，缺少按需读取和容量限制 |
+| 多 GPU worker 可以执行本机上传 | 目前拒绝执行阶段的 Encode 和 Host Compute，需要补 CPU 任务执行路径 |
+
+只把上传推迟还不够。如果仍在启动时编码全部权重，大量编码结果会堆到主机内存里。因此，**读取、编码、上传、释放都要一起分批安排**。
+
+还有一个独立限制：完整计划含 10,835 个在 CPU 上解密再重加密的 Boot 操作。现有多 GPU worker 模式不接受这些 Host Compute，所以当前四卡计划不能直接交给它运行。顺序执行模式有这条 CPU 执行路径，可以作为首版入口；它也能操作多张本机 GPU。
+
+## 建议按这个顺序实现
+
+1. **先验证已有上传路径。** 用两三个权重的小计划，启动时编码，计算途中分次上传。分别验证顺序执行和本机多 GPU worker 的事件等待、数值和释放。这个小实验不需要改计划格式，也不代表大模型内存问题已经解决。
+2. **做能控制内存的首版。** 新增 V3 计划，允许计算途中 Encode，加入 Fence；原始数据按需读取。先支持一台机器上的一张或四张 GPU，用顺序执行模式，每批结束后等完成再推进。先不提前上传，再在批内增加提前上传。
+3. **补多卡并行执行。** 增加一个 CPU worker，串行处理 Encode 和现有 Host Boot；GPU worker 处理上传和 GPU 计算。每批内部可并行，完成后再进入下一批。
+4. **测量后再加速。** 分别测读取、编码、上传、GPU 等待的时间，再决定提前准备多少权重，以及是否减少整批 Fence。
+
+首版只支持一台机器、一个 rank。跨机器 MPI/NCCL 协同另做，不混进这次实现。
+
+---
+
+## 给后续实现者的具体任务
+
+以下保留源码和正确性约束，供接手的 AI 或开发者使用。上面的目标不变：**先让内存受控，再优化上传与计算的重叠。**
+
+### 1. 从这些代码开始
+
+调查日期：2026-10-10。源码基线为 Poseidon `3b911694`、ckks-runtime `641e2ee`、DaCapo `a5bae92`。后续文档提交不改变这组运行时代码。
+
+| 需要改的部分 | 源码入口和关键位置 |
+| --- | --- |
+| 编码、上传、释放、worker 和批次推进 | [runtime.hpp](../third_party/ckks-runtime/runtime/runtime.hpp)：`load_bundle`、`execute_encode`、`execute_communication`、`compile_parallel_phase`、`execute_device_parallel_phases`、`execute_release` |
+| 新版计划读取与校验 | [json_plan_reader.cpp](../third_party/ckks-runtime/runtime/json_plan_reader.cpp)、[verifier.cpp](../third_party/ckks-runtime/runtime/verifier.cpp) |
+| 按需读取原始数据 | [plaintext_bundle.cpp](../third_party/ckks-runtime/runtime/plaintext_bundle.cpp)、[plaintext_bundle.hpp](../third_party/ckks-runtime/runtime/plaintext_bundle.hpp)：替换启动时全量填充 `slots_by_content` 的做法 |
+| 上传分配、完成事件、异步任务保留的数据 | [poseidon_gpu_api.cpp](../src/poseidon/runtime_api/poseidon_gpu_api.cpp)：`prepare_plaintext_upload`、`communicate_async`、`retain_in_flight`、`collect_completed`、`drain` |
+| 实际 CUDA 上传与流之间的等待 | [cuda_local_transfer.cpp](../src/poseidon/runtime_api/communication/cuda_local_transfer.cpp)：`copy_host_to_device_async`、`record_execution_ready` |
+| 编译器生成通信和划分初始化 | [MaterializeCommunication.cpp](../third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/MaterializeCommunication.cpp)、[RuntimePlanUtils.cpp](../third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/RuntimePlanUtils.cpp) |
+| 重新安排 Release、估算、导出 | [PlanRuntimeMemory.cpp](../third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/PlanRuntimeMemory.cpp)、[EstimateRuntimeMemory.cpp](../third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/EstimateRuntimeMemory.cpp)、[EmitRuntimePlan.cpp](../third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/EmitRuntimePlan.cpp) |
+| 所有导出流水线注册 | [optimizer.cpp](../third_party/ckks-runtime/third_party/dacapo/tools/optimizer.cpp) |
+
+### 2. 新版计划和 Fence
+
+新增 RuntimePlan V3，继承 V2 的 Release/reuse，允许执行阶段的 Host Encode。保留 V1/V2 的旧限制和默认行为；不支持 V3 的执行器应明确报错。
+
+建议 Fence 没有输出值，JSON 形如：
+
+```json
+{"ordinal": 123, "kind": "fence"}
+```
+
+Fence 的执行要求：
+
+- 停止提交下一批任务，等待本批 CPU、GPU 和通信任务完成。
+- 把通信结果交付给 Runtime，再清理 API 因异步任务保留的旧引用。`Api::drain()` 可复用，但它本身不能代替 Runtime 的结果交付。
+- 保留后续批次仍需使用的值、上下文、使用次数和最终输出，不重置 ValueStore。
+- 只处理当前未完成的通信组，不在每个 Fence 从头扫描全部历史记录。清理或重用组索引前，确认没有 Pending 值仍引用它。
+
+同步修改 schema、reader、Verifier、打印、dispatch、编译器指令、计划布局和导出。布局目前只允许 Release 无结果，需要接受 Fence。Fence 有执行顺序上的作用，不能被 CSE/DCE 删除或随意移位。首版不把它定义成分布式 barrier。
+
+### 3. 编译器怎样划分每一批
+
+建议新增 `PlanPlaintextStreaming` Pass，所有 RuntimePlan 导出入口使用同一条公共流水线：
+
+```text
+既有 scale/boot 优化、Encode CSE、物理 level
+→ AssignPlacement → MaterializeCommunication
+→ PlanPlaintextStreaming（新增）
+→ PlanRuntimeMemory → EstimateRuntimeMemory → EmitRuntimePlan
+```
+
+第一版保持模型计算、boot 插入、设备分配和密文通信的顺序，只重新安排 Encode 产生的权重明文。按计算顺序扫描一次，记录每份权重在哪里使用、要传到哪张卡、编码后多大，然后逐步加入当前批：
+
+- 加入下一步计算所需的权重；任何一项内存预算放不下，就结束本批。
+- 还有空间时，加入稍后会用的权重，安排在首次使用前编码和上传。预取距离参考耗时和字节数；不能只用固定指令条数，因为 Rotate 与 Boot 耗时差很多。
+- 跨很远位置重复使用的权重，允许分批重新编码、上传。使用相同原始数据和编码参数，但生成新的 ValueId/TransferId。常用小系数可以保留，但必须计入预算。
+- 拆批后不再运行会把这些 Encode 跨批合并的 CSE。保留现有单位明文优化，以及满槽 ±1、补零前缀掩码、编码 scale 的区别。
+- 调度完成后重新规划 Release/reuse，不能沿用原计划的释放位置。
+- 如果一个不可拆分的计算连同必需数据仍装不下，明确报告哪张卡、需要多少内存、哪个对象超限。不回退到全量加载或无限缓存。
+
+阶段划分也必须一起改：`isRuntimeInitialization`、`buildRuntimePlanLayout`、通信的初始化标记、导出器的 Encode 分支。目前这些地方会把 Encode 放回初始化。不能只改 JSON 数组，否则分析和实际执行会看到不同的顺序。
+
+避免定义前使用、重复 ID、释放后使用、覆盖尚有用途的输入。当前图约 489 万计算步骤，算法应接近 `O(V+E)`，必要时做索引排序；不要每安排一份权重就重扫全图。
+
+### 4. 内存预算怎么算才可靠
+
+分别限制每卡 GPU 对象、Host 编码结果、上传用的 pinned buffer、原始数据缓存。新增参数可采用 `--runtime-plan-plaintext-schedule=eager|stream` 和相应 `*-budget-bytes`；这些参数目前不存在，默认保持 eager。
+
+首版对每批采用保守估算：
+
+```text
+这批的对象上界 = 批开始时仍需保留的对象 + 批内所有新增分配
+```
+
+在 Fence 前，不因为遇到 Release 就扣掉可能仍被 GPU 使用的对象。原位复用按实际分配计费。还必须满足：
+
+- GPU 预算同时算密文和明文，并为密钥、参数表、临时工作区、内存池和碎片留出空间。
+- Rotate、Rescale、keyswitch 等调用的临时内存可能直到事件完成才释放。多个调用连续提交时，不能只预留“最大单个算子的临时内存”；首版累计计入本批，除非已证明可以安全共用。
+- Host 编码结果、pinned 上传副本、GPU 目标对象可能同时存在，要分别计入预算。上传开始前就可能分配目标对象和 pinned buffer，必须先检查容量，再分配。
+- 后续如果改为按完成事件放行上传，只有事件完成、所有引用结束、底层内存可复用时，才能归还额度。等待容量时不能持有 ValueStore/通信组/allocator 锁，也不能堵住负责完成旧任务的 worker。
+
+例如 N=65536、40 个 q limb、无 p limb 时，一份 GPU 明文约 10 MiB、Host 明文约 20 MiB、上传副本约 10 MiB。编码后大小按实际 q/p limb 计算；原始数据只有少量元素，也可能需要完整多项式。
+
+缺少实际临时内存上界时，报告只能称为 RNS 对象估算，不能承诺总显存一定受限。实测同时记录对象占用、内存池保留量和 CUDA 空闲量。
+
+### 5. 原始数据和 CPU 任务
+
+启动时只读取 manifest、建立长度索引；执行 Encode 时再读取对应原始数据。初始化和执行阶段的 Encode 都要纳入本 rank 引用检查。读取时完成已有的长度、内容、有限值、槽容量校验；缓存命中不重复读取，不另做一轮全数据包校验。
+
+首版不缓存原始数据，或使用按字节数限制的简单 LRU。原始数据缓存与编码后对象分别管理。同一 content 的 level/scale/NTT/context 不同时，不能直接共享编码结果。减少 vector 拷贝时，保留补零和负零的原有语义。
+
+多卡模式先用一个串行 CPU worker 执行 Encode 和 Host Boot，因为两者共用的 `encoder_` 不能假设线程安全。复用现有值发布、依赖等待、使用次数和失败通知。Host Release 也要正确路由；不要统一塞到 GPU worker 0。一批出错时，必须唤醒其他等待线程，不能挂住。
+
+### 6. 提前上传是否真的加速，要实测
+
+当前 `copy_host_to_device_async` 会让上传流等待目标计算流上的 `destination_ready` 事件。如果上传在长 kernel 已经入队后才发起，上传也可能排在它后面，未必重叠。
+
+先尝试在本批内把后续 Transfer 提到独立计算之前。不要直接删掉现有等待：它还保护 RMM 异步分配和内存重用的正确顺序。若确需改事件，分别表达“目标内存可写”和“输入数据就绪”。
+
+用 Nsight 或现有 trace 看真实重叠，分别统计读取、Encode、packing、H2D、计算等待。瓶颈也可能在 CPU 编码、文件读取或 Host Boot；调用了异步复制接口不等于性能已经提升。
+
+### 7. 怎样验收
+
+先跑小型真实 CKKS 计划，再跑一层或小词表模型，最后尝试完整 24 层四卡图。至少覆盖：
+
+- 旧 V1/V2 仍拒绝执行阶段 Encode；V3 接受合法计划，拒绝非法 ID、释放后使用和不支持的模式。
+- 全量初始化、分批无预取、分批预取的数值及最终 CKKS 元信息一致。覆盖满槽 ±1、补零前缀、共享权重、不同 scale/level、跨批重新编码。
+- 上传未完成就提交计算、Release 早于 GPU 完成、同一输入重复使用、GPU0/GPU3 在不同时间使用同一原始数据，都没有提前销毁或重复交付。
+- 人为拖慢编码、上传或计算，内存仍受限制；跨批密文与输出仍有效。超限和 worker 出错能明确退出，没有死锁。
+- 至少 20,000 个操作的规模测试；大图不逐批反复扫描全图，也不累积已完成的 pinned buffer 和任务句柄。
+
+交付计划估算与实测峰值、每卡密文/明文/密钥/工作区、Host RSS、pinned 与原始缓存占用，以及上传次数/字节量、重复编码次数和耗时。**“编译成功”“实际装得下”“完整结果通过”分别报告。**
+
+## 复用已有模型和产物
+
+本次模型是合成权重的完整 24 层 Qwen、两个 token 位置、完整 LM head 和 96 个 KV 输出。配置中的 512 是结构上界，本次只编译了位置 0/1。
+
+证据见[完整编译记录](../test-results/qwen24-dacapo-188-20261010/README.md)和[摘要](../test-results/qwen24-dacapo-188-20261010/unit-plaintext/summary.json)。服务器大文件在：
 
 ```text
 /home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/artifacts/qwen24-native
 /home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/artifacts/qwen24-unit-plaintext/gpu-plans/{gpu1,gpu4}
 ```
 
-无损源文件是 `qwen24-native/traced/trace_qwen24.mlirbc`，约 14.82 GB。诊断文本 MLIR 省略
-常量，不能用于重新编译。复用现有字节码，不要重新生成数 GB 权重或重新跟踪模型。
+重新编译应复用 `qwen24-native/traced/trace_qwen24.mlirbc`（约 14.82 GB）。诊断文本 MLIR 省略了常量，不能作为编译输入。不要重新生成大模型或另做一次全量哈希检查。
 
-## 4. 分阶段交付
+`/tmp` 只放少量脚本和日志；大型模型、字节码、计划继续放在 `/home` 或指定工作目录。不做全量 RNS 磁盘缓存。
 
-### P0：验证已有执行期上传能力
-
-先用手写小型 V2 计划，将两个或三个权重 Encode 留在初始化，把 H2D Transfer 分散到
-execution，安排独立计算夹在上传之间；分别覆盖 Sequential 和单 rank 多设备 worker。
-加入 Host/GPU plaintext Release，检查事件依赖、数值结果和上传/释放轨迹。
-
-此阶段无需改协议。它用于证明上传基础设施可复用，不能作为完整模型的内存解决方案，
-因为初始化后的 Host RNS 明文仍全部存在。现有大 Qwen 计划的 Host Boot 也不能直接交给
-当前 `PerDeviceWorkers`；这里先使用没有 Host Compute 的小型探针。
-
-### P1：有界在线编码和顺序提交 MVP
-
-建议增加 RuntimePlan V3，允许 Host Encode 出现在 execution，继承 V2 的 Release/reuse，
-并增加下文的窗口 Fence。保留 V1/V2 的旧限制，旧计划仍按旧语义运行；不要悄悄放宽 V2。
-
-先支持 `world_size=1`、一个或多个本地 GPU、`DeviceExecutionMode::Sequential`。
-此模式已有 Host Boot 分派，可先验证完整现有图的上传与内存行为。顺序提交仍会提交异步
-GPU 工作，所以必须有窗口完成边界，不能把“顺序提交”当作“每个算子已经完成”。
-
-同时实现按需 blob 读取、Host 编码预算、GPU 对象预算、pinned 预算、权重使用区间切分，
-以及每个窗口结束时的完成等待与回收。首先交付预取距离为零的正确版本，再在窗口内提早上传。
-
-### P2：单 rank 多卡 worker 与 Host 任务
-
-为 Encode 和已有 Host Boot 增加一个串行 Host 任务执行路径，复用 `ParallelValue` 的发布、
-依赖等待、使用次数、失败通知和释放机制。GPU worker 继续执行本地 Transfer 和 Device Compute。
-
-GPU API 的 `encoder_` 同时被 Encode 和 Host Boot 使用，不能默认线程安全。首版把两者
-放在同一个 Host worker 串行执行；不要直接在多个 GPU worker 上同时调用该 encoder。
-Host Release 也需要正确路由，不应继续简单塞到 GPU worker 0。
-
-每个窗口内可并行执行，窗口结束后等待本窗口的 Host/GPU/通信任务完成，才能提交下一窗口。
-不要为全部窗口一次性启动可无限向前执行的任务队列。跨窗口的活值、使用次数和上下文
-必须保留，不能像结束一次 `run()` 那样重置 ValueStore。第一版明确拒绝跨 rank streaming；
-现有设备 worker 只接受 Device-only 跨 rank 在线通信，MPI/NCCL 协调需另做任务。
-
-### P3：优化提前上传与窗口等待
-
-取得真实的 blob 读取、CPU Encode、packing、H2D、算子耗时和实际内存统计后，调预取距离。
-可以再用事件驱动的预算归还减少全窗口 Fence，但必须保持 P1/P2 已建立的内存和释放约束。
-不要第一版就引入通用动态 DAG 调度器、自动驱逐所有密文或磁盘 RNS 编码缓存。
-
-## 5. 推荐协议：显式指令、V3 和窗口 Fence
-
-Prefetch 本质上是把已有 `Encode → Transfer` 提前到消费者之前；不需要一个运行时隐式
-查找和搬运权重的特殊数学算子。V3 保留完整 ValueDesc 和显式 SSA 值。
-
-建议新增不产生值的 `fence` 指令，例如：
-
-```json
-{"ordinal": 123, "kind": "fence"}
-```
-
-首版语义：当前 rank 本窗口内的已提交工作完成；通信结果被交付、完成的在途引用被清理。
-Fence 不释放后续仍要使用的值，不改 level/scale，不解密，不能用它代替 Release。
-首版只接受单 rank streaming，暂不定义分布式 barrier。
-
-窗口示意：
-
-```text
-initialization: 绑定输入、必要输入搬运、少量决定常驻的明文
-execution:
-  Encode(w0) → Transfer(w0) → Release(Host w0)
-  Encode(w1) → Transfer(w1) → Release(Host w1)  # 预算许可时提前
-  Compute(x, GPU w0) → Release(GPU w0)
-  Compute(y, GPU w1) → Release(GPU w1)
-  Fence
-  Encode(w2) → Transfer(w2) → ...
-```
-
-Fence 可复用完成通信及 `Api::drain()` 的底层能力，先实现较保守的窗口边界，不在每个权重
-后全设备同步。别在每个 Fence 从头扫描所有历史通信组；只处理本窗口未完成的组，及时
-清掉已交付的句柄和暂存。丢弃组或重用索引前，必须证明没有 Pending 值还引用它。
-`drain()` 当前只处理 API 持有的在途工作，不能代替 Runtime 的通信结果交付。
-
-需要同步更新 JSON schema/reader、Verifier、计划打印、Runtime dispatch、编译器
-`dist.fence`、布局、内存规划和导出。布局目前只允许 Release 没有结果，新 Fence 也必须
-作为无结果指令处理。Fence 应有调度副作用，不能被 CSE/DCE 删除或随意跨越。
-格式版本检查以 V3 为准；不认识 V3/Fence/在线 Encode 的执行器直接报错。
-
-## 6. 编译器 Pass 的边界与算法
-
-建议新增 `PlanPlaintextStreaming`，放在下面位置，所有 RuntimePlan 导出入口共用：
-
-```text
-既有 scale/boot 优化 → Upscale 转换 → Encode CSE → 物理 level
-→ AssignPlacement → MaterializeCommunication
-→ PlanPlaintextStreaming（新）
-→ PlanRuntimeMemory → EstimateRuntimeMemory → EmitRuntimePlan
-```
-
-第一版固定当前计算、placement、boot 和密文通信顺序，只安排来自 Encode 的权重。
-计算输入、输出及最终 CKKS 元信息应保持；新增或拆分的 Encode/Transfer 使用唯一 ID。
-不能只在 JSON writer 挪数组，内存分析和所有消费方必须看到同一份真实 IR 顺序。
-
-建议做一次扫描，收集每个编码值的消费位置、目的设备、物理大小和共享关系。按当前计算
-顺序贪心形成有界窗口，然后在窗口内按首次使用时机安排 Encode/Transfer：
-
-1. 维护窗口开始时仍存活的密文和常驻明文，以及窗口中新建对象的字节数。
-2. 加入下一步计算所需的权重；如果超过任一设备/Host/pinned 预算，就结束当前窗口。
-3. 容量允许时，提前加入后续将使用的权重；预取距离用预计时间或实际字节数控制。
-   不用“提前 1000 条指令”作为唯一标准，Rotate 与 Boot 的时间差很大。
-4. 单个步骤连同必要活值和资源余量都装不下时，编译器报出设备、需要字节数及超限对象。
-   不偷偷切回全量初始化或无限缓存；进一步切模型/改变 placement 属于后续工作。
-5. 形成窗口后，再运行 Release/reuse 规划和估算，不复用旧计划的 Release 位置。
-
-同一个权重可能跨很远的位置使用，现有“每源值/目的地一个 Transfer”的共享会拉长驻留。
-首版允许按窗口重新编码/上传，使用同一个 bundle content、相同 level/scale/NTT 和新
-ValueId/TransferId；宁可增加少量编码和传输，也不要为了 CSE 保留大权重到最后。
-多设备间隔很远的上传也可以拆开 Host Encode，避免等最后一张卡时持有巨量 Host RNS。
-
-小型且频繁使用的系数可以常驻，但也算入预算；不能默认所有共享值都常驻。
-窗口拆分后不要再跑能把相同 Encode 跨窗口合并的 CSE。保留现有单位明文优化，满槽单位
-与补零前缀掩码的区别、编码 scale 都不能改变。
-
-修改公共 `isRuntimeInitialization`，让在线 Encode 的阶段能显式表达；同时修改
-`buildRuntimePlanLayout`、通信初始化标记和 exporter 的 Encode 分支，防止后面的 Pass
-又把已经安排到 execution 的权重挪回初始化。校验不存在定义前使用、跨 Fence 的非法
-移动、重复 ID、已释放后使用或覆盖仍有消费者的输入。
-
-算法应接近 `O(V+E)`，最多增加索引排序；不要每安排一个权重就重建整个计划、重扫活值
-或排序全部对象。当前图约 489 万计算步骤，原来的二次复杂度问题不能重新出现。
-
-## 7. 内存约束：首版采用保守窗口上界
-
-至少分别配置并报告：每张 GPU 的对象预算、Host 编码明文预算、pinned staging 预算和
-原始 blob cache 预算。预算及预取参数由编译器选项提供，运行时明确验证；名字可以采用
-`--runtime-plan-plaintext-schedule=eager|stream` 及相应 `*-budget-bytes` 选项。
-这些选项目前不存在，实现时应保持默认 eager 行为。
-
-GPU 对象预算要给密文和预取明文共同计费，不能把整张 32 GiB 都交给权重。密钥、参数表、
-算子工作区和 allocator 保留/碎片的余量需根据该 context/设备的实测配置；启动时核对实际
-环境。已有顺序对象峰值加一个任意常量，不能冒充实际并行上界。
-
-还要区分长期常驻余量与在途临时区。当前 Rotate、Rescale、keyswitch 等操作可能为每次
-调用分配临时对象并保留到事件完成；一个窗口同时在途多个调用时，不能只预留“最大单个
-算子的工作区”。首版用该参数/算子实现的保守临时分配上界，累计计入窗口；只有已证明
-安全串行复用的 workspace 才能按一份计费。缺少该上界时报告应明确标成 RNS 对象估算，
-不能宣称已经给出了总显存保证。资源配置和 allocator 实测要与实际后端匹配。
-
-最简单的可审核上界是：
-
-```text
-本窗口对象上界 = 窗口开始的活对象 + 本窗口所有新增分配
-```
-
-窗口内不因逻辑 Release 提前扣除在途对象。原位复用按实际分配计费，算子临时区另外预留。
-这是保守上界，会牺牲一些窗口长度，但先避免将“API 已接手”错误等同于“内存已回收”。
-Host 源明文、pinned 副本、GPU 目的明文可能同时存在，三处必须一起计费；请求预算在
-`prepare_plaintext_upload` 分配目的对象和 staging 之前完成。
-
-运行时不能绕过窗口提交后续工作。优化为动态预算后，只能在相关事件完成、所有使用者
-结束且底层分配可复用后归还额度。不能在提交 Transfer 或遇到 Release 时立即归还。
-等待预算不能持有 ValueStore/通信组/allocator 锁，也不能阻塞负责完成旧消费者的 worker。
-缺少合法进展路径应报出超限或循环依赖，不能无限等待。
-
-验收同时记录对象 allocated/used、内存池 reserved、CUDA 空闲量和实际峰值。内存池把空闲
-块留在 GPU 是正常行为；对象减少不等于进程实际显存立即下降。
-
-## 8. bundle 和 Host 编码
-
-把“一次性加载 manifest 和所有 blob”拆成：启动读取并验证 manifest/建立长度索引；
-执行 Encode 时才读取需要的 blob、检查长度/内容/有限值/槽容量，随后编码。
-扫描初始化和执行阶段的本 rank Encode 引用，不能继续只扫描 `initialization`。
-
-保留已有文件完整性和数值验证语义，不另外启动一轮全 bundle 校验。被实际读取的文件
-在读取路径内完成校验；缓存命中不重复读文件。不要将未经校验的数据交给 encoder。
-默认不建全量 RNS 磁盘缓存，也不将数十 GB blob 复制到 `/tmp`。
-
-首版可不缓存原始 blob，或做简单的字节数受限 LRU。编码完成后的 blob 缓存与 Host
-plaintext 生命周期分别管理。共享 content 的 level/scale/NTT 可能不同，不能直接复用
-同一编码对象；任何编码缓存的 key 还必须包含 context 和实际编码元信息。
-尽量减少当前 `execute_encode` 的多余整份 vector 拷贝，但不能借此改变补零或负零处理。
-
-## 9. 提前上传的性能陷阱
-
-`copy_host_to_device_async` 先在目标执行流上记录 `destination_ready`，拷贝流等待该事件。
-这是当前分配与写入顺序的正确性保护。如果下一份权重的上传在一个长 kernel 入队后发起，
-这个等待可能把上传也排到长 kernel 后面。这里只能据源码指出风险，实际重叠需要测量。
-
-先尝试在窗口内把后续 Transfer 提到独立计算之前，用现有顺序保护取得重叠。若测量表明
-仍需缩小等待范围，再分别表达“目的分配已可写”和“输入数据已就绪”事件。不要直接删除
-`destination_ready` 等待，否则 RMM 异步分配及内存重用可能与拷贝写入竞争。
-
-用 Nsight 或现有 trace 确认 H2D 与 kernel 的实际重叠，并分别统计读取、Encode、packing、
-copy 和消费者等待时间。真正瓶颈可能是 CPU 编码、几十万小文件或 Host Boot；仅有
-`cudaMemcpyAsync` 调用不能证明预取加速。V100 的实际 copy/compute 并发能力也应实测。
-
-## 10. 实现顺序与验收
-
-建议把工作分成独立可审阅的提交：
-
-1. P0 手写计划探针与明确的上传轨迹，证明现有 execution Transfer 路径。
-2. V3/在线 Encode/Fence 的协议、Verifier 和顺序 Runtime 支持；V1/V2 旧行为保持。
-3. 按需 blob loader 和有界 Host 数据路径；读入/缓存/释放统计。
-4. 编译器窗口调度、跨窗口权重拆分、Release/reuse 重规划及窗口上界报告。
-5. 多卡 worker 中串行 Host 任务和窗口推进，覆盖 Host Boot 与失败唤醒。
-6. 小模型实机验收后，才编译完整四卡计划并调预取距离。
-
-必须覆盖的正确性测试：
-
-- V1/V2 的 execution Encode 仍被拒绝；V3 的合法在线 Encode/Fence 通过，非法 SSA/
-  重复 ID/释放后使用/不支持的执行模式被拒绝。
-- 小型真实 CKKS 模型的 eager、零距离 stream、提前上传 stream 数值和最终元信息一致。
-  满槽 ±1、补零前缀 ±1、共享权重、不同编码 scale/level、跨窗口重新编码都要覆盖。
-- Host→GPU0/GPU3 使用时间不同，Host Release 早于某个实际完成事件，重复输入使用、
-  Transfer 尚未完成就消费、输出延迟交付，均无提前销毁或重复交付。
-- 人为延迟 Encode、copy 或 compute，内存仍受窗口约束；Fence 保留后续仍需使用的
-  密文和最终输出；窗口之间不重置上下文、ValueStore 或使用次数。
-- 一个权重/一个不可切分计算超过预算时明确失败；GPU、Host、pinned 和 blob cache
-  分别超限；多 worker 抛错后其他等待者能退出，无预算等待死锁。
-- 至少 20000 个操作的规模回归；数百万指令场景不按窗口反复全图扫描，也不累积
-  已完成 pinned buffer 或庞大在途句柄资源。
-
-实机验收先跑小型线性/非线性探针，再跑一层或小词表模型，最后才尝试完整 24 层四卡图。
-同时提供计划级窗口对象上界与实测峰值、每卡密文/明文/密钥/工作区占用、Host RSS、pinned
-峰值、缓存占用、H2D 字节量/次数、重复编码次数及耗时。明确区分“成功编译”“内存能容纳”
-和“完整数值结果通过”，不能把编译完成写成模型能跑。
-
-复用已完成的小型 CPU CKKS scale-absorption 测试和 DaCapo CTest，不为了文档重新跑
-大模型哈希校验。新增行为需要有针对性的正确性与内存测试。`/tmp` 只放少量脚本/日志；
-大型字节码、模型和计划继续留在 `/home` 或明确指定的工作目录。
-
-## 11. 可直接交给实现者的任务说明
-
-请基于本文列出的三个提交实现 P0→P2，保留现有数学/boot/placement 和单位明文优化。
-首版限制单 rank、本地 1/4 卡；采用显式 V3 在线 Encode 和有完成语义的窗口 Fence，
-先保证 GPU/Host/pinned/blob 内存受限，再增加窗口内提前上传。复用当前 Transfer、事件
-和异步保活，补齐 Host Encode/Boot 执行及按需 bundle 读取，不能只把初始化数组搬到
-execution 或只修改 JSON 导出器。预算无法满足时明确失败，不回退到全量加载。
-
-交付代码、版本化协议说明、小模型数值与故障测试、窗口上界及实测内存/耗时报告。
-完整四卡 Qwen 是否能跑以实测为准；单卡当前密文峰值问题另行处理。提交时按 DaCapo、
-ckks-runtime、Poseidon 的顺序更新子模块和推送，并保持本地与 188Server 仓库一致。
+交接时按上述顺序交付代码、协议说明、小模型测试和内存/耗时报告。按 DaCapo、ckks-runtime、Poseidon 的顺序提交和更新子模块，并保持本地与 188Server 代码一致。完整四卡是否能跑以实测为准；单卡密文过大的问题需要另外处理。
