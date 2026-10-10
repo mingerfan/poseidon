@@ -803,7 +803,8 @@ public:
 
     bool collect_completed()
     {
-        std::lock_guard<std::mutex> lock(wait_mutex_);
+        std::unique_lock<std::mutex> lock(wait_mutex_, std::try_to_lock);
+        if (!lock.owns_lock()) return false;
         if (waited_)
         {
             return true;
@@ -2813,7 +2814,8 @@ void PoseidonGpuApi::retain_communication(
 
 void PoseidonGpuApi::collect_completed()
 {
-    std::lock_guard<std::mutex> lock(in_flight_mutex_);
+    std::unique_lock<std::mutex> lock(in_flight_mutex_, std::try_to_lock);
+    if (!lock.owns_lock()) return;
     in_flight_work_.erase(
         std::remove_if(in_flight_work_.begin(), in_flight_work_.end(),
                        [](auto &work) { return work.completion->collect_completed(); }),

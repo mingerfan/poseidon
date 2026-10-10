@@ -315,7 +315,8 @@ int CudaTransferRequest::completion_device() const
 bool CudaTransferRequest::collect_completed()
 {
     const auto event = completion_event();
-    std::lock_guard<std::mutex> lock(state_->wait_mutex);
+    std::unique_lock<std::mutex> lock(state_->wait_mutex, std::try_to_lock);
+    if (!lock.owns_lock()) return false;
     if (state_->waited)
     {
         return true;
