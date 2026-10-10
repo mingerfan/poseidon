@@ -345,6 +345,13 @@ struct GpuBootstrapWorkspace
  * It does not directly launch CUDA kernels.
  * Kernel launch planning belongs to handler classes.
  */
+struct GpuRotateWorkspace
+{
+    GpuCiphertextData permutation;
+    GpuDoubleHoistWorkspace pre_rotated;
+    std::shared_ptr<void> key_switch;
+};
+
 class GpuEvaluator
 {
 public:
@@ -373,6 +380,11 @@ public:
         const GpuCiphertextData &source_ciphertext,
         const GpuPlaintextData &source_plaintext,
         GpuCiphertextData &destination_ciphertext) const;
+
+    void add_plain_inplace(GpuCiphertextData &ciphertext,
+                           const GpuPlaintextData &plaintext) const;
+    void sub_plain_inplace(GpuCiphertextData &ciphertext,
+                           const GpuPlaintextData &plaintext) const;
 
     void multiply_plain(
         const GpuCiphertextData &source_ciphertext,
@@ -511,6 +523,10 @@ public:
         int step,
         const GpuGaloisKeysData &galois_keys,
         GpuCiphertextData &destination_ciphertext) const;
+
+    void rotate_inplace(GpuCiphertextData &ciphertext, int step,
+                        const GpuGaloisKeysData &galois_keys,
+                        GpuRotateWorkspace &workspace) const;
 
     /**
      * @brief Conjugate ciphertext.
@@ -653,6 +669,8 @@ public:
         GpuCiphertextData &destination_ciphertext) const;
 
 private:
+    void validate_plain_input(const GpuCiphertextData &ciphertext,
+                              const GpuPlaintextData &plaintext) const;
     const GpuParameterData &params_;
 
     GpuElementwiseHandler elementwise_handler_;

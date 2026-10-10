@@ -3063,7 +3063,8 @@ void GpuKeySwitchHandler::switch_key_hybrid_ciphertext(
     const GpuConstEvaluationKeyView &switch_keys_view,
     const GpuEvaluationKeyData &switch_keys_data,
     std::size_t key_index,/*可以自由选择密钥切换的密钥类型*/
-    const GpuLevelInfo &level_info) const
+    const GpuLevelInfo &level_info,
+    std::shared_ptr<void> *workspace) const
 {
     switch_key_hybrid_ciphertext_impl(
         destination_view,
@@ -3073,7 +3074,9 @@ void GpuKeySwitchHandler::switch_key_hybrid_ciphertext(
         key_index,
         level_info,
         nullptr,
-        nullptr);
+        nullptr,
+        nullptr,
+        workspace);
 }
 
 void GpuKeySwitchHandler::switch_key_hybrid_ciphertext_impl(
@@ -3085,7 +3088,8 @@ void GpuKeySwitchHandler::switch_key_hybrid_ciphertext_impl(
     const GpuLevelInfo &level_info,
     const GpuConstRNSPolyView *add_source0,
     const GpuConstRNSPolyView *add_source1,
-    const GpuLevelInfo *rescale_x2_destination_level) const
+    const GpuLevelInfo *rescale_x2_destination_level,
+    std::shared_ptr<void> *workspace) const
 {
     (void)params_;
     if (rescale_x2_destination_level == nullptr)
@@ -3187,7 +3191,15 @@ void GpuKeySwitchHandler::switch_key_hybrid_ciphertext_impl(
         add_source0 != nullptr &&
         add_source1 != nullptr &&
         use_persistent_relinearize();
-    if (persistent_relinearize)
+    if (workspace != nullptr)
+    {
+        if (!*workspace) *workspace = std::make_shared<HybridScratch>();
+        auto owned = std::static_pointer_cast<HybridScratch>(*workspace);
+        ensure_hybrid_scratch(*owned, device_id, destination_view.meta.degree,
+                              base_q_size, base_p_size);
+        scratch_ptr = owned.get();
+    }
+    else if (persistent_relinearize)
     {
         ensure_hybrid_scratch(
             persistent_workspace_->relinearize,

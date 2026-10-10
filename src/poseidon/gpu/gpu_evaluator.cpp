@@ -1176,69 +1176,77 @@ void GpuEvaluator::negate(
         level_info);
 }
 
-void GpuEvaluator::add_plain(
+void GpuEvaluator::validate_plain_input(
     const GpuCiphertextData &source_ciphertext,
-    const GpuPlaintextData &source_plaintext,
-    GpuCiphertextData &destination_ciphertext) const
+    const GpuPlaintextData &source_plaintext) const
 {
     if (source_ciphertext.empty() || source_plaintext.empty())
     {
-        throw std::invalid_argument("GpuEvaluator::add_plain: empty input");
+        throw std::invalid_argument("GpuEvaluator::plain arithmetic: empty input");
     }
 
     if (!(source_ciphertext.meta.parms_id == source_plaintext.meta.parms_id))
     {
-        throw std::invalid_argument("GpuEvaluator::add_plain: parms_id mismatch");
+        throw std::invalid_argument("GpuEvaluator::plain arithmetic: parms_id mismatch");
     }
 
     if (source_ciphertext.meta.is_ntt_form != source_plaintext.meta.is_ntt_form)
     {
-        throw std::invalid_argument("GpuEvaluator::add_plain: NTT form mismatch");
+        throw std::invalid_argument("GpuEvaluator::plain arithmetic: NTT form mismatch");
     }
 
     // CKKS add_plain usually expects both ciphertext and plaintext in NTT form.
     if (!source_ciphertext.meta.is_ntt_form)
     {
-        throw std::invalid_argument("GpuEvaluator::add_plain: CKKS input must be in NTT form");
+        throw std::invalid_argument("GpuEvaluator::plain arithmetic: CKKS input must be in NTT form");
     }
 
     if (source_ciphertext.meta.degree != source_plaintext.meta.degree ||
         source_ciphertext.meta.q_count != source_plaintext.meta.q_count ||
         source_ciphertext.meta.p_count != source_plaintext.meta.p_count)
     {
-        throw std::invalid_argument("GpuEvaluator::add_plain: shape mismatch");
+        throw std::invalid_argument("GpuEvaluator::plain arithmetic: shape mismatch");
     }
 
     if (!same_scale(source_ciphertext.meta.scale, source_plaintext.meta.scale))
     {
-        throw std::invalid_argument("GpuEvaluator::add_plain: scale mismatch");
+        throw std::invalid_argument("GpuEvaluator::plain arithmetic: scale mismatch");
     }
 
     if (source_ciphertext.meta.p_count != 0)
     {
         throw std::invalid_argument(
-            "GpuEvaluator::add_plain: p limbs are not supported by add_plain kernel yet");
+            "GpuEvaluator::plain arithmetic: p limbs are not supported by add_plain kernel yet");
     }
 
     if (source_ciphertext.meta.component_count != source_ciphertext.size())
     {
-        throw std::invalid_argument("GpuEvaluator::add_plain: component metadata mismatch");
+        throw std::invalid_argument("GpuEvaluator::plain arithmetic: component metadata mismatch");
     }
 
-    const std::size_t result_components = source_ciphertext.size();
-
-    const int device_id = source_ciphertext.fields_.at(0).device_id;
     const auto &reference_layout = source_ciphertext.polys_.at(0);
 
     if (!all_components_use_layout(source_ciphertext, reference_layout))
     {
-        throw std::invalid_argument("GpuEvaluator::add_plain: ciphertext shard layout mismatch");
+        throw std::invalid_argument("GpuEvaluator::plain arithmetic: ciphertext shard layout mismatch");
     }
 
     if (!same_logical_shard_layout(reference_layout, source_plaintext.poly_))
     {
-        throw std::invalid_argument("GpuEvaluator::add_plain: plaintext shard layout mismatch");
+        throw std::invalid_argument("GpuEvaluator::plain arithmetic: plaintext shard layout mismatch");
     }
+
+}
+
+void GpuEvaluator::add_plain(
+    const GpuCiphertextData &source_ciphertext,
+    const GpuPlaintextData &source_plaintext,
+    GpuCiphertextData &destination_ciphertext) const
+{
+    validate_plain_input(source_ciphertext, source_plaintext);
+    const std::size_t result_components = source_ciphertext.size();
+    const int device_id = source_ciphertext.fields_.at(0).device_id;
+    const auto &reference_layout = source_ciphertext.polys_.at(0);
 
     prepare_ciphertext_destination(
         destination_ciphertext,
@@ -1267,63 +1275,10 @@ void GpuEvaluator::sub_plain(
     const GpuPlaintextData &source_plaintext,
     GpuCiphertextData &destination_ciphertext) const
 {
-    if (source_ciphertext.empty() || source_plaintext.empty())
-    {
-        throw std::invalid_argument("GpuEvaluator::sub_plain: empty input");
-    }
-
-    if (!(source_ciphertext.meta.parms_id == source_plaintext.meta.parms_id))
-    {
-        throw std::invalid_argument("GpuEvaluator::sub_plain: parms_id mismatch");
-    }
-
-    if (source_ciphertext.meta.is_ntt_form != source_plaintext.meta.is_ntt_form)
-    {
-        throw std::invalid_argument("GpuEvaluator::sub_plain: NTT form mismatch");
-    }
-
-    if (!source_ciphertext.meta.is_ntt_form)
-    {
-        throw std::invalid_argument("GpuEvaluator::sub_plain: CKKS input must be in NTT form");
-    }
-
-    if (source_ciphertext.meta.degree != source_plaintext.meta.degree ||
-        source_ciphertext.meta.q_count != source_plaintext.meta.q_count ||
-        source_ciphertext.meta.p_count != source_plaintext.meta.p_count)
-    {
-        throw std::invalid_argument("GpuEvaluator::sub_plain: shape mismatch");
-    }
-
-    if (!same_scale(source_ciphertext.meta.scale, source_plaintext.meta.scale))
-    {
-        throw std::invalid_argument("GpuEvaluator::sub_plain: scale mismatch");
-    }
-
-    if (source_ciphertext.meta.p_count != 0)
-    {
-        throw std::invalid_argument(
-            "GpuEvaluator::sub_plain: p limbs are not supported by sub_plain kernel yet");
-    }
-
-    if (source_ciphertext.meta.component_count != source_ciphertext.size())
-    {
-        throw std::invalid_argument("GpuEvaluator::sub_plain: component metadata mismatch");
-    }
-
+    validate_plain_input(source_ciphertext, source_plaintext);
     const std::size_t result_components = source_ciphertext.size();
-
     const int device_id = source_ciphertext.fields_.at(0).device_id;
     const auto &reference_layout = source_ciphertext.polys_.at(0);
-
-    if (!all_components_use_layout(source_ciphertext, reference_layout))
-    {
-        throw std::invalid_argument("GpuEvaluator::sub_plain: ciphertext shard layout mismatch");
-    }
-
-    if (!same_logical_shard_layout(reference_layout, source_plaintext.poly_))
-    {
-        throw std::invalid_argument("GpuEvaluator::sub_plain: plaintext shard layout mismatch");
-    }
 
     prepare_ciphertext_destination(
         destination_ciphertext,
@@ -1345,6 +1300,26 @@ void GpuEvaluator::sub_plain(
         ciphertext_view,
         plaintext_view,
         level_info);
+}
+
+void GpuEvaluator::add_plain_inplace(
+    GpuCiphertextData &ciphertext, const GpuPlaintextData &plaintext) const
+{
+    validate_plain_input(ciphertext, plaintext);
+    auto view = ciphertext.make_view();
+    auto plain = plaintext.make_const_view();
+    elementwise_handler_.add_plain_to_ciphertext_inplace(
+        view, plain, params_.get_level(ciphertext.meta.parms_id));
+}
+
+void GpuEvaluator::sub_plain_inplace(
+    GpuCiphertextData &ciphertext, const GpuPlaintextData &plaintext) const
+{
+    validate_plain_input(ciphertext, plaintext);
+    auto view = ciphertext.make_view();
+    auto plain = plaintext.make_const_view();
+    elementwise_handler_.sub_plain_from_ciphertext_inplace(
+        view, plain, params_.get_level(ciphertext.meta.parms_id));
 }
 
 void GpuEvaluator::multiply_plain(
@@ -2763,11 +2738,7 @@ void GpuEvaluator::relinearize_rescale_x2_hybrid(
 }
 
 /*顶层旋转操作入口*/
-void GpuEvaluator::rotate(
-    const GpuCiphertextData &source_ciphertext,
-    int step,
-    const GpuGaloisKeysData &galois_keys,
-    GpuCiphertextData &destination_ciphertext) const
+static void validate_rotate_input(const GpuCiphertextData &source_ciphertext)
 {
     validate_ntt_ciphertext_input(
         "GpuEvaluator::rotate",
@@ -2788,6 +2759,16 @@ void GpuEvaluator::rotate(
         throw std::invalid_argument(
             "GpuEvaluator::rotate: first implementation requires one full shard");
     }
+
+}
+
+void GpuEvaluator::rotate(
+    const GpuCiphertextData &source_ciphertext,
+    int step,
+    const GpuGaloisKeysData &galois_keys,
+    GpuCiphertextData &destination_ciphertext) const
+{
+    validate_rotate_input(source_ciphertext);
 
     const int device_id = source_ciphertext.fields_.at(0).device_id;
     const auto &reference_layout = source_ciphertext.polys_.at(0);
@@ -2935,6 +2916,78 @@ void GpuEvaluator::rotate(
         level_info);
 
     destination_ciphertext = std::move(result);
+}
+
+void GpuEvaluator::rotate_inplace(
+    GpuCiphertextData &ciphertext, int step,
+    const GpuGaloisKeysData &galois_keys, GpuRotateWorkspace &workspace) const
+{
+    validate_rotate_input(ciphertext);
+    if (step == 0) return;
+    if (galois_keys.empty())
+        throw std::invalid_argument("GpuEvaluator::rotate_inplace: empty galois keys");
+    const auto galois_elt = galois_elt_from_rotation_step(ciphertext.meta.degree, step);
+    const auto key_index = galois_key_index(galois_elt);
+    const int device_id = ciphertext.fields_.front().device_id;
+    const auto &level_info = params_.get_level(ciphertext.meta.parms_id);
+    auto source_view = ciphertext.make_const_view();
+    auto destination_view = ciphertext.make_view();
+
+    if (galois_keys.meta.galois_format == GpuGaloisKeyFormat::InversePreRotated)
+    {
+        auto &staged = workspace.pre_rotated;
+        staged.outer_accumulator.ensure_capacity(device_id, ciphertext.meta.degree,
+            ciphertext.meta.q_count, galois_keys.meta.p_count, 1);
+        keyswitch_handler_.hoist_decompose_modup_ntt(source_view.polys[1],
+            level_info, staged.source_hoist, staged.keyswitch);
+        const auto key_view = galois_keys.make_const_view(ciphertext.meta.q_count);
+        keyswitch_handler_.keyswitch_multsum_no_moddown(staged.source_hoist,
+            galois_elt, key_view, galois_keys, key_index,
+            staged.outer_accumulator, 0, true, level_info, staged.keyswitch);
+        const GpuParameterShard *parameter_shard = nullptr;
+        for (const auto &candidate : level_info.shards)
+            if (candidate.device_id == device_id &&
+                candidate.hybrid_base_q_count == ciphertext.meta.q_count)
+            {
+                parameter_shard = &candidate;
+                break;
+            }
+        if (!parameter_shard)
+            throw std::invalid_argument("GpuEvaluator::rotate_inplace: HYBRID parameter shard is absent");
+        kernel::launch_double_hoist_add_lifted_galois_c0(
+            staged.outer_accumulator.q_component(0, 0),
+            source_view.polys[0].shards.front().ptr, galois_elt,
+            *parameter_shard, ciphertext.meta.degree);
+        const auto meta = ciphertext.meta;
+        keyswitch_handler_.moddown_qp_ciphertext_to_q(staged.outer_accumulator,
+            0, ciphertext, meta, level_info, staged.keyswitch);
+        return;
+    }
+
+    auto &temporary = workspace.permutation;
+    if (temporary.empty())
+        temporary = GpuCiphertextData::allocate_single_device_sharded(
+            ciphertext.meta.degree, ciphertext.meta.q_count, 1, device_id,
+            ciphertext.polys_.front().shards, 0);
+    if (temporary.meta.degree != ciphertext.meta.degree ||
+        temporary.meta.q_count != ciphertext.meta.q_count ||
+        temporary.size() != 1 || temporary.fields_.front().device_id != device_id)
+        throw std::invalid_argument("GpuEvaluator::rotate_inplace: workspace shape mismatch");
+    temporary.meta = ciphertext.meta;
+    temporary.meta.component_count = 1;
+    auto temporary_view = temporary.make_view();
+    kernel::launch_apply_galois_ntt_poly_shard(temporary_view.polys[0].shards.front(),
+        source_view.polys[0].shards.front(), galois_elt, ciphertext.meta.degree);
+    copy_poly(destination_view.polys[0], temporary.make_const_view().polys[0],
+              "GpuEvaluator::rotate_inplace copy c0");
+    kernel::launch_apply_galois_ntt_poly_shard(temporary_view.polys[0].shards.front(),
+        source_view.polys[1].shards.front(), galois_elt, ciphertext.meta.degree);
+    zero_poly(destination_view.polys[1], "GpuEvaluator::rotate_inplace zero c1");
+    auto temporary_const_view = temporary.make_const_view();
+    const auto key_view = galois_keys.make_const_view(ciphertext.meta.q_count);
+    keyswitch_handler_.switch_key_hybrid_ciphertext(destination_view,
+        temporary_const_view.polys[0], key_view, galois_keys, key_index,
+        level_info, &workspace.key_switch);
 }
 
 void GpuEvaluator::conjugate(

@@ -40,6 +40,7 @@ public:
     fhegpu::ValueKind kind() const;
     const Plaintext &plaintext() const;
     const Ciphertext &ciphertext() const;
+    Ciphertext &ciphertext();
 
 private:
     using Storage = std::variant<std::shared_ptr<Plaintext>, std::shared_ptr<Ciphertext>>;
@@ -81,6 +82,9 @@ public:
     int world_size() const noexcept;
     Value encode_plaintext(const fhegpu::ValueDesc &output_desc, const std::vector<double> &slots);
     Value compute(const fhegpu::ComputeOp &op, const std::vector<Value> &inputs);
+    bool supports_reuse(const fhegpu::ComputeOp &op) const;
+    Value compute_reuse(const fhegpu::ComputeOp &op, Value input,
+                        const std::vector<Value> &other_inputs);
     CommHandle communicate_async(const fhegpu::CommAction &action,
                                  const std::vector<Value> &local_inputs,
                                  const std::vector<fhegpu::ValueDesc> &output_descs);

@@ -1931,6 +1931,12 @@ void EvaluatorCkksBase::relinearize(const Ciphertext &ciph, Ciphertext &result,
     kswitch_->relinearize(ciph, result, relin_keys);
 }
 
+void EvaluatorCkksBase::rotate_inplace(Ciphertext &ciph, int step,
+                                      const GaloisKeys &galois_keys) const
+{
+    kswitch_->rotate_internal(ciph, step, galois_keys);
+}
+
 void EvaluatorCkksBase::rotate(const Ciphertext &ciph, Ciphertext &result, int step,
                                const GaloisKeys &galois_keys) const
 {

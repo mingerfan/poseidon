@@ -157,6 +157,23 @@ void test_single_process_host_add_plain()
         require(std::abs(result[i].imag()) < 1e-5,
                 "unexpected imaginary component at slot " + std::to_string(i));
     }
+    auto release_plan = loaded_plan;
+    release_plan.plan.format_version = 2;
+    release_plan.plan.finalization = {{2, fhegpu::ReleaseOp{0}}, {3, fhegpu::ReleaseOp{1}}};
+    for (int iteration = 0; iteration < 3; ++iteration)
+    {
+        const auto released = runtime.run(release_plan, resources, inputs);
+        decryptor.decrypt(released.values.at(2).value.ciphertext(), result_plain);
+        encoder.decode(result_plain, result);
+        for (std::size_t i = 0; i < expected.size(); ++i)
+            require(std::abs(result[i].real() - expected[i]) < 1e-5,
+                    "Release changed Host AddCP result");
+        decryptor.decrypt(inputs.at(0).ciphertext(), result_plain);
+        encoder.decode(result_plain, result);
+        for (std::size_t i = 0; i < input.size(); ++i)
+            require(std::abs(result[i].real() - input[i]) < 1e-5,
+                    "Release changed caller-owned Host input");
+    }
 }
 
 void test_decrypt_reencrypt_boot()
@@ -272,6 +289,115 @@ void test_binary_rotation_keys()
     {
         require(std::abs(actual_slots[i] - expected_slots[i]) < 1e-5,
                 "binary rotation key result mismatch");
+    }
+}
+
+void test_runtime_reuse()
+{
+    constexpr std::uint32_t degree = 4096;
+    const auto moduli = poseidon::CoeffModulus::Create(degree, std::vector<int>(9, 40));
+    poseidon::ParametersLiteral parameters(CKKS, 12, 11, 40, 0, 0, poseidon::Modulus(0),
+        std::vector<poseidon::Modulus>(moduli.begin(), moduli.begin() + 7),
+        std::vector<poseidon::Modulus>(moduli.begin() + 7, moduli.end()), poseidon::sec_level_type::none);
+    poseidon::PoseidonContext context(parameters);
+    poseidon::KeyGenerator keys(context);
+    auto rotations = std::make_shared<poseidon::GaloisKeys>();
+    keys.create_galois_keys(std::vector<int>{1, 2, -1, -2}, *rotations);
+    poseidon::PublicKey public_key; keys.create_public_key(public_key);
+    poseidon::CKKSEncoder encoder(context);
+    poseidon::Encryptor encryptor(context, public_key);
+    poseidon::Decryptor decryptor(context, keys.secret_key());
+    poseidon::Plaintext plain; encoder.encode(std::vector<double>{1, -2, 3, 4, 5, 6}, parameters.scale(), plain);
+    poseidon::Ciphertext cipher; encryptor.encrypt(plain, cipher);
+    auto spec = make_operator_spec(context, "cpu-reuse-test");
+    spec.spec.operators[fhegpu::ComputeKind::Negate].supported = true;
+    spec.spec.operators[fhegpu::ComputeKind::Rotate].supported = true;
+    const fhegpu::Place host{fhegpu::PlaceKind::Host, 0, 0};
+    fhegpu::RuntimePlan plan; plan.format_version = 2; plan.plan_id = 44;
+    plan.target = {"poseidon-ckks-cpu", 1, {0}, 1, {spec.spec.id, spec.spec.version, spec.source_sha256}};
+    for (fhegpu::ValueId id = 0; id <= 4; ++id)
+        plan.values.push_back({id, fhegpu::ValueKind::Ciphertext, host, spec.spec.context_id, 6, 40, true, 2});
+    plan.external_inputs = {0}; plan.final_outputs = {4};
+    class ObservedApi : public PoseidonCpuApi {
+    public:
+        using PoseidonCpuApi::PoseidonCpuApi;
+        std::vector<const void *> pointers;
+        int reuses = 0;
+        Value compute_reuse(const fhegpu::ComputeOp &op, Value input, const std::vector<Value> &others) {
+            std::vector<const void *> before;
+            for (const auto &poly : input.ciphertext().polys()) before.push_back(poly.data());
+            if (pointers.empty()) pointers = before;
+            require(before == pointers, "CPU reuse chain changed ciphertext storage");
+            auto output = PoseidonCpuApi::compute_reuse(op, std::move(input), others);
+            std::vector<const void *> after;
+            for (const auto &poly : output.ciphertext().polys()) after.push_back(poly.data());
+            require(after == before, "CPU reuse allocated a new ciphertext");
+            ++reuses; return output;
+        }
+    };
+    std::unordered_map<fhegpu::ValueId, PoseidonCpuValue> inputs;
+    inputs.emplace(0, PoseidonCpuValue::from_ciphertext(cipher));
+    const auto decode = [&](const PoseidonCpuValue &value) {
+        poseidon::Plaintext plaintext; decryptor.decrypt(value.ciphertext(), plaintext);
+        std::vector<std::complex<double>> slots; encoder.decode(plaintext, slots); return slots;
+    };
+    const auto original = decode(inputs.at(0));
+    {
+        auto cpu_context = context;
+        poseidon::EvaluatorCkksSoftware evaluator(cpu_context);
+        poseidon::Ciphertext product;
+        evaluator.multiply(cipher, cipher, product);
+        require(product.size() == 3, "MulCC fixture must have three components");
+        PoseidonCpuApi api(spec.spec.context_id, context);
+        auto owned = PoseidonCpuValue::from_ciphertext(product);
+        std::vector<const void *> pointers;
+        for (const auto &poly : owned.ciphertext().polys()) pointers.push_back(poly.data());
+        fhegpu::ComputeOp negate{fhegpu::ComputeKind::Negate, {0}, 1, host, {}};
+        const auto expected = decode(api.compute(negate, {owned}));
+        negate.reuse_input = 0;
+        auto reused = api.compute_reuse(negate, std::move(owned), {});
+        for (std::size_t component = 0; component < pointers.size(); ++component)
+            require(reused.ciphertext().polys()[component].data() == pointers[component], "Negate resized a three-component ciphertext");
+        const auto actual = decode(reused);
+        for (std::size_t slot = 0; slot < actual.size(); ++slot)
+            require(std::abs(actual[slot] - expected[slot]) < 1e-5, "three-component Negate mismatch");
+    }
+
+    {
+        ObservedApi api(spec.spec.context_id, context, {}, rotations);
+        fhegpu::ComputeOp zero{fhegpu::ComputeKind::Rotate, {0}, 1, host, fhegpu::RotateAttrs{0}};
+        zero.reuse_input = 0;
+        auto owned = PoseidonCpuValue::from_ciphertext(cipher);
+        const auto unchanged = api.compute_reuse(zero, std::move(owned), {});
+        require(decode(unchanged) == original, "CPU zero rotation changed result");
+    }
+    for (int variant = 0; variant < 3; ++variant) {
+        plan.execution.clear();
+        plan.execution.push_back({0, fhegpu::ComputeOp{fhegpu::ComputeKind::Negate, {0}, 1, host, {}}});
+        plan.execution.push_back({1, fhegpu::ReleaseOp{0}});
+        const std::vector<int> steps = variant == 1 ? std::vector<int>{1, 2, -3} : std::vector<int>{1, 3, -3};
+        for (int index = 0; index < 3; ++index) {
+            fhegpu::ComputeOp op{variant == 0 ? fhegpu::ComputeKind::Negate : fhegpu::ComputeKind::Rotate,
+                {static_cast<fhegpu::ValueId>(index + 1)}, static_cast<fhegpu::ValueId>(index + 2), host, {}};
+            if (variant != 0) op.attrs = fhegpu::RotateAttrs{steps[index]};
+            op.reuse_input = 0; plan.execution.push_back({static_cast<std::uint64_t>(index + 2), op});
+        }
+        auto baseline = plan;
+        for (auto &instruction : baseline.execution)
+            if (auto *op = std::get_if<fhegpu::ComputeOp>(&instruction.body)) op->reuse_input.reset();
+        PoseidonCpuApi ordinary(spec.spec.context_id, context, {}, rotations);
+        fhegpu::SequentialRuntime<PoseidonCpuApi> base(0, 1, 0, ordinary);
+        const auto expected = decode(base.run({baseline, spec.source_sha256}, {spec, {}, false}, inputs).values.at(4).value);
+        ObservedApi api(spec.spec.context_id, context, {}, rotations);
+        fhegpu::SequentialRuntime<ObservedApi> runtime(0, 1, 0, api);
+        for (int iteration = 0; iteration < 3; ++iteration) {
+            api.pointers.clear();
+            const auto actual = decode(runtime.run({plan, spec.source_sha256}, {spec, {}, false}, inputs).values.at(4).value);
+            for (std::size_t i = 0; i < actual.size(); ++i)
+                require(std::abs(actual[i] - expected[i]) < 1e-5, "CPU reuse result differs from ordinary computation");
+            require(decode(inputs.at(0)) == original, "CPU reuse changed caller input");
+        }
+        require(api.reuses == 9, "CPU reuse chain was not executed");
     }
 }
 
@@ -605,6 +731,7 @@ int main(int argc, char **argv)
         run_test("single-process Host AddCP", test_single_process_host_add_plain);
         run_test("decrypt_reencrypt Boot", test_decrypt_reencrypt_boot);
         run_test("binary rotation keys", test_binary_rotation_keys);
+        run_test("CPU Negate/Rotate reuse chains", test_runtime_reuse);
         run_test("multi-level Rescale", test_multi_level_rescale);
         run_test("reject multi-process target", test_rejects_multi_process_target);
         std::cout << tests_run << " Poseidon CPU Runtime Api tests passed\n";

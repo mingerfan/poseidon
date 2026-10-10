@@ -54,7 +54,8 @@ public:
         const GpuConstEvaluationKeyView &switch_keys_view,
         const GpuEvaluationKeyData &switch_keys_data,
         std::size_t key_index,
-        const GpuLevelInfo &level_info) const;
+        const GpuLevelInfo &level_info,
+        std::shared_ptr<void> *workspace = nullptr) const;
 
     /**
      * Decompose one Q/NTT polynomial once and retain every HYBRID digit in
@@ -133,7 +134,8 @@ private:
         const GpuLevelInfo &level_info,
         const GpuConstRNSPolyView *add_source0,
         const GpuConstRNSPolyView *add_source1,
-        const GpuLevelInfo *rescale_x2_destination_level = nullptr) const;
+        const GpuLevelInfo *rescale_x2_destination_level = nullptr,
+        std::shared_ptr<void> *workspace = nullptr) const;
 
     struct PersistentWorkspace;
 

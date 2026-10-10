@@ -1411,6 +1411,63 @@ PoseidonGpuApi::Value PoseidonGpuApi::encode_plaintext(
     return Value::from_host_plaintext(std::move(output));
 }
 
+bool PoseidonGpuApi::supports_reuse(const fhegpu::ComputeOp &op) const
+{
+    return op.place.kind == fhegpu::PlaceKind::Device &&
+           (op.kind == fhegpu::ComputeKind::AddCP ||
+            op.kind == fhegpu::ComputeKind::SubCP ||
+            op.kind == fhegpu::ComputeKind::Rotate);
+}
+
+PoseidonGpuApi::Value PoseidonGpuApi::compute_reuse(
+    const fhegpu::ComputeOp &op, Value input, const std::vector<Value> &other_inputs)
+{
+    if (!supports_reuse(op) || op.reuse_input != 0 ||
+        other_inputs.size() != (op.kind == fhegpu::ComputeKind::Rotate ? 0U : 1U))
+        throw std::invalid_argument("unsupported Poseidon GPU compute_reuse");
+    auto &device = device_state(op.place, "Poseidon GPU compute_reuse");
+    gpu::gpu_check_cuda(cudaSetDevice(device.cuda_device_id), "cudaSetDevice");
+    const auto prepare = [&](const Value &value) {
+        if (value_cuda_device_id(value, "Poseidon GPU compute_reuse input") != device.cuda_device_id)
+            throw std::invalid_argument("Poseidon GPU compute_reuse input is on the wrong device");
+        if (value.ready_) value.ready_->wait_on_execution_stream(device.cuda_device_id);
+    };
+    prepare(input);
+    for (const auto &value : other_inputs) prepare(value);
+    std::vector<std::shared_ptr<void>> temporaries;
+    try
+    {
+        auto &ciphertext = input.device_ciphertext();
+        if (op.kind == fhegpu::ComputeKind::AddCP)
+            device.evaluator->add_plain_inplace(ciphertext, require_plaintext(other_inputs, 0));
+        else if (op.kind == fhegpu::ComputeKind::SubCP)
+            device.evaluator->sub_plain_inplace(ciphertext, require_plaintext(other_inputs, 0));
+        else
+        {
+            if (!galois_keys_)
+                throw std::runtime_error("Poseidon GPU Rotate requires GaloisKeys");
+            auto workspace = std::make_shared<gpu::GpuRotateWorkspace>();
+            temporaries.push_back(workspace);
+            for (int step : available_rotation_steps(
+                     context_, *galois_keys_, std::get<fhegpu::RotateAttrs>(op.attrs).steps))
+                device.evaluator->rotate_inplace(ciphertext, step,
+                    galois_keys_for(device, ciphertext.meta.q_count), *workspace);
+        }
+        input.ready_ = PoseidonGpuValue::ReadyEvent::record(device.cuda_device_id);
+        auto retained = other_inputs;
+        retained.push_back(input);
+        retain_in_flight(input.ready_, retained, temporaries);
+        collect_completed();
+        return input;
+    }
+    catch (...)
+    {
+        (void)cudaSetDevice(device.cuda_device_id);
+        (void)cudaStreamSynchronize(gpu::gpu_execution_stream());
+        throw;
+    }
+}
+
 PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
                                               const std::vector<Value> &inputs)
 {

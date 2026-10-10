@@ -496,6 +496,43 @@ PoseidonCpuApi::Value PoseidonCpuApi::encode_plaintext(const fhegpu::ValueDesc &
     return Value::from_plaintext(std::move(output));
 }
 
+Ciphertext &PoseidonCpuValue::ciphertext()
+{
+    return const_cast<Ciphertext &>(std::as_const(*this).ciphertext());
+}
+
+bool PoseidonCpuApi::supports_reuse(const fhegpu::ComputeOp &op) const
+{
+    return op.place.kind == fhegpu::PlaceKind::Host &&
+           (op.kind == fhegpu::ComputeKind::Negate || op.kind == fhegpu::ComputeKind::Rotate);
+}
+
+PoseidonCpuApi::Value PoseidonCpuApi::compute_reuse(
+    const fhegpu::ComputeOp &op, Value input, const std::vector<Value> &other_inputs)
+{
+    require_local_host_place(op.place, "Poseidon CPU compute_reuse");
+    if (!supports_reuse(op) || op.reuse_input != 0 || !other_inputs.empty())
+        throw std::invalid_argument("unsupported Poseidon CPU compute_reuse");
+    auto &ciphertext = input.ciphertext();
+    if (ciphertext.size() < 2)
+        throw std::invalid_argument("Poseidon CPU compute_reuse requires a ciphertext");
+    if (op.kind == fhegpu::ComputeKind::Rotate && (!ciphertext.is_ntt_form() || ciphertext.size() != 2))
+        throw std::invalid_argument("Poseidon CPU Rotate requires a size-2 NTT ciphertext");
+    if (op.kind == fhegpu::ComputeKind::Negate)
+    {
+        for (auto &poly : ciphertext.polys()) poly.negate();
+    }
+    else
+    {
+        if (!galois_keys_)
+            throw std::runtime_error("Poseidon CPU Rotate requires GaloisKeys");
+        for (int step : available_rotation_steps(
+                 context_, *galois_keys_, std::get<fhegpu::RotateAttrs>(op.attrs).steps))
+            evaluator_->rotate_inplace(ciphertext, step, *galois_keys_);
+    }
+    return input;
+}
+
 PoseidonCpuApi::Value PoseidonCpuApi::compute(const fhegpu::ComputeOp &op,
                                               const std::vector<Value> &inputs)
 {
