@@ -1,0 +1,1 @@
+{"equal":true,"mode":"--compare-manifests","peak_rss_bytes":15728640,"seconds":6.376752218,"summary":{"blobs":{"records":784750,"records_sha256":"sha256:c7caa44bacd8d055fcead2bf0ea54ff00b742ca0a0028f6be834b41a917f8927"},"bundle_format_version":1,"bundle_id":"runtime-plan-2514-_hecate_qwen25_24layer-plaintexts","version":1}}

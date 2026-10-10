@@ -21,7 +21,8 @@
   "compiler_profile_sha256": "7a3d6d0d45fcfe579ac72f0bccf931fb37d9967a354c03f2c1a29aabfc385264",
   "threads": 1,
   "nice": 10,
-  "cache_conditions": "Shared server; page cache was not cleared or controlled. Comparisons and validation read the artifacts before the final O2 load measurements.",
+  "cache_conditions": "Shared server; page cache was not cleared or controlled. Final O2 loads run sequentially (original, then compact), concurrently with record comparisons, blob integrity checks and the compiler's final diagnostic IR processing.",
+  "validation_concurrent_checks": 3,
   "remote_json_regression": {
     "command": "ctest --test-dir /home/xuming/poseidon-runtime-io-20261010/build-o2 -R runtime_plan_json_tests --output-on-failure",
     "passed": true,

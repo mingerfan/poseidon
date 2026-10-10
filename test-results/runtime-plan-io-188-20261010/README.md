@@ -71,7 +71,30 @@ DaCapo `52f071f` 按公共布局中的 ID、ordinal 和阶段逐条写出，mani
 
 [恢复结果](restore-scheduled-payloads.json)记录了 1,019,527 个 Encode，计划提取 181.23 秒、常量恢复 256.41 秒、峰值 RSS 492.8 MiB。恢复后的 IR 为 40,864,182,764 字节，其中非 splat 常量采用 float64 原始字节的十六进制 DenseElementsAttr。该文件大于原诊断 IR；它的读取、解析时间和内存应计入实验进程开销，分别与 EmitRuntimePlan 时间、进入导出阶段时的 RSS 报告。
 
-导出命令与 128 GiB 地址空间限制在 [run-export.py](run-export.py)，完整记录比对、同编译选项加载和独立 blob 摘要检查在 [run-validation.py](run-validation.py)。后者要求导出进程成功且报告完整，检查 writer 与 reader 的计划字节数、摘要和记录数量一致。独立 blob 检查只保留 manifest DOM 和单个 64 KiB 数据块，不计入 reader 的性能结果。版本、二进制摘要、编译选项和缓存条件见 [provenance.json](provenance.json)。
+导出命令与 128 GiB 地址空间限制在 [run-export.py](run-export.py)，完整记录比对、同编译选项加载和独立 blob 摘要检查在 [run-validation.py](run-validation.py)。后者以导出器关闭所有文件并完成发布后打印的完整报告为入口，检查 writer 与 reader 的计划字节数、摘要和记录数量一致。完整编译器的诊断 IR 输出和销毁可能仍在继续；`-o /dev/null` 只避免诊断文件落盘，仍有 IR 序列化成本。全进程时间单独报告。
+
+记录比对、加载测量和独立 blob 检查三组工作并行。原 JSON 和紧凑 JSON 的 O2 加载依次进行，但与其他验收负载重叠，属于共享负载下的单次观测，不能视为受控速度对照。独立 blob 检查只保留 manifest DOM 和单个 64 KiB 数据块，不计入 reader 的性能结果。版本、二进制摘要、编译选项和缓存条件见 [provenance.json](provenance.json)。
+
+### 完整四卡 V2 流式导出
+
+[导出分项](stage-c-gpu4-export.json)覆盖 10,669,278 个 values、21,336,108 条指令，以及 784,750 个唯一 blob。计划为 4,891,577,376 字节，manifest 为 82,675,385 字节，blob 原始载荷仍为 14,701,969,408 字节。计划的新源摘要为 `b65320a51e773161ea5d395c6f93704afd77abad87b8f4f4418a91602c457404`。
+
+| 项目 | 测量 |
+| --- | ---: |
+| EmitRuntimePlan 完整导出 | 423.56 秒 |
+| 布局 / 编号 | 16.13 秒 |
+| 常量转换 / SHA-256 / 写入 | 97.84 / 80.62 / 47.09 秒 |
+| plan 记录序列化 | 72.59 秒 |
+| plan SHA-256 / 写入 | 26.37 / 4.17 秒 |
+| manifest | 1.61 秒 |
+| 进入导出 / 完成导出 RSS | 60.93 / 61.84 GiB |
+| 报告时进程峰值 RSS | 61.90 GiB |
+
+`build_seconds` 为包含布局、常量处理和记录写出的 421.86 秒；`plan_serialize_seconds` 包含序列化触发的缓冲区哈希和写入。这些分项存在包含关系，不能相加为总时间。RSS 包含完整 MLIR 与常量；导出起止增加约 0.92 GiB，不能把整个进程的 61.90 GiB 标成 plan DOM 或纯 writer 内存。
+
+原有编译记录的 EmitRuntimePlan 为 537.06 秒；本次为同一调度与计划语义恢复常量后的独立导出。DenseElementsAttr 的恢复表示与原编译不同，缓存和共享服务器负载未控制，因此这两次观测不能单独证明 JSON 改动带来的速度比例。
+
+[全进程报告](stage-c-gpu4-export-process.json)为 931.17 秒、峰值 RSS 65.22 GiB、退出码 0。它包括 40.86 GB 恢复 IR 的读取与解析、pass 验证、诊断 IR 序列化和清理；该时间不能与原编译的 JSON 导出子阶段比较。[完整日志](stage-c-gpu4-export.log)保留导出器的原始计时。新旧 manifest 的 784,750 个内容摘要、长度及根元数据逐项一致，见 [manifest 比对](stage-c-manifest-equivalence.json)。
 
 ## 复现
 
