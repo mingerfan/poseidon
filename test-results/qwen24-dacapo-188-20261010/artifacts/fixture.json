@@ -1,0 +1,25 @@
+{
+  "config": {
+    "num_layers": 24,
+    "hidden_size": 896,
+    "intermediate_size": 4864,
+    "query_heads": 14,
+    "kv_heads": 2,
+    "head_dim": 64,
+    "vocab_size": 151936,
+    "max_sequence_length": 512,
+    "rope_theta": 1000000.0,
+    "rms_norm_eps": 1e-06
+  },
+  "synthetic": true,
+  "seed": 20261009,
+  "positions": [
+    0,
+    1
+  ],
+  "slots": 32768,
+  "weight_files": 291,
+  "weight_bytes": 2520669696,
+  "reference": "exact sqrt, sigmoid/SiLU and softmax; no CKKS",
+  "warning": "Synthetic acceptance does not calibrate pretrained Qwen weights"
+}

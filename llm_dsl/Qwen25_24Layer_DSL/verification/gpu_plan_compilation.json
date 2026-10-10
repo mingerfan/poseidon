@@ -1,0 +1,275 @@
+{
+  "status": "passed",
+  "scope": "Full actual-size 24 blocks + final RMSNorm + full 151936-vocabulary LM head, two-token prefill",
+  "weights": "synthetic distinct-layer weights; no pretrained checkpoint",
+  "provenance": {
+    "compiler_sha256": "f581c6341e80f7ab71392550d1279294fcdf1dc12c9991f2e85b7bcccc233ad3",
+    "sources": {
+      "lib/Dialect/CKKS/Transforms/AssignPlacement.cpp": "6c0738775b77e3131376e8c49467f8dc6f4b8fa5aef666c81d08e3eb28ae5e46",
+      "lib/Dialect/CKKS/Transforms/PlanRuntimeMemory.cpp": "b080130254861eeddf6e2644a9f2b73fc073b29ef5134b3d1e20eb8980f6b93a",
+      "lib/Dialect/CKKS/Transforms/EstimateRuntimeMemory.cpp": "56282e2134d7f8cb57d2861cbdf07af2a6e07ad9caa79e9659840395b51ab956",
+      "test/runtime-plan/check-runtime-scale.py": "7ec3277b08978ea1f8415e75b40be75bf190080ddd50e2b176a0f85ad7b94982",
+      "test/CMakeLists.txt": "b8efa4f5a835a34eb783ceb39129fb9175db36c326bdeb721e6d93cc0ebdedfa"
+    },
+    "base_dacapo_commit": "06bdd08b83676351186f6982b79921994298e51a",
+    "ctest_passed": 6,
+    "reference_small_plan_comparisons": 16,
+    "full_scope": "24 blocks, final RMSNorm, full vocabulary LM head, synthetic weights, 2-token prefill",
+    "placement_devices": [
+      1,
+      4
+    ],
+    "boot_strategy": "depth-dp",
+    "boot_implementation": "host decrypt_reencrypt",
+    "release_enabled": true,
+    "reuse_enabled": true,
+    "memory_estimate_excludes": [
+      "keys",
+      "parameter tables",
+      "Rotate and Boot workspaces",
+      "communication staging",
+      "encoding caches",
+      "allocator alignment and reserved pool memory",
+      "object metadata"
+    ],
+    "memory_assumption": "Each instruction completes before the next; external inputs are held by the caller throughout the run.",
+    "reference_small_memory_reports_equal": true,
+    "lossless_native_source_sha256": "sha256:41e31a6a237901d88aba26631b850010dea89b0ec4bf2894f7f293d8baa56e6c",
+    "lossless_native_source_bytes": 14821237862,
+    "parent_native_compilation_provenance": "../provenance.json",
+    "operator_spec_sha256": "1f12fb5f6a7228e7373ada0d96d5115d190533a887f801a6928ba4ae14c193ff",
+    "communication_profile_sha256": "a7abb07495f547e19b9722b7753cadc34a2447a861ff616aa7c55f76162d1fcc",
+    "orchestration_and_validation_scripts": {
+      "run_parallel.py": "bd46d7caeb28fb216e713508607e988881e7ec8aebfb0bd3110c8dfe3603fa12",
+      "run_validation.py": "ce14874c846bd6f932252cac02c4d57a29be5b003d3dce6fc7fe940f65491d4f",
+      "validate.py": "785f744225a3bd6d8c3da83f7be921e603ba96088efefcfa7b47faaf2af882a0",
+      "summarize.py": "058bbcb247541f157690b9d5ddd242753c14347e4f9fac1dab9309a8cf616b77"
+    }
+  },
+  "boot_count": 10835,
+  "memory_kind": "Sequential RNS object estimates, not measured GPU/process peaks or bounds for parallel execution",
+  "assumption": "Each instruction completes before the next; external inputs are held by the caller throughout the run. This is not measured process memory or a bound for parallel execution.",
+  "excluded": [
+    "keys",
+    "parameter tables",
+    "Rotate and Boot workspaces",
+    "communication staging",
+    "encoding caches",
+    "allocator alignment and reserved pool memory",
+    "object metadata"
+  ],
+  "eager_plaintext_initialization": true,
+  "hardware": "188Server: four Tesla V100-SXM2-32GB devices",
+  "fits_existing_gpus": false,
+  "runtime_execution_tested": false,
+  "large_artifacts_in_tmp": false,
+  "plans": [
+    {
+      "devices": 1,
+      "plan_remote": "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/artifacts/qwen24-gpu-memory/gpu1/qwen24._hecate_qwen25_24layer.runtime-plan.json",
+      "compiler_pass_seconds": {
+        "Parser": 27.6975,
+        "GreedyBootstrapPlacement": 25.9189,
+        "AssignPlacement": 105.3852,
+        "MaterializeCommunication": 41.1505,
+        "PlanRuntimeMemory": 91.0885,
+        "EmitRuntimePlan": 487.1642,
+        "Output": 126.7742
+      },
+      "validation": {
+        "devices": 1,
+        "plan": "artifacts/qwen24-gpu-memory/gpu1/qwen24._hecate_qwen25_24layer.runtime-plan.json",
+        "format_version": 2,
+        "plan_sha256": "sha256:73f14829dc5c1828c6f143957af595295ae44b257a5068757ffcbd68de766c02",
+        "plan_bytes": 7965322721,
+        "value_count": 11016147,
+        "instruction_counts": {
+          "transfer": 2406535,
+          "release": 11013412,
+          "encode": 2384863,
+          "compute": 6224747,
+          "reuse_input": 2490
+        },
+        "op_counts": {
+          "mul_cc": 8775,
+          "relinearize": 8775,
+          "mul_cp": 2699953,
+          "rescale": 1354364,
+          "rotate": 716207,
+          "add_cc": 1347874,
+          "add_cp": 3858,
+          "boot": 10835,
+          "mod_switch": 73963,
+          "negate": 143
+        },
+        "input_ciphertexts": 2,
+        "output_ciphertexts": 245,
+        "semantic_sha256": "sha256:aabcb028744c99d22024ff4eb980455f6331fa7a45c8fd5faae58b20f831693b",
+        "matches_complete_host_graph": true,
+        "hashes_verified": true,
+        "topology_verified": true,
+        "physical_metadata_verified": true,
+        "release_reuse_verified": true,
+        "memory_report_independently_verified": true,
+        "bundle_blobs": 784750,
+        "bundle_bytes": 14701969408,
+        "object_memory": [
+          {
+            "place_index": -1,
+            "peak_bytes": 1916796928,
+            "plaintext_peak_bytes": 20971520,
+            "ciphertext_peak_bytes": 1916796928
+          },
+          {
+            "place_index": 0,
+            "peak_bytes": 20690982928384,
+            "plaintext_peak_bytes": 20686791770112,
+            "ciphertext_peak_bytes": 207114731520
+          }
+        ],
+        "aggregate_gpu_peak": {
+          "bytes": 20690982928384,
+          "instruction_ordinal": 7156151,
+          "plaintext_bytes": 20685551304704,
+          "ciphertext_bytes": 5431623680
+        },
+        "runtime_execution_tested": false,
+        "seconds": 571.8830710449256
+      },
+      "gpu_peak_bytes": [
+        20690982928384
+      ],
+      "gpu_peak_TiB": [
+        18.818339347839355
+      ],
+      "max_gpu_peak_TiB": 18.818339347839355,
+      "aggregate_gpu_peak_TiB": 18.818339347839355,
+      "host_rns_object_peak_GiB": 1.78515625,
+      "gpu_peaks_before_release_TiB": [
+        112.27180290222168
+      ],
+      "compiler_measurements": {
+        "returncode": 0,
+        "elapsed_seconds": 1214.713208729867,
+        "max_rss_MiB": 86724.890625
+      }
+    },
+    {
+      "devices": 4,
+      "plan_remote": "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/artifacts/qwen24-gpu-memory/gpu4/qwen24._hecate_qwen25_24layer.runtime-plan.json",
+      "compiler_pass_seconds": {
+        "Parser": 26.2163,
+        "GreedyBootstrapPlacement": 31.8315,
+        "AssignPlacement": 138.2945,
+        "MaterializeCommunication": 73.4717,
+        "PlanRuntimeMemory": 125.8315,
+        "EmitRuntimePlan": 621.226,
+        "Output": 185.9727
+      },
+      "validation": {
+        "devices": 4,
+        "plan": "artifacts/qwen24-gpu-memory/gpu4/qwen24._hecate_qwen25_24layer.runtime-plan.json",
+        "format_version": 2,
+        "plan_sha256": "sha256:61ba11591d1e8c9eeed13f655a36ec1a3b123188fd1608522c59da52b2a869df",
+        "plan_bytes": 11979783926,
+        "value_count": 15476395,
+        "instruction_counts": {
+          "transfer": 6866783,
+          "release": 15474053,
+          "encode": 2384863,
+          "compute": 6224747,
+          "reuse_input": 2097
+        },
+        "op_counts": {
+          "mul_cc": 8775,
+          "mod_switch": 73963,
+          "relinearize": 8775,
+          "mul_cp": 2699953,
+          "rescale": 1354364,
+          "rotate": 716207,
+          "add_cc": 1347874,
+          "add_cp": 3858,
+          "boot": 10835,
+          "negate": 143
+        },
+        "input_ciphertexts": 2,
+        "output_ciphertexts": 245,
+        "semantic_sha256": "sha256:aabcb028744c99d22024ff4eb980455f6331fa7a45c8fd5faae58b20f831693b",
+        "matches_complete_host_graph": true,
+        "hashes_verified": true,
+        "topology_verified": true,
+        "physical_metadata_verified": true,
+        "release_reuse_verified": true,
+        "memory_report_independently_verified": true,
+        "bundle_blobs": 784750,
+        "bundle_bytes": 14701969408,
+        "object_memory": [
+          {
+            "place_index": -1,
+            "peak_bytes": 1916796928,
+            "plaintext_peak_bytes": 20971520,
+            "ciphertext_peak_bytes": 1916796928
+          },
+          {
+            "place_index": 0,
+            "peak_bytes": 6095298887680,
+            "plaintext_peak_bytes": 6095208710144,
+            "ciphertext_peak_bytes": 12828278784
+          },
+          {
+            "place_index": 1,
+            "peak_bytes": 5847826563072,
+            "plaintext_peak_bytes": 5847701782528,
+            "ciphertext_peak_bytes": 26044530688
+          },
+          {
+            "place_index": 2,
+            "peak_bytes": 5363798638592,
+            "plaintext_peak_bytes": 5363699023872,
+            "ciphertext_peak_bytes": 12912164864
+          },
+          {
+            "place_index": 3,
+            "peak_bytes": 5299185385472,
+            "plaintext_peak_bytes": 5298990350336,
+            "ciphertext_peak_bytes": 13077839872
+          }
+        ],
+        "aggregate_gpu_peak": {
+          "bytes": 22605755056128,
+          "instruction_ordinal": 7375626,
+          "plaintext_bytes": 22605599866880,
+          "ciphertext_bytes": 155189248
+        },
+        "runtime_execution_tested": false,
+        "seconds": 918.3297167909332
+      },
+      "gpu_peak_bytes": [
+        6095298887680,
+        5847826563072,
+        5363798638592,
+        5299185385472
+      ],
+      "gpu_peak_TiB": [
+        5.543642044067383,
+        5.318567276000977,
+        4.8783464431762695,
+        4.819581031799316
+      ],
+      "max_gpu_peak_TiB": 5.543642044067383,
+      "aggregate_gpu_peak_TiB": 20.559814453125,
+      "host_rns_object_peak_GiB": 1.78515625,
+      "gpu_peaks_before_release_TiB": [
+        47.67070960998535,
+        44.85487461090088,
+        42.753499031066895,
+        42.15213584899902
+      ],
+      "compiler_measurements": {
+        "returncode": 0,
+        "elapsed_seconds": 1573.0325029278174,
+        "max_rss_MiB": 115529.94921875
+      }
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "files": {
+    "traced/trace_qwen24.mlirbc": {
+      "bytes": 14821237862
+    },
+    "traced/signature.json": {
+      "bytes": 86472
+    },
+    "qwen24.depth-dp.mlir": {
+      "bytes": 1224124699
+    },
+    "qwen24.depth-dp._hecate_qwen25_24layer.runtime-plan.json": {
+      "bytes": 4820471407
+    },
+    "qwen24.depth-dp._hecate_qwen25_24layer.bundle/manifest.json": {
+      "bytes": 103078905
+    }
+  },
+  "native_binaries_and_adapter_sha256": {
+    "toolchain/bin/hecate-opt.depth-dp-final": "284856906d996a32f8c9209f6215c75458d844355e039617a82e51756b6db7c6",
+    "toolchain/lib/libHecateFrontend.so": "6cb49745f348c8af30a24fc8cc08700666b12e5f1b44b7a65eb2309a1087d980",
+    "toolchain/python/hecate/expr.py": "193a4b96e55dc6f41d8057a31b2060f74a934856312d1aa7289499cb31357fac"
+  },
+  "tmp_allocated_bytes": {
+    "/tmp/poseidon-qwen24-IUOMH1": 49152,
+    "/tmp/poseidon-boot-placement-IUOMH1": 86016
+  },
+  "large_artifacts_in_tmp": false,
+  "diagnostic_mlir_constants_elided": true,
+  "recompilable_source": "traced/trace_qwen24.mlirbc"
+}

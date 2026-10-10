@@ -1,0 +1,13 @@
+{
+  "bytes": 2086150721,
+  "sha256": "5d2bc55c944e8bf4d62f6f9174a84b0a92f6d9f9813fd2b6d729c9b9b896234c",
+  "lines": 164737,
+  "earth_op_counts": {
+    "earth.mul": 44687,
+    "earth.rotate": 30318,
+    "earth.add": 45238,
+    "earth.constant": 44482,
+    "earth.negate": 6
+  },
+  "total_earth_ops": 164731
+}

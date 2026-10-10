@@ -1,0 +1,33 @@
+[0/1] Re-running CMake...
+-- Could NOT find OpenMP_C (missing: OpenMP_C_FLAGS OpenMP_C_LIB_NAMES) 
+-- Could NOT find OpenMP_CXX (missing: OpenMP_CXX_FLAGS OpenMP_CXX_LIB_NAMES) 
+-- Could NOT find OpenMP (missing: OpenMP_C_FOUND OpenMP_CXX_FOUND) 
+-- Building with -fPIC
+CMake Warning (policy) at /nix/store/v0vnvpp16nijl7pf2yj8k4bvfdcfp65r-llvm-18.1.8-dev/lib/cmake/llvm/HandleLLVMOptions.cmake:870 (CHECK_C_SOURCE_COMPILES):
+  Policy CMP0219 is not set: Macro invocations preserve backslashes in
+  arguments.  Run "cmake --help-policy CMP0219" for policy details.  Use the
+  cmake_policy command to set the policy and suppress this warning.
+
+  Command "CHECK_C_SOURCE_COMPILES" called with arguments containing
+  backslashes.
+
+  Since the policy is not set, backslashes in the arguments:
+
+   "// \\\n//\nint main(void) {return 0;}"
+
+  will be interpreted as escape sequences for compatibility.
+
+  Set the policy to NEW to instead pass
+
+   "// \\\\\\n//\\nint main(void) {return 0;}"
+
+  so that argument parsing will preserve the original values.
+Call Stack (most recent call first):
+  CMakeLists.txt:97 (include)
+This warning is for project developers.  Use -Wno-author or -Wno-policy to
+suppress it.
+
+-- Configuring done (0.5s)
+-- Generating done (0.0s)
+-- Build files have been written to: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix
+ninja: no work to do.

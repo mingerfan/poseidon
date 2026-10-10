@@ -1,0 +1,18 @@
+def _frameInfo(frame):
+    return (frame, frame.f_code.co_filename, frame.f_lineno,
+            frame.f_code.co_name, None, None)
+
+
+def getCallerFrame():
+    return _frameInfo(sys._getframe(2))
+
+
+def getProperFrame():
+    thisname = sys._getframe().f_code.co_filename
+    frame = sys._getframe(1)
+    while frame is not None and frame.f_code.co_filename == thisname:
+        frame = frame.f_back
+    if frame is None:
+        raise RuntimeError("Cannot find the frontend caller's source location")
+    return _frameInfo(frame)
+

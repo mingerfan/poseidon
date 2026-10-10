@@ -1,0 +1,3142 @@
+{
+  "format": "qwen25-24layer-dsl-v1",
+  "config": {
+    "num_layers": 24,
+    "hidden_size": 896,
+    "intermediate_size": 4864,
+    "query_heads": 14,
+    "kv_heads": 2,
+    "head_dim": 64,
+    "vocab_size": 151936,
+    "max_sequence_length": 512,
+    "rope_theta": 1000000.0,
+    "rms_norm_eps": 1e-06
+  },
+  "mode": "prefill",
+  "function": "_hecate_qwen25_24layer",
+  "new_positions": [
+    0
+  ],
+  "cached_positions": [],
+  "slots": 32768,
+  "logit_chunk_size": 1024,
+  "logit_ciphertexts": 149,
+  "inputs": [
+    {
+      "name": "embedding.position_0",
+      "prefix_size": 896,
+      "ciphertext": 0
+    }
+  ],
+  "outputs": [
+    {
+      "name": "logits.0:1024",
+      "prefix_size": 1024,
+      "ciphertext": 0
+    },
+    {
+      "name": "logits.1024:2048",
+      "prefix_size": 1024,
+      "ciphertext": 1
+    },
+    {
+      "name": "logits.2048:3072",
+      "prefix_size": 1024,
+      "ciphertext": 2
+    },
+    {
+      "name": "logits.3072:4096",
+      "prefix_size": 1024,
+      "ciphertext": 3
+    },
+    {
+      "name": "logits.4096:5120",
+      "prefix_size": 1024,
+      "ciphertext": 4
+    },
+    {
+      "name": "logits.5120:6144",
+      "prefix_size": 1024,
+      "ciphertext": 5
+    },
+    {
+      "name": "logits.6144:7168",
+      "prefix_size": 1024,
+      "ciphertext": 6
+    },
+    {
+      "name": "logits.7168:8192",
+      "prefix_size": 1024,
+      "ciphertext": 7
+    },
+    {
+      "name": "logits.8192:9216",
+      "prefix_size": 1024,
+      "ciphertext": 8
+    },
+    {
+      "name": "logits.9216:10240",
+      "prefix_size": 1024,
+      "ciphertext": 9
+    },
+    {
+      "name": "logits.10240:11264",
+      "prefix_size": 1024,
+      "ciphertext": 10
+    },
+    {
+      "name": "logits.11264:12288",
+      "prefix_size": 1024,
+      "ciphertext": 11
+    },
+    {
+      "name": "logits.12288:13312",
+      "prefix_size": 1024,
+      "ciphertext": 12
+    },
+    {
+      "name": "logits.13312:14336",
+      "prefix_size": 1024,
+      "ciphertext": 13
+    },
+    {
+      "name": "logits.14336:15360",
+      "prefix_size": 1024,
+      "ciphertext": 14
+    },
+    {
+      "name": "logits.15360:16384",
+      "prefix_size": 1024,
+      "ciphertext": 15
+    },
+    {
+      "name": "logits.16384:17408",
+      "prefix_size": 1024,
+      "ciphertext": 16
+    },
+    {
+      "name": "logits.17408:18432",
+      "prefix_size": 1024,
+      "ciphertext": 17
+    },
+    {
+      "name": "logits.18432:19456",
+      "prefix_size": 1024,
+      "ciphertext": 18
+    },
+    {
+      "name": "logits.19456:20480",
+      "prefix_size": 1024,
+      "ciphertext": 19
+    },
+    {
+      "name": "logits.20480:21504",
+      "prefix_size": 1024,
+      "ciphertext": 20
+    },
+    {
+      "name": "logits.21504:22528",
+      "prefix_size": 1024,
+      "ciphertext": 21
+    },
+    {
+      "name": "logits.22528:23552",
+      "prefix_size": 1024,
+      "ciphertext": 22
+    },
+    {
+      "name": "logits.23552:24576",
+      "prefix_size": 1024,
+      "ciphertext": 23
+    },
+    {
+      "name": "logits.24576:25600",
+      "prefix_size": 1024,
+      "ciphertext": 24
+    },
+    {
+      "name": "logits.25600:26624",
+      "prefix_size": 1024,
+      "ciphertext": 25
+    },
+    {
+      "name": "logits.26624:27648",
+      "prefix_size": 1024,
+      "ciphertext": 26
+    },
+    {
+      "name": "logits.27648:28672",
+      "prefix_size": 1024,
+      "ciphertext": 27
+    },
+    {
+      "name": "logits.28672:29696",
+      "prefix_size": 1024,
+      "ciphertext": 28
+    },
+    {
+      "name": "logits.29696:30720",
+      "prefix_size": 1024,
+      "ciphertext": 29
+    },
+    {
+      "name": "logits.30720:31744",
+      "prefix_size": 1024,
+      "ciphertext": 30
+    },
+    {
+      "name": "logits.31744:32768",
+      "prefix_size": 1024,
+      "ciphertext": 31
+    },
+    {
+      "name": "logits.32768:33792",
+      "prefix_size": 1024,
+      "ciphertext": 32
+    },
+    {
+      "name": "logits.33792:34816",
+      "prefix_size": 1024,
+      "ciphertext": 33
+    },
+    {
+      "name": "logits.34816:35840",
+      "prefix_size": 1024,
+      "ciphertext": 34
+    },
+    {
+      "name": "logits.35840:36864",
+      "prefix_size": 1024,
+      "ciphertext": 35
+    },
+    {
+      "name": "logits.36864:37888",
+      "prefix_size": 1024,
+      "ciphertext": 36
+    },
+    {
+      "name": "logits.37888:38912",
+      "prefix_size": 1024,
+      "ciphertext": 37
+    },
+    {
+      "name": "logits.38912:39936",
+      "prefix_size": 1024,
+      "ciphertext": 38
+    },
+    {
+      "name": "logits.39936:40960",
+      "prefix_size": 1024,
+      "ciphertext": 39
+    },
+    {
+      "name": "logits.40960:41984",
+      "prefix_size": 1024,
+      "ciphertext": 40
+    },
+    {
+      "name": "logits.41984:43008",
+      "prefix_size": 1024,
+      "ciphertext": 41
+    },
+    {
+      "name": "logits.43008:44032",
+      "prefix_size": 1024,
+      "ciphertext": 42
+    },
+    {
+      "name": "logits.44032:45056",
+      "prefix_size": 1024,
+      "ciphertext": 43
+    },
+    {
+      "name": "logits.45056:46080",
+      "prefix_size": 1024,
+      "ciphertext": 44
+    },
+    {
+      "name": "logits.46080:47104",
+      "prefix_size": 1024,
+      "ciphertext": 45
+    },
+    {
+      "name": "logits.47104:48128",
+      "prefix_size": 1024,
+      "ciphertext": 46
+    },
+    {
+      "name": "logits.48128:49152",
+      "prefix_size": 1024,
+      "ciphertext": 47
+    },
+    {
+      "name": "logits.49152:50176",
+      "prefix_size": 1024,
+      "ciphertext": 48
+    },
+    {
+      "name": "logits.50176:51200",
+      "prefix_size": 1024,
+      "ciphertext": 49
+    },
+    {
+      "name": "logits.51200:52224",
+      "prefix_size": 1024,
+      "ciphertext": 50
+    },
+    {
+      "name": "logits.52224:53248",
+      "prefix_size": 1024,
+      "ciphertext": 51
+    },
+    {
+      "name": "logits.53248:54272",
+      "prefix_size": 1024,
+      "ciphertext": 52
+    },
+    {
+      "name": "logits.54272:55296",
+      "prefix_size": 1024,
+      "ciphertext": 53
+    },
+    {
+      "name": "logits.55296:56320",
+      "prefix_size": 1024,
+      "ciphertext": 54
+    },
+    {
+      "name": "logits.56320:57344",
+      "prefix_size": 1024,
+      "ciphertext": 55
+    },
+    {
+      "name": "logits.57344:58368",
+      "prefix_size": 1024,
+      "ciphertext": 56
+    },
+    {
+      "name": "logits.58368:59392",
+      "prefix_size": 1024,
+      "ciphertext": 57
+    },
+    {
+      "name": "logits.59392:60416",
+      "prefix_size": 1024,
+      "ciphertext": 58
+    },
+    {
+      "name": "logits.60416:61440",
+      "prefix_size": 1024,
+      "ciphertext": 59
+    },
+    {
+      "name": "logits.61440:62464",
+      "prefix_size": 1024,
+      "ciphertext": 60
+    },
+    {
+      "name": "logits.62464:63488",
+      "prefix_size": 1024,
+      "ciphertext": 61
+    },
+    {
+      "name": "logits.63488:64512",
+      "prefix_size": 1024,
+      "ciphertext": 62
+    },
+    {
+      "name": "logits.64512:65536",
+      "prefix_size": 1024,
+      "ciphertext": 63
+    },
+    {
+      "name": "logits.65536:66560",
+      "prefix_size": 1024,
+      "ciphertext": 64
+    },
+    {
+      "name": "logits.66560:67584",
+      "prefix_size": 1024,
+      "ciphertext": 65
+    },
+    {
+      "name": "logits.67584:68608",
+      "prefix_size": 1024,
+      "ciphertext": 66
+    },
+    {
+      "name": "logits.68608:69632",
+      "prefix_size": 1024,
+      "ciphertext": 67
+    },
+    {
+      "name": "logits.69632:70656",
+      "prefix_size": 1024,
+      "ciphertext": 68
+    },
+    {
+      "name": "logits.70656:71680",
+      "prefix_size": 1024,
+      "ciphertext": 69
+    },
+    {
+      "name": "logits.71680:72704",
+      "prefix_size": 1024,
+      "ciphertext": 70
+    },
+    {
+      "name": "logits.72704:73728",
+      "prefix_size": 1024,
+      "ciphertext": 71
+    },
+    {
+      "name": "logits.73728:74752",
+      "prefix_size": 1024,
+      "ciphertext": 72
+    },
+    {
+      "name": "logits.74752:75776",
+      "prefix_size": 1024,
+      "ciphertext": 73
+    },
+    {
+      "name": "logits.75776:76800",
+      "prefix_size": 1024,
+      "ciphertext": 74
+    },
+    {
+      "name": "logits.76800:77824",
+      "prefix_size": 1024,
+      "ciphertext": 75
+    },
+    {
+      "name": "logits.77824:78848",
+      "prefix_size": 1024,
+      "ciphertext": 76
+    },
+    {
+      "name": "logits.78848:79872",
+      "prefix_size": 1024,
+      "ciphertext": 77
+    },
+    {
+      "name": "logits.79872:80896",
+      "prefix_size": 1024,
+      "ciphertext": 78
+    },
+    {
+      "name": "logits.80896:81920",
+      "prefix_size": 1024,
+      "ciphertext": 79
+    },
+    {
+      "name": "logits.81920:82944",
+      "prefix_size": 1024,
+      "ciphertext": 80
+    },
+    {
+      "name": "logits.82944:83968",
+      "prefix_size": 1024,
+      "ciphertext": 81
+    },
+    {
+      "name": "logits.83968:84992",
+      "prefix_size": 1024,
+      "ciphertext": 82
+    },
+    {
+      "name": "logits.84992:86016",
+      "prefix_size": 1024,
+      "ciphertext": 83
+    },
+    {
+      "name": "logits.86016:87040",
+      "prefix_size": 1024,
+      "ciphertext": 84
+    },
+    {
+      "name": "logits.87040:88064",
+      "prefix_size": 1024,
+      "ciphertext": 85
+    },
+    {
+      "name": "logits.88064:89088",
+      "prefix_size": 1024,
+      "ciphertext": 86
+    },
+    {
+      "name": "logits.89088:90112",
+      "prefix_size": 1024,
+      "ciphertext": 87
+    },
+    {
+      "name": "logits.90112:91136",
+      "prefix_size": 1024,
+      "ciphertext": 88
+    },
+    {
+      "name": "logits.91136:92160",
+      "prefix_size": 1024,
+      "ciphertext": 89
+    },
+    {
+      "name": "logits.92160:93184",
+      "prefix_size": 1024,
+      "ciphertext": 90
+    },
+    {
+      "name": "logits.93184:94208",
+      "prefix_size": 1024,
+      "ciphertext": 91
+    },
+    {
+      "name": "logits.94208:95232",
+      "prefix_size": 1024,
+      "ciphertext": 92
+    },
+    {
+      "name": "logits.95232:96256",
+      "prefix_size": 1024,
+      "ciphertext": 93
+    },
+    {
+      "name": "logits.96256:97280",
+      "prefix_size": 1024,
+      "ciphertext": 94
+    },
+    {
+      "name": "logits.97280:98304",
+      "prefix_size": 1024,
+      "ciphertext": 95
+    },
+    {
+      "name": "logits.98304:99328",
+      "prefix_size": 1024,
+      "ciphertext": 96
+    },
+    {
+      "name": "logits.99328:100352",
+      "prefix_size": 1024,
+      "ciphertext": 97
+    },
+    {
+      "name": "logits.100352:101376",
+      "prefix_size": 1024,
+      "ciphertext": 98
+    },
+    {
+      "name": "logits.101376:102400",
+      "prefix_size": 1024,
+      "ciphertext": 99
+    },
+    {
+      "name": "logits.102400:103424",
+      "prefix_size": 1024,
+      "ciphertext": 100
+    },
+    {
+      "name": "logits.103424:104448",
+      "prefix_size": 1024,
+      "ciphertext": 101
+    },
+    {
+      "name": "logits.104448:105472",
+      "prefix_size": 1024,
+      "ciphertext": 102
+    },
+    {
+      "name": "logits.105472:106496",
+      "prefix_size": 1024,
+      "ciphertext": 103
+    },
+    {
+      "name": "logits.106496:107520",
+      "prefix_size": 1024,
+      "ciphertext": 104
+    },
+    {
+      "name": "logits.107520:108544",
+      "prefix_size": 1024,
+      "ciphertext": 105
+    },
+    {
+      "name": "logits.108544:109568",
+      "prefix_size": 1024,
+      "ciphertext": 106
+    },
+    {
+      "name": "logits.109568:110592",
+      "prefix_size": 1024,
+      "ciphertext": 107
+    },
+    {
+      "name": "logits.110592:111616",
+      "prefix_size": 1024,
+      "ciphertext": 108
+    },
+    {
+      "name": "logits.111616:112640",
+      "prefix_size": 1024,
+      "ciphertext": 109
+    },
+    {
+      "name": "logits.112640:113664",
+      "prefix_size": 1024,
+      "ciphertext": 110
+    },
+    {
+      "name": "logits.113664:114688",
+      "prefix_size": 1024,
+      "ciphertext": 111
+    },
+    {
+      "name": "logits.114688:115712",
+      "prefix_size": 1024,
+      "ciphertext": 112
+    },
+    {
+      "name": "logits.115712:116736",
+      "prefix_size": 1024,
+      "ciphertext": 113
+    },
+    {
+      "name": "logits.116736:117760",
+      "prefix_size": 1024,
+      "ciphertext": 114
+    },
+    {
+      "name": "logits.117760:118784",
+      "prefix_size": 1024,
+      "ciphertext": 115
+    },
+    {
+      "name": "logits.118784:119808",
+      "prefix_size": 1024,
+      "ciphertext": 116
+    },
+    {
+      "name": "logits.119808:120832",
+      "prefix_size": 1024,
+      "ciphertext": 117
+    },
+    {
+      "name": "logits.120832:121856",
+      "prefix_size": 1024,
+      "ciphertext": 118
+    },
+    {
+      "name": "logits.121856:122880",
+      "prefix_size": 1024,
+      "ciphertext": 119
+    },
+    {
+      "name": "logits.122880:123904",
+      "prefix_size": 1024,
+      "ciphertext": 120
+    },
+    {
+      "name": "logits.123904:124928",
+      "prefix_size": 1024,
+      "ciphertext": 121
+    },
+    {
+      "name": "logits.124928:125952",
+      "prefix_size": 1024,
+      "ciphertext": 122
+    },
+    {
+      "name": "logits.125952:126976",
+      "prefix_size": 1024,
+      "ciphertext": 123
+    },
+    {
+      "name": "logits.126976:128000",
+      "prefix_size": 1024,
+      "ciphertext": 124
+    },
+    {
+      "name": "logits.128000:129024",
+      "prefix_size": 1024,
+      "ciphertext": 125
+    },
+    {
+      "name": "logits.129024:130048",
+      "prefix_size": 1024,
+      "ciphertext": 126
+    },
+    {
+      "name": "logits.130048:131072",
+      "prefix_size": 1024,
+      "ciphertext": 127
+    },
+    {
+      "name": "logits.131072:132096",
+      "prefix_size": 1024,
+      "ciphertext": 128
+    },
+    {
+      "name": "logits.132096:133120",
+      "prefix_size": 1024,
+      "ciphertext": 129
+    },
+    {
+      "name": "logits.133120:134144",
+      "prefix_size": 1024,
+      "ciphertext": 130
+    },
+    {
+      "name": "logits.134144:135168",
+      "prefix_size": 1024,
+      "ciphertext": 131
+    },
+    {
+      "name": "logits.135168:136192",
+      "prefix_size": 1024,
+      "ciphertext": 132
+    },
+    {
+      "name": "logits.136192:137216",
+      "prefix_size": 1024,
+      "ciphertext": 133
+    },
+    {
+      "name": "logits.137216:138240",
+      "prefix_size": 1024,
+      "ciphertext": 134
+    },
+    {
+      "name": "logits.138240:139264",
+      "prefix_size": 1024,
+      "ciphertext": 135
+    },
+    {
+      "name": "logits.139264:140288",
+      "prefix_size": 1024,
+      "ciphertext": 136
+    },
+    {
+      "name": "logits.140288:141312",
+      "prefix_size": 1024,
+      "ciphertext": 137
+    },
+    {
+      "name": "logits.141312:142336",
+      "prefix_size": 1024,
+      "ciphertext": 138
+    },
+    {
+      "name": "logits.142336:143360",
+      "prefix_size": 1024,
+      "ciphertext": 139
+    },
+    {
+      "name": "logits.143360:144384",
+      "prefix_size": 1024,
+      "ciphertext": 140
+    },
+    {
+      "name": "logits.144384:145408",
+      "prefix_size": 1024,
+      "ciphertext": 141
+    },
+    {
+      "name": "logits.145408:146432",
+      "prefix_size": 1024,
+      "ciphertext": 142
+    },
+    {
+      "name": "logits.146432:147456",
+      "prefix_size": 1024,
+      "ciphertext": 143
+    },
+    {
+      "name": "logits.147456:148480",
+      "prefix_size": 1024,
+      "ciphertext": 144
+    },
+    {
+      "name": "logits.148480:149504",
+      "prefix_size": 1024,
+      "ciphertext": 145
+    },
+    {
+      "name": "logits.149504:150528",
+      "prefix_size": 1024,
+      "ciphertext": 146
+    },
+    {
+      "name": "logits.150528:151552",
+      "prefix_size": 1024,
+      "ciphertext": 147
+    },
+    {
+      "name": "logits.151552:151936",
+      "prefix_size": 384,
+      "ciphertext": 148
+    },
+    {
+      "name": "layer_0.key.position_0",
+      "prefix_size": 128,
+      "ciphertext": 149
+    },
+    {
+      "name": "layer_0.value.position_0",
+      "prefix_size": 128,
+      "ciphertext": 150
+    },
+    {
+      "name": "layer_1.key.position_0",
+      "prefix_size": 128,
+      "ciphertext": 151
+    },
+    {
+      "name": "layer_1.value.position_0",
+      "prefix_size": 128,
+      "ciphertext": 152
+    },
+    {
+      "name": "layer_2.key.position_0",
+      "prefix_size": 128,
+      "ciphertext": 153
+    },
+    {
+      "name": "layer_2.value.position_0",
+      "prefix_size": 128,
+      "ciphertext": 154
+    },
+    {
+      "name": "layer_3.key.position_0",
+      "prefix_size": 128,
+      "ciphertext": 155
+    },
+    {
+      "name": "layer_3.value.position_0",
+      "prefix_size": 128,
+      "ciphertext": 156
+    },
+    {
+      "name": "layer_4.key.position_0",
+      "prefix_size": 128,
+      "ciphertext": 157
+    },
+    {
+      "name": "layer_4.value.position_0",
+      "prefix_size": 128,
+      "ciphertext": 158
+    },
+    {
+      "name": "layer_5.key.position_0",
+      "prefix_size": 128,
+      "ciphertext": 159
+    },
+    {
+      "name": "layer_5.value.position_0",
+      "prefix_size": 128,
+      "ciphertext": 160
+    },
+    {
+      "name": "layer_6.key.position_0",
+      "prefix_size": 128,
+      "ciphertext": 161
+    },
+    {
+      "name": "layer_6.value.position_0",
+      "prefix_size": 128,
+      "ciphertext": 162
+    },
+    {
+      "name": "layer_7.key.position_0",
+      "prefix_size": 128,
+      "ciphertext": 163
+    },
+    {
+      "name": "layer_7.value.position_0",
+      "prefix_size": 128,
+      "ciphertext": 164
+    },
+    {
+      "name": "layer_8.key.position_0",
+      "prefix_size": 128,
+      "ciphertext": 165
+    },
+    {
+      "name": "layer_8.value.position_0",
+      "prefix_size": 128,
+      "ciphertext": 166
+    },
+    {
+      "name": "layer_9.key.position_0",
+      "prefix_size": 128,
+      "ciphertext": 167
+    },
+    {
+      "name": "layer_9.value.position_0",
+      "prefix_size": 128,
+      "ciphertext": 168
+    },
+    {
+      "name": "layer_10.key.position_0",
+      "prefix_size": 128,
+      "ciphertext": 169
+    },
+    {
+      "name": "layer_10.value.position_0",
+      "prefix_size": 128,
+      "ciphertext": 170
+    },
+    {
+      "name": "layer_11.key.position_0",
+      "prefix_size": 128,
+      "ciphertext": 171
+    },
+    {
+      "name": "layer_11.value.position_0",
+      "prefix_size": 128,
+      "ciphertext": 172
+    },
+    {
+      "name": "layer_12.key.position_0",
+      "prefix_size": 128,
+      "ciphertext": 173
+    },
+    {
+      "name": "layer_12.value.position_0",
+      "prefix_size": 128,
+      "ciphertext": 174
+    },
+    {
+      "name": "layer_13.key.position_0",
+      "prefix_size": 128,
+      "ciphertext": 175
+    },
+    {
+      "name": "layer_13.value.position_0",
+      "prefix_size": 128,
+      "ciphertext": 176
+    },
+    {
+      "name": "layer_14.key.position_0",
+      "prefix_size": 128,
+      "ciphertext": 177
+    },
+    {
+      "name": "layer_14.value.position_0",
+      "prefix_size": 128,
+      "ciphertext": 178
+    },
+    {
+      "name": "layer_15.key.position_0",
+      "prefix_size": 128,
+      "ciphertext": 179
+    },
+    {
+      "name": "layer_15.value.position_0",
+      "prefix_size": 128,
+      "ciphertext": 180
+    },
+    {
+      "name": "layer_16.key.position_0",
+      "prefix_size": 128,
+      "ciphertext": 181
+    },
+    {
+      "name": "layer_16.value.position_0",
+      "prefix_size": 128,
+      "ciphertext": 182
+    },
+    {
+      "name": "layer_17.key.position_0",
+      "prefix_size": 128,
+      "ciphertext": 183
+    },
+    {
+      "name": "layer_17.value.position_0",
+      "prefix_size": 128,
+      "ciphertext": 184
+    },
+    {
+      "name": "layer_18.key.position_0",
+      "prefix_size": 128,
+      "ciphertext": 185
+    },
+    {
+      "name": "layer_18.value.position_0",
+      "prefix_size": 128,
+      "ciphertext": 186
+    },
+    {
+      "name": "layer_19.key.position_0",
+      "prefix_size": 128,
+      "ciphertext": 187
+    },
+    {
+      "name": "layer_19.value.position_0",
+      "prefix_size": 128,
+      "ciphertext": 188
+    },
+    {
+      "name": "layer_20.key.position_0",
+      "prefix_size": 128,
+      "ciphertext": 189
+    },
+    {
+      "name": "layer_20.value.position_0",
+      "prefix_size": 128,
+      "ciphertext": 190
+    },
+    {
+      "name": "layer_21.key.position_0",
+      "prefix_size": 128,
+      "ciphertext": 191
+    },
+    {
+      "name": "layer_21.value.position_0",
+      "prefix_size": 128,
+      "ciphertext": 192
+    },
+    {
+      "name": "layer_22.key.position_0",
+      "prefix_size": 128,
+      "ciphertext": 193
+    },
+    {
+      "name": "layer_22.value.position_0",
+      "prefix_size": 128,
+      "ciphertext": 194
+    },
+    {
+      "name": "layer_23.key.position_0",
+      "prefix_size": 128,
+      "ciphertext": 195
+    },
+    {
+      "name": "layer_23.value.position_0",
+      "prefix_size": 128,
+      "ciphertext": 196
+    }
+  ],
+  "output_tail": "zero; verify after actual encrypted execution",
+  "embedding": "client plaintext lookup, then encrypt; not encrypted token-ID lookup",
+  "output": "last-new-token raw logits plus all 24 layers of encrypted KV",
+  "bootstrap": "backend must schedule real refresh; not emitted explicitly by this DSL",
+  "native_compiled": false,
+  "full_model_ckks_validated": false,
+  "gpu_validated": false,
+  "approximations": {
+    "blocks": [
+      {
+        "pre_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "post_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "silu": {
+          "method": "chebyshev",
+          "function": "silu",
+          "coefficients": [
+            0.4058378425657395,
+            0.9999999999999998,
+            0.3787149374031208,
+            -3.0744637605004334e-16,
+            -0.02486449417225911,
+            -3.0744637605004334e-16,
+            0.00206718747643809,
+            -3.416070845000482e-16,
+            -0.0001750023807192136,
+            -3.0744637605004334e-16,
+            1.4854569353222731e-05,
+            3.416070845000482e-16,
+            -1.3665638488847576e-06
+          ],
+          "domain": [
+            -2.0,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "softmax": {
+          "method": "normalize_square",
+          "centered_bound": 0.5,
+          "squarings": 0,
+          "reciprocal_iterations": 6,
+          "max_length": 2,
+          "exp_degree": 8,
+          "intermediate_iterations": null,
+          "exp_bound": 0.5
+        }
+      },
+      {
+        "pre_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "post_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "silu": {
+          "method": "chebyshev",
+          "function": "silu",
+          "coefficients": [
+            0.4058378425657395,
+            0.9999999999999998,
+            0.3787149374031208,
+            -3.0744637605004334e-16,
+            -0.02486449417225911,
+            -3.0744637605004334e-16,
+            0.00206718747643809,
+            -3.416070845000482e-16,
+            -0.0001750023807192136,
+            -3.0744637605004334e-16,
+            1.4854569353222731e-05,
+            3.416070845000482e-16,
+            -1.3665638488847576e-06
+          ],
+          "domain": [
+            -2.0,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "softmax": {
+          "method": "normalize_square",
+          "centered_bound": 0.5,
+          "squarings": 0,
+          "reciprocal_iterations": 6,
+          "max_length": 2,
+          "exp_degree": 8,
+          "intermediate_iterations": null,
+          "exp_bound": 0.5
+        }
+      },
+      {
+        "pre_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "post_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "silu": {
+          "method": "chebyshev",
+          "function": "silu",
+          "coefficients": [
+            0.4058378425657395,
+            0.9999999999999998,
+            0.3787149374031208,
+            -3.0744637605004334e-16,
+            -0.02486449417225911,
+            -3.0744637605004334e-16,
+            0.00206718747643809,
+            -3.416070845000482e-16,
+            -0.0001750023807192136,
+            -3.0744637605004334e-16,
+            1.4854569353222731e-05,
+            3.416070845000482e-16,
+            -1.3665638488847576e-06
+          ],
+          "domain": [
+            -2.0,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "softmax": {
+          "method": "normalize_square",
+          "centered_bound": 0.5,
+          "squarings": 0,
+          "reciprocal_iterations": 6,
+          "max_length": 2,
+          "exp_degree": 8,
+          "intermediate_iterations": null,
+          "exp_bound": 0.5
+        }
+      },
+      {
+        "pre_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "post_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "silu": {
+          "method": "chebyshev",
+          "function": "silu",
+          "coefficients": [
+            0.4058378425657395,
+            0.9999999999999998,
+            0.3787149374031208,
+            -3.0744637605004334e-16,
+            -0.02486449417225911,
+            -3.0744637605004334e-16,
+            0.00206718747643809,
+            -3.416070845000482e-16,
+            -0.0001750023807192136,
+            -3.0744637605004334e-16,
+            1.4854569353222731e-05,
+            3.416070845000482e-16,
+            -1.3665638488847576e-06
+          ],
+          "domain": [
+            -2.0,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "softmax": {
+          "method": "normalize_square",
+          "centered_bound": 0.5,
+          "squarings": 0,
+          "reciprocal_iterations": 6,
+          "max_length": 2,
+          "exp_degree": 8,
+          "intermediate_iterations": null,
+          "exp_bound": 0.5
+        }
+      },
+      {
+        "pre_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "post_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "silu": {
+          "method": "chebyshev",
+          "function": "silu",
+          "coefficients": [
+            0.4058378425657395,
+            0.9999999999999998,
+            0.3787149374031208,
+            -3.0744637605004334e-16,
+            -0.02486449417225911,
+            -3.0744637605004334e-16,
+            0.00206718747643809,
+            -3.416070845000482e-16,
+            -0.0001750023807192136,
+            -3.0744637605004334e-16,
+            1.4854569353222731e-05,
+            3.416070845000482e-16,
+            -1.3665638488847576e-06
+          ],
+          "domain": [
+            -2.0,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "softmax": {
+          "method": "normalize_square",
+          "centered_bound": 0.5,
+          "squarings": 0,
+          "reciprocal_iterations": 6,
+          "max_length": 2,
+          "exp_degree": 8,
+          "intermediate_iterations": null,
+          "exp_bound": 0.5
+        }
+      },
+      {
+        "pre_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "post_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "silu": {
+          "method": "chebyshev",
+          "function": "silu",
+          "coefficients": [
+            0.4058378425657395,
+            0.9999999999999998,
+            0.3787149374031208,
+            -3.0744637605004334e-16,
+            -0.02486449417225911,
+            -3.0744637605004334e-16,
+            0.00206718747643809,
+            -3.416070845000482e-16,
+            -0.0001750023807192136,
+            -3.0744637605004334e-16,
+            1.4854569353222731e-05,
+            3.416070845000482e-16,
+            -1.3665638488847576e-06
+          ],
+          "domain": [
+            -2.0,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "softmax": {
+          "method": "normalize_square",
+          "centered_bound": 0.5,
+          "squarings": 0,
+          "reciprocal_iterations": 6,
+          "max_length": 2,
+          "exp_degree": 8,
+          "intermediate_iterations": null,
+          "exp_bound": 0.5
+        }
+      },
+      {
+        "pre_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "post_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "silu": {
+          "method": "chebyshev",
+          "function": "silu",
+          "coefficients": [
+            0.4058378425657395,
+            0.9999999999999998,
+            0.3787149374031208,
+            -3.0744637605004334e-16,
+            -0.02486449417225911,
+            -3.0744637605004334e-16,
+            0.00206718747643809,
+            -3.416070845000482e-16,
+            -0.0001750023807192136,
+            -3.0744637605004334e-16,
+            1.4854569353222731e-05,
+            3.416070845000482e-16,
+            -1.3665638488847576e-06
+          ],
+          "domain": [
+            -2.0,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "softmax": {
+          "method": "normalize_square",
+          "centered_bound": 0.5,
+          "squarings": 0,
+          "reciprocal_iterations": 6,
+          "max_length": 2,
+          "exp_degree": 8,
+          "intermediate_iterations": null,
+          "exp_bound": 0.5
+        }
+      },
+      {
+        "pre_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "post_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "silu": {
+          "method": "chebyshev",
+          "function": "silu",
+          "coefficients": [
+            0.4058378425657395,
+            0.9999999999999998,
+            0.3787149374031208,
+            -3.0744637605004334e-16,
+            -0.02486449417225911,
+            -3.0744637605004334e-16,
+            0.00206718747643809,
+            -3.416070845000482e-16,
+            -0.0001750023807192136,
+            -3.0744637605004334e-16,
+            1.4854569353222731e-05,
+            3.416070845000482e-16,
+            -1.3665638488847576e-06
+          ],
+          "domain": [
+            -2.0,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "softmax": {
+          "method": "normalize_square",
+          "centered_bound": 0.5,
+          "squarings": 0,
+          "reciprocal_iterations": 6,
+          "max_length": 2,
+          "exp_degree": 8,
+          "intermediate_iterations": null,
+          "exp_bound": 0.5
+        }
+      },
+      {
+        "pre_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "post_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "silu": {
+          "method": "chebyshev",
+          "function": "silu",
+          "coefficients": [
+            0.4058378425657395,
+            0.9999999999999998,
+            0.3787149374031208,
+            -3.0744637605004334e-16,
+            -0.02486449417225911,
+            -3.0744637605004334e-16,
+            0.00206718747643809,
+            -3.416070845000482e-16,
+            -0.0001750023807192136,
+            -3.0744637605004334e-16,
+            1.4854569353222731e-05,
+            3.416070845000482e-16,
+            -1.3665638488847576e-06
+          ],
+          "domain": [
+            -2.0,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "softmax": {
+          "method": "normalize_square",
+          "centered_bound": 0.5,
+          "squarings": 0,
+          "reciprocal_iterations": 6,
+          "max_length": 2,
+          "exp_degree": 8,
+          "intermediate_iterations": null,
+          "exp_bound": 0.5
+        }
+      },
+      {
+        "pre_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "post_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "silu": {
+          "method": "chebyshev",
+          "function": "silu",
+          "coefficients": [
+            0.4058378425657395,
+            0.9999999999999998,
+            0.3787149374031208,
+            -3.0744637605004334e-16,
+            -0.02486449417225911,
+            -3.0744637605004334e-16,
+            0.00206718747643809,
+            -3.416070845000482e-16,
+            -0.0001750023807192136,
+            -3.0744637605004334e-16,
+            1.4854569353222731e-05,
+            3.416070845000482e-16,
+            -1.3665638488847576e-06
+          ],
+          "domain": [
+            -2.0,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "softmax": {
+          "method": "normalize_square",
+          "centered_bound": 0.5,
+          "squarings": 0,
+          "reciprocal_iterations": 6,
+          "max_length": 2,
+          "exp_degree": 8,
+          "intermediate_iterations": null,
+          "exp_bound": 0.5
+        }
+      },
+      {
+        "pre_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "post_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "silu": {
+          "method": "chebyshev",
+          "function": "silu",
+          "coefficients": [
+            0.4058378425657395,
+            0.9999999999999998,
+            0.3787149374031208,
+            -3.0744637605004334e-16,
+            -0.02486449417225911,
+            -3.0744637605004334e-16,
+            0.00206718747643809,
+            -3.416070845000482e-16,
+            -0.0001750023807192136,
+            -3.0744637605004334e-16,
+            1.4854569353222731e-05,
+            3.416070845000482e-16,
+            -1.3665638488847576e-06
+          ],
+          "domain": [
+            -2.0,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "softmax": {
+          "method": "normalize_square",
+          "centered_bound": 0.5,
+          "squarings": 0,
+          "reciprocal_iterations": 6,
+          "max_length": 2,
+          "exp_degree": 8,
+          "intermediate_iterations": null,
+          "exp_bound": 0.5
+        }
+      },
+      {
+        "pre_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "post_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "silu": {
+          "method": "chebyshev",
+          "function": "silu",
+          "coefficients": [
+            0.4058378425657395,
+            0.9999999999999998,
+            0.3787149374031208,
+            -3.0744637605004334e-16,
+            -0.02486449417225911,
+            -3.0744637605004334e-16,
+            0.00206718747643809,
+            -3.416070845000482e-16,
+            -0.0001750023807192136,
+            -3.0744637605004334e-16,
+            1.4854569353222731e-05,
+            3.416070845000482e-16,
+            -1.3665638488847576e-06
+          ],
+          "domain": [
+            -2.0,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "softmax": {
+          "method": "normalize_square",
+          "centered_bound": 0.5,
+          "squarings": 0,
+          "reciprocal_iterations": 6,
+          "max_length": 2,
+          "exp_degree": 8,
+          "intermediate_iterations": null,
+          "exp_bound": 0.5
+        }
+      },
+      {
+        "pre_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "post_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "silu": {
+          "method": "chebyshev",
+          "function": "silu",
+          "coefficients": [
+            0.4058378425657395,
+            0.9999999999999998,
+            0.3787149374031208,
+            -3.0744637605004334e-16,
+            -0.02486449417225911,
+            -3.0744637605004334e-16,
+            0.00206718747643809,
+            -3.416070845000482e-16,
+            -0.0001750023807192136,
+            -3.0744637605004334e-16,
+            1.4854569353222731e-05,
+            3.416070845000482e-16,
+            -1.3665638488847576e-06
+          ],
+          "domain": [
+            -2.0,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "softmax": {
+          "method": "normalize_square",
+          "centered_bound": 0.5,
+          "squarings": 0,
+          "reciprocal_iterations": 6,
+          "max_length": 2,
+          "exp_degree": 8,
+          "intermediate_iterations": null,
+          "exp_bound": 0.5
+        }
+      },
+      {
+        "pre_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "post_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "silu": {
+          "method": "chebyshev",
+          "function": "silu",
+          "coefficients": [
+            0.4058378425657395,
+            0.9999999999999998,
+            0.3787149374031208,
+            -3.0744637605004334e-16,
+            -0.02486449417225911,
+            -3.0744637605004334e-16,
+            0.00206718747643809,
+            -3.416070845000482e-16,
+            -0.0001750023807192136,
+            -3.0744637605004334e-16,
+            1.4854569353222731e-05,
+            3.416070845000482e-16,
+            -1.3665638488847576e-06
+          ],
+          "domain": [
+            -2.0,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "softmax": {
+          "method": "normalize_square",
+          "centered_bound": 0.5,
+          "squarings": 0,
+          "reciprocal_iterations": 6,
+          "max_length": 2,
+          "exp_degree": 8,
+          "intermediate_iterations": null,
+          "exp_bound": 0.5
+        }
+      },
+      {
+        "pre_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "post_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "silu": {
+          "method": "chebyshev",
+          "function": "silu",
+          "coefficients": [
+            0.4058378425657395,
+            0.9999999999999998,
+            0.3787149374031208,
+            -3.0744637605004334e-16,
+            -0.02486449417225911,
+            -3.0744637605004334e-16,
+            0.00206718747643809,
+            -3.416070845000482e-16,
+            -0.0001750023807192136,
+            -3.0744637605004334e-16,
+            1.4854569353222731e-05,
+            3.416070845000482e-16,
+            -1.3665638488847576e-06
+          ],
+          "domain": [
+            -2.0,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "softmax": {
+          "method": "normalize_square",
+          "centered_bound": 0.5,
+          "squarings": 0,
+          "reciprocal_iterations": 6,
+          "max_length": 2,
+          "exp_degree": 8,
+          "intermediate_iterations": null,
+          "exp_bound": 0.5
+        }
+      },
+      {
+        "pre_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "post_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "silu": {
+          "method": "chebyshev",
+          "function": "silu",
+          "coefficients": [
+            0.4058378425657395,
+            0.9999999999999998,
+            0.3787149374031208,
+            -3.0744637605004334e-16,
+            -0.02486449417225911,
+            -3.0744637605004334e-16,
+            0.00206718747643809,
+            -3.416070845000482e-16,
+            -0.0001750023807192136,
+            -3.0744637605004334e-16,
+            1.4854569353222731e-05,
+            3.416070845000482e-16,
+            -1.3665638488847576e-06
+          ],
+          "domain": [
+            -2.0,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "softmax": {
+          "method": "normalize_square",
+          "centered_bound": 0.5,
+          "squarings": 0,
+          "reciprocal_iterations": 6,
+          "max_length": 2,
+          "exp_degree": 8,
+          "intermediate_iterations": null,
+          "exp_bound": 0.5
+        }
+      },
+      {
+        "pre_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "post_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "silu": {
+          "method": "chebyshev",
+          "function": "silu",
+          "coefficients": [
+            0.4058378425657395,
+            0.9999999999999998,
+            0.3787149374031208,
+            -3.0744637605004334e-16,
+            -0.02486449417225911,
+            -3.0744637605004334e-16,
+            0.00206718747643809,
+            -3.416070845000482e-16,
+            -0.0001750023807192136,
+            -3.0744637605004334e-16,
+            1.4854569353222731e-05,
+            3.416070845000482e-16,
+            -1.3665638488847576e-06
+          ],
+          "domain": [
+            -2.0,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "softmax": {
+          "method": "normalize_square",
+          "centered_bound": 0.5,
+          "squarings": 0,
+          "reciprocal_iterations": 6,
+          "max_length": 2,
+          "exp_degree": 8,
+          "intermediate_iterations": null,
+          "exp_bound": 0.5
+        }
+      },
+      {
+        "pre_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "post_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "silu": {
+          "method": "chebyshev",
+          "function": "silu",
+          "coefficients": [
+            0.4058378425657395,
+            0.9999999999999998,
+            0.3787149374031208,
+            -3.0744637605004334e-16,
+            -0.02486449417225911,
+            -3.0744637605004334e-16,
+            0.00206718747643809,
+            -3.416070845000482e-16,
+            -0.0001750023807192136,
+            -3.0744637605004334e-16,
+            1.4854569353222731e-05,
+            3.416070845000482e-16,
+            -1.3665638488847576e-06
+          ],
+          "domain": [
+            -2.0,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "softmax": {
+          "method": "normalize_square",
+          "centered_bound": 0.5,
+          "squarings": 0,
+          "reciprocal_iterations": 6,
+          "max_length": 2,
+          "exp_degree": 8,
+          "intermediate_iterations": null,
+          "exp_bound": 0.5
+        }
+      },
+      {
+        "pre_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "post_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "silu": {
+          "method": "chebyshev",
+          "function": "silu",
+          "coefficients": [
+            0.4058378425657395,
+            0.9999999999999998,
+            0.3787149374031208,
+            -3.0744637605004334e-16,
+            -0.02486449417225911,
+            -3.0744637605004334e-16,
+            0.00206718747643809,
+            -3.416070845000482e-16,
+            -0.0001750023807192136,
+            -3.0744637605004334e-16,
+            1.4854569353222731e-05,
+            3.416070845000482e-16,
+            -1.3665638488847576e-06
+          ],
+          "domain": [
+            -2.0,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "softmax": {
+          "method": "normalize_square",
+          "centered_bound": 0.5,
+          "squarings": 0,
+          "reciprocal_iterations": 6,
+          "max_length": 2,
+          "exp_degree": 8,
+          "intermediate_iterations": null,
+          "exp_bound": 0.5
+        }
+      },
+      {
+        "pre_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "post_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "silu": {
+          "method": "chebyshev",
+          "function": "silu",
+          "coefficients": [
+            0.4058378425657395,
+            0.9999999999999998,
+            0.3787149374031208,
+            -3.0744637605004334e-16,
+            -0.02486449417225911,
+            -3.0744637605004334e-16,
+            0.00206718747643809,
+            -3.416070845000482e-16,
+            -0.0001750023807192136,
+            -3.0744637605004334e-16,
+            1.4854569353222731e-05,
+            3.416070845000482e-16,
+            -1.3665638488847576e-06
+          ],
+          "domain": [
+            -2.0,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "softmax": {
+          "method": "normalize_square",
+          "centered_bound": 0.5,
+          "squarings": 0,
+          "reciprocal_iterations": 6,
+          "max_length": 2,
+          "exp_degree": 8,
+          "intermediate_iterations": null,
+          "exp_bound": 0.5
+        }
+      },
+      {
+        "pre_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "post_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "silu": {
+          "method": "chebyshev",
+          "function": "silu",
+          "coefficients": [
+            0.4058378425657395,
+            0.9999999999999998,
+            0.3787149374031208,
+            -3.0744637605004334e-16,
+            -0.02486449417225911,
+            -3.0744637605004334e-16,
+            0.00206718747643809,
+            -3.416070845000482e-16,
+            -0.0001750023807192136,
+            -3.0744637605004334e-16,
+            1.4854569353222731e-05,
+            3.416070845000482e-16,
+            -1.3665638488847576e-06
+          ],
+          "domain": [
+            -2.0,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "softmax": {
+          "method": "normalize_square",
+          "centered_bound": 0.5,
+          "squarings": 0,
+          "reciprocal_iterations": 6,
+          "max_length": 2,
+          "exp_degree": 8,
+          "intermediate_iterations": null,
+          "exp_bound": 0.5
+        }
+      },
+      {
+        "pre_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "post_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "silu": {
+          "method": "chebyshev",
+          "function": "silu",
+          "coefficients": [
+            0.4058378425657395,
+            0.9999999999999998,
+            0.3787149374031208,
+            -3.0744637605004334e-16,
+            -0.02486449417225911,
+            -3.0744637605004334e-16,
+            0.00206718747643809,
+            -3.416070845000482e-16,
+            -0.0001750023807192136,
+            -3.0744637605004334e-16,
+            1.4854569353222731e-05,
+            3.416070845000482e-16,
+            -1.3665638488847576e-06
+          ],
+          "domain": [
+            -2.0,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "softmax": {
+          "method": "normalize_square",
+          "centered_bound": 0.5,
+          "squarings": 0,
+          "reciprocal_iterations": 6,
+          "max_length": 2,
+          "exp_degree": 8,
+          "intermediate_iterations": null,
+          "exp_bound": 0.5
+        }
+      },
+      {
+        "pre_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "post_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "silu": {
+          "method": "chebyshev",
+          "function": "silu",
+          "coefficients": [
+            0.4058378425657395,
+            0.9999999999999998,
+            0.3787149374031208,
+            -3.0744637605004334e-16,
+            -0.02486449417225911,
+            -3.0744637605004334e-16,
+            0.00206718747643809,
+            -3.416070845000482e-16,
+            -0.0001750023807192136,
+            -3.0744637605004334e-16,
+            1.4854569353222731e-05,
+            3.416070845000482e-16,
+            -1.3665638488847576e-06
+          ],
+          "domain": [
+            -2.0,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "softmax": {
+          "method": "normalize_square",
+          "centered_bound": 0.5,
+          "squarings": 0,
+          "reciprocal_iterations": 6,
+          "max_length": 2,
+          "exp_degree": 8,
+          "intermediate_iterations": null,
+          "exp_bound": 0.5
+        }
+      },
+      {
+        "pre_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "post_norm": {
+          "method": "chebyshev",
+          "function": "rsqrt",
+          "coefficients": [
+            0.970773111745931,
+            -0.32835436875231444,
+            0.08249430050762926,
+            -0.022972180101814378,
+            0.006710299927208311,
+            -0.002015118961649879,
+            0.0006161756936946539,
+            -0.00019082453175583563,
+            5.9657330940573375e-05,
+            -1.878550742598991e-05,
+            5.9445754776369464e-06,
+            -1.8738640847252382e-06,
+            5.427726382213082e-07
+          ],
+          "domain": [
+            0.5,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "silu": {
+          "method": "chebyshev",
+          "function": "silu",
+          "coefficients": [
+            0.4058378425657395,
+            0.9999999999999998,
+            0.3787149374031208,
+            -3.0744637605004334e-16,
+            -0.02486449417225911,
+            -3.0744637605004334e-16,
+            0.00206718747643809,
+            -3.416070845000482e-16,
+            -0.0001750023807192136,
+            -3.0744637605004334e-16,
+            1.4854569353222731e-05,
+            3.416070845000482e-16,
+            -1.3665638488847576e-06
+          ],
+          "domain": [
+            -2.0,
+            2.0
+          ],
+          "evaluation": "blocked",
+          "block_size": 8
+        },
+        "softmax": {
+          "method": "normalize_square",
+          "centered_bound": 0.5,
+          "squarings": 0,
+          "reciprocal_iterations": 6,
+          "max_length": 2,
+          "exp_degree": 8,
+          "intermediate_iterations": null,
+          "exp_bound": 0.5
+        }
+      }
+    ],
+    "final_norm": {
+      "method": "chebyshev",
+      "function": "rsqrt",
+      "coefficients": [
+        0.970773111745931,
+        -0.32835436875231444,
+        0.08249430050762926,
+        -0.022972180101814378,
+        0.006710299927208311,
+        -0.002015118961649879,
+        0.0006161756936946539,
+        -0.00019082453175583563,
+        5.9657330940573375e-05,
+        -1.878550742598991e-05,
+        5.9445754776369464e-06,
+        -1.8738640847252382e-06,
+        5.427726382213082e-07
+      ],
+      "domain": [
+        0.5,
+        2.0
+      ],
+      "evaluation": "blocked",
+      "block_size": 8
+    }
+  }
+}

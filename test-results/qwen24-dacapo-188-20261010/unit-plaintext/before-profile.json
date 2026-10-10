@@ -1,0 +1,146 @@
+{
+  "counts": {
+    "prefix_mask": 11,
+    "full_slot": 1365344,
+    "full_unit_mul_cp": 1365342,
+    "full_unit_after_single_use_mul_cp": 1334611
+  },
+  "full_unit_encoded_rns_gpu_bytes": 11846244368384,
+  "distinct_unit_types": 19,
+  "histogram": [
+    {
+      "kind": "full_slot",
+      "payload_slots": 32768,
+      "scale_log2": 40,
+      "level": 27,
+      "count": 1
+    },
+    {
+      "kind": "full_slot",
+      "payload_slots": 32768,
+      "scale_log2": 40,
+      "level": 31,
+      "count": 1555
+    },
+    {
+      "kind": "full_slot",
+      "payload_slots": 32768,
+      "scale_log2": 40,
+      "level": 35,
+      "count": 545
+    },
+    {
+      "kind": "full_slot",
+      "payload_slots": 32768,
+      "scale_log2": 40,
+      "level": 39,
+      "count": 8879
+    },
+    {
+      "kind": "full_slot",
+      "payload_slots": 32768,
+      "scale_log2": 80,
+      "level": 27,
+      "count": 10835
+    },
+    {
+      "kind": "full_slot",
+      "payload_slots": 32768,
+      "scale_log2": 80,
+      "level": 31,
+      "count": 976291
+    },
+    {
+      "kind": "full_slot",
+      "payload_slots": 32768,
+      "scale_log2": 80,
+      "level": 35,
+      "count": 367236
+    },
+    {
+      "kind": "full_slot",
+      "payload_slots": 32768,
+      "scale_log2": 80,
+      "level": 39,
+      "count": 2
+    },
+    {
+      "kind": "prefix_mask",
+      "payload_slots": 1,
+      "scale_log2": 40,
+      "level": 31,
+      "count": 1
+    },
+    {
+      "kind": "prefix_mask",
+      "payload_slots": 1,
+      "scale_log2": 40,
+      "level": 35,
+      "count": 1
+    },
+    {
+      "kind": "prefix_mask",
+      "payload_slots": 2,
+      "scale_log2": 40,
+      "level": 31,
+      "count": 1
+    },
+    {
+      "kind": "prefix_mask",
+      "payload_slots": 2,
+      "scale_log2": 40,
+      "level": 35,
+      "count": 1
+    },
+    {
+      "kind": "prefix_mask",
+      "payload_slots": 64,
+      "scale_log2": 40,
+      "level": 31,
+      "count": 1
+    },
+    {
+      "kind": "prefix_mask",
+      "payload_slots": 64,
+      "scale_log2": 40,
+      "level": 35,
+      "count": 1
+    },
+    {
+      "kind": "prefix_mask",
+      "payload_slots": 128,
+      "scale_log2": 40,
+      "level": 31,
+      "count": 1
+    },
+    {
+      "kind": "prefix_mask",
+      "payload_slots": 896,
+      "scale_log2": 40,
+      "level": 31,
+      "count": 1
+    },
+    {
+      "kind": "prefix_mask",
+      "payload_slots": 896,
+      "scale_log2": 40,
+      "level": 35,
+      "count": 1
+    },
+    {
+      "kind": "prefix_mask",
+      "payload_slots": 4864,
+      "scale_log2": 40,
+      "level": 31,
+      "count": 1
+    },
+    {
+      "kind": "prefix_mask",
+      "payload_slots": 4864,
+      "scale_log2": 40,
+      "level": 35,
+      "count": 1
+    }
+  ],
+  "seconds": 68.86222453974187
+}

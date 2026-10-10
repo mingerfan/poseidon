@@ -1,0 +1,17 @@
+{
+  "devices": 4,
+  "returncode": 0,
+  "elapsed_seconds": 941.3825634722598,
+  "user_seconds": 988.895208,
+  "system_seconds": 202.504456,
+  "max_rss_MiB": 45378.515625,
+  "command": [
+    "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/ld-linux-x86-64.so.2",
+    "--library-path",
+    "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib:/opt/conda/lib:/lib/x86_64-linux-gnu",
+    "/opt/conda/bin/python",
+    "/tmp/poseidon-qwen24-IUOMH1/validate_gpu_plans.py",
+    "--devices",
+    "4"
+  ]
+}

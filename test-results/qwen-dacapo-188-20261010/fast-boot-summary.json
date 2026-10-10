@@ -1,0 +1,379 @@
+{
+  "format": "qwen-dacapo-fast-boot-corrected-v1",
+  "host": "188Server / HPU-001",
+  "experiment_root": "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1",
+  "scope": "Actual-dimension Qwen two-token one-decoder-block prefill, synthetic fixture weights",
+  "compiler_profile": "N=65536, slots=32768, rescale factor=120, waterline=40, logical boot bounds=[1,4]",
+  "frontend": {
+    "stage": "block_fixed2_frontend",
+    "returncode": 0,
+    "elapsed_seconds": 126.1781842240598,
+    "user_seconds": 119.137074,
+    "system_seconds": 6.765436,
+    "max_rss_MiB": 846.97265625,
+    "limits": {
+      "cpu_seconds": 360,
+      "address_space_GiB": 64
+    },
+    "stop_reason": null,
+    "command": [
+      "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/ld-linux-x86-64.so.2",
+      "--library-path",
+      "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib:/opt/conda/lib:/lib/x86_64-linux-gnu",
+      "/opt/conda/bin/python",
+      "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/llm_dsl/Qwen25_2Token_Block_DSL/trace_qwen_block.py",
+      "--mode",
+      "prefill",
+      "--weights",
+      "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/artifacts/fixture/weights.npz",
+      "--output-dir",
+      "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/artifacts/block-prefill-fixed2"
+    ]
+  },
+  "source": {
+    "source": "artifacts/block-prefill-fixed2/trace_qwen_block.mlir",
+    "bytes": 2086266234,
+    "sha256": "sha256:cf4ed1490872b834c93fc53f950f3481a5130cf48325c41e0f9862bc7a77eb35",
+    "lines": 165175,
+    "earth_op_counts": {
+      "earth.mul": 44909,
+      "earth.constant": 44704,
+      "earth.rotate": 30318,
+      "earth.add": 45238
+    },
+    "total_earth_ops": 165169,
+    "frontend_slot_capacity_guard": true,
+    "diagnostic_mlir_constants_elided": true,
+    "runtime_plan_and_bundle_payloads_complete": true,
+    "files": [
+      {
+        "path": "artifacts/block-prefill.depth-dp-fixed.mlir",
+        "bytes": 41887430
+      },
+      {
+        "path": "artifacts/q-projection.depth-dp-fixed.mlir",
+        "bytes": 1700210
+      },
+      {
+        "path": "artifacts/rmsnorm.depth-dp-fixed.mlir",
+        "bytes": 43612
+      },
+      {
+        "path": "artifacts/block-prefill.depth-dp-fixed._hecate_qwen_block_2tokens.runtime-plan.json",
+        "bytes": 164212663,
+        "bundle": "artifacts/block-prefill.depth-dp-fixed._hecate_qwen_block_2tokens.bundle",
+        "bundle_blobs": 20911,
+        "bundle_bytes": 526513152
+      },
+      {
+        "path": "artifacts/q-projection.depth-dp-fixed._hecate_qwen_q_projection.runtime-plan.json",
+        "bytes": 6432252,
+        "bundle": "artifacts/q-projection.depth-dp-fixed._hecate_qwen_q_projection.bundle",
+        "bundle_blobs": 1793,
+        "bundle_bytes": 13107200
+      },
+      {
+        "path": "artifacts/rmsnorm.depth-dp-fixed._hecate_qwen_rmsnorm.runtime-plan.json",
+        "bytes": 172066,
+        "bundle": "artifacts/rmsnorm.depth-dp-fixed._hecate_qwen_rmsnorm.bundle",
+        "bundle_blobs": 22,
+        "bundle_bytes": 5257216
+      },
+      {
+        "path": "artifacts/block-prefill.lazy-fixed.mlir",
+        "bytes": 42218958
+      },
+      {
+        "path": "artifacts/q-projection.lazy-fixed.mlir",
+        "bytes": 1700210
+      },
+      {
+        "path": "artifacts/rmsnorm.lazy-fixed.mlir",
+        "bytes": 37871
+      },
+      {
+        "path": "artifacts/block-prefill.lazy-fixed._hecate_qwen_block_2tokens.runtime-plan.json",
+        "bytes": 166396778,
+        "bundle": "artifacts/block-prefill.lazy-fixed._hecate_qwen_block_2tokens.bundle",
+        "bundle_blobs": 20911,
+        "bundle_bytes": 526513152
+      },
+      {
+        "path": "artifacts/q-projection.lazy-fixed._hecate_qwen_q_projection.runtime-plan.json",
+        "bytes": 6432252,
+        "bundle": "artifacts/q-projection.lazy-fixed._hecate_qwen_q_projection.bundle",
+        "bundle_blobs": 1793,
+        "bundle_bytes": 13107200
+      },
+      {
+        "path": "artifacts/rmsnorm.lazy-fixed._hecate_qwen_rmsnorm.runtime-plan.json",
+        "bytes": 147759,
+        "bundle": "artifacts/rmsnorm.lazy-fixed._hecate_qwen_rmsnorm.bundle",
+        "bundle_blobs": 22,
+        "bundle_bytes": 5257216
+      }
+    ]
+  },
+  "provenance": {
+    "base_dacapo_commit": "06bdd08b83676351186f6982b79921994298e51a",
+    "working_tree_modified": true,
+    "compiler_sha256": "284856906d996a32f8c9209f6215c75458d844355e039617a82e51756b6db7c6",
+    "sources": {
+      "README.md": "c5a1813432114f51238a545ec31ebab65c940f0a1388d717e2e9a071ad61c4d7",
+      "include/hecate/Dialect/Earth/Transforms/Passes.td": "17a35e802917197763d5a777f54d2cc75cdb80ba8c6462cf8683ae888b346689",
+      "include/hecate/Dialect/Earth/IR/EarthCanonicalizer.td": "3c611acebd8fba06cf53c22a64408bbcc419430275b820667ce6f8fb40abb8c8",
+      "lib/Dialect/CKKS/Transforms/EmitRuntimePlan.cpp": "1173c359f830d936eb1b60d2574d16442c1777bb72df7a7d04cd97831a118047",
+      "lib/Dialect/Earth/Transforms/GreedyBootstrapPlacement.cpp": "1afd105cf3085fb77322872e2f2b7b547d21aea7aba55442dba582101d9cb3c3",
+      "lib/Dialect/Earth/Transforms/CMakeLists.txt": "670e6b65caa9defa8598374b5f341b748ab0379fb57833d95fa2e38a739087f6",
+      "tools/optimizer.cpp": "6485604435fe1f946fcd3b21bb28fcd78f791dd7519baf7f9c92eb638b96ad43",
+      "test/CMakeLists.txt": "ed91ae47fd55c71e470598b0163f7cdef8dbe1576c434649e0ef3a6818aff403",
+      "test/runtime-plan/check-greedy.py": "12929d2ca15c61846eb38e06724064577b4896c7e96b11fc853c11d644bd1f02"
+    },
+    "fhelipe_source_revision": "891b3086bf6a144deebac79290801253b9cc510c",
+    "fhelipe_source_files": [
+      "backend/src/dp_bootstrapping_pass.cc",
+      "backend/src/dag_depth_info.cc"
+    ],
+    "method": "Independent Earth adaptation of depth-boundary DP, with early Add reductions and deferred unary fanout; conservative shortcut skipping; eager per-Mul rescale. Not a complete Fhelipe port.",
+    "consulted_papers": [
+      {
+        "title": "Fhelipe",
+        "doi": "10.1145/3656382",
+        "url": "https://dspace.mit.edu/entities/publication/2cef6b74-b0eb-4b5b-abd1-16d59b12380e"
+      },
+      {
+        "title": "ReSBM",
+        "doi": "10.1145/3669940.3707276",
+        "url": "https://pacman.cs.tsinghua.edu.cn/~cwg/publication/10-1145-3669940-3707276/10-1145-3669940-3707276.pdf"
+      },
+      {
+        "title": "Orion",
+        "doi": "10.1145/3676641.3716008",
+        "url": "https://arxiv.org/abs/2311.03470"
+      }
+    ],
+    "frontend_sha256": "cfeb92a30bef7553143d66ced30ab9a8d1873d8f0f3281d657a5618b28cc9841",
+    "frontend_rebuilt": true,
+    "canonicalizer_fix": "Retain zero-padded prefix masks; full-slot units preserve encoding scale via Upscale. The old frontend exported an already corrupted graph; old numerical validation failed.",
+    "raw_frontend_slot_capacity_guard": true,
+    "integration_script_sha256": "3aa286901634b375a71186bad0d8db66a89dc249dcbd3018ab4502cde0bfba3f"
+  },
+  "methods": {
+    "depth-dp": {
+      "compiler_instrumented_seconds_including_parse_and_export": 25.9041,
+      "supervisor_wall_seconds": 27.041828613961115,
+      "supervisor_poll_interval_seconds": 3,
+      "placement_pass_seconds": 0.7,
+      "peak_rss_MiB": 3671.234375,
+      "bootstrap_boundaries": 34,
+      "boot_count": 448,
+      "execution_steps": 218349,
+      "full_block_validation": {
+        "plan": "artifacts/block-prefill.depth-dp-fixed._hecate_qwen_block_2tokens.runtime-plan.json",
+        "plan_bytes": 164212663,
+        "plan_sha256": "sha256:35a28b806ed108df7d5aa3411c42d923c43afe54e741b796ea38814b9098fdae",
+        "value_count": 300442,
+        "execution_steps": 218349,
+        "op_counts": {
+          "mul_cc": 366,
+          "relinearize": 366,
+          "mul_cp": 90312,
+          "rescale": 45339,
+          "rotate": 30318,
+          "add_cc": 45077,
+          "add_cp": 161,
+          "boot": 448,
+          "mod_switch": 5956,
+          "negate": 6
+        },
+        "bundle_blobs": 20911,
+        "bundle_bytes": 526513152,
+        "hashes_verified": true,
+        "topology_verified": true,
+        "physical_metadata_verified": true,
+        "encrypted_execution_tested": false,
+        "decoded_numpy_execution_verified": true,
+        "reference_max_absolute_difference": 0.0,
+        "tail_max_absolute": 0.0,
+        "note": "Ideal decoded arithmetic only; no CKKS noise or encrypted Boot is simulated",
+        "validation_seconds": 20.170058540068567
+      },
+      "component_checks": [
+        {
+          "plan": "artifacts/q-projection.depth-dp-fixed._hecate_qwen_q_projection.runtime-plan.json",
+          "plan_bytes": 6432252,
+          "plan_sha256": "sha256:28ef587966aa2d6dc9ca4f70c6e6c9a13b1c84a1584a792e02a2363c6b55a8c3",
+          "value_count": 12539,
+          "execution_steps": 8955,
+          "op_counts": {
+            "mod_switch": 1,
+            "rotate": 1790,
+            "mul_cp": 3582,
+            "rescale": 1791,
+            "add_cc": 1790,
+            "add_cp": 1
+          },
+          "bundle_blobs": 1793,
+          "bundle_bytes": 13107200,
+          "hashes_verified": true,
+          "topology_verified": true,
+          "physical_metadata_verified": true,
+          "encrypted_execution_tested": false,
+          "validation_seconds": 0.25945710483938456
+        },
+        {
+          "plan": "artifacts/rmsnorm.depth-dp-fixed._hecate_qwen_rmsnorm.runtime-plan.json",
+          "plan_bytes": 172066,
+          "plan_sha256": "sha256:c2a9236571d94b7ba7ebcfe0991dacae8fe0033b1d17c7aac768656942797c64",
+          "value_count": 332,
+          "execution_steps": 242,
+          "op_counts": {
+            "mul_cc": 10,
+            "relinearize": 10,
+            "mul_cp": 90,
+            "rescale": 50,
+            "rotate": 15,
+            "add_cc": 28,
+            "add_cp": 8,
+            "boot": 17,
+            "mod_switch": 13,
+            "negate": 1
+          },
+          "bundle_blobs": 22,
+          "bundle_bytes": 5257216,
+          "hashes_verified": true,
+          "topology_verified": true,
+          "physical_metadata_verified": true,
+          "encrypted_execution_tested": false,
+          "validation_seconds": 0.020207096124067903
+        }
+      ],
+      "report": "artifacts/depth-dp-fixed-report.json"
+    },
+    "greedy": {
+      "compiler_instrumented_seconds_including_parse_and_export": 26.6142,
+      "supervisor_wall_seconds": 27.117363792145625,
+      "supervisor_poll_interval_seconds": 3,
+      "placement_pass_seconds": 0.6847,
+      "peak_rss_MiB": 3680.984375,
+      "bootstrap_boundaries": 4054,
+      "boot_count": 4084,
+      "execution_steps": 227090,
+      "full_block_validation": {
+        "plan": "artifacts/block-prefill.lazy-fixed._hecate_qwen_block_2tokens.runtime-plan.json",
+        "plan_bytes": 166396778,
+        "plan_sha256": "sha256:471f12e5ec08562d683e1f42655f55dddee3891e0060aff5beb22ccc582abaee",
+        "value_count": 303131,
+        "execution_steps": 227090,
+        "op_counts": {
+          "mul_cc": 366,
+          "relinearize": 366,
+          "mul_cp": 97584,
+          "rescale": 48975,
+          "rotate": 30318,
+          "add_cc": 45077,
+          "add_cp": 161,
+          "boot": 4084,
+          "mod_switch": 153,
+          "negate": 6
+        },
+        "bundle_blobs": 20911,
+        "bundle_bytes": 526513152,
+        "hashes_verified": true,
+        "topology_verified": true,
+        "physical_metadata_verified": true,
+        "encrypted_execution_tested": false,
+        "decoded_numpy_execution_verified": true,
+        "reference_max_absolute_difference": 0.0,
+        "tail_max_absolute": 0.0,
+        "note": "Ideal decoded arithmetic only; no CKKS noise or encrypted Boot is simulated",
+        "validation_seconds": 19.51737787015736
+      },
+      "component_checks": [
+        {
+          "plan": "artifacts/q-projection.lazy-fixed._hecate_qwen_q_projection.runtime-plan.json",
+          "plan_bytes": 6432252,
+          "plan_sha256": "sha256:28ef587966aa2d6dc9ca4f70c6e6c9a13b1c84a1584a792e02a2363c6b55a8c3",
+          "value_count": 12539,
+          "execution_steps": 8955,
+          "op_counts": {
+            "mod_switch": 1,
+            "rotate": 1790,
+            "mul_cp": 3582,
+            "rescale": 1791,
+            "add_cc": 1790,
+            "add_cp": 1
+          },
+          "bundle_blobs": 1793,
+          "bundle_bytes": 13107200,
+          "hashes_verified": true,
+          "topology_verified": true,
+          "physical_metadata_verified": true,
+          "encrypted_execution_tested": false,
+          "validation_seconds": 0.2578196751419455
+        },
+        {
+          "plan": "artifacts/rmsnorm.lazy-fixed._hecate_qwen_rmsnorm.runtime-plan.json",
+          "plan_bytes": 147759,
+          "plan_sha256": "sha256:3b6cdbbe3490d417f6315108db352ab308d84b6652440142c16a068785c8a66e",
+          "value_count": 287,
+          "execution_steps": 211,
+          "op_counts": {
+            "mul_cc": 10,
+            "relinearize": 10,
+            "mul_cp": 76,
+            "rescale": 43,
+            "rotate": 15,
+            "add_cc": 28,
+            "add_cp": 8,
+            "boot": 10,
+            "mod_switch": 10,
+            "negate": 1
+          },
+          "bundle_blobs": 22,
+          "bundle_bytes": 5257216,
+          "hashes_verified": true,
+          "topology_verified": true,
+          "physical_metadata_verified": true,
+          "encrypted_execution_tested": false,
+          "validation_seconds": 0.019768094178289175
+        }
+      ],
+      "report": "artifacts/lazy-fixed-report.json"
+    }
+  },
+  "boot_count_reduction_percent": 89.03036238981392,
+  "tests": {
+    "ctest_passed": 3,
+    "ctest_total": 3,
+    "log": "artifacts/fast-compiler-ctest.log"
+  },
+  "correctness_fix": {
+    "prefix_units_are_zero_padded_masks": true,
+    "full_slot_unit_folds_preserve_encoding_scale": true,
+    "frontend_cannot_assume_selected_runtime_slot_capacity": true,
+    "compiler_and_frontend_rebuilt": true,
+    "native_source_retraced": true,
+    "pre_fix_traces_and_plans_valid_for_numerics": false
+  },
+  "temporary_cache": {
+    "local_allocated_bytes": {
+      "/tmp/poseidon-boot-placement": 3497984,
+      "/tmp/qwen188-stage-r7d_vesp": 1093632
+    },
+    "local_total_MiB": 4.37890625,
+    "remote_path": "/tmp/poseidon-boot-placement-IUOMH1",
+    "remote_allocated_KiB": 64,
+    "large_model_artifacts_in_tmp": false
+  },
+  "limits": [
+    "Depth-boundary conservative cost model; not a complete Fhelipe port or arbitrary-DAG optimum",
+    "Per-Mul eager rescale can increase Boot count relative to DaCapo's latency-aware planning",
+    "DP does not improve every graph: standalone RMSNorm uses 17 Boots versus lazy greedy's 10",
+    "Decoded NumPy interpreter treats Boot/rescale/modswitch/relinearize as identities; no encrypted CKKS noise check",
+    "Selected runtime profile uses host decrypt_reencrypt Boot; no real encrypted GPU Boot execution",
+    "Full 24-layer model compilation and runtime memory requirements are untested"
+  ],
+  "remote_full_plan": "artifacts/block-prefill.depth-dp-fixed._hecate_qwen_block_2tokens.runtime-plan.json",
+  "local_component_artifacts": "artifacts/{rmsnorm,q-projection}.depth-dp-fixed.*"
+}

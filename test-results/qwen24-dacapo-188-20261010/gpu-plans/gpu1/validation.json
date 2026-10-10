@@ -1,0 +1,60 @@
+{
+  "devices": 1,
+  "plan": "artifacts/qwen24-gpu-memory/gpu1/qwen24._hecate_qwen25_24layer.runtime-plan.json",
+  "format_version": 2,
+  "plan_sha256": "sha256:73f14829dc5c1828c6f143957af595295ae44b257a5068757ffcbd68de766c02",
+  "plan_bytes": 7965322721,
+  "value_count": 11016147,
+  "instruction_counts": {
+    "transfer": 2406535,
+    "release": 11013412,
+    "encode": 2384863,
+    "compute": 6224747,
+    "reuse_input": 2490
+  },
+  "op_counts": {
+    "mul_cc": 8775,
+    "relinearize": 8775,
+    "mul_cp": 2699953,
+    "rescale": 1354364,
+    "rotate": 716207,
+    "add_cc": 1347874,
+    "add_cp": 3858,
+    "boot": 10835,
+    "mod_switch": 73963,
+    "negate": 143
+  },
+  "input_ciphertexts": 2,
+  "output_ciphertexts": 245,
+  "semantic_sha256": "sha256:aabcb028744c99d22024ff4eb980455f6331fa7a45c8fd5faae58b20f831693b",
+  "matches_complete_host_graph": true,
+  "hashes_verified": true,
+  "topology_verified": true,
+  "physical_metadata_verified": true,
+  "release_reuse_verified": true,
+  "memory_report_independently_verified": true,
+  "bundle_blobs": 784750,
+  "bundle_bytes": 14701969408,
+  "object_memory": [
+    {
+      "place_index": -1,
+      "peak_bytes": 1916796928,
+      "plaintext_peak_bytes": 20971520,
+      "ciphertext_peak_bytes": 1916796928
+    },
+    {
+      "place_index": 0,
+      "peak_bytes": 20690982928384,
+      "plaintext_peak_bytes": 20686791770112,
+      "ciphertext_peak_bytes": 207114731520
+    }
+  ],
+  "aggregate_gpu_peak": {
+    "bytes": 20690982928384,
+    "instruction_ordinal": 7156151,
+    "plaintext_bytes": 20685551304704,
+    "ciphertext_bytes": 5431623680
+  },
+  "runtime_execution_tested": false,
+  "seconds": 571.8830710449256
+}

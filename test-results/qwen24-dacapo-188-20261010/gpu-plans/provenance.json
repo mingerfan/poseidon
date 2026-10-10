@@ -1,0 +1,44 @@
+{
+  "compiler_sha256": "f581c6341e80f7ab71392550d1279294fcdf1dc12c9991f2e85b7bcccc233ad3",
+  "sources": {
+    "lib/Dialect/CKKS/Transforms/AssignPlacement.cpp": "6c0738775b77e3131376e8c49467f8dc6f4b8fa5aef666c81d08e3eb28ae5e46",
+    "lib/Dialect/CKKS/Transforms/PlanRuntimeMemory.cpp": "b080130254861eeddf6e2644a9f2b73fc073b29ef5134b3d1e20eb8980f6b93a",
+    "lib/Dialect/CKKS/Transforms/EstimateRuntimeMemory.cpp": "56282e2134d7f8cb57d2861cbdf07af2a6e07ad9caa79e9659840395b51ab956",
+    "test/runtime-plan/check-runtime-scale.py": "7ec3277b08978ea1f8415e75b40be75bf190080ddd50e2b176a0f85ad7b94982",
+    "test/CMakeLists.txt": "b8efa4f5a835a34eb783ceb39129fb9175db36c326bdeb721e6d93cc0ebdedfa"
+  },
+  "base_dacapo_commit": "06bdd08b83676351186f6982b79921994298e51a",
+  "ctest_passed": 6,
+  "reference_small_plan_comparisons": 16,
+  "full_scope": "24 blocks, final RMSNorm, full vocabulary LM head, synthetic weights, 2-token prefill",
+  "placement_devices": [
+    1,
+    4
+  ],
+  "boot_strategy": "depth-dp",
+  "boot_implementation": "host decrypt_reencrypt",
+  "release_enabled": true,
+  "reuse_enabled": true,
+  "memory_estimate_excludes": [
+    "keys",
+    "parameter tables",
+    "Rotate and Boot workspaces",
+    "communication staging",
+    "encoding caches",
+    "allocator alignment and reserved pool memory",
+    "object metadata"
+  ],
+  "memory_assumption": "Each instruction completes before the next; external inputs are held by the caller throughout the run.",
+  "reference_small_memory_reports_equal": true,
+  "lossless_native_source_sha256": "sha256:41e31a6a237901d88aba26631b850010dea89b0ec4bf2894f7f293d8baa56e6c",
+  "lossless_native_source_bytes": 14821237862,
+  "parent_native_compilation_provenance": "../provenance.json",
+  "operator_spec_sha256": "1f12fb5f6a7228e7373ada0d96d5115d190533a887f801a6928ba4ae14c193ff",
+  "communication_profile_sha256": "a7abb07495f547e19b9722b7753cadc34a2447a861ff616aa7c55f76162d1fcc",
+  "orchestration_and_validation_scripts": {
+    "run_parallel.py": "bd46d7caeb28fb216e713508607e988881e7ec8aebfb0bd3110c8dfe3603fa12",
+    "run_validation.py": "ce14874c846bd6f932252cac02c4d57a29be5b003d3dce6fc7fe940f65491d4f",
+    "validate.py": "785f744225a3bd6d8c3da83f7be921e603ba96088efefcfa7b47faaf2af882a0",
+    "summarize.py": "058bbcb247541f157690b9d5ddd242753c14347e4f9fac1dab9309a8cf616b77"
+  }
+}

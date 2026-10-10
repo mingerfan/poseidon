@@ -1,0 +1,115 @@
+{
+  "seed": 20260922,
+  "positions": [
+    7,
+    8
+  ],
+  "numpy_version": "2.2.6",
+  "synthetic_weights": true,
+  "input_shape": [
+    2,
+    896
+  ],
+  "physical_slot_shape": [
+    2,
+    32768
+  ],
+  "input_tail_probe": [
+    0.3,
+    -0.2
+  ],
+  "input_sha256": "bfa959e790de228e41c22e6a7954b981e4be722e995b7951c59deb154c8c6cb8",
+  "reference_sha256": "d9b70982b32633b0761b511423d8bf2d37546ff051b7e83ec949a29ed7dc97cc",
+  "weight_arrays": {
+    "final_normal.weight": {
+      "shape": [
+        896
+      ],
+      "sha256": "df1f40695081a7e4ddff3e893636694137ef0334c3fa5ffc32753efe92e5ba44"
+    },
+    "model_list.0.pre_Normal.weight": {
+      "shape": [
+        896
+      ],
+      "sha256": "ba8a27e24e11052593af53203e04735db9b109d5f2ea44e696c2227ec1d65f93"
+    },
+    "model_list.0.post_Normal.weight": {
+      "shape": [
+        896
+      ],
+      "sha256": "666ebab054400fb765e30379c4ae4a73527c11b6d560f661ba5c369e2267520b"
+    },
+    "model_list.0.attention.q_weight.weight": {
+      "shape": [
+        896,
+        896
+      ],
+      "sha256": "f2936c076ea12108b72861c999adf0530c0f36f5e9909e3c77eb0ef2cfb0e169"
+    },
+    "model_list.0.attention.q_weight.bias": {
+      "shape": [
+        896
+      ],
+      "sha256": "e246bd38fec7c5faa07ace1878663a90b12995c7aa003dae8ce1d62bddef5d56"
+    },
+    "model_list.0.attention.k_weight.weight": {
+      "shape": [
+        128,
+        896
+      ],
+      "sha256": "c41635ffb4887d8318b4ba83bf2f56c8a7d62bda5afb3eb954e2eea36956d2c6"
+    },
+    "model_list.0.attention.k_weight.bias": {
+      "shape": [
+        128
+      ],
+      "sha256": "f701da5f1498e2f7cb457edd1380b8c0b66e36397789e5a9471e85d7bfa5755c"
+    },
+    "model_list.0.attention.v_weight.weight": {
+      "shape": [
+        128,
+        896
+      ],
+      "sha256": "c378ebaed85958bea75179a24e72ea8e5a509ec2521edbb17da048731e81af7c"
+    },
+    "model_list.0.attention.v_weight.bias": {
+      "shape": [
+        128
+      ],
+      "sha256": "fb1bac4876fbcf37b6d76d271d37b15884177696abe679976e246a8f2a8e5bed"
+    },
+    "model_list.0.attention.o_weight.weight": {
+      "shape": [
+        896,
+        896
+      ],
+      "sha256": "9f2a06dd70b2d0160fce9789fd72451029d9b38055c9645189c60c76fcf59e27"
+    },
+    "model_list.0.mlplayer.gate_proj.weight": {
+      "shape": [
+        4864,
+        896
+      ],
+      "sha256": "0253dc5471badd2c527510943264215e51fb9d1ef698a416f57f0b04ff80f84e"
+    },
+    "model_list.0.mlplayer.up_proj.weight": {
+      "shape": [
+        4864,
+        896
+      ],
+      "sha256": "5d5462852902852df709b0ae042fcf6e7b4579e1a49a3e076fbaa72dc0ec6eb3"
+    },
+    "model_list.0.mlplayer.down_proj.weight": {
+      "shape": [
+        896,
+        4864
+      ],
+      "sha256": "e8f879615eb4d8dc98e736ced32267b355065637faf957f53dbfe3cf28f4213f"
+    }
+  },
+  "bounds": {
+    "observed_centered_bound": 0.03760949183853861,
+    "observed_gate_abs_max": 0.5954980732893501
+  },
+  "reference_difference_from_frozen": 0.0
+}

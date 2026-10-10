@@ -1,0 +1,38 @@
+runtime memory _hecate_qwen25_24layer rank=0 device=-1 peak=1.759900e+07 MiB
+runtime memory _hecate_qwen25_24layer rank=0 device=0 peak=8.434453e+07 MiB
+runtime memory _hecate_qwen25_24layer rank=0 device=-1 peak=1.828000e+03 MiB
+runtime memory _hecate_qwen25_24layer rank=0 device=0 peak=8.470954e+06 MiB
+===-------------------------------------------------------------------------===
+                         ... Execution time report ...
+===-------------------------------------------------------------------------===
+  Total Execution Time: 970.6060 seconds
+
+  ----Wall Time----  ----Name----
+   27.7139 (  2.9%)  Parser
+   40.2612 (  4.1%)  'func.func' Pipeline
+    4.4097 (  0.5%)    RemoveBootstrap
+   26.7300 (  2.8%)    GreedyBootstrapPlacement
+    9.1214 (  0.9%)    EarlyModswitch
+   27.9324 (  2.9%)  Canonicalizer
+   16.2414 (  1.7%)  CSE
+    0.0000 (  0.0%)    (A) DominanceInfo
+    9.7669 (  1.0%)  CSE
+   13.2763 (  1.4%)  Canonicalizer
+  740.8708 ( 76.3%)  'func.func' Pipeline
+   24.5131 (  2.5%)    EarthToCKKSConversion
+    6.4127 (  0.7%)    UpscaleToMulcpConversion
+    7.1332 (  0.7%)    CSE
+    0.0000 (  0.0%)      (A) DominanceInfo
+    9.1446 (  0.9%)    Canonicalizer
+    7.2182 (  0.7%)    MaterializePhysicalLevels
+   81.0879 (  8.4%)    AssignPlacement
+   25.9567 (  2.7%)    MaterializeCommunication
+   46.1185 (  4.8%)    EstimateRuntimeMemory
+   59.2792 (  6.1%)    PlanRuntimeMemory
+   48.3275 (  5.0%)    EstimateRuntimeMemory
+  425.6792 ( 43.9%)    EmitRuntimePlan
+   88.4983 (  9.1%)  Output
+    4.4513 (  0.5%)  Rest
+  970.6060 (100.0%)  Total
+Depth-DP bootstrap boundaries: 846
+Number of Bootstrapping: 10835

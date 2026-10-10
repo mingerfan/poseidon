@@ -1,0 +1,31 @@
+validating block-prefill.depth-dp-v2._hecate_qwen_block_2tokens.runtime-plan.json
+interpreted 0 of 224288
+interpreted 50000 of 224288
+interpreted 100000 of 224288
+/tmp/poseidon-boot-placement-IUOMH1/validate_fast_plans.py:124: RuntimeWarning: overflow encountered in multiply
+  result = operands[0] * operands[1]
+/tmp/poseidon-boot-placement-IUOMH1/validate_fast_plans.py:126: RuntimeWarning: invalid value encountered in add
+  result = operands[0] + operands[1]
+interpreted 150000 of 224288
+interpreted 200000 of 224288
+Traceback (most recent call last):
+  File "/tmp/poseidon-boot-placement-IUOMH1/validate_fast_plans.py", line 168, in <module>
+    record = validate(path, args.root, args.execute_full and path.name.startswith("block-prefill."))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/poseidon-boot-placement-IUOMH1/validate_fast_plans.py", line 151, in validate
+    np.testing.assert_allclose(result[:len(reference)], reference, rtol=1e-10, atol=1e-10)
+  File "/opt/conda/lib/python3.12/site-packages/numpy/testing/_private/utils.py", line 1768, in assert_allclose
+    assert_array_compare(compare, actual, desired, err_msg=str(err_msg),
+  File "/opt/conda/lib/python3.12/site-packages/numpy/testing/_private/utils.py", line 847, in assert_array_compare
+    flagged = func_assert_same_pos(x, y, func=isnan, hasval='nan')
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.12/site-packages/numpy/testing/_private/utils.py", line 790, in func_assert_same_pos
+    raise AssertionError(msg)
+AssertionError: 
+Not equal to tolerance rtol=1e-10, atol=1e-10
+
+nan location mismatch:
+ ACTUAL: array([ 2.299032, -1.125513,  1.134604, ...,       nan,       nan,
+             nan], shape=(1792,))
+ DESIRED: array([ 2.319723, -1.119442,  1.116413, ..., -0.664713, -0.210148,
+       -1.900681], shape=(1792,))

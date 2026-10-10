@@ -9,3 +9,5 @@ build*/
 .claude/
 compile_commands.json
 stubs/
+__pycache__/
+*.py[cod]

@@ -1,0 +1,24 @@
+[
+  {
+    "stage": "fixture24",
+    "returncode": 0,
+    "elapsed_seconds": 63.325054744724184,
+    "user_seconds": 39.059731,
+    "system_seconds": 5.9351,
+    "max_rss_MiB": 2498.46875,
+    "limits": {
+      "cpu_seconds": 900,
+      "address_space_GiB": 16
+    },
+    "stop_reason": null,
+    "command": [
+      "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/ld-linux-x86-64.so.2",
+      "--library-path",
+      "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib:/opt/conda/lib:/lib/x86_64-linux-gnu",
+      "/opt/conda/bin/python",
+      "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/llm_dsl/Qwen25_24Layer_DSL/prepare_fixture.py",
+      "--output-dir",
+      "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/artifacts/qwen24-native/fixture"
+    ]
+  }
+]

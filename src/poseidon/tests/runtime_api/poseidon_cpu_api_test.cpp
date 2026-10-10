@@ -444,6 +444,86 @@ void test_multi_level_rescale()
             "multi-level Rescale produced the wrong scale");
 }
 
+void test_plaintext_scale_absorption()
+{
+    // Match the compiler's 40-bit waterline and four 30-bit prime drops.
+    constexpr std::uint32_t degree = 4096;
+    constexpr std::size_t q_count = 9;
+    const auto moduli = poseidon::CoeffModulus::Create(
+        degree, std::vector<int>(q_count + 2, 30));
+    const std::vector<poseidon::Modulus> q(moduli.begin(), moduli.begin() + q_count);
+    const std::vector<poseidon::Modulus> p(moduli.begin() + q_count, moduli.end());
+    poseidon::ParametersLiteral parameters(
+        CKKS, 12, 11, 40, 0, 0, poseidon::Modulus(0), q, p,
+        poseidon::sec_level_type::none);
+    poseidon::PoseidonContext context(parameters);
+    poseidon::KeyGenerator key_generator(context);
+    poseidon::PublicKey public_key;
+    key_generator.create_public_key(public_key);
+    poseidon::CKKSEncoder encoder(context);
+    poseidon::Encryptor encryptor(context, public_key);
+    poseidon::Decryptor decryptor(context, key_generator.secret_key());
+    PoseidonCpuApi api("scale-absorption-test", context);
+    std::vector<double> slots(degree / 2);
+    for (std::size_t i = 0; i < slots.size(); ++i)
+        slots[i] = 0.125 * (1 + i % 7); // Nonzero tails expose lost masks.
+    poseidon::Plaintext input_plain;
+    encoder.encode(slots, parameters.scale(), input_plain);
+    poseidon::Ciphertext input;
+    encryptor.encrypt(input_plain, input);
+    const auto parms_id = input.parms_id();
+    const int target_level = static_cast<int>(input.level()) - 4;
+    const fhegpu::Place host{fhegpu::PlaceKind::Host, 0, 0};
+    const fhegpu::ComputeOp multiply{fhegpu::ComputeKind::MulCP, {0, 1}, 2, host, {}};
+    const fhegpu::ComputeOp rescale{fhegpu::ComputeKind::Rescale, {0}, 1, host,
+                                    fhegpu::RescaleAttrs{target_level, 40}};
+    auto encode = [&](const std::vector<double> &payload, int scale_log2) {
+        poseidon::Plaintext plaintext;
+        encoder.encode(payload, parms_id, std::ldexp(1.0, scale_log2), plaintext);
+        return PoseidonCpuValue::from_plaintext(std::move(plaintext));
+    };
+    auto decode = [&](const PoseidonCpuValue &value) {
+        poseidon::Plaintext plaintext;
+        decryptor.decrypt(value.ciphertext(), plaintext);
+        std::vector<std::complex<double>> decoded;
+        encoder.decode(plaintext, decoded);
+        return decoded;
+    };
+    const auto unit = encode(std::vector<double>(slots.size(), 1.0), 80);
+    for (int kind : {0, 1, -1})
+    {
+        const bool mask = kind != 0;
+        std::vector<double> weights(slots.size());
+        for (std::size_t i = 0; i < weights.size(); ++i)
+            weights[i] = mask ? (i < 3 ? static_cast<double>(kind) : 0.0)
+                              : (0.25 + 0.125 * (i % 3));
+        const auto old_weight = encode(weights, 40);
+        const auto new_weight = encode(weights, 120);
+        const auto old_product = api.compute(
+            multiply, {PoseidonCpuValue::from_ciphertext(input), old_weight});
+        const auto old_scaled = api.compute(multiply, {old_product, unit});
+        const auto old_result = api.compute(rescale, {old_scaled});
+        const auto new_product = api.compute(
+            multiply, {PoseidonCpuValue::from_ciphertext(input), new_weight});
+        const auto new_result = api.compute(rescale, {new_product});
+        require(old_result.ciphertext().level() == new_result.ciphertext().level(),
+                "scale absorption changed the output level");
+        require(old_result.ciphertext().scale() == new_result.ciphertext().scale(),
+                "scale absorption changed the output scale");
+        const auto before = decode(old_result);
+        const auto after = decode(new_result);
+        for (std::size_t i = 0; i < slots.size(); ++i)
+        {
+            require(std::abs(before[i] - after[i]) < 1e-7,
+                    "absorbed plaintext scale changed the decrypted result");
+            require(std::abs(after[i].real() - slots[i] * weights[i]) < 1e-3,
+                    "absorbed plaintext scale has excessive CKKS error");
+            if (mask && i >= 3)
+                require(std::abs(after[i]) < 1e-7, "scale absorption removed a prefix mask");
+        }
+    }
+}
+
 void test_rejects_multi_process_target()
 {
     poseidon::ParametersLiteralDefault parameters(CKKS, 4096, poseidon::sec_level_type::tc128);
@@ -728,11 +808,17 @@ int main(int argc, char **argv)
 
     try
     {
+        if (argc == 2 && std::string(argv[1]) == "--plaintext-scale-absorption")
+        {
+            run_test("plaintext scale absorption", test_plaintext_scale_absorption);
+            return 0;
+        }
         run_test("single-process Host AddCP", test_single_process_host_add_plain);
         run_test("decrypt_reencrypt Boot", test_decrypt_reencrypt_boot);
         run_test("binary rotation keys", test_binary_rotation_keys);
         run_test("CPU Negate/Rotate reuse chains", test_runtime_reuse);
         run_test("multi-level Rescale", test_multi_level_rescale);
+        run_test("plaintext scale absorption", test_plaintext_scale_absorption);
         run_test("reject multi-process target", test_rejects_multi_process_target);
         std::cout << tests_run << " Poseidon CPU Runtime Api tests passed\n";
         return 0;

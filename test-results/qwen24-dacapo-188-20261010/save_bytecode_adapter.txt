@@ -1,0 +1,24 @@
+def save(dirs="", cst_dirs="", *, bytecode=False):
+    (frame, filename, line_number, function_name, lines,
+            index) = getProperFrame()
+
+    start = time.perf_counter()
+    proc_start = time.process_time()
+    if dirs=="" :
+        dirs = os.getcwd()
+    if cst_dirs=="" :
+        cst_dirs = os.getcwd()
+    
+    [func.eval() for func in funcList]
+    name = filename.split("/")[-1].split(".")[0].encode('utf-8')
+    extension = ".mlirbc" if bytecode else ".mlir"
+    name = (dirs +"/"+ filename.split("/")[-1].split(".")[0]+ extension ).encode('utf-8')
+    cst_name = (cst_dirs).encode('utf-8') 
+    result = lt.save(ctxt, cst_name, name)
+    if result is None:
+        raise RuntimeError("Hecate frontend export failed: " + name.decode('utf-8'))
+    name = result.decode('utf-8')
+
+
+    return name 
+

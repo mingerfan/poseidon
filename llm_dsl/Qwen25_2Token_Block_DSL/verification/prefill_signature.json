@@ -1,0 +1,37 @@
+{
+  "format": "qwen-2token-block-handoff-v1",
+  "mode": "prefill",
+  "function": "_hecate_qwen_block_2tokens",
+  "slots": 32768,
+  "positions": [
+    7,
+    8
+  ],
+  "inputs": [
+    {
+      "name": "hidden_position_7",
+      "ciphertext": 0,
+      "prefix_size": 896
+    },
+    {
+      "name": "hidden_position_8",
+      "ciphertext": 1,
+      "prefix_size": 896
+    }
+  ],
+  "outputs": [
+    {
+      "name": "concatenated_hidden",
+      "ciphertext": 0,
+      "prefix_size": 1792,
+      "order": [
+        "position_7[0:896]",
+        "position_8[0:896]"
+      ],
+      "tail": "zero"
+    }
+  ],
+  "kv": "remains an encrypted expression inside decode-pair; no external cache input/output",
+  "refresh": "GPU backend must schedule real bootstrap/rescale; no explicit bootstrap in source DSL",
+  "scope": "one decoder block, synthetic weights; no embedding/final norm/LM head"
+}

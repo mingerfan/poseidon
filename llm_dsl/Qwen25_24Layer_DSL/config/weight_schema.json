@@ -1,0 +1,1051 @@
+{
+  "format": "my_qwen2-state-dict-v1",
+  "weight_count": 291,
+  "float32_data_bytes": 2520669696,
+  "automatic_weight_tying": false,
+  "weights": {
+    "emb_weight.weight": [
+      151936,
+      896
+    ],
+    "final_normal.weight": [
+      896
+    ],
+    "lm_head.weight": [
+      151936,
+      896
+    ],
+    "model_list.0.pre_Normal.weight": [
+      896
+    ],
+    "model_list.0.post_Normal.weight": [
+      896
+    ],
+    "model_list.0.attention.q_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.0.attention.q_weight.bias": [
+      896
+    ],
+    "model_list.0.attention.k_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.0.attention.k_weight.bias": [
+      128
+    ],
+    "model_list.0.attention.v_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.0.attention.v_weight.bias": [
+      128
+    ],
+    "model_list.0.attention.o_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.0.mlplayer.gate_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.0.mlplayer.up_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.0.mlplayer.down_proj.weight": [
+      896,
+      4864
+    ],
+    "model_list.1.pre_Normal.weight": [
+      896
+    ],
+    "model_list.1.post_Normal.weight": [
+      896
+    ],
+    "model_list.1.attention.q_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.1.attention.q_weight.bias": [
+      896
+    ],
+    "model_list.1.attention.k_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.1.attention.k_weight.bias": [
+      128
+    ],
+    "model_list.1.attention.v_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.1.attention.v_weight.bias": [
+      128
+    ],
+    "model_list.1.attention.o_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.1.mlplayer.gate_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.1.mlplayer.up_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.1.mlplayer.down_proj.weight": [
+      896,
+      4864
+    ],
+    "model_list.2.pre_Normal.weight": [
+      896
+    ],
+    "model_list.2.post_Normal.weight": [
+      896
+    ],
+    "model_list.2.attention.q_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.2.attention.q_weight.bias": [
+      896
+    ],
+    "model_list.2.attention.k_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.2.attention.k_weight.bias": [
+      128
+    ],
+    "model_list.2.attention.v_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.2.attention.v_weight.bias": [
+      128
+    ],
+    "model_list.2.attention.o_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.2.mlplayer.gate_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.2.mlplayer.up_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.2.mlplayer.down_proj.weight": [
+      896,
+      4864
+    ],
+    "model_list.3.pre_Normal.weight": [
+      896
+    ],
+    "model_list.3.post_Normal.weight": [
+      896
+    ],
+    "model_list.3.attention.q_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.3.attention.q_weight.bias": [
+      896
+    ],
+    "model_list.3.attention.k_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.3.attention.k_weight.bias": [
+      128
+    ],
+    "model_list.3.attention.v_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.3.attention.v_weight.bias": [
+      128
+    ],
+    "model_list.3.attention.o_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.3.mlplayer.gate_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.3.mlplayer.up_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.3.mlplayer.down_proj.weight": [
+      896,
+      4864
+    ],
+    "model_list.4.pre_Normal.weight": [
+      896
+    ],
+    "model_list.4.post_Normal.weight": [
+      896
+    ],
+    "model_list.4.attention.q_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.4.attention.q_weight.bias": [
+      896
+    ],
+    "model_list.4.attention.k_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.4.attention.k_weight.bias": [
+      128
+    ],
+    "model_list.4.attention.v_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.4.attention.v_weight.bias": [
+      128
+    ],
+    "model_list.4.attention.o_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.4.mlplayer.gate_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.4.mlplayer.up_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.4.mlplayer.down_proj.weight": [
+      896,
+      4864
+    ],
+    "model_list.5.pre_Normal.weight": [
+      896
+    ],
+    "model_list.5.post_Normal.weight": [
+      896
+    ],
+    "model_list.5.attention.q_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.5.attention.q_weight.bias": [
+      896
+    ],
+    "model_list.5.attention.k_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.5.attention.k_weight.bias": [
+      128
+    ],
+    "model_list.5.attention.v_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.5.attention.v_weight.bias": [
+      128
+    ],
+    "model_list.5.attention.o_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.5.mlplayer.gate_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.5.mlplayer.up_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.5.mlplayer.down_proj.weight": [
+      896,
+      4864
+    ],
+    "model_list.6.pre_Normal.weight": [
+      896
+    ],
+    "model_list.6.post_Normal.weight": [
+      896
+    ],
+    "model_list.6.attention.q_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.6.attention.q_weight.bias": [
+      896
+    ],
+    "model_list.6.attention.k_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.6.attention.k_weight.bias": [
+      128
+    ],
+    "model_list.6.attention.v_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.6.attention.v_weight.bias": [
+      128
+    ],
+    "model_list.6.attention.o_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.6.mlplayer.gate_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.6.mlplayer.up_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.6.mlplayer.down_proj.weight": [
+      896,
+      4864
+    ],
+    "model_list.7.pre_Normal.weight": [
+      896
+    ],
+    "model_list.7.post_Normal.weight": [
+      896
+    ],
+    "model_list.7.attention.q_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.7.attention.q_weight.bias": [
+      896
+    ],
+    "model_list.7.attention.k_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.7.attention.k_weight.bias": [
+      128
+    ],
+    "model_list.7.attention.v_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.7.attention.v_weight.bias": [
+      128
+    ],
+    "model_list.7.attention.o_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.7.mlplayer.gate_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.7.mlplayer.up_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.7.mlplayer.down_proj.weight": [
+      896,
+      4864
+    ],
+    "model_list.8.pre_Normal.weight": [
+      896
+    ],
+    "model_list.8.post_Normal.weight": [
+      896
+    ],
+    "model_list.8.attention.q_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.8.attention.q_weight.bias": [
+      896
+    ],
+    "model_list.8.attention.k_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.8.attention.k_weight.bias": [
+      128
+    ],
+    "model_list.8.attention.v_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.8.attention.v_weight.bias": [
+      128
+    ],
+    "model_list.8.attention.o_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.8.mlplayer.gate_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.8.mlplayer.up_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.8.mlplayer.down_proj.weight": [
+      896,
+      4864
+    ],
+    "model_list.9.pre_Normal.weight": [
+      896
+    ],
+    "model_list.9.post_Normal.weight": [
+      896
+    ],
+    "model_list.9.attention.q_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.9.attention.q_weight.bias": [
+      896
+    ],
+    "model_list.9.attention.k_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.9.attention.k_weight.bias": [
+      128
+    ],
+    "model_list.9.attention.v_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.9.attention.v_weight.bias": [
+      128
+    ],
+    "model_list.9.attention.o_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.9.mlplayer.gate_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.9.mlplayer.up_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.9.mlplayer.down_proj.weight": [
+      896,
+      4864
+    ],
+    "model_list.10.pre_Normal.weight": [
+      896
+    ],
+    "model_list.10.post_Normal.weight": [
+      896
+    ],
+    "model_list.10.attention.q_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.10.attention.q_weight.bias": [
+      896
+    ],
+    "model_list.10.attention.k_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.10.attention.k_weight.bias": [
+      128
+    ],
+    "model_list.10.attention.v_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.10.attention.v_weight.bias": [
+      128
+    ],
+    "model_list.10.attention.o_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.10.mlplayer.gate_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.10.mlplayer.up_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.10.mlplayer.down_proj.weight": [
+      896,
+      4864
+    ],
+    "model_list.11.pre_Normal.weight": [
+      896
+    ],
+    "model_list.11.post_Normal.weight": [
+      896
+    ],
+    "model_list.11.attention.q_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.11.attention.q_weight.bias": [
+      896
+    ],
+    "model_list.11.attention.k_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.11.attention.k_weight.bias": [
+      128
+    ],
+    "model_list.11.attention.v_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.11.attention.v_weight.bias": [
+      128
+    ],
+    "model_list.11.attention.o_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.11.mlplayer.gate_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.11.mlplayer.up_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.11.mlplayer.down_proj.weight": [
+      896,
+      4864
+    ],
+    "model_list.12.pre_Normal.weight": [
+      896
+    ],
+    "model_list.12.post_Normal.weight": [
+      896
+    ],
+    "model_list.12.attention.q_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.12.attention.q_weight.bias": [
+      896
+    ],
+    "model_list.12.attention.k_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.12.attention.k_weight.bias": [
+      128
+    ],
+    "model_list.12.attention.v_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.12.attention.v_weight.bias": [
+      128
+    ],
+    "model_list.12.attention.o_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.12.mlplayer.gate_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.12.mlplayer.up_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.12.mlplayer.down_proj.weight": [
+      896,
+      4864
+    ],
+    "model_list.13.pre_Normal.weight": [
+      896
+    ],
+    "model_list.13.post_Normal.weight": [
+      896
+    ],
+    "model_list.13.attention.q_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.13.attention.q_weight.bias": [
+      896
+    ],
+    "model_list.13.attention.k_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.13.attention.k_weight.bias": [
+      128
+    ],
+    "model_list.13.attention.v_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.13.attention.v_weight.bias": [
+      128
+    ],
+    "model_list.13.attention.o_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.13.mlplayer.gate_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.13.mlplayer.up_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.13.mlplayer.down_proj.weight": [
+      896,
+      4864
+    ],
+    "model_list.14.pre_Normal.weight": [
+      896
+    ],
+    "model_list.14.post_Normal.weight": [
+      896
+    ],
+    "model_list.14.attention.q_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.14.attention.q_weight.bias": [
+      896
+    ],
+    "model_list.14.attention.k_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.14.attention.k_weight.bias": [
+      128
+    ],
+    "model_list.14.attention.v_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.14.attention.v_weight.bias": [
+      128
+    ],
+    "model_list.14.attention.o_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.14.mlplayer.gate_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.14.mlplayer.up_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.14.mlplayer.down_proj.weight": [
+      896,
+      4864
+    ],
+    "model_list.15.pre_Normal.weight": [
+      896
+    ],
+    "model_list.15.post_Normal.weight": [
+      896
+    ],
+    "model_list.15.attention.q_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.15.attention.q_weight.bias": [
+      896
+    ],
+    "model_list.15.attention.k_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.15.attention.k_weight.bias": [
+      128
+    ],
+    "model_list.15.attention.v_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.15.attention.v_weight.bias": [
+      128
+    ],
+    "model_list.15.attention.o_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.15.mlplayer.gate_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.15.mlplayer.up_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.15.mlplayer.down_proj.weight": [
+      896,
+      4864
+    ],
+    "model_list.16.pre_Normal.weight": [
+      896
+    ],
+    "model_list.16.post_Normal.weight": [
+      896
+    ],
+    "model_list.16.attention.q_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.16.attention.q_weight.bias": [
+      896
+    ],
+    "model_list.16.attention.k_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.16.attention.k_weight.bias": [
+      128
+    ],
+    "model_list.16.attention.v_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.16.attention.v_weight.bias": [
+      128
+    ],
+    "model_list.16.attention.o_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.16.mlplayer.gate_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.16.mlplayer.up_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.16.mlplayer.down_proj.weight": [
+      896,
+      4864
+    ],
+    "model_list.17.pre_Normal.weight": [
+      896
+    ],
+    "model_list.17.post_Normal.weight": [
+      896
+    ],
+    "model_list.17.attention.q_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.17.attention.q_weight.bias": [
+      896
+    ],
+    "model_list.17.attention.k_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.17.attention.k_weight.bias": [
+      128
+    ],
+    "model_list.17.attention.v_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.17.attention.v_weight.bias": [
+      128
+    ],
+    "model_list.17.attention.o_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.17.mlplayer.gate_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.17.mlplayer.up_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.17.mlplayer.down_proj.weight": [
+      896,
+      4864
+    ],
+    "model_list.18.pre_Normal.weight": [
+      896
+    ],
+    "model_list.18.post_Normal.weight": [
+      896
+    ],
+    "model_list.18.attention.q_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.18.attention.q_weight.bias": [
+      896
+    ],
+    "model_list.18.attention.k_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.18.attention.k_weight.bias": [
+      128
+    ],
+    "model_list.18.attention.v_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.18.attention.v_weight.bias": [
+      128
+    ],
+    "model_list.18.attention.o_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.18.mlplayer.gate_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.18.mlplayer.up_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.18.mlplayer.down_proj.weight": [
+      896,
+      4864
+    ],
+    "model_list.19.pre_Normal.weight": [
+      896
+    ],
+    "model_list.19.post_Normal.weight": [
+      896
+    ],
+    "model_list.19.attention.q_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.19.attention.q_weight.bias": [
+      896
+    ],
+    "model_list.19.attention.k_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.19.attention.k_weight.bias": [
+      128
+    ],
+    "model_list.19.attention.v_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.19.attention.v_weight.bias": [
+      128
+    ],
+    "model_list.19.attention.o_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.19.mlplayer.gate_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.19.mlplayer.up_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.19.mlplayer.down_proj.weight": [
+      896,
+      4864
+    ],
+    "model_list.20.pre_Normal.weight": [
+      896
+    ],
+    "model_list.20.post_Normal.weight": [
+      896
+    ],
+    "model_list.20.attention.q_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.20.attention.q_weight.bias": [
+      896
+    ],
+    "model_list.20.attention.k_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.20.attention.k_weight.bias": [
+      128
+    ],
+    "model_list.20.attention.v_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.20.attention.v_weight.bias": [
+      128
+    ],
+    "model_list.20.attention.o_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.20.mlplayer.gate_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.20.mlplayer.up_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.20.mlplayer.down_proj.weight": [
+      896,
+      4864
+    ],
+    "model_list.21.pre_Normal.weight": [
+      896
+    ],
+    "model_list.21.post_Normal.weight": [
+      896
+    ],
+    "model_list.21.attention.q_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.21.attention.q_weight.bias": [
+      896
+    ],
+    "model_list.21.attention.k_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.21.attention.k_weight.bias": [
+      128
+    ],
+    "model_list.21.attention.v_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.21.attention.v_weight.bias": [
+      128
+    ],
+    "model_list.21.attention.o_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.21.mlplayer.gate_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.21.mlplayer.up_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.21.mlplayer.down_proj.weight": [
+      896,
+      4864
+    ],
+    "model_list.22.pre_Normal.weight": [
+      896
+    ],
+    "model_list.22.post_Normal.weight": [
+      896
+    ],
+    "model_list.22.attention.q_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.22.attention.q_weight.bias": [
+      896
+    ],
+    "model_list.22.attention.k_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.22.attention.k_weight.bias": [
+      128
+    ],
+    "model_list.22.attention.v_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.22.attention.v_weight.bias": [
+      128
+    ],
+    "model_list.22.attention.o_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.22.mlplayer.gate_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.22.mlplayer.up_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.22.mlplayer.down_proj.weight": [
+      896,
+      4864
+    ],
+    "model_list.23.pre_Normal.weight": [
+      896
+    ],
+    "model_list.23.post_Normal.weight": [
+      896
+    ],
+    "model_list.23.attention.q_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.23.attention.q_weight.bias": [
+      896
+    ],
+    "model_list.23.attention.k_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.23.attention.k_weight.bias": [
+      128
+    ],
+    "model_list.23.attention.v_weight.weight": [
+      128,
+      896
+    ],
+    "model_list.23.attention.v_weight.bias": [
+      128
+    ],
+    "model_list.23.attention.o_weight.weight": [
+      896,
+      896
+    ],
+    "model_list.23.mlplayer.gate_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.23.mlplayer.up_proj.weight": [
+      4864,
+      896
+    ],
+    "model_list.23.mlplayer.down_proj.weight": [
+      896,
+      4864
+    ]
+  }
+}

@@ -1,0 +1,80 @@
+[
+  {
+    "plan": "artifacts/block-prefill.depth-dp-fixed._hecate_qwen_block_2tokens.runtime-plan.json",
+    "plan_bytes": 164212663,
+    "plan_sha256": "sha256:35a28b806ed108df7d5aa3411c42d923c43afe54e741b796ea38814b9098fdae",
+    "value_count": 300442,
+    "execution_steps": 218349,
+    "op_counts": {
+      "mul_cc": 366,
+      "relinearize": 366,
+      "mul_cp": 90312,
+      "rescale": 45339,
+      "rotate": 30318,
+      "add_cc": 45077,
+      "add_cp": 161,
+      "boot": 448,
+      "mod_switch": 5956,
+      "negate": 6
+    },
+    "bundle_blobs": 20911,
+    "bundle_bytes": 526513152,
+    "hashes_verified": true,
+    "topology_verified": true,
+    "physical_metadata_verified": true,
+    "encrypted_execution_tested": false,
+    "decoded_numpy_execution_verified": true,
+    "reference_max_absolute_difference": 0.0,
+    "tail_max_absolute": 0.0,
+    "note": "Ideal decoded arithmetic only; no CKKS noise or encrypted Boot is simulated",
+    "validation_seconds": 20.170058540068567
+  },
+  {
+    "plan": "artifacts/q-projection.depth-dp-fixed._hecate_qwen_q_projection.runtime-plan.json",
+    "plan_bytes": 6432252,
+    "plan_sha256": "sha256:28ef587966aa2d6dc9ca4f70c6e6c9a13b1c84a1584a792e02a2363c6b55a8c3",
+    "value_count": 12539,
+    "execution_steps": 8955,
+    "op_counts": {
+      "mod_switch": 1,
+      "rotate": 1790,
+      "mul_cp": 3582,
+      "rescale": 1791,
+      "add_cc": 1790,
+      "add_cp": 1
+    },
+    "bundle_blobs": 1793,
+    "bundle_bytes": 13107200,
+    "hashes_verified": true,
+    "topology_verified": true,
+    "physical_metadata_verified": true,
+    "encrypted_execution_tested": false,
+    "validation_seconds": 0.25945710483938456
+  },
+  {
+    "plan": "artifacts/rmsnorm.depth-dp-fixed._hecate_qwen_rmsnorm.runtime-plan.json",
+    "plan_bytes": 172066,
+    "plan_sha256": "sha256:c2a9236571d94b7ba7ebcfe0991dacae8fe0033b1d17c7aac768656942797c64",
+    "value_count": 332,
+    "execution_steps": 242,
+    "op_counts": {
+      "mul_cc": 10,
+      "relinearize": 10,
+      "mul_cp": 90,
+      "rescale": 50,
+      "rotate": 15,
+      "add_cc": 28,
+      "add_cp": 8,
+      "boot": 17,
+      "mod_switch": 13,
+      "negate": 1
+    },
+    "bundle_blobs": 22,
+    "bundle_bytes": 5257216,
+    "hashes_verified": true,
+    "topology_verified": true,
+    "physical_metadata_verified": true,
+    "encrypted_execution_tested": false,
+    "validation_seconds": 0.020207096124067903
+  }
+]

@@ -1,0 +1,33 @@
+===-------------------------------------------------------------------------===
+                         ... Execution time report ...
+===-------------------------------------------------------------------------===
+  Total Execution Time: 0.4047 seconds
+
+  ----Wall Time----  ----Name----
+    0.0017 (  0.4%)  Parser
+    0.3348 ( 82.7%)  'func.func' Pipeline
+    0.0001 (  0.0%)    RemoveBootstrap
+    0.0098 (  2.4%)    BypassDetection
+    0.0010 (  0.2%)      (A) hecate::CandidateAnalysis
+    0.0001 (  0.0%)      (A) hecate::ScaleManagementUnit
+    0.0013 (  0.3%)    CandidateSelection
+    0.3230 ( 79.8%)    DaCapoPlanner
+    0.0001 (  0.0%)    BootstrapPlacement
+    0.0003 (  0.1%)    ProactiveRescaling
+    0.0002 (  0.0%)    EarlyModswitch
+    0.0004 (  0.1%)  Canonicalizer
+    0.0002 (  0.1%)  CSE
+    0.0000 (  0.0%)    (A) DominanceInfo
+    0.0001 (  0.0%)  CSE
+    0.0002 (  0.1%)  Canonicalizer
+    0.0661 ( 16.3%)  'func.func' Pipeline
+    0.0005 (  0.1%)    EarthToCKKSConversion
+    0.0002 (  0.0%)    UpscaleToMulcpConversion
+    0.0002 (  0.0%)    Canonicalizer
+    0.0004 (  0.1%)    MaterializePhysicalLevels
+    0.0649 ( 16.0%)    EmitRuntimePlan
+    0.0007 (  0.2%)  Output
+    0.0003 (  0.1%)  Rest
+    0.4047 (100.0%)  Total
+Estimated Latency: 0.043234 (sec) 
+Number of Bootstrapping: 3

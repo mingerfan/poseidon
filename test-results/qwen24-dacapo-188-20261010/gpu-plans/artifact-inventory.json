@@ -1,0 +1,28 @@
+{
+  "files": {
+    "gpu1/qwen24.mlir": {
+      "bytes": 4647785524
+    },
+    "gpu1/qwen24._hecate_qwen25_24layer.runtime-plan.json": {
+      "bytes": 7965322721
+    },
+    "gpu1/qwen24._hecate_qwen25_24layer.bundle/manifest.json": {
+      "bytes": 103078905
+    },
+    "gpu4/qwen24.mlir": {
+      "bytes": 6699287089
+    },
+    "gpu4/qwen24._hecate_qwen25_24layer.runtime-plan.json": {
+      "bytes": 11979783926
+    },
+    "gpu4/qwen24._hecate_qwen25_24layer.bundle/manifest.json": {
+      "bytes": 103078905
+    }
+  },
+  "tmp_allocated_bytes": {
+    "/tmp/poseidon-qwen24-IUOMH1": 81920
+  },
+  "large_artifacts_in_tmp": false,
+  "diagnostic_mlir_constants_elided": true,
+  "lossless_source": "../qwen24-native/traced/trace_qwen24.mlirbc"
+}

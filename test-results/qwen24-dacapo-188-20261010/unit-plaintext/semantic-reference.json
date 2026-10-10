@@ -1,0 +1,2290 @@
+{
+  "decoded_graph_sha256": "sha256:b7ebb08742f0a9a5013596c63c866cbe060b483a5e34e072808ff0fc09b51418",
+  "final_metadata": [
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    },
+    {
+      "kind": "ciphertext",
+      "level": 27,
+      "scale_log2": 40,
+      "components": 2,
+      "ntt": true,
+      "context": "poseidon-ckks-gpu-65536-estimated"
+    }
+  ],
+  "full_unit_encode_count": 1365346,
+  "distinct_full_unit_types": 10,
+  "full_unit_histogram": [
+    {
+      "sign": 1,
+      "scale_log2": 40,
+      "level": 27,
+      "count": 1
+    },
+    {
+      "sign": 1,
+      "scale_log2": 40,
+      "level": 31,
+      "count": 1555
+    },
+    {
+      "sign": 1,
+      "scale_log2": 40,
+      "level": 35,
+      "count": 545
+    },
+    {
+      "sign": 1,
+      "scale_log2": 40,
+      "level": 39,
+      "count": 8879
+    },
+    {
+      "sign": 1,
+      "scale_log2": 80,
+      "level": 27,
+      "count": 10835
+    },
+    {
+      "sign": 1,
+      "scale_log2": 80,
+      "level": 31,
+      "count": 976291
+    },
+    {
+      "sign": 1,
+      "scale_log2": 80,
+      "level": 35,
+      "count": 367236
+    },
+    {
+      "sign": 1,
+      "scale_log2": 80,
+      "level": 39,
+      "count": 2
+    },
+    {
+      "sign": 2,
+      "scale_log2": 40,
+      "level": 27,
+      "count": 1
+    },
+    {
+      "sign": 2,
+      "scale_log2": 40,
+      "level": 31,
+      "count": 1
+    }
+  ],
+  "native_value_count": 8609612,
+  "op_counts": {
+    "mul_cc": 8775,
+    "relinearize": 8775,
+    "mul_cp": 2699953,
+    "rescale": 1354364,
+    "rotate": 716207,
+    "add_cc": 1347874,
+    "add_cp": 3858,
+    "boot": 10835,
+    "mod_switch": 73963,
+    "negate": 143
+  },
+  "final_outputs": [
+    "7192827",
+    "7202421",
+    "7212015",
+    "7221609",
+    "7231203",
+    "7240797",
+    "7250391",
+    "7259985",
+    "7269579",
+    "7279173",
+    "7288767",
+    "7298361",
+    "7307955",
+    "7317549",
+    "7327143",
+    "7336737",
+    "7346331",
+    "7355925",
+    "7365519",
+    "7375113",
+    "7384707",
+    "7394301",
+    "7403895",
+    "7413489",
+    "7423083",
+    "7432677",
+    "7442271",
+    "7451865",
+    "7461459",
+    "7471053",
+    "7480647",
+    "7490241",
+    "7499835",
+    "7509429",
+    "7519023",
+    "7528617",
+    "7538211",
+    "7547805",
+    "7557399",
+    "7566993",
+    "7576587",
+    "7586181",
+    "7595775",
+    "7605369",
+    "7614963",
+    "7624557",
+    "7634151",
+    "7643745",
+    "7653339",
+    "7662933",
+    "7672527",
+    "7682121",
+    "7691715",
+    "7701309",
+    "7710903",
+    "7720497",
+    "7730091",
+    "7739685",
+    "7749279",
+    "7758873",
+    "7768467",
+    "7778061",
+    "7787655",
+    "7797249",
+    "7806843",
+    "7816437",
+    "7826031",
+    "7835625",
+    "7845219",
+    "7854813",
+    "7864407",
+    "7874001",
+    "7883595",
+    "7893189",
+    "7902783",
+    "7912377",
+    "7921971",
+    "7931565",
+    "7941159",
+    "7950753",
+    "7960347",
+    "7969941",
+    "7979535",
+    "7989129",
+    "7998723",
+    "8008317",
+    "8017911",
+    "8027505",
+    "8037099",
+    "8046693",
+    "8056287",
+    "8065881",
+    "8075475",
+    "8085069",
+    "8094663",
+    "8104257",
+    "8113851",
+    "8123445",
+    "8133039",
+    "8142633",
+    "8152227",
+    "8161821",
+    "8171415",
+    "8181009",
+    "8190603",
+    "8200197",
+    "8209791",
+    "8219385",
+    "8228979",
+    "8238573",
+    "8248167",
+    "8257761",
+    "8267355",
+    "8276949",
+    "8286543",
+    "8296137",
+    "8305731",
+    "8315325",
+    "8324919",
+    "8334513",
+    "8344107",
+    "8353701",
+    "8363295",
+    "8372889",
+    "8382483",
+    "8392077",
+    "8401671",
+    "8411265",
+    "8420859",
+    "8430453",
+    "8440047",
+    "8449641",
+    "8459235",
+    "8468829",
+    "8478423",
+    "8488017",
+    "8497611",
+    "8507205",
+    "8516799",
+    "8526393",
+    "8535987",
+    "8545581",
+    "8555175",
+    "8564769",
+    "8574363",
+    "8583957",
+    "8593551",
+    "8603145",
+    "8609539",
+    "8609540",
+    "8609541",
+    "8609542",
+    "8609543",
+    "1271288",
+    "8609544",
+    "1260461",
+    "8609545",
+    "8609546",
+    "8609547",
+    "8609548",
+    "8609549",
+    "1691320",
+    "8609550",
+    "1680460",
+    "8609551",
+    "8609552",
+    "8609553",
+    "8609554",
+    "8609555",
+    "2099314",
+    "8609556",
+    "2087864",
+    "8609557",
+    "8609558",
+    "8609559",
+    "8609560",
+    "8609561",
+    "2488509",
+    "8609562",
+    "2477493",
+    "8609563",
+    "8609564",
+    "8609565",
+    "8609566",
+    "8609567",
+    "2885747",
+    "8609568",
+    "2874854",
+    "8609569",
+    "8609570",
+    "8609571",
+    "8609572",
+    "8609573",
+    "3369095",
+    "8609574",
+    "3323717",
+    "8609575",
+    "8609576",
+    "8609577",
+    "8609578",
+    "8609579",
+    "3775570",
+    "8609580",
+    "3764680",
+    "8609581",
+    "8609582",
+    "8609583",
+    "8609584",
+    "8609585",
+    "4165149",
+    "8609586",
+    "4153881",
+    "8609587",
+    "8609588",
+    "8609589",
+    "8609590",
+    "8609591",
+    "4563441",
+    "8609592",
+    "4552623",
+    "8609593",
+    "8609594",
+    "8609595",
+    "8609596",
+    "8609597",
+    "5012272",
+    "8609598",
+    "5001415",
+    "8609599",
+    "8609600",
+    "8609601",
+    "8609602",
+    "8609603",
+    "5432337",
+    "8609604",
+    "5421444",
+    "8609605",
+    "8609606",
+    "8609607",
+    "8609608",
+    "8609609",
+    "5830152",
+    "8609610",
+    "5829529",
+    "8609611"
+  ],
+  "base_plan_sha256": "sha256:9526373525f0675bd88d71cae46109fcf3ee2d64cfc8b4c160778bd56b1df054"
+}

@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-09",
+  "kernel_sha256": {
+    "ops.py": "da174d81af7cd3ebc67938b2a1167b5852e08f1d60acc47dbd5165c37c47af9a",
+    "qwen_layers.py": "f987c2dc6d0661381828e2911df352d8cb1f8fc3de3b2db8ec582031823e1f75",
+    "qwen_nonlinear.py": "6036e5ce683354497c9d6ca17d9408bd4adcb6304a456b70a500da1e8d949760",
+    "qwen_model.py": "a3d64b339622022215786fbaef42d4cc3aca1cc0fb9ef36ba15181dc188c6e2a",
+    "expr.py": "f82f27646065da32f8e83954ec7d537c690a9bcc645918f41def486626072fff",
+    "__init__.py": "4d351cf501d750e507f2c5d0aaa4c5b9ab92921153d653e8c6202d9fadd527e1"
+  },
+  "reference_file": "my_qwen2.py",
+  "reference_sha256": "8c98d11903d2022044d3fadb07345165397b3413a190b290329a01368004440e",
+  "architecture": "24 blocks + final RMSNorm + full vocabulary LM head; client-side embedding lookup",
+  "prior_ckks_scope": "2 tokens, single real-size block, synthetic weights, Poseidon CPU",
+  "full_24_layer_ckks_validated": false,
+  "native_hecate_compiled": true,
+  "gpu_validated": false,
+  "approximation_status": "Copied single-block profiles into 24 explicit entries; not pretrained-weight calibration",
+  "native_compilation_scope": "Full actual-size two-token prefill; depth-dp, synthetic distinct-layer weights",
+  "native_compilation_evidence": "verification/native_compilation.json",
+  "unit_plaintext_optimization_evidence": "verification/unit_plaintext_optimization.json"
+}

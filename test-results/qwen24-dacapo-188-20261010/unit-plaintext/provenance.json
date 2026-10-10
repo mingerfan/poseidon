@@ -1,0 +1,36 @@
+{
+  "compiler_sha256": "sha256:43a46c84cd07817168252b3bbb91f8d4c1653738a0334dd8ab8efd01e818f56c",
+  "frontend_sha256": "sha256:910b0717f724c9734c4e5089508e84357ec2779f879c3a9c3be1492ab1d73594",
+  "source_bytecode_sha256": "sha256:41e31a6a237901d88aba26631b850010dea89b0ec4bf2894f7f293d8baa56e6c",
+  "source_files": {
+    "include/hecate/Dialect/Earth/IR/EarthCanonicalizer.td": "sha256:95cfee92a3905a8289ab74a0c19f5f1ea11868ec50bd1a4dbcea2c14245db268",
+    "lib/Dialect/Earth/IR/EarthDialect.cpp": "sha256:7cbb898eb18debfd282b7c407ca44cb83158d03808f784cad23b9ce19e158a1c",
+    "include/hecate/Dialect/CKKS/IR/CKKSOps.td": "sha256:9091d4e6553ec076c0ad38537e20fe28fe16447f0d9f1061d080b8ddd1ef5ae9",
+    "tools/optimizer.cpp": "sha256:79a19f67cbc3bb82d86cd3d9bb3a941de98bf2db59e71aa3abb080080335fbd8",
+    "test/runtime-plan/check-unit-plaintext.py": "sha256:8932022c370f1479d5d408cfa4952b61afe8f3e8eab84fd09e8f50b88338240f"
+  },
+  "cpu_test_source_sha256": "sha256:75a8986064d1e8d846597b1aa763376d062df3bd05d2c7bb0f5c5c7e09aa31c4",
+  "scope": "complete 24-layer Qwen + LM head, 2-token prefill, synthetic weights",
+  "changes": [
+    "absorb Upscale into plaintext encoding after a single-use MulCP",
+    "CSE equal encodings before placement and Release planning"
+  ],
+  "gpu_execution_tested": false,
+  "validation": {
+    "compiler_ctest": "7/7 passed",
+    "unit_rewrite_cases": 13,
+    "real_cpu_ckks_scale_absorption": "passed; 40 + 40 + 80 vs 40 + 120, four 30-bit Rescale levels; dense weights and positive/negative prefix masks",
+    "cpu_suite": "Latest complete suite: 7/7 passed; an earlier run failed the existing randomized Boot imaginary-error tolerance",
+    "memory_regression": "16 old/new equal plans and reports; 20,000-operation chain passed",
+    "decoded_graph_selfcheck": "passed: scale absorption, Transfer, Release, and retained masks",
+    "full_gpu_plan_validation": "single-GPU and four-GPU passed: all 245 decoded arithmetic outputs, metadata, Release/reuse, memory recomputation, and all bundle hashes"
+  },
+  "validation_scripts": {
+    "run_parallel.py": "sha256:4832b1362e05e50c97bbd166c10c3d9ae88f31b8d3ddb799a5943834d1317695",
+    "run_validation.py": "sha256:d99e770124a77b0d8b5b75ef3169556e6e1fd36214dc5d99538990504378c004",
+    "validate.py": "sha256:182fbc1ed7010eaccea9ff4cefa4a77c92d22d9a04fe377e4edf3e500d927dbb",
+    "decoded_graph.py": "sha256:11c3488e1a20f4e3b80121e2f5771abcb07f1f489ed43e6921f86cf17e4e42b0",
+    "count_full_units.py": "sha256:1d72056ecbe8b80f86b209bad2e9df2159807f9ab3fd8813ae18858c5fc8abed",
+    "summarize.py": "sha256:1e19b0fe4873a71cc27e4d657c009f7ac4d3032051b6022db81e1d3ad45abfa3"
+  }
+}

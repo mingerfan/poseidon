@@ -1,0 +1,170 @@
+{
+  "package": "Qwen25_24Layer_DSL",
+  "date": "2026-10-09",
+  "config": {
+    "num_layers": 24,
+    "hidden_size": 896,
+    "intermediate_size": 4864,
+    "query_heads": 14,
+    "kv_heads": 2,
+    "head_dim": 64,
+    "vocab_size": 151936,
+    "max_sequence_length": 512,
+    "rope_theta": 1000000.0,
+    "rms_norm_eps": 1e-06
+  },
+  "scope": "Full 24-block architecture plus final RMSNorm and LM head; client embedding; default two tokens",
+  "validation": "Full actual-size two-token prefill native compilation, payload hashes, DAG topology and physical metadata verified; compiled arithmetic, CKKS and GPU execution untested",
+  "pretrained_weights_included": false,
+  "native_compiled": true,
+  "full_size_24layer_ckks_passed": false,
+  "gpu_validated": false,
+  "files": {
+    "check_outputs.py": {
+      "bytes": 1813,
+      "sha256": "8470b5844676dc51d06f52a2de5e7ea3339ecaaef0ba6512428a81b2e5f16b5f"
+    },
+    "config/approximations.provisional.json": {
+      "bytes": 55601,
+      "sha256": "d3c8e3915697d4fde6536f86faf386a1534cbb6aa4a522a6b0fbcb0cb72f5342"
+    },
+    "config/model.json": {
+      "bytes": 236,
+      "sha256": "75a88ca552e366dfc81a17fc6e92009475920bce91843ce3422e5d20d868d1a9"
+    },
+    "config/weight_schema.json": {
+      "bytes": 20569,
+      "sha256": "82afdc3e3ea365e44cf482fb5b2b1dbc10703e1bb23c7ab57f0a5bae81474bc3"
+    },
+    "interfaces/decode_pair.json": {
+      "bytes": 85924,
+      "sha256": "427739b8081a465e556872e577885783a82083c5437f94421b1f9c613dc906b3"
+    },
+    "interfaces/decode_second_token.json": {
+      "bytes": 90785,
+      "sha256": "30a7b862cff1cd642a757ba48f4055c084ab4427856840b62766b71f460ffdfd"
+    },
+    "interfaces/prefill_1token.json": {
+      "bytes": 80794,
+      "sha256": "e12cc6748c7af2edecd852612c89e52585a135322842f48bd794ded9ab6f869e"
+    },
+    "interfaces/prefill_2token.json": {
+      "bytes": 85920,
+      "sha256": "b62f8028500d38386a1e4d00c339ca8964ff3a9a6cdc819b9aa1a0ac8cd902b3"
+    },
+    "prepare_fixture.py": {
+      "bytes": 3689,
+      "sha256": "53948fe482524b82c898bbc4edaf38665cfb82499fad9deb4324f75ce0bd28b0"
+    },
+    "prepare_inputs.py": {
+      "bytes": 1203,
+      "sha256": "1761ad490108dab28d06bc3cb4bde43ccf99dd263fd929da76304c4b81bc011f"
+    },
+    "provenance.json": {
+      "bytes": 1390,
+      "sha256": "444569c396480e5a941c052f9a71454733bbd7386225af2158df27b12d9f498d"
+    },
+    "qwen24/__init__.py": {
+      "bytes": 49,
+      "sha256": "895fc0c6b174a0324f2fcebd8953facac89e216daff19db4b924407995c9f4a9"
+    },
+    "qwen24/kernels/__init__.py": {
+      "bytes": 69,
+      "sha256": "4d351cf501d750e507f2c5d0aaa4c5b9ab92921153d653e8c6202d9fadd527e1"
+    },
+    "qwen24/kernels/expr.py": {
+      "bytes": 95,
+      "sha256": "f82f27646065da32f8e83954ec7d537c690a9bcc645918f41def486626072fff"
+    },
+    "qwen24/kernels/ops.py": {
+      "bytes": 5772,
+      "sha256": "da174d81af7cd3ebc67938b2a1167b5852e08f1d60acc47dbd5165c37c47af9a"
+    },
+    "qwen24/kernels/qwen_layers.py": {
+      "bytes": 21564,
+      "sha256": "f987c2dc6d0661381828e2911df352d8cb1f8fc3de3b2db8ec582031823e1f75"
+    },
+    "qwen24/kernels/qwen_model.py": {
+      "bytes": 13502,
+      "sha256": "a3d64b339622022215786fbaef42d4cc3aca1cc0fb9ef36ba15181dc188c6e2a"
+    },
+    "qwen24/kernels/qwen_nonlinear.py": {
+      "bytes": 9650,
+      "sha256": "6036e5ce683354497c9d6ca17d9408bd4adcb6304a456b70a500da1e8d949760"
+    },
+    "qwen24/reference.py": {
+      "bytes": 3631,
+      "sha256": "008bb189a767a075e720b0df25a7c653f02130def6bce4f75786e60538dd6fb6"
+    },
+    "qwen24/runtime.py": {
+      "bytes": 3362,
+      "sha256": "53c85b23efa37b1273ae0021e630079e190318497100e7fa2e936494afa9ec75"
+    },
+    "qwen24/spec.py": {
+      "bytes": 5126,
+      "sha256": "a012f4db2c1d10b51755596bedc180535e7859ecfd8b50ea77e3fd233477474a"
+    },
+    "qwen24/weights.py": {
+      "bytes": 1957,
+      "sha256": "6f003998a7d684b85dca2588dfca56d2c402fcc176e8ee20233b08eef9d1dcb8"
+    },
+    "README.md": {
+      "bytes": 14487,
+      "sha256": "77f7e2a19b4aaab70bacedc89792345f9f4ff25127796c0d194c11362d5e5429"
+    },
+    "trace_qwen24.py": {
+      "bytes": 2762,
+      "sha256": "19f4f62712ead8b5fdbc59e427187a5e7a085e3a7479488ffaf1d65947512ee3"
+    },
+    "unpack_outputs.py": {
+      "bytes": 2024,
+      "sha256": "2ffc6b9b169b0e8a2e7b62129a5a36eb6285fd0b28ecfdc032b2c3b67671d306"
+    },
+    "verification/numpy_validation.json": {
+      "bytes": 15154,
+      "sha256": "97f86ae7d72a07000bb06d396a2ba1c00d29fda666401f7d301ddc1f8f0ac286"
+    },
+    "verification/smoke_config.json": {
+      "bytes": 226,
+      "sha256": "095b78dd0c476e440c86f7b08419f6b4f3599fccaaff6c6412392f14e8b5f5c7"
+    },
+    "verification/structure_validation.json": {
+      "bytes": 2850,
+      "sha256": "35fc0a4e9414a71dfda4a68073893cc7b03fe72566d2037c4557a075d67c8e6c"
+    },
+    "verification/validate_numpy.py": {
+      "bytes": 8130,
+      "sha256": "8ff1ef78a1b340deec84b243c9072d8af270ce31dfd7a14b803a33c767ff5838"
+    },
+    "verification/validate_structure.py": {
+      "bytes": 3408,
+      "sha256": "cd9785d11ae0a8042babf06383477f4489e69c42a27c7f7edc532f268fcffd45"
+    },
+    "verify_manifest.py": {
+      "bytes": 732,
+      "sha256": "1d569781965e163dc037d4235aba06d7b6b232ebc5a1b5719eb37a5bb7723905"
+    },
+    "verification/native_compilation.json": {
+      "bytes": 5891,
+      "sha256": "4fb27c4455abdf5af976bd749d50dfc5b2f99d88408eba23cefee924afde7c5b"
+    },
+    "verification/gpu_plan_compilation.json": {
+      "bytes": 10297,
+      "sha256": "fa8c84c9007a97ca17f34615ae76072fcbe9b53f458dcc68a6ee65b295be9e21"
+    },
+    "verification/unit_plaintext_optimization.json": {
+      "bytes": 11188,
+      "sha256": "5ef66c2b206fcd7dbddb36e520aca29985b6844f2f2531ff6edb673995b2d946"
+    }
+  },
+  "native_compilation_scope": "prefill, positions [0,1], 24 blocks and full LM head, synthetic weights",
+  "gpu_plans_compiled": [
+    1,
+    4
+  ],
+  "gpu_plan_scope": "One rank, two-token prefill, full 24 blocks and LM head, synthetic weights, Release/reuse enabled; runtime execution untested",
+  "unit_plaintext_optimized_gpu_plans": [
+    1,
+    4
+  ]
+}

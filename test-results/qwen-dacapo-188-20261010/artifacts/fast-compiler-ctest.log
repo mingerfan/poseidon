@@ -1,0 +1,59 @@
+Start testing: Oct 10 17:19 CST
+----------------------------------------------------------
+1/3 Testing: DacapoGreedyBootstrap
+1/3 Test: DacapoGreedyBootstrap
+Command: "/nix/store/60m4rxhg2fldqaak400c0lry96ijrzqn-python3-3.13.13/bin/python3.13" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/check-greedy.py" "--hecate-opt" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/bin/hecate-opt" "--source-dir" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo"
+Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/test
+"DacapoGreedyBootstrap" start time: Oct 10 17:19 CST
+Output:
+----------------------------------------------------------
+Lazy/depth-DP chains, residuals, shared inputs, fanout, and budget checks passed
+<end of output>
+Test time =   0.51 sec
+----------------------------------------------------------
+Test Passed.
+"DacapoGreedyBootstrap" end time: Oct 10 17:19 CST
+"DacapoGreedyBootstrap" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/3 Testing: DacapoRuntimePlanPipeline
+2/3 Test: DacapoRuntimePlanPipeline
+Command: "/nix/store/60m4rxhg2fldqaak400c0lry96ijrzqn-python3-3.13.13/bin/python3.13" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/check.py" "--hecate-opt" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/bin/hecate-opt" "--source-dir" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo"
+Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/test
+"DacapoRuntimePlanPipeline" start time: Oct 10 17:19 CST
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.24 sec
+----------------------------------------------------------
+Test Passed.
+"DacapoRuntimePlanPipeline" end time: Oct 10 17:19 CST
+"DacapoRuntimePlanPipeline" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/3 Testing: DacapoRuntimeMemory
+3/3 Test: DacapoRuntimeMemory
+Command: "/nix/store/60m4rxhg2fldqaak400c0lry96ijrzqn-python3-3.13.13/bin/python3.13" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/check-memory.py" "--hecate-opt" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/bin/hecate-opt" "--source-dir" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo"
+Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/test
+"DacapoRuntimeMemory" start time: Oct 10 17:19 CST
+Output:
+----------------------------------------------------------
+runtime memory memory_host rank=0 device=-1 peak=3.173828e-03 MiB
+runtime memory memory_host rank=0 device=-1 peak=1.708984e-03 MiB
+runtime memory memory_host rank=0 device=-1 peak=1.708984e-03 MiB
+runtime memory memory_devices rank=0 device=-1 peak=7.324219e-04 MiB
+runtime memory memory_devices rank=0 device=0 peak=6.103516e-04 MiB
+runtime memory memory_devices rank=1 device=-1 peak=0.000000e+00 MiB
+runtime memory memory_devices rank=1 device=0 peak=4.882812e-04 MiB
+runtime memory memory_levels rank=0 device=-1 peak=1.953125e-03 MiB
+runtime memory memory_final_fanout rank=0 device=-1 peak=2.441406e-03 MiB
+Runtime memory planner and hand-calculated estimates passed
+<end of output>
+Test time =   0.15 sec
+----------------------------------------------------------
+Test Passed.
+"DacapoRuntimeMemory" end time: Oct 10 17:19 CST
+"DacapoRuntimeMemory" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Oct 10 17:19 CST

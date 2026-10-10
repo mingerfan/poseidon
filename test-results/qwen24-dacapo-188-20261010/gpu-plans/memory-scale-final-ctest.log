@@ -1,0 +1,17 @@
+Test project /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix
+    Start 1: DacapoRuntimeScale
+1/6 Test #1: DacapoRuntimeScale ...............   Passed    0.89 sec
+    Start 2: DacapoFrontendLocations
+2/6 Test #2: DacapoFrontendLocations ..........   Passed    0.03 sec
+    Start 3: DacapoFrontendBytecode
+3/6 Test #3: DacapoFrontendBytecode ...........   Passed    0.06 sec
+    Start 4: DacapoGreedyBootstrap
+4/6 Test #4: DacapoGreedyBootstrap ............   Passed    0.48 sec
+    Start 5: DacapoRuntimePlanPipeline
+5/6 Test #5: DacapoRuntimePlanPipeline ........   Passed    0.25 sec
+    Start 6: DacapoRuntimeMemory
+6/6 Test #6: DacapoRuntimeMemory ..............   Passed    0.16 sec
+
+100% tests passed out of 6
+
+Total Test time (real) =   1.87 sec

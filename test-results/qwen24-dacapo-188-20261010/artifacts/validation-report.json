@@ -1,0 +1,22 @@
+[
+  {
+    "stage": "validate24",
+    "returncode": 0,
+    "elapsed_seconds": 345.84313671989366,
+    "user_seconds": 274.778069,
+    "system_seconds": 57.374541,
+    "max_rss_MiB": 18210.76953125,
+    "limits": {
+      "cpu_seconds": 1800,
+      "address_space_GiB": 128
+    },
+    "stop_reason": null,
+    "command": [
+      "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib/ld-linux-x86-64.so.2",
+      "--library-path",
+      "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/toolchain/lib:/opt/conda/lib:/lib/x86_64-linux-gnu",
+      "/opt/conda/bin/python",
+      "/tmp/poseidon-qwen24-IUOMH1/validate_compilation.py"
+    ]
+  }
+]
