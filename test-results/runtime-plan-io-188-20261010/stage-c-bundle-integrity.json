@@ -1,0 +1,8 @@
+{
+  "verified_blobs": 784750,
+  "blob_bytes": 14701969408,
+  "manifest_sha256": "sha256:0c9595641faf72c2e1b3a66c86c59f78fef3398e88e73359d5ea262b57977fd4",
+  "seconds": 91.91288575110957,
+  "input_buffer_bytes": 65536,
+  "peak_rss_bytes": 504102912
+}

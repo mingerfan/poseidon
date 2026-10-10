@@ -96,6 +96,14 @@ DaCapo `52f071f` 按公共布局中的 ID、ordinal 和阶段逐条写出，mani
 
 [全进程报告](stage-c-gpu4-export-process.json)为 931.17 秒、峰值 RSS 65.22 GiB、退出码 0。它包括 40.86 GB 恢复 IR 的读取与解析、pass 验证、诊断 IR 序列化和清理；该时间不能与原编译的 JSON 导出子阶段比较。[完整日志](stage-c-gpu4-export.log)保留导出器的原始计时。新旧 manifest 的 784,750 个内容摘要、长度及根元数据逐项一致，见 [manifest 比对](stage-c-manifest-equivalence.json)。
 
+[独立 blob 验收](stage-c-bundle-integrity.json)以 Python hashlib 重读新 bundle 的全部 784,750 个文件，核对每个原始长度和内容 SHA-256，总载荷 14,701,969,408 字节均通过。manifest 原始字节摘要为 `0c9595641faf72c2e1b3a66c86c59f78fef3398e88e73359d5ea262b57977fd4`。检查耗时 91.91 秒、Python 进程峰值 RSS 480.75 MiB；这包括 manifest DOM、文件访问、读入和哈希，不能单独视为 open 延迟或 runtime 加载耗时。
+
+### 最终验收范围
+
+[完整计划比对](stage-c-plan-equivalence.json)已完成：新旧计划的全部 values、各阶段指令、输入输出及根元数据一致。比较按记录规范序列化并累积摘要，保持阶段内顺序；只排除因 manifest 紧凑化而改变的原始字节摘要，该 manifest 已另行完整比对。原始 O2 加载复测为 271.59 秒、峰值 RSS 5.52 GiB，见 [结果](stage-c-original-load-o2.json)。
+
+用户要求停止追加全量哈希和重复校验后，验收进程已终止，没有继续启动实验。新紧凑文件的 O2 加载与 Verifier 测量在输出完整报告前被中止，因此没有该项性能结果，也不将部分运行算作通过。前述已完成的完整 V2/V3 加载、V3 Verifier、导出、记录比对及小型 CPU/GPU 测试保持各自的验收范围。
+
 ## 复现
 
 ```bash
