@@ -45,6 +45,24 @@ DaCapo `52f071f` 按公共布局中的 ID、ordinal 和阶段逐条写出，mani
 
 本地 ckks-runtime 5/5、DaCapo 9/9、Poseidon CPU API 测试通过。逐项比对真实 V1 样例的全部 target、values、指令属性、输入输出和 bundle 引用；V2/V3 版本约束、任意根字段顺序、跨 64 KiB 边界、尾部空白摘要、截断、尾部垃圾、I/O 错误、manifest 重复内容、转义重复键和错误长度均有回归检查。真实 GPU MLP 采用已有无 Boot 校准计划，fixture 和 mock 均在既有绝对/相对容差内（最大绝对误差 0.52479，最大相对误差 0.01235）；[结果](gpu-mlp.json)和[日志](gpu-mlp.log)单独记录，不表示全量 Qwen GPU 执行通过。
 
+### 完整四卡 V3，O2 加载与全局校验
+
+[stage-c-v3-load-verify-o2.json](stage-c-v3-load-verify-o2.json) 使用原有完整 V3 文件，GCC 11.4、`-O2 -DNDEBUG`、单线程、nice 10、32 GiB 地址空间限制。源 SHA-256 为 `bd6b45b7f06e04456b2cf4665e7c975d9bdd6b5a4c864f072ef3833a54939d9a`，包含在线 Encode 和 Fence。此次测量与常量恢复工具同时运行，服务器也有其他负载；缓存未控制。
+
+| 项目 | 测量 |
+| --- | ---: |
+| 原始 JSON 字节数 | 8,756,201,335 |
+| values / execution（initialization 为空） | 11,064,667 / 22,149,239 |
+| 读取 / 解析与构建 / SHA-256 | 1.72 / 216.63 / 56.67 秒 |
+| 元数据加载合计 | 275.03 秒 |
+| 元数据加载峰值 RSS | 5.69 GiB |
+| 完整 PlanVerifier | 33.52 秒 |
+| bundle manifest 摘要校验与索引 | 7.99 秒 |
+| 包含校验后的进程峰值 RSS | 8.73 GiB |
+| 计划销毁 | 1.21 秒 |
+
+全局定义、使用、Release/reuse/Fence、物理元数据、能力和摘要检查均通过，没有关闭摘要验证。bundle 阶段只建 manifest 索引；不读取全部 blob、不构造 RNS 明文。上述合计仍不包含 runtime 的描述符索引、使用次数表、任务闭包、rank/device 资源绑定或 GPU 初始化与执行，不能标作完整启动时间。
+
 ### 全量导出的输入边界
 
 原有四卡 `qwen24.mlir` 是诊断产物：部分 Encode 已被后续 `.cst` 导出改成整数索引。直接重新导出在第一处这样的 Encode 明确失败，所有 plan/bundle staging 文件被清理；[失败记录](diagnostic-export-failed-process.json)与[日志](diagnostic-export-failed.log)保留。该次 90.50 秒的 EmitRuntimePlan 只是失败前的工作，不能算作完成导出性能。
