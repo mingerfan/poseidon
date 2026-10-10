@@ -2,6 +2,11 @@
 #include "poseidon/runtime_api/rotation_key_basis.h"
 #include "poseidon/ckks_encoder.h"
 #include "poseidon/encryptor.h"
+#include "poseidon/decryptor.h"
+#include <rmm/mr/device/per_device_resource.hpp>
+#include <rmm/mr/device/cuda_memory_resource.hpp>
+#include <rmm/mr/device/pool_memory_resource.hpp>
+#include <rmm/mr/device/statistics_resource_adaptor.hpp>
 #include "runtime/json_plan_reader.hpp"
 #include "runtime/operator_spec_reader.hpp"
 #include "runtime/runtime.hpp"
@@ -45,7 +50,7 @@ using poseidon::runtime_api::test::require_same_topology;
 
 constexpr const char *kUsage =
     "usage: poseidon_gpu_mpi_runtime_e2e PLAN OPERATOR_SPEC BUNDLE_DIR REPORT "
-    "(--local | --rank-to-node 0x1) [--warmups N] [--iterations N]";
+    "(--local | --rank-to-node 0x1) [--warmups N] [--iterations N] [--measure-memory] [--expected-output JSON] [--execution-mode sequential|per_device_workers]";
 
 class NvtxRange
 {
@@ -76,6 +81,32 @@ private:
     bool active_ = true;
 };
 
+// Install a measured pool before the API, and keep it alive until API caches are destroyed.
+class MemoryCounter {
+public:
+    explicit MemoryCounter(int device) : device_(device) {
+        if (cudaSetDevice(device) != cudaSuccess) throw std::runtime_error("memory counter device selection failed");
+        previous_ = rmm::mr::get_current_device_resource();
+        pool_ = std::make_unique<rmm::mr::pool_memory_resource<rmm::mr::cuda_memory_resource>>(&upstream_, 64ULL << 20);
+        counter_ = std::make_unique<rmm::mr::statistics_resource_adaptor<rmm::mr::device_memory_resource>>(pool_.get());
+        rmm::mr::set_current_device_resource(counter_.get());
+    }
+    ~MemoryCounter() { rmm::mr::set_per_device_resource(rmm::cuda_device_id{device_}, previous_); }
+    int64_t active() const { return counter_->get_bytes_counter().value; }
+    void begin() { counter_->push_counters(); }
+    Json end(int rank, int index) {
+        auto bytes = counter_->pop_counters().first;
+        return {{"rank", rank}, {"index", index}, {"peak_increment_bytes", bytes.peak},
+                {"allocation_bytes", bytes.total}, {"net_change_bytes", bytes.value}, {"active_bytes", active()}};
+    }
+private:
+    int device_;
+    rmm::mr::device_memory_resource *previous_;
+    rmm::mr::cuda_memory_resource upstream_;
+    std::unique_ptr<rmm::mr::pool_memory_resource<rmm::mr::cuda_memory_resource>> pool_;
+    std::unique_ptr<rmm::mr::statistics_resource_adaptor<rmm::mr::device_memory_resource>> counter_;
+};
+
 struct RunnerOptions
 {
     std::filesystem::path plan_path;
@@ -86,6 +117,9 @@ struct RunnerOptions
     std::vector<int> rank_to_node;
     std::size_t warmups = 0;
     std::size_t iterations = 1;
+    bool measure_memory = false;
+    fhegpu::DeviceExecutionMode execution_mode = fhegpu::DeviceExecutionMode::PerDeviceWorkers;
+    std::optional<std::filesystem::path> expected_output;
 };
 
 void write_report(const std::filesystem::path &path, const Json &report)
@@ -104,6 +138,7 @@ void write_report(const std::filesystem::path &path, const Json &report)
 
 struct GenericPlanStats
 {
+    std::size_t release_instructions = 0;
     std::size_t compute_instructions = 0;
     std::size_t initialization_compute = 0;
     std::size_t execution_compute = 0;
@@ -127,6 +162,11 @@ void count_phase(const std::vector<fhegpu::Instruction> &phase,
         {
             ++compute_count;
             ++stats.compute_instructions;
+            continue;
+        }
+        if (std::holds_alternative<fhegpu::ReleaseOp>(instruction.body))
+        {
+            ++stats.release_instructions;
             continue;
         }
         if (std::holds_alternative<fhegpu::EncodeOp>(instruction.body))
@@ -241,6 +281,19 @@ RunnerOptions parse_options(int argc, char **argv)
             saw_rank_to_node = true;
             options.rank_to_node = parse_rank_to_node(argv[index]);
             continue;
+        }
+        if (option == "--execution-mode") {
+            if (++index >= argc) throw std::invalid_argument("--execution-mode requires an argument");
+            const std::string mode = argv[index];
+            if (mode == "sequential") options.execution_mode = fhegpu::DeviceExecutionMode::Sequential;
+            else if (mode == "per_device_workers") options.execution_mode = fhegpu::DeviceExecutionMode::PerDeviceWorkers;
+            else throw std::invalid_argument("invalid execution mode");
+            continue;
+        }
+        if (option == "--measure-memory") { options.measure_memory = true; continue; }
+        if (option == "--expected-output") {
+            if (++index >= argc) throw std::invalid_argument("--expected-output requires a JSON file");
+            options.expected_output = argv[index]; continue;
         }
         if (option == "--warmups" || option == "--iterations")
         {
@@ -418,6 +471,9 @@ int main(int argc, char **argv)
                 local_cuda_devices(MPI_COMM_WORLD, local_device_count);
         }
 
+        std::vector<std::unique_ptr<MemoryCounter>> memory;
+        if (options.measure_memory)
+            for (int device : cuda_devices) memory.push_back(std::make_unique<MemoryCounter>(device));
         std::unique_ptr<PoseidonGpuApi> api;
         if (world_size == 1)
         {
@@ -440,6 +496,12 @@ int main(int argc, char **argv)
             throw std::runtime_error("Poseidon GPU runtime identity mismatch");
         }
 
+        Json expected;
+        if (options.expected_output) {
+            std::ifstream expected_file(*options.expected_output);
+            if (!expected_file) throw std::runtime_error("cannot open expected output");
+            expected_file >> expected;
+        }
         const fhegpu::ValueId input_id = plan.external_inputs.front();
         const auto &input_desc = find_value(plan, input_id);
         if (input_desc.kind != fhegpu::ValueKind::Ciphertext ||
@@ -480,7 +542,7 @@ int main(int argc, char **argv)
         }
         fhegpu::SequentialRuntime<PoseidonGpuApi> runtime(
             rank, world_size, local_device_count, *api,
-            fhegpu::DeviceExecutionMode::PerDeviceWorkers,
+            options.execution_mode,
             static_cast<std::size_t>(local_device_count));
         const fhegpu::RuntimeResources resources{
             loaded_spec, std::move(bundle_dir), false};
@@ -500,6 +562,11 @@ int main(int argc, char **argv)
             }
         }
 
+        Json iteration_memory = Json::array();
+        Json numerical_checks = Json::array();
+        std::vector<std::complex<double>> first_output;
+        std::vector<int64_t> memory_baseline;
+        for (const auto &counter : memory) memory_baseline.push_back(counter->active());
         std::vector<double> local_online_seconds;
         local_online_seconds.reserve(options.iterations);
         for (std::size_t index = 0; index < options.iterations; ++index)
@@ -512,11 +579,66 @@ int main(int argc, char **argv)
             const std::string range_name =
                 "online.iteration." + std::to_string(index + 1);
             NvtxRange iteration_range(range_name.c_str());
+            for (const auto &counter : memory) counter->begin();
+            {
             const auto artifact = runtime.run(loaded_plan, resources, inputs);
+            const auto output_id = plan.final_outputs.front();
+            auto output_desc = find_value(plan, output_id);
+            if (output_desc.place.rank == rank) {
+                auto output = artifact.values.at(output_id).value;
+                if (output_desc.place.kind == fhegpu::PlaceKind::Device) {
+                    fhegpu::CommAction transfer;
+                    transfer.id = 1000000000ULL + index;
+                    transfer.kind = fhegpu::CommKind::Transfer;
+                    transfer.inputs = {output_id}; transfer.outputs = {output_id};
+                    transfer.sources = {output_desc.place};
+                    transfer.destinations = {{fhegpu::PlaceKind::Host, rank, 0}};
+                    transfer.output_types = {fhegpu::ValueKind::Ciphertext};
+                    output_desc.place = transfer.destinations.front();
+                    auto handle = api->communicate_async(transfer, {output}, {output_desc});
+                    auto downloaded = api->wait(handle);
+                    if (downloaded.size() != 1 || !downloaded.front()) throw std::runtime_error("numerical check download failed");
+                    output = std::move(*downloaded.front());
+                }
+                poseidon::Decryptor decryptor(context, *secret_key);
+                poseidon::CKKSEncoder encoder(context);
+                poseidon::Plaintext plaintext;
+                decryptor.decrypt(output.host_ciphertext(), plaintext);
+                std::vector<std::complex<double>> slots; encoder.decode(plaintext, slots);
+                for (const auto &slot : slots)
+                    if (!std::isfinite(slot.real()) || !std::isfinite(slot.imag()))
+                        throw std::runtime_error("non-finite numerical output");
+                if (first_output.empty()) first_output = slots;
+                double repeat_error = 0, expected_error = 0;
+                for (size_t i = 0; i < slots.size(); ++i) repeat_error = std::max(repeat_error, std::abs(slots[i] - first_output.at(i)));
+                if (repeat_error > 1e-4) throw std::runtime_error("repeated output changed");
+                if (!expected.is_null()) {
+                    const auto &indices = expected.at("indices"), &values = expected.at("values");
+                    if (indices.size() != values.size() || indices.empty()) throw std::runtime_error("invalid numerical oracle");
+                    for (size_t i = 0; i < indices.size(); ++i)
+                        expected_error = std::max(expected_error, std::abs(slots.at(indices[i].get<size_t>()) - values[i].get<double>()));
+                    if (expected_error > expected.at("absolute_tolerance").get<double>()) throw std::runtime_error("output differs from numerical oracle");
+                }
+                numerical_checks.push_back({{"iteration", index + 1}, {"repeat_max_error", repeat_error}, {"expected_max_error", expected_error}});
+            }
             local_online_seconds.push_back(
                 static_cast<double>(artifact.timing.online_execution_nanoseconds) *
                 1e-9);
+            }
+            api->drain();
+            Json devices = Json::array();
+            for (size_t device = 0; device < memory.size(); ++device) {
+                devices.push_back(memory[device]->end(rank, device));
+                if (memory[device]->active() != memory_baseline[device])
+                    throw std::runtime_error("GPU active memory did not return to the warmup baseline");
+            }
+            iteration_memory.push_back({{"iteration", index + 1}, {"devices", std::move(devices)}});
         }
+        Json decoded_output = Json::array();
+        for (const auto &slot : first_output) decoded_output.push_back({slot.real(), slot.imag()});
+        write_report(options.report_path.string() + ".rank" + std::to_string(rank) + ".checks.json",
+                     {{"rank", rank}, {"memory_measurement", "Active RMM allocations, including cached keys/parameters in the warmup baseline; pool reservation is excluded."},
+                      {"memory_baseline_bytes", memory_baseline}, {"iterations", iteration_memory}, {"numerical_checks", numerical_checks}, {"decoded_output", decoded_output}, {"oracle_provided", !expected.is_null()}});
 
         std::vector<double> gathered;
         if (world_size == 1)
@@ -561,6 +683,7 @@ int main(int argc, char **argv)
                 {"passed", true},
                 {"runner", "poseidon_gpu_mpi_runtime_e2e"},
                 {"execution_mode", options.local ? "local" : "mpi"},
+                {"device_execution_mode", options.execution_mode == fhegpu::DeviceExecutionMode::Sequential ? "sequential" : "per_device_workers"},
                 {"mpi_initialized", mpi_initialized},
                 {"nccl_transport_enabled", world_size > 1},
                 {"runtime_scope", "online_execution_only"},
@@ -572,7 +695,8 @@ int main(int argc, char **argv)
                 {"warmups", options.warmups},
                 {"iterations", options.iterations},
                 {"plan_stats",
-                 {{"compute_instructions", stats.compute_instructions},
+                 {{"release_instructions", stats.release_instructions},
+                  {"compute_instructions", stats.compute_instructions},
                   {"initialization_compute", stats.initialization_compute},
                   {"execution_compute", stats.execution_compute},
                   {"finalization_compute", stats.finalization_compute},

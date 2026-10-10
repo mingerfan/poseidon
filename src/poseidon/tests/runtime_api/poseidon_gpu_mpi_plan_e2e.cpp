@@ -395,11 +395,23 @@ int main(int argc, char **argv)
 
     try
     {
-        if (argc != 6 || std::string(argv[4]) != "--rank-to-node")
+        if ((argc != 6 && argc != 8) || std::string(argv[4]) != "--rank-to-node")
         {
             throw std::invalid_argument(
                 "usage: poseidon_gpu_mpi_plan_e2e PLAN OPERATOR_SPEC REPORT "
-                "--rank-to-node 0x1");
+                "--rank-to-node 0x1 [--execution-mode sequential|per_device_workers]");
+        }
+        auto execution_mode = fhegpu::DeviceExecutionMode::PerDeviceWorkers;
+        std::string execution_mode_name = "per_device_workers";
+        if (argc == 8)
+        {
+            if (std::string(argv[6]) != "--execution-mode")
+                throw std::invalid_argument("expected --execution-mode");
+            execution_mode_name = argv[7];
+            if (execution_mode_name == "sequential")
+                execution_mode = fhegpu::DeviceExecutionMode::Sequential;
+            else if (execution_mode_name != "per_device_workers")
+                throw std::invalid_argument("unknown execution mode: " + execution_mode_name);
         }
         const std::vector<int> rank_to_node = parse_rank_to_node(argv[5]);
         if (static_cast<int>(rank_to_node.size()) != world_size)
@@ -521,7 +533,7 @@ int main(int argc, char **argv)
 
         fhegpu::SequentialRuntime<PoseidonGpuApi> runtime(
             rank, world_size, local_device_count, api,
-            fhegpu::DeviceExecutionMode::PerDeviceWorkers,
+            execution_mode,
             static_cast<std::size_t>(local_device_count));
         const fhegpu::RuntimeResources resources{loaded_spec, std::nullopt, false};
         const auto artifact = runtime.run(loaded_plan, resources, inputs);
@@ -587,7 +599,7 @@ int main(int argc, char **argv)
                 {"passed", all_passed != 0},
                 {"expression", "-10*x"},
                 {"world_size", world_size},
-                {"execution_mode", "per_device_workers"},
+                {"execution_mode", execution_mode_name},
                 {"device_counts", plan.target.device_counts},
                 {"rank_to_node", rank_to_node},
                 {"plan_sha256", loaded_plan.source_sha256},
