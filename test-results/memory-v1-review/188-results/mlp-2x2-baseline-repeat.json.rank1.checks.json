@@ -1,0 +1,223 @@
+{
+  "decoded_output": [],
+  "iterations": [
+    {
+      "devices": [
+        {
+          "active_bytes": 239735032,
+          "allocation_bytes": 277872640,
+          "index": 0,
+          "net_change_bytes": 0,
+          "peak_increment_bytes": 93945856,
+          "rank": 1
+        },
+        {
+          "active_bytes": 204181752,
+          "allocation_bytes": 259981312,
+          "index": 1,
+          "net_change_bytes": 0,
+          "peak_increment_bytes": 91783168,
+          "rank": 1
+        }
+      ],
+      "iteration": 1
+    },
+    {
+      "devices": [
+        {
+          "active_bytes": 239735032,
+          "allocation_bytes": 277872640,
+          "index": 0,
+          "net_change_bytes": 0,
+          "peak_increment_bytes": 94306304,
+          "rank": 1
+        },
+        {
+          "active_bytes": 204181752,
+          "allocation_bytes": 259981312,
+          "index": 1,
+          "net_change_bytes": 0,
+          "peak_increment_bytes": 91783168,
+          "rank": 1
+        }
+      ],
+      "iteration": 2
+    },
+    {
+      "devices": [
+        {
+          "active_bytes": 239735032,
+          "allocation_bytes": 277872640,
+          "index": 0,
+          "net_change_bytes": 0,
+          "peak_increment_bytes": 93945856,
+          "rank": 1
+        },
+        {
+          "active_bytes": 204181752,
+          "allocation_bytes": 259981312,
+          "index": 1,
+          "net_change_bytes": 0,
+          "peak_increment_bytes": 93290496,
+          "rank": 1
+        }
+      ],
+      "iteration": 3
+    },
+    {
+      "devices": [
+        {
+          "active_bytes": 239735032,
+          "allocation_bytes": 277872640,
+          "index": 0,
+          "net_change_bytes": 0,
+          "peak_increment_bytes": 93945856,
+          "rank": 1
+        },
+        {
+          "active_bytes": 204181752,
+          "allocation_bytes": 259981312,
+          "index": 1,
+          "net_change_bytes": 0,
+          "peak_increment_bytes": 93290496,
+          "rank": 1
+        }
+      ],
+      "iteration": 4
+    },
+    {
+      "devices": [
+        {
+          "active_bytes": 239735032,
+          "allocation_bytes": 277872640,
+          "index": 0,
+          "net_change_bytes": 0,
+          "peak_increment_bytes": 94011392,
+          "rank": 1
+        },
+        {
+          "active_bytes": 204181752,
+          "allocation_bytes": 259981312,
+          "index": 1,
+          "net_change_bytes": 0,
+          "peak_increment_bytes": 92962816,
+          "rank": 1
+        }
+      ],
+      "iteration": 5
+    },
+    {
+      "devices": [
+        {
+          "active_bytes": 239735032,
+          "allocation_bytes": 277872640,
+          "index": 0,
+          "net_change_bytes": 0,
+          "peak_increment_bytes": 93945856,
+          "rank": 1
+        },
+        {
+          "active_bytes": 204181752,
+          "allocation_bytes": 259981312,
+          "index": 1,
+          "net_change_bytes": 0,
+          "peak_increment_bytes": 91783168,
+          "rank": 1
+        }
+      ],
+      "iteration": 6
+    },
+    {
+      "devices": [
+        {
+          "active_bytes": 239735032,
+          "allocation_bytes": 277872640,
+          "index": 0,
+          "net_change_bytes": 0,
+          "peak_increment_bytes": 94011392,
+          "rank": 1
+        },
+        {
+          "active_bytes": 204181752,
+          "allocation_bytes": 259981312,
+          "index": 1,
+          "net_change_bytes": 0,
+          "peak_increment_bytes": 93683712,
+          "rank": 1
+        }
+      ],
+      "iteration": 7
+    },
+    {
+      "devices": [
+        {
+          "active_bytes": 239735032,
+          "allocation_bytes": 277872640,
+          "index": 0,
+          "net_change_bytes": 0,
+          "peak_increment_bytes": 94306304,
+          "rank": 1
+        },
+        {
+          "active_bytes": 204181752,
+          "allocation_bytes": 259981312,
+          "index": 1,
+          "net_change_bytes": 0,
+          "peak_increment_bytes": 93290496,
+          "rank": 1
+        }
+      ],
+      "iteration": 8
+    },
+    {
+      "devices": [
+        {
+          "active_bytes": 239735032,
+          "allocation_bytes": 277872640,
+          "index": 0,
+          "net_change_bytes": 0,
+          "peak_increment_bytes": 93945856,
+          "rank": 1
+        },
+        {
+          "active_bytes": 204181752,
+          "allocation_bytes": 259981312,
+          "index": 1,
+          "net_change_bytes": 0,
+          "peak_increment_bytes": 91783168,
+          "rank": 1
+        }
+      ],
+      "iteration": 9
+    },
+    {
+      "devices": [
+        {
+          "active_bytes": 239735032,
+          "allocation_bytes": 277872640,
+          "index": 0,
+          "net_change_bytes": 0,
+          "peak_increment_bytes": 93945856,
+          "rank": 1
+        },
+        {
+          "active_bytes": 204181752,
+          "allocation_bytes": 259981312,
+          "index": 1,
+          "net_change_bytes": 0,
+          "peak_increment_bytes": 93290496,
+          "rank": 1
+        }
+      ],
+      "iteration": 10
+    }
+  ],
+  "memory_baseline_bytes": [
+    239735032,
+    204181752
+  ],
+  "memory_measurement": "Active RMM allocations, including cached keys/parameters in the warmup baseline; pool reservation is excluded.",
+  "numerical_checks": [],
+  "oracle_provided": false,
+  "rank": 1
+}

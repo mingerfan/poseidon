@@ -1,0 +1,10 @@
+NCCL version 2.20.5+cuda12.4
+fatal runtime error: reason=distributed GPU destination must be a valid Device Place plan_id=103 plan_source_sha256=sha256:8dd71ddb98b8c2ea5192e9998b5c8f4e45b688de3911fb2b2794c62f7622d5f6 local_rank=1 api=PoseidonGpuApi op_ordinal=28 op=Transfer transfer_id=109
+--------------------------------------------------------------------------
+MPI_ABORT was invoked on rank 1 in communicator MPI COMMUNICATOR 3 DUP FROM 0
+with errorcode 1.
+
+NOTE: invoking MPI_ABORT causes Open MPI to kill all MPI processes.
+You may or may not see output from other processes, depending on
+exactly when Open MPI kills them.
+--------------------------------------------------------------------------

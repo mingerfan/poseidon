@@ -2,7 +2,7 @@
 
 这次先做两件事：**不用的数据及时释放；能安全覆盖输入的计算，直接使用输入的那块内存。**
 
-另外在编译器里增加峰值内存估算，查看任务分到不同设备、加入释放和原位之后，各处最多需要保存多少数据。通过编译器选项生成报告，不增加 Verifier 的职责。现有 Python 脚本只是验证计算方法的临时参考；编译器内的正式功能尚待实现。
+另外在编译器里增加峰值内存估算，查看任务分到不同设备、加入释放和原位之后，各处最多需要保存多少数据。通过编译器选项生成报告，不增加 Verifier 的职责。现有 Python 脚本只是验证计算方法的临时参考；编译器内的正式功能现已实现，见本文末尾的整体审阅记录。
 
 预取暂时不做。权重什么时候上传，继续沿用现在的安排。这次也不加入为预取准备的 `wait=true`、双权重窗口和队列等待机制。
 
@@ -238,7 +238,7 @@ GPU 每个数 4 字节，Host 每个数 8 字节。
 - `generate_model_artifacts.py` 透传这个编译器选项，批量生成模型时也能拿到报告。
 - 已经准备好的 CKKS/Dist IR 可以单独运行 `estimate-runtime-memory` Pass，方便检查不同设备分配方案。
 
-以上选项和 Pass 尚待实现。估算代码放在编译器内的小模块中，让管线调用和单独运行 Pass 共用一份计算逻辑，不再维护另一套正式 Python 实现。
+以上选项和 Pass 已实现。估算代码放在编译器内的小模块中，让管线调用和单独运行 Pass 共用一份计算逻辑，不再维护另一套正式 Python 实现。
 
 比较内存规划前后时，在同一次编译中记录两次：第一次在通信插入后、内存规划前；第二次在 Release 和原位标记插入后。两次都分析当时实际的 IR，不由估算器另行猜测该怎么释放或原位。如果要单独看原位的收益，就用关闭原位的内存规划配置再编译一次。
 
@@ -268,11 +268,11 @@ GPU 每个数 4 字节，Host 每个数 8 字节。
 | 6 | 在编译器中加入峰值估算 Pass、选项和报告输出 | 按实际 IR 统计各设备占用，能比较内存规划前后，报告位置能对应到导出的计划 |
 | 7 | 用已有模型和重复运行测试检查 | 数值正确，内存能回收，多跑几轮不持续积累；对照编译器估算说明实际开销 |
 
-**当前已完成第 1、2 步，step 2 等待审阅。** 第 1 步的计划结构、
+**第 1 至 7 步均已实现，已完成本地及 188Server 验证，等待整体审阅。** 第 1 步的计划结构、
 V1/V2 解析、打印和 Verifier 保持不变。协议、Schema 和 CPU/GPU 三次原位链
 样例见 [`RuntimePlan V2`](../third_party/ckks-runtime/docs/runtime-plan/v2/specification.md)。
 
-本次 step 2 的改动：
+第 2 步已完成的改动：
 
 - **GPU API 按完成事件保留每次工作。** 输入、输出、Rotate/Rescale 的临时数据
   随对应事件保存；`collect_completed()` 只查询并清掉已完成工作，`drain()`
@@ -301,7 +301,7 @@ V1/V2 解析、打印和 Verifier 保持不变。协议、Schema 和 CPU/GPU 三
 [`GPU API 测试`](../src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp) 和
 [`Runtime 测试`](../third_party/ckks-runtime/tests/runtime_tests.cpp)。
 
-本次验证：
+第 2 步验证记录：
 
 - 独立 Runtime 的 6 个 CTest 目标全部通过，包括 MPI 两、四进程；
   Runtime 主测试有 15 个测试组，step 1 的 7 组内存规则测试继续通过。
@@ -314,10 +314,58 @@ V1/V2 解析、打印和 Verifier 保持不变。协议、Schema 和 CPU/GPU 三
 - 已重新编译 GPU 计划和 MLP 的端到端工具，适配新的通信返回接口；本次未运行
   完整模型或 native bootstrap。
 
-**step 3 的 Release 执行、尚未提交使用的计数，以及 step 4 的原位入口尚未实现。**
-含 Release/reuse 的计划仍会在提交 API 工作前明确报错；当前 Runtime 中间值
-保留到运行收尾。step 2 解决的是 API 的异步引用和通信交付，不代表已经能
-在计划最后一次使用后提前释放数据。
+第 3 步的改动：
+
+- **Runtime 执行 Release。** 串行和工作线程模式都先记录释放请求，尚待提交
+  的使用次数归零后清掉数据引用，保留值表项。外部输入的调用方引用和最终
+  输出继续有效；遗漏 Release 的值仍在整次运行收尾清理。
+- **计数覆盖全部阶段。** 计算的每个输入出现都计数，`AddCC(x, x)` 计两次；
+  初始化消耗的次数带入执行和收尾阶段。计数只在 API 成功接手工作之后减少，
+  并先清掉本次调用的临时输入副本；失败提交不会减少次数。
+- **按实际发送计数。** 工作线程模式下，Replicate 的每个本地目的地各有
+  一次提交，跨 rank 目的地由通信提交线程一起提交、计一次。源数据要等这些
+  提交都成功后才能清掉，因此其他线程即使晚一点取源数据也安全。
+- **丢弃已释放的晚到输出。** Release 可以先于另一线程提交传输执行。
+  无论输出提前交付还是在 `wait()` 时交付，已请求释放且不再使用的数据
+  都不会重新保留。每次 Release 调用 `collect_completed()` 清理已完成工作。
+- **端到端工具支持 Release。** MPI GPU 执行工具识别 Release 并统计条数，
+  不再把它当作未知指令。双卡测试加入 Release 计划、在线拆分 Replicate、
+  串行/工作线程模式和连续三轮执行，已在 188Server 实测通过。
+
+审阅 step 3 可以先看
+[`runtime.hpp`](../third_party/ckks-runtime/runtime/runtime.hpp) 的 `count_uses`、
+`execute_release`、`submitted_sequential_uses`、`submitted_parallel_uses`，
+再看通信结果接收和并行任务编排。
+[`Release 专项测试`](../third_party/ckks-runtime/tests/runtime_release_tests.cpp)
+用明确的线程门控和弱引用检查 Runtime 的引用何时消失；
+[`GPU API 测试`](../src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp)
+检查实际 GPU 工作和分配器活跃字节数。
+
+第 3 步验证记录：
+
+- 独立 Runtime 的 9 个 CTest 目标通过，包括原有 MPI 两、四进程及新增的
+  Release 版本。Runtime 主测试 15 组、内存规则测试 8 组、Release 专项
+  测试 5 组通过。
+- Mock 验证单 rank 三设备、两 rank 各两设备、四 rank 各一设备，分别运行
+  串行/工作线程模式和三个延迟种子。专项测试强制 Release 先于第二份发送、
+  第二份提交失败，以及输出晚于 Release 到达，检查引用保留和回收。
+- Poseidon CPU API 5 组和单卡 GPU API 15 组通过。新增 GPU 用例在沙箱外
+  暂停计算或上传，确认 Release 不等待、不提前回收；工作完成后的活跃 GPU
+  分配在 Runtime 内部值表收尾前已经回到基线。两种执行模式各重复三轮，
+  结果和调用方输入保持正确。CPU 的 Host AddCP 也运行了三轮 Release 版本。
+- 2026-10-08 在 188Server 的四张 V100 上补测：CPU API 5 组、GPU API 16 组、
+  独立 Runtime 9 个 CTest 目标全部通过，双卡用例实际执行。2×2 NCCL 初始化
+  和跨 rank 密文传输通过。单进程四卡、两进程各两卡分别验证普通／Release
+  计划的串行和工作线程模式，共 8 组数值检查，最大误差 `2.04e-7`，阈值
+  `1e-4`；每个 Release 计划的轨迹合计记录 31 次 Release。
+- 两种四卡布局的 Release 计划各完成 1 次预热和 10 次连续运行。该连续运行
+  工具检查执行完成，不逐轮解密，也没有测量多卡显存峰值。完整模型、native
+  bootstrap 和编译器自动插入 Release 留到后续步骤。环境、测试配置修正和
+  结果见[四卡测试报告](poseidon-memory-step3-188-test-report.zh-CN.md)。
+
+第 3 步完成时，step 4 的原位入口尚未实现，含 `reuse_input` 的计划仍在 API
+工作前报错；后续实现见第 9 节。`AllValuesAfterRun` 仍拒绝 Release/reuse，
+因为它要求保留所有历史值。
 
 先用手写小计划验证 Runtime 和 API，再接编译器，出错时更容易定位。没有预取和强制等待释放，也就不需要原方案中的队列栅栏、双权重窗口和相关测试。
 
@@ -369,4 +417,31 @@ V1/V2 解析、打印和 Verifier 保持不变。协议、Schema 和 CPU/GPU 三
 
 当前 `build-runtime-gpu-api-release` 已指向嵌套 Runtime，并开启 Poseidon CPU/GPU API 测试。Runtime 自身测试需另行构建；MPI/NCCL 也需使用开启相应选项的构建。编译器沿用其 README 中的构建方法即可。
 
-现有 Python 估算原型已通过 9 个单元测试，并对仓库中 11 份计划做过试算；它只作为实现编译器功能时的参考，正式的编译器估算功能尚未实现。Runtime 的第 1、2 步（计划结构、解析检查，以及 API 异步保留、清理和通信交付）已实现；第 3—7 步尚未实现，包括 Release 执行、原位入口和编译器内存 Pass。这里的内存估算数值不是 GPU 实测结果。
+现有 Python 估算原型已通过 9 个单元测试，并对仓库中 11 份计划做过试算；它只作为实现编译器功能时的参考。Runtime 的第 1—7 步现已实现，正式的编译器估算功能和原位入口见第 9 节。这里的内存估算数值不是 GPU 实测结果。
+
+
+## 9 第 4 至 7 步整体审阅（2026-10-08）
+
+- **原位入口已经接通。** Runtime 在执行前检查后端是否支持 reuse，执行时
+  清掉旧 ValueId 的数据引用并调用 `compute_reuse()`。CPU 直接修改 Negate、
+  Rotate 的密文存储；GPU AddCP/SubCP 使用现有原位 kernel，Rotate 保持最终
+  密文地址不变，只申请排列与密钥切换工作区。组合旋转复用同一密文和工作区，
+  新输出重新记录完成事件，工作区随事件保留。
+- **编译器自动规划已经接通。** `plan-runtime-memory` 与导出器、估算器共用
+  阶段顺序和 ValueId；先保持初始化/执行各自的顺序，再插 Release 和安全的
+  `runtime.reuse_input=0`。`dist.release` 声明 Free 副作用。重复规划报错；
+  正常管线在规划后只估算和导出。默认仍导出 V1，启用规划后导出 V2。
+- **正式估算在 C++ 编译器内。** `estimate-runtime-memory` 直接读取实际 IR
+  和 OperatorSpec，报告每个 Host/GPU 的峰值、位置、明密文分项、最大的对象，
+  以及不同数据块的累计分配量。原位链只算一次；外部输入按调用方始终持有
+  计入。`--runtime-plan-memory-report` 和模型生成脚本的透传均已接通；
+  同时开启规划时保存实际规划前后的两份报告。
+- **整体测试已经完成。** 本地及远端 Runtime 9 个 CTest 目标、编译器 2 个
+  CTest 目标通过；CPU API 6 项、188Server GPU API 17 项通过。单卡、四卡、
+  同机 2×2 NCCL 上的编译器短计划及现有 MLP，均对照普通/仅释放/释放加原位
+  三种配置，并检查预热后连续 10 轮的数值与活跃分配回收。
+
+详细改动、审阅入口、实测与估算的区别见
+[整体实现及测试报告](poseidon-memory-management-v1-review.zh-CN.md)。
+模型测试使用 degree 8192 的现有无 Boot MLP；本次没有验证完整 native Boot
+模型，也不把共享服务器上的时间当作性能结论。

@@ -1,0 +1,6 @@
+[PASS] single-process Host AddCP
+[PASS] decrypt_reencrypt Boot
+[PASS] binary rotation keys
+[PASS] multi-level Rescale
+[PASS] reject multi-process target
+5 Poseidon CPU Runtime Api tests passed

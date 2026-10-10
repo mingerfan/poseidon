@@ -1,0 +1,2 @@
+PASS boots=0 transfers=340 rotation_key_policy=binary rotations=14 key_seconds=1.90017 runtime_seconds=0.235365 initialization_seconds=0.707845 online_execution_seconds=0.235365 boot_seconds=0 python_max_abs=0.524793 max_imaginary=1.10118e-06
+report=memory-v1-review/results/mlp-4gpu-release-numerical.json

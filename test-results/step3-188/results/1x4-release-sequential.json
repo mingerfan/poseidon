@@ -1,0 +1,34 @@
+{
+  "actual": [
+    7.499999800587975,
+    5.000000055517944,
+    2.4999999975925062,
+    -1.2499999664437313,
+    -2.500000093685888,
+    -5.0000000364032795,
+    -7.4999999414412475,
+    -8.750000111412419
+  ],
+  "add_calls": 9,
+  "cross_rank_device_transfers": 0,
+  "cross_rank_host_uploads": 0,
+  "cross_rank_transfers": 0,
+  "device_counts": [
+    4
+  ],
+  "execution_mode": "sequential",
+  "expression": "-10*x",
+  "format_version": 1,
+  "local_device_transfers": 11,
+  "max_abs_error": 1.9941202467066432e-07,
+  "max_imaginary": 1.5594168029488611e-07,
+  "negate_calls": 10,
+  "operator_spec_sha256": "sha256:391cdacc333789ad7ff8cc32180578285ac9cc230398aa2e7d730d67f21bda47",
+  "passed": true,
+  "plan_sha256": "sha256:c2b227d75175ca64b6e292520a43ac87d539fe1569f2aab629f28d167a32d1fe",
+  "rank_to_node": [
+    0
+  ],
+  "tolerance": 0.0001,
+  "world_size": 1
+}

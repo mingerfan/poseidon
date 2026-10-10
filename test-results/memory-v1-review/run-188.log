@@ -1,0 +1,108 @@
+cpu-api: PASS
+[PASS] reject multi-process target
+6 Poseidon CPU Runtime Api tests passed
+nccl-2x2: PASS
+NCCL version 2.20.5+cuda12.4
+NCCL MPI smoke passed: mpi_world=2 total_gpu_ranks=4
+transfer-2x2: PASS
+NCCL version 2.20.5+cuda12.4
+Poseidon GPU MPI transfer passed: world=2 device_counts=2x2 rank_to_node=0x0
+smoke-1gpu-baseline-sequential: PASS
+PASS runner=poseidon_gpu_mpi_runtime_e2e world=1 mode=local device_counts=1 online_average_seconds=0.00251279 cross_rank_communication=0
+report=memory-v1-review/results/smoke-1gpu-baseline-sequential.json
+smoke-1gpu-baseline-per_device_workers: PASS
+PASS runner=poseidon_gpu_mpi_runtime_e2e world=1 mode=local device_counts=1 online_average_seconds=0.00302145 cross_rank_communication=0
+report=memory-v1-review/results/smoke-1gpu-baseline-per_device_workers.json
+smoke-1gpu-release-sequential: PASS
+PASS runner=poseidon_gpu_mpi_runtime_e2e world=1 mode=local device_counts=1 online_average_seconds=0.00256933 cross_rank_communication=0
+report=memory-v1-review/results/smoke-1gpu-release-sequential.json
+smoke-1gpu-release-per_device_workers: PASS
+PASS runner=poseidon_gpu_mpi_runtime_e2e world=1 mode=local device_counts=1 online_average_seconds=0.00110354 cross_rank_communication=0
+report=memory-v1-review/results/smoke-1gpu-release-per_device_workers.json
+smoke-1gpu-reuse-sequential: PASS
+PASS runner=poseidon_gpu_mpi_runtime_e2e world=1 mode=local device_counts=1 online_average_seconds=0.00235597 cross_rank_communication=0
+report=memory-v1-review/results/smoke-1gpu-reuse-sequential.json
+smoke-1gpu-reuse-per_device_workers: PASS
+PASS runner=poseidon_gpu_mpi_runtime_e2e world=1 mode=local device_counts=1 online_average_seconds=0.00245871 cross_rank_communication=0
+report=memory-v1-review/results/smoke-1gpu-reuse-per_device_workers.json
+mlp-1gpu-baseline-repeat: PASS
+PASS runner=poseidon_gpu_mpi_runtime_e2e world=1 mode=local device_counts=1 online_average_seconds=0.374061 cross_rank_communication=0
+report=memory-v1-review/results/mlp-1gpu-baseline-repeat.json
+mlp-1gpu-baseline-numerical: PASS
+PASS boots=0 transfers=122 rotation_key_policy=binary rotations=14 key_seconds=1.91308 runtime_seconds=0.142739 initialization_seconds=0.475964 online_execution_seconds=0.142739 boot_seconds=0 python_max_abs=0.524793 max_imaginary=1.12829e-06
+report=memory-v1-review/results/mlp-1gpu-baseline-numerical.json
+mlp-1gpu-release-repeat: PASS
+PASS runner=poseidon_gpu_mpi_runtime_e2e world=1 mode=local device_counts=1 online_average_seconds=0.331101 cross_rank_communication=0
+report=memory-v1-review/results/mlp-1gpu-release-repeat.json
+mlp-1gpu-release-numerical: PASS
+PASS boots=0 transfers=122 rotation_key_policy=binary rotations=14 key_seconds=1.9063 runtime_seconds=0.386474 initialization_seconds=0.417627 online_execution_seconds=0.386474 boot_seconds=0 python_max_abs=0.524795 max_imaginary=8.87308e-07
+report=memory-v1-review/results/mlp-1gpu-release-numerical.json
+mlp-1gpu-reuse-repeat: PASS
+PASS runner=poseidon_gpu_mpi_runtime_e2e world=1 mode=local device_counts=1 online_average_seconds=0.385361 cross_rank_communication=0
+report=memory-v1-review/results/mlp-1gpu-reuse-repeat.json
+mlp-1gpu-reuse-numerical: PASS
+PASS boots=0 transfers=122 rotation_key_policy=binary rotations=14 key_seconds=1.92273 runtime_seconds=0.397604 initialization_seconds=0.463544 online_execution_seconds=0.397604 boot_seconds=0 python_max_abs=0.524794 max_imaginary=9.20079e-07
+report=memory-v1-review/results/mlp-1gpu-reuse-numerical.json
+smoke-4gpu-baseline-sequential: PASS
+PASS runner=poseidon_gpu_mpi_runtime_e2e world=1 mode=local device_counts=4 online_average_seconds=0.00640621 cross_rank_communication=0
+report=memory-v1-review/results/smoke-4gpu-baseline-sequential.json
+smoke-4gpu-baseline-per_device_workers: PASS
+PASS runner=poseidon_gpu_mpi_runtime_e2e world=1 mode=local device_counts=4 online_average_seconds=0.007399 cross_rank_communication=0
+report=memory-v1-review/results/smoke-4gpu-baseline-per_device_workers.json
+smoke-4gpu-release-sequential: PASS
+PASS runner=poseidon_gpu_mpi_runtime_e2e world=1 mode=local device_counts=4 online_average_seconds=0.00942506 cross_rank_communication=0
+report=memory-v1-review/results/smoke-4gpu-release-sequential.json
+smoke-4gpu-release-per_device_workers: PASS
+PASS runner=poseidon_gpu_mpi_runtime_e2e world=1 mode=local device_counts=4 online_average_seconds=0.00916158 cross_rank_communication=0
+report=memory-v1-review/results/smoke-4gpu-release-per_device_workers.json
+smoke-4gpu-reuse-sequential: PASS
+PASS runner=poseidon_gpu_mpi_runtime_e2e world=1 mode=local device_counts=4 online_average_seconds=0.00758994 cross_rank_communication=0
+report=memory-v1-review/results/smoke-4gpu-reuse-sequential.json
+smoke-4gpu-reuse-per_device_workers: PASS
+PASS runner=poseidon_gpu_mpi_runtime_e2e world=1 mode=local device_counts=4 online_average_seconds=0.00659836 cross_rank_communication=0
+report=memory-v1-review/results/smoke-4gpu-reuse-per_device_workers.json
+mlp-4gpu-baseline-repeat: PASS
+PASS runner=poseidon_gpu_mpi_runtime_e2e world=1 mode=local device_counts=4 online_average_seconds=0.253328 cross_rank_communication=0
+report=memory-v1-review/results/mlp-4gpu-baseline-repeat.json
+mlp-4gpu-baseline-numerical: PASS
+PASS boots=0 transfers=340 rotation_key_policy=binary rotations=14 key_seconds=1.92154 runtime_seconds=0.266968 initialization_seconds=0.959497 online_execution_seconds=0.266968 boot_seconds=0 python_max_abs=0.524794 max_imaginary=8.50951e-07
+report=memory-v1-review/results/mlp-4gpu-baseline-numerical.json
+mlp-4gpu-release-repeat: PASS
+PASS runner=poseidon_gpu_mpi_runtime_e2e world=1 mode=local device_counts=4 online_average_seconds=0.251267 cross_rank_communication=0
+report=memory-v1-review/results/mlp-4gpu-release-repeat.json
+mlp-4gpu-release-numerical: PASS
+PASS boots=0 transfers=340 rotation_key_policy=binary rotations=14 key_seconds=1.90017 runtime_seconds=0.235365 initialization_seconds=0.707845 online_execution_seconds=0.235365 boot_seconds=0 python_max_abs=0.524793 max_imaginary=1.10118e-06
+report=memory-v1-review/results/mlp-4gpu-release-numerical.json
+mlp-4gpu-reuse-repeat: PASS
+PASS runner=poseidon_gpu_mpi_runtime_e2e world=1 mode=local device_counts=4 online_average_seconds=0.230401 cross_rank_communication=0
+report=memory-v1-review/results/mlp-4gpu-reuse-repeat.json
+mlp-4gpu-reuse-numerical: PASS
+PASS boots=0 transfers=340 rotation_key_policy=binary rotations=14 key_seconds=1.94616 runtime_seconds=0.274709 initialization_seconds=0.614504 online_execution_seconds=0.274709 boot_seconds=0 python_max_abs=0.524793 max_imaginary=6.04732e-07
+report=memory-v1-review/results/mlp-4gpu-reuse-numerical.json
+smoke-2x2-baseline-sequential: PASS
+PASS runner=poseidon_gpu_mpi_runtime_e2e world=2 mode=mpi device_counts=2x2 online_average_seconds=0.0068769 cross_rank_communication=6
+report=memory-v1-review/results/smoke-2x2-baseline-sequential.json
+smoke-2x2-baseline-per_device_workers: PASS
+PASS runner=poseidon_gpu_mpi_runtime_e2e world=2 mode=mpi device_counts=2x2 online_average_seconds=0.00944356 cross_rank_communication=6
+report=memory-v1-review/results/smoke-2x2-baseline-per_device_workers.json
+smoke-2x2-release-sequential: PASS
+PASS runner=poseidon_gpu_mpi_runtime_e2e world=2 mode=mpi device_counts=2x2 online_average_seconds=0.00923325 cross_rank_communication=6
+report=memory-v1-review/results/smoke-2x2-release-sequential.json
+smoke-2x2-release-per_device_workers: PASS
+PASS runner=poseidon_gpu_mpi_runtime_e2e world=2 mode=mpi device_counts=2x2 online_average_seconds=0.00674948 cross_rank_communication=6
+report=memory-v1-review/results/smoke-2x2-release-per_device_workers.json
+smoke-2x2-reuse-sequential: PASS
+PASS runner=poseidon_gpu_mpi_runtime_e2e world=2 mode=mpi device_counts=2x2 online_average_seconds=0.00907433 cross_rank_communication=6
+report=memory-v1-review/results/smoke-2x2-reuse-sequential.json
+smoke-2x2-reuse-per_device_workers: PASS
+PASS runner=poseidon_gpu_mpi_runtime_e2e world=2 mode=mpi device_counts=2x2 online_average_seconds=0.00656707 cross_rank_communication=6
+report=memory-v1-review/results/smoke-2x2-reuse-per_device_workers.json
+mlp-2x2-baseline-repeat: PASS
+PASS runner=poseidon_gpu_mpi_runtime_e2e world=2 mode=mpi device_counts=2x2 online_average_seconds=0.219165 cross_rank_communication=209
+report=memory-v1-review/results/mlp-2x2-baseline-repeat.json
+mlp-2x2-release-repeat: PASS
+PASS runner=poseidon_gpu_mpi_runtime_e2e world=2 mode=mpi device_counts=2x2 online_average_seconds=0.222297 cross_rank_communication=209
+report=memory-v1-review/results/mlp-2x2-release-repeat.json
+mlp-2x2-reuse-repeat: PASS
+PASS runner=poseidon_gpu_mpi_runtime_e2e world=2 mode=mpi device_counts=2x2 online_average_seconds=0.20472 cross_rank_communication=209
+report=memory-v1-review/results/mlp-2x2-reuse-repeat.json

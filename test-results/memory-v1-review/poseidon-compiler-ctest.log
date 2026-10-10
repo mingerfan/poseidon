@@ -1,0 +1,9 @@
+Test project /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix
+    Start 1: DacapoRuntimePlanPipeline
+1/2 Test #1: DacapoRuntimePlanPipeline ........   Passed    0.33 sec
+    Start 2: DacapoRuntimeMemory
+2/2 Test #2: DacapoRuntimeMemory ..............   Passed    0.17 sec
+
+100% tests passed out of 2
+
+Total Test time (real) =   0.51 sec

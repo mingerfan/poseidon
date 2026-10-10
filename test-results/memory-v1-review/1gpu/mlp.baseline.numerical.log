@@ -1,0 +1,2 @@
+PASS boots=0 transfers=122 rotation_key_policy=binary rotations=14 key_seconds=1.14267 runtime_seconds=0.104241 initialization_seconds=0.227049 online_execution_seconds=0.104241 boot_seconds=0 python_max_abs=0.524794 max_imaginary=9.59996e-07
+report=test-results/memory-v1-review/1gpu/mlp.baseline.numerical.json

@@ -1,0 +1,4 @@
+runtime memory _hecate_MLP rank=0 device=-1 peak=6.518750e+01 MiB
+runtime memory _hecate_MLP rank=0 device=0 peak=2.270625e+02 MiB
+runtime memory _hecate_MLP rank=0 device=-1 peak=2.687500e+00 MiB
+runtime memory _hecate_MLP rank=0 device=0 peak=8.834375e+01 MiB

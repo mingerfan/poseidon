@@ -1,0 +1,2 @@
+NCCL version 2.20.5+cuda12.4
+NCCL MPI smoke passed: mpi_world=2 total_gpu_ranks=4

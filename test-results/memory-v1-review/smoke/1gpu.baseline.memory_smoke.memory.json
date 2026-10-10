@@ -1,0 +1,102 @@
+{
+  "assumption": "Each instruction completes before the next; external inputs are held by the caller throughout the run. This is not measured process memory or a bound for parallel execution.",
+  "distinct_allocation_meaning": "Sum of distinct planned object blocks, counting a reuse chain once; excludes unmodeled memory and is not a process memory upper bound.",
+  "excluded": [
+    "keys",
+    "parameter tables",
+    "Rotate and Boot workspaces",
+    "communication staging",
+    "encoding caches",
+    "allocator alignment and reserved pool memory",
+    "object metadata"
+  ],
+  "format_version": 1,
+  "function": "memory_smoke",
+  "memory_planned": false,
+  "places": [
+    {
+      "distinct_allocation_bytes": 688128,
+      "peak": {
+        "ciphertext_bytes": 458752,
+        "instruction_ordinal": 0,
+        "largest_objects": [
+          {
+            "bytes": 458752,
+            "external": true,
+            "kind": "ciphertext",
+            "value_id": "0"
+          },
+          {
+            "bytes": 229376,
+            "external": false,
+            "kind": "plaintext",
+            "value_id": "1"
+          }
+        ],
+        "operation": "ckks.encode",
+        "phase": "initialization",
+        "plaintext_bytes": 229376
+      },
+      "peak_bytes": 688128,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "retained_bytes": 688128
+    },
+    {
+      "distinct_allocation_bytes": 1720320,
+      "peak": {
+        "ciphertext_bytes": 1605632,
+        "instruction_ordinal": 8,
+        "largest_objects": [
+          {
+            "bytes": 229376,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "2"
+          },
+          {
+            "bytes": 229376,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "3"
+          },
+          {
+            "bytes": 229376,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "4"
+          },
+          {
+            "bytes": 229376,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "5"
+          },
+          {
+            "bytes": 229376,
+            "external": false,
+            "kind": "ciphertext",
+            "value_id": "6"
+          }
+        ],
+        "operation": "ckks.rotatec",
+        "phase": "execution",
+        "plaintext_bytes": 114688
+      },
+      "peak_bytes": 1720320,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      },
+      "retained_bytes": 1720320
+    }
+  ],
+  "poly_degree": 4096,
+  "word_bytes": {
+    "device": 4,
+    "host": 8
+  }
+}

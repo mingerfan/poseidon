@@ -1,0 +1,235 @@
+{
+  "execution": [
+    {
+      "attrs": {
+        "target_level": 4
+      },
+      "inputs": [
+        "4"
+      ],
+      "kind": "compute",
+      "op": "mod_switch",
+      "ordinal": 5,
+      "output": "1",
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      }
+    },
+    {
+      "kind": "release",
+      "ordinal": 6,
+      "value": "4"
+    },
+    {
+      "inputs": [
+        "1",
+        "5"
+      ],
+      "kind": "compute",
+      "op": "add_cp",
+      "ordinal": 7,
+      "output": "3",
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      },
+      "reuse_input": 0
+    },
+    {
+      "kind": "release",
+      "ordinal": 8,
+      "value": "5"
+    }
+  ],
+  "external_inputs": [
+    "0"
+  ],
+  "final_outputs": [
+    "3"
+  ],
+  "finalization": [],
+  "format_version": 2,
+  "initialization": [
+    {
+      "destinations": [
+        {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      ],
+      "hint": "point_to_point",
+      "inputs": [
+        "0"
+      ],
+      "kind": "transfer",
+      "ordinal": 0,
+      "output_kinds": [
+        "ciphertext"
+      ],
+      "outputs": [
+        "4"
+      ],
+      "sources": [
+        {
+          "kind": "host",
+          "rank": 0
+        }
+      ],
+      "transfer_id": "0"
+    },
+    {
+      "kind": "release",
+      "ordinal": 1,
+      "value": "0"
+    },
+    {
+      "kind": "encode",
+      "ordinal": 2,
+      "output": "2",
+      "payload": {
+        "kind": "inline",
+        "values": [
+          1.0,
+          2.0,
+          3.0,
+          4.0
+        ]
+      }
+    },
+    {
+      "destinations": [
+        {
+          "index": 0,
+          "kind": "device",
+          "rank": 0
+        }
+      ],
+      "hint": "point_to_point",
+      "inputs": [
+        "2"
+      ],
+      "kind": "transfer",
+      "ordinal": 3,
+      "output_kinds": [
+        "plaintext"
+      ],
+      "outputs": [
+        "5"
+      ],
+      "sources": [
+        {
+          "kind": "host",
+          "rank": 0
+        }
+      ],
+      "transfer_id": "1"
+    },
+    {
+      "kind": "release",
+      "ordinal": 4,
+      "value": "2"
+    }
+  ],
+  "plan_id": "1",
+  "target": {
+    "capability_version": 1,
+    "device_counts": [
+      1
+    ],
+    "operator_spec": {
+      "id": "poseidon-ckks-gpu-8192-v100-e63ec18",
+      "source_sha256": "sha256:b37c827c139a227d95cc76b7e7c43677281a0e18752f540db8b714e37b79806b",
+      "version": 2
+    },
+    "target_id": "poseidon-ckks-gpu",
+    "world_size": 1
+  },
+  "values": [
+    {
+      "components": 2,
+      "context": "poseidon-ckks-gpu-8192-calibrated",
+      "id": "0",
+      "kind": "ciphertext",
+      "level": 16,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-ckks-gpu-8192-calibrated",
+      "id": "1",
+      "kind": "ciphertext",
+      "level": 4,
+      "ntt": true,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 1,
+      "context": "poseidon-ckks-gpu-8192-calibrated",
+      "id": "2",
+      "kind": "plaintext",
+      "level": 4,
+      "ntt": true,
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-ckks-gpu-8192-calibrated",
+      "id": "3",
+      "kind": "ciphertext",
+      "level": 4,
+      "ntt": true,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 2,
+      "context": "poseidon-ckks-gpu-8192-calibrated",
+      "id": "4",
+      "kind": "ciphertext",
+      "level": 16,
+      "ntt": true,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      },
+      "scale_log2": 40
+    },
+    {
+      "components": 1,
+      "context": "poseidon-ckks-gpu-8192-calibrated",
+      "id": "5",
+      "kind": "plaintext",
+      "level": 4,
+      "ntt": true,
+      "place": {
+        "index": 0,
+        "kind": "device",
+        "rank": 0
+      },
+      "scale_log2": 40
+    }
+  ]
+}

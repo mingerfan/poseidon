@@ -1,0 +1,1057 @@
+{
+  "format_version": 1,
+  "plan_id": "103",
+  "target": {
+    "target_id": "poseidon-ckks-gpu",
+    "capability_version": 1,
+    "world_size": 2,
+    "device_counts": [
+      2,
+      2
+    ],
+    "operator_spec": {
+      "id": "poseidon-runtime-release-smoke-v1",
+      "version": 1,
+      "source_sha256": "sha256:391cdacc333789ad7ff8cc32180578285ac9cc230398aa2e7d730d67f21bda47"
+    }
+  },
+  "values": [
+    {
+      "id": "0",
+      "kind": "ciphertext",
+      "place": {
+        "kind": "host",
+        "rank": 0
+      },
+      "context": "poseidon-runtime-release-smoke",
+      "level": 6,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2
+    },
+    {
+      "id": "1",
+      "kind": "ciphertext",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "context": "poseidon-runtime-release-smoke",
+      "level": 6,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2
+    },
+    {
+      "id": "2",
+      "kind": "ciphertext",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 1
+      },
+      "context": "poseidon-runtime-release-smoke",
+      "level": 6,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2
+    },
+    {
+      "id": "3",
+      "kind": "ciphertext",
+      "place": {
+        "kind": "device",
+        "rank": 1,
+        "index": 0
+      },
+      "context": "poseidon-runtime-release-smoke",
+      "level": 6,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2
+    },
+    {
+      "id": "4",
+      "kind": "ciphertext",
+      "place": {
+        "kind": "device",
+        "rank": 1,
+        "index": 1
+      },
+      "context": "poseidon-runtime-release-smoke",
+      "level": 6,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2
+    },
+    {
+      "id": "5",
+      "kind": "ciphertext",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "context": "poseidon-runtime-release-smoke",
+      "level": 6,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2
+    },
+    {
+      "id": "6",
+      "kind": "ciphertext",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 1
+      },
+      "context": "poseidon-runtime-release-smoke",
+      "level": 6,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2
+    },
+    {
+      "id": "7",
+      "kind": "ciphertext",
+      "place": {
+        "kind": "device",
+        "rank": 1,
+        "index": 0
+      },
+      "context": "poseidon-runtime-release-smoke",
+      "level": 6,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2
+    },
+    {
+      "id": "8",
+      "kind": "ciphertext",
+      "place": {
+        "kind": "device",
+        "rank": 1,
+        "index": 1
+      },
+      "context": "poseidon-runtime-release-smoke",
+      "level": 6,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2
+    },
+    {
+      "id": "9",
+      "kind": "ciphertext",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "context": "poseidon-runtime-release-smoke",
+      "level": 6,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2
+    },
+    {
+      "id": "10",
+      "kind": "ciphertext",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 1
+      },
+      "context": "poseidon-runtime-release-smoke",
+      "level": 6,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2
+    },
+    {
+      "id": "11",
+      "kind": "ciphertext",
+      "place": {
+        "kind": "device",
+        "rank": 1,
+        "index": 0
+      },
+      "context": "poseidon-runtime-release-smoke",
+      "level": 6,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2
+    },
+    {
+      "id": "12",
+      "kind": "ciphertext",
+      "place": {
+        "kind": "device",
+        "rank": 1,
+        "index": 1
+      },
+      "context": "poseidon-runtime-release-smoke",
+      "level": 6,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2
+    },
+    {
+      "id": "13",
+      "kind": "ciphertext",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "context": "poseidon-runtime-release-smoke",
+      "level": 6,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2
+    },
+    {
+      "id": "14",
+      "kind": "ciphertext",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 1
+      },
+      "context": "poseidon-runtime-release-smoke",
+      "level": 6,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2
+    },
+    {
+      "id": "15",
+      "kind": "ciphertext",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "context": "poseidon-runtime-release-smoke",
+      "level": 6,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2
+    },
+    {
+      "id": "16",
+      "kind": "ciphertext",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "context": "poseidon-runtime-release-smoke",
+      "level": 6,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2
+    },
+    {
+      "id": "17",
+      "kind": "ciphertext",
+      "place": {
+        "kind": "device",
+        "rank": 1,
+        "index": 0
+      },
+      "context": "poseidon-runtime-release-smoke",
+      "level": 6,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2
+    },
+    {
+      "id": "18",
+      "kind": "ciphertext",
+      "place": {
+        "kind": "device",
+        "rank": 1,
+        "index": 0
+      },
+      "context": "poseidon-runtime-release-smoke",
+      "level": 6,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2
+    },
+    {
+      "id": "19",
+      "kind": "ciphertext",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "context": "poseidon-runtime-release-smoke",
+      "level": 6,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2
+    },
+    {
+      "id": "20",
+      "kind": "ciphertext",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "context": "poseidon-runtime-release-smoke",
+      "level": 6,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2
+    },
+    {
+      "id": "21",
+      "kind": "ciphertext",
+      "place": {
+        "kind": "device",
+        "rank": 1,
+        "index": 0
+      },
+      "context": "poseidon-runtime-release-smoke",
+      "level": 6,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2
+    },
+    {
+      "id": "22",
+      "kind": "ciphertext",
+      "place": {
+        "kind": "device",
+        "rank": 1,
+        "index": 0
+      },
+      "context": "poseidon-runtime-release-smoke",
+      "level": 6,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2
+    },
+    {
+      "id": "23",
+      "kind": "ciphertext",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "context": "poseidon-runtime-release-smoke",
+      "level": 6,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2
+    },
+    {
+      "id": "24",
+      "kind": "ciphertext",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "context": "poseidon-runtime-release-smoke",
+      "level": 6,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2
+    },
+    {
+      "id": "25",
+      "kind": "ciphertext",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "context": "poseidon-runtime-release-smoke",
+      "level": 6,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2
+    },
+    {
+      "id": "26",
+      "kind": "ciphertext",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "context": "poseidon-runtime-release-smoke",
+      "level": 6,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2
+    },
+    {
+      "id": "27",
+      "kind": "ciphertext",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "context": "poseidon-runtime-release-smoke",
+      "level": 6,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2
+    },
+    {
+      "id": "28",
+      "kind": "ciphertext",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "context": "poseidon-runtime-release-smoke",
+      "level": 6,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2
+    },
+    {
+      "id": "29",
+      "kind": "ciphertext",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "context": "poseidon-runtime-release-smoke",
+      "level": 6,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2
+    },
+    {
+      "id": "30",
+      "kind": "ciphertext",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "context": "poseidon-runtime-release-smoke",
+      "level": 6,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2
+    },
+    {
+      "id": "31",
+      "kind": "ciphertext",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 1
+      },
+      "context": "poseidon-runtime-release-smoke",
+      "level": 6,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2
+    }
+  ],
+  "external_inputs": [
+    "0"
+  ],
+  "initialization": [
+    {
+      "kind": "transfer",
+      "transfer_id": "100",
+      "hint": "point_to_point",
+      "inputs": [
+        "0"
+      ],
+      "outputs": [
+        "1"
+      ],
+      "sources": [
+        {
+          "kind": "host",
+          "rank": 0
+        }
+      ],
+      "destinations": [
+        {
+          "kind": "device",
+          "rank": 0,
+          "index": 0
+        }
+      ],
+      "output_kinds": [
+        "ciphertext"
+      ],
+      "ordinal": 0
+    }
+  ],
+  "execution": [
+    {
+      "kind": "replicate",
+      "transfer_id": "101",
+      "hint": "broadcast",
+      "inputs": [
+        "1"
+      ],
+      "outputs": [
+        "2",
+        "3",
+        "4"
+      ],
+      "sources": [
+        {
+          "kind": "device",
+          "rank": 0,
+          "index": 0
+        }
+      ],
+      "destinations": [
+        {
+          "kind": "device",
+          "rank": 0,
+          "index": 1
+        },
+        {
+          "kind": "device",
+          "rank": 1,
+          "index": 0
+        },
+        {
+          "kind": "device",
+          "rank": 1,
+          "index": 1
+        }
+      ],
+      "output_kinds": [
+        "ciphertext",
+        "ciphertext",
+        "ciphertext"
+      ],
+      "ordinal": 1
+    },
+    {
+      "kind": "compute",
+      "op": "negate",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "inputs": [
+        "1"
+      ],
+      "output": "5",
+      "ordinal": 2
+    },
+    {
+      "kind": "compute",
+      "op": "negate",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 1
+      },
+      "inputs": [
+        "2"
+      ],
+      "output": "6",
+      "ordinal": 3
+    },
+    {
+      "kind": "compute",
+      "op": "negate",
+      "place": {
+        "kind": "device",
+        "rank": 1,
+        "index": 0
+      },
+      "inputs": [
+        "3"
+      ],
+      "output": "7",
+      "ordinal": 4
+    },
+    {
+      "kind": "compute",
+      "op": "negate",
+      "place": {
+        "kind": "device",
+        "rank": 1,
+        "index": 1
+      },
+      "inputs": [
+        "4"
+      ],
+      "output": "8",
+      "ordinal": 5
+    },
+    {
+      "kind": "compute",
+      "op": "negate",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "inputs": [
+        "1"
+      ],
+      "output": "9",
+      "ordinal": 6
+    },
+    {
+      "kind": "compute",
+      "op": "negate",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 1
+      },
+      "inputs": [
+        "2"
+      ],
+      "output": "10",
+      "ordinal": 7
+    },
+    {
+      "kind": "compute",
+      "op": "negate",
+      "place": {
+        "kind": "device",
+        "rank": 1,
+        "index": 0
+      },
+      "inputs": [
+        "3"
+      ],
+      "output": "11",
+      "ordinal": 8
+    },
+    {
+      "kind": "compute",
+      "op": "negate",
+      "place": {
+        "kind": "device",
+        "rank": 1,
+        "index": 1
+      },
+      "inputs": [
+        "4"
+      ],
+      "output": "12",
+      "ordinal": 9
+    },
+    {
+      "kind": "compute",
+      "op": "negate",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "inputs": [
+        "1"
+      ],
+      "output": "13",
+      "ordinal": 10
+    },
+    {
+      "kind": "compute",
+      "op": "negate",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 1
+      },
+      "inputs": [
+        "2"
+      ],
+      "output": "14",
+      "ordinal": 11
+    },
+    {
+      "kind": "transfer",
+      "transfer_id": "102",
+      "hint": "point_to_point",
+      "inputs": [
+        "6"
+      ],
+      "outputs": [
+        "15"
+      ],
+      "sources": [
+        {
+          "kind": "device",
+          "rank": 0,
+          "index": 1
+        }
+      ],
+      "destinations": [
+        {
+          "kind": "device",
+          "rank": 0,
+          "index": 0
+        }
+      ],
+      "output_kinds": [
+        "ciphertext"
+      ],
+      "ordinal": 12
+    },
+    {
+      "kind": "compute",
+      "op": "add_cc",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "inputs": [
+        "5",
+        "15"
+      ],
+      "output": "16",
+      "ordinal": 13
+    },
+    {
+      "kind": "transfer",
+      "transfer_id": "103",
+      "hint": "point_to_point",
+      "inputs": [
+        "8"
+      ],
+      "outputs": [
+        "17"
+      ],
+      "sources": [
+        {
+          "kind": "device",
+          "rank": 1,
+          "index": 1
+        }
+      ],
+      "destinations": [
+        {
+          "kind": "device",
+          "rank": 1,
+          "index": 0
+        }
+      ],
+      "output_kinds": [
+        "ciphertext"
+      ],
+      "ordinal": 14
+    },
+    {
+      "kind": "compute",
+      "op": "add_cc",
+      "place": {
+        "kind": "device",
+        "rank": 1,
+        "index": 0
+      },
+      "inputs": [
+        "7",
+        "17"
+      ],
+      "output": "18",
+      "ordinal": 15
+    },
+    {
+      "kind": "transfer",
+      "transfer_id": "104",
+      "hint": "point_to_point",
+      "inputs": [
+        "10"
+      ],
+      "outputs": [
+        "19"
+      ],
+      "sources": [
+        {
+          "kind": "device",
+          "rank": 0,
+          "index": 1
+        }
+      ],
+      "destinations": [
+        {
+          "kind": "device",
+          "rank": 0,
+          "index": 0
+        }
+      ],
+      "output_kinds": [
+        "ciphertext"
+      ],
+      "ordinal": 16
+    },
+    {
+      "kind": "compute",
+      "op": "add_cc",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "inputs": [
+        "9",
+        "19"
+      ],
+      "output": "20",
+      "ordinal": 17
+    },
+    {
+      "kind": "transfer",
+      "transfer_id": "105",
+      "hint": "point_to_point",
+      "inputs": [
+        "12"
+      ],
+      "outputs": [
+        "21"
+      ],
+      "sources": [
+        {
+          "kind": "device",
+          "rank": 1,
+          "index": 1
+        }
+      ],
+      "destinations": [
+        {
+          "kind": "device",
+          "rank": 1,
+          "index": 0
+        }
+      ],
+      "output_kinds": [
+        "ciphertext"
+      ],
+      "ordinal": 18
+    },
+    {
+      "kind": "compute",
+      "op": "add_cc",
+      "place": {
+        "kind": "device",
+        "rank": 1,
+        "index": 0
+      },
+      "inputs": [
+        "11",
+        "21"
+      ],
+      "output": "22",
+      "ordinal": 19
+    },
+    {
+      "kind": "transfer",
+      "transfer_id": "106",
+      "hint": "point_to_point",
+      "inputs": [
+        "14"
+      ],
+      "outputs": [
+        "23"
+      ],
+      "sources": [
+        {
+          "kind": "device",
+          "rank": 0,
+          "index": 1
+        }
+      ],
+      "destinations": [
+        {
+          "kind": "device",
+          "rank": 0,
+          "index": 0
+        }
+      ],
+      "output_kinds": [
+        "ciphertext"
+      ],
+      "ordinal": 20
+    },
+    {
+      "kind": "compute",
+      "op": "add_cc",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "inputs": [
+        "13",
+        "23"
+      ],
+      "output": "24",
+      "ordinal": 21
+    },
+    {
+      "kind": "transfer",
+      "transfer_id": "107",
+      "hint": "point_to_point",
+      "inputs": [
+        "18"
+      ],
+      "outputs": [
+        "25"
+      ],
+      "sources": [
+        {
+          "kind": "device",
+          "rank": 1,
+          "index": 0
+        }
+      ],
+      "destinations": [
+        {
+          "kind": "device",
+          "rank": 0,
+          "index": 0
+        }
+      ],
+      "output_kinds": [
+        "ciphertext"
+      ],
+      "ordinal": 22
+    },
+    {
+      "kind": "compute",
+      "op": "add_cc",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "inputs": [
+        "16",
+        "25"
+      ],
+      "output": "26",
+      "ordinal": 23
+    },
+    {
+      "kind": "transfer",
+      "transfer_id": "108",
+      "hint": "point_to_point",
+      "inputs": [
+        "22"
+      ],
+      "outputs": [
+        "27"
+      ],
+      "sources": [
+        {
+          "kind": "device",
+          "rank": 1,
+          "index": 0
+        }
+      ],
+      "destinations": [
+        {
+          "kind": "device",
+          "rank": 0,
+          "index": 0
+        }
+      ],
+      "output_kinds": [
+        "ciphertext"
+      ],
+      "ordinal": 24
+    },
+    {
+      "kind": "compute",
+      "op": "add_cc",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "inputs": [
+        "20",
+        "27"
+      ],
+      "output": "28",
+      "ordinal": 25
+    },
+    {
+      "kind": "compute",
+      "op": "add_cc",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "inputs": [
+        "26",
+        "28"
+      ],
+      "output": "29",
+      "ordinal": 26
+    },
+    {
+      "kind": "compute",
+      "op": "add_cc",
+      "place": {
+        "kind": "device",
+        "rank": 0,
+        "index": 0
+      },
+      "inputs": [
+        "29",
+        "24"
+      ],
+      "output": "30",
+      "ordinal": 27
+    }
+  ],
+  "finalization": [
+    {
+      "kind": "transfer",
+      "transfer_id": "109",
+      "hint": "point_to_point",
+      "inputs": [
+        "30"
+      ],
+      "outputs": [
+        "31"
+      ],
+      "sources": [
+        {
+          "kind": "device",
+          "rank": 0,
+          "index": 0
+        }
+      ],
+      "destinations": [
+        {
+          "kind": "device",
+          "rank": 0,
+          "index": 1
+        }
+      ],
+      "output_kinds": [
+        "ciphertext"
+      ],
+      "ordinal": 28
+    }
+  ],
+  "final_outputs": [
+    "31"
+  ]
+}

@@ -1,0 +1,3 @@
+NCCL version 2.20.5+cuda12.4
+PASS runner=poseidon_gpu_mpi_runtime_e2e world=2 mode=mpi device_counts=2x2 online_average_seconds=0.00944356 cross_rank_communication=6
+report=memory-v1-review/results/smoke-2x2-baseline-per_device_workers.json

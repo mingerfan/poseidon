@@ -1,0 +1,18 @@
+[PASS] internal RMM pool lifetime
+[PASS] selected Galois-key upload
+[PASS] GPU transfer publishes completion events
+[PASS] async computation and transfer storage cleanup
+[PASS] completed transfer releases pinned staging
+[PASS] Runtime drains work outside final output dependencies
+[PASS] Runtime Release during unfinished computation and transfer
+[PASS] GPU AddCP/SubCP/Rotate reuse chains
+[PASS] device mapping rejects invalid CUDA device lists
+[PASS] preflight rejects unsupported configurations
+[PASS] Runtime Encode/Transfer/AddCP/Transfer
+[PASS] Runtime Transfer/AddCC/Transfer
+[PASS] Runtime Encode/Transfer/MulCP/Transfer
+[PASS] ordinary/lazy Rescale and Value validation
+[PASS] MulCC/Relinearize/Rescale/composite Rotate
+[PASS] Host decrypt/re-encrypt Boot
+[SKIP] two-GPU RuntimePlan requires two CUDA devices
+16 Poseidon GPU Runtime Api tests passed

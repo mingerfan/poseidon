@@ -1,0 +1,10 @@
+runtime memory inline_constant rank=0 device=-1 peak=2.437500e+00 MiB
+runtime memory inline_constant rank=0 device=0 peak=1.843750e+00 MiB
+runtime memory inline_constant rank=0 device=-1 peak=2.437500e+00 MiB
+runtime memory inline_constant rank=0 device=0 peak=1.531250e+00 MiB
+Estimated Latency: 0.000234 (sec) 
+Number of Bootstrapping: 0
+traced MLIR: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/inline-constant.mlir
+optimized MLIR: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/memory-v1-review/cli-smoke/mlp.optimized.mlir
+RuntimePlan: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/memory-v1-review/cli-smoke/mlp.optimized.inline_constant.runtime-plan.json
+memory report: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/memory-v1-review/cli-smoke/mlp.optimized.inline_constant.memory.json
