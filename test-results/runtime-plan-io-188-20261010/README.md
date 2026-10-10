@@ -69,6 +69,10 @@ DaCapo `52f071f` 按公共布局中的 ID、ordinal 和阶段逐条写出，mani
 
 实验工具 [restore-scheduled-payloads.cpp](restore-scheduled-payloads.cpp) 从原计划提取 Encode 输出 ID 与 payload，核对完整计划和 manifest 摘要，再逐项校验 blob 内容摘要并恢复 DenseElementsAttr。其他 IR 字节逐行复制，不重建 ID、调度、Release/reuse 或 boot 放置。这是实验输入准备工具，runtime 仍拒绝 `.cst` 索引。已用 splat 和非 splat float64 的小型计划核对恢复前后 plan、manifest 和内容摘要。
 
+[恢复结果](restore-scheduled-payloads.json)记录了 1,019,527 个 Encode，计划提取 181.23 秒、常量恢复 256.41 秒、峰值 RSS 492.8 MiB。恢复后的 IR 为 40,864,182,764 字节，其中非 splat 常量采用 float64 原始字节的十六进制 DenseElementsAttr。该文件大于原诊断 IR；它的读取、解析时间和内存应计入实验进程开销，分别与 EmitRuntimePlan 时间、进入导出阶段时的 RSS 报告。
+
+导出命令与 128 GiB 地址空间限制在 [run-export.py](run-export.py)，完整记录比对、同编译选项加载和独立 blob 摘要检查在 [run-validation.py](run-validation.py)。后者要求导出进程成功且报告完整，检查 writer 与 reader 的计划字节数、摘要和记录数量一致。独立 blob 检查只保留 manifest DOM 和单个 64 KiB 数据块，不计入 reader 的性能结果。版本、二进制摘要、编译选项和缓存条件见 [provenance.json](provenance.json)。
+
 ## 复现
 
 ```bash
