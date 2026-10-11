@@ -41,6 +41,11 @@ times include Python/API submission gaps. `--batch 8` repeats a one-plaintext
 corpus eight times, rather than using independent model weights. All codec
 outputs are checked byte-for-byte. No codec dependency is needed by Poseidon
 or the C++ compression experiment.
+Use `--cuda-graph` to capture the inner group of decode calls and replay it,
+removing per-call Python submission gaps. Graph capture errors are reported
+without switching to a different timing mode. Decode configurations, wrapped
+outputs and scratch initialization precede capture. Event/replay dispatch is
+amortized over `--inner` calls, and GPU clocks remain unlocked.
 
 All timings exclude CPU preprocessing, compression, tables, allocation and
 configuration setup. Decode/RNS/NTT and compressed upload are timed. Each
