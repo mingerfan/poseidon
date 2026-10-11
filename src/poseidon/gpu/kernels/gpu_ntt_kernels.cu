@@ -7000,6 +7000,7 @@ void launch_forward_ntt_poly_shard_batch_fourstep_65536(
         throw std::invalid_argument(std::string(name) + ": invalid degree, buffers or batch count");
     gpu_check_cuda(cudaSetDevice(destination.device_id), name);
     const auto stride = checked_size_mul(destination.limb_count, degree, name);
+    (void)checked_size_mul(stride, batch_count, name);
     const auto offset = destination.limb_begin - parameters.limb_begin;
     forward_ntt_cheddar_phase1_65536_kernel<<<
         dim3(32, destination.limb_count, batch_count), 128,

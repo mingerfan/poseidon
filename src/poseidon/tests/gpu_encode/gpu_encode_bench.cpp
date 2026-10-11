@@ -3,6 +3,8 @@
 #include "poseidon/basics/util/croots.h"
 #include "poseidon/gpu/gpu_tensor_core_gemm.h"
 #include "json.hpp"
+#include <rmm/mr/device/cuda_memory_resource.hpp>
+#include <rmm/mr/device/pool_memory_resource.hpp>
 
 #include <algorithm>
 #include <chrono>
@@ -18,6 +20,23 @@ using namespace poseidon::gpu;
 using Json = nlohmann::json;
 using Clock = std::chrono::steady_clock;
 namespace {
+class BenchmarkMemoryPool {
+    rmm::mr::device_memory_resource *previous_ = nullptr;
+    std::unique_ptr<rmm::mr::cuda_memory_resource> upstream_;
+    std::unique_ptr<rmm::mr::pool_memory_resource<rmm::mr::cuda_memory_resource>> pool_;
+public:
+    explicit BenchmarkMemoryPool(std::size_t initial_bytes) {
+        if (!initial_bytes) return;
+        previous_ = rmm::mr::get_current_device_resource();
+        upstream_ = std::make_unique<rmm::mr::cuda_memory_resource>();
+        pool_ = std::make_unique<rmm::mr::pool_memory_resource<rmm::mr::cuda_memory_resource>>(
+            upstream_.get(), initial_bytes);
+        rmm::mr::set_per_device_resource(rmm::cuda_device_id{0}, pool_.get());
+    }
+    ~BenchmarkMemoryPool() {
+        if (pool_) rmm::mr::set_per_device_resource(rmm::cuda_device_id{0}, previous_);
+    }
+};
 struct PinnedInput {
     double *data = nullptr;
     explicit PinnedInput(std::size_t count) {
@@ -78,14 +97,21 @@ Json measure(GpuEncodeExperiment &encoder, DeviceVector<double> &input,
 
 Json validate(const std::vector<GpuWord> &actual, const std::vector<GpuWord> &reference,
               const PinnedInput &input, const PoseidonContext &context,
-              std::size_t batch, std::size_t n, std::size_t limbs, double scale)
+              std::size_t batch, std::size_t n, std::size_t limbs, double scale,
+              const Json &reference_validation)
 {
     if (!reference.empty() && actual != reference)
         throw std::runtime_error("single/batched or CUDA/Tensor NTT residues differ");
+    if (!reference.empty()) {
+        Json result = reference_validation;
+        result["exact_gpu_reference_match"] = true;
+        return result;
+    }
     CKKSEncoder cpu(context);
     const auto id = context.crt_context()->first_context_data()->parms_id();
     double max_error = 0, max_cpu_difference = 0;
     std::size_t cpu_residue_differences = 0;
+    std::size_t decoded_plaintexts = 0;
     for (std::size_t b = 0; b < batch; ++b) {
         std::vector<double> slots(input.data + b * n / 2, input.data + (b + 1) * n / 2);
         Plaintext expected, gpu_plain;
@@ -93,10 +119,16 @@ Json validate(const std::vector<GpuWord> &actual, const std::vector<GpuWord> &re
         gpu_plain.resize(context, id, n * limbs);
         gpu_plain.parms_id() = id;
         gpu_plain.scale() = scale;
+        std::size_t differences = 0;
         for (std::size_t i = 0; i < n * limbs; ++i) {
             gpu_plain.data()[i] = actual[b * n * limbs + i];
-            cpu_residue_differences += gpu_plain.data()[i] != expected.data()[i];
+            differences += gpu_plain.data()[i] != expected.data()[i];
         }
+        cpu_residue_differences += differences;
+        // Full CPU residue comparison already proves equivalence. Decode the
+        // endpoints and every plaintext whose FFT rounding differs from CPU.
+        if (b != 0 && b + 1 != batch && differences == 0) continue;
+        ++decoded_plaintexts;
         std::vector<double> decoded, cpu_decoded;
         cpu.decode(gpu_plain, decoded);
         cpu.decode(expected, cpu_decoded);
@@ -113,6 +145,7 @@ Json validate(const std::vector<GpuWord> &actual, const std::vector<GpuWord> &re
     if (max_error > tolerance || max_cpu_difference > tolerance)
         throw std::runtime_error("GPU encoder exceeded decoded-error tolerance");
     return {{"checked_plaintexts", batch}, {"max_input_error", max_error},
+            {"decoded_plaintexts", decoded_plaintexts},
             {"max_cpu_decode_difference", max_cpu_difference}, {"tolerance", tolerance},
             {"cpu_ntt_residue_differences", cpu_residue_differences},
             {"exact_gpu_reference_match", reference.empty() ? Json(nullptr) : Json(true)}};
@@ -130,6 +163,13 @@ try {
         throw std::invalid_argument("unsupported benchmark size or scale");
     const double scale = std::ldexp(1.0, scale_log2);
     gpu_check_cuda(cudaSetDevice(0), "select GPU");
+    const char *pool_env = std::getenv("POSEIDON_GPU_ENCODE_POOL_MB");
+    const std::string pool_text = pool_env ? pool_env : "64";
+    if (pool_text.empty() || pool_text.find_first_not_of("0123456789") != std::string::npos)
+        throw std::invalid_argument("POSEIDON_GPU_ENCODE_POOL_MB must be a nonnegative integer");
+    const auto pool_mb = std::stoul(pool_text);
+    if (pool_mb > 4096) throw std::invalid_argument("encode benchmark pool initial size exceeds 4096 MiB");
+    BenchmarkMemoryPool memory_pool(pool_mb * (1ULL << 20));
     cudaDeviceProp properties{};
     gpu_check_cuda(cudaGetDeviceProperties(&properties, 0), "GPU properties");
     setenv("POSEIDON_NTT_ALGO", "tensor", 1);
@@ -178,9 +218,11 @@ try {
         {"batch", batch}, {"warmup", warmup}, {"repeat", repeat}, {"setup_seconds", setup_seconds},
         {"raw_bytes", input.size() * sizeof(double)}, {"encoded_gpu_bytes", n * limbs * batch * sizeof(GpuWord)},
         {"fft", "cuFFT double Z2Z, both backends"}, {"tensor_scope", "INT8 Tensor Core NTT, fusion=4"},
+        {"allocator", pool_mb ? "RMM pool" : "direct cudaMalloc/cudaFree"}, {"initial_pool_mb", pool_mb},
         {"allocation_scope", "workspace, tables, plans and output allocation excluded; existing NTT scratch included"},
         {"modes", Json::array()}};
     std::vector<GpuWord> reference;
+    Json reference_validation;
     for (bool tensor : {false, true}) {
         if (tensor && !supports_tensor_core_integer_gemm()) {
             report["tensor_skipped"] = "SM 7.5+ required";
@@ -193,8 +235,12 @@ try {
             mode["device_only"] = measure(encoder, input, host, shard, scale, tensor, batched, false, warmup, repeat);
             std::vector<GpuWord> actual(encoder.output.size());
             encoder.output.copy_to_host(actual.data(), actual.size());
-            mode["correctness"] = validate(actual, reference, host, context, batch, n, limbs, scale);
-            if (reference.empty()) reference = std::move(actual);
+            mode["correctness"] = validate(actual, reference, host, context, batch, n, limbs, scale,
+                                            reference_validation);
+            if (reference.empty()) {
+                reference = std::move(actual);
+                reference_validation = mode["correctness"];
+            }
             mode["with_raw_h2d"] = measure(encoder, input, host, shard, scale, tensor, batched, true, warmup, repeat);
             mode["device_ms_per_plaintext"] = mode["device_only"]["total"]["median_ms"].get<double>() / batch;
             mode["device_plaintexts_per_second"] = 1000.0 * batch / mode["device_only"]["total"]["median_ms"].get<double>();

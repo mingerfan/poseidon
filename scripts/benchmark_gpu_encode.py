@@ -17,11 +17,12 @@ def main():
     parser.add_argument("--runs", type=int, default=3)
     parser.add_argument("--warmup", type=int, default=5)
     parser.add_argument("--repeat", type=int, default=30)
+    parser.add_argument("--pool-mb", type=int, default=64)
     args = parser.parse_args()
-    if args.runs < 1 or args.warmup < 0 or args.repeat < 1:
+    if args.runs < 1 or args.warmup < 0 or args.repeat < 1 or not 0 <= args.pool_mb <= 4096:
         parser.error("invalid measurement counts")
     args.output.mkdir(parents=True, exist_ok=True)
-    env = dict(os.environ, OMP_NUM_THREADS="1")
+    env = dict(os.environ, OMP_NUM_THREADS="1", POSEIDON_GPU_ENCODE_POOL_MB=str(args.pool_mb))
     cases = list(itertools.product((8, 32), (1, 8, 32)))
     random.Random(20261011).shuffle(cases)
     reports = []
@@ -43,6 +44,7 @@ def main():
                                check=True, timeout=300)
             reports.append(json.loads(report.read_text()))
     summary = {"gpu": reports[0]["gpu"], "degree": 65536, "scale_log2": 40,
+               "initial_pool_mb": args.pool_mb,
                "runs": args.runs, "warmup": args.warmup, "repeat": args.repeat,
                "case_order": telemetry, "rows": []}
     for limbs, batch in itertools.product((8, 32), (1, 8, 32)):

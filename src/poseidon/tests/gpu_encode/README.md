@@ -24,6 +24,9 @@ OMP_NUM_THREADS=1 build-runtime-gpu-api-release/bin/poseidon_gpu_encode_bench \
 
 Arguments: Q limb count, batch count, scale_log2, warmups, repetitions, report.
 The benchmark supports the CUDA path on V100; its Tensor path requires SM 7.5+.
+An RMM pool with 64 MiB initial size is the default, matching the runtime's
+allocation approach. `POSEIDON_GPU_ENCODE_POOL_MB=0` uses direct allocation for
+an explicit allocator-overhead comparison. The runner exposes `--pool-mb`.
 
 `individual` submits one FFT/RNS expansion per plaintext and one NTT per
 plaintext. `batched` uses one batched FFT and folds all plaintexts into the
@@ -46,8 +49,10 @@ inside its measured path; allocation overhead is **not** silently removed.
 Median, p95, min/max and samples are saved. CPU comparison measures Encode only,
 with a warmed output allocation and prebuilt slot vectors, without upload.
 
-Every plaintext is decoded on CPU and compared with both its original slots
-and CPU Encode. GPU variants are also compared at residue level. Differences
+Every canonical GPU plaintext is compared with CPU Encode at residue level.
+CPU decode checks the first/last plaintext and every plaintext whose FFT
+rounding differs from CPU. Other GPU variants must exactly match the canonical
+GPU residues for the whole batch, so their decode validation is reused. Differences
 from CPU rounding are reported; FFT operation order is not required to be
 bit-identical to CPU. Inputs include negative/zero/larger values and differ
 across the batch. GPU non-finite and coefficient-overflow rejection is checked
