@@ -48,6 +48,12 @@ buffers are setup. Existing Tensor NTT scratch allocation and release remain
 inside its measured path; allocation overhead is **not** silently removed.
 Median, p95, min/max and samples are saved. CPU comparison measures Encode only,
 with a warmed output allocation and prebuilt slot vectors, without upload.
+For nonzero warmup counts each GPU measurement also warms for at least 100 ms
+of CUDA-event time. Mode order is shuffled using `POSEIDON_GPU_ENCODE_ORDER_SEED`
+(default 20261011); the runner changes the seed for each configuration/process.
+Canonical CUDA/CPU validation happens before timed modes. Samples retain their
+measurement order. This reduces ordering/clock-ramp effects without locking
+GPU clocks. Event times still include GPU waiting for host submission.
 
 Every canonical GPU plaintext is compared with CPU Encode at residue level.
 CPU decode checks the first/last plaintext and every plaintext whose FFT

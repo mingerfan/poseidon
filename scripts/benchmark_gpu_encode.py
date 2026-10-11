@@ -39,6 +39,7 @@ def main():
                 "--format=csv,noheader"], text=True).strip()})
             command = [str(args.binary.resolve()), str(limbs), str(batch), "40",
                        str(args.warmup), str(args.repeat), str(report.resolve())]
+            env["POSEIDON_GPU_ENCODE_ORDER_SEED"] = str(20261011 + run * 10000 + limbs * 100 + batch)
             with (args.output / f"{name}.log").open("w") as log:
                 subprocess.run(command, env=env, stdout=log, stderr=subprocess.STDOUT,
                                check=True, timeout=300)

@@ -14,6 +14,7 @@
 #include <iostream>
 #include <limits>
 #include <random>
+#include <tuple>
 
 using namespace poseidon;
 using namespace poseidon::gpu;
@@ -56,12 +57,13 @@ double milliseconds(const Event &start, const Event &end) {
     return value;
 }
 Json statistics(std::vector<double> samples) {
+    const auto chronological = samples;
     std::sort(samples.begin(), samples.end());
     const std::size_t n = samples.size();
     return {{"median_ms", (samples[(n - 1) / 2] + samples[n / 2]) / 2},
             {"min_ms", samples.front()}, {"max_ms", samples.back()},
             {"p95_ms", samples[static_cast<std::size_t>(std::ceil(n * .95)) - 1]},
-            {"samples_ms", samples}};
+            {"samples_ms", chronological}};
 }
 
 Json measure(GpuEncodeExperiment &encoder, DeviceVector<double> &input,
@@ -70,7 +72,11 @@ Json measure(GpuEncodeExperiment &encoder, DeviceVector<double> &input,
 {
     std::vector<double> total, preparation, ntt, transfer, wall;
     Event begin, uploaded, prepared, end;
-    for (int i = -warmup; i < repeat; ++i) {
+    int warmed = 0, measured = 0;
+    double warmed_gpu_ms = 0;
+    const double minimum_warmup_ms = warmup ? 100.0 : 0.0;
+    while (measured < repeat) {
+        const bool sample = warmed >= warmup && warmed_gpu_ms >= minimum_warmup_ms;
         const auto start = Clock::now();
         begin.record();
         if (upload) gpu_check_cuda(cudaMemcpyAsync(input.data(), host.data,
@@ -83,16 +89,21 @@ Json measure(GpuEncodeExperiment &encoder, DeviceVector<double> &input,
         gpu_check_cuda(cudaEventSynchronize(end.event), "encode completion");
         const auto finish = Clock::now();
         encoder.check_result(); // Error materialization outside the reported timings.
-        if (i >= 0) {
+        if (sample) {
+            ++measured;
             total.push_back(milliseconds(begin, end));
             transfer.push_back(milliseconds(begin, uploaded));
             preparation.push_back(milliseconds(uploaded, prepared));
             ntt.push_back(milliseconds(prepared, end));
             wall.push_back(std::chrono::duration<double, std::milli>(finish - start).count());
+        } else {
+            ++warmed;
+            warmed_gpu_ms += milliseconds(begin, end);
         }
     }
     return {{"total", statistics(total)}, {"prepare_fft_rns", statistics(preparation)},
-            {"ntt", statistics(ntt)}, {"h2d", statistics(transfer)}, {"wall", statistics(wall)}};
+            {"ntt", statistics(ntt)}, {"h2d", statistics(transfer)}, {"wall", statistics(wall)},
+            {"warmup_iterations", warmed}, {"warmup_gpu_ms", warmed_gpu_ms}};
 }
 
 Json validate(const std::vector<GpuWord> &actual, const std::vector<GpuWord> &reference,
@@ -170,6 +181,11 @@ try {
     const auto pool_mb = std::stoul(pool_text);
     if (pool_mb > 4096) throw std::invalid_argument("encode benchmark pool initial size exceeds 4096 MiB");
     BenchmarkMemoryPool memory_pool(pool_mb * (1ULL << 20));
+    const char *seed_env = std::getenv("POSEIDON_GPU_ENCODE_ORDER_SEED");
+    const std::string seed_text = seed_env ? seed_env : "20261011";
+    if (seed_text.empty() || seed_text.find_first_not_of("0123456789") != std::string::npos)
+        throw std::invalid_argument("POSEIDON_GPU_ENCODE_ORDER_SEED must be a nonnegative integer");
+    const auto order_seed = std::stoull(seed_text);
     cudaDeviceProp properties{};
     gpu_check_cuda(cudaGetDeviceProperties(&properties, 0), "GPU properties");
     setenv("POSEIDON_NTT_ALGO", "tensor", 1);
@@ -221,13 +237,12 @@ try {
     Json report{{"gpu", properties.name}, {"compute_capability", properties.major * 10 + properties.minor},
         {"degree", n}, {"q_limbs", limbs}, {"modulus_bits", 30}, {"scale_log2", scale_log2},
         {"batch", batch}, {"warmup", warmup}, {"repeat", repeat}, {"setup_seconds", setup_seconds},
+        {"minimum_warmup_ms", warmup ? 100 : 0}, {"mode_order_seed", order_seed},
         {"raw_bytes", input.size() * sizeof(double)}, {"encoded_gpu_bytes", n * limbs * batch * sizeof(GpuWord)},
         {"fft", "cuFFT double Z2Z, all backends"}, {"tensor_scope", "INT8 Tensor Core NTT, fusion=4"},
         {"allocator", pool_mb ? "RMM pool" : "direct cudaMalloc/cudaFree"}, {"initial_pool_mb", pool_mb},
         {"allocation_scope", "workspace, tables, plans and output allocation excluded; existing NTT scratch included"},
         {"modes", Json::array()}};
-    std::vector<GpuWord> reference;
-    Json reference_validation;
     using Backend = GpuEncodeExperiment::Backend;
     std::vector<std::pair<Backend, std::string>> backends{
         {Backend::cuda, "cuda_ntt"}, {Backend::tensor, "tensor_ntt"}};
@@ -238,13 +253,25 @@ try {
     backends.emplace_back(Backend::tilelang_cuda, "tilelang_cuda_ntt");
     backends.emplace_back(Backend::tilelang_tensor, "tilelang_tensor_ntt");
 #endif
-    for (const auto &[backend, name] : backends) {
+    // Validate the canonical CUDA encoding before any timed mode. Avoid a
+    // long CPU decode pause between the first timed mode and later modes.
+    encoder.prepare(input.data(), scale, shard, false);
+    encoder.ntt(shard, Backend::cuda, false);
+    encoder.check_result();
+    std::vector<GpuWord> reference(encoder.output.size());
+    encoder.output.copy_to_host(reference.data(), reference.size());
+    Json reference_validation = validate(reference, {}, host, context, batch, n, limbs, scale, {});
+    std::vector<std::tuple<Backend, std::string, bool>> modes;
+    for (const auto &[backend, name] : backends)
+        for (bool batched : {false, true}) modes.emplace_back(backend, name, batched);
+    std::mt19937_64 order_rng(order_seed);
+    std::shuffle(modes.begin(), modes.end(), order_rng);
+    for (const auto &[backend, name, batched] : modes) {
         const bool tensor = backend == Backend::tensor || backend == Backend::tilelang_tensor;
         if (tensor && !supports_tensor_core_integer_gemm()) {
             report["tensor_skipped"] = "SM 7.5+ required";
             continue;
         }
-        for (bool batched : {false, true}) {
             Json mode{{"backend", name},
                 {"submission", batched ? "batched" : "individual"}};
             std::cout << "measuring " << mode.dump() << std::endl;
@@ -253,15 +280,10 @@ try {
             encoder.output.copy_to_host(actual.data(), actual.size());
             mode["correctness"] = validate(actual, reference, host, context, batch, n, limbs, scale,
                                             reference_validation);
-            if (reference.empty()) {
-                reference = std::move(actual);
-                reference_validation = mode["correctness"];
-            }
             mode["with_raw_h2d"] = measure(encoder, input, host, shard, scale, backend, batched, true, warmup, repeat);
             mode["device_ms_per_plaintext"] = mode["device_only"]["total"]["median_ms"].get<double>() / batch;
             mode["device_plaintexts_per_second"] = 1000.0 * batch / mode["device_only"]["total"]["median_ms"].get<double>();
             report["modes"].push_back(std::move(mode));
-        }
     }
     CKKSEncoder cpu(context);
     Plaintext cpu_output;
