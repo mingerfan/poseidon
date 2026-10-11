@@ -28,6 +28,9 @@ def main():
     parser.add_argument("--inner", type=int, default=10)
     parser.add_argument("--cuda-graph", action="store_true",
                         help="capture inner decode calls and replay to remove per-call host dispatch")
+    parser.add_argument("--representations", nargs="+",
+                        default=["ntt-gpu-uint32", "fft-fp64", "integer-int64", "integer-bitpacked-realhalf"],
+                        choices=["ntt-gpu-uint32", "fft-fp64", "integer-int64", "integer-bitpacked-realhalf"])
     args = parser.parse_args()
     if min(args.batch, args.repeat, args.inner) < 1:
         parser.error("counts must be positive")
@@ -47,6 +50,7 @@ def main():
               "timing_scope": "cached decode config and wrapped output; graph replay includes amortized event/replay dispatch"
                   if args.cuda_graph else "cached decode config and wrapped output; event includes Python/API dispatch gaps",
               "cuda_graph": args.cuda_graph,
+              "representations": args.representations,
               "format_scope": "nvCOMP native 64KiB chunks, encoded on GPU during setup; not CPU stream interoperability",
               "gpu": torch.cuda.get_device_name(), "q_limbs": manifest["q_limbs"],
               "batch": args.batch, "repeat": args.repeat, "inner": args.inner,
@@ -57,7 +61,7 @@ def main():
     for case in manifest["cases"]:
         for entry in case["files"]:
             if any(entry["representation"].endswith(x) for x in
-                   ("ntt-gpu-uint32", "fft-fp64", "integer-int64", "integer-bitpacked-realhalf")):
+                   args.representations):
                 for algorithm in ("LZ4", "Zstd"):
                     cases.append((case["pattern"], entry, algorithm))
     random.Random(20261012 + args.batch).shuffle(cases)
