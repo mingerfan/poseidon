@@ -10,6 +10,8 @@ pack 将 784,750 个 `.bin` 合并为一个 `data.bin`，以 content ID、offset
 
 阶段 E 已完成独立二进制小实验，尚未切换生产入口。188Server 上约 40 万条 V3 MLP 指令及描述符的加载中位数由 4.031 秒降至 0.398 秒，计入同一 PlanVerifier 后为 4.502 秒与 0.897 秒；真实 784,750 项 manifest 由 3.460 秒降至 0.825 秒。三次交替测量保留元数据 SHA-256，不读取权重 blob。计划样本是独立 MLP 计算图的复制，不能将约 10.1 倍加载倍率外推为完整 Qwen 或推理加速。编码、正确性与工程化边界见[二进制实验记录](../test-results/runtime-binary-io-20261011/README.md)。
 
+随后直接转换既有完整 V3 Qwen JSON：11,064,667 个描述符、22,149,239 条指令，8.756 GB 转为 1.470 GB，全部字段读回一致。188Server 单次成功运行的 JSON 加载 278.424 秒，二进制独立进程加载 22.147 秒，快 12.6 倍；计入同一 PlanVerifier 为 312.003 秒与 54.427 秒，快 5.7 倍。纯解析与构建为 220.622 秒与 12.362 秒；加载峰值 RSS 5.689 / 5.507 GiB，含 Verifier 均约 8.734 GiB。没有读取或校验权重载荷，生产入口尚未切换，见[完整 Qwen 二进制实验](../test-results/runtime-binary-qwen-188-20261011/README.md)。
+
 Poseidon CPU/GPU MLP 执行入口可设置 `POSEIDON_RUNTIME_BUNDLE_RESIDENT_BYTES=17179869184`，提供 16 GiB raw 驻留上限；未设置或为零时按文件 offset 读取。预算不包含计划、索引、解码 slot 或 RNS 对象；独立 rank 进程各占一份。在 V3 中 raw pack 持续驻留，Encode/Fence 仍控制解码和 RNS 生命周期；V1/V2 计划完成 eager load 后释放 raw 缓冲并保留本地 slot。超预算或旧 V1 bundle 请求驻留直接报错。
 
 当前 Qwen 已达到千万级指令规模。应先消除 JSON 解析中的平方级扫描，再同时改造生成端和读取端，减少完整对象树、大字符串、重复遍历和小文件访问。近期保留现有 JSON 语义，采用紧凑、流式的读写方式；压缩用于归档与传输。分块二进制格式作为后续选项，根据修复后的启动时间和内存预算决定是否实施。

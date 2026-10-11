@@ -6,6 +6,8 @@
 
 **自定义二进制明显改善元数据加载：约 40 万条指令的加载快 10.1 倍，真实 manifest 加载快 4.2 倍。** 计时保留原始元数据 SHA-256、typed 对象构建和严格范围检查。整个实验不读取、不解码、不校验权重 blob。
 
+后续已直接转换并读回完整 V3 Qwen，22,149,239 条指令及 11,064,667 个描述符全部字段一致，加载 278.42 → 22.15 秒，见[完整测量记录](../runtime-binary-qwen-188-20261011/README.md)。本文件保留小样本实验当时的结果及 2 GiB 数组限制；后续工具已提高单数组上限到 8 GiB，生产格式仍未切换。
+
 ## 输入范围
 
 - 计划源为已有的 `build-plaintext-models/1gpu-stream._hecate_MLP.runtime-plan.json`，V3，619 个描述符、1,239 条指令。其中有 121 条在线 Encode、375 条 Compute、122 条 Transfer、616 条 Release、5 条 Fence，2 处 reuse_input。复制 81/324 份独立计算图，重新映射 ValueId、TransferId 和全局 ordinal，得到 100,359/401,436 条指令和 50,139/200,556 个描述符。JSON 与二进制使用完全相同的每份输入，均通过同一 PlanVerifier。它们是重复 MLP 的规模样本，**不是完整 Qwen 计划**。

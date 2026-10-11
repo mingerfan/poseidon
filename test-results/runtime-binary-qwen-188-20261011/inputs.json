@@ -1,0 +1,12 @@
+{
+  "source": "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/artifacts/qwen24-plaintext-streaming/qwen24._hecate_qwen25_24layer.runtime-plan.json",
+  "source_bytes": 8756201335,
+  "binary": "/home/xuming/poseidon-runtime-io-20261010/build-o2/runtime_binary_io_experiment",
+  "output": "/home/xuming/poseidon-runtime-io-20261010/full-qwen-binary-corrected-20261011/qwen24.v3.plan.bin",
+  "operator_spec": "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/profiles/operator-spec.json",
+  "address_space_limit_bytes": 34359738368,
+  "process_timeout_seconds": 900,
+  "cache_condition": "shared server, no page cache eviction; binary read after conversion",
+  "json_full_loads": 1,
+  "blob_payloads_read": 0
+}
