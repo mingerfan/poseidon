@@ -1,0 +1,120 @@
+{
+  "1": {
+    "runs": 1,
+    "load_seconds": {
+      "min": 10.477611459,
+      "median": 10.477611459,
+      "max": 10.477611459
+    },
+    "verify_seconds": {
+      "min": 6.846600337,
+      "median": 6.846600337,
+      "max": 6.846600337
+    },
+    "bundle_index_seconds": {
+      "min": 1.149381811,
+      "median": 1.149381811,
+      "max": 1.149381811
+    },
+    "total_load_verify_index_seconds": {
+      "min": 18.473593607,
+      "median": 18.473593607,
+      "max": 18.473593607
+    },
+    "peak_rss_bytes": {
+      "min": 7383416832,
+      "median": 7383416832,
+      "max": 7383416832
+    }
+  },
+  "4": {
+    "runs": 3,
+    "load_seconds": {
+      "min": 6.547924491,
+      "median": 6.552412683,
+      "max": 6.620431286
+    },
+    "verify_seconds": {
+      "min": 7.443796872,
+      "median": 7.617651895,
+      "max": 9.7467125
+    },
+    "bundle_index_seconds": {
+      "min": 1.180768271,
+      "median": 1.184116993,
+      "max": 1.310181633
+    },
+    "total_load_verify_index_seconds": {
+      "min": 15.176977826,
+      "median": 15.349693379,
+      "max": 17.677325419
+    },
+    "peak_rss_bytes": {
+      "min": 7381843968,
+      "median": 7381843968,
+      "max": 7382237184
+    }
+  },
+  "8": {
+    "runs": 3,
+    "load_seconds": {
+      "min": 5.743576658,
+      "median": 5.764492562,
+      "max": 5.845083915
+    },
+    "verify_seconds": {
+      "min": 7.742774992,
+      "median": 7.796405135,
+      "max": 8.334786248
+    },
+    "bundle_index_seconds": {
+      "min": 1.180085416,
+      "median": 1.18125904,
+      "max": 1.513755489
+    },
+    "total_load_verify_index_seconds": {
+      "min": 14.666437066,
+      "median": 14.742156737,
+      "max": 15.693625652
+    },
+    "peak_rss_bytes": {
+      "min": 7381450752,
+      "median": 7381843968,
+      "max": 7381843968
+    }
+  },
+  "resident_4": {
+    "binary": true,
+    "bundle_index_peak_rss_bytes": 21040885760,
+    "bundle_index_seconds": 11.494202396,
+    "bundle_resident_bytes": 14701969408,
+    "bundle_resident_load_seconds": 10.2907572,
+    "bytes": 1469778284,
+    "capabilities": 4,
+    "decode_seconds": 1.87531318,
+    "destroy_seconds": 1.479079502,
+    "execution": 22149239,
+    "file": "/home/xuming/poseidon-runtime-io-20261010/production-binary-20261011/qwen24.runtime-plan.bin",
+    "finalization": 0,
+    "hash_seconds": 0.0,
+    "initialization": 0,
+    "instruction_size": 152,
+    "keys": 42566,
+    "load_seconds": 6.543391985,
+    "metadata_peak_rss_bytes": 7382630400,
+    "parse_build_seconds": 5.505516941,
+    "peak_rss_bytes": 21040885760,
+    "read_seconds": 0.949934195,
+    "scan_allocate_seconds": 3.607637614,
+    "source_bytes": 1469778284,
+    "source_sha256": "",
+    "threads": 4,
+    "total_load_verify_index_seconds": 25.701450903999998,
+    "typed_array_bytes": 4163340352,
+    "typed_array_capacity_bytes": 4163340352,
+    "value_desc_size": 72,
+    "values": 11064667,
+    "verify_peak_rss_bytes": 7382630400,
+    "verify_seconds": 7.663856523
+  }
+}

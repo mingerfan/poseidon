@@ -6,7 +6,7 @@
 #include "poseidon/parameters_literal.h"
 #include "poseidon/runtime_api/poseidon_gpu_api.h"
 #include "poseidon/runtime_api/rotation_key_basis.h"
-#include "runtime/json_plan_reader.hpp"
+#include "runtime/plan_reader.hpp"
 #include "runtime/operator_spec_reader.hpp"
 #include "runtime/runtime.hpp"
 
@@ -421,7 +421,7 @@ int main(int argc, char **argv)
         }
         require_same_topology(rank_to_node, world_size);
 
-        const auto loaded_plan = fhegpu::RuntimePlanJsonReader::read_file(argv[1]);
+        const auto loaded_plan = fhegpu::RuntimePlanReader::read_file(argv[1]);
         const auto loaded_spec = fhegpu::OperatorSpecReader::read_file(argv[2]);
         const auto &plan = loaded_plan.plan;
         if (plan.target.world_size != world_size ||

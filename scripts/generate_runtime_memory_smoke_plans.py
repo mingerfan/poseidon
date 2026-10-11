@@ -119,7 +119,7 @@ def main():
                 )
             passes += [
                 f"estimate-runtime-memory{{prefix={prefix} operator-spec={spec_path}}}",
-                f"emit-runtime-plan{{prefix={prefix} plan-id=104 target-id={spec['target_id']} operator-spec-id={spec['spec_id']} operator-spec-sha256={digest} context-id={spec['context']['context_id']}}}",
+                f"emit-runtime-plan{{plan-format=json prefix={prefix} plan-id=104 target-id={spec['target_id']} operator-spec-id={spec['spec_id']} operator-spec-sha256={digest} context-id={spec['context']['context_id']}}}",
             ]
             subprocess.run(
                 [

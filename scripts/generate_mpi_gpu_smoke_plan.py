@@ -272,7 +272,7 @@ def main() -> None:
         "}"
     )
     emit = (
-        "emit-runtime-plan{"
+        "emit-runtime-plan{plan-format=json "
         f"prefix={prefix} "
         "plan-id=104 "
         "target-id=poseidon-ckks-gpu "

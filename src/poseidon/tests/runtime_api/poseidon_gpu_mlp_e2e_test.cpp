@@ -6,7 +6,7 @@
 #include "poseidon/parameters_literal.h"
 #include "poseidon/runtime_api/poseidon_gpu_api.h"
 #include "poseidon/runtime_api/rotation_key_basis.h"
-#include "runtime/json_plan_reader.hpp"
+#include "runtime/plan_reader.hpp"
 #include "runtime/operator_spec_reader.hpp"
 #include "runtime/runtime.hpp"
 #include "runtime/verifier.hpp"
@@ -381,7 +381,7 @@ int main(int argc, char **argv)
 
     try
     {
-        const auto loaded_plan = fhegpu::RuntimePlanJsonReader::read_file(argv[1]);
+        const auto loaded_plan = fhegpu::RuntimePlanReader::read_file(argv[1]);
         const auto loaded_spec = fhegpu::OperatorSpecReader::read_file(argv[2]);
         const Json fixture = read_json(argv[4]);
         const Json mock_result = read_json(argv[5]);

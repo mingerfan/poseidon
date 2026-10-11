@@ -2,6 +2,8 @@
 
 2026-10-10。面向 DaCapo 导出器、ckks-runtime 读取器和 Poseidon 执行入口的后续实现方案。
 
+正式二进制模式已接入：编译器默认 binary，需要查看指令时显式 JSON；runtime 整文件读入后默认 4 线程构建。完整 Qwen 三项加载中位数 15.35 秒，8 线程 14.74 秒；加上全部 14.70 GB raw 权重驻留，一次测试 25.70 秒。详见[正式入口验收](../test-results/runtime-binary-production-188-20261011/README.md)和[容器格式](../third_party/ckks-runtime/docs/runtime-plan/binary-v1.md)。本轮按用户要求取消 binary 路径的整文件和 payload 哈希扫描；下文早期方案的 SHA 要求仅描述原 JSON 路径。
+
 实施状态：阶段 A–C 已实现，采用严格单遍 SAX、逐记录 typed plan 构建、增量 SHA-256、紧凑流式导出、manifest 写流和 staging 发布。代码、测试、完整 V2/V3 元数据测量及四卡 Qwen 导出证据见 [I/O 优化验收记录](../test-results/runtime-plan-io-188-20261010/README.md)。元数据加载峰值已低于 16 GiB；180 秒时间目标仍需继续优化。阶段 D 的 bundle pack 已实现并支持显式预算下的 raw 内存驻留，见[pack 验收记录](../test-results/runtime-bundle-pack-188-20261011/README.md)；压缩入口和阶段 E 的二进制容器继续按下述条件推进。
 
 原始四卡 JSON 的 31.03 MB/s 是端到端加载速度：读取 1.82 秒，解析与 typed plan 构建 213.89 秒，增量 SHA-256 55.88 秒，总计 271.59 秒。CPU 解析和对象分配是主要瓶颈；该数字不表示磁盘带宽。合并权重文件不会消除 JSON 的解析时间，后续应减少逐记录临时 DOM、字段查找与分配，或采用阶段 E 的二进制计划。

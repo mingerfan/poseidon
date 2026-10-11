@@ -7,7 +7,7 @@
 #include <rmm/mr/device/cuda_memory_resource.hpp>
 #include <rmm/mr/device/pool_memory_resource.hpp>
 #include <rmm/mr/device/statistics_resource_adaptor.hpp>
-#include "runtime/json_plan_reader.hpp"
+#include "runtime/plan_reader.hpp"
 #include "runtime/operator_spec_reader.hpp"
 #include "runtime/runtime.hpp"
 #include "poseidon/runtime_api/communication/cuda_local_transfer.h"
@@ -393,7 +393,7 @@ int main(int argc, char **argv)
 
         NvtxRange setup_range("setup");
         const auto loaded_plan =
-            fhegpu::RuntimePlanJsonReader::read_file(options.plan_path.string());
+            fhegpu::RuntimePlanReader::read_file(options.plan_path.string());
         const auto loaded_spec =
             fhegpu::OperatorSpecReader::read_file(options.spec_path.string());
         const auto &plan = loaded_plan.plan;

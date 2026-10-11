@@ -6,7 +6,7 @@
 #include "poseidon/parameters_literal.h"
 #include "poseidon/runtime_api/poseidon_cpu_api.h"
 #include "poseidon/runtime_api/rotation_key_basis.h"
-#include "runtime/json_plan_reader.hpp"
+#include "runtime/plan_reader.hpp"
 #include "runtime/operator_spec_reader.hpp"
 #include "runtime/runtime.hpp"
 #include "runtime/verifier.hpp"
@@ -342,7 +342,7 @@ std::size_t count_transfers(const fhegpu::RuntimePlan &plan)
 
 int run_e2e(char **paths, bool mpi_mode, int rank, int world_size)
 {
-    const auto loaded_plan = fhegpu::RuntimePlanJsonReader::read_file(paths[0]);
+    const auto loaded_plan = fhegpu::RuntimePlanReader::read_file(paths[0]);
     const auto loaded_spec = fhegpu::OperatorSpecReader::read_file(paths[1]);
     const Json fixture = read_json(paths[3]);
     const Json mock_result = read_json(paths[4]);

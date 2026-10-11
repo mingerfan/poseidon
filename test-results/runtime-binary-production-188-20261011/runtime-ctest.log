@@ -1,0 +1,19 @@
+Test project /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-binary-io-experiment
+    Start 1: pack_plaintext_bundle_tests
+1/7 Test #1: pack_plaintext_bundle_tests ..........   Passed    0.22 sec
+    Start 2: runtime_tests
+2/7 Test #2: runtime_tests ........................   Passed    0.05 sec
+    Start 3: runtime_plan_json_tests
+3/7 Test #3: runtime_plan_json_tests ..............   Passed    0.04 sec
+    Start 4: runtime_plan_memory_tests
+4/7 Test #4: runtime_plan_memory_tests ............   Passed    0.01 sec
+    Start 5: runtime_release_tests
+5/7 Test #5: runtime_release_tests ................   Passed    0.80 sec
+    Start 6: thread_trace_tests
+6/7 Test #6: thread_trace_tests ...................   Passed    0.00 sec
+    Start 7: runtime_binary_io_experiment_tests
+7/7 Test #7: runtime_binary_io_experiment_tests ...   Passed    0.00 sec
+
+100% tests passed out of 7
+
+Total Test time (real) =   1.13 sec

@@ -5,7 +5,7 @@
 #include "poseidon/keygenerator.h"
 #include "poseidon/parameters_literal.h"
 #include "poseidon/runtime_api/poseidon_gpu_api.h"
-#include "runtime/json_plan_reader.hpp"
+#include "runtime/plan_reader.hpp"
 #include "runtime/operator_spec_reader.hpp"
 #include "runtime/runtime.hpp"
 
@@ -130,7 +130,7 @@ int main(int argc, char **argv)
 
     try
     {
-        const auto loaded_plan = fhegpu::RuntimePlanJsonReader::read_file(argv[1]);
+        const auto loaded_plan = fhegpu::RuntimePlanReader::read_file(argv[1]);
         const auto loaded_spec = fhegpu::OperatorSpecReader::read_file(argv[2]);
         const auto &plan = loaded_plan.plan;
         if (plan.target.world_size != 1 || plan.target.device_counts != std::vector<int>{1} ||
