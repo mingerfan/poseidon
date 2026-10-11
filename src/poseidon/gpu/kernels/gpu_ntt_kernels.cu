@@ -1404,12 +1404,16 @@ __global__ void forward_ntt_cheddar_phase1_65536_kernel(
     const GpuWide *rns_modulus_constants,
     const GpuWord *roots,
     std::size_t modulus_offset,
-    std::size_t limb_count)
+    std::size_t limb_count,
+    std::size_t batch_stride = 0)
 {
     constexpr int kLogDegree = 16;
     constexpr int kDegree = 1 << kLogDegree;
     constexpr int kRadix = 16;
     extern __shared__ GpuWord shared_values[];
+
+    destination += blockIdx.z * batch_stride;
+    source += blockIdx.z * batch_stride;
 
     const std::size_t local_limb = blockIdx.y;
     if (local_limb >= limb_count)
@@ -1478,12 +1482,15 @@ __global__ void forward_ntt_cheddar_phase2_65536_kernel(
     const GpuWide *rns_modulus_constants,
     const GpuWord *roots,
     std::size_t modulus_offset,
-    std::size_t limb_count)
+    std::size_t limb_count,
+    std::size_t batch_stride = 0)
 {
     constexpr int kLogDegree = 16;
     constexpr int kDegree = 1 << kLogDegree;
     constexpr int kRadix = 8;
     extern __shared__ GpuWord shared_values[];
+
+    values += blockIdx.z * batch_stride;
 
     const std::size_t local_limb = blockIdx.y;
     if (local_limb >= limb_count)
@@ -6977,6 +6984,37 @@ void launch_hybrid_convert_p9_to_q_forward_ntt_two_components_fourstep_65536(
     gpu_check_cuda(
         cudaGetLastError(),
         "launch_hybrid_convert_p9_to_q_forward_ntt_two_components_fourstep_65536 phase2 kernel launch");
+}
+
+void launch_forward_ntt_poly_shard_batch_fourstep_65536(
+    const GpuPolyShardView &destination,
+    const GpuConstPolyShardView &source,
+    const GpuParameterShard &parameters,
+    std::size_t degree,
+    std::size_t batch_count)
+{
+    const char *name = "launch_forward_ntt_poly_shard_batch_fourstep_65536";
+    validate_ntt_launch_shape(name, destination, source, parameters, degree, false);
+    if (degree != 65536 || destination.ptr == source.ptr ||
+        batch_count == 0 || batch_count > 65535)
+        throw std::invalid_argument(std::string(name) + ": invalid degree, buffers or batch count");
+    gpu_check_cuda(cudaSetDevice(destination.device_id), name);
+    const auto stride = checked_size_mul(destination.limb_count, degree, name);
+    const auto offset = destination.limb_begin - parameters.limb_begin;
+    forward_ntt_cheddar_phase1_65536_kernel<<<
+        dim3(32, destination.limb_count, batch_count), 128,
+        128 * 16 * sizeof(GpuWord), gpu_execution_stream()>>>(
+        destination.ptr, source.ptr, parameters.rns_primes.data(),
+        parameters.rns_modulus_constants.data(), parameters.ntt_tables.data(),
+        offset, destination.limb_count, stride);
+    gpu_check_cuda(cudaGetLastError(), "batched forward NTT phase1");
+    forward_ntt_cheddar_phase2_65536_kernel<<<
+        dim3(128, destination.limb_count, batch_count), 64,
+        64 * 8 * sizeof(GpuWord), gpu_execution_stream()>>>(
+        destination.ptr, parameters.rns_primes.data(),
+        parameters.rns_modulus_constants.data(), parameters.ntt_tables.data(),
+        offset, destination.limb_count, stride);
+    gpu_check_cuda(cudaGetLastError(), "batched forward NTT phase2");
 }
 
 void launch_forward_ntt_components_shard_tensor(

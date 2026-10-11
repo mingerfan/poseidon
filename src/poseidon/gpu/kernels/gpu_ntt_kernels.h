@@ -48,6 +48,14 @@ void launch_forward_ntt_poly_shard_fourstep_65536(
     const GpuParameterShard &parameter_shard,
     std::size_t degree);
 
+// Contiguous independent polynomials; folds the batch into grid.z.
+void launch_forward_ntt_poly_shard_batch_fourstep_65536(
+    const GpuPolyShardView &first_destination_shard,
+    const GpuConstPolyShardView &first_source_shard,
+    const GpuParameterShard &parameter_shard,
+    std::size_t degree,
+    std::size_t batch_count);
+
 void launch_forward_ntt_qp_active_fourstep_65536(
     GpuWord *destination_q,
     GpuWord *destination_p,

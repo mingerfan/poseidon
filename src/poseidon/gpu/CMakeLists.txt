@@ -75,3 +75,21 @@ target_compile_options(poseidon_gpu
         $<$<COMPILE_LANGUAGE:CUDA>:--default-stream=per-thread>
         $<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>
 )
+
+option(POSEIDON_BUILD_GPU_ENCODE_BENCH "Build experimental CUDA/Tensor CKKS encoding benchmark" OFF)
+if(POSEIDON_BUILD_GPU_ENCODE_BENCH)
+    add_executable(poseidon_gpu_encode_bench
+        ../tests/gpu_encode/gpu_encode_bench.cpp
+        ../tests/gpu_encode/gpu_encode_experiment.cu)
+    target_include_directories(poseidon_gpu_encode_bench PRIVATE
+        ${POSEIDON_INCLUDES_DIR}/third_party/ckks-runtime/third_party/nlohmann)
+    target_link_libraries(poseidon_gpu_encode_bench PRIVATE poseidon_gpu CUDA::cufft)
+    target_compile_options(poseidon_gpu_encode_bench PRIVATE
+        $<$<COMPILE_LANGUAGE:CUDA>:--default-stream=per-thread>
+        $<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>)
+    if(POSEIDON_BUILD_CKKS_RUNTIME_TESTS)
+        add_test(NAME poseidon_gpu_encode_smoke
+            COMMAND poseidon_gpu_encode_bench 8 2 40 0 1
+                ${CMAKE_CURRENT_BINARY_DIR}/encode-smoke.json)
+    endif()
+endif()
