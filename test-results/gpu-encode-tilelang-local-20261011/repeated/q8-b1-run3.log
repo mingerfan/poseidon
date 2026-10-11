@@ -1,0 +1,9 @@
+measuring {"backend":"tilelang_tensor_ntt","submission":"batched"}
+measuring {"backend":"tilelang_cuda_ntt","submission":"individual"}
+measuring {"backend":"tensor_ntt","submission":"batched"}
+measuring {"backend":"tilelang_cuda_ntt","submission":"batched"}
+measuring {"backend":"tensor_ntt","submission":"individual"}
+measuring {"backend":"cuda_ntt","submission":"batched"}
+measuring {"backend":"cuda_ntt","submission":"individual"}
+measuring {"backend":"tilelang_tensor_ntt","submission":"individual"}
+report: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/gpu-encode-tilelang-local-20261011/repeated/q8-b1-run3.json

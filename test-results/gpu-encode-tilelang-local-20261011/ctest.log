@@ -1,0 +1,7 @@
+Test project /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release
+    Start 1: poseidon_gpu_encode_smoke
+1/1 Test #1: poseidon_gpu_encode_smoke ........   Passed    2.40 sec
+
+100% tests passed out of 1
+
+Total Test time (real) =   2.41 sec
