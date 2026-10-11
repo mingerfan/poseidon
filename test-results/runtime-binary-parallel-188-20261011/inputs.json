@@ -1,0 +1,17 @@
+{
+  "source": "/home/xuming/poseidon-runtime-io-20261010/full-qwen-binary-corrected-20261011/qwen24.v3.plan.bin",
+  "source_bytes": 1469778349,
+  "operator_spec": "/home/xuming/poseidon-qwen-dacapo-20261010-IUOMH1/profiles/operator-spec.json",
+  "threads": [
+    1,
+    2,
+    4,
+    8
+  ],
+  "runs": 2,
+  "address_space_limit_bytes": 34359738368,
+  "timeout_seconds": 180,
+  "source_hashing": false,
+  "blob_payloads_read": 0,
+  "cache_condition": "shared server, no cache eviction"
+}
