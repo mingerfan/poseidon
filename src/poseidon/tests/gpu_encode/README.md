@@ -64,6 +64,31 @@ and LZ4 do not reduce the dense uint32 NTT data. Periodic1024 slot input has
 compression guarantee. CUDA materialization is faster than the current
 Tensor implementation on this GPU, while both reduce transfer volume.
 
+A separate check found exact mirror symmetry in the **complete NTT results**
+of all eight dumped Q8/Q32 batch-one real-input cases: `P[i] = P[N-1-i]`
+within each limb in Poseidon's bit-reversed order. Integer antisymmetry implies
+`a(X^-1) = a(X)` modulo `X^N+1`, so inverse NTT roots have equal evaluations.
+Storing the first N/2 uint32 residues per limb would reduce a dense fully
+encoded plaintext from 2 MiB to 1 MiB/Q8, or 8 MiB to 4 MiB/Q32. A future
+`multiply_plain` consumer could read index `i < N/2 ? i : N-1-i` directly,
+without a separate decoder, RNS expansion or NTT. Address calculation still
+uses ordinary instructions; its performance and interference are unmeasured.
+The current plaintext view/evaluator requires a full layout, so this consumer
+is a proposal, **not implemented**. Require an exact symmetry check before
+enabling it; complex or asymmetrically rounded inputs may need a fallback.
+This is mathematical layout compression even though generic byte codecs did
+not compress the same dense NTT buffer. Reproduce the corpus check with:
+
+```sh
+python test-results/plaintext-compression-local-20261011/verify-ntt-mirror.py \
+  --manifest test-results/plaintext-compression-local-20261011/q8-b1-run1.json \
+  --manifest test-results/plaintext-compression-local-20261011/q32-b1-run1.json \
+  --output test-results/plaintext-compression-local-20261011/ntt-mirror-verification.json
+```
+
+The check requires the original ignored binary dumps; its saved JSON includes
+payload hashes and exact mismatch counts, not GPU timing claims.
+
 This is an experiment, not a runtime Encode implementation. It encodes real
 full-slot inputs on GPU: slot permutation, double-precision cuFFT, negacyclic
 twist/scaling/rounding, exact RNS expansion, and forward NTT. CUDA and Tensor

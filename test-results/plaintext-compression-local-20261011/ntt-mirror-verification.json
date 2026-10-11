@@ -1,0 +1,123 @@
+{
+  "scope": "CPU verification of existing real-slot corpus; no GPU timing or runtime integration",
+  "degree": 65536,
+  "ntt_order": "Poseidon bit-reversed negacyclic NTT",
+  "identity": "P[b,limb,i] == P[b,limb,N-1-i]",
+  "half_view_index": "i < N/2 ? i : N-1-i",
+  "basis": "a[N-i]=-a[i], a[N/2]=0 imply a(X^-1)=a(X) modulo X^N+1; inverse NTT roots have equal evaluations",
+  "proposed_consumer": "Store [batch,limb,N/2] uint32 NTT values; multiply_plain reads via half_view_index without materializing a full plaintext",
+  "limits": [
+    "Enable only after exact symmetry verification; complex slots or asymmetric rounded coefficients may fail.",
+    "The index relation depends on the NTT root order; this check is for Poseidon's current order.",
+    "A compressed-aware consumer needs new plaintext layout metadata and kernel reads; existing GpuEvaluator requires a full layout.",
+    "No standalone unpack, RNS or NTT would be needed; address calculation still uses ordinary instructions, and bandwidth/latency impact is unmeasured.",
+    "Eight synthetic batch-one cases from two existing dumped manifests, not pretrained Qwen or arbitrary inputs."
+  ],
+  "all_exact": true,
+  "cases": [
+    {
+      "manifest": "test-results/plaintext-compression-local-20261011/q8-b1-run1.json",
+      "payload_sha256": "b1dea6b926d5605001b59984b015df2fd8dd4d74d604e263d404f143a79d4296",
+      "pattern": "dense",
+      "batch": 1,
+      "q_limbs": 8,
+      "integer_antisymmetry_exact": true,
+      "pairs_checked": 262144,
+      "mirror_mismatches": 0,
+      "full_ntt_bytes": 2097152,
+      "half_ntt_bytes": 1048576,
+      "full_to_half_ratio": 2
+    },
+    {
+      "manifest": "test-results/plaintext-compression-local-20261011/q8-b1-run1.json",
+      "payload_sha256": "726b35ceba799ba004ddc25d4680b36570ff4321633b93cdd818c0734a8b2cf6",
+      "pattern": "periodic1024",
+      "batch": 1,
+      "q_limbs": 8,
+      "integer_antisymmetry_exact": true,
+      "pairs_checked": 262144,
+      "mirror_mismatches": 0,
+      "full_ntt_bytes": 2097152,
+      "half_ntt_bytes": 1048576,
+      "full_to_half_ratio": 2
+    },
+    {
+      "manifest": "test-results/plaintext-compression-local-20261011/q8-b1-run1.json",
+      "payload_sha256": "5e61da7fb0ef93bd3f48b9231bbdad7c1d60ce59445b63f348a3c45098193b57",
+      "pattern": "prefix896",
+      "batch": 1,
+      "q_limbs": 8,
+      "integer_antisymmetry_exact": true,
+      "pairs_checked": 262144,
+      "mirror_mismatches": 0,
+      "full_ntt_bytes": 2097152,
+      "half_ntt_bytes": 1048576,
+      "full_to_half_ratio": 2
+    },
+    {
+      "manifest": "test-results/plaintext-compression-local-20261011/q8-b1-run1.json",
+      "payload_sha256": "6e99363424be40d6c1bff3eaf3eddf116daedff26abb3e9a23bae4580e61b7a0",
+      "pattern": "scalar",
+      "batch": 1,
+      "q_limbs": 8,
+      "integer_antisymmetry_exact": true,
+      "pairs_checked": 262144,
+      "mirror_mismatches": 0,
+      "full_ntt_bytes": 2097152,
+      "half_ntt_bytes": 1048576,
+      "full_to_half_ratio": 2
+    },
+    {
+      "manifest": "test-results/plaintext-compression-local-20261011/q32-b1-run1.json",
+      "payload_sha256": "7374f1be807a853a9feeb7ffe64c043724b4abcd7a991c84b10765d892f8f134",
+      "pattern": "dense",
+      "batch": 1,
+      "q_limbs": 32,
+      "integer_antisymmetry_exact": true,
+      "pairs_checked": 1048576,
+      "mirror_mismatches": 0,
+      "full_ntt_bytes": 8388608,
+      "half_ntt_bytes": 4194304,
+      "full_to_half_ratio": 2
+    },
+    {
+      "manifest": "test-results/plaintext-compression-local-20261011/q32-b1-run1.json",
+      "payload_sha256": "fea3ca3d7e1befb1b21194310b445680d6054b3a713e9bb64bf1baec6b2c31b8",
+      "pattern": "periodic1024",
+      "batch": 1,
+      "q_limbs": 32,
+      "integer_antisymmetry_exact": true,
+      "pairs_checked": 1048576,
+      "mirror_mismatches": 0,
+      "full_ntt_bytes": 8388608,
+      "half_ntt_bytes": 4194304,
+      "full_to_half_ratio": 2
+    },
+    {
+      "manifest": "test-results/plaintext-compression-local-20261011/q32-b1-run1.json",
+      "payload_sha256": "76e6519e7f5fd5459a0c0968bfe64ac229b2eea4c645ccf2730c22c370fcfd01",
+      "pattern": "prefix896",
+      "batch": 1,
+      "q_limbs": 32,
+      "integer_antisymmetry_exact": true,
+      "pairs_checked": 1048576,
+      "mirror_mismatches": 0,
+      "full_ntt_bytes": 8388608,
+      "half_ntt_bytes": 4194304,
+      "full_to_half_ratio": 2
+    },
+    {
+      "manifest": "test-results/plaintext-compression-local-20261011/q32-b1-run1.json",
+      "payload_sha256": "c376ca5f3377bdd050da285a5509c0d6713060a3c8c4a29349c9bf5d46b0b257",
+      "pattern": "scalar",
+      "batch": 1,
+      "q_limbs": 32,
+      "integer_antisymmetry_exact": true,
+      "pairs_checked": 1048576,
+      "mirror_mismatches": 0,
+      "full_ntt_bytes": 8388608,
+      "half_ntt_bytes": 4194304,
+      "full_to_half_ratio": 2
+    }
+  ]
+}
