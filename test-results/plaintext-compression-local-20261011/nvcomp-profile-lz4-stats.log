@@ -1,0 +1,4 @@
+Generating SQLite file build-runtime-gpu-api-release/nvcomp-profile-lz4.sqlite from build-runtime-gpu-api-release/nvcomp-profile-lz4.nsys-rep
+Processing [build-runtime-gpu-api-release/nvcomp-profile-lz4.sqlite] with [/usr/lib/nsight-systems/target-linux-x64/reports/cuda_gpu_kern_sum.py] to [test-results/plaintext-compression-local-20261011/nvcomp-profile-lz4_cuda_gpu_kern_sum.csv]... PROCESSED
+
+Processing [build-runtime-gpu-api-release/nvcomp-profile-lz4.sqlite] with [/usr/lib/nsight-systems/target-linux-x64/reports/cuda_api_sum.py] to [test-results/plaintext-compression-local-20261011/nvcomp-profile-lz4_cuda_api_sum.csv]... PROCESSED

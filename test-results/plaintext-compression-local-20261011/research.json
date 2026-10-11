@@ -1,0 +1,108 @@
+{
+  "date": "2026-10-11",
+  "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU, SM89",
+  "parameters": {
+    "N": 65536,
+    "Q_limb_counts": [
+      8,
+      32
+    ],
+    "modulus_bits": 30,
+    "scale_log2": 40,
+    "real_dense_sigma": 0.02,
+    "batches": [
+      1,
+      8
+    ],
+    "runs": 3
+  },
+  "ratio_definition": "raw bytes / compressed bytes; >1 means storage saved",
+  "formulas": {
+    "gpu_ntt_bytes": "4*N*L",
+    "cpu_ntt_bytes": "8*N*L",
+    "packed_integer_bytes": "N*b/8",
+    "verified_real_half_integer_bytes": "N*b/16, plus uint64 guard word",
+    "gpu_to_half_integer_ratio": "64*L/b ignoring metadata/guard"
+  },
+  "findings": [
+    "Dense final GPU uint32 NTT: whole-buffer Zstd1/3/9 ratio about 1.000, LZ4 about 0.996. No useful byte-codec compression in this corpus.",
+    "Dense CPU uint64 NTT: Zstd3 about 2.1x, LZ4 about 1.34x. GPU already uses uint32; CPU storage gains must not be reported as GPU gains.",
+    "Dense normalized FP64 FFT: Zstd3 about 1.04x, LZ4 slightly expands.",
+    "Dense rounded integer coefficients require 30 zigzag bits in all formal runs. Exact real antisymmetry permits half storage: 122888 bytes per plaintext at batch1, about 120KiB. GPU reduction about 17.07x at Q8 and 68.26x at Q32.",
+    "Half coefficients are lossless relative to CPU Encode; they are tied to scale. Real symmetry is checked before enabling. Complex inputs and >63-bit codes require another format.",
+    "A verified periodic1024 slot corpus has 32-fold exact NTT replication groups in Poseidon bit-reversed order. Direct group storage is 64KiB/Q8 or 256KiB/Q32; upload+CUDA replication takes 25.4us or 67.5us per plaintext at batch1.",
+    "Traditional byte codecs compress that periodic GPU NTT by about 33x/Zstd3 and 16x/LZ4. Periodic half coefficients plus Zstd3 reach about 5KiB, but they require entropy decode, RNS and NTT; not a claim for dense Qwen weights.",
+    "Dense half coefficients: H2D+CUDA RNS+CUDA NTT takes about 56.1us/Q8 and 163.8us/Q32 at batch1; H2D+CUDA RNS+TileLang Tensor NTT takes 107.8us/Q8 and 368.6us/Q32. Tensor NTT has 12 Tensor stages and 4 CUDA stages; unpack and modular work use CUDA.",
+    "On dense GPU NTT, nvCOMP LZ4 device decode about 273us/pt at batch1; Zstd about 3.53ms/Q8 and 3.69ms/Q32. Batch8 increases output throughput; see summary. nsight confirms most elapsed work is in GPU decompress kernels.",
+    "Prefer fixed-width half integer coefficients for dense real weights in this parameter range; verified repeated NTT can use replication or a future compressed-aware multiply_plain. Fusing unpack/RNS into the first Tensor NTT stage is a future optimization, not implemented."
+  ],
+  "limitations": [
+    "Synthetic Gaussian/prefix/periodic/scalar corpora, not pretrained Qwen. Compression ratios vary with scale, magnitude, packing and modulus count.",
+    "No full Qwen/CKKS end-to-end run or concurrent foreground interference measurement in this study.",
+    "CPU preprocessing/compression, allocations, tables and codec configuration excluded from GPU runtime timings. GPU output still needs a full materialized NTT buffer.",
+    "C++ event timing includes host submission gaps; nvCOMP Python API event timing includes Python/dispatch gaps. Nsight diagnostics separately measure device kernels.",
+    "nvCOMP native64KiB chunks encoded on GPU during setup. CPU-produced compressed payload interoperability was not tested; batch8 tiles the same payload.",
+    "Repeated CUDA Graph replay failed with SIGSEGV for the current nvCOMP/PyTorch dependency combination; not used in formal results, experimental graph option removed. Root cause not established.",
+    "188Server SOCKSv5 Host unreachable; local GPU only. Clocks not locked.",
+    "Only optional benchmark code/build target changed; no production kernel, compiler IR or runtime integration in this study."
+  ],
+  "validation": {
+    "format_modes": "all match CPU Encode NTT bit for bit",
+    "codecs": "all exact byte round trips",
+    "ctest": "2/2 passed",
+    "memcheck": "0 errors; Q3 batch2 scale2^60"
+  },
+  "sources": [
+    {
+      "title": "WPC: Weight Plaintext Compression for CNN Inference based on RNS-CKKS, CCS 2025",
+      "url": "https://www.thu-haslab.org/publication/2025-wpc/3719027.3765022.pdf",
+      "findings": "Periodicity can be preserved through CKKS slot encoding and negacyclic NTT. Their CNN-specific packing reports 46.08-139.11x whole-model weight-plaintext compression and 1.25-2.18x speedup on A100. It does not establish those ratios for Qwen/Transformers. Different NTT orderings need different replication indexing."
+    },
+    {
+      "title": "ZipServ: Fast and Memory-Efficient LLM Inference with Hardware-Aware Lossless Compression, ASPLOS 2026",
+      "url": "https://cse.hkust.edu.hk/~weiwa/papers/zipserv-asplos26.pdf",
+      "findings": "Lossless BF16 weight compression of up to 30% size reduction. ALU units decode weights while Tensor Cores perform the following GEMM. Supports fusing unpack with the consuming matrix operation, not calling LZ4/Zstd bitstream decode Tensor Core arithmetic."
+    },
+    {
+      "title": "NVIDIA nvCOMP Algorithm Selection",
+      "url": "https://docs.nvidia.com/cuda/nvcomp/algorithm_selection.html",
+      "findings": "nvCOMP provides CUDA LZ4/Zstd and other codecs. Algorithm choice is data dependent. Hardware DE is distinct from Tensor Cores."
+    },
+    {
+      "title": "NVIDIA nvCOMP Decompression Engine FAQ",
+      "url": "https://docs.nvidia.com/cuda/nvcomp/decompression_engine_faq.html",
+      "findings": "Dedicated DE on supported B200/B300/GB200/GB300 GPUs, advertised up to 600GB/s. Supports LZ4/Snappy/Deflate/Gzip; not present on the local Ada RTX4060. This is not a measured result for our hardware."
+    }
+  ],
+  "kernel_diagnostics": [
+    {
+      "algorithm": "LZ4",
+      "plaintext_bytes": 2097152,
+      "calls": 20,
+      "api_timeline_ms_per_call": 0.4025568008422852,
+      "exact_round_trip": true,
+      "scope": "profiling diagnostic, not the 3-run formal timing",
+      "sum_gpu_kernel_us_per_call": 322.57125,
+      "profile_scope": "diagnostic; no 100ms warmup; profiling changes timings; use only to establish device kernel contribution"
+    },
+    {
+      "algorithm": "Zstd",
+      "plaintext_bytes": 2097152,
+      "calls": 20,
+      "api_timeline_ms_per_call": 4.922025680541992,
+      "exact_round_trip": true,
+      "scope": "profiling diagnostic, not the 3-run formal timing",
+      "sum_gpu_kernel_us_per_call": 4783.647650000001,
+      "profile_scope": "diagnostic; no 100ms warmup; profiling changes timings; use only to establish device kernel contribution"
+    }
+  ],
+  "artifacts": [
+    "format-summary.json",
+    "cpu-codec-summary.json",
+    "nvcomp-summary.json",
+    "provenance.json",
+    "nvcomp-provenance.json",
+    "ctest.log",
+    "memcheck.log"
+  ]
+}

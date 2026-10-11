@@ -1,0 +1,57 @@
+{
+  "case_order": [
+    {
+      "case": "nvcomp-q8-b8-run1",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 45, P0, 590.01 W, 1890 MHz, 8001 MHz"
+    },
+    {
+      "case": "nvcomp-q32-b1-run1",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 54, P0, 19.47 W, 2595 MHz, 8001 MHz"
+    },
+    {
+      "case": "nvcomp-q8-b1-run1",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 56, P0, 19.02 W, 2595 MHz, 8001 MHz"
+    },
+    {
+      "case": "nvcomp-q32-b8-run1",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 56, P0, 19.55 W, 2595 MHz, 8001 MHz"
+    },
+    {
+      "case": "nvcomp-q32-b8-run2",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 59, P0, 38.06 W, 2595 MHz, 8001 MHz"
+    },
+    {
+      "case": "nvcomp-q8-b1-run2",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 60, P0, 40.56 W, 2595 MHz, 8001 MHz"
+    },
+    {
+      "case": "nvcomp-q32-b1-run2",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 58, P0, 21.91 W, 2595 MHz, 8001 MHz"
+    },
+    {
+      "case": "nvcomp-q8-b8-run2",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 58, P0, 27.85 W, 2595 MHz, 8001 MHz"
+    },
+    {
+      "case": "nvcomp-q8-b8-run3",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 58, P0, 34.27 W, 2595 MHz, 8001 MHz"
+    },
+    {
+      "case": "nvcomp-q32-b1-run3",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 58, P0, 31.06 W, 2595 MHz, 8001 MHz"
+    },
+    {
+      "case": "nvcomp-q8-b1-run3",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 57, P0, 19.21 W, 2595 MHz, 8001 MHz"
+    },
+    {
+      "case": "nvcomp-q32-b8-run3",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 56, P0, 22.15 W, 2595 MHz, 8001 MHz"
+    }
+  ],
+  "runs": 3,
+  "source_commit": "75fb3e1bbb2e27d369e0c5726f9ea420a4f88a6a",
+  "input": "GPU-compressed native 64KiB chunks; batch8 duplicates the original payload; no CPU payload interchange test",
+  "timing": "100ms warmup,20samples of10calls; async API; output/config reused; Python dispatch gaps included",
+  "graph": "repeated replay crashed; see nvcomp-graph-debug.log; graph mode removed; Nsight kernel timing saved separately"
+}

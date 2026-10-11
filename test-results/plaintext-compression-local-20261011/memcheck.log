@@ -1,0 +1,6 @@
+========= COMPUTE-SANITIZER
+dense: integer bits=50, NTT replication=1, all modes exact
+periodic1024: integer bits=52, NTT replication=32, all modes exact
+prefix896: integer bits=47, NTT replication=1, all modes exact
+scalar: integer bits=59, NTT replication=65536, all modes exact
+========= ERROR SUMMARY: 0 errors

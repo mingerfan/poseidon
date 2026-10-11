@@ -1,0 +1,8 @@
+{
+  "algorithm": "Zstd",
+  "plaintext_bytes": 2097152,
+  "calls": 20,
+  "api_timeline_ms_per_call": 4.922025680541992,
+  "exact_round_trip": true,
+  "scope": "profiling diagnostic, not the 3-run formal timing"
+}

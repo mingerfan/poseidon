@@ -55,6 +55,15 @@ C++ payload sizes; packed buffers include a uint64 guard word. Decoded NTT
 buffers still occupy their original size. No concurrent operator-interference
 or full-model speedup is measured by these experiments.
 
+Local measurements and source references are in
+[`test-results/plaintext-compression-local-20261011/research.json`](../../../../test-results/plaintext-compression-local-20261011/research.json).
+For the dense real sigma=0.02, scale=2^40 corpus, the verified half-integer
+payload is about 120 KiB instead of 2 MiB/Q8 or 8 MiB/Q32. Whole-buffer Zstd
+and LZ4 do not reduce the dense uint32 NTT data. Periodic1024 slot input has
+32-fold exact NTT replication; this is a property of that corpus, not a Qwen
+compression guarantee. CUDA materialization is faster than the current
+Tensor implementation on this GPU, while both reduce transfer volume.
+
 This is an experiment, not a runtime Encode implementation. It encodes real
 full-slot inputs on GPU: slot permutation, double-precision cuFFT, negacyclic
 twist/scaling/rounding, exact RNS expansion, and forward NTT. CUDA and Tensor

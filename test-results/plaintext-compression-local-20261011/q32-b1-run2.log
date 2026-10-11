@@ -1,0 +1,4 @@
+dense: integer bits=30, NTT replication=1, all modes exact
+periodic1024: integer bits=32, NTT replication=32, all modes exact
+prefix896: integer bits=27, NTT replication=1, all modes exact
+scalar: integer bits=39, NTT replication=65536, all modes exact

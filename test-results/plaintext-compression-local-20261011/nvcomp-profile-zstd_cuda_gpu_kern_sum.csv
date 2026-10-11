@@ -1,0 +1,8 @@
+Time (%),Total Time (ns),Instances,Avg (ns),Med (ns),Min (ns),Max (ns),StdDev (ns),Name
+98.7,94393677,20,4719683.8,4757930.0,4367488,4865848,129640.1,"zstd::decompression_kernel(unsigned char *const *, unsigned long *, const unsigned long *, unsigned long, zstd::ZstdFrame *, zstd::DeviceBlockShare *, int *, int *, int *, int *, const int *, const int *, const int *)"
+0.8,808149,20,40407.4,40384.0,40352,40480,35.9,"zstd::init_huff_tables(unsigned char *, unsigned long *, unsigned long, int *, const int *, zstd::DeviceBlockShare *)"
+0.3,313723,20,15686.1,15680.0,15551,15872,78.9,"zstd::init_fse_tables(unsigned char *, unsigned long *, unsigned long, int *, const int *, zstd::DeviceBlockShare *)"
+0.1,77952,20,3897.6,3904.0,3872,3936,16.7,"void zstd::classify_frames<(int)2>(const unsigned char *const *, zstd::DeviceBlockShare *, unsigned long, unsigned long *, unsigned long, int *, int *, int *, zstd::ZstdFrame *, const unsigned long *)"
+0.0,32990,20,1649.5,1632.0,1631,1824,43.4,"nvcomp::setup_decomp_llif_buffers(const CommonHeader *, unsigned char *, const unsigned char *, unsigned char **, const unsigned char **, const unsigned long *, unsigned long *, const unsigned long *, const unsigned long *, bool)"
+0.0,25536,20,1276.8,1280.0,1248,1312,20.5,"void nvcomp::max_reduce_device_status_kernel<(unsigned int)256>(int *, int *, unsigned int)"
+0.0,20926,20,1046.3,1024.0,1023,1184,37.6,"zstd::init_buffer_vals(int, unsigned int, unsigned char *, int *)"

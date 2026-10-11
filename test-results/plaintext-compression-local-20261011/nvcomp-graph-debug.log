@@ -1,0 +1,8 @@
+Fatal Python error: Segmentation fault
+
+Thread 0x00007f28767a0780 (most recent call first):
+  File "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/experiments/tile_lang_int32/.venv/lib/python3.12/site-packages/torch/cuda/streams.py", line 254 in synchronize
+  File "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/scripts/benchmark_nvcomp_plaintext.py", line 120 in main
+  File "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/scripts/benchmark_nvcomp_plaintext.py", line 143 in <module>
+
+Extension modules: numpy._core._multiarray_umath, numpy.linalg._umath_linalg, torch._C, torch._C._dynamo.autograd_compiler, torch._C._dynamo.eval_frame, torch._C._dynamo.guards, torch._C._dynamo.utils, torch._C._fft, torch._C._linalg, torch._C._nested, torch._C._nn, torch._C._sparse, torch._C._special, cuda.bindings._internal.utils, cuda.bindings._internal.driver, cuda.bindings.cydriver, cuda.bindings.driver, cuda.bindings._internal.runtime_ptds, cuda.bindings._internal.runtime, cuda.bindings.cyruntime, cuda.bindings.runtime (total: 21)

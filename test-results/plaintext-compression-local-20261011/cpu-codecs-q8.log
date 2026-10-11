@@ -1,0 +1,4 @@
+dense Zstd/LZ4 round trips exact
+periodic1024 Zstd/LZ4 round trips exact
+prefix896 Zstd/LZ4 round trips exact
+scalar Zstd/LZ4 round trips exact

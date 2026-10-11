@@ -1,0 +1,7 @@
+Capture range started in the application.
+Capture range ended in the application.
+Generating '/tmp/nsys-xs/nsys-report-094e.qdstrm'
+[1/1] [0%                          ] nvcomp-profile-zstd.nsys-repProcessing events...
+[1/1] [0%                          ] nvcomp-profile-zstd.nsys-rep[1/1] [1%                          ] nvcomp-profile-zstd.nsys-rep[1/1] [2%                          ] nvcomp-profile-zstd.nsys-rep[1/1] [5%                          ] nvcomp-profile-zstd.nsys-rep[1/1] [==19%                       ] nvcomp-profile-zstd.nsys-rep[1/1] [==20%                       ] nvcomp-profile-zstd.nsys-rep[1/1] [=====32%                    ] nvcomp-profile-zstd.nsys-rep[1/1] [=========43%                ] nvcomp-profile-zstd.nsys-rep[1/1] [=======================96%  ] nvcomp-profile-zstd.nsys-rep[1/1] [========================98% ] nvcomp-profile-zstd.nsys-rep[1/1] [========================100%] nvcomp-profile-zstd.nsys-rep[1/1] [========================100%] nvcomp-profile-zstd.nsys-rep
+Generated:
+	/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release/nvcomp-profile-zstd.nsys-rep

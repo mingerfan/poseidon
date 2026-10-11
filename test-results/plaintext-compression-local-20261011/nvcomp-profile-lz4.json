@@ -1,0 +1,8 @@
+{
+  "algorithm": "LZ4",
+  "plaintext_bytes": 2097152,
+  "calls": 20,
+  "api_timeline_ms_per_call": 0.4025568008422852,
+  "exact_round_trip": true,
+  "scope": "profiling diagnostic, not the 3-run formal timing"
+}
