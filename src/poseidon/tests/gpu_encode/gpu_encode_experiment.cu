@@ -111,8 +111,8 @@ void GpuEncodeExperiment::prepare(const double *input, double scale,
 void GpuEncodeExperiment::initialize_tilelang(const GpuParameterShard &parameters)
 {
 #ifdef POSEIDON_ENCODE_TILELANG
-    if (parameters.limb_count != limbs_ || parameters.ntt_fused_matrix_fusion_stages != 4 ||
-        parameters.ntt_fused_matrices.size() < limbs_ * 69888 ||
+    if (parameters.limb_count < limbs_ || parameters.ntt_fused_matrix_fusion_stages != 4 ||
+        parameters.ntt_fused_matrices.size() < parameters.limb_count * 69888 ||
         parameters.rns_modulus_constants.size() < limbs_)
         throw std::invalid_argument("TileLang experiment requires full fusion=4 matrices and Barrett ratios");
     std::vector<GpuWord> primes(limbs_), weights(limbs_ * 7);
@@ -173,7 +173,8 @@ void GpuEncodeExperiment::ntt(const GpuParameterShard &parameters, Backend backe
             gpu_check_cuda(launch_encode_tilelang_ntt(source.ptr, destination.ptr,
                 parameters.ntt_tables.data(), parameters.ntt_fused_matrices.data(),
                 parameters.rns_primes.data(), parameters.rns_modulus_constants.data(),
-                tilelang_weights_.data(), limbs_, count, tensor, gpu_execution_stream()), "TileLang NTT");
+                tilelang_weights_.data(), limbs_, parameters.limb_count, count,
+                tensor, gpu_execution_stream()), "TileLang NTT");
 #else
             throw std::runtime_error("TileLang backend was not built");
 #endif

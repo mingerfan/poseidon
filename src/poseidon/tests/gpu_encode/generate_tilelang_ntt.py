@@ -38,7 +38,7 @@ def main():
                 elif param == "matrices":
                     # Stage-major table, then limb-major matrices.
                     offset = {1: 0, 16: 256, 256: 4352}[m]
-                    arguments.append(f"matrices + {offset} * limbs")
+                    arguments.append(f"matrices + {offset} * matrix_limbs")
                 else:
                     arguments.append(param)
             grid = f"dim3({256 // m}, {m}, limbs * batch)" if kind == "tam" else "dim3(64, limbs * batch)"
@@ -51,11 +51,11 @@ cudaError_t launch_encode_tilelang_ntt(
     const std::uint32_t *source, std::uint32_t *values,
     const std::uint32_t *roots, const std::uint32_t *matrices,
     const std::uint32_t *primes, const std::uint64_t *ratios,
-    const std::uint32_t *weights, int limbs, int batch,
+    const std::uint32_t *weights, int limbs, int matrix_limbs, int batch,
     bool tensor, cudaStream_t stream)
 {
     if (!source || !values || source == values || !roots || !primes || !ratios ||
-        !weights || limbs < 1 || limbs > 64 || batch < 1 || batch > 64 ||
+        !weights || limbs < 1 || limbs > 64 || matrix_limbs < limbs || batch < 1 || batch > 64 ||
         (tensor && !matrices)) return cudaErrorInvalidValue;
     if (tensor) {
 """

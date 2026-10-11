@@ -272,18 +272,18 @@ try {
             report["tensor_skipped"] = "SM 7.5+ required";
             continue;
         }
-            Json mode{{"backend", name},
-                {"submission", batched ? "batched" : "individual"}};
-            std::cout << "measuring " << mode.dump() << std::endl;
-            mode["device_only"] = measure(encoder, input, host, shard, scale, backend, batched, false, warmup, repeat);
-            std::vector<GpuWord> actual(encoder.output.size());
-            encoder.output.copy_to_host(actual.data(), actual.size());
-            mode["correctness"] = validate(actual, reference, host, context, batch, n, limbs, scale,
-                                            reference_validation);
-            mode["with_raw_h2d"] = measure(encoder, input, host, shard, scale, backend, batched, true, warmup, repeat);
-            mode["device_ms_per_plaintext"] = mode["device_only"]["total"]["median_ms"].get<double>() / batch;
-            mode["device_plaintexts_per_second"] = 1000.0 * batch / mode["device_only"]["total"]["median_ms"].get<double>();
-            report["modes"].push_back(std::move(mode));
+        Json mode{{"backend", name},
+            {"submission", batched ? "batched" : "individual"}};
+        std::cout << "measuring " << mode.dump() << std::endl;
+        mode["device_only"] = measure(encoder, input, host, shard, scale, backend, batched, false, warmup, repeat);
+        std::vector<GpuWord> actual(encoder.output.size());
+        encoder.output.copy_to_host(actual.data(), actual.size());
+        mode["correctness"] = validate(actual, reference, host, context, batch, n, limbs, scale,
+                                        reference_validation);
+        mode["with_raw_h2d"] = measure(encoder, input, host, shard, scale, backend, batched, true, warmup, repeat);
+        mode["device_ms_per_plaintext"] = mode["device_only"]["total"]["median_ms"].get<double>() / batch;
+        mode["device_plaintexts_per_second"] = 1000.0 * batch / mode["device_only"]["total"]["median_ms"].get<double>();
+        report["modes"].push_back(std::move(mode));
     }
     CKKSEncoder cpu(context);
     Plaintext cpu_output;

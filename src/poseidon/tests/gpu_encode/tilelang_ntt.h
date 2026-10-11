@@ -8,5 +8,5 @@ cudaError_t launch_encode_tilelang_ntt(
     const std::uint32_t *source, std::uint32_t *values,
     const std::uint32_t *roots, const std::uint32_t *matrices,
     const std::uint32_t *primes, const std::uint64_t *ratios,
-    const std::uint32_t *weights, int limbs, int batch,
+    const std::uint32_t *weights, int limbs, int matrix_limbs, int batch,
     bool tensor, cudaStream_t stream);

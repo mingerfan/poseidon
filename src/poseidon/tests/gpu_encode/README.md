@@ -113,3 +113,51 @@ on every coefficient for inputs including 0, 1, q-1, q-2 and independent random
 residues across all limbs and plaintexts. The full Encode checks then require
 both individual and batched TileLang modes to match canonical GPU Encode.
 `scripts/benchmark_gpu_encode.py` automatically summarizes the enabled backends.
+
+## Compute/Encode interference
+
+`poseidon_gpu_encode_contention_bench` measures actual `GpuEvaluator` add,
+multiply_plain, multiply, rescale, relinearize and rotate calls, alone and
+with a continuously active GPU Encode worker. Main computation uses CUDA
+four-step NTT. Background modes are CUDA full Encode and, when enabled,
+TileLang Tensor NTT full Encode; both include the same FP64 FFT/RNS. Input
+upload is selectable. Parameters are N=65536, 30-bit Q primes, four 30-bit P
+primes for HYBRID keys, scale=2^40. Only direct rotate-by-one keys are built.
+
+```sh
+OMP_NUM_THREADS=1 build-runtime-gpu-api-release/bin/poseidon_gpu_encode_contention_bench \
+  8 1 30 4 1 contention.json
+python3 scripts/benchmark_gpu_encode_contention.py \
+  --binary build-runtime-gpu-api-release/bin/poseidon_gpu_encode_contention_bench \
+  --output test-results/gpu-encode-contention-new --runs 3 --repeat 30 --burst 4
+```
+
+Arguments: Q limb count, encode batch, samples, operator calls per sample,
+raw H2D (0/1), report. Two host threads use distinct CUDA per-thread streams
+on the same GPU with default priority. FFT plans and Encode buffers are
+created in the encoding thread. Input/output buffers are disjoint and
+parameter/key tables are immutable; only the RMM pool is shared. Encode
+keeps one batch in flight and synchronizes after each batch, without a
+sleep or throughput limit. This tests sustained demand, not a particular
+compiler schedule or a finite prefetch window.
+
+Both workers warm for >=100 ms GPU event time. Per operator, paired alone
+baselines bracket the background tests; background order is shuffled.
+Slowdown is concurrent operator median divided by the average of the two
+baseline medians. CUDA event timing includes actual API submission gaps and
+internal allocation; wall timing is also saved. The worker counts plaintexts
+completed during the operator measurement window, giving observed Encode
+supply per operator call. Window-boundary uncertainty is one batch.
+Worker batch-latency statistics include operator warmup and measurement;
+the production count/rate is restricted to the measurement window.
+
+Every operator output must match CPU metadata and all RNS coefficients
+before and after concurrent tests. The worker's complete batch must match
+canonical CUDA Encode after each background test. Tensor NTT is validated
+on edge/random inputs, including the Q-prefix of Q+P parameter tables.
+Keys, transfers of operator operands, and parameter setup are untimed;
+internal evaluator allocations/scratch remain timed. This does not measure
+bootstrapping or establish a Qwen-level speedup. Separate streams permit
+overlap but still share CUDA cores, registers, cache and memory bandwidth;
+the measured slowdown determines whether spare Tensor Core arithmetic can
+be used economically for this workload.

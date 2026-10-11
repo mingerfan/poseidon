@@ -47,7 +47,7 @@ Pinned 原始数据 H2D + 完整 Encode（batched）：
 
 Encode CTest 通过；`compute-sanitizer --tool memcheck` 的 Q=3、batch=2 检查得到 0 errors（`memcheck.log`）。该检查和 `smoke.json` 基于实现提交 `33bc1232`；随机顺序改动后的 smoke 见 `shuffled-ctest.log`。`tensor-instructions.txt` 包含 TileLang kernel 的 IMMA.16832.U8.U8 证据，未获得硬件利用率计数器。
 
-`pilot/` 保留 4 个已完成的短预热、固定顺序初测，后续执行被主动中断（`pilot-run.log`）；这些数据不纳入正式汇总。
+`pilot/` 保留 5 个已完成的短预热、固定顺序初测，后续执行被主动中断（`pilot-run.log`）；这些数据不纳入正式汇总。
 
 结论：TileLang 显著改善旧 Tensor NTT 路径，完整 Encode 仍慢于 four-step。是否可以利用空闲 Tensor Core 隐藏 Encode，取决于主算子的明文消费速度及两条 stream 的实际资源竞争，需要另外测量并发时主算子的 slowdown，不能仅用独立 Encode 时延推断。
 
