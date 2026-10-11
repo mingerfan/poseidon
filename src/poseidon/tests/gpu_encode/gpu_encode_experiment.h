@@ -21,6 +21,10 @@ public:
     // prepare includes permutation, double-precision FFT and RNS expansion.
     void prepare(const double *input, double scale, const poseidon::gpu::GpuParameterShard &parameters,
                  bool batched);
+    // Input is [batch][N] real coefficients after CPU inverse embedding,
+    // including normalization/twist but before scaling or rounding. No FFT.
+    void prepare_coefficients(const double *input, double scale,
+                              const poseidon::gpu::GpuParameterShard &parameters, bool batched);
     void initialize_tilelang(const poseidon::gpu::GpuParameterShard &parameters);
     void validate_tilelang_ntt(const poseidon::gpu::GpuParameterShard &parameters);
     void ntt(const poseidon::gpu::GpuParameterShard &parameters, Backend backend, bool batched);

@@ -19,6 +19,8 @@ def main():
     parser.add_argument("--burst", type=int, default=4)
     parser.add_argument("--raw-h2d", type=int, choices=(0, 1), default=1)
     parser.add_argument("--demand-only", action="store_true")
+    parser.add_argument("--compare-cpu-fft", action="store_true",
+                        help="compare full Encode against cached CPU inverse-embedding coefficients")
     args = parser.parse_args()
     if args.runs < 1 or args.repeat < 1 or not 1 <= args.burst <= 64:
         parser.error("invalid measurement counts")
@@ -40,13 +42,16 @@ def main():
                        str(args.burst), str(args.raw_h2d), str(path.resolve())]
             with (args.output / f"{name}.log").open("w") as log:
                 subprocess.run(command, env=dict(os.environ, OMP_NUM_THREADS="1",
-                    POSEIDON_GPU_ENCODE_DEMAND_ONLY="1" if args.demand_only else "0"),
+                    POSEIDON_GPU_ENCODE_DEMAND_ONLY="1" if args.demand_only else "0",
+                    POSEIDON_GPU_ENCODE_COMPARE_CPU_FFT="1" if args.compare_cpu_fft else "0",
+                    POSEIDON_GPU_ENCODE_ORDER_SEED=str(20261012+run*10000+limbs*100+batch)),
                                stdout=log, stderr=subprocess.STDOUT, check=True, timeout=600)
             reports.append(json.loads(path.read_text()))
     summary = {"gpu": reports[0]["gpu"], "degree": 65536, "p_limbs": 4,
                "runs": args.runs, "repeat": args.repeat, "burst": args.burst,
                "raw_h2d": bool(args.raw_h2d), "case_order": telemetry, "rows": []}
     summary["demand_only"] = args.demand_only
+    summary["compare_cpu_fft"] = args.compare_cpu_fft
     for limbs, batch in itertools.product((8, 32), (1, 8)):
         group = [p for p in reports if p["q_limbs"] == limbs and p["batch"] == batch]
         for op in sorted({r["operator"] for p in group for r in p["rows"]}):
@@ -67,6 +72,22 @@ def main():
                     "exact_match": all(b["operator_and_encode_exact_match"] for b in backgrounds),
                 }
             summary["rows"].append(row)
+    if args.compare_cpu_fft:
+        summary["encode_preparation"] = []
+        for limbs, batch in itertools.product((8, 32), (1, 8)):
+            prepared = [p["encode_preparation"] for p in reports if p["q_limbs"] == limbs and p["batch"] == batch]
+            summary["encode_preparation"].append({
+                "q_limbs": limbs, "batch": batch,
+                "coefficient_cache_bytes": prepared[0]["coefficient_cache_bytes"],
+                "raw_cache_bytes": prepared[0]["raw_cache_bytes"],
+                "cpu_fft_preprocessing_ms_per_plaintext": statistics.median(
+                    p["cpu_fft_preprocessing_ms_per_plaintext"] for p in prepared),
+                "cpu_fft_exact_match": all(p["cpu_fft_validation"]["cpu_exact_match"] for p in prepared),
+                "max_cpu_fft_decode_error": max(p["cpu_fft_validation"]["max_input_error"] for p in prepared),
+                "standalone_ms_per_plaintext": {
+                    name: statistics.median(p["standalone"][name]["median_ms_per_plaintext"] for p in prepared)
+                    for name in prepared[0]["standalone"]},
+            })
     (args.output / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
 
 

@@ -14,6 +14,7 @@
 #include <rmm/mr/device/pool_memory_resource.hpp>
 
 #include <algorithm>
+#include <array>
 #include <atomic>
 #include <chrono>
 #include <cmath>
@@ -21,6 +22,7 @@
 #include <fstream>
 #include <functional>
 #include <iostream>
+#include <limits>
 #include <mutex>
 #include <numeric>
 #include <random>
@@ -77,6 +79,65 @@ void equal_cipher(const GpuCiphertextData &actual, const Ciphertext &expected, c
         throw std::runtime_error("operator output residues differ from CPU");
 }
 
+// Same inverse embedding and gen=5 slot map as CKKSEncoder, with scale=1.
+// Keep only N real coefficients; roots/workspace are transient and reusable.
+std::vector<double> cpu_fft_coefficients(const double *input, std::size_t n, std::size_t batch,
+    const std::vector<std::uint32_t> &indices, const std::vector<double2> &twists) {
+    const int logn = util::get_power_of_two(n);
+    std::vector<std::complex<double>> roots(n), work(n);
+    for (std::size_t i = 1; i < n; ++i) {
+        const auto root = twists[util::reverse_bits(i-1,logn)+1];
+        roots[i] = {root.x,root.y};
+    }
+    util::FFTHandler fft{util::ComplexArith{}};
+    const double normalization = 1. / n;
+    std::vector<double> coefficients(batch*n);
+    for (std::size_t b = 0; b < batch; ++b) {
+        for (std::size_t i = 0; i < n/2; ++i) {
+            const double value = input[b*n/2+i];
+            work[util::reverse_bits(indices[i],logn)] = {value,0};
+            work[util::reverse_bits(indices[n/2+i],logn)] = {value,0};
+        }
+        fft.transform_from_rev(work.data(),logn,roots.data(),&normalization);
+        for (std::size_t i = 0; i < n; ++i) coefficients[b*n+i] = work[i].real();
+    }
+    return coefficients;
+}
+
+Json validate_encode(const std::vector<GpuWord> &actual, const double *input,
+    const PoseidonContext &context, std::size_t n, std::size_t limbs, std::size_t batch,
+    bool require_cpu_exact) {
+    CKKSEncoder cpu(context);
+    const auto id = context.crt_context()->first_context_data()->parms_id();
+    const double scale = std::ldexp(1.,40);
+    const double tolerance = std::max(1e-8,64.*std::sqrt(static_cast<double>(n))/scale);
+    std::size_t differences = 0;
+    double max_error = 0;
+    for (std::size_t b = 0; b < batch; ++b) {
+        std::vector<double> slots(input+b*n/2,input+(b+1)*n/2), decoded;
+        Plaintext expected, downloaded;
+        cpu.encode(slots,id,scale,expected);
+        downloaded.resize(context,id,n*limbs);
+        downloaded.parms_id() = id;
+        downloaded.scale() = scale;
+        for (std::size_t i = 0; i < n*limbs; ++i) {
+            downloaded.data()[i] = actual[b*n*limbs+i];
+            differences += downloaded.data()[i] != expected.data()[i];
+        }
+        cpu.decode(downloaded,decoded);
+        for (std::size_t i = 0; i < n/2; ++i) {
+            if (!std::isfinite(decoded[i])) throw std::runtime_error("non-finite decoded Encode output");
+            max_error = std::max(max_error,std::abs(decoded[i]-slots[i]));
+        }
+    }
+    if (max_error > tolerance || (require_cpu_exact && differences))
+        throw std::runtime_error("CPU-precomputed or full Encode validation failed");
+    return {{"checked_plaintexts",batch}, {"cpu_ntt_residue_differences",differences},
+        {"cpu_exact_match",differences == 0}, {"max_input_error",max_error}, {"tolerance",tolerance}};
+}
+
+struct EncodeMode { std::string name; Backend backend; bool precomputed = false; };
+
 class EncodeWorker {
     std::mutex mutex_;
     std::condition_variable condition_;
@@ -84,11 +145,13 @@ class EncodeWorker {
     std::exception_ptr error_;
     bool ready_ = false, started_ = false, idle_ = true, exit_ = false;
     Backend backend_ = Backend::cuda;
+    bool precomputed_ = false;
     double period_ms_ = 0;
     std::atomic<bool> active_{false};
     std::atomic<std::uint64_t> completed_{0};
     std::vector<double> samples_;
     unsigned long long stream_id_ = 0;
+    Json preparation_ = Json::object();
 
     void fail(std::exception_ptr error) {
         std::lock_guard<std::mutex> lock(mutex_);
@@ -99,8 +162,9 @@ class EncodeWorker {
 public:
     EncodeWorker(std::size_t n, std::size_t limbs, std::size_t batch,
                  const GpuParameterShard &params, const std::vector<std::uint32_t> &indices,
-                 const std::vector<double2> &twists, bool upload) {
-        thread_ = std::thread([=, &params, &indices, &twists, this] {
+                 const std::vector<double2> &twists, bool upload, bool compare_cpu_fft,
+                 const PoseidonContext &context, std::uint64_t order_seed) {
+        thread_ = std::thread([=, &params, &indices, &twists, &context, this] {
             try {
                 gpu_check_cuda(cudaSetDevice(0), "worker select GPU");
                 gpu_check_cuda(cudaStreamGetId(gpu_execution_stream(), &stream_id_), "worker stream ID");
@@ -118,17 +182,87 @@ public:
                 for (std::size_t i = 0; i < input.size(); ++i)
                     pinned[i] = (static_cast<int>(rng()%2049)-1024)/1024.0;
                 input.copy_from_host(pinned, input.size());
-                auto run = [&](Backend backend) {
-                    if (upload) gpu_check_cuda(cudaMemcpyAsync(input.data(), pinned,
-                        input.size()*sizeof(double), cudaMemcpyHostToDevice, gpu_execution_stream()), "worker raw H2D");
-                    encoder.prepare(input.data(), std::ldexp(1.,40), params, true);
+                DeviceVector<double> coefficients;
+                double *pinned_coefficients = nullptr;
+                std::unique_ptr<double, decltype(&cudaFreeHost)> coefficient_host(nullptr,cudaFreeHost);
+                if (compare_cpu_fft) {
+                    coefficients.allocate(batch*n,0);
+                    gpu_check_cuda(cudaMallocHost(&pinned_coefficients,coefficients.size()*sizeof(double)),
+                        "worker pinned CPU FFT coefficients");
+                    coefficient_host.reset(pinned_coefficients);
+                    const auto start = Clock::now();
+                    const auto prepared = cpu_fft_coefficients(pinned,n,batch,indices,twists);
+                    const double ms = std::chrono::duration<double,std::milli>(Clock::now()-start).count();
+                    std::copy(prepared.begin(),prepared.end(),pinned_coefficients);
+                    coefficients.copy_from_host(pinned_coefficients,coefficients.size());
+                    preparation_["cpu_fft_preprocessing_ms"] = ms;
+                    preparation_["cpu_fft_preprocessing_ms_per_plaintext"] = ms/batch;
+                    preparation_["raw_cache_bytes"] = input.size()*sizeof(double);
+                    preparation_["coefficient_cache_bytes"] = coefficients.size()*sizeof(double);
+                    preparation_["coefficient_format"] = "FP64 [batch][N], inverse embedding normalized, unscaled/unrounded";
+                }
+                auto run = [&](Backend backend, bool precomputed = false) {
+                    auto &source = precomputed ? coefficients : input;
+                    const auto *host_source = precomputed ? pinned_coefficients : pinned;
+                    if (upload) gpu_check_cuda(cudaMemcpyAsync(source.data(),host_source,
+                        source.size()*sizeof(double),cudaMemcpyHostToDevice,gpu_execution_stream()), "worker input H2D");
+                    if (precomputed) encoder.prepare_coefficients(source.data(),std::ldexp(1.,40),params,true);
+                    else encoder.prepare(source.data(), std::ldexp(1.,40), params, true);
                     encoder.ntt(params, backend, true);
                 };
                 run(Backend::cuda);
                 encoder.check_result();
-                std::vector<GpuWord> reference(encoder.output.size()), actual(reference.size());
-                encoder.output.copy_to_host(reference.data(), reference.size());
+                std::array<std::vector<GpuWord>,2> reference;
+                reference[0].resize(encoder.output.size());
+                encoder.output.copy_to_host(reference[0].data(),reference[0].size());
+                std::vector<GpuWord> actual(reference[0].size());
                 Event begin, end;
+                if (compare_cpu_fft) {
+                    preparation_["full_gpu_validation"] = validate_encode(reference[0],pinned,context,n,limbs,batch,false);
+                    run(Backend::cuda,true);
+                    encoder.check_result();
+                    reference[1].resize(actual.size());
+                    encoder.output.copy_to_host(reference[1].data(),reference[1].size());
+                    preparation_["cpu_fft_validation"] = validate_encode(reference[1],pinned,context,n,limbs,batch,true);
+                    // Invalid cached coefficients must be rejected, too.
+                    const double saved = pinned_coefficients[0];
+                    for (const double invalid : {std::numeric_limits<double>::quiet_NaN(),std::ldexp(1.,90)}) {
+                        pinned_coefficients[0] = invalid;
+                        coefficients.copy_from_host(pinned_coefficients,coefficients.size());
+                        encoder.prepare_coefficients(coefficients.data(),std::ldexp(1.,40),params,true);
+                        bool rejected = false;
+                        try { encoder.check_result(); } catch (const std::runtime_error &) { rejected = true; }
+                        if (!rejected) throw std::runtime_error("invalid cached coefficient was accepted");
+                    }
+                    pinned_coefficients[0] = saved;
+                    coefficients.copy_from_host(pinned_coefficients,coefficients.size());
+                    preparation_["invalid_coefficients_rejected"] = true;
+                    std::vector<EncodeMode> standalone{{"cuda_encode",Backend::cuda},
+                        {"cpu_fft_cuda_encode",Backend::cuda,true}};
+#ifdef POSEIDON_ENCODE_TILELANG
+                    standalone.push_back({"tilelang_tensor_encode",Backend::tilelang_tensor});
+                    standalone.push_back({"cpu_fft_tilelang_tensor_encode",Backend::tilelang_tensor,true});
+#endif
+                    std::mt19937_64 rng_order(order_seed);
+                    std::shuffle(standalone.begin(),standalone.end(),rng_order);
+                    for (const auto &mode : standalone) {
+                        double warm = 0;
+                        std::vector<double> samples;
+                        for (int measured = 0; measured < 30;) {
+                            begin.record(); run(mode.backend,mode.precomputed); end.record(); end.wait();
+                            encoder.check_result();
+                            const auto ms = elapsed(begin,end);
+                            if (warm < 100) warm += ms;
+                            else { samples.push_back(ms); ++measured; }
+                        }
+                        encoder.output.copy_to_host(actual.data(),actual.size());
+                        if (actual != reference[mode.precomputed])
+                            throw std::runtime_error("standalone Encode differs from its canonical CUDA output");
+                        preparation_["standalone"][mode.name] = stats(samples);
+                        preparation_["standalone"][mode.name]["median_ms_per_plaintext"] =
+                            preparation_["standalone"][mode.name]["median_ms"].get<double>()/batch;
+                    }
+                }
                 {
                     std::lock_guard<std::mutex> lock(mutex_);
                     ready_ = true;
@@ -136,12 +270,14 @@ public:
                 }
                 for (;;) {
                     Backend backend;
+                    bool precomputed;
                     double period_ms;
                     {
                         std::unique_lock<std::mutex> lock(mutex_);
                         condition_.wait(lock, [&] { return active_.load() || exit_; });
                         if (exit_) break;
                         backend = backend_;
+                        precomputed = precomputed_;
                         period_ms = period_ms_;
                     }
                     std::vector<double> samples;
@@ -149,7 +285,7 @@ public:
                     while (active_.load()) {
                         const auto iteration_start = Clock::now();
                         begin.record();
-                        run(backend);
+                        run(backend,precomputed);
                         end.record();
                         end.wait();
                         encoder.check_result();
@@ -170,7 +306,8 @@ public:
                                 std::chrono::duration_cast<Clock::duration>(std::chrono::duration<double,std::milli>(period_ms)));
                     }
                     encoder.output.copy_to_host(actual.data(), actual.size());
-                    if (actual != reference) throw std::runtime_error("background Encode residues differ from canonical CUDA");
+                    if (actual != reference[precomputed])
+                        throw std::runtime_error("background Encode residues differ from its canonical CUDA output");
                     {
                         std::lock_guard<std::mutex> lock(mutex_);
                         samples_ = std::move(samples);
@@ -197,10 +334,11 @@ public:
         }
         if (thread_.joinable()) thread_.join();
     }
-    void start(Backend backend, double period_ms = 0) {
+    void start(Backend backend, double period_ms = 0, bool precomputed = false) {
         std::unique_lock<std::mutex> lock(mutex_);
         check();
         backend_ = backend;
+        precomputed_ = precomputed;
         period_ms_ = period_ms;
         started_ = false;
         idle_ = false;
@@ -221,6 +359,7 @@ public:
     }
     std::uint64_t completed() const { return completed_.load(); }
     unsigned long long stream_id() const { return stream_id_; }
+    const Json &preparation() const { return preparation_; }
 };
 
 Json measure(const std::function<void()> &operation, int repeat, int burst, EncodeWorker &worker) {
@@ -263,6 +402,13 @@ try {
     if (demand_text != "0" && demand_text != "1")
         throw std::invalid_argument("POSEIDON_GPU_ENCODE_DEMAND_ONLY must be 0 or 1");
     const bool demand_only = demand_text == "1";
+    const char *cpu_fft_env = std::getenv("POSEIDON_GPU_ENCODE_COMPARE_CPU_FFT");
+    const std::string cpu_fft_text = cpu_fft_env ? cpu_fft_env : "0";
+    if (cpu_fft_text != "0" && cpu_fft_text != "1")
+        throw std::invalid_argument("POSEIDON_GPU_ENCODE_COMPARE_CPU_FFT must be 0 or 1");
+    const bool compare_cpu_fft = cpu_fft_text == "1";
+    const char *order_env = std::getenv("POSEIDON_GPU_ENCODE_ORDER_SEED");
+    const std::uint64_t order_seed = order_env ? std::stoull(order_env) : 20261012+limbs*100+batch;
     if (limbs < 3 || limbs > 32 || !batch || batch > 32 || repeat < 1 || burst < 1 || burst > 64 ||
         (upload != 0 && upload != 1)) throw std::invalid_argument("unsupported contention geometry");
     gpu_check_cuda(cudaSetDevice(0), "select GPU");
@@ -317,7 +463,7 @@ try {
     // Fusion tables are built at the top key level. Encode reads its Q
     // prefix, while stage offsets include all Q+P limbs.
     const auto &encode_params = gpu_params.get_level(context.crt_context()->key_context_data()->parms_id());
-    EncodeWorker worker(n,limbs,batch,encode_params.shards.front(),indices,twists,upload);
+    EncodeWorker worker(n,limbs,batch,encode_params.shards.front(),indices,twists,upload,compare_cpu_fft,context,order_seed);
     struct Operation { std::string name; std::function<void()> gpu_call; std::function<void(Ciphertext&)> cpu_call; };
     GpuCiphertextData output;
     std::vector<Operation> operations{
@@ -336,20 +482,28 @@ try {
     Json report{{"gpu",prop.name}, {"degree",n}, {"q_limbs",limbs}, {"p_limbs",p_count}, {"batch",batch},
         {"scale_log2",40}, {"raw_h2d",static_cast<bool>(upload)}, {"repeat",repeat}, {"burst",burst},
         {"demand_only",demand_only},
+        {"order_seed",order_seed},
+        {"compare_cpu_fft",compare_cpu_fft}, {"encode_preparation",worker.preparation()},
+        {"input_h2d",static_cast<bool>(upload)},
         {"streams","two host threads, distinct CUDA per-thread streams; same GPU, default priority"},
         {"main_stream_id",main_stream_id}, {"encode_stream_id",worker.stream_id()},
-        {"scope","actual GpuEvaluator operations with internal allocation, RMM pool; continuous background full Encode"},
+        {"scope","actual GpuEvaluator operations with internal allocation, RMM pool; background Encode with optional precomputed CPU FFT"},
         {"rows",Json::array()}};
-    std::vector<std::pair<std::string,Backend>> backgrounds{{"cuda_encode",Backend::cuda}};
+    std::vector<EncodeMode> backgrounds{{"cuda_encode",Backend::cuda}};
+    if (compare_cpu_fft) backgrounds.push_back({"cpu_fft_cuda_encode",Backend::cuda,true});
 #ifdef POSEIDON_ENCODE_TILELANG
     if (prop.major*10+prop.minor < POSEIDON_ENCODE_TILELANG_SM)
         throw std::runtime_error("GPU is older than configured TileLang architecture");
-    backgrounds.emplace_back("tilelang_tensor_encode",Backend::tilelang_tensor);
-    if (demand_only) backgrounds = {{"tilelang_tensor_encode_demand",Backend::tilelang_tensor}};
+    backgrounds.push_back({"tilelang_tensor_encode",Backend::tilelang_tensor});
+    if (compare_cpu_fft) backgrounds.push_back({"cpu_fft_tilelang_tensor_encode",Backend::tilelang_tensor,true});
+    if (demand_only) {
+        backgrounds = {{"tilelang_tensor_encode_demand",Backend::tilelang_tensor}};
+        if (compare_cpu_fft) backgrounds.push_back({"cpu_fft_tilelang_tensor_encode_demand",Backend::tilelang_tensor,true});
+    }
 #else
     if (demand_only) throw std::runtime_error("Demand test requires the TileLang Tensor backend");
 #endif
-    std::mt19937_64 order_rng(20261011+limbs*100+batch);
+    std::mt19937_64 order_rng(order_seed+1);
     for (auto &op : operations) {
         if (demand_only && op.name != "relinearize" && op.name != "rotate") continue;
         Ciphertext expected;
@@ -363,22 +517,24 @@ try {
             row["alone_before"] = measure(op.gpu_call,repeat,burst,worker);
         }
         std::shuffle(backgrounds.begin(),backgrounds.end(),order_rng);
-        for (const auto &[name,backend] : backgrounds) {
-            std::cout << "measuring " << op.name << " + " << name << std::endl;
+        for (const auto &mode : backgrounds) {
+            std::cout << "measuring " << op.name << " + " << mode.name << std::endl;
             const double period_ms = demand_only ?
                 row["alone_before"]["operator"]["mean_ms"].get<double>()*batch : 0;
-            worker.start(backend,period_ms);
+            worker.start(mode.backend,period_ms,mode.precomputed);
             Json result;
             {
-                Range range("contention."+op.name+"."+name);
+                Range range("contention."+op.name+"."+mode.name);
                 result = measure(op.gpu_call,repeat,burst,worker);
             }
             result["encode_batch_latency"] = worker.stop(batch);
             result["target_batch_period_ms"] = period_ms;
+            result["precomputed_cpu_fft"] = mode.precomputed;
+            result["input_bytes_per_batch"] = batch*n*sizeof(double)/(mode.precomputed ? 1 : 2);
             if (period_ms > 0) result["target_plaintexts_per_second"] = 1000.*batch/period_ms;
             equal_cipher(output,expected,context);
             result["operator_and_encode_exact_match"] = true;
-            row["backgrounds"][name] = std::move(result);
+            row["backgrounds"][mode.name] = std::move(result);
         }
         {
             Range range("contention."+op.name+".alone_after");

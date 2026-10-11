@@ -28,15 +28,10 @@ __global__ void permute_slots(const double *input, double2 *fft,
     fft[batch * n + indices[n / 2 + i]] = make_double2(x, 0);
 }
 
-__global__ void expand_rns(const double2 *fft, const double2 *twists,
-                           GpuWord *rns, const GpuWord *primes, std::size_t n,
-                           std::size_t limbs, double fix, int *error)
+__device__ void write_rns(double coefficient, GpuWord *rns, const GpuWord *primes,
+                         std::size_t n, std::size_t limbs, std::size_t batch,
+                         std::size_t i, int *error)
 {
-    const std::size_t i = blockIdx.x * blockDim.x + threadIdx.x;
-    if (i >= n) return;
-    const std::size_t batch = blockIdx.y;
-    const double2 x = fft[batch * n + i], w = twists[i];
-    const double coefficient = round((x.x * w.x - x.y * w.y) * fix);
     const double magnitude = fabs(coefficient);
     if (!isfinite(coefficient) || magnitude >= 0x1p64) {
         atomicExch(error, 2);
@@ -49,6 +44,27 @@ __global__ void expand_rns(const double2 *fft, const double2 *twists,
         rns[(batch * limbs + limb) * n + i] =
             coefficient < 0 && residue ? q - residue : residue;
     }
+}
+
+__global__ void expand_rns(const double2 *fft, const double2 *twists,
+                           GpuWord *rns, const GpuWord *primes, std::size_t n,
+                           std::size_t limbs, double fix, int *error)
+{
+    const std::size_t i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i >= n) return;
+    const std::size_t batch = blockIdx.y;
+    const double2 x = fft[batch * n + i], w = twists[i];
+    write_rns(round((x.x * w.x - x.y * w.y) * fix), rns, primes, n, limbs, batch, i, error);
+}
+
+__global__ void expand_coefficients_rns(const double *input, GpuWord *rns,
+                                       const GpuWord *primes, std::size_t n,
+                                       std::size_t limbs, double scale, int *error)
+{
+    const std::size_t i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i >= n) return;
+    const std::size_t batch = blockIdx.y;
+    write_rns(round(input[batch * n + i] * scale), rns, primes, n, limbs, batch, i, error);
 }
 } // namespace
 
@@ -106,6 +122,22 @@ void GpuEncodeExperiment::prepare(const double *input, double scale,
     if (batched) prepare_one(input, scale, parameters, 0, batch_, batch_plan_);
     else for (std::size_t b = 0; b < batch_; ++b)
         prepare_one(input, scale, parameters, b, 1, single_plan_);
+}
+
+void GpuEncodeExperiment::prepare_coefficients(const double *input, double scale,
+    const GpuParameterShard &parameters, bool batched)
+{
+    if (!input || !std::isfinite(scale) || scale <= 0 || parameters.device_id != 0 ||
+        parameters.limb_begin != 0 || parameters.limb_count < limbs_)
+        throw std::invalid_argument("invalid precomputed-coefficient arguments");
+    error_.fill_zero();
+    const auto count = batched ? batch_ : 1;
+    for (std::size_t b = 0; b < batch_; b += count) {
+        expand_coefficients_rns<<<dim3((degree_ + 255) / 256, count), 256, 0, gpu_execution_stream()>>>(
+            input + b * degree_, rns_.data() + b * limbs_ * degree_, parameters.rns_primes.data(),
+            degree_, limbs_, scale, error_.data());
+        gpu_check_cuda(cudaGetLastError(), "expand precomputed coefficients RNS");
+    }
 }
 
 void GpuEncodeExperiment::initialize_tilelang(const GpuParameterShard &parameters)

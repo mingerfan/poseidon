@@ -182,3 +182,54 @@ python3 scripts/benchmark_gpu_encode_contention.py \
   --output test-results/gpu-encode-demand-new --runs 3 --repeat 30 --burst 4 \
   --demand-only
 ```
+
+## Cached CPU FFT / GPU Encode tail
+
+The contention runner's `--compare-cpu-fft` adds cached CPU inverse-embedding
+inputs to the same process and paired operator baselines. The CPU uses
+Poseidon's double-precision DWT handler and gen=5 slot map to prepare normalized,
+unscaled/unrounded real coefficients once, before measurements. It retains
+only `[batch][N]` FP64 coefficients (512 KiB/plaintext at N=65536), rather than
+complex FFT workspace or the complete RNS plaintext. Roots/workspace are
+transient. The raw full-slot FP64 input is 256 KiB/plaintext. Both source buffers
+remain allocated in this comparison so allocation/setup differences are untimed.
+
+At runtime the cached path uploads those real coefficients, then performs one
+CUDA scaling/rounding/RNS kernel and the same selected NTT backend. `--raw-h2d 1`
+includes the actual source upload in **both** modes: raw slots for full GPU
+Encode and twice as many bytes for the CPU FFT cache. With `--raw-h2d 0` inputs
+are GPU-resident. Pinned upload buffers are prepared in advance. CPU preparation
+time is recorded separately, including transient table/workspace allocation;
+it is a setup measurement, not a repeated/warmed CPU FFT benchmark.
+
+Continuous mode compares full/cached inputs with both CUDA and TileLang Tensor
+NTT. Demand-only mode compares the two inputs with TileLang Tensor NTT at the
+same one-plaintext/operator target period. Both modes retain the observed
+production counters, mean/median/p95 operator timings, and one-batch boundary
+uncertainty. Every report also measures standalone full/cached Encode (>=100 ms
+GPU warmup, 30 samples) outside foreground contention. The runner changes
+`POSEIDON_GPU_ENCODE_ORDER_SEED` between processes; standalone and per-operator
+background mode order are shuffled, and the seed is saved in each report.
+
+Every plaintext from the CPU-precomputed path must exactly match CPU Encode
+RNS residues at scale=2^40 and pass CPU decode. Full GPU Encode is decoded and
+its CPU residue differences are recorded; cuFFT and CPU FFT can round
+differently. Each NTT backend/background batch must exactly match the canonical
+CUDA output for **its own** input path. Non-finite/overflowing cached
+coefficients must be rejected. These are static-weight preprocessing tests;
+they do not include runtime CPU FFT for dynamic activations or file I/O/cache
+misses. The production prefetch runtime is not changed.
+
+```sh
+python3 scripts/benchmark_gpu_encode_contention.py \
+  --binary build-runtime-gpu-api-release/bin/poseidon_gpu_encode_contention_bench \
+  --output test-results/gpu-encode-cpu-fft-continuous-new \
+  --runs 3 --repeat 30 --burst 4 --compare-cpu-fft
+python3 scripts/benchmark_gpu_encode_contention.py \
+  --binary build-runtime-gpu-api-release/bin/poseidon_gpu_encode_contention_bench \
+  --output test-results/gpu-encode-cpu-fft-demand-new \
+  --runs 3 --repeat 30 --burst 4 --compare-cpu-fft --demand-only
+```
+
+For direct binary invocation, set `POSEIDON_GPU_ENCODE_COMPARE_CPU_FFT=1`;
+`POSEIDON_GPU_ENCODE_DEMAND_ONLY=1` additionally selects demand-only mode.
