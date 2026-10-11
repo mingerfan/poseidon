@@ -26,8 +26,6 @@ def main():
     parser.add_argument("--batch", type=int, default=1)
     parser.add_argument("--repeat", type=int, default=20)
     parser.add_argument("--inner", type=int, default=10)
-    parser.add_argument("--cuda-graph", action="store_true",
-                        help="capture inner decode calls and replay to remove per-call host dispatch")
     parser.add_argument("--representations", nargs="+",
                         default=["ntt-gpu-uint32", "fft-fp64", "integer-int64", "integer-bitpacked-realhalf"],
                         choices=["ntt-gpu-uint32", "fft-fp64", "integer-int64", "integer-bitpacked-realhalf"])
@@ -47,9 +45,7 @@ def main():
         raise ValueError("use a one-plaintext corpus; --batch tiles its payload")
     result = {"scope": "nvCOMP CUDA SM decode, not Tensor Cores; no concurrent foreground",
               "input_scope": "batch tiles the same plaintext payload; not independent model weights",
-              "timing_scope": "cached decode config and wrapped output; graph replay includes amortized event/replay dispatch"
-                  if args.cuda_graph else "cached decode config and wrapped output; event includes Python/API dispatch gaps",
-              "cuda_graph": args.cuda_graph,
+              "timing_scope": "cached decode config and wrapped output; event includes Python/API dispatch gaps",
               "representations": args.representations,
               "format_scope": "nvCOMP native 64KiB chunks, encoded on GPU during setup; not CPU stream interoperability",
               "gpu": torch.cuda.get_device_name(), "q_limbs": manifest["q_limbs"],
@@ -99,23 +95,14 @@ def main():
                         uploaded.copy_(host, non_blocking=True)
                     codec.decode(upload_array if with_h2d else compressed, out=target_array,
                                  decompression_config=config)
-            # Resolve allocator/library initialization before capture. A capture
-            # error is an error, rather than silently changing the timing mode.
+            # Resolve allocator/library initialization before measurements.
             submit()
             stream.synchronize()
-            graph = None
-            if args.cuda_graph:
-                graph = torch.cuda.CUDAGraph()
-                with torch.cuda.graph(graph, stream=stream):
-                    submit()
             while len(gpu_ms) < args.repeat:
                 sample = warmed >= 100
                 wall_start = time.perf_counter_ns()
                 start.record(stream)
-                if graph is not None:
-                    graph.replay()
-                else:
-                    submit()
+                submit()
                 end.record(stream)
                 end.synchronize()
                 event_ms = start.elapsed_time(end)
@@ -132,7 +119,6 @@ def main():
                 "gpu": stats(gpu_ms), "wall": stats(wall_ms),
                 "decompressed_output_gb_per_second": len(data)/(median*1e6),
                 "ms_per_plaintext": median/args.batch}
-            del graph
         result["rows"].append(row)
         print(pattern, entry["representation"], algorithm, round(row["ratio"], 3), flush=True)
         del codec, source, target, target_array, wrapped, compressed, config, uploaded, upload_array
