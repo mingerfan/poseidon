@@ -1,5 +1,50 @@
 # GPU CKKS Encode benchmark
 
+## Lossless plaintext compression experiment
+
+`poseidon_gpu_plaintext_compression_bench` is another optional target under
+`POSEIDON_BUILD_GPU_ENCODE_BENCH`. It does not change production kernels or
+runtime/compiler interfaces. It compares precomputed uint32 NTT upload,
+30-bit NTT packing, exact NTT replication groups, cached FP64 FFT coefficients,
+and packed signed integer coefficients. Integer coefficients are scaled and
+rounded on CPU during setup, so that cache is specific to its scale. Packed
+integers are unpacked and expanded into RNS with CUDA, then transformed using
+CUDA four-step or optional TileLang Tensor NTT. This is **not** Tensor Core
+entropy decompression. Every mode must reproduce every CPU Encode NTT residue.
+
+```sh
+cmake --build build-runtime-gpu-api-release --target poseidon_gpu_plaintext_compression_bench -j4
+OMP_NUM_THREADS=1 build-runtime-gpu-api-release/bin/poseidon_gpu_plaintext_compression_bench \
+  8 1 40 30 20261012 report.json /tmp/poseidon-compression-corpus
+python scripts/benchmark_plaintext_compression.py --manifest report.json --output cpu-codecs.json
+```
+
+Arguments are Q limbs, batch, scale_log2, repeats, seed, report, and dump
+directory (`-` disables binary dumps). Synthetic patterns are Gaussian dense
+weights (sigma=0.02), 1024-slot repetition, a random 896-slot prefix with zero
+tail, and scalar 0.125. They are not pretrained Qwen weights. GPU storage is
+uint32, CPU storage is uint64; report both when interpreting codec ratios.
+The CPU script uses system Zstd levels 1/3/9 and LZ4 through ctypes, checking
+exact round trips. It measures CPU codec speeds, not GPU speeds.
+
+The optional `scripts/benchmark_nvcomp_plaintext.py` measures GPU LZ4/Zstd
+decoding with nvCOMP and PyTorch. Install its dependencies in an isolated
+environment. It precomputes nvCOMP-native 64 KiB chunks on GPU, caches decode
+configuration, reuses output buffers, and separately measures device decode
+and pinned H2D + decode. It does not test CPU-stream interoperability. Event
+times include Python/API submission gaps. `--batch 8` repeats a one-plaintext
+corpus eight times, rather than using independent model weights. All codec
+outputs are checked byte-for-byte. No codec dependency is needed by Poseidon
+or the C++ compression experiment.
+
+All timings exclude CPU preprocessing, compression, tables, allocation and
+configuration setup. Decode/RNS/NTT and compressed upload are timed. Each
+mode warms for at least 100 ms by default; `POSEIDON_COMPRESSION_WARMUP_MS=0`
+is for correctness smoke checks. Output format metadata is excluded from
+C++ payload sizes; packed buffers include a uint64 guard word. Decoded NTT
+buffers still occupy their original size. No concurrent operator-interference
+or full-model speedup is measured by these experiments.
+
 This is an experiment, not a runtime Encode implementation. It encodes real
 full-slot inputs on GPU: slot permutation, double-precision cuFFT, negacyclic
 twist/scaling/rounding, exact RNS expansion, and forward NTT. CUDA and Tensor

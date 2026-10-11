@@ -66,6 +66,24 @@ __global__ void expand_coefficients_rns(const double *input, GpuWord *rns,
     const std::size_t batch = blockIdx.y;
     write_rns(round(input[batch * n + i] * scale), rns, primes, n, limbs, batch, i, error);
 }
+
+__global__ void expand_packed_coefficients_rns(const std::uint64_t *input, unsigned bits,
+    GpuWord *rns, const GpuWord *primes, std::size_t n, std::size_t limbs)
+{
+    const std::size_t i = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i >= n) return;
+    const std::size_t batch = blockIdx.y, offset = (batch * n + i) * bits;
+    const unsigned shift = offset % 64;
+    std::uint64_t code = input[offset / 64] >> shift;
+    if (shift + bits > 64) code |= input[offset / 64 + 1] << (64 - shift);
+    code &= (std::uint64_t(1) << bits) - 1;
+    const bool negative = code & 1;
+    const std::uint64_t magnitude = (code >> 1) + negative;
+    for (std::size_t limb = 0; limb < limbs; ++limb) {
+        const GpuWord q = primes[limb], residue = magnitude % q;
+        rns[(batch * limbs + limb) * n + i] = negative && residue ? q - residue : residue;
+    }
+}
 } // namespace
 
 GpuEncodeExperiment::GpuEncodeExperiment(
@@ -138,6 +156,19 @@ void GpuEncodeExperiment::prepare_coefficients(const double *input, double scale
             degree_, limbs_, scale, error_.data());
         gpu_check_cuda(cudaGetLastError(), "expand precomputed coefficients RNS");
     }
+}
+
+void GpuEncodeExperiment::prepare_packed_coefficients(const std::uint64_t *input, unsigned bits,
+    const GpuParameterShard &parameters)
+{
+    if (!input || bits < 1 || bits > 63 || parameters.device_id != 0 ||
+        parameters.limb_begin != 0 || parameters.limb_count < limbs_)
+        throw std::invalid_argument("invalid packed-coefficient arguments");
+    error_.fill_zero();
+    expand_packed_coefficients_rns<<<dim3((degree_ + 255) / 256, batch_), 256,
+        0, gpu_execution_stream()>>>(input, bits, rns_.data(), parameters.rns_primes.data(),
+        degree_, limbs_);
+    gpu_check_cuda(cudaGetLastError(), "expand packed integer coefficients RNS");
 }
 
 void GpuEncodeExperiment::initialize_tilelang(const GpuParameterShard &parameters)

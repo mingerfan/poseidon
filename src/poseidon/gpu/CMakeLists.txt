@@ -84,8 +84,12 @@ if(POSEIDON_BUILD_GPU_ENCODE_BENCH)
     add_executable(poseidon_gpu_encode_contention_bench
         ../tests/gpu_encode/gpu_encode_contention_bench.cpp
         ../tests/gpu_encode/gpu_encode_experiment.cu)
+    add_executable(poseidon_gpu_plaintext_compression_bench
+        ../tests/gpu_encode/gpu_plaintext_compression_bench.cpp
+        ../tests/gpu_encode/gpu_plaintext_compression_kernels.cu
+        ../tests/gpu_encode/gpu_encode_experiment.cu)
     find_package(Threads REQUIRED)
-    foreach(_encode_target IN ITEMS poseidon_gpu_encode_bench poseidon_gpu_encode_contention_bench)
+    foreach(_encode_target IN ITEMS poseidon_gpu_encode_bench poseidon_gpu_encode_contention_bench poseidon_gpu_plaintext_compression_bench)
         target_include_directories(${_encode_target} PRIVATE
             ${POSEIDON_INCLUDES_DIR}/third_party/ckks-runtime/third_party/nlohmann)
         target_link_libraries(${_encode_target} PRIVATE poseidon_gpu CUDA::cufft Threads::Threads)
@@ -125,7 +129,7 @@ if(POSEIDON_BUILD_GPU_ENCODE_BENCH)
         target_compile_options(poseidon_encode_tilelang PRIVATE --default-stream=per-thread)
         set_target_properties(poseidon_encode_tilelang PROPERTIES
             CUDA_ARCHITECTURES "${POSEIDON_GPU_ENCODE_TILELANG_ARCH}")
-        foreach(_encode_target IN ITEMS poseidon_gpu_encode_bench poseidon_gpu_encode_contention_bench)
+        foreach(_encode_target IN ITEMS poseidon_gpu_encode_bench poseidon_gpu_encode_contention_bench poseidon_gpu_plaintext_compression_bench)
             target_link_libraries(${_encode_target} PRIVATE poseidon_encode_tilelang)
             target_compile_definitions(${_encode_target} PRIVATE POSEIDON_ENCODE_TILELANG=1
                 POSEIDON_ENCODE_TILELANG_SM=${POSEIDON_GPU_ENCODE_TILELANG_ARCH})
@@ -135,5 +139,10 @@ if(POSEIDON_BUILD_GPU_ENCODE_BENCH)
         add_test(NAME poseidon_gpu_encode_smoke
             COMMAND poseidon_gpu_encode_bench 8 2 40 0 1
                 ${CMAKE_CURRENT_BINARY_DIR}/encode-smoke.json)
+        add_test(NAME poseidon_gpu_plaintext_compression_smoke
+            COMMAND poseidon_gpu_plaintext_compression_bench 8 2 40 1 20261012
+                ${CMAKE_CURRENT_BINARY_DIR}/compression-smoke.json -)
+        set_tests_properties(poseidon_gpu_plaintext_compression_smoke PROPERTIES
+            ENVIRONMENT "POSEIDON_COMPRESSION_WARMUP_MS=0;OMP_NUM_THREADS=1")
     endif()
 endif()

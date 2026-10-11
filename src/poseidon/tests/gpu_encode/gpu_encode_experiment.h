@@ -25,6 +25,10 @@ public:
     // including normalization/twist but before scaling or rounding. No FFT.
     void prepare_coefficients(const double *input, double scale,
                               const poseidon::gpu::GpuParameterShard &parameters, bool batched);
+    // Benchmark-only lossless compact form: fixed-width zigzag integers after
+    // CPU scaling/rounding. The packed input has one zero uint64 guard word.
+    void prepare_packed_coefficients(const std::uint64_t *input, unsigned bits,
+                                    const poseidon::gpu::GpuParameterShard &parameters);
     void initialize_tilelang(const poseidon::gpu::GpuParameterShard &parameters);
     void validate_tilelang_ntt(const poseidon::gpu::GpuParameterShard &parameters);
     void ntt(const poseidon::gpu::GpuParameterShard &parameters, Backend backend, bool batched);
