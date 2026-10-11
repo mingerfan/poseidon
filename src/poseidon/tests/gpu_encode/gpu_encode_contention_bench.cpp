@@ -22,6 +22,7 @@
 #include <functional>
 #include <iostream>
 #include <mutex>
+#include <numeric>
 #include <random>
 #include <thread>
 
@@ -61,6 +62,7 @@ Json stats(const std::vector<double> &samples) {
     std::sort(sorted.begin(), sorted.end());
     const auto n = sorted.size();
     return {{"median_ms", (sorted[(n-1)/2]+sorted[n/2])/2},
+        {"mean_ms",std::accumulate(samples.begin(),samples.end(),0.)/n},
         {"p95_ms", sorted[static_cast<std::size_t>(std::ceil(n*.95))-1]},
         {"min_ms", sorted.front()}, {"max_ms", sorted.back()}, {"samples_ms", samples}};
 }
@@ -82,6 +84,7 @@ class EncodeWorker {
     std::exception_ptr error_;
     bool ready_ = false, started_ = false, idle_ = true, exit_ = false;
     Backend backend_ = Backend::cuda;
+    double period_ms_ = 0;
     std::atomic<bool> active_{false};
     std::atomic<std::uint64_t> completed_{0};
     std::vector<double> samples_;
@@ -133,15 +136,18 @@ public:
                 }
                 for (;;) {
                     Backend backend;
+                    double period_ms;
                     {
                         std::unique_lock<std::mutex> lock(mutex_);
                         condition_.wait(lock, [&] { return active_.load() || exit_; });
                         if (exit_) break;
                         backend = backend_;
+                        period_ms = period_ms_;
                     }
                     std::vector<double> samples;
                     double warm_ms = 0;
                     while (active_.load()) {
+                        const auto iteration_start = Clock::now();
                         begin.record();
                         run(backend);
                         end.record();
@@ -159,6 +165,9 @@ public:
                             samples.push_back(ms);
                             completed_.fetch_add(batch);
                         }
+                        if (warm_ms >= 100 && period_ms > 0)
+                            std::this_thread::sleep_until(iteration_start +
+                                std::chrono::duration_cast<Clock::duration>(std::chrono::duration<double,std::milli>(period_ms)));
                     }
                     encoder.output.copy_to_host(actual.data(), actual.size());
                     if (actual != reference) throw std::runtime_error("background Encode residues differ from canonical CUDA");
@@ -188,10 +197,11 @@ public:
         }
         if (thread_.joinable()) thread_.join();
     }
-    void start(Backend backend) {
+    void start(Backend backend, double period_ms = 0) {
         std::unique_lock<std::mutex> lock(mutex_);
         check();
         backend_ = backend;
+        period_ms_ = period_ms;
         started_ = false;
         idle_ = false;
         completed_.store(0);
@@ -248,6 +258,11 @@ try {
         "usage: poseidon_gpu_encode_contention_bench Q_LIMBS BATCH REPEAT BURST RAW_H2D REPORT.json");
     const std::size_t n = 65536, limbs = std::stoul(argv[1]), batch = std::stoul(argv[2]);
     const int repeat = std::stoi(argv[3]), burst = std::stoi(argv[4]), upload = std::stoi(argv[5]);
+    const char *demand_env = std::getenv("POSEIDON_GPU_ENCODE_DEMAND_ONLY");
+    const std::string demand_text = demand_env ? demand_env : "0";
+    if (demand_text != "0" && demand_text != "1")
+        throw std::invalid_argument("POSEIDON_GPU_ENCODE_DEMAND_ONLY must be 0 or 1");
+    const bool demand_only = demand_text == "1";
     if (limbs < 3 || limbs > 32 || !batch || batch > 32 || repeat < 1 || burst < 1 || burst > 64 ||
         (upload != 0 && upload != 1)) throw std::invalid_argument("unsupported contention geometry");
     gpu_check_cuda(cudaSetDevice(0), "select GPU");
@@ -320,6 +335,7 @@ try {
     if (main_stream_id == worker.stream_id()) throw std::runtime_error("operator and Encode streams are identical");
     Json report{{"gpu",prop.name}, {"degree",n}, {"q_limbs",limbs}, {"p_limbs",p_count}, {"batch",batch},
         {"scale_log2",40}, {"raw_h2d",static_cast<bool>(upload)}, {"repeat",repeat}, {"burst",burst},
+        {"demand_only",demand_only},
         {"streams","two host threads, distinct CUDA per-thread streams; same GPU, default priority"},
         {"main_stream_id",main_stream_id}, {"encode_stream_id",worker.stream_id()},
         {"scope","actual GpuEvaluator operations with internal allocation, RMM pool; continuous background full Encode"},
@@ -329,9 +345,13 @@ try {
     if (prop.major*10+prop.minor < POSEIDON_ENCODE_TILELANG_SM)
         throw std::runtime_error("GPU is older than configured TileLang architecture");
     backgrounds.emplace_back("tilelang_tensor_encode",Backend::tilelang_tensor);
+    if (demand_only) backgrounds = {{"tilelang_tensor_encode_demand",Backend::tilelang_tensor}};
+#else
+    if (demand_only) throw std::runtime_error("Demand test requires the TileLang Tensor backend");
 #endif
     std::mt19937_64 order_rng(20261011+limbs*100+batch);
     for (auto &op : operations) {
+        if (demand_only && op.name != "relinearize" && op.name != "rotate") continue;
         Ciphertext expected;
         op.cpu_call(expected);
         op.gpu_call();
@@ -345,13 +365,17 @@ try {
         std::shuffle(backgrounds.begin(),backgrounds.end(),order_rng);
         for (const auto &[name,backend] : backgrounds) {
             std::cout << "measuring " << op.name << " + " << name << std::endl;
-            worker.start(backend);
+            const double period_ms = demand_only ?
+                row["alone_before"]["operator"]["mean_ms"].get<double>()*batch : 0;
+            worker.start(backend,period_ms);
             Json result;
             {
                 Range range("contention."+op.name+"."+name);
                 result = measure(op.gpu_call,repeat,burst,worker);
             }
             result["encode_batch_latency"] = worker.stop(batch);
+            result["target_batch_period_ms"] = period_ms;
+            if (period_ms > 0) result["target_plaintexts_per_second"] = 1000.*batch/period_ms;
             equal_cipher(output,expected,context);
             result["operator_and_encode_exact_match"] = true;
             row["backgrounds"][name] = std::move(result);
@@ -363,8 +387,13 @@ try {
         const double baseline = (row["alone_before"]["operator"]["median_ms"].get<double>() +
             row["alone_after"]["operator"]["median_ms"].get<double>())/2;
         row["baseline_median_ms"] = baseline;
-        for (auto &result : row["backgrounds"].items())
+        const double baseline_mean = (row["alone_before"]["operator"]["mean_ms"].get<double>() +
+            row["alone_after"]["operator"]["mean_ms"].get<double>())/2;
+        row["baseline_mean_ms"] = baseline_mean;
+        for (auto &result : row["backgrounds"].items()) {
             result.value()["operator_slowdown"] = result.value()["operator"]["median_ms"].get<double>()/baseline;
+            result.value()["operator_mean_slowdown"] = result.value()["operator"]["mean_ms"].get<double>()/baseline_mean;
+        }
         report["rows"].push_back(std::move(row));
     }
     std::ofstream out(argv[6]);

@@ -161,3 +161,24 @@ bootstrapping or establish a Qwen-level speedup. Separate streams permit
 overlap but still share CUDA cores, registers, cache and memory bandwidth;
 the measured slowdown determines whether spare Tensor Core arithmetic can
 be used economically for this workload.
+
+The runner's `--demand-only` option tests relinearize/rotate with a rate-limited
+TileLang Tensor worker. Its target is one encoded plaintext per operator at
+the measured standalone operator **mean** latency. The worker's batch period
+is `batch * baseline_mean_ms`; it sleeps on the host after each completed
+Encode batch when needed. It warms without a limit before the main operator
+warmup, then applies the limit throughout operator warmup and measurement.
+This is a controlled demand model, not the actual Qwen plaintext schedule.
+Mean slowdown and p95 are saved alongside the median so intermittent batch
+bursts are not hidden. The operator/Encode supply counters remain measured
+inside the operator's wall-time window, with one-batch boundary uncertainty.
+The independent operator inputs do not wait for these encoded plaintexts.
+Supply below the assumed demand indicates a potential stall in a real
+consumer; a low operator slowdown alone does not prove a viable pipeline.
+
+```sh
+python3 scripts/benchmark_gpu_encode_contention.py \
+  --binary build-runtime-gpu-api-release/bin/poseidon_gpu_encode_contention_bench \
+  --output test-results/gpu-encode-demand-new --runs 3 --repeat 30 --burst 4 \
+  --demand-only
+```
