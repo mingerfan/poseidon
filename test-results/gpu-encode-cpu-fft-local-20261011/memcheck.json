@@ -1,0 +1,1838 @@
+{
+  "batch": 2,
+  "burst": 1,
+  "compare_cpu_fft": true,
+  "degree": 65536,
+  "demand_only": false,
+  "encode_preparation": {
+    "coefficient_cache_bytes": 1048576,
+    "coefficient_format": "FP64 [batch][N], inverse embedding normalized, unscaled/unrounded",
+    "cpu_fft_preprocessing_ms": 1.790451,
+    "cpu_fft_preprocessing_ms_per_plaintext": 0.8952255,
+    "cpu_fft_validation": {
+      "checked_plaintexts": 2,
+      "cpu_exact_match": true,
+      "cpu_ntt_residue_differences": 0,
+      "max_input_error": 2.977737778575573e-10,
+      "tolerance": 1.4901161193847656e-08
+    },
+    "full_gpu_validation": {
+      "checked_plaintexts": 2,
+      "cpu_exact_match": true,
+      "cpu_ntt_residue_differences": 0,
+      "max_input_error": 2.977737778575573e-10,
+      "tolerance": 1.4901161193847656e-08
+    },
+    "invalid_coefficients_rejected": true,
+    "raw_cache_bytes": 524288,
+    "standalone": {
+      "cpu_fft_cuda_encode": {
+        "max_ms": 1.854464054107666,
+        "mean_ms": 1.8291882634162904,
+        "median_ms": 1.8295999765396118,
+        "median_ms_per_plaintext": 0.9147999882698059,
+        "min_ms": 1.8079999685287476,
+        "p95_ms": 1.8535679578781128,
+        "samples_ms": [
+          1.8116480112075806,
+          1.8178240060806274,
+          1.8535679578781128,
+          1.8197439908981323,
+          1.8355519771575928,
+          1.824895977973938,
+          1.8455040454864502,
+          1.854464054107666,
+          1.8367359638214111,
+          1.8112640380859375,
+          1.827232003211975,
+          1.8125120401382446,
+          1.824671983718872,
+          1.84825599193573,
+          1.8080639839172363,
+          1.8405120372772217,
+          1.8079999685287476,
+          1.8129279613494873,
+          1.8377920389175415,
+          1.8418240547180176,
+          1.8360320329666138,
+          1.8222719430923462,
+          1.8338559865951538,
+          1.831007957458496,
+          1.832927942276001,
+          1.835487961769104,
+          1.8320319652557373,
+          1.8281919956207275,
+          1.8262079954147339,
+          1.8246400356292725
+        ]
+      },
+      "cpu_fft_tilelang_tensor_encode": {
+        "max_ms": 7.914912223815918,
+        "mean_ms": 7.896647437413534,
+        "median_ms": 7.898639917373657,
+        "median_ms_per_plaintext": 3.9493199586868286,
+        "min_ms": 7.8733439445495605,
+        "p95_ms": 7.9148478507995605,
+        "samples_ms": [
+          7.8941121101379395,
+          7.884128093719482,
+          7.899199962615967,
+          7.889023780822754,
+          7.8886399269104,
+          7.901343822479248,
+          7.902560234069824,
+          7.902815818786621,
+          7.914912223815918,
+          7.9148478507995605,
+          7.902431964874268,
+          7.880064010620117,
+          7.879551887512207,
+          7.909984111785889,
+          7.896160125732422,
+          7.908224105834961,
+          7.888671875,
+          7.903584003448486,
+          7.909279823303223,
+          7.905344009399414,
+          7.898079872131348,
+          7.8733439445495605,
+          7.890912055969238,
+          7.894015789031982,
+          7.901311874389648,
+          7.9082560539245605,
+          7.886240005493164,
+          7.910367965698242,
+          7.881663799285889,
+          7.880352020263672
+        ]
+      },
+      "cuda_encode": {
+        "max_ms": 2.368000030517578,
+        "mean_ms": 2.338116256395976,
+        "median_ms": 2.341952085494995,
+        "median_ms_per_plaintext": 1.1709760427474976,
+        "min_ms": 2.29584002494812,
+        "p95_ms": 2.36080002784729,
+        "samples_ms": [
+          2.368000030517578,
+          2.3372159004211426,
+          2.347007989883423,
+          2.334336042404175,
+          2.333280086517334,
+          2.346400022506714,
+          2.351167917251587,
+          2.3475840091705322,
+          2.3462719917297363,
+          2.36080002784729,
+          2.343519926071167,
+          2.321631908416748,
+          2.3429760932922363,
+          2.3177599906921387,
+          2.327104091644287,
+          2.3182079792022705,
+          2.3466238975524902,
+          2.29584002494812,
+          2.350208044052124,
+          2.3530240058898926,
+          2.313983917236328,
+          2.3391358852386475,
+          2.3563199043273926,
+          2.3287999629974365,
+          2.340928077697754,
+          2.3284800052642822,
+          2.3275198936462402,
+          2.321631908416748,
+          2.3472321033477783,
+          2.3504960536956787
+        ]
+      },
+      "tilelang_tensor_encode": {
+        "max_ms": 11.205663681030273,
+        "mean_ms": 8.637460199991862,
+        "median_ms": 8.379231929779053,
+        "median_ms_per_plaintext": 4.189615964889526,
+        "min_ms": 8.320192337036133,
+        "p95_ms": 11.153023719787598,
+        "samples_ms": [
+          11.153023719787598,
+          11.205663681030273,
+          10.5895357131958,
+          8.347392082214355,
+          8.420767784118652,
+          8.384927749633789,
+          8.362848281860352,
+          8.386143684387207,
+          8.370207786560059,
+          8.38054370880127,
+          8.331968307495117,
+          8.390560150146484,
+          8.377920150756836,
+          8.370783805847168,
+          8.3635835647583,
+          8.36092758178711,
+          8.355936050415039,
+          8.38809585571289,
+          8.369376182556152,
+          8.384384155273438,
+          8.372672080993652,
+          8.409088134765625,
+          8.40550422668457,
+          8.393088340759277,
+          8.320192337036133,
+          8.371199607849121,
+          8.377311706542969,
+          8.371487617492676,
+          8.39964771270752,
+          8.409024238586426
+        ]
+      }
+    }
+  },
+  "encode_stream_id": 15,
+  "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+  "input_h2d": true,
+  "main_stream_id": 14,
+  "p_limbs": 4,
+  "q_limbs": 3,
+  "raw_h2d": true,
+  "repeat": 1,
+  "rows": [
+    {
+      "alone_after": {
+        "encode_plaintexts_per_second_in_window": 0.0,
+        "encoded_plaintexts_in_window": 0,
+        "encoded_plaintexts_per_operator": 0.0,
+        "measurement_window_ms": 0.524826,
+        "operator": {
+          "max_ms": 0.5191680192947388,
+          "mean_ms": 0.5191680192947388,
+          "median_ms": 0.5191680192947388,
+          "min_ms": 0.5191680192947388,
+          "p95_ms": 0.5191680192947388,
+          "samples_ms": [
+            0.5191680192947388
+          ]
+        },
+        "operator_calls": 1,
+        "wall": {
+          "max_ms": 0.523936,
+          "mean_ms": 0.523936,
+          "median_ms": 0.523936,
+          "min_ms": 0.523936,
+          "p95_ms": 0.523936,
+          "samples_ms": [
+            0.523936
+          ]
+        }
+      },
+      "alone_before": {
+        "encode_plaintexts_per_second_in_window": 0.0,
+        "encoded_plaintexts_in_window": 0,
+        "encoded_plaintexts_per_operator": 0.0,
+        "measurement_window_ms": 0.526425,
+        "operator": {
+          "max_ms": 0.52019202709198,
+          "mean_ms": 0.52019202709198,
+          "median_ms": 0.52019202709198,
+          "min_ms": 0.52019202709198,
+          "p95_ms": 0.52019202709198,
+          "samples_ms": [
+            0.52019202709198
+          ]
+        },
+        "operator_calls": 1,
+        "wall": {
+          "max_ms": 0.525686,
+          "mean_ms": 0.525686,
+          "median_ms": 0.525686,
+          "min_ms": 0.525686,
+          "p95_ms": 0.525686,
+          "samples_ms": [
+            0.525686
+          ]
+        }
+      },
+      "backgrounds": {
+        "cpu_fft_cuda_encode": {
+          "encode_batch_latency": {
+            "max_ms": 3.4603519439697266,
+            "mean_ms": 3.310192817135861,
+            "median_ms": 3.4123198986053467,
+            "median_ms_per_plaintext": 1.7061599493026733,
+            "min_ms": 1.8431040048599243,
+            "p95_ms": 3.4603519439697266,
+            "samples_ms": [
+              2.9082560539245605,
+              3.4093759059906006,
+              3.4071359634399414,
+              3.4603519439697266,
+              3.406399965286255,
+              3.4052159786224365,
+              3.41158390045166,
+              3.4362881183624268,
+              3.4238719940185547,
+              3.401024103164673,
+              3.432960033416748,
+              3.415839910507202,
+              3.435807943344116,
+              3.4475839138031006,
+              3.388000011444092,
+              3.4123198986053467,
+              3.4284799098968506,
+              3.4200639724731445,
+              1.8431040048599243
+            ]
+          },
+          "encode_plaintexts_per_second_in_window": 0.0,
+          "encoded_plaintexts_in_window": 0,
+          "encoded_plaintexts_per_operator": 0.0,
+          "input_bytes_per_batch": 1048576,
+          "measurement_window_ms": 0.561184,
+          "operator": {
+            "max_ms": 0.5447679758071899,
+            "mean_ms": 0.5447679758071899,
+            "median_ms": 0.5447679758071899,
+            "min_ms": 0.5447679758071899,
+            "p95_ms": 0.5447679758071899,
+            "samples_ms": [
+              0.5447679758071899
+            ]
+          },
+          "operator_and_encode_exact_match": true,
+          "operator_calls": 1,
+          "operator_mean_slowdown": 1.0482757687310524,
+          "operator_slowdown": 1.0482757687310524,
+          "precomputed_cpu_fft": true,
+          "target_batch_period_ms": 0.0,
+          "wall": {
+            "max_ms": 0.560495,
+            "mean_ms": 0.560495,
+            "median_ms": 0.560495,
+            "min_ms": 0.560495,
+            "p95_ms": 0.560495,
+            "samples_ms": [
+              0.560495
+            ]
+          }
+        },
+        "cpu_fft_tilelang_tensor_encode": {
+          "encode_batch_latency": {
+            "max_ms": 10.60921573638916,
+            "mean_ms": 10.505430902753558,
+            "median_ms": 10.579584121704102,
+            "median_ms_per_plaintext": 5.289792060852051,
+            "min_ms": 10.028960227966309,
+            "p95_ms": 10.60921573638916,
+            "samples_ms": [
+              10.028960227966309,
+              10.570464134216309,
+              10.601632118225098,
+              10.562623977661133,
+              10.585536003112793,
+              10.60921573638916,
+              10.579584121704102
+            ]
+          },
+          "encode_plaintexts_per_second_in_window": 0.0,
+          "encoded_plaintexts_in_window": 0,
+          "encoded_plaintexts_per_operator": 0.0,
+          "input_bytes_per_batch": 1048576,
+          "measurement_window_ms": 0.547438,
+          "operator": {
+            "max_ms": 0.5364800095558167,
+            "mean_ms": 0.5364800095558167,
+            "median_ms": 0.5364800095558167,
+            "min_ms": 0.5364800095558167,
+            "p95_ms": 0.5364800095558167,
+            "samples_ms": [
+              0.5364800095558167
+            ]
+          },
+          "operator_and_encode_exact_match": true,
+          "operator_calls": 1,
+          "operator_mean_slowdown": 1.0323275585219223,
+          "operator_slowdown": 1.0323275585219223,
+          "precomputed_cpu_fft": true,
+          "target_batch_period_ms": 0.0,
+          "wall": {
+            "max_ms": 0.546569,
+            "mean_ms": 0.546569,
+            "median_ms": 0.546569,
+            "min_ms": 0.546569,
+            "p95_ms": 0.546569,
+            "samples_ms": [
+              0.546569
+            ]
+          }
+        },
+        "cuda_encode": {
+          "encode_batch_latency": {
+            "max_ms": 5.319712162017822,
+            "mean_ms": 5.008069296677907,
+            "median_ms": 5.2304160594940186,
+            "median_ms_per_plaintext": 2.6152080297470093,
+            "min_ms": 3.7105600833892822,
+            "p95_ms": 5.319712162017822,
+            "samples_ms": [
+              4.7599358558654785,
+              5.2393598556518555,
+              5.2196478843688965,
+              4.794623851776123,
+              5.275455951690674,
+              5.236959934234619,
+              5.226848125457764,
+              5.291584014892578,
+              4.7881598472595215,
+              5.233983993530273,
+              5.319712162017822,
+              3.7105600833892822
+            ]
+          },
+          "encode_plaintexts_per_second_in_window": 0.0,
+          "encoded_plaintexts_in_window": 0,
+          "encoded_plaintexts_per_operator": 0.0,
+          "input_bytes_per_batch": 524288,
+          "measurement_window_ms": 0.611808,
+          "operator": {
+            "max_ms": 0.605184018611908,
+            "mean_ms": 0.605184018611908,
+            "median_ms": 0.605184018611908,
+            "min_ms": 0.605184018611908,
+            "p95_ms": 0.605184018611908,
+            "samples_ms": [
+              0.605184018611908
+            ]
+          },
+          "operator_and_encode_exact_match": true,
+          "operator_calls": 1,
+          "operator_mean_slowdown": 1.1645320035454485,
+          "operator_slowdown": 1.1645320035454485,
+          "precomputed_cpu_fft": false,
+          "target_batch_period_ms": 0.0,
+          "wall": {
+            "max_ms": 0.610709,
+            "mean_ms": 0.610709,
+            "median_ms": 0.610709,
+            "min_ms": 0.610709,
+            "p95_ms": 0.610709,
+            "samples_ms": [
+              0.610709
+            ]
+          }
+        },
+        "tilelang_tensor_encode": {
+          "encode_batch_latency": {
+            "max_ms": 12.481184005737305,
+            "mean_ms": 12.1768159866333,
+            "median_ms": 12.381519794464111,
+            "median_ms_per_plaintext": 6.190759897232056,
+            "min_ms": 11.497440338134766,
+            "p95_ms": 12.481184005737305,
+            "samples_ms": [
+              11.90454387664795,
+              12.363807678222656,
+              12.414688110351563,
+              12.399231910705566,
+              12.481184005737305,
+              11.497440338134766
+            ]
+          },
+          "encode_plaintexts_per_second_in_window": 0.0,
+          "encoded_plaintexts_in_window": 0,
+          "encoded_plaintexts_per_operator": 0.0,
+          "input_bytes_per_batch": 524288,
+          "measurement_window_ms": 2.534287,
+          "operator": {
+            "max_ms": 2.529279947280884,
+            "mean_ms": 2.529279947280884,
+            "median_ms": 2.529279947280884,
+            "min_ms": 2.529279947280884,
+            "p95_ms": 2.529279947280884,
+            "samples_ms": [
+              2.529279947280884
+            ]
+          },
+          "operator_and_encode_exact_match": true,
+          "operator_calls": 1,
+          "operator_mean_slowdown": 4.866994755231922,
+          "operator_slowdown": 4.866994755231922,
+          "precomputed_cpu_fft": false,
+          "target_batch_period_ms": 0.0,
+          "wall": {
+            "max_ms": 2.533477,
+            "mean_ms": 2.533477,
+            "median_ms": 2.533477,
+            "min_ms": 2.533477,
+            "p95_ms": 2.533477,
+            "samples_ms": [
+              2.533477
+            ]
+          }
+        }
+      },
+      "baseline_mean_ms": 0.5196800231933594,
+      "baseline_median_ms": 0.5196800231933594,
+      "cpu_exact_match": true,
+      "operator": "add"
+    },
+    {
+      "alone_after": {
+        "encode_plaintexts_per_second_in_window": 0.0,
+        "encoded_plaintexts_in_window": 0,
+        "encoded_plaintexts_per_operator": 0.0,
+        "measurement_window_ms": 0.693382,
+        "operator": {
+          "max_ms": 0.687936007976532,
+          "mean_ms": 0.687936007976532,
+          "median_ms": 0.687936007976532,
+          "min_ms": 0.687936007976532,
+          "p95_ms": 0.687936007976532,
+          "samples_ms": [
+            0.687936007976532
+          ]
+        },
+        "operator_calls": 1,
+        "wall": {
+          "max_ms": 0.692643,
+          "mean_ms": 0.692643,
+          "median_ms": 0.692643,
+          "min_ms": 0.692643,
+          "p95_ms": 0.692643,
+          "samples_ms": [
+            0.692643
+          ]
+        }
+      },
+      "alone_before": {
+        "encode_plaintexts_per_second_in_window": 0.0,
+        "encoded_plaintexts_in_window": 0,
+        "encoded_plaintexts_per_operator": 0.0,
+        "measurement_window_ms": 0.692203,
+        "operator": {
+          "max_ms": 0.6869440078735352,
+          "mean_ms": 0.6869440078735352,
+          "median_ms": 0.6869440078735352,
+          "min_ms": 0.6869440078735352,
+          "p95_ms": 0.6869440078735352,
+          "samples_ms": [
+            0.6869440078735352
+          ]
+        },
+        "operator_calls": 1,
+        "wall": {
+          "max_ms": 0.691503,
+          "mean_ms": 0.691503,
+          "median_ms": 0.691503,
+          "min_ms": 0.691503,
+          "p95_ms": 0.691503,
+          "samples_ms": [
+            0.691503
+          ]
+        }
+      },
+      "backgrounds": {
+        "cpu_fft_cuda_encode": {
+          "encode_batch_latency": {
+            "max_ms": 2.9337921142578125,
+            "mean_ms": 2.8606719857170466,
+            "median_ms": 2.8677120208740234,
+            "median_ms_per_plaintext": 1.4338560104370117,
+            "min_ms": 2.555903911590576,
+            "p95_ms": 2.9141440391540527,
+            "samples_ms": [
+              2.555903911590576,
+              2.8878400325775146,
+              2.8491199016571045,
+              2.859679937362671,
+              2.8641600608825684,
+              2.836416006088257,
+              2.8973119258880615,
+              2.862783908843994,
+              2.896064043045044,
+              2.859839916229248,
+              2.8582398891448975,
+              2.9016640186309814,
+              2.9141440391540527,
+              2.8808000087738037,
+              2.8739519119262695,
+              2.885983943939209,
+              2.8677120208740234,
+              2.9337921142578125,
+              2.8698880672454834,
+              2.8572800159454346,
+              2.8615360260009766
+            ]
+          },
+          "encode_plaintexts_per_second_in_window": 0.0,
+          "encoded_plaintexts_in_window": 0,
+          "encoded_plaintexts_per_operator": 0.0,
+          "input_bytes_per_batch": 1048576,
+          "measurement_window_ms": 1.830306,
+          "operator": {
+            "max_ms": 1.8257919549942017,
+            "mean_ms": 1.8257919549942017,
+            "median_ms": 1.8257919549942017,
+            "min_ms": 1.8257919549942017,
+            "p95_ms": 1.8257919549942017,
+            "samples_ms": [
+              1.8257919549942017
+            ]
+          },
+          "operator_and_encode_exact_match": true,
+          "operator_calls": 1,
+          "operator_mean_slowdown": 2.655929148646971,
+          "operator_slowdown": 2.655929148646971,
+          "precomputed_cpu_fft": true,
+          "target_batch_period_ms": 0.0,
+          "wall": {
+            "max_ms": 1.829367,
+            "mean_ms": 1.829367,
+            "median_ms": 1.829367,
+            "min_ms": 1.829367,
+            "p95_ms": 1.829367,
+            "samples_ms": [
+              1.829367
+            ]
+          }
+        },
+        "cpu_fft_tilelang_tensor_encode": {
+          "encode_batch_latency": {
+            "max_ms": 9.840383529663086,
+            "mean_ms": 9.554375886917114,
+            "median_ms": 9.534239768981934,
+            "median_ms_per_plaintext": 4.767119884490967,
+            "min_ms": 9.18454360961914,
+            "p95_ms": 9.840383529663086,
+            "samples_ms": [
+              9.18454360961914,
+              9.527199745178223,
+              9.547039985656738,
+              9.493247985839844,
+              9.541279792785645,
+              9.840383529663086,
+              9.464447975158691,
+              9.836864471435547
+            ]
+          },
+          "encode_plaintexts_per_second_in_window": 0.0,
+          "encoded_plaintexts_in_window": 0,
+          "encoded_plaintexts_per_operator": 0.0,
+          "input_bytes_per_batch": 1048576,
+          "measurement_window_ms": 1.471349,
+          "operator": {
+            "max_ms": 1.4663679599761963,
+            "mean_ms": 1.4663679599761963,
+            "median_ms": 1.4663679599761963,
+            "min_ms": 1.4663679599761963,
+            "p95_ms": 1.4663679599761963,
+            "samples_ms": [
+              1.4663679599761963
+            ]
+          },
+          "operator_and_encode_exact_match": true,
+          "operator_calls": 1,
+          "operator_mean_slowdown": 2.133084986429981,
+          "operator_slowdown": 2.133084986429981,
+          "precomputed_cpu_fft": true,
+          "target_batch_period_ms": 0.0,
+          "wall": {
+            "max_ms": 1.470619,
+            "mean_ms": 1.470619,
+            "median_ms": 1.470619,
+            "min_ms": 1.470619,
+            "p95_ms": 1.470619,
+            "samples_ms": [
+              1.470619
+            ]
+          }
+        },
+        "cuda_encode": {
+          "encode_batch_latency": {
+            "max_ms": 4.169983863830566,
+            "mean_ms": 4.131414156693679,
+            "median_ms": 4.153952121734619,
+            "median_ms_per_plaintext": 2.0769760608673096,
+            "min_ms": 3.8556480407714844,
+            "p95_ms": 4.169983863830566,
+            "samples_ms": [
+              3.8556480407714844,
+              4.162367820739746,
+              4.139296054840088,
+              4.165088176727295,
+              4.164095878601074,
+              4.163008213043213,
+              4.153952121734619,
+              4.148064136505127,
+              4.127359867095947,
+              4.1484479904174805,
+              4.142560005187988,
+              4.169983863830566,
+              4.168511867523193
+            ]
+          },
+          "encode_plaintexts_per_second_in_window": 0.0,
+          "encoded_plaintexts_in_window": 0,
+          "encoded_plaintexts_per_operator": 0.0,
+          "input_bytes_per_batch": 524288,
+          "measurement_window_ms": 0.729122,
+          "operator": {
+            "max_ms": 0.7208960056304932,
+            "mean_ms": 0.7208960056304932,
+            "median_ms": 0.7208960056304932,
+            "min_ms": 0.7208960056304932,
+            "p95_ms": 0.7208960056304932,
+            "samples_ms": [
+              0.7208960056304932
+            ]
+          },
+          "operator_and_encode_exact_match": true,
+          "operator_calls": 1,
+          "operator_mean_slowdown": 1.0486675161756196,
+          "operator_slowdown": 1.0486675161756196,
+          "precomputed_cpu_fft": false,
+          "target_batch_period_ms": 0.0,
+          "wall": {
+            "max_ms": 0.728052,
+            "mean_ms": 0.728052,
+            "median_ms": 0.728052,
+            "min_ms": 0.728052,
+            "p95_ms": 0.728052,
+            "samples_ms": [
+              0.728052
+            ]
+          }
+        },
+        "tilelang_tensor_encode": {
+          "encode_batch_latency": {
+            "max_ms": 11.135647773742676,
+            "mean_ms": 10.816836765834264,
+            "median_ms": 10.820159912109375,
+            "median_ms_per_plaintext": 5.4100799560546875,
+            "min_ms": 10.510144233703613,
+            "p95_ms": 11.135647773742676,
+            "samples_ms": [
+              10.787520408630371,
+              10.820159912109375,
+              10.83238410949707,
+              11.135647773742676,
+              10.77014446258545,
+              10.861856460571289,
+              10.510144233703613
+            ]
+          },
+          "encode_plaintexts_per_second_in_window": 0.0,
+          "encoded_plaintexts_in_window": 0,
+          "encoded_plaintexts_per_operator": 0.0,
+          "input_bytes_per_batch": 524288,
+          "measurement_window_ms": 4.765967,
+          "operator": {
+            "max_ms": 4.761600017547607,
+            "mean_ms": 4.761600017547607,
+            "median_ms": 4.761600017547607,
+            "min_ms": 4.761600017547607,
+            "p95_ms": 4.761600017547607,
+            "samples_ms": [
+              4.761600017547607
+            ]
+          },
+          "operator_and_encode_exact_match": true,
+          "operator_calls": 1,
+          "operator_mean_slowdown": 6.926568082529854,
+          "operator_slowdown": 6.926568082529854,
+          "precomputed_cpu_fft": false,
+          "target_batch_period_ms": 0.0,
+          "wall": {
+            "max_ms": 4.765247,
+            "mean_ms": 4.765247,
+            "median_ms": 4.765247,
+            "min_ms": 4.765247,
+            "p95_ms": 4.765247,
+            "samples_ms": [
+              4.765247
+            ]
+          }
+        }
+      },
+      "baseline_mean_ms": 0.6874400079250336,
+      "baseline_median_ms": 0.6874400079250336,
+      "cpu_exact_match": true,
+      "operator": "multiply_plain"
+    },
+    {
+      "alone_after": {
+        "encode_plaintexts_per_second_in_window": 0.0,
+        "encoded_plaintexts_in_window": 0,
+        "encoded_plaintexts_per_operator": 0.0,
+        "measurement_window_ms": 1.05149,
+        "operator": {
+          "max_ms": 1.0455039739608765,
+          "mean_ms": 1.0455039739608765,
+          "median_ms": 1.0455039739608765,
+          "min_ms": 1.0455039739608765,
+          "p95_ms": 1.0455039739608765,
+          "samples_ms": [
+            1.0455039739608765
+          ]
+        },
+        "operator_calls": 1,
+        "wall": {
+          "max_ms": 1.050511,
+          "mean_ms": 1.050511,
+          "median_ms": 1.050511,
+          "min_ms": 1.050511,
+          "p95_ms": 1.050511,
+          "samples_ms": [
+            1.050511
+          ]
+        }
+      },
+      "alone_before": {
+        "encode_plaintexts_per_second_in_window": 0.0,
+        "encoded_plaintexts_in_window": 0,
+        "encoded_plaintexts_per_operator": 0.0,
+        "measurement_window_ms": 1.048651,
+        "operator": {
+          "max_ms": 1.0424319505691528,
+          "mean_ms": 1.0424319505691528,
+          "median_ms": 1.0424319505691528,
+          "min_ms": 1.0424319505691528,
+          "p95_ms": 1.0424319505691528,
+          "samples_ms": [
+            1.0424319505691528
+          ]
+        },
+        "operator_calls": 1,
+        "wall": {
+          "max_ms": 1.047892,
+          "mean_ms": 1.047892,
+          "median_ms": 1.047892,
+          "min_ms": 1.047892,
+          "p95_ms": 1.047892,
+          "samples_ms": [
+            1.047892
+          ]
+        }
+      },
+      "backgrounds": {
+        "cpu_fft_cuda_encode": {
+          "encode_batch_latency": {
+            "max_ms": 3.547935962677002,
+            "mean_ms": 3.441058024764061,
+            "median_ms": 3.5145280361175537,
+            "median_ms_per_plaintext": 1.7572640180587769,
+            "min_ms": 2.9279680252075195,
+            "p95_ms": 3.547935962677002,
+            "samples_ms": [
+              2.9279680252075195,
+              3.302783966064453,
+              3.5028159618377686,
+              3.5027201175689697,
+              3.5140480995178223,
+              3.516832113265991,
+              3.5136001110076904,
+              3.266848087310791,
+              3.3186559677124023,
+              3.5166079998016357,
+              3.522047996520996,
+              3.5160319805145264,
+              3.538111925125122,
+              3.515007972717285,
+              3.534912109375,
+              3.547935962677002
+            ]
+          },
+          "encode_plaintexts_per_second_in_window": 0.0,
+          "encoded_plaintexts_in_window": 0,
+          "encoded_plaintexts_per_operator": 0.0,
+          "input_bytes_per_batch": 1048576,
+          "measurement_window_ms": 2.292712,
+          "operator": {
+            "max_ms": 2.2855679988861084,
+            "mean_ms": 2.2855679988861084,
+            "median_ms": 2.2855679988861084,
+            "min_ms": 2.2855679988861084,
+            "p95_ms": 2.2855679988861084,
+            "samples_ms": [
+              2.2855679988861084
+            ]
+          },
+          "operator_and_encode_exact_match": true,
+          "operator_calls": 1,
+          "operator_mean_slowdown": 2.189308562618428,
+          "operator_slowdown": 2.189308562618428,
+          "precomputed_cpu_fft": true,
+          "target_batch_period_ms": 0.0,
+          "wall": {
+            "max_ms": 2.291132,
+            "mean_ms": 2.291132,
+            "median_ms": 2.291132,
+            "min_ms": 2.291132,
+            "p95_ms": 2.291132,
+            "samples_ms": [
+              2.291132
+            ]
+          }
+        },
+        "cpu_fft_tilelang_tensor_encode": {
+          "encode_batch_latency": {
+            "max_ms": 10.699392318725586,
+            "mean_ms": 10.201421805790492,
+            "median_ms": 10.635231971740723,
+            "median_ms_per_plaintext": 5.317615985870361,
+            "min_ms": 7.898784160614014,
+            "p95_ms": 10.699392318725586,
+            "samples_ms": [
+              10.217951774597168,
+              10.631360054016113,
+              10.635231971740723,
+              10.699392318725586,
+              10.657952308654785,
+              10.669280052185059,
+              7.898784160614014
+            ]
+          },
+          "encode_plaintexts_per_second_in_window": 0.0,
+          "encoded_plaintexts_in_window": 0,
+          "encoded_plaintexts_per_operator": 0.0,
+          "input_bytes_per_batch": 1048576,
+          "measurement_window_ms": 1.08534,
+          "operator": {
+            "max_ms": 1.0803200006484985,
+            "mean_ms": 1.0803200006484985,
+            "median_ms": 1.0803200006484985,
+            "min_ms": 1.0803200006484985,
+            "p95_ms": 1.0803200006484985,
+            "samples_ms": [
+              1.0803200006484985
+            ]
+          },
+          "operator_and_encode_exact_match": true,
+          "operator_calls": 1,
+          "operator_mean_slowdown": 1.0348210287072543,
+          "operator_slowdown": 1.0348210287072543,
+          "precomputed_cpu_fft": true,
+          "target_batch_period_ms": 0.0,
+          "wall": {
+            "max_ms": 1.08455,
+            "mean_ms": 1.08455,
+            "median_ms": 1.08455,
+            "min_ms": 1.08455,
+            "p95_ms": 1.08455,
+            "samples_ms": [
+              1.08455
+            ]
+          }
+        },
+        "cuda_encode": {
+          "encode_batch_latency": {
+            "max_ms": 5.349055767059326,
+            "mean_ms": 4.958905529975891,
+            "median_ms": 5.293488025665283,
+            "median_ms_per_plaintext": 2.6467440128326416,
+            "min_ms": 2.3376638889312744,
+            "p95_ms": 5.349055767059326,
+            "samples_ms": [
+              4.841536045074463,
+              5.303616046905518,
+              5.349055767059326,
+              5.257631778717041,
+              5.307583808898926,
+              5.292704105377197,
+              5.3122878074646,
+              5.293087959289551,
+              5.293888092041016,
+              2.3376638889312744
+            ]
+          },
+          "encode_plaintexts_per_second_in_window": 0.0,
+          "encoded_plaintexts_in_window": 0,
+          "encoded_plaintexts_per_operator": 0.0,
+          "input_bytes_per_batch": 524288,
+          "measurement_window_ms": 1.106264,
+          "operator": {
+            "max_ms": 1.0985280275344849,
+            "mean_ms": 1.0985280275344849,
+            "median_ms": 1.0985280275344849,
+            "min_ms": 1.0985280275344849,
+            "p95_ms": 1.0985280275344849,
+            "samples_ms": [
+              1.0985280275344849
+            ]
+          },
+          "operator_and_encode_exact_match": true,
+          "operator_calls": 1,
+          "operator_mean_slowdown": 1.052262202712711,
+          "operator_slowdown": 1.052262202712711,
+          "precomputed_cpu_fft": false,
+          "target_batch_period_ms": 0.0,
+          "wall": {
+            "max_ms": 1.105444,
+            "mean_ms": 1.105444,
+            "median_ms": 1.105444,
+            "min_ms": 1.105444,
+            "p95_ms": 1.105444,
+            "samples_ms": [
+              1.105444
+            ]
+          }
+        },
+        "tilelang_tensor_encode": {
+          "encode_batch_latency": {
+            "max_ms": 12.6626558303833,
+            "mean_ms": 12.433279991149902,
+            "median_ms": 12.625663757324219,
+            "median_ms_per_plaintext": 6.312831878662109,
+            "min_ms": 11.628288269042969,
+            "p95_ms": 12.6626558303833,
+            "samples_ms": [
+              11.628288269042969,
+              12.643424034118652,
+              12.6626558303833,
+              12.606368064880371,
+              12.625663757324219
+            ]
+          },
+          "encode_plaintexts_per_second_in_window": 0.0,
+          "encoded_plaintexts_in_window": 0,
+          "encoded_plaintexts_per_operator": 0.0,
+          "input_bytes_per_batch": 524288,
+          "measurement_window_ms": 1.092387,
+          "operator": {
+            "max_ms": 1.0813440084457397,
+            "mean_ms": 1.0813440084457397,
+            "median_ms": 1.0813440084457397,
+            "min_ms": 1.0813440084457397,
+            "p95_ms": 1.0813440084457397,
+            "samples_ms": [
+              1.0813440084457397
+            ]
+          },
+          "operator_and_encode_exact_match": true,
+          "operator_calls": 1,
+          "operator_mean_slowdown": 1.0358019091885093,
+          "operator_slowdown": 1.0358019091885093,
+          "precomputed_cpu_fft": false,
+          "target_batch_period_ms": 0.0,
+          "wall": {
+            "max_ms": 1.091378,
+            "mean_ms": 1.091378,
+            "median_ms": 1.091378,
+            "min_ms": 1.091378,
+            "p95_ms": 1.091378,
+            "samples_ms": [
+              1.091378
+            ]
+          }
+        }
+      },
+      "baseline_mean_ms": 1.0439679622650146,
+      "baseline_median_ms": 1.0439679622650146,
+      "cpu_exact_match": true,
+      "operator": "multiply"
+    },
+    {
+      "alone_after": {
+        "encode_plaintexts_per_second_in_window": 0.0,
+        "encoded_plaintexts_in_window": 0,
+        "encoded_plaintexts_per_operator": 0.0,
+        "measurement_window_ms": 2.670063,
+        "operator": {
+          "max_ms": 2.662400007247925,
+          "mean_ms": 2.662400007247925,
+          "median_ms": 2.662400007247925,
+          "min_ms": 2.662400007247925,
+          "p95_ms": 2.662400007247925,
+          "samples_ms": [
+            2.662400007247925
+          ]
+        },
+        "operator_calls": 1,
+        "wall": {
+          "max_ms": 2.669273,
+          "mean_ms": 2.669273,
+          "median_ms": 2.669273,
+          "min_ms": 2.669273,
+          "p95_ms": 2.669273,
+          "samples_ms": [
+            2.669273
+          ]
+        }
+      },
+      "alone_before": {
+        "encode_plaintexts_per_second_in_window": 0.0,
+        "encoded_plaintexts_in_window": 0,
+        "encoded_plaintexts_per_operator": 0.0,
+        "measurement_window_ms": 2.650959,
+        "operator": {
+          "max_ms": 2.6460158824920654,
+          "mean_ms": 2.6460158824920654,
+          "median_ms": 2.6460158824920654,
+          "min_ms": 2.6460158824920654,
+          "p95_ms": 2.6460158824920654,
+          "samples_ms": [
+            2.6460158824920654
+          ]
+        },
+        "operator_calls": 1,
+        "wall": {
+          "max_ms": 2.650199,
+          "mean_ms": 2.650199,
+          "median_ms": 2.650199,
+          "min_ms": 2.650199,
+          "p95_ms": 2.650199,
+          "samples_ms": [
+            2.650199
+          ]
+        }
+      },
+      "backgrounds": {
+        "cpu_fft_cuda_encode": {
+          "encode_batch_latency": {
+            "max_ms": 2.5613439083099365,
+            "mean_ms": 2.415401402641745,
+            "median_ms": 2.5292160511016846,
+            "median_ms_per_plaintext": 1.2646080255508423,
+            "min_ms": 1.8094079494476318,
+            "p95_ms": 2.5613439083099365,
+            "samples_ms": [
+              2.207103967666626,
+              2.275360107421875,
+              2.2554240226745605,
+              2.5330560207366943,
+              2.5316479206085205,
+              2.5292160511016846,
+              2.2436161041259766,
+              2.5417919158935547,
+              2.5384318828582764,
+              2.4171841144561768,
+              2.4711039066314697,
+              2.543584108352661,
+              2.540031909942627,
+              2.5238399505615234,
+              2.5613439083099365,
+              2.539680004119873,
+              1.8094079494476318
+            ]
+          },
+          "encode_plaintexts_per_second_in_window": 0.0,
+          "encoded_plaintexts_in_window": 0,
+          "encoded_plaintexts_per_operator": 0.0,
+          "input_bytes_per_batch": 1048576,
+          "measurement_window_ms": 3.76076,
+          "operator": {
+            "max_ms": 3.7560319900512695,
+            "mean_ms": 3.7560319900512695,
+            "median_ms": 3.7560319900512695,
+            "min_ms": 3.7560319900512695,
+            "p95_ms": 3.7560319900512695,
+            "samples_ms": [
+              3.7560319900512695
+            ]
+          },
+          "operator_and_encode_exact_match": true,
+          "operator_calls": 1,
+          "operator_mean_slowdown": 1.4151234824350745,
+          "operator_slowdown": 1.4151234824350745,
+          "precomputed_cpu_fft": true,
+          "target_batch_period_ms": 0.0,
+          "wall": {
+            "max_ms": 3.759771,
+            "mean_ms": 3.759771,
+            "median_ms": 3.759771,
+            "min_ms": 3.759771,
+            "p95_ms": 3.759771,
+            "samples_ms": [
+              3.759771
+            ]
+          }
+        },
+        "cpu_fft_tilelang_tensor_encode": {
+          "encode_batch_latency": {
+            "max_ms": 8.94934368133545,
+            "mean_ms": 8.644864022731781,
+            "median_ms": 8.72214412689209,
+            "median_ms_per_plaintext": 4.361072063446045,
+            "min_ms": 7.920735836029053,
+            "p95_ms": 8.94934368133545,
+            "samples_ms": [
+              8.687199592590332,
+              8.72764778137207,
+              8.94934368133545,
+              8.737248420715332,
+              8.71664047241211,
+              8.6911039352417,
+              8.728992462158203,
+              7.920735836029053
+            ]
+          },
+          "encode_plaintexts_per_second_in_window": 0.0,
+          "encoded_plaintexts_in_window": 0,
+          "encoded_plaintexts_per_operator": 0.0,
+          "input_bytes_per_batch": 1048576,
+          "measurement_window_ms": 2.905518,
+          "operator": {
+            "max_ms": 2.895872116088867,
+            "mean_ms": 2.895872116088867,
+            "median_ms": 2.895872116088867,
+            "min_ms": 2.895872116088867,
+            "p95_ms": 2.895872116088867,
+            "samples_ms": [
+              2.895872116088867
+            ]
+          },
+          "operator_and_encode_exact_match": true,
+          "operator_calls": 1,
+          "operator_mean_slowdown": 1.0910494491156792,
+          "operator_slowdown": 1.0910494491156792,
+          "precomputed_cpu_fft": true,
+          "target_batch_period_ms": 0.0,
+          "wall": {
+            "max_ms": 2.904619,
+            "mean_ms": 2.904619,
+            "median_ms": 2.904619,
+            "min_ms": 2.904619,
+            "p95_ms": 2.904619,
+            "samples_ms": [
+              2.904619
+            ]
+          }
+        },
+        "cuda_encode": {
+          "encode_batch_latency": {
+            "max_ms": 3.3900160789489746,
+            "mean_ms": 3.1861062049865723,
+            "median_ms": 3.169343948364258,
+            "median_ms_per_plaintext": 1.584671974182129,
+            "min_ms": 2.9086720943450928,
+            "p95_ms": 3.3900160789489746,
+            "samples_ms": [
+              2.9086720943450928,
+              3.1807360649108887,
+              3.383552074432373,
+              3.169343948364258,
+              3.3900160789489746,
+              3.022655963897705,
+              3.1637439727783203,
+              3.1692800521850586,
+              3.2019519805908203,
+              3.380608081817627,
+              3.0766079425811768
+            ]
+          },
+          "encode_plaintexts_per_second_in_window": 523.2915772819241,
+          "encoded_plaintexts_in_window": 2,
+          "encoded_plaintexts_per_operator": 2.0,
+          "input_bytes_per_batch": 524288,
+          "measurement_window_ms": 3.821961,
+          "operator": {
+            "max_ms": 3.8154239654541016,
+            "mean_ms": 3.8154239654541016,
+            "median_ms": 3.8154239654541016,
+            "min_ms": 3.8154239654541016,
+            "p95_ms": 3.8154239654541016,
+            "samples_ms": [
+              3.8154239654541016
+            ]
+          },
+          "operator_and_encode_exact_match": true,
+          "operator_calls": 1,
+          "operator_mean_slowdown": 1.4375000168424947,
+          "operator_slowdown": 1.4375000168424947,
+          "precomputed_cpu_fft": false,
+          "target_batch_period_ms": 0.0,
+          "wall": {
+            "max_ms": 3.820852,
+            "mean_ms": 3.820852,
+            "median_ms": 3.820852,
+            "min_ms": 3.820852,
+            "p95_ms": 3.820852,
+            "samples_ms": [
+              3.820852
+            ]
+          }
+        },
+        "tilelang_tensor_encode": {
+          "encode_batch_latency": {
+            "max_ms": 9.423680305480957,
+            "mean_ms": 9.2893172899882,
+            "median_ms": 9.296303749084473,
+            "median_ms_per_plaintext": 4.648151874542236,
+            "min_ms": 9.175488471984863,
+            "p95_ms": 9.423680305480957,
+            "samples_ms": [
+              9.423680305480957,
+              9.175488471984863,
+              9.337311744689941,
+              9.261407852172852,
+              9.331199645996094,
+              9.206815719604492
+            ]
+          },
+          "encode_plaintexts_per_second_in_window": 0.0,
+          "encoded_plaintexts_in_window": 0,
+          "encoded_plaintexts_per_operator": 0.0,
+          "input_bytes_per_batch": 524288,
+          "measurement_window_ms": 3.47645,
+          "operator": {
+            "max_ms": 3.4693119525909424,
+            "mean_ms": 3.4693119525909424,
+            "median_ms": 3.4693119525909424,
+            "min_ms": 3.4693119525909424,
+            "p95_ms": 3.4693119525909424,
+            "samples_ms": [
+              3.4693119525909424
+            ]
+          },
+          "operator_and_encode_exact_match": true,
+          "operator_calls": 1,
+          "operator_mean_slowdown": 1.3070987747197296,
+          "operator_slowdown": 1.3070987747197296,
+          "precomputed_cpu_fft": false,
+          "target_batch_period_ms": 0.0,
+          "wall": {
+            "max_ms": 3.47536,
+            "mean_ms": 3.47536,
+            "median_ms": 3.47536,
+            "min_ms": 3.47536,
+            "p95_ms": 3.47536,
+            "samples_ms": [
+              3.47536
+            ]
+          }
+        }
+      },
+      "baseline_mean_ms": 2.654207944869995,
+      "baseline_median_ms": 2.654207944869995,
+      "cpu_exact_match": true,
+      "operator": "rescale"
+    },
+    {
+      "alone_after": {
+        "encode_plaintexts_per_second_in_window": 0.0,
+        "encoded_plaintexts_in_window": 0,
+        "encoded_plaintexts_per_operator": 0.0,
+        "measurement_window_ms": 11.743505,
+        "operator": {
+          "max_ms": 11.74015998840332,
+          "mean_ms": 11.74015998840332,
+          "median_ms": 11.74015998840332,
+          "min_ms": 11.74015998840332,
+          "p95_ms": 11.74015998840332,
+          "samples_ms": [
+            11.74015998840332
+          ]
+        },
+        "operator_calls": 1,
+        "wall": {
+          "max_ms": 11.742525,
+          "mean_ms": 11.742525,
+          "median_ms": 11.742525,
+          "min_ms": 11.742525,
+          "p95_ms": 11.742525,
+          "samples_ms": [
+            11.742525
+          ]
+        }
+      },
+      "alone_before": {
+        "encode_plaintexts_per_second_in_window": 0.0,
+        "encoded_plaintexts_in_window": 0,
+        "encoded_plaintexts_per_operator": 0.0,
+        "measurement_window_ms": 11.691871,
+        "operator": {
+          "max_ms": 11.686528205871582,
+          "mean_ms": 11.686528205871582,
+          "median_ms": 11.686528205871582,
+          "min_ms": 11.686528205871582,
+          "p95_ms": 11.686528205871582,
+          "samples_ms": [
+            11.686528205871582
+          ]
+        },
+        "operator_calls": 1,
+        "wall": {
+          "max_ms": 11.690441999999999,
+          "mean_ms": 11.690441999999999,
+          "median_ms": 11.690441999999999,
+          "min_ms": 11.690441999999999,
+          "p95_ms": 11.690441999999999,
+          "samples_ms": [
+            11.690441999999999
+          ]
+        }
+      },
+      "backgrounds": {
+        "cpu_fft_cuda_encode": {
+          "encode_batch_latency": {
+            "max_ms": 4.974976062774658,
+            "mean_ms": 4.357151997089386,
+            "median_ms": 4.889391899108887,
+            "median_ms_per_plaintext": 2.4446959495544434,
+            "min_ms": 1.8663040399551392,
+            "p95_ms": 4.974976062774658,
+            "samples_ms": [
+              2.532320022583008,
+              4.740287780761719,
+              4.886015892028809,
+              4.892767906188965,
+              4.974976062774658,
+              4.9336957931518555,
+              4.899936199188232,
+              4.960256099700928,
+              4.884960174560547,
+              1.8663040399551392
+            ]
+          },
+          "encode_plaintexts_per_second_in_window": 148.7258765698667,
+          "encoded_plaintexts_in_window": 2,
+          "encoded_plaintexts_per_operator": 2.0,
+          "input_bytes_per_batch": 1048576,
+          "measurement_window_ms": 13.447559,
+          "operator": {
+            "max_ms": 13.443072319030762,
+            "mean_ms": 13.443072319030762,
+            "median_ms": 13.443072319030762,
+            "min_ms": 13.443072319030762,
+            "p95_ms": 13.443072319030762,
+            "samples_ms": [
+              13.443072319030762
+            ]
+          },
+          "operator_and_encode_exact_match": true,
+          "operator_calls": 1,
+          "operator_mean_slowdown": 1.1476715963903108,
+          "operator_slowdown": 1.1476715963903108,
+          "precomputed_cpu_fft": true,
+          "target_batch_period_ms": 0.0,
+          "wall": {
+            "max_ms": 13.446629,
+            "mean_ms": 13.446629,
+            "median_ms": 13.446629,
+            "min_ms": 13.446629,
+            "p95_ms": 13.446629,
+            "samples_ms": [
+              13.446629
+            ]
+          }
+        },
+        "cpu_fft_tilelang_tensor_encode": {
+          "encode_batch_latency": {
+            "max_ms": 10.03388786315918,
+            "mean_ms": 9.452447986602783,
+            "median_ms": 9.795424461364746,
+            "median_ms_per_plaintext": 4.897712230682373,
+            "min_ms": 7.935455799102783,
+            "p95_ms": 10.03388786315918,
+            "samples_ms": [
+              9.684000015258789,
+              10.03388786315918,
+              9.813471794128418,
+              9.795424461364746,
+              7.935455799102783
+            ]
+          },
+          "encode_plaintexts_per_second_in_window": 0.0,
+          "encoded_plaintexts_in_window": 0,
+          "encoded_plaintexts_per_operator": 0.0,
+          "input_bytes_per_batch": 1048576,
+          "measurement_window_ms": 12.090417,
+          "operator": {
+            "max_ms": 12.076031684875488,
+            "mean_ms": 12.076031684875488,
+            "median_ms": 12.076031684875488,
+            "min_ms": 12.076031684875488,
+            "p95_ms": 12.076031684875488,
+            "samples_ms": [
+              12.076031684875488
+            ]
+          },
+          "operator_and_encode_exact_match": true,
+          "operator_calls": 1,
+          "operator_mean_slowdown": 1.0309636244551776,
+          "operator_slowdown": 1.0309636244551776,
+          "precomputed_cpu_fft": true,
+          "target_batch_period_ms": 0.0,
+          "wall": {
+            "max_ms": 12.089397,
+            "mean_ms": 12.089397,
+            "median_ms": 12.089397,
+            "min_ms": 12.089397,
+            "p95_ms": 12.089397,
+            "samples_ms": [
+              12.089397
+            ]
+          }
+        },
+        "cuda_encode": {
+          "encode_batch_latency": {
+            "max_ms": 5.043839931488037,
+            "mean_ms": 4.371564769744873,
+            "median_ms": 4.123295783996582,
+            "median_ms_per_plaintext": 2.061647891998291,
+            "min_ms": 3.802112102508545,
+            "p95_ms": 5.043839931488037,
+            "samples_ms": [
+              3.802112102508545,
+              4.798272132873535,
+              5.043839931488037,
+              4.090303897857666,
+              4.123295783996582
+            ]
+          },
+          "encode_plaintexts_per_second_in_window": 147.6971685197369,
+          "encoded_plaintexts_in_window": 2,
+          "encoded_plaintexts_per_operator": 2.0,
+          "input_bytes_per_batch": 524288,
+          "measurement_window_ms": 13.541221,
+          "operator": {
+            "max_ms": 13.534079551696777,
+            "mean_ms": 13.534079551696777,
+            "median_ms": 13.534079551696777,
+            "min_ms": 13.534079551696777,
+            "p95_ms": 13.534079551696777,
+            "samples_ms": [
+              13.534079551696777
+            ]
+          },
+          "operator_and_encode_exact_match": true,
+          "operator_calls": 1,
+          "operator_mean_slowdown": 1.155441131026304,
+          "operator_slowdown": 1.155441131026304,
+          "precomputed_cpu_fft": false,
+          "target_batch_period_ms": 0.0,
+          "wall": {
+            "max_ms": 13.539032,
+            "mean_ms": 13.539032,
+            "median_ms": 13.539032,
+            "min_ms": 13.539032,
+            "p95_ms": 13.539032,
+            "samples_ms": [
+              13.539032
+            ]
+          }
+        },
+        "tilelang_tensor_encode": {
+          "encode_batch_latency": {
+            "max_ms": 14.502016067504883,
+            "mean_ms": 11.89019227027893,
+            "median_ms": 11.417904376983643,
+            "median_ms_per_plaintext": 5.708952188491821,
+            "min_ms": 10.222944259643555,
+            "p95_ms": 14.502016067504883,
+            "samples_ms": [
+              10.222944259643555,
+              14.502016067504883,
+              11.9933443069458,
+              10.842464447021484
+            ]
+          },
+          "encode_plaintexts_per_second_in_window": 135.0295475031585,
+          "encoded_plaintexts_in_window": 2,
+          "encoded_plaintexts_per_operator": 2.0,
+          "input_bytes_per_batch": 524288,
+          "measurement_window_ms": 14.811573,
+          "operator": {
+            "max_ms": 14.809887886047363,
+            "mean_ms": 14.809887886047363,
+            "median_ms": 14.809887886047363,
+            "min_ms": 14.809887886047363,
+            "p95_ms": 14.809887886047363,
+            "samples_ms": [
+              14.809887886047363
+            ]
+          },
+          "operator_and_encode_exact_match": true,
+          "operator_calls": 1,
+          "operator_mean_slowdown": 1.264360353732514,
+          "operator_slowdown": 1.264360353732514,
+          "precomputed_cpu_fft": false,
+          "target_batch_period_ms": 0.0,
+          "wall": {
+            "max_ms": 14.810754,
+            "mean_ms": 14.810754,
+            "median_ms": 14.810754,
+            "min_ms": 14.810754,
+            "p95_ms": 14.810754,
+            "samples_ms": [
+              14.810754
+            ]
+          }
+        }
+      },
+      "baseline_mean_ms": 11.713344097137451,
+      "baseline_median_ms": 11.713344097137451,
+      "cpu_exact_match": true,
+      "operator": "relinearize"
+    },
+    {
+      "alone_after": {
+        "encode_plaintexts_per_second_in_window": 0.0,
+        "encoded_plaintexts_in_window": 0,
+        "encoded_plaintexts_per_operator": 0.0,
+        "measurement_window_ms": 11.554642,
+        "operator": {
+          "max_ms": 11.55174446105957,
+          "mean_ms": 11.55174446105957,
+          "median_ms": 11.55174446105957,
+          "min_ms": 11.55174446105957,
+          "p95_ms": 11.55174446105957,
+          "samples_ms": [
+            11.55174446105957
+          ]
+        },
+        "operator_calls": 1,
+        "wall": {
+          "max_ms": 11.553752,
+          "mean_ms": 11.553752,
+          "median_ms": 11.553752,
+          "min_ms": 11.553752,
+          "p95_ms": 11.553752,
+          "samples_ms": [
+            11.553752
+          ]
+        }
+      },
+      "alone_before": {
+        "encode_plaintexts_per_second_in_window": 0.0,
+        "encoded_plaintexts_in_window": 0,
+        "encoded_plaintexts_per_operator": 0.0,
+        "measurement_window_ms": 11.583864,
+        "operator": {
+          "max_ms": 11.581439971923828,
+          "mean_ms": 11.581439971923828,
+          "median_ms": 11.581439971923828,
+          "min_ms": 11.581439971923828,
+          "p95_ms": 11.581439971923828,
+          "samples_ms": [
+            11.581439971923828
+          ]
+        },
+        "operator_calls": 1,
+        "wall": {
+          "max_ms": 11.583064,
+          "mean_ms": 11.583064,
+          "median_ms": 11.583064,
+          "min_ms": 11.583064,
+          "p95_ms": 11.583064,
+          "samples_ms": [
+            11.583064
+          ]
+        }
+      },
+      "backgrounds": {
+        "cpu_fft_cuda_encode": {
+          "encode_batch_latency": {
+            "max_ms": 3.9856319427490234,
+            "mean_ms": 2.931382381916046,
+            "median_ms": 3.2729439735412598,
+            "median_ms_per_plaintext": 1.6364719867706299,
+            "min_ms": 1.8198720216751099,
+            "p95_ms": 3.9856319427490234,
+            "samples_ms": [
+              1.9994239807128906,
+              3.262079954147339,
+              2.5629758834838867,
+              2.4675519466400146,
+              3.2838079929351807,
+              3.9856319427490234,
+              3.2969279289245605,
+              3.3187520503997803,
+              3.316800117492676,
+              1.8198720216751099
+            ]
+          },
+          "encode_plaintexts_per_second_in_window": 150.85985971390787,
+          "encoded_plaintexts_in_window": 2,
+          "encoded_plaintexts_per_operator": 2.0,
+          "input_bytes_per_batch": 1048576,
+          "measurement_window_ms": 13.257337,
+          "operator": {
+            "max_ms": 13.24937629699707,
+            "mean_ms": 13.24937629699707,
+            "median_ms": 13.24937629699707,
+            "min_ms": 13.24937629699707,
+            "p95_ms": 13.24937629699707,
+            "samples_ms": [
+              13.24937629699707
+            ]
+          },
+          "operator_and_encode_exact_match": true,
+          "operator_calls": 1,
+          "operator_mean_slowdown": 1.1454865918162178,
+          "operator_slowdown": 1.1454865918162178,
+          "precomputed_cpu_fft": true,
+          "target_batch_period_ms": 0.0,
+          "wall": {
+            "max_ms": 13.254948,
+            "mean_ms": 13.254948,
+            "median_ms": 13.254948,
+            "min_ms": 13.254948,
+            "p95_ms": 13.254948,
+            "samples_ms": [
+              13.254948
+            ]
+          }
+        },
+        "cpu_fft_tilelang_tensor_encode": {
+          "encode_batch_latency": {
+            "max_ms": 13.513248443603516,
+            "mean_ms": 10.267028152942657,
+            "median_ms": 9.743951797485352,
+            "median_ms_per_plaintext": 4.871975898742676,
+            "min_ms": 7.988992214202881,
+            "p95_ms": 13.513248443603516,
+            "samples_ms": [
+              8.057536125183105,
+              13.513248443603516,
+              11.707072257995605,
+              11.695648193359375,
+              9.74294376373291,
+              9.744959831237793,
+              9.685824394226074,
+              7.988992214202881
+            ]
+          },
+          "encode_plaintexts_per_second_in_window": 105.73673045005836,
+          "encoded_plaintexts_in_window": 2,
+          "encoded_plaintexts_per_operator": 2.0,
+          "input_bytes_per_batch": 1048576,
+          "measurement_window_ms": 18.914903,
+          "operator": {
+            "max_ms": 18.911968231201172,
+            "mean_ms": 18.911968231201172,
+            "median_ms": 18.911968231201172,
+            "min_ms": 18.911968231201172,
+            "p95_ms": 18.911968231201172,
+            "samples_ms": [
+              18.911968231201172
+            ]
+          },
+          "operator_and_encode_exact_match": true,
+          "operator_calls": 1,
+          "operator_mean_slowdown": 1.6350510052767662,
+          "operator_slowdown": 1.6350510052767662,
+          "precomputed_cpu_fft": true,
+          "target_batch_period_ms": 0.0,
+          "wall": {
+            "max_ms": 18.913584,
+            "mean_ms": 18.913584,
+            "median_ms": 18.913584,
+            "min_ms": 18.913584,
+            "p95_ms": 18.913584,
+            "samples_ms": [
+              18.913584
+            ]
+          }
+        },
+        "cuda_encode": {
+          "encode_batch_latency": {
+            "max_ms": 4.188255786895752,
+            "mean_ms": 3.612465778986613,
+            "median_ms": 3.982815980911255,
+            "median_ms_per_plaintext": 1.9914079904556274,
+            "min_ms": 2.331360101699829,
+            "p95_ms": 4.188255786895752,
+            "samples_ms": [
+              2.465696096420288,
+              4.117152214050293,
+              4.154687881469727,
+              4.188255786895752,
+              3.9190399646759033,
+              3.982815980911255,
+              4.13375997543335,
+              3.21942400932312,
+              2.331360101699829
+            ]
+          },
+          "encode_plaintexts_per_second_in_window": 0.0,
+          "encoded_plaintexts_in_window": 0,
+          "encoded_plaintexts_per_operator": 0.0,
+          "input_bytes_per_batch": 524288,
+          "measurement_window_ms": 13.700138,
+          "operator": {
+            "max_ms": 13.698047637939453,
+            "mean_ms": 13.698047637939453,
+            "median_ms": 13.698047637939453,
+            "min_ms": 13.698047637939453,
+            "p95_ms": 13.698047637939453,
+            "samples_ms": [
+              13.698047637939453
+            ]
+          },
+          "operator_and_encode_exact_match": true,
+          "operator_calls": 1,
+          "operator_mean_slowdown": 1.1842768709705798,
+          "operator_slowdown": 1.1842768709705798,
+          "precomputed_cpu_fft": false,
+          "target_batch_period_ms": 0.0,
+          "wall": {
+            "max_ms": 13.699259,
+            "mean_ms": 13.699259,
+            "median_ms": 13.699259,
+            "min_ms": 13.699259,
+            "p95_ms": 13.699259,
+            "samples_ms": [
+              13.699259
+            ]
+          }
+        },
+        "tilelang_tensor_encode": {
+          "encode_batch_latency": {
+            "max_ms": 13.534303665161133,
+            "mean_ms": 10.775018533070883,
+            "median_ms": 10.423359870910645,
+            "median_ms_per_plaintext": 5.211679935455322,
+            "min_ms": 8.564959526062012,
+            "p95_ms": 13.534303665161133,
+            "samples_ms": [
+              8.564959526062012,
+              11.308480262756348,
+              13.534303665161133,
+              10.395648002624512,
+              10.403583526611328,
+              10.443136215209961
+            ]
+          },
+          "encode_plaintexts_per_second_in_window": 0.0,
+          "encoded_plaintexts_in_window": 0,
+          "encoded_plaintexts_per_operator": 0.0,
+          "input_bytes_per_batch": 524288,
+          "measurement_window_ms": 19.326794,
+          "operator": {
+            "max_ms": 19.324928283691406,
+            "mean_ms": 19.324928283691406,
+            "median_ms": 19.324928283691406,
+            "min_ms": 19.324928283691406,
+            "p95_ms": 19.324928283691406,
+            "samples_ms": [
+              19.324928283691406
+            ]
+          },
+          "operator_and_encode_exact_match": true,
+          "operator_calls": 1,
+          "operator_mean_slowdown": 1.6707538332801113,
+          "operator_slowdown": 1.6707538332801113,
+          "precomputed_cpu_fft": false,
+          "target_batch_period_ms": 0.0,
+          "wall": {
+            "max_ms": 19.325675,
+            "mean_ms": 19.325675,
+            "median_ms": 19.325675,
+            "min_ms": 19.325675,
+            "p95_ms": 19.325675,
+            "samples_ms": [
+              19.325675
+            ]
+          }
+        }
+      },
+      "baseline_mean_ms": 11.5665922164917,
+      "baseline_median_ms": 11.5665922164917,
+      "cpu_exact_match": true,
+      "operator": "rotate"
+    }
+  ],
+  "scale_log2": 40,
+  "scope": "actual GpuEvaluator operations with internal allocation, RMM pool; background Encode with optional precomputed CPU FFT",
+  "streams": "two host threads, distinct CUDA per-thread streams; same GPU, default priority"
+}
