@@ -1,0 +1,5 @@
+measuring {"backend":"cuda_ntt","submission":"individual"}
+measuring {"backend":"cuda_ntt","submission":"batched"}
+measuring {"backend":"tensor_ntt","submission":"individual"}
+measuring {"backend":"tensor_ntt","submission":"batched"}
+report: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/gpu-encode-local-20261011/full/q32-b8-run1.json

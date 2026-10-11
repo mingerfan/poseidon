@@ -1,0 +1,10 @@
+measuring {"backend":"cuda_ntt","submission":"individual"}
+measuring {"backend":"cuda_ntt","submission":"batched"}
+measuring {"backend":"tensor_ntt","submission":"individual"}
+measuring {"backend":"tensor_ntt","submission":"batched"}
+report: build-runtime-gpu-api-release/encode-profile.json
+Collecting data...
+Generating '/tmp/nsys-xs/nsys-report-f8fb.qdstrm'
+[1/1] [0%                          ] encode-profile.nsys-rep[1/1] [0%                          ] encode-profile.nsys-rep[1/1] [1%                          ] encode-profile.nsys-rep[1/1] [2%                          ] encode-profile.nsys-rep[1/1] [5%                          ] encode-profile.nsys-rep[1/1] [14%                         ] encode-profile.nsys-rep[1/1] [==19%                       ] encode-profile.nsys-rep[1/1] [==20%                       ] encode-profile.nsys-rep[1/1] [==========48%               ] encode-profile.nsys-rep[1/1] [============55%             ] encode-profile.nsys-rep[1/1] [=======================96%  ] encode-profile.nsys-rep[1/1] [========================98% ] encode-profile.nsys-rep[1/1] [========================100%] encode-profile.nsys-rep[1/1] [========================100%] encode-profile.nsys-rep
+Generated:
+	/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release/encode-profile.nsys-rep
