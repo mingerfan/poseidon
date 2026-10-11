@@ -1,0 +1,637 @@
+{
+  "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+  "degree": 65536,
+  "p_limbs": 4,
+  "runs": 3,
+  "repeat": 30,
+  "burst": 4,
+  "raw_h2d": true,
+  "case_order": [
+    {
+      "case": "q8-b1-run1",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 47, P0, 590.01 W, 1890 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q32-b1-run1",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 56, P0, 61.64 W, 2595 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q8-b8-run1",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 64, P0, 50.61 W, 2595 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q32-b8-run1",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 66, P0, 64.07 W, 2595 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q32-b8-run2",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 66, P0, 59.62 W, 2595 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q8-b8-run2",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 67, P0, 58.16 W, 2595 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q32-b1-run2",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 67, P0, 61.60 W, 2535 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q8-b1-run2",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 67, P0, 60.69 W, 2595 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q8-b1-run3",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 68, P0, 61.21 W, 2595 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q32-b1-run3",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 68, P0, 57.90 W, 2595 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q8-b8-run3",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 67, P0, 67.34 W, 2595 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q32-b8-run3",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 69, P0, 54.46 W, 2580 MHz, 8001 MHz, 2 MiB"
+    }
+  ],
+  "rows": [
+    {
+      "q_limbs": 8,
+      "batch": 1,
+      "operator": "add",
+      "baseline_ms": 0.017656000331044197,
+      "backgrounds": {
+        "cuda_encode": {
+          "operator_ms": 0.02099199965596199,
+          "operator_slowdown": 1.1901575816470844,
+          "encode_ms_per_plaintext": 0.23843200504779816,
+          "encoded_plaintexts_per_operator": 0.09166666666666666,
+          "encode_plaintexts_per_second_in_window": 3992.501356543075,
+          "exact_match": true
+        },
+        "tilelang_tensor_encode": {
+          "operator_ms": 0.020863999612629414,
+          "operator_slowdown": 1.1816945639689787,
+          "encode_ms_per_plaintext": 0.324864000082016,
+          "encoded_plaintexts_per_operator": 0.08333333333333333,
+          "encode_plaintexts_per_second_in_window": 3028.503263212266,
+          "exact_match": true
+        }
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 1,
+      "operator": "multiply_plain",
+      "baseline_ms": 0.019202000461518764,
+      "backgrounds": {
+        "cuda_encode": {
+          "operator_ms": 0.025855999439954758,
+          "operator_slowdown": 1.3402445846481048,
+          "encode_ms_per_plaintext": 0.2035199999809265,
+          "encoded_plaintexts_per_operator": 0.125,
+          "encode_plaintexts_per_second_in_window": 4508.411794726601,
+          "exact_match": true
+        },
+        "tilelang_tensor_encode": {
+          "operator_ms": 0.029439999721944332,
+          "operator_slowdown": 1.5589295100991656,
+          "encode_ms_per_plaintext": 0.27212798595428467,
+          "encoded_plaintexts_per_operator": 0.10833333333333334,
+          "encode_plaintexts_per_second_in_window": 3336.9329427923917,
+          "exact_match": true
+        }
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 1,
+      "operator": "multiply",
+      "baseline_ms": 0.03276799991726875,
+      "backgrounds": {
+        "cuda_encode": {
+          "operator_ms": 0.045312000438570976,
+          "operator_slowdown": 1.38281251687539,
+          "encode_ms_per_plaintext": 0.249439999461174,
+          "encoded_plaintexts_per_operator": 0.16666666666666666,
+          "encode_plaintexts_per_second_in_window": 3748.414654876903,
+          "exact_match": true
+        },
+        "tilelang_tensor_encode": {
+          "operator_ms": 0.04966399818658829,
+          "operator_slowdown": 1.5049696501726615,
+          "encode_ms_per_plaintext": 0.3325919955968857,
+          "encoded_plaintexts_per_operator": 0.14166666666666666,
+          "encode_plaintexts_per_second_in_window": 2907.643990806372,
+          "exact_match": true
+        }
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 1,
+      "operator": "rescale",
+      "baseline_ms": 0.12156400084495544,
+      "backgrounds": {
+        "cuda_encode": {
+          "operator_ms": 0.17395199835300446,
+          "operator_slowdown": 1.442839374482517,
+          "encode_ms_per_plaintext": 0.18886399269104004,
+          "encoded_plaintexts_per_operator": 0.85,
+          "encode_plaintexts_per_second_in_window": 4825.692440737303,
+          "exact_match": true
+        },
+        "tilelang_tensor_encode": {
+          "operator_ms": 0.20441599935293198,
+          "operator_slowdown": 1.7046839956476811,
+          "encode_ms_per_plaintext": 0.2552320063114166,
+          "encoded_plaintexts_per_operator": 0.7416666666666667,
+          "encode_plaintexts_per_second_in_window": 3650.4210760711244,
+          "exact_match": true
+        }
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 1,
+      "operator": "relinearize",
+      "baseline_ms": 0.6747500151395798,
+      "backgrounds": {
+        "cuda_encode": {
+          "operator_ms": 0.8825599849224091,
+          "operator_slowdown": 1.3037869465525704,
+          "encode_ms_per_plaintext": 0.3081600069999695,
+          "encoded_plaintexts_per_operator": 2.5166666666666666,
+          "encode_plaintexts_per_second_in_window": 2843.8645656019476,
+          "exact_match": true
+        },
+        "tilelang_tensor_encode": {
+          "operator_ms": 0.944128006696701,
+          "operator_slowdown": 1.4012715689606052,
+          "encode_ms_per_plaintext": 0.43430399894714355,
+          "encoded_plaintexts_per_operator": 2.0,
+          "encode_plaintexts_per_second_in_window": 2114.7703677917866,
+          "exact_match": true
+        }
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 1,
+      "operator": "rotate",
+      "baseline_ms": 0.7146580070257187,
+      "backgrounds": {
+        "cuda_encode": {
+          "operator_ms": 0.7854080200195312,
+          "operator_slowdown": 1.100274626570384,
+          "encode_ms_per_plaintext": 0.2827039957046509,
+          "encoded_plaintexts_per_operator": 0.95,
+          "encode_plaintexts_per_second_in_window": 1217.1331347199825,
+          "exact_match": true
+        },
+        "tilelang_tensor_encode": {
+          "operator_ms": 0.8317440152168274,
+          "operator_slowdown": 1.1555502870411558,
+          "encode_ms_per_plaintext": 0.3601920008659363,
+          "encoded_plaintexts_per_operator": 0.75,
+          "encode_plaintexts_per_second_in_window": 898.8479106789663,
+          "exact_match": true
+        }
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 8,
+      "operator": "add",
+      "baseline_ms": 0.01740800030529499,
+      "backgrounds": {
+        "cuda_encode": {
+          "operator_ms": 0.0689920000731945,
+          "operator_slowdown": 3.9325124522719754,
+          "encode_ms_per_plaintext": 0.13810399919748306,
+          "encoded_plaintexts_per_operator": 0.5333333333333333,
+          "encode_plaintexts_per_second_in_window": 7781.601570327198,
+          "exact_match": true
+        },
+        "tilelang_tensor_encode": {
+          "operator_ms": 0.07180799916386604,
+          "operator_slowdown": 4.093023112608012,
+          "encode_ms_per_plaintext": 0.19359999895095825,
+          "encoded_plaintexts_per_operator": 0.4666666666666667,
+          "encode_plaintexts_per_second_in_window": 5655.8412518477435,
+          "exact_match": true
+        }
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 8,
+      "operator": "multiply_plain",
+      "baseline_ms": 0.019118000753223896,
+      "backgrounds": {
+        "cuda_encode": {
+          "operator_ms": 0.07104000076651573,
+          "operator_slowdown": 3.7158697545576858,
+          "encode_ms_per_plaintext": 0.12362799793481827,
+          "encoded_plaintexts_per_operator": 0.6666666666666666,
+          "encode_plaintexts_per_second_in_window": 8027.076130495775,
+          "exact_match": true
+        },
+        "tilelang_tensor_encode": {
+          "operator_ms": 0.07500799745321274,
+          "operator_slowdown": 3.8955378962394045,
+          "encode_ms_per_plaintext": 0.18022799491882324,
+          "encoded_plaintexts_per_operator": 0.5333333333333333,
+          "encode_plaintexts_per_second_in_window": 5185.972204485477,
+          "exact_match": true
+        }
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 8,
+      "operator": "multiply",
+      "baseline_ms": 0.03261600062251091,
+      "backgrounds": {
+        "cuda_encode": {
+          "operator_ms": 0.11494400352239609,
+          "operator_slowdown": 3.5410968030330245,
+          "encode_ms_per_plaintext": 0.13540799915790558,
+          "encoded_plaintexts_per_operator": 0.8666666666666667,
+          "encode_plaintexts_per_second_in_window": 7245.6043913936155,
+          "exact_match": true
+        },
+        "tilelang_tensor_encode": {
+          "operator_ms": 0.15001599490642548,
+          "operator_slowdown": 4.5994601435863185,
+          "encode_ms_per_plaintext": 0.19256000220775604,
+          "encoded_plaintexts_per_operator": 0.8,
+          "encode_plaintexts_per_second_in_window": 4910.997380596773,
+          "exact_match": true
+        }
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 8,
+      "operator": "rescale",
+      "baseline_ms": 0.12057600170373917,
+      "backgrounds": {
+        "cuda_encode": {
+          "operator_ms": 0.501120001077652,
+          "operator_slowdown": 4.166313587474304,
+          "encode_ms_per_plaintext": 0.12322400137782097,
+          "encoded_plaintexts_per_operator": 4.0,
+          "encode_plaintexts_per_second_in_window": 7930.756433400705,
+          "exact_match": true
+        },
+        "tilelang_tensor_encode": {
+          "operator_ms": 0.7212800085544586,
+          "operator_slowdown": 5.969279551347202,
+          "encode_ms_per_plaintext": 0.18383199721574783,
+          "encoded_plaintexts_per_operator": 3.6666666666666665,
+          "encode_plaintexts_per_second_in_window": 5355.41152739421,
+          "exact_match": true
+        }
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 8,
+      "operator": "relinearize",
+      "baseline_ms": 0.6764800250530243,
+      "backgrounds": {
+        "cuda_encode": {
+          "operator_ms": 2.2911999225616455,
+          "operator_slowdown": 3.3288507042750775,
+          "encode_ms_per_plaintext": 0.14185599982738495,
+          "encoded_plaintexts_per_operator": 16.0,
+          "encode_plaintexts_per_second_in_window": 6970.6727857749565,
+          "exact_match": true
+        },
+        "tilelang_tensor_encode": {
+          "operator_ms": 2.5486080646514893,
+          "operator_slowdown": 3.7407581276281205,
+          "encode_ms_per_plaintext": 0.20891200006008148,
+          "encoded_plaintexts_per_operator": 12.0,
+          "encode_plaintexts_per_second_in_window": 4703.686561379346,
+          "exact_match": true
+        }
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 8,
+      "operator": "rotate",
+      "baseline_ms": 0.7220640033483505,
+      "backgrounds": {
+        "cuda_encode": {
+          "operator_ms": 1.1051520109176636,
+          "operator_slowdown": 1.5305457768187583,
+          "encode_ms_per_plaintext": 0.13373999297618866,
+          "encoded_plaintexts_per_operator": 4.0,
+          "encode_plaintexts_per_second_in_window": 3596.0549928208134,
+          "exact_match": true
+        },
+        "tilelang_tensor_encode": {
+          "operator_ms": 1.3386240005493164,
+          "operator_slowdown": 1.8472544582820285,
+          "encode_ms_per_plaintext": 0.1783680021762848,
+          "encoded_plaintexts_per_operator": 4.0,
+          "encode_plaintexts_per_second_in_window": 2979.551635083585,
+          "exact_match": true
+        }
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 1,
+      "operator": "add",
+      "baseline_ms": 0.21800599992275238,
+      "backgrounds": {
+        "cuda_encode": {
+          "operator_ms": 0.24025599658489227,
+          "operator_slowdown": 1.1049971172514812,
+          "encode_ms_per_plaintext": 1.4948159456253052,
+          "encoded_plaintexts_per_operator": 0.16666666666666666,
+          "encode_plaintexts_per_second_in_window": 661.8559227682971,
+          "exact_match": true
+        },
+        "tilelang_tensor_encode": {
+          "operator_ms": 0.27161599695682526,
+          "operator_slowdown": 1.3304880808404373,
+          "encode_ms_per_plaintext": 2.452944040298462,
+          "encoded_plaintexts_per_operator": 0.11666666666666667,
+          "encode_plaintexts_per_second_in_window": 393.73772863365554,
+          "exact_match": true
+        }
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 1,
+      "operator": "multiply_plain",
+      "baseline_ms": 0.1992959976196289,
+      "backgrounds": {
+        "cuda_encode": {
+          "operator_ms": 0.2640639990568161,
+          "operator_slowdown": 1.3249839545739484,
+          "encode_ms_per_plaintext": 0.7639679908752441,
+          "encoded_plaintexts_per_operator": 0.3333333333333333,
+          "encode_plaintexts_per_second_in_window": 1285.1569957424676,
+          "exact_match": true
+        },
+        "tilelang_tensor_encode": {
+          "operator_ms": 0.30502399802207947,
+          "operator_slowdown": 1.525119967384339,
+          "encode_ms_per_plaintext": 1.3219679594039917,
+          "encoded_plaintexts_per_operator": 0.225,
+          "encode_plaintexts_per_second_in_window": 752.8557911424118,
+          "exact_match": true
+        }
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 1,
+      "operator": "multiply",
+      "baseline_ms": 0.328794002532959,
+      "backgrounds": {
+        "cuda_encode": {
+          "operator_ms": 0.4628480076789856,
+          "operator_slowdown": 1.4077142652034498,
+          "encode_ms_per_plaintext": 1.3573920130729675,
+          "encoded_plaintexts_per_operator": 0.3333333333333333,
+          "encode_plaintexts_per_second_in_window": 729.9519295631425,
+          "exact_match": true
+        },
+        "tilelang_tensor_encode": {
+          "operator_ms": 0.5181440114974976,
+          "operator_slowdown": 1.5758925269494772,
+          "encode_ms_per_plaintext": 2.2418720722198486,
+          "encoded_plaintexts_per_operator": 0.23333333333333334,
+          "encode_plaintexts_per_second_in_window": 455.82801843290366,
+          "exact_match": true
+        }
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 1,
+      "operator": "rescale",
+      "baseline_ms": 0.5301620066165924,
+      "backgrounds": {
+        "cuda_encode": {
+          "operator_ms": 0.8957439959049225,
+          "operator_slowdown": 1.689566556497352,
+          "encode_ms_per_plaintext": 0.5126399993896484,
+          "encoded_plaintexts_per_operator": 1.6666666666666667,
+          "encode_plaintexts_per_second_in_window": 1842.1187077364812,
+          "exact_match": true
+        },
+        "tilelang_tensor_encode": {
+          "operator_ms": 1.015168011188507,
+          "operator_slowdown": 1.9148260315127899,
+          "encode_ms_per_plaintext": 1.0048320293426514,
+          "encoded_plaintexts_per_operator": 1.0,
+          "encode_plaintexts_per_second_in_window": 982.2096298582298,
+          "exact_match": true
+        }
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 1,
+      "operator": "relinearize",
+      "baseline_ms": 6.190700054168701,
+      "backgrounds": {
+        "cuda_encode": {
+          "operator_ms": 8.164735794067383,
+          "operator_slowdown": 1.32203773588839,
+          "encode_ms_per_plaintext": 0.9374079704284668,
+          "encoded_plaintexts_per_operator": 8.183333333333334,
+          "encode_plaintexts_per_second_in_window": 994.090791630753,
+          "exact_match": true
+        },
+        "tilelang_tensor_encode": {
+          "operator_ms": 9.367680072784424,
+          "operator_slowdown": 1.5131859064107627,
+          "encode_ms_per_plaintext": 1.6060640215873718,
+          "encoded_plaintexts_per_operator": 5.95,
+          "encode_plaintexts_per_second_in_window": 634.894112943091,
+          "exact_match": true
+        }
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 1,
+      "operator": "rotate",
+      "baseline_ms": 6.2949219942092896,
+      "backgrounds": {
+        "cuda_encode": {
+          "operator_ms": 6.8657920360565186,
+          "operator_slowdown": 1.0905457644929544,
+          "encode_ms_per_plaintext": 0.8923519849777222,
+          "encoded_plaintexts_per_operator": 2.2583333333333333,
+          "encode_plaintexts_per_second_in_window": 328.4877801885158,
+          "exact_match": true
+        },
+        "tilelang_tensor_encode": {
+          "operator_ms": 7.231231927871704,
+          "operator_slowdown": 1.1498182021603642,
+          "encode_ms_per_plaintext": 1.5292479991912842,
+          "encoded_plaintexts_per_operator": 1.7166666666666666,
+          "encode_plaintexts_per_second_in_window": 236.69008875569253,
+          "exact_match": true
+        }
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 8,
+      "operator": "add",
+      "baseline_ms": 0.20346599817276,
+      "backgrounds": {
+        "cuda_encode": {
+          "operator_ms": 0.5360639989376068,
+          "operator_slowdown": 2.6140685551661336,
+          "encode_ms_per_plaintext": 0.4045239984989166,
+          "encoded_plaintexts_per_operator": 1.3333333333333333,
+          "encode_plaintexts_per_second_in_window": 2458.9140814540497,
+          "exact_match": true
+        },
+        "tilelang_tensor_encode": {
+          "operator_ms": 0.731904000043869,
+          "operator_slowdown": 3.5529684568068496,
+          "encode_ms_per_plaintext": 0.7858480215072632,
+          "encoded_plaintexts_per_operator": 0.9333333333333333,
+          "encode_plaintexts_per_second_in_window": 1342.5633605396606,
+          "exact_match": true
+        }
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 8,
+      "operator": "multiply_plain",
+      "baseline_ms": 0.20049400255084038,
+      "backgrounds": {
+        "cuda_encode": {
+          "operator_ms": 0.7508479952812195,
+          "operator_slowdown": 3.9711960551690106,
+          "encode_ms_per_plaintext": 0.3339020013809204,
+          "encoded_plaintexts_per_operator": 2.3333333333333335,
+          "encode_plaintexts_per_second_in_window": 2993.409869193227,
+          "exact_match": true
+        },
+        "tilelang_tensor_encode": {
+          "operator_ms": 1.1449599862098694,
+          "operator_slowdown": 5.702458896415721,
+          "encode_ms_per_plaintext": 0.6779879927635193,
+          "encoded_plaintexts_per_operator": 1.6,
+          "encode_plaintexts_per_second_in_window": 1469.1868925175238,
+          "exact_match": true
+        }
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 8,
+      "operator": "multiply",
+      "baseline_ms": 0.32896000146865845,
+      "backgrounds": {
+        "cuda_encode": {
+          "operator_ms": 1.053056001663208,
+          "operator_slowdown": 3.201167305939283,
+          "encode_ms_per_plaintext": 0.3924359977245331,
+          "encoded_plaintexts_per_operator": 2.6666666666666665,
+          "encode_plaintexts_per_second_in_window": 2537.270642429156,
+          "exact_match": true
+        },
+        "tilelang_tensor_encode": {
+          "operator_ms": 1.337343990802765,
+          "operator_slowdown": 4.06536960369688,
+          "encode_ms_per_plaintext": 0.767003983259201,
+          "encoded_plaintexts_per_operator": 1.8,
+          "encode_plaintexts_per_second_in_window": 1323.0954251151848,
+          "exact_match": true
+        }
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 8,
+      "operator": "rescale",
+      "baseline_ms": 0.5181980133056641,
+      "backgrounds": {
+        "cuda_encode": {
+          "operator_ms": 2.6272000074386597,
+          "operator_slowdown": 5.017665230588267,
+          "encode_ms_per_plaintext": 0.3256480097770691,
+          "encoded_plaintexts_per_operator": 8.066666666666666,
+          "encode_plaintexts_per_second_in_window": 3048.4480335315175,
+          "exact_match": true
+        },
+        "tilelang_tensor_encode": {
+          "operator_ms": 5.04371190071106,
+          "operator_slowdown": 9.742679856818857,
+          "encode_ms_per_plaintext": 0.6290619969367981,
+          "encoded_plaintexts_per_operator": 8.0,
+          "encode_plaintexts_per_second_in_window": 1586.7355178314585,
+          "exact_match": true
+        }
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 8,
+      "operator": "relinearize",
+      "baseline_ms": 6.181393980979919,
+      "backgrounds": {
+        "cuda_encode": {
+          "operator_ms": 21.63967990875244,
+          "operator_slowdown": 3.4946697211154993,
+          "encode_ms_per_plaintext": 0.38558000326156616,
+          "encoded_plaintexts_per_operator": 56.0,
+          "encode_plaintexts_per_second_in_window": 2581.265467930825,
+          "exact_match": true
+        },
+        "tilelang_tensor_encode": {
+          "operator_ms": 32.94412803649902,
+          "operator_slowdown": 5.320265698160352,
+          "encode_ms_per_plaintext": 0.7465499937534332,
+          "encoded_plaintexts_per_operator": 44.0,
+          "encode_plaintexts_per_second_in_window": 1339.134262086553,
+          "exact_match": true
+        }
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 8,
+      "operator": "rotate",
+      "baseline_ms": 6.251911997795105,
+      "backgrounds": {
+        "cuda_encode": {
+          "operator_ms": 9.94265604019165,
+          "operator_slowdown": 1.6002088070315652,
+          "encode_ms_per_plaintext": 0.3608640134334564,
+          "encoded_plaintexts_per_operator": 14.0,
+          "encode_plaintexts_per_second_in_window": 1403.9352433565348,
+          "exact_match": true
+        },
+        "tilelang_tensor_encode": {
+          "operator_ms": 13.401343822479248,
+          "operator_slowdown": 2.143559254705692,
+          "encode_ms_per_plaintext": 0.733568012714386,
+          "encoded_plaintexts_per_operator": 12.0,
+          "encode_plaintexts_per_second_in_window": 892.676547993083,
+          "exact_match": true
+        }
+      }
+    }
+  ]
+}

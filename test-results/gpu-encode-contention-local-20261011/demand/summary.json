@@ -1,0 +1,206 @@
+{
+  "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+  "degree": 65536,
+  "p_limbs": 4,
+  "runs": 3,
+  "repeat": 30,
+  "burst": 4,
+  "raw_h2d": true,
+  "case_order": [
+    {
+      "case": "q8-b1-run1",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 44, P0, 590.01 W, 1890 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q32-b1-run1",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 50, P0, 20.03 W, 2610 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q8-b8-run1",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 57, P0, 79.21 W, 2595 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q32-b8-run1",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 59, P0, 75.04 W, 2595 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q32-b8-run2",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 61, P0, 72.82 W, 2595 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q8-b8-run2",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 63, P0, 70.23 W, 2595 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q32-b1-run2",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 65, P0, 78.99 W, 2595 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q8-b1-run2",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 64, P0, 69.13 W, 2595 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q8-b1-run3",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 67, P0, 75.86 W, 2565 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q32-b1-run3",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 65, P0, 72.79 W, 2580 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q8-b8-run3",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 64, P0, 68.93 W, 2595 MHz, 8001 MHz, 2 MiB"
+    },
+    {
+      "case": "q32-b8-run3",
+      "before": "NVIDIA GeForce RTX 4060 Laptop GPU, 615.71.09, 65, P0, 77.58 W, 2595 MHz, 8001 MHz, 2 MiB"
+    }
+  ],
+  "rows": [
+    {
+      "q_limbs": 8,
+      "batch": 1,
+      "operator": "relinearize",
+      "baseline_ms": 0.6267099827528,
+      "baseline_mean_ms": 0.6247838596502939,
+      "backgrounds": {
+        "tilelang_tensor_encode_demand": {
+          "operator_ms": 0.79202800989151,
+          "operator_slowdown": 1.2799094198828065,
+          "operator_mean_slowdown": 1.277798684073907,
+          "encode_ms_per_plaintext": 0.39160001277923584,
+          "encoded_plaintexts_per_operator": 1.1916666666666667,
+          "encode_plaintexts_per_second_in_window": 1490.8165958328966,
+          "exact_match": true
+        }
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 1,
+      "operator": "rotate",
+      "baseline_ms": 0.6669280081987381,
+      "baseline_mean_ms": 0.6672880083322525,
+      "backgrounds": {
+        "tilelang_tensor_encode_demand": {
+          "operator_ms": 0.7312680184841156,
+          "operator_slowdown": 1.0964721971403617,
+          "operator_mean_slowdown": 1.0965616036797727,
+          "encode_ms_per_plaintext": 0.3953920006752014,
+          "encoded_plaintexts_per_operator": 0.5,
+          "encode_plaintexts_per_second_in_window": 682.2155025763925,
+          "exact_match": true
+        }
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 8,
+      "operator": "relinearize",
+      "baseline_ms": 0.6267579942941666,
+      "baseline_mean_ms": 0.626676802833875,
+      "backgrounds": {
+        "tilelang_tensor_encode_demand": {
+          "operator_ms": 0.8972960114479065,
+          "operator_slowdown": 1.4436618444106633,
+          "operator_mean_slowdown": 1.2961717576042187,
+          "encode_ms_per_plaintext": 0.18880000710487366,
+          "encoded_plaintexts_per_operator": 1.2666666666666666,
+          "encode_plaintexts_per_second_in_window": 1577.7864279226676,
+          "exact_match": true
+        }
+      }
+    },
+    {
+      "q_limbs": 8,
+      "batch": 8,
+      "operator": "rotate",
+      "baseline_ms": 0.6639339923858643,
+      "baseline_mean_ms": 0.6635881324609121,
+      "backgrounds": {
+        "tilelang_tensor_encode_demand": {
+          "operator_ms": 0.9370879828929901,
+          "operator_slowdown": 1.4114301564838765,
+          "operator_mean_slowdown": 1.2641053458482032,
+          "encode_ms_per_plaintext": 0.20018400251865387,
+          "encoded_plaintexts_per_operator": 1.2666666666666666,
+          "encode_plaintexts_per_second_in_window": 1469.617244279904,
+          "exact_match": true
+        }
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 1,
+      "operator": "relinearize",
+      "baseline_ms": 5.787775993347168,
+      "baseline_mean_ms": 5.811874556541443,
+      "backgrounds": {
+        "tilelang_tensor_encode_demand": {
+          "operator_ms": 6.346207857131958,
+          "operator_slowdown": 1.0857353740623936,
+          "operator_mean_slowdown": 1.0688400879735458,
+          "encode_ms_per_plaintext": 1.352224051952362,
+          "encoded_plaintexts_per_operator": 1.0416666666666667,
+          "encode_plaintexts_per_second_in_window": 168.7432430649409,
+          "exact_match": true
+        }
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 1,
+      "operator": "rotate",
+      "baseline_ms": 5.92851996421814,
+      "baseline_mean_ms": 5.925806983311971,
+      "backgrounds": {
+        "tilelang_tensor_encode_demand": {
+          "operator_ms": 6.15014386177063,
+          "operator_slowdown": 1.0447779802679853,
+          "operator_mean_slowdown": 1.0473407048247052,
+          "encode_ms_per_plaintext": 1.2638720273971558,
+          "encoded_plaintexts_per_operator": 0.5,
+          "encode_plaintexts_per_second_in_window": 80.97758865875832,
+          "exact_match": true
+        }
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 8,
+      "operator": "relinearize",
+      "baseline_ms": 5.750775933265686,
+      "baseline_mean_ms": 5.7716578642527265,
+      "backgrounds": {
+        "tilelang_tensor_encode_demand": {
+          "operator_ms": 6.845856189727783,
+          "operator_slowdown": 1.1919578549784962,
+          "operator_mean_slowdown": 1.1077528223606166,
+          "encode_ms_per_plaintext": 0.6744759976863861,
+          "encoded_plaintexts_per_operator": 1.1333333333333333,
+          "encode_plaintexts_per_second_in_window": 172.97769204641577,
+          "exact_match": true
+        }
+      }
+    },
+    {
+      "q_limbs": 32,
+      "batch": 8,
+      "operator": "rotate",
+      "baseline_ms": 5.873331904411316,
+      "baseline_mean_ms": 5.864473748207093,
+      "backgrounds": {
+        "tilelang_tensor_encode_demand": {
+          "operator_ms": 6.990735769271851,
+          "operator_slowdown": 1.1797781508703573,
+          "operator_mean_slowdown": 1.10549753329261,
+          "encode_ms_per_plaintext": 0.6586319804191589,
+          "encoded_plaintexts_per_operator": 1.0666666666666667,
+          "encode_plaintexts_per_second_in_window": 164.5718155267874,
+          "exact_match": true
+        }
+      }
+    }
+  ],
+  "demand_only": true
+}

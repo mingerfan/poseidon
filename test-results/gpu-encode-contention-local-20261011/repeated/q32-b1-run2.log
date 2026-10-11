@@ -1,0 +1,14 @@
+setting up operands and direct rotation/relinearization keys
+measuring add + tilelang_tensor_encode
+measuring add + cuda_encode
+measuring multiply_plain + cuda_encode
+measuring multiply_plain + tilelang_tensor_encode
+measuring multiply + tilelang_tensor_encode
+measuring multiply + cuda_encode
+measuring rescale + tilelang_tensor_encode
+measuring rescale + cuda_encode
+measuring relinearize + cuda_encode
+measuring relinearize + tilelang_tensor_encode
+measuring rotate + tilelang_tensor_encode
+measuring rotate + cuda_encode
+report: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/gpu-encode-contention-local-20261011/repeated/q32-b1-run2.json
