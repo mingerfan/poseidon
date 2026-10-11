@@ -66,7 +66,7 @@ Json statistics(std::vector<double> samples) {
 
 Json measure(GpuEncodeExperiment &encoder, DeviceVector<double> &input,
     const PinnedInput &host, const GpuParameterShard &parameters, double scale,
-    bool tensor, bool batched, bool upload, int warmup, int repeat)
+    GpuEncodeExperiment::Backend backend, bool batched, bool upload, int warmup, int repeat)
 {
     std::vector<double> total, preparation, ntt, transfer, wall;
     Event begin, uploaded, prepared, end;
@@ -78,7 +78,7 @@ Json measure(GpuEncodeExperiment &encoder, DeviceVector<double> &input,
         uploaded.record();
         encoder.prepare(input.data(), scale, parameters, batched);
         prepared.record();
-        encoder.ntt(parameters, tensor, batched);
+        encoder.ntt(parameters, backend, batched);
         end.record();
         gpu_check_cuda(cudaEventSynchronize(end.event), "encode completion");
         const auto finish = Clock::now();
@@ -200,6 +200,11 @@ try {
         twists[i] = make_double2(root.real(), root.imag());
     }
     GpuEncodeExperiment encoder(n, limbs, batch, indices, twists);
+#ifdef POSEIDON_ENCODE_TILELANG
+    if (properties.major * 10 + properties.minor < POSEIDON_ENCODE_TILELANG_SM)
+        throw std::runtime_error("GPU is older than the configured TileLang target architecture");
+    encoder.initialize_tilelang(shard);
+#endif
     DeviceVector<double> input(n / 2 * batch, 0);
     PinnedInput host(input.size());
     std::mt19937_64 rng(20261011);
@@ -217,22 +222,33 @@ try {
         {"degree", n}, {"q_limbs", limbs}, {"modulus_bits", 30}, {"scale_log2", scale_log2},
         {"batch", batch}, {"warmup", warmup}, {"repeat", repeat}, {"setup_seconds", setup_seconds},
         {"raw_bytes", input.size() * sizeof(double)}, {"encoded_gpu_bytes", n * limbs * batch * sizeof(GpuWord)},
-        {"fft", "cuFFT double Z2Z, both backends"}, {"tensor_scope", "INT8 Tensor Core NTT, fusion=4"},
+        {"fft", "cuFFT double Z2Z, all backends"}, {"tensor_scope", "INT8 Tensor Core NTT, fusion=4"},
         {"allocator", pool_mb ? "RMM pool" : "direct cudaMalloc/cudaFree"}, {"initial_pool_mb", pool_mb},
         {"allocation_scope", "workspace, tables, plans and output allocation excluded; existing NTT scratch included"},
         {"modes", Json::array()}};
     std::vector<GpuWord> reference;
     Json reference_validation;
-    for (bool tensor : {false, true}) {
+    using Backend = GpuEncodeExperiment::Backend;
+    std::vector<std::pair<Backend, std::string>> backends{
+        {Backend::cuda, "cuda_ntt"}, {Backend::tensor, "tensor_ntt"}};
+#ifdef POSEIDON_ENCODE_TILELANG
+    encoder.validate_tilelang_ntt(shard);
+    report["tilelang"] = {{"version", "0.1.14"}, {"target_sm", POSEIDON_ENCODE_TILELANG_SM},
+        {"boundary_random_ntt_exact_match", true}, {"reduction", "runtime primes, uint64 Barrett"}};
+    backends.emplace_back(Backend::tilelang_cuda, "tilelang_cuda_ntt");
+    backends.emplace_back(Backend::tilelang_tensor, "tilelang_tensor_ntt");
+#endif
+    for (const auto &[backend, name] : backends) {
+        const bool tensor = backend == Backend::tensor || backend == Backend::tilelang_tensor;
         if (tensor && !supports_tensor_core_integer_gemm()) {
             report["tensor_skipped"] = "SM 7.5+ required";
             continue;
         }
         for (bool batched : {false, true}) {
-            Json mode{{"backend", tensor ? "tensor_ntt" : "cuda_ntt"},
+            Json mode{{"backend", name},
                 {"submission", batched ? "batched" : "individual"}};
             std::cout << "measuring " << mode.dump() << std::endl;
-            mode["device_only"] = measure(encoder, input, host, shard, scale, tensor, batched, false, warmup, repeat);
+            mode["device_only"] = measure(encoder, input, host, shard, scale, backend, batched, false, warmup, repeat);
             std::vector<GpuWord> actual(encoder.output.size());
             encoder.output.copy_to_host(actual.data(), actual.size());
             mode["correctness"] = validate(actual, reference, host, context, batch, n, limbs, scale,
@@ -241,7 +257,7 @@ try {
                 reference = std::move(actual);
                 reference_validation = mode["correctness"];
             }
-            mode["with_raw_h2d"] = measure(encoder, input, host, shard, scale, tensor, batched, true, warmup, repeat);
+            mode["with_raw_h2d"] = measure(encoder, input, host, shard, scale, backend, batched, true, warmup, repeat);
             mode["device_ms_per_plaintext"] = mode["device_only"]["total"]["median_ms"].get<double>() / batch;
             mode["device_plaintexts_per_second"] = 1000.0 * batch / mode["device_only"]["total"]["median_ms"].get<double>();
             report["modes"].push_back(std::move(mode));

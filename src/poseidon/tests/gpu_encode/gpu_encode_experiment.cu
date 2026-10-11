@@ -3,6 +3,10 @@
 #include "poseidon/gpu/kernels/gpu_ntt_kernels.h"
 #include <cmath>
 #include <stdexcept>
+#include <random>
+#ifdef POSEIDON_ENCODE_TILELANG
+#include "tilelang_ntt.h"
+#endif
 
 using namespace poseidon::gpu;
 namespace {
@@ -104,8 +108,57 @@ void GpuEncodeExperiment::prepare(const double *input, double scale,
         prepare_one(input, scale, parameters, b, 1, single_plan_);
 }
 
-void GpuEncodeExperiment::ntt(const GpuParameterShard &parameters, bool tensor, bool batched)
+void GpuEncodeExperiment::initialize_tilelang(const GpuParameterShard &parameters)
 {
+#ifdef POSEIDON_ENCODE_TILELANG
+    if (parameters.limb_count != limbs_ || parameters.ntt_fused_matrix_fusion_stages != 4 ||
+        parameters.ntt_fused_matrices.size() < limbs_ * 69888 ||
+        parameters.rns_modulus_constants.size() < limbs_)
+        throw std::invalid_argument("TileLang experiment requires full fusion=4 matrices and Barrett ratios");
+    std::vector<GpuWord> primes(limbs_), weights(limbs_ * 7);
+    parameters.rns_primes.copy_to_host(primes.data(), limbs_);
+    for (std::size_t l = 0; l < limbs_; ++l) {
+        if (primes[l] >= (1U << 31)) throw std::invalid_argument("TileLang NTT requires q<2^31");
+        weights[l * 7] = 1;
+        for (std::size_t k = 1; k < 7; ++k)
+            weights[l * 7 + k] = static_cast<std::uint64_t>(weights[l * 7 + k - 1]) * 256 % primes[l];
+    }
+    tilelang_weights_ = DeviceVector<GpuWord>(weights.size(), 0);
+    tilelang_weights_.copy_from_host(weights.data(), weights.size());
+#else
+    throw std::runtime_error("TileLang backend was not built");
+#endif
+}
+
+void GpuEncodeExperiment::validate_tilelang_ntt(const GpuParameterShard &parameters)
+{
+#ifdef POSEIDON_ENCODE_TILELANG
+    // Cover 0, 1, q-1, q-2 and unrelated random residues for every limb and
+    // plaintext, independently of the FFT-generated encoding coefficients.
+    std::vector<GpuWord> primes(limbs_), input(rns_.size()), expected(output.size()), actual(output.size());
+    parameters.rns_primes.copy_to_host(primes.data(), limbs_);
+    std::mt19937_64 rng(20261012);
+    for (std::size_t b = 0; b < batch_; ++b)
+        for (std::size_t l = 0; l < limbs_; ++l)
+            for (std::size_t i = 0; i < degree_; ++i)
+                input[(b * limbs_ + l) * degree_ + i] = i % 7 == 0 ? 0 : i % 7 == 1 ? 1 :
+                    i % 7 == 2 ? primes[l] - 1 : i % 7 == 3 ? primes[l] - 2 : rng() % primes[l];
+    rns_.copy_from_host(input.data(), input.size());
+    ntt(parameters, Backend::cuda, true);
+    output.copy_to_host(expected.data(), expected.size());
+    for (auto backend : {Backend::tilelang_cuda, Backend::tilelang_tensor}) {
+        ntt(parameters, backend, true);
+        output.copy_to_host(actual.data(), actual.size());
+        if (actual != expected) throw std::runtime_error("TileLang boundary/random NTT mismatch");
+    }
+#else
+    throw std::runtime_error("TileLang backend was not built");
+#endif
+}
+
+void GpuEncodeExperiment::ntt(const GpuParameterShard &parameters, Backend backend, bool batched)
+{
+    const bool tensor = backend == Backend::tensor || backend == Backend::tilelang_tensor;
     if (tensor && !supports_tensor_core_integer_gemm())
         throw std::runtime_error("tensor encoder requires integer Tensor Core support (SM 7.5+)");
     const auto stride = degree_ * limbs_;
@@ -113,7 +166,18 @@ void GpuEncodeExperiment::ntt(const GpuParameterShard &parameters, bool tensor, 
     for (std::size_t b = 0; b < batch_; b += count) {
         GpuPolyShardView destination{0, output.data() + b * stride, 0, limbs_, 0, degree_};
         GpuConstPolyShardView source{0, rns_.data() + b * stride, 0, limbs_, 0, degree_};
-        if (tensor)
+        if (backend == Backend::tilelang_cuda || backend == Backend::tilelang_tensor) {
+#ifdef POSEIDON_ENCODE_TILELANG
+            if (tilelang_weights_.size() != limbs_ * 7)
+                throw std::runtime_error("TileLang weights were not initialized");
+            gpu_check_cuda(launch_encode_tilelang_ntt(source.ptr, destination.ptr,
+                parameters.ntt_tables.data(), parameters.ntt_fused_matrices.data(),
+                parameters.rns_primes.data(), parameters.rns_modulus_constants.data(),
+                tilelang_weights_.data(), limbs_, count, tensor, gpu_execution_stream()), "TileLang NTT");
+#else
+            throw std::runtime_error("TileLang backend was not built");
+#endif
+        } else if (tensor)
             kernel::launch_forward_ntt_components_shard_tensor(
                 destination, source, parameters, degree_, count, stride);
         else

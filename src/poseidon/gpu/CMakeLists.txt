@@ -87,6 +87,42 @@ if(POSEIDON_BUILD_GPU_ENCODE_BENCH)
     target_compile_options(poseidon_gpu_encode_bench PRIVATE
         $<$<COMPILE_LANGUAGE:CUDA>:--default-stream=per-thread>
         $<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>)
+    set(POSEIDON_GPU_ENCODE_TILELANG_PYTHON "" CACHE FILEPATH
+        "Optional Python with TileLang 0.1.14 to build experimental NTT kernels")
+    set(POSEIDON_GPU_ENCODE_TILELANG_ARCH "89" CACHE STRING
+        "CUDA architecture for experimental TileLang NTT kernels")
+    if(POSEIDON_GPU_ENCODE_TILELANG_PYTHON)
+        if(NOT POSEIDON_GPU_ENCODE_TILELANG_ARCH MATCHES "^[0-9]+$")
+            message(FATAL_ERROR "TileLang architecture must be a single numeric SM version")
+        endif()
+        execute_process(COMMAND "${POSEIDON_GPU_ENCODE_TILELANG_PYTHON}" -c
+            "import pathlib,tilelang; print(pathlib.Path(tilelang.__file__).parent)"
+            RESULT_VARIABLE _tilelang_status OUTPUT_VARIABLE _tilelang_root
+            OUTPUT_STRIP_TRAILING_WHITESPACE)
+        if(NOT _tilelang_status EQUAL 0)
+            message(FATAL_ERROR "Cannot import TileLang with POSEIDON_GPU_ENCODE_TILELANG_PYTHON")
+        endif()
+        set(_encode_dir "${CMAKE_CURRENT_SOURCE_DIR}/../tests/gpu_encode")
+        set(_tilelang_generated "${CMAKE_CURRENT_BINARY_DIR}/tilelang-ntt-generated.cu")
+        add_custom_command(OUTPUT "${_tilelang_generated}"
+            COMMAND "${POSEIDON_GPU_ENCODE_TILELANG_PYTHON}"
+                "${_encode_dir}/generate_tilelang_ntt.py"
+                --out "${_tilelang_generated}" --arch "sm_${POSEIDON_GPU_ENCODE_TILELANG_ARCH}"
+            DEPENDS "${_encode_dir}/generate_tilelang_ntt.py" "${_encode_dir}/tilelang_ntt.py"
+            VERBATIM)
+        # Compile separately: TileLang MMA uses the toolkit CUDA C++ headers;
+        # Poseidon/RMM's vendored CCCL include paths must not reach this target.
+        add_library(poseidon_encode_tilelang STATIC "${_tilelang_generated}")
+        target_include_directories(poseidon_encode_tilelang PRIVATE
+            "${_encode_dir}" "${_tilelang_root}/src" "${_tilelang_root}/3rdparty/cutlass/include")
+        target_compile_features(poseidon_encode_tilelang PRIVATE cxx_std_17)
+        target_compile_options(poseidon_encode_tilelang PRIVATE --default-stream=per-thread)
+        set_target_properties(poseidon_encode_tilelang PROPERTIES
+            CUDA_ARCHITECTURES "${POSEIDON_GPU_ENCODE_TILELANG_ARCH}")
+        target_link_libraries(poseidon_gpu_encode_bench PRIVATE poseidon_encode_tilelang)
+        target_compile_definitions(poseidon_gpu_encode_bench PRIVATE POSEIDON_ENCODE_TILELANG=1
+            POSEIDON_ENCODE_TILELANG_SM=${POSEIDON_GPU_ENCODE_TILELANG_ARCH})
+    endif()
     if(POSEIDON_BUILD_CKKS_RUNTIME_TESTS)
         add_test(NAME poseidon_gpu_encode_smoke
             COMMAND poseidon_gpu_encode_bench 8 2 40 0 1

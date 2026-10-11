@@ -52,7 +52,8 @@ def main():
         row = {"q_limbs": limbs, "batch": batch,
                "cpu_encode_ms_per_plaintext": statistics.median(
                    p["cpu_encode_only"]["median_ms"] / batch for p in group)}
-        for backend, submission in itertools.product(("cuda_ntt", "tensor_ntt"), ("individual", "batched")):
+        backend_names = sorted({m["backend"] for p in group for m in p["modes"]})
+        for backend, submission in itertools.product(backend_names, ("individual", "batched")):
             modes = [m for p in group for m in p["modes"]
                      if m["backend"] == backend and m["submission"] == submission]
             if not modes:
