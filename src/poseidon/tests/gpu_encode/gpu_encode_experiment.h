@@ -28,7 +28,8 @@ public:
     // Benchmark-only lossless compact form: fixed-width zigzag integers after
     // CPU scaling/rounding. The packed input has one zero uint64 guard word.
     void prepare_packed_coefficients(const std::uint64_t *input, unsigned bits,
-                                    const poseidon::gpu::GpuParameterShard &parameters);
+                                    const poseidon::gpu::GpuParameterShard &parameters,
+                                    bool real_symmetric = false);
     void initialize_tilelang(const poseidon::gpu::GpuParameterShard &parameters);
     void validate_tilelang_ntt(const poseidon::gpu::GpuParameterShard &parameters);
     void ntt(const poseidon::gpu::GpuParameterShard &parameters, Backend backend, bool batched);

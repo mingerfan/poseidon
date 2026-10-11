@@ -11,6 +11,11 @@ rounded on CPU during setup, so that cache is specific to its scale. Packed
 integers are unpacked and expanded into RNS with CUDA, then transformed using
 CUDA four-step or optional TileLang Tensor NTT. This is **not** Tensor Core
 entropy decompression. Every mode must reproduce every CPU Encode NTT residue.
+For real-slot inputs the benchmark also verifies exact integer antisymmetry
+`a[N-i] = -a[i]` and `a[N/2] = 0` before enabling a half-coefficient payload.
+Its CUDA decoder mirrors signs before RNS expansion. Complex-slot inputs and
+integer coefficients whose CPU rounding breaks this identity cannot use that
+format without additional correction data.
 
 ```sh
 cmake --build build-runtime-gpu-api-release --target poseidon_gpu_plaintext_compression_bench -j4

@@ -240,6 +240,15 @@ try {
         }
         const auto bits=width(max_code);
         auto packed=pack(codes,bits);
+        bool symmetric=true;
+        std::vector<std::uint64_t> half_codes;
+        for(std::size_t b=0;b<batch;++b) {
+            symmetric=symmetric && integers[b*n+n/2]==0;
+            for(std::size_t i=1;i<n/2;++i)
+                symmetric=symmetric && integers[b*n+i]==-integers[b*n+n-i];
+            half_codes.insert(half_codes.end(),codes.begin()+b*n,codes.begin()+b*n+n/2);
+        }
+        auto half_packed=pack(half_codes,bits);
         std::vector<std::uint64_t> encoded64(n*limbs*batch);
         std::vector<GpuWord> reference(encoded64.size());
         for(std::size_t b=0;b<batch;++b) {
@@ -258,14 +267,16 @@ try {
         std::vector<GpuWord> reduced;
         for(std::size_t i=0;i<reference.size();i+=group) reduced.push_back(reference[i]);
         Pinned<double> host_fft(fft);
-        Pinned<std::uint64_t> host_packed(packed),host_packed_ntt(packed_ntt);
+        Pinned<std::uint64_t> host_packed(packed),host_packed_ntt(packed_ntt),host_half_packed(half_packed);
         Pinned<GpuWord> host_encoded(reference),host_reduced(reduced);
         DeviceVector<double> dev_fft(fft.size(),0);
-        DeviceVector<std::uint64_t> dev_packed(packed.size(),0),dev_packed_ntt(packed_ntt.size(),0);
+        DeviceVector<std::uint64_t> dev_packed(packed.size(),0),dev_packed_ntt(packed_ntt.size(),0),
+            dev_half_packed(half_packed.size(),0);
         DeviceVector<GpuWord> dev_reduced(reduced.size(),0);
         dev_fft.copy_from_host(fft.data(),fft.size());
         dev_packed.copy_from_host(packed.data(),packed.size());
         dev_packed_ntt.copy_from_host(packed_ntt.data(),packed_ntt.size());
+        dev_half_packed.copy_from_host(half_packed.data(),half_packed.size());
         dev_reduced.copy_from_host(reduced.data(),reduced.size());
         encoder.prepare_coefficients(dev_fft.data(),scale,shard,true);
         std::vector<Mode> modes;
@@ -286,11 +297,16 @@ try {
             modes.push_back({"integer_bitpack_"+name,host_packed.data,dev_packed.data(),host_packed.bytes,
                 [&]{encoder.prepare_packed_coefficients(dev_packed.data(),bits,shard);},
                 [&,backend]{encoder.ntt(shard,backend,true);}});
+            if(symmetric) modes.push_back({"integer_realhalf_"+name,host_half_packed.data,dev_half_packed.data(),
+                host_half_packed.bytes,[&]{encoder.prepare_packed_coefficients(dev_half_packed.data(),bits,shard,true);},
+                [&,backend]{encoder.ntt(shard,backend,true);}});
         }
         std::shuffle(modes.begin(),modes.end(),order_rng);
         Json row{{"pattern",pattern},{"coefficient_bits",bits},{"replication_group",group},
             {"slots_bytes",slots.size()*8},{"fft_fp64_bytes",fft.size()*8},
             {"integer_int64_bytes",integers.size()*8},{"integer_bitpacked_bytes",packed.size()*8},
+            {"integer_realhalf_bitpacked_bytes",symmetric?Json(half_packed.size()*8):Json(nullptr)},
+            {"integer_real_antisymmetry_exact",symmetric},
             {"encoded_cpu_uint64_bytes",encoded64.size()*8},{"encoded_gpu_uint32_bytes",reference.size()*4},
             {"ntt_bitpacked_bytes",packed_ntt.size()*8},{"ntt_replicated_payload_bytes",reduced.size()*4},
             {"gpu_to_integer_compression_ratio",double(reference.size()*4)/(packed.size()*8)},
@@ -299,6 +315,7 @@ try {
         dump(row["files"],directory,pattern+"-fft-fp64",fft,"float64");
         dump(row["files"],directory,pattern+"-integer-int64",integers,"int64");
         dump(row["files"],directory,pattern+"-integer-bitpacked",packed,"packed-zigzag");
+        if(symmetric) dump(row["files"],directory,pattern+"-integer-bitpacked-realhalf",half_packed,"packed-zigzag-realhalf");
         dump(row["files"],directory,pattern+"-ntt-cpu-uint64",encoded64,"uint64");
         dump(row["files"],directory,pattern+"-ntt-gpu-uint32",reference,"uint32");
         dump(row["files"],directory,pattern+"-ntt-bitpack30",packed_ntt,"packed30");

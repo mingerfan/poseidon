@@ -68,17 +68,23 @@ __global__ void expand_coefficients_rns(const double *input, GpuWord *rns,
 }
 
 __global__ void expand_packed_coefficients_rns(const std::uint64_t *input, unsigned bits,
-    GpuWord *rns, const GpuWord *primes, std::size_t n, std::size_t limbs)
+    GpuWord *rns, const GpuWord *primes, std::size_t n, std::size_t limbs,bool real_symmetric)
 {
     const std::size_t i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= n) return;
-    const std::size_t batch = blockIdx.y, offset = (batch * n + i) * bits;
-    const unsigned shift = offset % 64;
-    std::uint64_t code = input[offset / 64] >> shift;
-    if (shift + bits > 64) code |= input[offset / 64 + 1] << (64 - shift);
-    code &= (std::uint64_t(1) << bits) - 1;
-    const bool negative = code & 1;
-    const std::uint64_t magnitude = (code >> 1) + negative;
+    const std::size_t batch = blockIdx.y;
+    const bool mirror=real_symmetric && i>n/2;
+    std::uint64_t code=0;
+    if(!(real_symmetric && i==n/2)) {
+        const std::size_t index=mirror?n-i:i;
+        const std::size_t offset=(batch*(real_symmetric?n/2:n)+index)*bits;
+        const unsigned shift=offset%64;
+        code=input[offset/64]>>shift;
+        if(shift+bits>64) code|=input[offset/64+1]<<(64-shift);
+        code&=(std::uint64_t(1)<<bits)-1;
+    }
+    const bool negative = bool(code & 1) != mirror;
+    const std::uint64_t magnitude = (code >> 1) + (code & 1);
     for (std::size_t limb = 0; limb < limbs; ++limb) {
         const GpuWord q = primes[limb], residue = magnitude % q;
         rns[(batch * limbs + limb) * n + i] = negative && residue ? q - residue : residue;
@@ -159,7 +165,7 @@ void GpuEncodeExperiment::prepare_coefficients(const double *input, double scale
 }
 
 void GpuEncodeExperiment::prepare_packed_coefficients(const std::uint64_t *input, unsigned bits,
-    const GpuParameterShard &parameters)
+    const GpuParameterShard &parameters,bool real_symmetric)
 {
     if (!input || bits < 1 || bits > 63 || parameters.device_id != 0 ||
         parameters.limb_begin != 0 || parameters.limb_count < limbs_)
@@ -167,7 +173,7 @@ void GpuEncodeExperiment::prepare_packed_coefficients(const std::uint64_t *input
     error_.fill_zero();
     expand_packed_coefficients_rns<<<dim3((degree_ + 255) / 256, batch_), 256,
         0, gpu_execution_stream()>>>(input, bits, rns_.data(), parameters.rns_primes.data(),
-        degree_, limbs_);
+        degree_, limbs_,real_symmetric);
     gpu_check_cuda(cudaGetLastError(), "expand packed integer coefficients RNS");
 }
 

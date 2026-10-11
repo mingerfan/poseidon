@@ -52,7 +52,7 @@ def main():
     for case in manifest["cases"]:
         for entry in case["files"]:
             if any(entry["representation"].endswith(x) for x in
-                   ("ntt-gpu-uint32", "fft-fp64", "integer-int64", "integer-bitpacked")):
+                   ("ntt-gpu-uint32", "fft-fp64", "integer-int64", "integer-bitpacked-realhalf")):
                 for algorithm in ("LZ4", "Zstd"):
                     cases.append((case["pattern"], entry, algorithm))
     random.Random(20261012 + args.batch).shuffle(cases)
