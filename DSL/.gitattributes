@@ -1,0 +1,2 @@
+# Preserve the exact bytes covered by the benchmark package manifests.
+DSL_benchmark/llm_dsl/** -text -whitespace
