@@ -15,6 +15,7 @@
 #include <iomanip>
 #include <iostream>
 #include <limits>
+#include <set>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -1919,11 +1920,43 @@ GpuParameterData::GpuParameterData(const PoseidonContext &context, int device_id
     build_from_poseidon_context(context, device_id);
 }
 
+GpuParameterData::GpuParameterData(
+    const PoseidonContext &context,
+    int device_id,
+    const std::vector<std::size_t> &active_q_counts)
+{
+    if (active_q_counts.empty())
+    {
+        throw std::invalid_argument(
+            "GpuParameterData sparse construction requires active q levels");
+    }
+    build_from_poseidon_context(context, device_id, active_q_counts);
+}
+
 void GpuParameterData::build_from_poseidon_context(
     const PoseidonContext &context,
     int device_id)
 {
+    build_from_poseidon_context(context, device_id, {});
+}
+
+void GpuParameterData::build_from_poseidon_context(
+    const PoseidonContext &context,
+    int device_id,
+    const std::vector<std::size_t> &active_q_counts)
+{
     levels_.clear();
+
+    const std::set<std::size_t> requested_q_counts(
+        active_q_counts.begin(), active_q_counts.end());
+    if (requested_q_counts.size() != active_q_counts.size() ||
+        requested_q_counts.count(0) != 0)
+    {
+        throw std::invalid_argument(
+            "GpuParameterData active q levels must be unique and nonzero");
+    }
+    const bool sparse_q_only = !requested_q_counts.empty();
+    std::set<std::size_t> built_q_counts;
 
     auto crt_context = context.crt_context();
     if (!crt_context)
@@ -1966,6 +1999,17 @@ void GpuParameterData::build_from_poseidon_context(
         if (parameter_p.empty() && rns_qp != nullptr && rns_qp->base_p() != nullptr)
         {
             parameter_p = copy_rns_base_moduli(*rns_qp->base_p());
+        }
+
+        // Sparse application evaluators only operate on explicitly planned
+        // q-only levels.  Skip before allocating or uploading any per-level
+        // NTT/RNS tables; the key context is intentionally not retained.
+        if (sparse_q_only &&
+            (!p.empty() || requested_q_counts.count(q.size()) == 0))
+        {
+            context_data = context_data->next_context_data();
+            ++level_index;
+            continue;
         }
 
         GpuLevelInfo level;
@@ -2381,9 +2425,29 @@ void GpuParameterData::build_from_poseidon_context(
 
         level.shards.push_back(std::move(shard));
         levels_.push_back(std::move(level));
+        if (sparse_q_only)
+        {
+            built_q_counts.insert(q.size());
+        }
 
         context_data = context_data->next_context_data();
         ++level_index;
+    }
+
+    if (sparse_q_only && built_q_counts != requested_q_counts)
+    {
+        std::ostringstream stream;
+        stream << "GpuParameterData sparse q level not found; requested=";
+        for (auto q_count : requested_q_counts)
+        {
+            stream << q_count << ',';
+        }
+        stream << " built=";
+        for (auto q_count : built_q_counts)
+        {
+            stream << q_count << ',';
+        }
+        throw std::out_of_range(stream.str());
     }
 }
 

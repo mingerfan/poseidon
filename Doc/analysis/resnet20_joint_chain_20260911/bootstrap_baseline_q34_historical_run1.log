@@ -1,0 +1,35 @@
+BASELINE profile=historical-q34 dataset=historical N=65536 Q=34 P=9 global_dnum=4 secret_hamming_weight=192 degree=59 DA=2 arcsine_degree=0 output_fold=false c2s_log_scale=45 linear_mode=double_hoist metadata_only=0
+Q_PRIMES 4255252481 4255645697 4258922497 4260364289 4261675009 4264427521 4265476097 4266393601 4267442177 4269015041 4271374337 4271505409 265420801 268042241 2135031809 2135162881 4272291841 4272685057 1071513601 2135818241 4273340417 2142502913 4274126849 4276092929 2144468993 2146041857 2146959361 4277403649 4279369729 2147352577 4280025089 4280156161 4281204737 1073479681
+P_PRIMES 4283301889 4284088321 4284874753 4286054401 4286709761 4288806913 4289462273 4291952641 4293918721
+CONTRACT preparation_target_log_scale=59 c2s_log_scale=45 periods_per_integer=1
+PLAN C2S stage=1 q_in=34 q_out=33 output_log_scale=60.00035226212768
+PLAN C2S stage=2 q_in=33 q_out=32 output_log_scale=73.0049825779811
+PLAN C2S stage=3 q_in=32 q_out=30 output_log_scale=54.01499418230242
+PLAN EvalMod q_in=30 q_out=15 output_log_scale=53.03094629532368 effective_degree=58
+SECRET h=192 positive=96 negative=96 source=OS_random nonzero=true
+CHECK baseline_input_Q6 q=6 log_scale=40 max_abs=1.085642336571231e-06 rms=1.573662098935286e-07 max_imag=0.1718756715401238 reference_max_abs=0.5583615120376761
+PHASE baseline_matrices
+PHASE baseline_keys rotations=39 estimated_gpu_GiB=3.275390625
+PHASE baseline_S2C_double_hoist
+TRACE S2C stage=1 q_in=6 q_out=5 input_log_scale=40 output_log_scale=53.0102950663809
+TRACE S2C stage=2 q_in=5 q_out=4 input_log_scale=53.0102950663809 output_log_scale=66.02152163353519
+TRACE S2C stage=3 q_in=4 q_out=2 input_log_scale=66.02152163353519 output_log_scale=47.04535065372118
+CHECK baseline_S2C_vs_plain_DFT q=2 log_scale=47.04535065372118 max_abs=5.779146712197984e-09 rms=1.335316258482048e-10 max_imag=7821.799878316047 reference_max_abs=8745.029060342804
+PREPARE multiplier=3969 actual_log_scale=58.99991050072101
+CHECK baseline_prepare_preserves_value q=2 log_scale=58.99991050072101 max_abs=9.094947017729282e-13 rms=1.70950927001763e-14 max_imag=7821.799878316047 reference_max_abs=8745.029060338249
+CONTRACT small_signal_gain=0.9999379657513102 output_gain_compensation=false
+PHASE baseline_C2S_double_hoist
+TRACE C2S stage=1 q_in=34 q_out=33 input_log_scale=45 output_log_scale=60.00035226212768
+TRACE C2S stage=2 q_in=33 q_out=32 input_log_scale=60.00035226212768 output_log_scale=73.0049825779811
+TRACE C2S stage=3 q_in=32 q_out=30 input_log_scale=73.0049825779811 output_log_scale=54.01499418230242
+CHECK baseline_C2S_real_vs_plain_DFT q=30 log_scale=54.01499418230242 max_abs=1.420180374064993e-08 rms=3.291142573367057e-09 max_imag=1.336668806604576e-08 reference_max_abs=0.679761266467227
+CHECK baseline_C2S_imag_vs_plain_DFT q=30 log_scale=54.01499418230242 max_abs=1.288703375112371e-08 rms=3.286824120450004e-09 max_imag=2.481193070675788e-09 reference_max_abs=0.7201790497353979
+DOMAIN max_abs=0.7201790500795311 outside=0
+ORACLE baseline_ideal_sine_vs_input max_abs=0.001041373064593927 rms=0.0004355046991321804
+ORACLE baseline_degree59_vs_sine max_abs=1.400716368258194e-07 rms=5.468482204986108e-08
+ORACLE baseline_degree59_vs_input max_abs=0.001041290004684468 rms=0.0004355046311962679
+PHASE baseline_original_EvalMod_no_fold
+CHECK baseline_final_vs_original_input q=15 log_scale=53.03094629532368 max_abs=0.001041236638381904 rms=0.0004355057230512897 max_imag=0.1718394950949462 reference_max_abs=0.5583615120376761
+CHECK baseline_final_vs_decrypted_input q=15 log_scale=53.03094629532368 max_abs=0.0010412851232342 rms=0.0004355059558508685 max_imag=0.1718394950949462 reference_max_abs=0.5583618224743178
+CHECK baseline_final_vs_degree59_plain q=15 log_scale=53.03094629532368 max_abs=4.742677707531077e-06 rms=2.857061127287935e-07 max_imag=0.1718394950949462 reference_max_abs=0.5573735225372477
+BASELINE_RESULT legacy_tolerance_0_002=PASS strict_target_1e_4=FAIL max_abs=0.001041236638381904 arithmetic_max=4.742677707531077e-06 q=15 log_scale=53.03094629532368 no_reencryption=true full_network_tested=false output_fold=false

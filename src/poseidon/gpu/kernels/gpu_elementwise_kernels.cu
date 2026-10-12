@@ -551,6 +551,35 @@ __global__ void multiply_plain_caccumulate_two_components_4_kernel(
     destination[tid] = value;
 }
 
+template <bool ProductCorrection>
+__global__ void double_sub_plain_two_components_kernel(
+    GpuWord *dst0, GpuWord *dst1,
+    const GpuWord *src0, const GpuWord *src1, const GpuWord *plain,
+    const GpuWord *correction0, const GpuWord *correction1,
+    const GpuWord *moduli, const GpuWide *barrett,
+    std::size_t limbs, std::size_t degree)
+{
+    const std::size_t index = blockIdx.x * blockDim.x + threadIdx.x;
+    if (index >= limbs * degree) return;
+    const bool second = blockIdx.y != 0;
+    const GpuWord modulus = moduli[index / degree];
+    const GpuWord *source = second ? src1 : src0;
+    GpuWide doubled = GpuWide(source[index]) * 2;
+    if (doubled >= modulus) doubled -= modulus;
+    GpuWord subtrahend = 0;
+    if constexpr (ProductCorrection)
+    {
+        const auto *correction = second ? correction1 : correction0;
+        subtrahend = barrett_reduce_u64_u32(
+            GpuWide(correction[index]) * plain[index], modulus, barrett[index / degree]);
+    }
+    else if (!second) subtrahend = plain[index];
+    // Widen before adding q: the application's q primes approach 2^32.
+    const GpuWord result = static_cast<GpuWord>(
+        doubled >= subtrahend ? doubled - subtrahend : doubled + modulus - subtrahend);
+    (second ? dst1 : dst0)[index] = result;
+}
+
 __global__ void multiply_outer_components_kernel(
     GpuWord *destination0,
     GpuWord *destination2,
@@ -1726,6 +1755,45 @@ void launch_multiply_plain_caccumulate_two_components_4(
         cudaGetLastError(),
         "launch_multiply_plain_caccumulate_two_components_4 kernel launch");
     (void)degree;
+}
+
+void launch_double_sub_plain_two_components(
+    const GpuPolyShardView &dst0, const GpuPolyShardView &dst1,
+    const GpuConstPolyShardView &src0, const GpuConstPolyShardView &src1,
+    const GpuConstPolyShardView &plain,
+    const GpuConstPolyShardView *correction0,
+    const GpuConstPolyShardView *correction1,
+    const GpuParameterShard &parameters)
+{
+    const auto matches = [&](const auto &s) {
+        return s.ptr && s.device_id == dst0.device_id &&
+            s.limb_begin == dst0.limb_begin && s.limb_count == dst0.limb_count &&
+            s.coeff_begin == dst0.coeff_begin && s.coeff_count == dst0.coeff_count;
+    };
+    if (!dst0.ptr || !dst0.limb_count || !dst0.coeff_count ||
+        !matches(dst1) || !matches(src0) || !matches(src1) || !matches(plain) ||
+        bool(correction0) != bool(correction1) ||
+        (correction0 && (!matches(*correction0) || !matches(*correction1))) ||
+        parameters.device_id != dst0.device_id || dst0.limb_begin < parameters.limb_begin)
+        throw std::invalid_argument("double_sub_plain: shard mismatch");
+    const auto offset = dst0.limb_begin - parameters.limb_begin;
+    if (offset + dst0.limb_count > parameters.q_primes.size() ||
+        offset + dst0.limb_count > parameters.q_modulus_constants.size())
+        throw std::invalid_argument("double_sub_plain: parameter range mismatch");
+    gpu_check_cuda(cudaSetDevice(dst0.device_id), "double_sub_plain cudaSetDevice");
+    constexpr int block = 256;
+    const dim3 grid((dst0.limb_count * dst0.coeff_count + block - 1) / block, 2);
+    if (correction0)
+        double_sub_plain_two_components_kernel<true><<<grid, block>>>(
+            dst0.ptr, dst1.ptr, src0.ptr, src1.ptr, plain.ptr, correction0->ptr, correction1->ptr,
+            parameters.q_primes.data() + offset, parameters.q_modulus_constants.data() + offset,
+            dst0.limb_count, dst0.coeff_count);
+    else
+        double_sub_plain_two_components_kernel<false><<<grid, block>>>(
+            dst0.ptr, dst1.ptr, src0.ptr, src1.ptr, plain.ptr, nullptr, nullptr,
+            parameters.q_primes.data() + offset, parameters.q_modulus_constants.data() + offset,
+            dst0.limb_count, dst0.coeff_count);
+    gpu_check_cuda(cudaGetLastError(), "double_sub_plain kernel launch");
 }
 
 std::size_t validate_fused_ciphertext_product_shards(

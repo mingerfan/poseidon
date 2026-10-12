@@ -1,0 +1,32 @@
+test_explicit_accuracy_only_flag_required (test_bootstrap_baseline.BaselineContractTests) ... ok
+test_historical_exact_primes_and_native_contract (test_bootstrap_baseline.BaselineContractTests) ... ok
+test_q50_preserves_saved_primes_but_fixes_contract (test_bootstrap_baseline.BaselineContractTests) ... ok
+test_truncated_primes_rejected_before_context (test_bootstrap_baseline.BaselineContractTests) ... ok
+test_unknown_profile_rejected_before_keys (test_bootstrap_baseline.BaselineContractTests) ... ok
+test_integer_free_case_hides_period_error (test_bootstrap_period.BootstrapPeriodTests) ... ok
+test_period_aligned_counterfactual_is_not_amplitude_normalized (test_bootstrap_period.BootstrapPeriodTests) ... ok
+test_saved_scale_ledger_still_passes_but_period_does_not (test_bootstrap_period.BootstrapPeriodTests) ... ok
+test_zero_message_nonzero_wrap_is_counterexample (test_bootstrap_period.BootstrapPeriodTests) ... ok
+test_branch_level_mismatch_rejected (test_joint.JointLedgerTest) ... ok
+test_duplicate_auxiliary_prime_rejected (test_joint.JointLedgerTest) ... ok
+test_missing_physical_prime_rejected (test_joint.JointLedgerTest) ... ok
+test_omitted_convolution_rescale_rejected (test_joint.JointLedgerTest) ... ok
+test_relabel_without_coefficient_folding_rejected (test_joint.JointLedgerTest) ... ok
+test_same_chain_closes (test_joint.JointLedgerTest) ... ok
+test_scale_overflow_rejected (test_joint.JointLedgerTest) ... ok
+test_unfolded_double_angle_constant_rejected (test_joint.JointLedgerTest) ... ok
+test_wrong_evalmod_drop_rejected (test_joint.JointLedgerTest) ... ok
+test_wrong_folded_polynomial_rejected (test_joint.JointLedgerTest) ... ok
+test_wrong_preparation_integer_rejected (test_joint.JointLedgerTest) ... ok
+test_wrong_relu_input_scale_rejected (test_joint.JointLedgerTest) ... ok
+test_actual_prime_witness (test_relu_precision.FixtureTests) ... ok
+test_coefficient_order_is_heap_not_dfs (test_relu_precision.FixtureTests) ... ok
+test_original_coefficients_not_refitted (test_relu_precision.FixtureTests) ... ok
+test_reject_truncated_or_extra_file (test_relu_precision.FixtureTests) ... ok
+test_saved_fixture_deterministic (test_relu_precision.FixtureTests) ... ok
+test_unused_even_position_guard (test_relu_precision.FixtureTests) ... ok
+
+----------------------------------------------------------------------
+Ran 27 tests in 16.060s
+
+OK

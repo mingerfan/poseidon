@@ -936,6 +936,83 @@ void test_selected_galois_key_upload(
     }
 }
 
+void test_application_gpu_extensions(
+    const poseidon::PoseidonContext &context,
+    poseidon::KeyGenerator &key_generator,
+    const poseidon::GaloisKeys &galois_keys)
+{
+    using namespace poseidon::gpu;
+    poseidon::PublicKey public_key;
+    key_generator.create_public_key(public_key);
+    poseidon::CKKSEncoder encoder(context);
+    poseidon::Encryptor encryptor(context, public_key);
+    poseidon::Plaintext input_plain;
+    encoder.encode(std::vector<double>{0.25, -0.5, 0.75, 1.0},
+                   std::ldexp(1.0, kDefaultScaleLog2), input_plain);
+    poseidon::Ciphertext input;
+    encryptor.encrypt(input_plain, input);
+    auto source = GpuUploader::upload_ciphertext(input, kDeviceId);
+    auto unchanged = GpuUploader::upload_ciphertext(input, kDeviceId);
+    const auto source_q = source.meta.q_count;
+    const auto target_q = source_q - 2;
+    const auto target = context.crt_context()->parms_id_map().at(target_q - 1);
+    GpuParameterData parameters(context, kDeviceId, {source_q, target_q});
+    require(parameters.level_count() == 2, "sparse parameter levels were not retained");
+    GpuEvaluator evaluator(parameters);
+
+    const auto exact = [&](const GpuCiphertextData &actual,
+                           const GpuCiphertextData &expected) {
+        poseidon::Ciphertext a, b;
+        GpuUploader::download_ciphertext(actual, a, context);
+        GpuUploader::download_ciphertext(expected, b, context);
+        require(a.parms_id() == b.parms_id() && a.size() == b.size() &&
+                    a.scale() == b.scale() && a.is_ntt_form() == b.is_ntt_form(),
+                "application extension changed ciphertext metadata");
+        const auto words = a.size() * a.poly_modulus_degree() * a.coeff_modulus_size();
+        require(std::equal(a.data(), a.data() + words, b.data()),
+                "application extension changed RNS residues");
+    };
+
+    GpuCiphertextData dropped;
+    evaluator.drop_modulus(source, dropped, target);
+    poseidon::Plaintext weight;
+    encoder.encode(std::vector<double>{0.5, 0.25, -0.5, 0.75}, target,
+                   std::ldexp(1.0, kDefaultScaleLog2), weight);
+    auto plaintext = GpuUploader::upload_plaintext(weight, kDeviceId);
+    GpuCiphertextData expected, actual, doubled;
+    evaluator.multiply_plain(dropped, plaintext, expected);
+    evaluator.multiply_plain_q_prefix(source, plaintext, actual);
+    exact(actual, expected);
+    evaluator.add(expected, expected, doubled);
+    evaluator.multiply_plain_sum_q_prefix({&source, &source}, {&plaintext, &plaintext}, actual);
+    exact(actual, doubled);
+    evaluator.multiply(dropped, dropped, expected);
+    evaluator.multiply_q_prefix(source, source, actual, target);
+    exact(actual, expected);
+    evaluator.add(dropped, dropped, doubled);
+    evaluator.sub_plain(doubled, plaintext, expected);
+    evaluator.double_sub_plain_q_prefix(dropped, plaintext, actual);
+    exact(actual, expected);
+    exact(source, unchanged);
+
+    auto rotations = GpuUploader::upload_double_hoist_galois_keys(galois_keys, kDeviceId);
+    GpuDoubleHoistWorkspace workspace;
+    std::vector<GpuCiphertextData> rotated;
+    evaluator.rotate_many_hoisted(source, {1, 2}, rotations, workspace, rotated);
+    require(rotated.size() == 2, "hoisted rotation batch size changed");
+    for (std::size_t i = 0; i < rotated.size(); ++i)
+    {
+        evaluator.rotate(source, static_cast<int>(i + 1), rotations, expected);
+        exact(rotated[i], expected);
+    }
+    exact(source, unchanged);
+    const auto *allocation = source.fields_.front().data();
+    evaluator.drop_modulus_inplace(source, target);
+    require(source.fields_.front().data() == allocation,
+            "inplace modulus drop replaced its allocation");
+    exact(source, dropped);
+}
+
 void test_host_decrypt_reencrypt_boot(
     PoseidonGpuApi &api, const poseidon::PoseidonContext &context,
     const poseidon::PublicKey &public_key, const poseidon::SecretKey &secret_key,
@@ -2031,6 +2108,8 @@ int main()
         const auto loaded_spec = make_operator_spec(context);
         run_test("selected Galois-key upload",
                  [&] { test_selected_galois_key_upload(context, *galois_keys); });
+        run_test("application Q-prefix, sparse levels and hoisted rotations",
+                 [&] { test_application_gpu_extensions(context, key_generator, *galois_keys); });
         run_test("GPU transfer publishes completion events",
                  [&] {
                      test_transfer_posts_completion_event(context, key_generator);

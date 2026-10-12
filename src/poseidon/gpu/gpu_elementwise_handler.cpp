@@ -2,6 +2,7 @@
 #include "poseidon/gpu/kernels/gpu_elementwise_kernels.h"
 
 #include <algorithm>
+#include <array>
 #include <cstdlib>
 #include <stdexcept>
 #include <string>
@@ -82,6 +83,70 @@ bool can_fuse_two_component_add_shards(
 GpuElementwiseHandler::GpuElementwiseHandler(const GpuParameterData &params)
     : params_(params)
 {}
+
+void GpuElementwiseHandler::multiply_plain_sum(
+    GpuCiphertextView &destination_view,
+    const std::vector<GpuConstCiphertextView> &ciphertexts,
+    const std::vector<GpuConstPlaintextView> &plaintexts,
+    const GpuLevelInfo &level_info,
+    bool accumulate) const
+{
+    if (ciphertexts.empty() || ciphertexts.size() > 4 ||
+        ciphertexts.size() != plaintexts.size() ||
+        destination_view.polys.size() != 2 ||
+        destination_view.polys[0].shards.size() != 1 ||
+        destination_view.polys[1].shards.size() != 1)
+        throw std::invalid_argument("multiply_plain_sum: unsupported shape");
+    const auto &dst0 = destination_view.polys[0].shards.front();
+    const auto &dst1 = destination_view.polys[1].shards.front();
+    if (!same_shard_placement(dst0, dst1))
+        throw std::invalid_argument("multiply_plain_sum: destination shard mismatch");
+    std::array<GpuConstPolyShardView, 4> c0{}, c1{}, plain{};
+    for (std::size_t i = 0; i < ciphertexts.size(); ++i)
+    {
+        const auto &ct = ciphertexts[i];
+        const auto &pt = plaintexts[i];
+        if (ct.polys.size() != 2 || ct.polys[0].shards.size() != 1 ||
+            ct.polys[1].shards.size() != 1 || pt.poly.shards.size() != 1 ||
+            ct.meta.parms_id != level_info.parms_id ||
+            pt.meta.parms_id != level_info.parms_id)
+            throw std::invalid_argument("multiply_plain_sum: source shape mismatch");
+        c0[i] = ct.polys[0].shards.front();
+        c1[i] = ct.polys[1].shards.front();
+        plain[i] = pt.poly.shards.front();
+        if (!same_shard_placement(dst0, c0[i]) ||
+            !same_shard_placement(dst0, c1[i]) ||
+            !same_shard_placement(dst0, plain[i]))
+            throw std::invalid_argument("multiply_plain_sum: source shard mismatch");
+    }
+    const auto *shard = find_parameter_shard(level_info, dst0);
+    if (shard == nullptr)
+        throw std::invalid_argument("multiply_plain_sum: parameter shard absent");
+    kernel::launch_multiply_plain_caccumulate_two_components_4(
+        dst0, dst1, c0.data(), c1.data(), plain.data(), ciphertexts.size(),
+        nullptr, accumulate, *shard, level_info.degree);
+}
+
+void GpuElementwiseHandler::double_sub_plain(
+    GpuCiphertextView &destination, const GpuConstCiphertextView &source,
+    const GpuConstPlaintextView &plaintext, const GpuConstCiphertextView *correction,
+    const GpuLevelInfo &level) const
+{
+    const auto valid = [&](const auto &ct) {
+        return ct.meta.parms_id == level.parms_id && ct.polys.size() == 2 &&
+            ct.polys[0].shards.size() == 1 && ct.polys[1].shards.size() == 1;
+    };
+    if (!valid(destination) || !valid(source) || (correction && !valid(*correction)) ||
+        plaintext.meta.parms_id != level.parms_id || plaintext.poly.shards.size() != 1)
+        throw std::invalid_argument("double_sub_plain: unsupported shape");
+    const auto *parameters = find_parameter_shard(level, destination.polys[0].shards[0]);
+    if (!parameters) throw std::invalid_argument("double_sub_plain: parameter shard absent");
+    kernel::launch_double_sub_plain_two_components(
+        destination.polys[0].shards[0], destination.polys[1].shards[0],
+        source.polys[0].shards[0], source.polys[1].shards[0], plaintext.poly.shards[0],
+        correction ? &correction->polys[0].shards[0] : nullptr,
+        correction ? &correction->polys[1].shards[0] : nullptr, *parameters);
+}
 
 // 最顶层的加法，支持不同component密文的求和，低位求和。
 void GpuElementwiseHandler::add_ciphertext(

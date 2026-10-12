@@ -29,6 +29,41 @@ struct GpuMatrixPlain
 };
 
 /**
+ * One independently schedulable plaintext product in a loose BSGS group.
+ *
+ * The input is Rotate(source, baby_step), with baby_step zero denoting the
+ * original source.  The output remains an ordinary Q-basis ciphertext.
+ */
+struct GpuLooseBsgsTerm
+{
+    int baby_step = 0;
+    int diagonal_index = 0;
+};
+
+/**
+ * One independently reducible giant group.  After its term products are
+ * summed, giant_step is applied to the ordinary Q-basis group result.
+ */
+struct GpuLooseBsgsGroup
+{
+    int giant_step = 0;
+    std::vector<GpuLooseBsgsTerm> terms;
+};
+
+/**
+ * Host-side, device-independent BSGS task graph used by the opt-in
+ * loose-coupled path.  No lifted-QP object crosses a task boundary.
+ */
+struct GpuLooseBsgsPlan
+{
+    std::vector<int> baby_steps;
+    std::vector<GpuLooseBsgsGroup> groups;
+};
+
+GpuLooseBsgsPlan make_gpu_loose_bsgs_plan(
+    const GpuMatrixPlain &matrix);
+
+/**
  * @brief GPU-resident form of LinearMatrixGroup.
  */
 class GpuLinearMatrixGroup

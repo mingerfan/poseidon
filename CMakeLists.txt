@@ -279,6 +279,9 @@ endif()
 option(POSEIDON_BUILD_CKKS_RUNTIME_API
     "Build the optional CKKS Runtime CPU/GPU Api integration" OFF)
 message(STATUS "POSEIDON_BUILD_CKKS_RUNTIME_API: ${POSEIDON_BUILD_CKKS_RUNTIME_API}")
+option(POSEIDON_BUILD_GPU "Build the standalone Poseidon GPU library" OFF)
+option(POSEIDON_BUILD_RESNET20_S2C_FIRST
+    "Build the self-contained S2C-first ResNet20 application" OFF)
 
 set(POSEIDON_CKKS_RUNTIME_SOURCE_DIR
     "${CMAKE_CURRENT_SOURCE_DIR}/third_party/ckks-runtime" CACHE PATH
@@ -319,6 +322,10 @@ if(POSEIDON_BUILD_CKKS_RUNTIME_API)
         enable_testing()
     endif()
 
+endif()
+
+if(POSEIDON_BUILD_CKKS_RUNTIME_API OR POSEIDON_BUILD_GPU OR
+   POSEIDON_BUILD_RESNET20_S2C_FIRST)
     enable_language(CUDA)
     set(CMAKE_CUDA_STANDARD 17)
     set(CMAKE_CUDA_STANDARD_REQUIRED ON)
@@ -328,7 +335,15 @@ if(POSEIDON_BUILD_CKKS_RUNTIME_API)
     endif()
 
     add_subdirectory(src/poseidon/gpu)
+endif()
+
+if(POSEIDON_BUILD_CKKS_RUNTIME_API)
     add_subdirectory(src/poseidon/runtime_api)
+endif()
+
+if(POSEIDON_BUILD_RESNET20_S2C_FIRST)
+    enable_testing()
+    add_subdirectory(bench/resnet20_s2c_first)
 endif()
 
 install(

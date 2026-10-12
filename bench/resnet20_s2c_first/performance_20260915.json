@@ -1,0 +1,102 @@
+{
+  "date": "2026-09-15",
+  "hardware": {
+    "gpu": "Tesla V100-SXM2-32GB",
+    "cuda_visible_device": 0,
+    "cuda_total_mib": 32501.125
+  },
+  "configuration": {
+    "scheme": "CKKS",
+    "N": 65536,
+    "Q": 50,
+    "P": 25,
+    "dnum": 2,
+    "security_approved": false
+  },
+  "online_contract": {
+    "topology": "ResNet20",
+    "blocks": 9,
+    "bootstraps": 18,
+    "single_continuous_graph": true,
+    "per_stage_sync": false,
+    "observer_decryptions": 0,
+    "host_device_transfers": 0,
+    "runtime_swaps": false,
+    "intermediate_reencryptions": 0,
+    "starts_after_input_and_public_material_upload": true,
+    "ends_at_encrypted_logits": true,
+    "encrypted_logits_q": 4
+  },
+  "resident_inventory": {
+    "standard_direct_rotations": 109,
+    "double_hoist_rotations": 39,
+    "input_ciphertexts": 27,
+    "stem_plaintexts": 28,
+    "conv_plaintexts": 1696,
+    "shortcut_plaintexts": 48,
+    "relu_plaintexts_reused_by_all_19_relu_calls": 46,
+    "head_plaintexts": 93,
+    "s2c_diagonals": 158,
+    "c2s_diagonals": 158,
+    "pool_initial_gib": 30,
+    "pool_cap_gib": 30,
+    "cuda_free_after_prepared_warmup_mib": 1470.375
+  },
+  "memory_audit": {
+    "accounted_static_payload_mib_excluding_gpu_parameter_tables": 21324.5,
+    "uncompressed_dft_qp_mib": 4108.0,
+    "evalmod_plaintext_mib": 755.25,
+    "relu_plaintext_mib": 244.75,
+    "conservative_stress_extra_resident_mib": 14216.5,
+    "stress_used_after_parameters_and_relin_mib": 9526.75,
+    "stress_used_after_one_real_bootstrap_mib": 28354.75,
+    "stress_free_after_one_real_bootstrap_mib": 4146.375,
+    "stress_bootstrap_pass": true
+  },
+  "timing_ms": {
+    "end_to_end_wall": 8162.723379,
+    "cuda_event_default_stream_span": 8164.14013671875,
+    "cupti_gpu_activity_union": 8071.055126,
+    "host_enqueue": 8127.841425,
+    "whole_process_approx_from_log_birth_to_final_write": 467000
+  },
+  "gpu_breakdown_ms": {
+    "bootstrap_total_18": 5130.018323,
+    "bootstrap_mean": 285.00101794444447,
+    "bootstrap_S2C_18": 348.863515,
+    "bootstrap_prepare_18": 0.185311,
+    "bootstrap_ModRaise_18": 8.213223,
+    "bootstrap_C2S_18": 1973.734041,
+    "bootstrap_EvalMod_36_calls": 2746.897622,
+    "bootstrap_recombine_18": 52.124611,
+    "relu_19": 1430.068546,
+    "conv_bn_18": 1418.559541,
+    "stem_conv_bn_and_drop": 4.547306,
+    "residual_clone_and_add_9": 0.498239,
+    "shortcut_2": 56.063438,
+    "head_1": 31.299733,
+    "category_sum": 8071.055126000001,
+    "category_overlap": 9.094947017729282e-13
+  },
+  "gpu_category_ms": {
+    "Conv+BN": 1423.06048,
+    "ReLU": 1430.068546,
+    "Bootstrap": 5130.018323,
+    "Shortcut": 56.063438,
+    "Pool+FC": 31.299733,
+    "Residual/copy": 0.544606,
+    "total": 8071.055126
+  },
+  "cupti": {
+    "activities": 108241,
+    "host_transfers": 0,
+    "host_transfer_bytes": 0,
+    "dropped_records": 0
+  },
+  "artifacts": {
+    "local_log": "/tmp/poseidon_resnet20_s2c_first_breakdown_20260915.log",
+    "local_log_sha256": "5efbae53d9b2f9deb668ed4eec151971261e282e0072dde93d8abc68e36e3ae2",
+    "local_binary": "/tmp/poseidon_resnet20_s2c_first_breakdown",
+    "local_binary_sha256": "99c0c0fac5caf1a778261667e985845b4c44e767be9cc5dff3be6f681c3e8e0c"
+  }
+}

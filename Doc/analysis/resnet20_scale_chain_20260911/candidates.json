@@ -1,0 +1,1000 @@
+[
+  {
+    "mixed": false,
+    "verification": {
+      "checks": "PASS",
+      "total_q_dropped": 22,
+      "minimum_cipher_logscale": 40,
+      "minimum_plain_logscale": 40.03079684115245,
+      "maximum_intermediate_logscale": 179.76504214780743,
+      "output_logscale": 40,
+      "output_q_count": 16,
+      "warning": "METADATA ONLY: no CKKS encoding, noise or encrypted correctness checked"
+    },
+    "widths_top_first": [
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30
+    ],
+    "primes_top_first": [
+      1073479681,
+      1071513601,
+      1070727169,
+      1068236801,
+      1065484289,
+      1064697857,
+      1062862849,
+      1062469633,
+      1060765697,
+      1056440321,
+      1056178177,
+      1055260673,
+      1054212097,
+      1053818881,
+      1052508161,
+      1051721729,
+      1049100289,
+      1048707073,
+      1045430273,
+      1043464193,
+      1042415617,
+      1040842753,
+      1040056321,
+      1038745601,
+      1037303809,
+      1036779521,
+      1034813441,
+      1032192001,
+      1031667713,
+      1030619137,
+      1029308417,
+      1026686977,
+      1026162689,
+      1023148033,
+      1021444097,
+      1019609089,
+      1019478017,
+      1018429441
+    ],
+    "plan": {
+      "total": 22,
+      "stages": [
+        {
+          "degree": 15,
+          "start": 0,
+          "end": 6,
+          "input_scale": 40,
+          "output_scale": 40.1,
+          "basis_floor": 40,
+          "basis": [
+            {
+              "degree": 2,
+              "work": 0,
+              "output": 1,
+              "pre": 80,
+              "scale": 50.00035226212769
+            },
+            {
+              "degree": 4,
+              "work": 1,
+              "output": 3,
+              "pre": 100.00070452425538,
+              "scale": 40.007757738523814
+            },
+            {
+              "degree": 3,
+              "work": 1,
+              "output": 2,
+              "pre": 90.00035226212769,
+              "scale": 60.003349245508474
+            },
+            {
+              "degree": 8,
+              "work": 3,
+              "output": 4,
+              "pre": 80.01551547704763,
+              "scale": 50.02293113169129
+            }
+          ],
+          "tree": {
+            "type": "combine",
+            "split": 8,
+            "work": 4,
+            "output": 6,
+            "scale": 40.1,
+            "pre": 100.07665910453503,
+            "quotient": {
+              "type": "combine",
+              "split": 4,
+              "work": 3,
+              "output": 4,
+              "scale": 50.05372797284374,
+              "pre": 80.04631231820008,
+              "quotient": {
+                "type": "combine",
+                "split": 2,
+                "work": 1,
+                "output": 3,
+                "scale": 40.038554579676266,
+                "pre": 100.03150136540783,
+                "quotient": {
+                  "type": "leaf",
+                  "degree": 1,
+                  "work": 0,
+                  "output": 1,
+                  "scale": 50.03114910328014,
+                  "pre": 80.03079684115245,
+                  "encoding_scales": [
+                    40.03079684115245
+                  ]
+                },
+                "remainder": {
+                  "type": "leaf",
+                  "degree": 1,
+                  "work": 0,
+                  "output": 1,
+                  "scale": 100.03150136540783,
+                  "pre": 130.03114910328014,
+                  "encoding_scales": [
+                    90.03114910328014
+                  ]
+                }
+              },
+              "remainder": {
+                "type": "leaf",
+                "degree": 3,
+                "work": 2,
+                "output": 3,
+                "scale": 80.04631231820008,
+                "pre": 110.04225608731244,
+                "encoding_scales": [
+                  70.04225608731244,
+                  50.038906841803964
+                ]
+              }
+            },
+            "remainder": {
+              "type": "combine",
+              "split": 4,
+              "work": 3,
+              "output": 4,
+              "scale": 100.07665910453503,
+              "pre": 130.06924344989136,
+              "quotient": {
+                "type": "leaf",
+                "degree": 3,
+                "work": 2,
+                "output": 3,
+                "scale": 90.06148571136754,
+                "pre": 120.0574294804799,
+                "encoding_scales": [
+                  80.0574294804799,
+                  60.05408023497142
+                ]
+              },
+              "remainder": {
+                "type": "leaf",
+                "degree": 3,
+                "work": 2,
+                "output": 3,
+                "scale": 130.06924344989136,
+                "pre": 160.06518721900372,
+                "encoding_scales": [
+                  120.06518721900372,
+                  100.06183797349524
+                ]
+              }
+            }
+          }
+        },
+        {
+          "degree": 15,
+          "start": 6,
+          "end": 12,
+          "input_scale": 40.1,
+          "output_scale": 44,
+          "basis_floor": 40,
+          "basis": [
+            {
+              "degree": 2,
+              "work": 6,
+              "output": 7,
+              "pre": 80.2,
+              "scale": 50.21469170138678
+            },
+            {
+              "degree": 4,
+              "work": 7,
+              "output": 9,
+              "pre": 100.42938340277357,
+              "scale": 40.46215005988145
+            },
+            {
+              "degree": 3,
+              "work": 7,
+              "output": 8,
+              "pre": 90.31469170138678,
+              "scale": 60.329917239982066
+            },
+            {
+              "degree": 8,
+              "work": 9,
+              "output": 10,
+              "pre": 80.9243001197629,
+              "scale": 50.947735994981954
+            }
+          ],
+          "tree": {
+            "type": "combine",
+            "split": 8,
+            "work": 10,
+            "output": 12,
+            "scale": 44,
+            "pre": 103.95115836641571,
+            "quotient": {
+              "type": "combine",
+              "split": 4,
+              "work": 9,
+              "output": 10,
+              "scale": 53.00342237143376,
+              "pre": 82.97998649621474,
+              "quotient": {
+                "type": "combine",
+                "split": 2,
+                "work": 7,
+                "output": 9,
+                "scale": 42.51783643633328,
+                "pre": 102.4850697792254,
+                "quotient": {
+                  "type": "leaf",
+                  "degree": 1,
+                  "work": 6,
+                  "output": 7,
+                  "scale": 52.270378077838615,
+                  "pre": 82.25568637645185,
+                  "encoding_scales": [
+                    42.15568637645185
+                  ]
+                },
+                "remainder": {
+                  "type": "leaf",
+                  "degree": 1,
+                  "work": 6,
+                  "output": 7,
+                  "scale": 102.4850697792254,
+                  "pre": 132.4703780778386,
+                  "encoding_scales": [
+                    92.37037807783861
+                  ]
+                }
+              },
+              "remainder": {
+                "type": "leaf",
+                "degree": 3,
+                "work": 8,
+                "output": 9,
+                "scale": 82.97998649621474,
+                "pre": 112.96244537770212,
+                "encoding_scales": [
+                  72.86244537770213,
+                  52.63252813772006
+                ]
+              }
+            },
+            "remainder": {
+              "type": "combine",
+              "split": 4,
+              "work": 9,
+              "output": 10,
+              "scale": 103.95115836641571,
+              "pre": 133.92772249119668,
+              "quotient": {
+                "type": "leaf",
+                "degree": 3,
+                "work": 8,
+                "output": 9,
+                "scale": 93.46557243131522,
+                "pre": 123.44803131280264,
+                "encoding_scales": [
+                  83.34803131280265,
+                  63.118114072820575
+                ]
+              },
+              "remainder": {
+                "type": "leaf",
+                "degree": 3,
+                "work": 8,
+                "output": 9,
+                "scale": 133.92772249119668,
+                "pre": 163.91018137268406,
+                "encoding_scales": [
+                  123.81018137268407,
+                  103.580264132702
+                ]
+              }
+            }
+          }
+        },
+        {
+          "degree": 27,
+          "start": 12,
+          "end": 19,
+          "input_scale": 44,
+          "output_scale": 89.87112238710051,
+          "basis_floor": 41,
+          "basis": [
+            {
+              "degree": 2,
+              "work": 12,
+              "output": 13,
+              "pre": 88,
+              "scale": 58.026481993927774
+            },
+            {
+              "degree": 4,
+              "work": 13,
+              "output": 15,
+              "pre": 116.05296398785555,
+              "scale": 56.10879992664485
+            },
+            {
+              "degree": 3,
+              "work": 13,
+              "output": 15,
+              "pre": 102.02648199392777,
+              "scale": 42.082317932717075
+            },
+            {
+              "degree": 8,
+              "work": 15,
+              "output": 17,
+              "pre": 112.2175998532897,
+              "scale": 52.28098850802485
+            },
+            {
+              "degree": 5,
+              "work": 15,
+              "output": 16,
+              "pre": 100.10879992664485,
+              "scale": 70.13869403466092
+            },
+            {
+              "degree": 7,
+              "work": 15,
+              "output": 16,
+              "pre": 98.19111785936192,
+              "scale": 68.22101196737799
+            },
+            {
+              "degree": 16,
+              "work": 17,
+              "output": 19,
+              "pre": 104.5619770160497,
+              "scale": 44.63456270862373
+            }
+          ],
+          "tree": {
+            "type": "combine",
+            "split": 16,
+            "work": 19,
+            "output": 19,
+            "scale": 89.87112238710051,
+            "pre": 89.87112238710051,
+            "quotient": {
+              "type": "combine",
+              "split": 8,
+              "work": 17,
+              "output": 19,
+              "scale": 45.23655967847678,
+              "pre": 105.16397398590277,
+              "quotient": {
+                "type": "leaf",
+                "degree": 3,
+                "work": 15,
+                "output": 17,
+                "scale": 52.882985477877924,
+                "pre": 112.81959682314272,
+                "encoding_scales": [
+                  68.81959682314272,
+                  70.73727889042564
+                ]
+              },
+              "remainder": {
+                "type": "leaf",
+                "degree": 7,
+                "work": 16,
+                "output": 17,
+                "scale": 105.16397398590277,
+                "pre": 135.13047943918366,
+                "encoding_scales": [
+                  91.13047943918366,
+                  93.04816150646658,
+                  64.99178540452274,
+                  66.90946747180567
+                ]
+              }
+            },
+            "remainder": {
+              "type": "combine",
+              "split": 8,
+              "work": 17,
+              "output": 19,
+              "scale": 89.87112238710051,
+              "pre": 149.79853669452655,
+              "quotient": {
+                "type": "leaf",
+                "degree": 7,
+                "work": 16,
+                "output": 17,
+                "scale": 97.5175481865017,
+                "pre": 127.48405363978259,
+                "encoding_scales": [
+                  83.48405363978259,
+                  85.40173570706551,
+                  57.34535960512167,
+                  59.2630416724046
+                ]
+              },
+              "remainder": {
+                "type": "leaf",
+                "degree": 7,
+                "work": 16,
+                "output": 17,
+                "scale": 149.79853669452655,
+                "pre": 179.76504214780743,
+                "encoding_scales": [
+                  135.76504214780743,
+                  137.68272421509036,
+                  109.62634811314652,
+                  111.54403018042944
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "tail_work": 19,
+      "tail_drop": 3,
+      "stage_scales": [
+        40.1,
+        44,
+        89.87112238710051
+      ],
+      "dropped_bits": 659.4949322132715
+    }
+  },
+  {
+    "mixed": true,
+    "verification": {
+      "checks": "PASS",
+      "total_q_dropped": 22,
+      "minimum_cipher_logscale": 40,
+      "minimum_plain_logscale": 40.130796841152474,
+      "maximum_intermediate_logscale": 174.79862189631115,
+      "output_logscale": 40,
+      "output_q_count": 16,
+      "warning": "METADATA ONLY: no CKKS encoding, noise or encrypted correctness checked"
+    },
+    "widths_top_first": [
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      25,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30
+    ],
+    "primes_top_first": [
+      1073479681,
+      1071513601,
+      1070727169,
+      1068236801,
+      1065484289,
+      1064697857,
+      1062862849,
+      1062469633,
+      1060765697,
+      1056440321,
+      1056178177,
+      1055260673,
+      1054212097,
+      1053818881,
+      1052508161,
+      1051721729,
+      1049100289,
+      1048707073,
+      1045430273,
+      1043464193,
+      33292289,
+      1042415617,
+      1040842753,
+      1040056321,
+      1038745601,
+      1037303809,
+      1036779521,
+      1034813441,
+      1032192001,
+      1031667713,
+      1030619137,
+      1029308417,
+      1026686977,
+      1026162689,
+      1023148033,
+      1021444097,
+      1019609089,
+      1019478017
+    ],
+    "plan": {
+      "total": 22,
+      "stages": [
+        {
+          "degree": 15,
+          "start": 0,
+          "end": 6,
+          "input_scale": 40,
+          "output_scale": 40.2,
+          "basis_floor": 40,
+          "basis": [
+            {
+              "degree": 2,
+              "work": 0,
+              "output": 1,
+              "pre": 80,
+              "scale": 50.00035226212769
+            },
+            {
+              "degree": 4,
+              "work": 1,
+              "output": 3,
+              "pre": 100.00070452425538,
+              "scale": 40.007757738523814
+            },
+            {
+              "degree": 3,
+              "work": 1,
+              "output": 2,
+              "pre": 90.00035226212769,
+              "scale": 60.003349245508474
+            },
+            {
+              "degree": 8,
+              "work": 3,
+              "output": 4,
+              "pre": 80.01551547704763,
+              "scale": 50.02293113169129
+            }
+          ],
+          "tree": {
+            "type": "combine",
+            "split": 8,
+            "work": 4,
+            "output": 6,
+            "scale": 40.2,
+            "pre": 100.17665910453505,
+            "quotient": {
+              "type": "combine",
+              "split": 4,
+              "work": 3,
+              "output": 4,
+              "scale": 50.15372797284376,
+              "pre": 80.1463123182001,
+              "quotient": {
+                "type": "combine",
+                "split": 2,
+                "work": 1,
+                "output": 3,
+                "scale": 40.13855457967629,
+                "pre": 100.13150136540786,
+                "quotient": {
+                  "type": "leaf",
+                  "degree": 1,
+                  "work": 0,
+                  "output": 1,
+                  "scale": 50.131149103280165,
+                  "pre": 80.13079684115247,
+                  "encoding_scales": [
+                    40.130796841152474
+                  ]
+                },
+                "remainder": {
+                  "type": "leaf",
+                  "degree": 1,
+                  "work": 0,
+                  "output": 1,
+                  "scale": 100.13150136540786,
+                  "pre": 130.13114910328017,
+                  "encoding_scales": [
+                    90.13114910328017
+                  ]
+                }
+              },
+              "remainder": {
+                "type": "leaf",
+                "degree": 3,
+                "work": 2,
+                "output": 3,
+                "scale": 80.1463123182001,
+                "pre": 110.14225608731246,
+                "encoding_scales": [
+                  70.14225608731246,
+                  50.13890684180399
+                ]
+              }
+            },
+            "remainder": {
+              "type": "combine",
+              "split": 4,
+              "work": 3,
+              "output": 4,
+              "scale": 100.17665910453505,
+              "pre": 130.16924344989138,
+              "quotient": {
+                "type": "leaf",
+                "degree": 3,
+                "work": 2,
+                "output": 3,
+                "scale": 90.16148571136756,
+                "pre": 120.15742948047992,
+                "encoding_scales": [
+                  80.15742948047992,
+                  60.154080234971445
+                ]
+              },
+              "remainder": {
+                "type": "leaf",
+                "degree": 3,
+                "work": 2,
+                "output": 3,
+                "scale": 130.16924344989138,
+                "pre": 160.16518721900374,
+                "encoding_scales": [
+                  120.16518721900374,
+                  100.16183797349527
+                ]
+              }
+            }
+          }
+        },
+        {
+          "degree": 15,
+          "start": 6,
+          "end": 12,
+          "input_scale": 40.2,
+          "output_scale": 44,
+          "basis_floor": 40,
+          "basis": [
+            {
+              "degree": 2,
+              "work": 6,
+              "output": 7,
+              "pre": 80.4,
+              "scale": 50.414691701386786
+            },
+            {
+              "degree": 4,
+              "work": 7,
+              "output": 9,
+              "pre": 100.82938340277357,
+              "scale": 40.86215005988146
+            },
+            {
+              "degree": 3,
+              "work": 7,
+              "output": 8,
+              "pre": 90.61469170138679,
+              "scale": 60.62991723998208
+            },
+            {
+              "degree": 8,
+              "work": 9,
+              "output": 10,
+              "pre": 81.72430011976292,
+              "scale": 51.747735994981966
+            }
+          ],
+          "tree": {
+            "type": "combine",
+            "split": 8,
+            "work": 10,
+            "output": 12,
+            "scale": 44,
+            "pre": 103.95115836641571,
+            "quotient": {
+              "type": "combine",
+              "split": 4,
+              "work": 9,
+              "output": 10,
+              "scale": 52.203422371433746,
+              "pre": 82.17998649621472,
+              "quotient": {
+                "type": "combine",
+                "split": 2,
+                "work": 7,
+                "output": 9,
+                "scale": 41.317836436333266,
+                "pre": 101.28506977922535,
+                "quotient": {
+                  "type": "leaf",
+                  "degree": 1,
+                  "work": 6,
+                  "output": 7,
+                  "scale": 50.870378077838566,
+                  "pre": 80.85568637645176,
+                  "encoding_scales": [
+                    40.655686376451754
+                  ]
+                },
+                "remainder": {
+                  "type": "leaf",
+                  "degree": 1,
+                  "work": 6,
+                  "output": 7,
+                  "scale": 101.28506977922535,
+                  "pre": 131.27037807783856,
+                  "encoding_scales": [
+                    91.07037807783855
+                  ]
+                }
+              },
+              "remainder": {
+                "type": "leaf",
+                "degree": 3,
+                "work": 8,
+                "output": 9,
+                "scale": 82.17998649621472,
+                "pre": 112.16244537770211,
+                "encoding_scales": [
+                  71.96244537770211,
+                  51.532528137720035
+                ]
+              }
+            },
+            "remainder": {
+              "type": "combine",
+              "split": 4,
+              "work": 9,
+              "output": 10,
+              "scale": 103.95115836641571,
+              "pre": 133.92772249119668,
+              "quotient": {
+                "type": "leaf",
+                "degree": 3,
+                "work": 8,
+                "output": 9,
+                "scale": 93.06557243131522,
+                "pre": 123.0480313128026,
+                "encoding_scales": [
+                  82.8480313128026,
+                  62.41811407282053
+                ]
+              },
+              "remainder": {
+                "type": "leaf",
+                "degree": 3,
+                "work": 8,
+                "output": 9,
+                "scale": 133.92772249119668,
+                "pre": 163.91018137268406,
+                "encoding_scales": [
+                  123.71018137268406,
+                  103.28026413270199
+                ]
+              }
+            }
+          }
+        },
+        {
+          "degree": 27,
+          "start": 12,
+          "end": 19,
+          "input_scale": 44,
+          "output_scale": 84.90470213560423,
+          "basis_floor": 41,
+          "basis": [
+            {
+              "degree": 2,
+              "work": 12,
+              "output": 13,
+              "pre": 88,
+              "scale": 58.026481993927774
+            },
+            {
+              "degree": 4,
+              "work": 13,
+              "output": 15,
+              "pre": 116.05296398785555,
+              "scale": 56.10879992664485
+            },
+            {
+              "degree": 3,
+              "work": 13,
+              "output": 15,
+              "pre": 102.02648199392777,
+              "scale": 42.082317932717075
+            },
+            {
+              "degree": 8,
+              "work": 15,
+              "output": 17,
+              "pre": 112.2175998532897,
+              "scale": 52.28098850802485
+            },
+            {
+              "degree": 5,
+              "work": 15,
+              "output": 16,
+              "pre": 100.10879992664485,
+              "scale": 70.13869403466092
+            },
+            {
+              "degree": 7,
+              "work": 15,
+              "output": 16,
+              "pre": 98.19111785936192,
+              "scale": 68.22101196737799
+            },
+            {
+              "degree": 16,
+              "work": 17,
+              "output": 19,
+              "pre": 104.5619770160497,
+              "scale": 44.63456270862373
+            }
+          ],
+          "tree": {
+            "type": "combine",
+            "split": 16,
+            "work": 19,
+            "output": 19,
+            "scale": 84.90470213560423,
+            "pre": 84.90470213560423,
+            "quotient": {
+              "type": "combine",
+              "split": 8,
+              "work": 17,
+              "output": 19,
+              "scale": 40.27013942698049,
+              "pre": 100.19755373440648,
+              "quotient": {
+                "type": "leaf",
+                "degree": 3,
+                "work": 15,
+                "output": 17,
+                "scale": 47.916565226381636,
+                "pre": 107.85317657164643,
+                "encoding_scales": [
+                  63.85317657164643,
+                  65.77085863892935
+                ]
+              },
+              "remainder": {
+                "type": "leaf",
+                "degree": 7,
+                "work": 16,
+                "output": 17,
+                "scale": 100.19755373440648,
+                "pre": 130.16405918768737,
+                "encoding_scales": [
+                  86.16405918768737,
+                  88.0817412549703,
+                  60.025365153026456,
+                  61.94304722030938
+                ]
+              }
+            },
+            "remainder": {
+              "type": "combine",
+              "split": 8,
+              "work": 17,
+              "output": 19,
+              "scale": 84.90470213560423,
+              "pre": 144.83211644303026,
+              "quotient": {
+                "type": "leaf",
+                "degree": 7,
+                "work": 16,
+                "output": 17,
+                "scale": 92.55112793500541,
+                "pre": 122.5176333882863,
+                "encoding_scales": [
+                  78.5176333882863,
+                  80.43531545556922,
+                  52.378939353625384,
+                  54.29662142090831
+                ]
+              },
+              "remainder": {
+                "type": "leaf",
+                "degree": 7,
+                "work": 16,
+                "output": 17,
+                "scale": 144.83211644303026,
+                "pre": 174.79862189631115,
+                "encoding_scales": [
+                  130.79862189631115,
+                  132.71630396359407,
+                  104.65992786165023,
+                  106.57760992893316
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "tail_work": 19,
+      "tail_drop": 3,
+      "stage_scales": [
+        40.2,
+        44,
+        84.90470213560423
+      ],
+      "dropped_bits": 654.5285119617752
+    }
+  }
+]

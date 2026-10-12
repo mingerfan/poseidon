@@ -1,0 +1,165 @@
+{
+  "scope": "PUBLIC_MODRAISE_PERIOD_AUDIT",
+  "q0_product": 18108846910416224257,
+  "q_diff": 0.9816825580740343,
+  "prepared_log_scale": 58.97349886989023,
+  "c2s_logical_log_scale": 44.97349886989022,
+  "normalized_step_per_integer_wrap": 0.04074155739499797,
+  "sine_period": 0.04,
+  "periods_per_integer_wrap": 1.0185389348749492,
+  "period_error_fraction": 0.018538934874949176,
+  "period_alignment_pass": false,
+  "cases": [
+    {
+      "input": 0.0,
+      "integer_wrap": 0,
+      "c2s_input": 0.0,
+      "ideal_modular_sine": 0.0,
+      "degree59_output": 1.2905205792890229e-08,
+      "absolute_error": 1.2905205792890229e-08
+    },
+    {
+      "input": 0.0,
+      "integer_wrap": 1,
+      "c2s_input": 0.04074155739499797,
+      "ideal_modular_sine": 0.5810630673310985,
+      "degree59_output": 0.5810630523624365,
+      "absolute_error": 0.5810630523624365
+    },
+    {
+      "input": 0.0,
+      "integer_wrap": 2,
+      "c2s_input": 0.08148311478999594,
+      "ideal_modular_sine": 1.154250937171291,
+      "degree59_output": 1.1542510106744306,
+      "absolute_error": 1.1542510106744306
+    },
+    {
+      "input": 0.0,
+      "integer_wrap": 5,
+      "c2s_input": 0.20370778697498984,
+      "ideal_modular_sine": 2.7500412316664553,
+      "degree59_output": 2.7500412394747196,
+      "absolute_error": 2.7500412394747196
+    },
+    {
+      "input": 0.0,
+      "integer_wrap": 10,
+      "c2s_input": 0.4074155739499797,
+      "ideal_modular_sine": 4.593312386667896,
+      "degree59_output": 4.593312430937462,
+      "absolute_error": 4.593312430937462
+    },
+    {
+      "input": 0.0,
+      "integer_wrap": 15,
+      "c2s_input": 0.6111233609249695,
+      "ideal_modular_sine": 4.922032349838186,
+      "degree59_output": 4.922032361153373,
+      "absolute_error": 4.922032361153373
+    },
+    {
+      "input": 0.05,
+      "integer_wrap": 0,
+      "c2s_input": 6.366620195699438e-05,
+      "ideal_modular_sine": 0.0499991665602281,
+      "degree59_output": 0.04999917979104307,
+      "absolute_error": 8.202089569336879e-07
+    },
+    {
+      "input": 0.05,
+      "integer_wrap": 1,
+      "c2s_input": 0.040805223596954966,
+      "ideal_modular_sine": 0.6306943556317937,
+      "degree59_output": 0.6306943407799048,
+      "absolute_error": 0.5806943407799048
+    },
+    {
+      "input": 0.05,
+      "integer_wrap": 2,
+      "c2s_input": 0.08154678099195294,
+      "ideal_modular_sine": 1.202841690113648,
+      "degree59_output": 1.2028417639064495,
+      "absolute_error": 1.1528417639064494
+    },
+    {
+      "input": 0.05,
+      "integer_wrap": 5,
+      "c2s_input": 0.20377145317694684,
+      "ideal_modular_sine": 2.7916597757261403,
+      "degree59_output": 2.791659783402186,
+      "absolute_error": 2.741659783402186
+    },
+    {
+      "input": 0.05,
+      "integer_wrap": 10,
+      "c2s_input": 0.40747924015193665,
+      "ideal_modular_sine": 4.612827441110264,
+      "degree59_output": 4.612827485163739,
+      "absolute_error": 4.562827485163739
+    },
+    {
+      "input": 0.05,
+      "integer_wrap": 15,
+      "c2s_input": 0.6111870271269265,
+      "ideal_modular_sine": 4.913009222990646,
+      "degree59_output": 4.913009235020978,
+      "absolute_error": 4.863009235020979
+    },
+    {
+      "input": 0.5,
+      "integer_wrap": 0,
+      "c2s_input": 0.0006366620195699437,
+      "ideal_modular_sine": 0.49916697273813077,
+      "degree59_output": 0.49916698900771994,
+      "absolute_error": 0.0008330109922800588
+    },
+    {
+      "input": 0.5,
+      "integer_wrap": 1,
+      "c2s_input": 0.041378219414567916,
+      "ideal_modular_sine": 1.073944133692533,
+      "degree59_output": 1.073944119939978,
+      "absolute_error": 0.573944119939978
+    },
+    {
+      "input": 0.5,
+      "integer_wrap": 2,
+      "c2s_input": 0.08211977680956588,
+      "ideal_modular_sine": 1.6341660378726968,
+      "degree59_output": 1.6341661141142518,
+      "absolute_error": 1.1341661141142518
+    },
+    {
+      "input": 0.5,
+      "integer_wrap": 5,
+      "c2s_input": 0.20434444899455978,
+      "ideal_modular_sine": 3.1531725604255385,
+      "degree59_output": 3.1531725669311674,
+      "absolute_error": 2.6531725669311674
+    },
+    {
+      "input": 0.5,
+      "integer_wrap": 10,
+      "c2s_input": 0.40805223596954965,
+      "ideal_modular_sine": 4.767483727741491,
+      "degree59_output": 4.767483769726895,
+      "absolute_error": 4.267483769726895
+    },
+    {
+      "input": 0.5,
+      "integer_wrap": 15,
+      "c2s_input": 0.6117600229445395,
+      "ideal_modular_sine": 4.8098142514495015,
+      "degree59_output": 4.809814270244519,
+      "absolute_error": 4.309814270244519
+    }
+  ],
+  "diagnostic_counterfactual": {
+    "c2s_logical_log_scale": 45,
+    "periods_per_integer_wrap": 1.0,
+    "remaining_small_signal_message_gain": 0.9817985015200029,
+    "precision_validated": false,
+    "production_modified": false
+  }
+}

@@ -1,0 +1,113 @@
+{
+  "date": "2026-09-16",
+  "hardware": {
+    "gpu": "Tesla V100-SXM2-32GB",
+    "cuda_visible_device": 0,
+    "cuda_total_mib": 32501.125
+  },
+  "configuration": {
+    "scheme": "CKKS",
+    "N": 65536,
+    "Q": 50,
+    "P": 25,
+    "input_q": 32,
+    "stem_output_q": 31,
+    "dnum": 2,
+    "security_approved": false
+  },
+  "online_contract": {
+    "topology": "ResNet20",
+    "blocks": 9,
+    "bootstraps": 18,
+    "single_continuous_graph": true,
+    "per_stage_sync": false,
+    "observer_decryptions": 0,
+    "post_timing_decryptions": 1,
+    "host_device_transfers": 0,
+    "runtime_swaps": false,
+    "intermediate_reencryptions": 0,
+    "starts_after_input_and_public_material_upload": true,
+    "ends_at_encrypted_logits": true,
+    "encrypted_logits_q": 4
+  },
+  "application_keyswitch": {
+    "mode": "fixed_dnum2",
+    "hoisted_rotation": true,
+    "rotation_levels": 6,
+    "relinearization_levels": 13,
+    "relinearization_contexts": 11,
+    "sparse_gpu_parameter_levels": 19,
+    "rotation_key_payload_mib": 1469.0,
+    "relinearization_key_payload_mib": 363.0,
+    "total_key_payload_mib": 1832.0,
+    "active_large_ntt_tables_mib": 862.75,
+    "resident": true,
+    "runtime_swaps": false
+  },
+  "resident_inventory": {
+    "standard_direct_rotations": 109,
+    "double_hoist_rotations": 39,
+    "input_ciphertexts": 27,
+    "stem_plaintexts": 28,
+    "conv_plaintexts": 1696,
+    "shortcut_plaintexts": 48,
+    "relu_plaintexts_reused_by_all_19_relu_calls": 46,
+    "head_plaintexts": 93,
+    "s2c_diagonals": 158,
+    "c2s_diagonals": 158,
+    "pool_initial_gib": 30,
+    "pool_cap_gib": 30,
+    "cuda_free_after_prepared_warmup_mib": 1470.375
+  },
+  "timing_ms": {
+    "end_to_end_wall": 7218.232339,
+    "cuda_event_default_stream_span": 7227.673828125,
+    "cupti_gpu_activity_union": 7058.020744,
+    "host_enqueue": 7203.87564
+  },
+  "gpu_breakdown_ms": {
+    "bootstrap_total_18": 5132.198665,
+    "bootstrap_S2C_18": 348.998482,
+    "bootstrap_prepare_18": 0.18896,
+    "bootstrap_ModRaise_18": 8.204673,
+    "bootstrap_C2S_18": 1971.021055,
+    "bootstrap_EvalMod_36_calls": 2751.611998,
+    "bootstrap_recombine_18": 52.173497,
+    "relu_19": 1180.926338,
+    "conv_bn_18": 699.366365,
+    "stem_conv_bn": 2.959454,
+    "residual_clone_and_add_9": 0.505496,
+    "shortcut_2": 29.649602,
+    "head_1": 12.414824,
+    "category_sum": 7058.020744,
+    "category_overlap": 0.0
+  },
+  "gpu_category_ms": {
+    "Conv+BN": 702.325819,
+    "ReLU": 1180.926338,
+    "Bootstrap": 5132.198665,
+    "Shortcut": 29.649602,
+    "Pool+FC": 12.414824,
+    "Residual/copy": 0.505496,
+    "total": 7058.020744
+  },
+  "accuracy": {
+    "result": "PASS",
+    "true_label": 3,
+    "plain_prediction": 3,
+    "gpu_prediction": 3,
+    "max_logit_error": 0.01248775229269938,
+    "max_logit_imag": 0.00008903595411059742
+  },
+  "cupti": {
+    "activities": 115789,
+    "host_transfers": 0,
+    "host_transfer_bytes": 0
+  },
+  "artifacts": {
+    "local_log": "/tmp/poseidon_resnet20_q32_sparse_params_full.log",
+    "local_log_sha256": "f2d28d1c8ac295e5f0846320d1fd97a1afd22d86e5a949c0cd0431967855fae7",
+    "local_binary": "/tmp/poseidon_resnet20_s2c_first_sparse",
+    "local_binary_sha256": "50bda61129d9f408158ea4964af31e12f2af32bf0d5112060536641a6a959710"
+  }
+}

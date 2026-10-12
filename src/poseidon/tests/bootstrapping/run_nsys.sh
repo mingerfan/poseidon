@@ -142,7 +142,7 @@ fi
 # Profile a single full GPU bootstrap. The test binary still performs setup and
 # one warmup outside the profiler capture range, so the Nsight timeline starts
 # at the measured bootstrap rather than at CPU matrix/key preparation.
-export POSEIDON_BOOTSTRAP_PROFILE="${POSEIDON_BOOTSTRAP_PROFILE:-dynamic32}"
+export POSEIDON_BOOTSTRAP_PROFILE="${POSEIDON_BOOTSTRAP_PROFILE:-slim22_da3_c2s5433}"
 export POSEIDON_NTT_ALGO="${POSEIDON_NTT_ALGO:-fourstep}"
 export POSEIDON_KEYSWITCH_FOURSTEP_ALL_NTT="${POSEIDON_KEYSWITCH_FOURSTEP_ALL_NTT:-1}"
 export POSEIDON_KEYSWITCH_FOURSTEP_PHASE2_MAC="${POSEIDON_KEYSWITCH_FOURSTEP_PHASE2_MAC:-1}"
@@ -211,6 +211,15 @@ export POSEIDON_BOOTSTRAP_STAGE_PROFILE_ITERATIONS="${POSEIDON_BOOTSTRAP_STAGE_P
 # launches TEST_BIN directly after the build, so reproduce the profile-derived
 # runtime settings here instead of losing them at that process boundary.
 case "${POSEIDON_BOOTSTRAP_PROFILE}" in
+    evalmod30_da3_no_hoist)
+        export POSEIDON_GPU_LINEAR_TRANSFORM_MODE=no_hoist
+        export POSEIDON_BOOTSTRAP_EVALMOD_SINE_DEGREE=30
+        export POSEIDON_BOOTSTRAP_EVALMOD_GENERATION_DEGREE=30
+        unset POSEIDON_BOOTSTRAP_EVALMOD_TRUNCATE_DEGREE
+        unset POSEIDON_BOOTSTRAP_EVALMOD_FIXED_DEGREE_REFIT
+        export POSEIDON_BOOTSTRAP_EVALMOD_DOUBLE_ANGLE=3
+        export POSEIDON_BOOTSTRAP_EVALMOD_K=16
+        ;;
     slim59_da2)
         export POSEIDON_BOOTSTRAP_SLIM_STC_EVALMOD_PROBE=1
         export POSEIDON_BOOTSTRAP_EVALMOD_SINE_DEGREE=59
