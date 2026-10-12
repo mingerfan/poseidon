@@ -1,0 +1,543 @@
+{
+  "description": "Raw profiler captures archived outside the current source tree; build inputs, summaries, scripts and DSL are retained.",
+  "excluded_from_current_tree": true,
+  "git_history_rewritten": false,
+  "source_commit": "bfa264a991736bf2012755d67388fd280be34371",
+  "upstream_commit_with_identical_raw_files": "fcd31d648ae0529400aacbf61aab600bbac291cc",
+  "file_count": 106,
+  "total_bytes": 385306516,
+  "restore_one_file": "git restore --source=fcd31d648ae0529400aacbf61aab600bbac291cc --worktree -- <path>",
+  "restore_note": "Restored captures remain ignored. Restore the required files before rerunning historical trace-analysis scripts, or point configurable tools at a local archive. Summaries and reproducible source scripts remain tracked.",
+  "files": [
+    {
+      "path": "test-results/direct-single-thread-4gpu-560ebec/single-thread-4gpu-repeat.nsys-rep",
+      "bytes": 1550733,
+      "git_blob": "9c954866453825bcb212d09aab889604f3ff5712"
+    },
+    {
+      "path": "test-results/direct-single-thread-4gpu-560ebec/single-thread-4gpu-repeat.sqlite",
+      "bytes": 4661248,
+      "git_blob": "93b77a3f589219be0e205f771276cd72cecadbf5"
+    },
+    {
+      "path": "test-results/direct-single-thread-4gpu-560ebec/single-thread-4gpu.nsys-rep",
+      "bytes": 1549864,
+      "git_blob": "e199a0e23fe8a16c106950277a1448639df9e73b"
+    },
+    {
+      "path": "test-results/e2e-new-profile-e63ec18/runs-single-plan-ab/nsys-new.nsys-rep",
+      "bytes": 1420563,
+      "git_blob": "96a4280ebf55835bf8fd42d8efb176fd74fa97fd"
+    },
+    {
+      "path": "test-results/e2e-new-profile-e63ec18/runs-single-plan-ab/nsys-new.sqlite",
+      "bytes": 4157440,
+      "git_blob": "bcb30a4a5aa7f6487d2f798fe6c30c1742c9fc4c"
+    },
+    {
+      "path": "test-results/e2e-new-profile-e63ec18/runs-single-plan-ab/nsys-old.nsys-rep",
+      "bytes": 1419430,
+      "git_blob": "4daa6145671c4b18f16cf16fb357236c92506a85"
+    },
+    {
+      "path": "test-results/e2e-new-profile-e63ec18/runs-single-plan-ab/nsys-old.sqlite",
+      "bytes": 4161536,
+      "git_blob": "6ce2b6c7f1d7f03e36aa54d745a5b759f53ac273"
+    },
+    {
+      "path": "test-results/gpu-runtime-parallel-probe-65536/nsight-corrected/4gpu-lowcomm-naive.nsys-rep",
+      "bytes": 4482872,
+      "git_blob": "678c9d893597146e46735fd5df4333a4a81275e0"
+    },
+    {
+      "path": "test-results/gpu-runtime-parallel-probe-65536/nsight-corrected/4gpu-lowcomm-naive.sqlite",
+      "bytes": 13897728,
+      "git_blob": "35ae4188ec2092f780fbdbe8cd7fff002c9934c1"
+    },
+    {
+      "path": "test-results/gpu-runtime-parallel-probe-65536/nsight-pool24g-comm/4gpu-fullcomm-naive.nsys-rep",
+      "bytes": 4863256,
+      "git_blob": "bccdc4b798d7b65ef985aa97095d3f04b38975a5"
+    },
+    {
+      "path": "test-results/gpu-runtime-parallel-probe-65536/nsight-pool24g-comm/4gpu-fullcomm-naive.sqlite",
+      "bytes": 14483456,
+      "git_blob": "effe9889f4ee358133ba0b46d0b557e19b4be410"
+    },
+    {
+      "path": "test-results/gpu-runtime-parallel-probe-65536/nsight-pool24g-interleaved/4gpu-interleaved-dependency.nsys-rep",
+      "bytes": 4878205,
+      "git_blob": "1138dad7bb93ed3c7e73601d2319d6db00f52ea2"
+    },
+    {
+      "path": "test-results/gpu-runtime-parallel-probe-65536/nsight-pool24g-interleaved/4gpu-interleaved-dependency.sqlite",
+      "bytes": 14618624,
+      "git_blob": "10c1780f149a95c5f107bb18df3bcc3955968c70"
+    },
+    {
+      "path": "test-results/gpu-runtime-parallel-probe-65536/nsight-pool24g-interleaved/4gpu-interleaved-naive.nsys-rep",
+      "bytes": 5076761,
+      "git_blob": "ff84dfcc9ca262c9e365be6df404b6e091eede36"
+    },
+    {
+      "path": "test-results/gpu-runtime-parallel-probe-65536/nsight-pool24g-interleaved/4gpu-interleaved-naive.sqlite",
+      "bytes": 14999552,
+      "git_blob": "13289c470b501f592ea066bafa19dcd9816877e9"
+    },
+    {
+      "path": "test-results/gpu-runtime-parallel-probe-65536/nsight-pool24g/1gpu.nsys-rep",
+      "bytes": 3911195,
+      "git_blob": "43ec8c0f9f2d9b7660898f2c62bf93b6cbaf41e0"
+    },
+    {
+      "path": "test-results/gpu-runtime-parallel-probe-65536/nsight-pool24g/1gpu.sqlite",
+      "bytes": 12099584,
+      "git_blob": "cca98cdf52a0f6f1302d4eb780a2737134bf6276"
+    },
+    {
+      "path": "test-results/gpu-runtime-parallel-probe-65536/nsight-pool24g/4gpu-lowcomm-naive.nsys-rep",
+      "bytes": 4818406,
+      "git_blob": "00c81815d004d026e076dbce78bd85c9bbde263b"
+    },
+    {
+      "path": "test-results/gpu-runtime-parallel-probe-65536/nsight-pool24g/4gpu-lowcomm-naive.sqlite",
+      "bytes": 14327808,
+      "git_blob": "baf86106f2cd28c33a227a946a8caad52086d4e5"
+    },
+    {
+      "path": "test-results/gpu-runtime-parallel-probe-65536/nsight-pool8g/1gpu.nsys-rep",
+      "bytes": 3861332,
+      "git_blob": "77abbb661e9b60dbcc456daf4270ca4724eb32da"
+    },
+    {
+      "path": "test-results/gpu-runtime-parallel-probe-65536/nsight-pool8g/1gpu.sqlite",
+      "bytes": 11976704,
+      "git_blob": "fdfe82d2f2176180751caa59dd22c144af53cc5c"
+    },
+    {
+      "path": "test-results/gpu-runtime-parallel-probe-65536/nsight-pool8g/4gpu-lowcomm-naive.nsys-rep",
+      "bytes": 4807769,
+      "git_blob": "4a1b505e08769c0e5312d84db8ce0a479af22d81"
+    },
+    {
+      "path": "test-results/gpu-runtime-parallel-probe-65536/nsight-pool8g/4gpu-lowcomm-naive.sqlite",
+      "bytes": 14303232,
+      "git_blob": "402224fa34ef7f2a2388f19f79b8a68ab9a1b669"
+    },
+    {
+      "path": "test-results/gpu-runtime-parallel-probe-65536/nsight/4gpu-no-comm-naive.nsys-rep",
+      "bytes": 4574603,
+      "git_blob": "f286c7f54b4894186849d707736864f1d0f00b48"
+    },
+    {
+      "path": "test-results/gpu-runtime-parallel-probe-65536/nsight/4gpu-no-comm-naive.sqlite",
+      "bytes": 13983744,
+      "git_blob": "67e65b11e60641eaafef3cc1e737655220bc1316"
+    },
+    {
+      "path": "test-results/mlp-65536-workers-20260812/nsight/1x1-naive.nsys-rep",
+      "bytes": 2267757,
+      "git_blob": "23b42f6052cdcca06351160d5166e1fb4a97d556"
+    },
+    {
+      "path": "test-results/mlp-65536-workers-20260812/nsight/1x1-naive.sqlite",
+      "bytes": 7766016,
+      "git_blob": "3434ecf7e1a1f02a31fdd43106a47e275470315e"
+    },
+    {
+      "path": "test-results/mlp-65536-workers-20260812/nsight/1x4-dependency.nsys-rep",
+      "bytes": 3148332,
+      "git_blob": "482d8e4586de9c189d38383cda2ac3a608ff13ac"
+    },
+    {
+      "path": "test-results/mlp-65536-workers-20260812/nsight/1x4-dependency.sqlite",
+      "bytes": 11411456,
+      "git_blob": "1abc2a35f0de290fc9558705831ccc83e237132b"
+    },
+    {
+      "path": "test-results/mlp-65536-workers-20260812/nsight/1x4-naive.nsys-rep",
+      "bytes": 3051263,
+      "git_blob": "5f022b0281d98820de5604e39d24d399dca1dca9"
+    },
+    {
+      "path": "test-results/mlp-65536-workers-20260812/nsight/1x4-naive.sqlite",
+      "bytes": 11177984,
+      "git_blob": "9f8fb409b88fee226588665616fabc6c84963c60"
+    },
+    {
+      "path": "test-results/nsight-188server-20260728/1gpu-serial-explain.nsys-rep",
+      "bytes": 1436757,
+      "git_blob": "6c310ac9d4c7e406089922e9688aef97f2ae84a9"
+    },
+    {
+      "path": "test-results/nsight-188server-20260728/1gpu-serial-explain.sqlite",
+      "bytes": 4210688,
+      "git_blob": "91920691fe0306a5f3c6c4475260d10db0c4fad9"
+    },
+    {
+      "path": "test-results/nsight-188server-20260728/4gpu-wall-breakdown.nsys-rep",
+      "bytes": 1940548,
+      "git_blob": "2a6ce8ac20eb06257f32d94a010f6a7f2c399e18"
+    },
+    {
+      "path": "test-results/nsight-188server-20260728/4gpu-wall-breakdown.sqlite",
+      "bytes": 5808128,
+      "git_blob": "e17697fb1325f7af4e99a78cf3786b5ca5f503c4"
+    },
+    {
+      "path": "test-results/nsight-compare/1gpu-direct.nsys-rep",
+      "bytes": 939862,
+      "git_blob": "5f0e5551f6110359c7e6296aedecd6bf5abb472f"
+    },
+    {
+      "path": "test-results/nsight-compare/1gpu-direct.sqlite",
+      "bytes": 2482176,
+      "git_blob": "6782ce88defe702c77f2e15bdabb1b8546170462"
+    },
+    {
+      "path": "test-results/nsight-compare/4gpu-direct.nsys-rep",
+      "bytes": 1300224,
+      "git_blob": "98f56e1d166dc79c97d5637362bd3e35ccd39509"
+    },
+    {
+      "path": "test-results/nsight-compare/4gpu-direct.sqlite",
+      "bytes": 3256320,
+      "git_blob": "000e3f09e4adfd00334ee5e6364e29a91b1e5d2f"
+    },
+    {
+      "path": "test-results/nsight-direct-560ebec/direct-1gpu.nsys-rep",
+      "bytes": 1189142,
+      "git_blob": "187286ce9e0121ea5a02f3dd14a89a3cfac6bd43"
+    },
+    {
+      "path": "test-results/nsight-direct-560ebec/direct-1gpu.sqlite",
+      "bytes": 3461120,
+      "git_blob": "518f55db05a5ca4f284bce0e6f101251558b0f85"
+    },
+    {
+      "path": "test-results/nsight-direct-560ebec/direct-4gpu.nsys-rep",
+      "bytes": 1737440,
+      "git_blob": "0f5a9438e684bdf391d8e45c04b91fe135512dc6"
+    },
+    {
+      "path": "test-results/nsight-direct-560ebec/direct-4gpu.sqlite",
+      "bytes": 5042176,
+      "git_blob": "51c11e8bce7c83e0fd7f034dac121b5cbfe48d59"
+    },
+    {
+      "path": "test-results/nsight-final-b6718e6/dependency-events.nsys-rep",
+      "bytes": 2186451,
+      "git_blob": "0bb94e000389a8fc98727fdb0e37f674a925d7ea"
+    },
+    {
+      "path": "test-results/nsight-final-b6718e6/dependency-events.sqlite",
+      "bytes": 6610944,
+      "git_blob": "eac4522eabd45c459fda1dd3b7a32073521ffe7a"
+    },
+    {
+      "path": "test-results/nsight-final-b6718e6/dependency-warm.nsys-rep",
+      "bytes": 2240145,
+      "git_blob": "134f0c6719677e9f3596bc50ab1c14a3b2d2d342"
+    },
+    {
+      "path": "test-results/nsight-final-b6718e6/dependency-warm.sqlite",
+      "bytes": 6569984,
+      "git_blob": "0c1a63dc9fc0021b6c149d7a09c646d483481ddd"
+    },
+    {
+      "path": "test-results/nsight-final-b6718e6/dependency.nsys-rep",
+      "bytes": 2231401,
+      "git_blob": "00ca0aed611593762960f688d11b5fb8aaaa369b"
+    },
+    {
+      "path": "test-results/nsight-final-b6718e6/dependency.sqlite",
+      "bytes": 6590464,
+      "git_blob": "b01dde023bacddedf6c398851083519f43c94f1f"
+    },
+    {
+      "path": "test-results/nsight-level-mlp/mlp-4gpu.nsys-rep",
+      "bytes": 1685140,
+      "git_blob": "3fb981592d5b372efe70573912563ddf3a995550"
+    },
+    {
+      "path": "test-results/nsight-level-mlp/mlp-4gpu.sqlite",
+      "bytes": 4599808,
+      "git_blob": "feef4d7d48ea8f37fc61ed08fdab60083c12996f"
+    },
+    {
+      "path": "test-results/nsight-level-test/demo-level.nsys-rep",
+      "bytes": 897263,
+      "git_blob": "4af750626d8e56a11672eb815b2c5ebde06996cc"
+    },
+    {
+      "path": "test-results/nsight-osrt/1gpu-direct-osrt.nsys-rep",
+      "bytes": 1211998,
+      "git_blob": "d83604eb185f80d33a94697515063feec0f2f37b"
+    },
+    {
+      "path": "test-results/nsight-osrt/1gpu-direct-osrt.sqlite",
+      "bytes": 3530752,
+      "git_blob": "1847ddcc6408d58886cb0c766d3beb1a33a27405"
+    },
+    {
+      "path": "test-results/nsight-osrt/4gpu-direct-osrt.nsys-rep",
+      "bytes": 1728453,
+      "git_blob": "7f47cabff4d766818ed8570eb1371d0ac4bb8002"
+    },
+    {
+      "path": "test-results/nsight-osrt/4gpu-direct-osrt.sqlite",
+      "bytes": 5021696,
+      "git_blob": "ac490d7caa8c837e5ddc2e702682165e55c15af8"
+    },
+    {
+      "path": "test-results/nsight-ready-backfill-47e21e6/ready-backfill.nsys-rep",
+      "bytes": 2100433,
+      "git_blob": "012d2d0ebaa0d9ef38bc02ea8b84af70e446673c"
+    },
+    {
+      "path": "test-results/nsight-ready-backfill-47e21e6/ready-backfill.sqlite",
+      "bytes": 6098944,
+      "git_blob": "7e0e827fbaa3622ac271d540bd97e9aaf584187a"
+    },
+    {
+      "path": "test-results/nsight-worker-prototype-f50cb7e/sequential.nsys-rep",
+      "bytes": 1942108,
+      "git_blob": "eaccc9067feda29b0dd1604376056223afd1fc51"
+    },
+    {
+      "path": "test-results/nsight-worker-prototype-f50cb7e/sequential.sqlite",
+      "bytes": 6111232,
+      "git_blob": "aad34d93bce3d6e8778622e05882edbeea382d39"
+    },
+    {
+      "path": "test-results/nsight-worker-prototype-f50cb7e/workers.nsys-rep",
+      "bytes": 2119315,
+      "git_blob": "ae00641e1020d6afcd01d58644731eef2efe5c96"
+    },
+    {
+      "path": "test-results/nsight-worker-prototype-f50cb7e/workers.sqlite",
+      "bytes": 6381568,
+      "git_blob": "3a030fa2addb1e00b8196389b9711e085ed42b24"
+    },
+    {
+      "path": "test-results/p2p-bench/dual_thread.nsys-rep",
+      "bytes": 371517,
+      "git_blob": "8d3645550362b9e7bb7ede8ac05e72994c4bcda6"
+    },
+    {
+      "path": "test-results/p2p-bench/dual_thread.sqlite",
+      "bytes": 937984,
+      "git_blob": "afcc8cccc1c009e6feba8d0bb132d0a672421a66"
+    },
+    {
+      "path": "test-results/p2p-bench/keyswitch-mt/keyswitch_mt_5090_t1.nsys-rep",
+      "bytes": 304932,
+      "git_blob": "1fb750e68e01b003b5b70e72efa56901fe7df9d1"
+    },
+    {
+      "path": "test-results/p2p-bench/keyswitch-mt/keyswitch_mt_5090_t1.sqlite",
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "test-results/p2p-bench/keyswitch-mt/keyswitch_mt_5090_t2.nsys-rep",
+      "bytes": 499900,
+      "git_blob": "bff9e5b6f49570938450a2b736471b43a426bcf5"
+    },
+    {
+      "path": "test-results/p2p-bench/keyswitch-mt/keyswitch_mt_5090_t4.nsys-rep",
+      "bytes": 896479,
+      "git_blob": "cf6451dceab9b2f49dd8c8d89dba244b75deba7d"
+    },
+    {
+      "path": "test-results/p2p-bench/keyswitch-mt/keyswitch_mt_5090_t8.nsys-rep",
+      "bytes": 1676781,
+      "git_blob": "f5a8ae8aa4f46f88ad897c50b34e20c42bcf8e1d"
+    },
+    {
+      "path": "test-results/p2p-bench/keyswitch-mt/keyswitch_mt_d0_t1.nsys-rep",
+      "bytes": 460549,
+      "git_blob": "806dfe801a4f9c940d0652fc528d7b93d2a7a594"
+    },
+    {
+      "path": "test-results/p2p-bench/keyswitch-mt/keyswitch_mt_d0_t2.nsys-rep",
+      "bytes": 638556,
+      "git_blob": "d64e04f04722c52be8235a62e25f59d7b562e9fe"
+    },
+    {
+      "path": "test-results/p2p-bench/keyswitch-mt/keyswitch_mt_d0_t4.nsys-rep",
+      "bytes": 1007123,
+      "git_blob": "bc1f18f041b47bc7f831695de67e05dd6e9feae1"
+    },
+    {
+      "path": "test-results/p2p-bench/keyswitch-mt/keyswitch_mt_d0_t8.nsys-rep",
+      "bytes": 1709211,
+      "git_blob": "1e7d9e6bf031d5bfe7dc43e41af2554e5544c8af"
+    },
+    {
+      "path": "test-results/p2p-bench/keyswitch-mt/keyswitch_mt_d0_t8.sqlite",
+      "bytes": 0,
+      "git_blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "test-results/p2p-bench/keyswitch-mt/keyswitch_mt_d1_t1.nsys-rep",
+      "bytes": 457811,
+      "git_blob": "43c81ac41878f8711645f5180a226bdf1a8c016b"
+    },
+    {
+      "path": "test-results/p2p-bench/keyswitch-mt/keyswitch_mt_d1_t2.nsys-rep",
+      "bytes": 634425,
+      "git_blob": "27e408cbc74549ae445bc9f2ac5ce4fb4c676409"
+    },
+    {
+      "path": "test-results/p2p-bench/keyswitch-mt/keyswitch_mt_d1_t4.nsys-rep",
+      "bytes": 1002420,
+      "git_blob": "9511e1d1e567d9f3f44e9e8e5b94a7f87a55b074"
+    },
+    {
+      "path": "test-results/p2p-bench/keyswitch-mt/keyswitch_mt_d1_t8.nsys-rep",
+      "bytes": 1704046,
+      "git_blob": "46e8098369ccdb6c9438fa9ba36b59ef17c41da1"
+    },
+    {
+      "path": "test-results/p2p-bench/keyswitch-mt/keyswitch_mt_t1.nsys-rep",
+      "bytes": 453681,
+      "git_blob": "eea2284bb50dc23fb53a9db656cfa12b9a71b4a4"
+    },
+    {
+      "path": "test-results/p2p-bench/keyswitch-mt/keyswitch_mt_t1.sqlite",
+      "bytes": 1347584,
+      "git_blob": "56a215cd22fbfc0351e13f4788dd821195b25f02"
+    },
+    {
+      "path": "test-results/p2p-bench/keyswitch-mt/keyswitch_mt_t2.nsys-rep",
+      "bytes": 735547,
+      "git_blob": "9e7911a610ea6e6b7350cfe7e7878375d2a5e31d"
+    },
+    {
+      "path": "test-results/p2p-bench/keyswitch-mt/keyswitch_mt_t2.sqlite",
+      "bytes": 2052096,
+      "git_blob": "e60777d8c6c97d7257445ffeb49106d7a07d8a7d"
+    },
+    {
+      "path": "test-results/p2p-bench/keyswitch-mt/keyswitch_mt_t4.nsys-rep",
+      "bytes": 1365031,
+      "git_blob": "7f3c1cc2d8afcbfb49874aa487f66d2716f3911c"
+    },
+    {
+      "path": "test-results/p2p-bench/keyswitch-mt/keyswitch_mt_t4.sqlite",
+      "bytes": 3641344,
+      "git_blob": "1003b9962f9ad489f55f39bd990e1ce69bb353a6"
+    },
+    {
+      "path": "test-results/p2p-bench/keyswitch-mt/mlp-5090-1gpu.nsys-rep",
+      "bytes": 1129949,
+      "git_blob": "0b4b7362e1503eb2cbb57151551a09b44f104c60"
+    },
+    {
+      "path": "test-results/p2p-bench/keyswitch-mt/mlp-5090-4gpu.nsys-rep",
+      "bytes": 1531843,
+      "git_blob": "31e7462ea5bf01df026bdaaed8e44a719bf89d0b"
+    },
+    {
+      "path": "test-results/p2p-bench/keyswitch-mt/mlp-5090-dep.nsys-rep",
+      "bytes": 1617629,
+      "git_blob": "cc2861c842d0e0a745d4477598871d72aaf0c170"
+    },
+    {
+      "path": "test-results/p2p-bench/keyswitch-mt/mlp-5090-w-1gpu.nsys-rep",
+      "bytes": 1144287,
+      "git_blob": "aad05a887c377bf04b4e3934f83874f122df465b"
+    },
+    {
+      "path": "test-results/p2p-bench/keyswitch-mt/mlp-5090-w-4gpu.nsys-rep",
+      "bytes": 1614086,
+      "git_blob": "9b50bddd6e4ef37ebeca63bbeae0dff4b6b681b2"
+    },
+    {
+      "path": "test-results/p2p-bench/keyswitch_dual.nsys-rep",
+      "bytes": 1138824,
+      "git_blob": "555343fe0b75537734527b19fba6b9ba707a078e"
+    },
+    {
+      "path": "test-results/p2p-bench/keyswitch_dual.sqlite",
+      "bytes": 2895872,
+      "git_blob": "e7452a43ec60fbc6045460e345c5252956560c37"
+    },
+    {
+      "path": "test-results/p2p-bench/keyswitch_dual_osrt.nsys-rep",
+      "bytes": 1548072,
+      "git_blob": "78c6a3f4f12e13256bfed234e8ae2caa6349b498"
+    },
+    {
+      "path": "test-results/p2p-bench/keyswitch_dual_osrt.sqlite",
+      "bytes": 4825088,
+      "git_blob": "ed444d068c67eae30248b1a1baa3e5da88d44ec7"
+    },
+    {
+      "path": "test-results/p2p-bench/keyswitch_single_local.nsys-rep",
+      "bytes": 515526,
+      "git_blob": "cc2312e19da95f2e8a865e7f689b03c837b7b2d0"
+    },
+    {
+      "path": "test-results/p2p-bench/keyswitch_single_local.sqlite",
+      "bytes": 1560576,
+      "git_blob": "800ea752f6f451990651d68deb706cb029a63e2f"
+    },
+    {
+      "path": "test-results/p2p-bench/keyswitch_single_server.nsys-rep",
+      "bytes": 487973,
+      "git_blob": "bfa67178ab3f946b156396003bde2e080cc40803"
+    },
+    {
+      "path": "test-results/p2p-bench/keyswitch_single_server.sqlite",
+      "bytes": 1323008,
+      "git_blob": "be8b38c55e97db015ef47f5b4b95a7b1ba4aa47a"
+    },
+    {
+      "path": "test-results/p2p-bench/p2p_clean.nsys-rep",
+      "bytes": 855280,
+      "git_blob": "f7aac867498e34ae088f74cece7c4c8548874756"
+    },
+    {
+      "path": "test-results/p2p-bench/p2p_clean.sqlite",
+      "bytes": 2232320,
+      "git_blob": "dfcc2f58c9e3533184527c47de900a86d6df058c"
+    },
+    {
+      "path": "test-results/p2p-bench/p2p_single.nsys-rep",
+      "bytes": 830633,
+      "git_blob": "50a1d10c483024f7ca74c004823dc0d40fa0da41"
+    },
+    {
+      "path": "test-results/p2p-bench/p2p_single.sqlite",
+      "bytes": 2220032,
+      "git_blob": "9439801a9a0532d22de5804e0158a737184a17f6"
+    },
+    {
+      "path": "test-results/p2p-bench/p2p_single2.nsys-rep",
+      "bytes": 539187,
+      "git_blob": "875a5bbff40ca25bac1a4165ae175211a112a9b0"
+    },
+    {
+      "path": "test-results/p2p-bench/p2p_single2.sqlite",
+      "bytes": 1429504,
+      "git_blob": "0dd0f0bb26f448cf4555954effd8217daf01779a"
+    },
+    {
+      "path": "test-results/p2p-bench/real_kernel.nsys-rep",
+      "bytes": 352853,
+      "git_blob": "6d98788e1090af15dcb67412233c6ab0344e3885"
+    },
+    {
+      "path": "test-results/p2p-bench/real_kernel.sqlite",
+      "bytes": 913408,
+      "git_blob": "7d016285dcf5431bac9c6f2ddce6c4cdc36db391"
+    },
+    {
+      "path": "test-results/persistent-transfer-d8376d5/dependency.sqlite",
+      "bytes": 6332416,
+      "git_blob": "38315e7007c3db68b7a083d8c1b87fb48e7ecb23"
+    }
+  ]
+}

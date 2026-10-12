@@ -11,3 +11,12 @@ compile_commands.json
 stubs/
 __pycache__/
 *.py[cod]
+
+# Raw profiler output is archived locally, not shipped in the source tree.
+# Inventory and restore command: test-results/raw-profile-artifacts.json
+/test-results/**/*.nsys-rep
+/test-results/**/*.sqlite
+/test-results/**/*.sqlite-shm
+/test-results/**/*.sqlite-wal
+/test-results/**/*.ncu-rep
+/test-results/**/*.qdrep
