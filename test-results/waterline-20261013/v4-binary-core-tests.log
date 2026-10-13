@@ -1,0 +1,21 @@
+Test project /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-resource-audit
+    Start 1: runtime_binary_plan_tests
+1/8 Test #1: runtime_binary_plan_tests ........   Passed    0.03 sec
+    Start 2: runtime_waterline_tests
+2/8 Test #2: runtime_waterline_tests ..........   Passed    3.27 sec
+    Start 3: pack_plaintext_bundle_tests
+3/8 Test #3: pack_plaintext_bundle_tests ......   Passed    0.22 sec
+    Start 4: runtime_tests
+4/8 Test #4: runtime_tests ....................   Passed    0.06 sec
+    Start 5: runtime_plan_json_tests
+5/8 Test #5: runtime_plan_json_tests ..........   Passed    0.04 sec
+    Start 6: runtime_plan_memory_tests
+6/8 Test #6: runtime_plan_memory_tests ........   Passed    0.03 sec
+    Start 7: runtime_release_tests
+7/8 Test #7: runtime_release_tests ............   Passed   32.44 sec
+    Start 8: thread_trace_tests
+8/8 Test #8: thread_trace_tests ...............   Passed    0.00 sec
+
+100% tests passed out of 8
+
+Total Test time (real) =  36.11 sec

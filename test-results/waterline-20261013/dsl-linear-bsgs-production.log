@@ -1,0 +1,21 @@
+PASS linear q_proj 2048x1024 dense: max_abs=5.773159728050814e-15 output_tail=0.0 input_tail_contamination=0.0
+PASS linear q_proj 2048x1024 short_logical_tail: max_abs=4.8849813083506888e-15 output_tail=0.0 input_tail_contamination=0.0
+PASS linear k_proj 1024x1024 dense: max_abs=4.8849813083506888e-15 output_tail=0.0 input_tail_contamination=0.0
+PASS linear k_proj 1024x1024 short_logical_tail: max_abs=7.1054273576010019e-15 output_tail=0.0 input_tail_contamination=0.0
+PASS linear v_proj 1024x1024 dense: max_abs=4.4408920985006262e-15 output_tail=0.0 input_tail_contamination=0.0
+PASS linear v_proj 1024x1024 short_logical_tail: max_abs=3.9968028886505635e-15 output_tail=0.0 input_tail_contamination=0.0
+PASS linear o_proj 1024x2048 dense: max_abs=1.1102230246251565e-14 output_tail=0.0 input_tail_contamination=0.0
+PASS linear o_proj 1024x2048 short_logical_tail: max_abs=1.0658141036401503e-14 output_tail=0.0 input_tail_contamination=0.0
+PASS linear gate_proj 3072x1024 dense: max_abs=8.4376949871511897e-15 output_tail=0.0 input_tail_contamination=0.0
+PASS linear gate_proj 3072x1024 short_logical_tail: max_abs=8.4376949871511897e-15 output_tail=0.0 input_tail_contamination=0.0
+PASS linear up_proj 3072x1024 dense: max_abs=7.1054273576010019e-15 output_tail=0.0 input_tail_contamination=0.0
+PASS linear up_proj 3072x1024 short_logical_tail: max_abs=6.6613381477509392e-15 output_tail=0.0 input_tail_contamination=0.0
+PASS linear down_proj 1024x3072 dense: max_abs=1.021405182655144e-14 output_tail=0.0 input_tail_contamination=0.0
+PASS linear down_proj 1024x3072 short_logical_tail: max_abs=1.0658141036401503e-14 output_tail=0.0 input_tail_contamination=0.0
+PASS small production BSGS block=1 shape=1x1 bias max_abs=0 tail=0.0
+PASS small production BSGS block=1 shape=2x1 bias max_abs=0 tail=0.0
+PASS small production BSGS block=2 shape=1x2 bias max_abs=0 tail=0.0
+PASS small production BSGS block=5 shape=3x5 bias max_abs=4.4408920985006262e-16 tail=0.0
+PASS small production BSGS block=9 shape=17x9 bias max_abs=1.7763568394002505e-15 tail=0.0
+PASS small production BSGS block=35 shape=70x35 bias max_abs=3.5527136788005009e-15 tail=0.0
+PASS small production BSGS block=64 shape=129x71 bias max_abs=1.0658141036401503e-14 tail=0.0

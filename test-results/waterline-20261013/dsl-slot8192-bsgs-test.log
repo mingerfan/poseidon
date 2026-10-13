@@ -1,0 +1,28 @@
+PASS complete interface: N=16384 slots=8192 layers=28 inputs=2 outputs=261 logits=151936 chunks=149 last_chunk=384
+PASS linear q_proj 2048x1024 dense: max_abs=5.773159728050814e-15 output_tail=0.0 input_tail_contamination=0.0
+PASS linear q_proj 2048x1024 short_logical_tail: max_abs=4.8849813083506888e-15 output_tail=0.0 input_tail_contamination=0.0
+PASS linear k_proj 1024x1024 dense: max_abs=4.8849813083506888e-15 output_tail=0.0 input_tail_contamination=0.0
+PASS linear k_proj 1024x1024 short_logical_tail: max_abs=7.1054273576010019e-15 output_tail=0.0 input_tail_contamination=0.0
+PASS linear v_proj 1024x1024 dense: max_abs=4.4408920985006262e-15 output_tail=0.0 input_tail_contamination=0.0
+PASS linear v_proj 1024x1024 short_logical_tail: max_abs=3.9968028886505635e-15 output_tail=0.0 input_tail_contamination=0.0
+PASS linear o_proj 1024x2048 dense: max_abs=1.1102230246251565e-14 output_tail=0.0 input_tail_contamination=0.0
+PASS linear o_proj 1024x2048 short_logical_tail: max_abs=1.0658141036401503e-14 output_tail=0.0 input_tail_contamination=0.0
+PASS linear gate_proj 3072x1024 dense: max_abs=8.4376949871511897e-15 output_tail=0.0 input_tail_contamination=0.0
+PASS linear gate_proj 3072x1024 short_logical_tail: max_abs=8.4376949871511897e-15 output_tail=0.0 input_tail_contamination=0.0
+PASS linear up_proj 3072x1024 dense: max_abs=7.1054273576010019e-15 output_tail=0.0 input_tail_contamination=0.0
+PASS linear up_proj 3072x1024 short_logical_tail: max_abs=6.6613381477509392e-15 output_tail=0.0 input_tail_contamination=0.0
+PASS linear down_proj 1024x3072 dense: max_abs=1.021405182655144e-14 output_tail=0.0 input_tail_contamination=0.0
+PASS linear down_proj 1024x3072 short_logical_tail: max_abs=1.0658141036401503e-14 output_tail=0.0 input_tail_contamination=0.0
+PASS grouped_norm heads=16 dense: max_abs=8.1712414612411521e-14 output_tail=0.0 rotations=14
+PASS grouped_norm heads=16 short_last_head: max_abs=7.7271522513910895e-14 output_tail=0.0 rotations=14
+PASS grouped_norm heads=16 zero_final_heads: max_abs=8.8817841970012523e-16 output_tail=0.0 rotations=14
+PASS grouped_norm heads=16 wide_head_scales: max_abs=8.8817841970012523e-16 output_tail=0.0 rotations=14
+PASS grouped_norm heads=8 dense: max_abs=5.0182080713057076e-14 output_tail=0.0 rotations=14
+PASS grouped_norm heads=8 short_last_head: max_abs=7.9936057773011271e-14 output_tail=0.0 rotations=14
+PASS grouped_norm heads=8 zero_final_heads: max_abs=1.3322676295501878e-15 output_tail=0.0 rotations=14
+PASS grouped_norm heads=8 wide_head_scales: max_abs=8.8817841970012523e-16 output_tail=0.0 rotations=14
+PASS grouped_norm negative unequal_profile
+PASS grouped_norm negative missing_profile
+PASS grouped_norm negative wrong_gain
+PASS grouped_norm negative wrong_head_count
+PASS all slot8192 checks
