@@ -1,0 +1,19 @@
+Test project /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-core
+    Start 1: runtime_waterline_tests
+1/7 Test #1: runtime_waterline_tests ..........   Passed    0.42 sec
+    Start 2: pack_plaintext_bundle_tests
+2/7 Test #2: pack_plaintext_bundle_tests ......   Passed    0.45 sec
+    Start 3: runtime_tests
+3/7 Test #3: runtime_tests ....................   Passed    0.09 sec
+    Start 4: runtime_plan_json_tests
+4/7 Test #4: runtime_plan_json_tests ..........   Passed    0.35 sec
+    Start 5: runtime_plan_memory_tests
+5/7 Test #5: runtime_plan_memory_tests ........   Passed    0.08 sec
+    Start 6: runtime_release_tests
+6/7 Test #6: runtime_release_tests ............   Passed   32.88 sec
+    Start 7: thread_trace_tests
+7/7 Test #7: thread_trace_tests ...............   Passed    0.03 sec
+
+100% tests passed out of 7
+
+Total Test time (real) =  34.31 sec

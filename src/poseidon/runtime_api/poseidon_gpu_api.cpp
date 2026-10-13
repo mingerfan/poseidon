@@ -1,5 +1,6 @@
 #include "poseidon/runtime_api/poseidon_gpu_api.h"
 
+#include "gpu_plaintext_encoder.h"
 #include "poseidon/ckks_encoder.h"
 #include "poseidon/decryptor.h"
 #include "poseidon/encryptor.h"
@@ -729,6 +730,7 @@ struct PoseidonGpuApi::DeviceState
     };
 
     int cuda_device_id = 0;
+    std::unique_ptr<GpuPlaintextEncoder> plaintext_encoder;
     std::shared_ptr<DeviceMemoryPool> memory_pool;
     std::unique_ptr<gpu::GpuParameterData> gpu_parameters;
     std::unique_ptr<gpu::GpuEvaluator> evaluator;
@@ -758,6 +760,7 @@ public:
                 cudaEventRecord(ready->event_, gpu::gpu_execution_stream()),
                 "cudaEventRecord");
             ready->recorded_ = true;
+            ready->producer_stream_ = gpu::gpu_execution_stream();
         }
         catch (...)
         {
@@ -897,7 +900,8 @@ public:
             && !nccl_request_
 #endif
             && cuda_device_id_ == cuda_device_id &&
-            producer_thread_ == std::this_thread::get_id())
+            producer_thread_ == std::this_thread::get_id() &&
+            producer_stream_ == gpu::gpu_execution_stream())
         {
             return;
         }
@@ -922,6 +926,7 @@ private:
 #endif
     std::mutex wait_mutex_;
     std::thread::id producer_thread_;
+    cudaStream_t producer_stream_ = nullptr;
 };
 
 struct PoseidonGpuApi::CommHandle::State
@@ -1418,6 +1423,118 @@ PoseidonGpuApi::Value PoseidonGpuApi::encode_plaintext(
     Plaintext output;
     encoder_->encode(slots, parms_id, exact_scale(output_desc.scale_log2), output);
     return Value::from_host_plaintext(std::move(output));
+}
+
+fhegpu::ResourceUsage PoseidonGpuApi::value_resources(const fhegpu::ValueDesc &desc) const
+{
+    fhegpu::ResourceUsage usage(devices_.size());
+    const auto bytes=context_.parameters_literal()->degree()*q_count_for_level(desc.level)*desc.components*
+        (desc.place.kind==fhegpu::PlaceKind::Host?8ULL:4ULL);
+    if(desc.place.kind==fhegpu::PlaceKind::Host)usage.host=bytes;
+    else if(desc.kind==fhegpu::ValueKind::Plaintext)usage.plain.at(desc.place.index)=bytes;
+    else usage.front.at(desc.place.index)=bytes;
+    return usage;
+}
+
+fhegpu::PrepareResources PoseidonGpuApi::prepare_resources(const fhegpu::ValueDesc &desc, fhegpu::PrepareBackend backend)
+{
+    auto resident=value_resources(desc),peak=resident;
+    if(desc.kind!=fhegpu::ValueKind::Plaintext || desc.place.kind!=fhegpu::PlaceKind::Device || !desc.ntt || desc.components!=1)
+        return {peak,resident,false};
+    const std::size_t n=context_.parameters_literal()->degree(),q=q_count_for_level(desc.level),bytes=n*q*4;
+    peak.raw=n*8;peak.host=n*8;
+    if(backend==fhegpu::PrepareBackend::Cpu) {peak.host+=bytes*2+n*32;peak.pinned=bytes;}
+    else if(backend==fhegpu::PrepareBackend::Gpu) {
+        // Plans/tables are fixed setup allocations, charged to the configured reserve.
+        auto &device=device_state(desc.place,"GPU Prepare resources");
+        if(!device.plaintext_encoder)device.plaintext_encoder=std::make_unique<GpuPlaintextEncoder>(n,device.cuda_device_id);
+        peak.plain[desc.place.index]+=device.plaintext_encoder->workspace_bytes(q);
+        peak.pinned=n*4;
+    } else throw std::invalid_argument("Prepare resource query needs a fixed backend");
+    return {peak,resident,true};
+}
+
+fhegpu::ResourceUsage PoseidonGpuApi::instruction_workspace(const fhegpu::Instruction &instruction) const
+{
+    fhegpu::ResourceUsage usage(devices_.size());
+    const auto n=context_.parameters_literal()->degree();
+    const auto q=context_.crt_context()->first_context_data()->parms().q().size();
+    const auto p=context_.crt_context()->first_context_data()->parms().p().size();
+    if(const auto *op=std::get_if<fhegpu::ComputeOp>(&instruction.body)) {
+        if(op->place.kind==fhegpu::PlaceKind::Host)usage.host=n*(32+(q+p)*8*8);
+        else {
+            std::uint64_t bytes=0;
+            switch(op->kind) {
+            case fhegpu::ComputeKind::AddCC:case fhegpu::ComputeKind::AddCP:
+            case fhegpu::ComputeKind::SubCC:case fhegpu::ComputeKind::SubCP:
+            case fhegpu::ComputeKind::Negate:case fhegpu::ComputeKind::MulCP:break;
+            case fhegpu::ComputeKind::MulCC:bytes=n*q*4*8;break;
+            case fhegpu::ComputeKind::Rescale:case fhegpu::ComputeKind::ModSwitch:bytes=n*q*4*8;break;
+            case fhegpu::ComputeKind::Rotate:case fhegpu::ComputeKind::Relinearize:
+                // Conservative bound on HYBRID digit expansion, accumulation,
+                // automorphism/copy and retained intermediate rotations.
+                bytes=n*(q+p)*4*(16+4*q);break;
+            case fhegpu::ComputeKind::Boot:
+                if(std::get<fhegpu::BootAttrs>(op->attrs).implementation==fhegpu::BootImplementation::Native)
+                    throw std::runtime_error("Waterline native Boot workspace bound is not implemented");
+                usage.host=n*(32+(q+p)*8*8);usage.pinned=n*q*8;break;
+            }
+            usage.front.at(op->place.index)=bytes;
+        }
+    } else if(const auto *comm=std::get_if<fhegpu::CommAction>(&instruction.body)) {
+        // Staging may include both download and upload sides. Use the full
+        // context for the bound; source and destination output storage is separate.
+        const auto staged=n*q*4*3;
+        usage.pinned=staged*comm->outputs.size();
+        usage.host=staged*2*comm->outputs.size();
+    }
+    return usage;
+}
+
+PoseidonGpuApi::Value PoseidonGpuApi::prepare_plaintext_async(const fhegpu::ValueDesc &desc,
+    const std::vector<double> &slots, fhegpu::PrepareBackend backend)
+{
+    auto resources=prepare_resources(desc,backend);
+    if(!resources.supported)throw std::invalid_argument("unsupported PreparePlaintext descriptor");
+    if(backend==fhegpu::PrepareBackend::Cpu) {
+        auto host_desc=desc;host_desc.place={fhegpu::PlaceKind::Host,mpi_rank_,0};
+        auto host=encode_plaintext(host_desc,slots);
+        fhegpu::CommAction action{desc.id,fhegpu::CommKind::Transfer,fhegpu::CommHint::PointToPoint,
+            {desc.id},{desc.id},{host_desc.place},{desc.place},{fhegpu::ValueKind::Plaintext}};
+        auto handle=communicate_async(action,{host},{desc});
+        auto posted=posted_outputs(handle);
+        if(posted.size()!=1 || !posted[0])throw std::logic_error("CPU Prepare upload did not publish its Ready value");
+        return std::move(*posted[0]);
+    }
+    if(backend!=fhegpu::PrepareBackend::Gpu)throw std::invalid_argument("Prepare needs fixed backend");
+    auto &device=device_state(desc.place,"GPU Prepare");
+    const auto n=context_.parameters_literal()->degree();
+    if(slots.empty() || slots.size()>n/2)throw std::invalid_argument("GPU Prepare slot count outside context");
+    const auto scale=exact_scale(desc.scale_log2);
+    double maximum=0;
+    for(double value:slots) {if(!std::isfinite(value))throw std::invalid_argument("GPU Prepare non-finite slot");maximum=std::max(maximum,std::abs(value));}
+    // The normalized inverse embedding has magnitude <= max|slot|. A margin
+    // avoids undefined FP64-to-uint64 conversion at the boundary under FFT rounding.
+    if(maximum>=std::ldexp(1.0,64)/scale*(1-1e-10))throw std::invalid_argument("GPU Prepare coefficient range exceeds uint64");
+    auto pinned=std::make_shared<communication::PinnedHostBuffer>(n*4);
+    auto *raw=static_cast<double *>(pinned->data());std::fill(raw,raw+n/2,0.0);std::copy(slots.begin(),slots.end(),raw);
+    gpu::gpu_check_cuda(cudaSetDevice(device.cuda_device_id),"GPU Prepare device");
+    gpu::ScopedGpuExecutionStream stream(device.plaintext_encoder->stream());
+    const auto q=q_count_for_level(desc.level);
+    auto output=gpu::GpuPlaintextData::allocate_single_device(n,q,device.cuda_device_id);
+    output.meta.parms_id=context_.crt_context()->parms_id_map().at(static_cast<std::uint32_t>(desc.level));
+    output.meta.scale=scale;output.meta.is_ntt_form=true;
+    const auto &level=device.gpu_parameters->get_level_by_q_count(q);
+    auto scratch=device.plaintext_encoder->submit(raw,scale,level.shards.front(),output);
+    auto result=Value::from_device_plaintext(std::move(output));
+    result.ready_=PoseidonGpuValue::ReadyEvent::record(device.cuda_device_id);
+    retain_in_flight(result.ready_,{result},{pinned,scratch});
+    return result;
+}
+
+bool PoseidonGpuApi::is_ready(Value &value)
+{
+    return !value.ready_ || value.ready_->collect_completed();
 }
 
 bool PoseidonGpuApi::supports_reuse(const fhegpu::ComputeOp &op) const

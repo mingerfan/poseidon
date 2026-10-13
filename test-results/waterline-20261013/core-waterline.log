@@ -1,0 +1,12 @@
+waterline GPU0 front_peak=800 plain_peak=200 remaining_front=0 remaining_plain=0
+waterline shared host_peak=400 pinned_peak=100 raw_peak=40
+PASS rolling backend=0 cpu=20 gpu=0
+waterline GPU0 front_peak=700 plain_peak=250 remaining_front=0 remaining_plain=0
+waterline shared host_peak=400 pinned_peak=50 raw_peak=20
+PASS rolling backend=1 cpu=0 gpu=20
+waterline GPU0 front_peak=800 plain_peak=200 remaining_front=0 remaining_plain=0
+waterline shared host_peak=400 pinned_peak=100 raw_peak=40
+PASS rolling backend=2 cpu=20 gpu=0
+fatal runtime error: reason=Waterline single-group baseline infeasible at instruction #2 GPU0 front=500 plain=100 M=1000 reserve=0 Host=300 pinned=50 raw=20 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+fatal runtime error: reason=unsupported complete Prepare backend at ValueId 1 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+PASS complete atomic group, delayed events, continuous reclaim, no partial start on failure, V4 binary

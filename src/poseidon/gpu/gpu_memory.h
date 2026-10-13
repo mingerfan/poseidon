@@ -38,10 +38,20 @@ inline void gpu_check_cuda(cudaError_t status, const char *what)
     }
 }
 
+inline thread_local cudaStream_t execution_stream_override = nullptr;
 inline cudaStream_t gpu_execution_stream() noexcept
 {
-    return cudaStreamPerThread;
+    return execution_stream_override ? execution_stream_override : cudaStreamPerThread;
 }
+class ScopedGpuExecutionStream {
+public:
+    explicit ScopedGpuExecutionStream(cudaStream_t stream) : previous_(execution_stream_override) {execution_stream_override=stream;}
+    ~ScopedGpuExecutionStream() {execution_stream_override=previous_;}
+    ScopedGpuExecutionStream(const ScopedGpuExecutionStream &)=delete;
+    ScopedGpuExecutionStream &operator=(const ScopedGpuExecutionStream &)=delete;
+private:
+    cudaStream_t previous_;
+};
 
 std::shared_ptr<void> device_memory_resource_owner(
     rmm::mr::device_memory_resource *resource);

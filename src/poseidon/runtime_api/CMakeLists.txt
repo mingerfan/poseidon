@@ -1,3 +1,4 @@
+find_package(CUDAToolkit REQUIRED)
 add_library(poseidon_runtime_cpu_api STATIC
     poseidon_cpu_api.cpp
 )
@@ -23,6 +24,7 @@ endif()
 
 add_library(poseidon_runtime_gpu_api STATIC
     poseidon_gpu_api.cpp
+    gpu_plaintext_encoder.cu
     communication/cuda_local_transfer.cpp
     communication/gpu_object_copy.cpp
 )
@@ -36,9 +38,13 @@ target_link_libraries(poseidon_runtime_gpu_api
     PUBLIC
         poseidon_shared
         poseidon::gpu
+        CUDA::cufft
         ckks_runtime::core
 )
 target_compile_features(poseidon_runtime_gpu_api PUBLIC cxx_std_17)
+target_compile_options(poseidon_runtime_gpu_api PRIVATE
+    $<$<COMPILE_LANGUAGE:CUDA>:--default-stream=per-thread>
+    $<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>)
 
 if(POSEIDON_BUILD_CKKS_RUNTIME_GPU_NCCL)
     find_package(MPI REQUIRED COMPONENTS CXX)

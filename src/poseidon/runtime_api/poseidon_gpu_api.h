@@ -1,4 +1,5 @@
 #pragma once
+#include "runtime/waterline.hpp"
 
 #include "poseidon/ciphertext.h"
 #include "poseidon/gpu/gpu_ciphertext.h"
@@ -191,6 +192,11 @@ public:
     int nccl_rank(int logical_device_index) const;
     Value encode_plaintext(const fhegpu::ValueDesc &output_desc,
                            const std::vector<double> &slots);
+    fhegpu::ResourceUsage value_resources(const fhegpu::ValueDesc &desc) const;
+    fhegpu::PrepareResources prepare_resources(const fhegpu::ValueDesc &desc, fhegpu::PrepareBackend backend);
+    fhegpu::ResourceUsage instruction_workspace(const fhegpu::Instruction &instruction) const;
+    Value prepare_plaintext_async(const fhegpu::ValueDesc &desc, const std::vector<double> &slots, fhegpu::PrepareBackend backend);
+    bool is_ready(Value &value);
     Value compute(const fhegpu::ComputeOp &op, const std::vector<Value> &inputs);
     bool supports_reuse(const fhegpu::ComputeOp &op) const;
     Value compute_reuse(const fhegpu::ComputeOp &op, Value input,

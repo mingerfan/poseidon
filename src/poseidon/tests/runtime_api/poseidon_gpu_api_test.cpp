@@ -42,7 +42,7 @@ using poseidon::runtime_api::PoseidonGpuApi;
 using poseidon::runtime_api::PoseidonGpuValue;
 
 constexpr int kDeviceId = 0;
-constexpr int kDefaultScaleLog2 = 30;
+int kDefaultScaleLog2 = 30;
 const std::string kContextId = "poseidon-gpu-api-test-context";
 const std::string kOperatorSpecSha =
     "sha256:0000000000000000000000000000000000000000000000000000000000000000";
@@ -197,8 +197,8 @@ poseidon::ParametersLiteral make_parameters()
 {
     poseidon::ParametersLiteral parameters(
         CKKS,
-        /*log_n=*/12,
-        /*log_slots=*/11,
+        /*log_n=*/std::getenv("POSEIDON_WATERLINE_LOG_N") ? std::stoi(std::getenv("POSEIDON_WATERLINE_LOG_N")) : 12,
+        /*log_slots=*/std::getenv("POSEIDON_WATERLINE_LOG_N") ? std::stoi(std::getenv("POSEIDON_WATERLINE_LOG_N"))-1 : 11,
         /*log_scale=*/kDefaultScaleLog2,
         /*hamming_weight=*/0,
         /*q0_level=*/0,
@@ -206,7 +206,7 @@ poseidon::ParametersLiteral make_parameters()
         {},
         {},
         poseidon::sec_level_type::none);
-    parameters.set_log_modulus(std::vector<std::uint32_t>(7, 30),
+    parameters.set_log_modulus(std::vector<std::uint32_t>(std::getenv("POSEIDON_WATERLINE_Q_COUNT") ? std::stoi(std::getenv("POSEIDON_WATERLINE_Q_COUNT")) : 7, 30),
                                std::vector<std::uint32_t>(2, 30));
     return parameters;
 }
@@ -690,7 +690,7 @@ fhegpu::RuntimePlan make_multiply_plain_plan(
 {
     const auto host = host_place();
     const auto device = device_place();
-    constexpr int output_scale_log2 = kDefaultScaleLog2 * 2;
+    const int output_scale_log2 = kDefaultScaleLog2 * 2;
     fhegpu::RuntimePlan plan;
     plan.plan_id = 3;
     plan.target = make_target(loaded_spec);
@@ -2074,6 +2074,77 @@ void test_two_gpu_runtime_plan(const poseidon::PoseidonContext &context,
     }
 }
 
+void test_waterline_runtime(const poseidon::PoseidonContext &context,
+                           poseidon::KeyGenerator &key_generator,
+                           const fhegpu::LoadedOperatorSpec &spec,int device_count)
+{
+    std::vector<int> ids(device_count);for(int d=0;d<device_count;++d)ids[d]=d;
+    PoseidonGpuApi api(kContextId,context,ids);
+    poseidon::PublicKey public_key;key_generator.create_public_key(public_key);
+    poseidon::Encryptor encryptor(context,public_key);poseidon::Decryptor decryptor(context,key_generator.secret_key());
+    poseidon::CKKSEncoder encoder(context);poseidon::Plaintext plain;
+    const std::vector<double> input{1,-2,3,4};
+    std::vector<double> weight(context.parameters_literal()->degree()/2);
+    for(std::size_t i=0;i<weight.size();++i)weight[i]=std::sin(double(i)*.137)*.125;
+    weight[0]=.5;weight[1]=-1;weight[2]=2;weight[3]=3;
+    encoder.encode(input,std::ldexp(1.,kDefaultScaleLog2),plain);poseidon::Ciphertext cipher;encryptor.encrypt(plain,cipher);
+    const int level=static_cast<int>(cipher.level());
+    fhegpu::RuntimePlan plan;plan.format_version=4;plan.plan_id=401;plan.target=make_target(spec,device_count);
+    const auto add_value=[&](fhegpu::ValueKind kind,fhegpu::Place place) {
+        const auto id=plan.values.size();plan.values.push_back({id,kind,place,kContextId,level,kDefaultScaleLog2,true,kind==fhegpu::ValueKind::Plaintext?1:2});return id;
+    };
+    const auto arg=add_value(fhegpu::ValueKind::Ciphertext,host_place());plan.external_inputs={arg};
+    auto current=add_value(fhegpu::ValueKind::Ciphertext,device_place());
+    auto initial=transfer_action(1,fhegpu::ValueKind::Ciphertext,host_place(),device_place());initial.inputs={arg};initial.outputs={current};
+    plan.initialization={{0,initial}};
+    std::vector<fhegpu::ValueId> weights;
+    for(int d=0;d<device_count;++d) {
+        auto w=add_value(fhegpu::ValueKind::Plaintext,device_place(d));weights.push_back(w);
+        plan.execution.push_back({0,fhegpu::PreparePlaintextOp{fhegpu::InlineEncodePayload{weight},w}});
+    }
+    const int rounds=5;std::uint64_t transfer_id=2;
+    for(int r=0;r<rounds;++r)for(int d=0;d<device_count;++d) {
+        const auto out=add_value(fhegpu::ValueKind::Ciphertext,device_place(d));
+        plan.execution.push_back({0,fhegpu::ComputeOp{fhegpu::ComputeKind::AddCP,{current,weights[d]},out,device_place(d),{}}});
+        plan.execution.push_back({0,fhegpu::ReleaseOp{current}});
+        if(r==rounds-1)plan.execution.push_back({0,fhegpu::ReleaseOp{weights[d]}});
+        current=out;
+        if(device_count>1) {
+            const int next=(d+1)%device_count;const auto moved=add_value(fhegpu::ValueKind::Ciphertext,device_place(next));
+            auto action=transfer_action(transfer_id++,fhegpu::ValueKind::Ciphertext,device_place(d),device_place(next));action.inputs={current};action.outputs={moved};
+            plan.execution.push_back({0,action});plan.execution.push_back({0,fhegpu::ReleaseOp{current}});current=moved;
+        }
+    }
+    const auto result=add_value(fhegpu::ValueKind::Ciphertext,host_place());
+    auto download=transfer_action(transfer_id,fhegpu::ValueKind::Ciphertext,device_place(),host_place());download.inputs={current};download.outputs={result};
+    plan.finalization={{0,download},{0,fhegpu::ReleaseOp{current}}};plan.final_outputs={result};
+    std::size_t ordinal=0;for(auto *phase:{&plan.initialization,&plan.execution,&plan.finalization})for(auto &i:*phase)i.ordinal=ordinal++;
+    fhegpu::WaterlineConfig config;config.device_capacity_bytes.assign(device_count,4ULL<<30);config.device_reserve_bytes.assign(device_count,256ULL<<20);
+    config.host_budget_bytes=512ULL<<20;config.pinned_budget_bytes=64ULL<<20;config.raw_budget_bytes=32ULL<<20;
+    config.device_fractions.assign(device_count,.02);config.lookahead_groups=8;
+    std::unordered_map<fhegpu::ValueId,PoseidonGpuValue> inputs{{arg,PoseidonGpuValue::from_host_ciphertext(cipher)}};
+    for(auto backend:{fhegpu::PrepareBackend::Cpu,fhegpu::PrepareBackend::Gpu,fhegpu::PrepareBackend::Auto}) {
+        config.backend=backend;plan.waterline=config;
+        const auto begin=std::chrono::steady_clock::now();
+        fhegpu::SequentialRuntime<PoseidonGpuApi> runtime(0,1,device_count,api,fhegpu::DeviceExecutionMode::PerDeviceWorkers);
+        auto artifact=runtime.run({plan,kPlanSha},{spec,std::nullopt,false},inputs);
+        poseidon::Plaintext decoded;decryptor.decrypt(artifact.values.at(result).value.host_ciphertext(),decoded);
+        std::vector<std::complex<double>> slots;encoder.decode(decoded,slots);double maximum=0;
+        for(std::size_t i=0;i<slots.size();++i) {
+            const double expected=(i<input.size()?input[i]:0)+rounds*device_count*weight[i];
+            maximum=std::max(maximum,std::abs(slots[i]-expected));
+        }
+        std::cout << "Waterline diagnostic max=" << maximum << " slot0=" << slots[0] << " slot1=" << slots[1] << '\n';
+        require(maximum<1e-4,"Waterline plaintext consumer numerical mismatch");
+        require(artifact.timing.encode_calls==static_cast<std::size_t>(device_count),"shared Prepare was encoded more than once");
+        std::cout<<"WATERLINE backend="<<int(backend)<<" devices="<<device_count<<" max_abs_error="<<maximum
+                 <<" cold_ms="<<std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-begin).count()
+                 <<" forward_ms="<<artifact.timing.online_execution_nanoseconds/1e6<<" pinned_live="
+                 <<poseidon::runtime_api::communication::PinnedHostBuffer::live_bytes()<<'\n';
+    }
+}
+
+
 } // namespace
 
 int main()
@@ -2089,6 +2160,7 @@ int main()
 
     try
     {
+        if (std::getenv("POSEIDON_WATERLINE_SCALE")) kDefaultScaleLog2=std::stoi(std::getenv("POSEIDON_WATERLINE_SCALE"));
         const auto parameters = make_parameters();
         poseidon::PoseidonContext context(parameters);
         run_test("internal RMM pool lifetime",
@@ -2106,6 +2178,11 @@ int main()
         key_generator.create_public_key(*boot_public_key);
 
         const auto loaded_spec = make_operator_spec(context);
+        if (std::getenv("POSEIDON_WATERLINE_ONLY")) {
+            test_waterline_runtime(context,key_generator,loaded_spec,device_count);
+            return 0;
+        }
+        run_test("CPU/GPU/auto Waterline through encrypted consumers",[&] {test_waterline_runtime(context,key_generator,loaded_spec,1);});
         run_test("selected Galois-key upload",
                  [&] { test_selected_galois_key_upload(context, *galois_keys); });
         run_test("application Q-prefix, sparse levels and hoisted rotations",

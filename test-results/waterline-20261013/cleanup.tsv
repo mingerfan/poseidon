@@ -1,0 +1,9 @@
+path	引用依据	处理
+DaCapo/PlanPlaintextStreaming.cpp	optimizer.cpp stream 分支和 Passes.td	替换为 PlanPlaintextWaterline，不插自动 Fence，不克隆/重编码每批明文
+DaCapo/runtime-plan-prefetch-bytes	仅静态分批 hoist 使用	删除，改为运行时 lookahead_groups
+DaCapo/runtime.streaming	初始化判定/版本导出为旧批次服务	移除批次标记，Prepare 固定 Device 且属于 execution
+ckks-runtime/runtime.hpp run_parallel_batch	无 Fence 时全阶段建队；V3 Host worker 可等待未来 Encode	复用执行函数，改为持续按依赖分派和资源准入，保留显式边界 drain
+Poseidon/ReadyEvent	原相同线程即跳过等待	核对真实生产 stream，跨 stream 必须等待
+Poseidon/GPU Encode experiments	独立实验，固定 N/设备/批次且可选 Tensor backend	提取正式完整 CUDA Encode，保留有效实验数值测试
+ckks-runtime/binary plan/manifest	Qwen 加载优化、正常生产 API 使用	保留并扩展 V4
+ckks-runtime/CPU worker/raw reader/Release/reuse	正常在线执行和生命周期使用	保留，接入统一额度和真实完成回收

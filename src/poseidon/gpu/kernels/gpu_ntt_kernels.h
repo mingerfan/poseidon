@@ -36,6 +36,10 @@ NttStageProfileSnapshot get_ntt_stage_profile_snapshot();
  * - roots are read from GpuParameterShard::ntt_tables in
  *   [local limb][degree roots] layout.
  */
+void launch_forward_ntt_plaintext_cuda(
+    const GpuPolyShardView &destination, const GpuConstPolyShardView &source,
+    const GpuParameterShard &parameters, std::size_t degree);
+
 void launch_forward_ntt_poly_shard(
     const GpuPolyShardView &destination_shard,
     const GpuConstPolyShardView &source_shard,
