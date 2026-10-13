@@ -3,6 +3,8 @@
 set -euo pipefail
 base=${POSEIDON_188_WORKSPACE:-/home/xuming/poseidon-waterline-20261013}
 wait_pid=${POSEIDON_WAIT_FOR_PID:-0}
+run_label=${POSEIDON_ACCEPTANCE_LABEL:-qwen3-bsgs-auto-final}
+run_logs="$base/logs/$run_label"
 cd "$base"
 if (( wait_pid > 0 )); then
   printf 'waiting_for_existing_model_pid=%s\n' "$wait_pid"
@@ -17,8 +19,9 @@ test -f "$base/logs/latest-build.status"
 cat "$base/logs/latest-build.status"
 test "$(/opt/conda/bin/python -c 'import json,sys;print(json.load(open(sys.argv[1]))["returncode"])' \
   "$base/qwen3-plans-bsgs-final/gpu4/status.json")" = 0
+mkdir "$run_logs"
 nvidia-smi --query-gpu=index,uuid,memory.total,memory.used,ecc.errors.uncorrected.volatile.total \
-  --format=csv > "$base/logs/final-devices-before.csv"
+  --format=csv > "$run_logs/devices-before.csv"
 for selection in single all host-staged; do
   visible=0,1,2,3
   staged=0
@@ -29,11 +32,11 @@ for selection in single all host-staged; do
     POSEIDON_WATERLINE_Q_COUNT=32 POSEIDON_WATERLINE_SCALE=40 \
     POSEIDON_WATERLINE_HOST_STAGED="$staged" \
     "$base/build/bin/poseidon_runtime_gpu_api_tests" \
-    > "$base/logs/final-waterline-$selection.log" 2>&1
+    > "$run_logs/waterline-$selection.log" 2>&1
   printf 'pressure_complete selection=%s\n' "$selection"
 done
 plan="$base/qwen3-plans-bsgs-final/gpu4/qwen3._hecate_qwen3_0_6b"
-prefix="$base/logs/qwen3-bsgs-auto-final"
+prefix="$run_logs/model"
 set +e
 /usr/bin/time -v env CUDA_VISIBLE_DEVICES=0,1,2,3 OMP_NUM_THREADS=1 \
   "$base/build/bin/poseidon_runtime_gpu_qwen_e2e" \
@@ -62,7 +65,7 @@ set -e
 printf '%s\n' "$model_status" > "$prefix.exit-status"
 if test -n "${monitor_pid:-}"; then wait "$monitor_pid"; fi
 nvidia-smi --query-gpu=index,uuid,memory.total,memory.used,ecc.errors.uncorrected.volatile.total \
-  --format=csv > "$base/logs/final-devices-after.csv"
+  --format=csv > "$run_logs/devices-after.csv"
 if (( model_status != 0 )); then
   printf 'full_bsgs_auto_failed status=%s\n' "$model_status"
   exit "$model_status"

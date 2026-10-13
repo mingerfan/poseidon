@@ -1,0 +1,24 @@
+{
+  "scope": "compiler completion, not model acceptance",
+  "observed_at": "2026-10-13T19:53:04.167412+08:00",
+  "status": {
+    "devices": 4,
+    "pid": 25578,
+    "elapsed_seconds": 1796.6144681680016,
+    "returncode": 0
+  },
+  "time_v": [
+    "Elapsed (wall clock) time (h:mm:ss or m:ss): 29:55.87",
+    "Maximum resident set size (kbytes): 137225352",
+    "Exit status: 0"
+  ],
+  "build_status": [
+    "a95e509f7ed9df99a24d22c440ac6c46f8c91d55491daade8ac593f8de4bfefb  /home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_gpu_api_tests",
+    "31bcc0e8973fff5d882018aa0c8d2fcc49f856613f4c767104f3fed41a1323a9  /home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_gpu_qwen_e2e",
+    "6f59e03f380627c5801b828fddd5a8ed94a0d1d9f1467178d899f499d1c4a4de  /home/xuming/poseidon-waterline-20261013/src/src/poseidon/runtime_api/poseidon_gpu_api.cpp",
+    "231c40e4ce83fe8e4524f44ef08c1447857435184cb081d8bd9bb78e55b69b01  /home/xuming/poseidon-waterline-20261013/src/third_party/ckks-runtime/runtime/runtime.hpp"
+  ],
+  "build_time_rss_exit": "not separately present in build log/status",
+  "build_log_last_modified": "2026-10-13T19:28:17.594639+08:00",
+  "latest_build_status_last_modified": "2026-10-13T19:45:44.090684+08:00"
+}

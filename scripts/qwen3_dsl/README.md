@@ -54,14 +54,14 @@ OPENBLAS_NUM_THREADS=4 /usr/bin/time -v \
   --config "$base/qwen3-fixture/model.json" \
   --approximations "$base/qwen3-fixture/approximations.json" \
   --weights "$base/qwen3-fixture/weights" --slots 8192 --bytecode \
-  --output-dir "$base/qwen3-traced-n16384"
+  --output-dir "$base/qwen3-traced-bsgs"
 /opt/conda/bin/python compile_plans.py --workspace "$base" \
-  --source "$base/qwen3-traced-n16384/trace_qwen3.mlirbc" \
-  --output-name qwen3-plans-n16384 --devices 1 4
+  --source "$base/qwen3-traced-bsgs/trace_qwen3.mlirbc" \
+  --output-name qwen3-plans-bsgs-final --devices 1 4
 /opt/conda/envs/apollo/bin/python export_runner_fixture.py \
-  --signature "$base/qwen3-traced-n16384/signature.json" \
+  --signature "$base/qwen3-traced-bsgs/signature.json" \
   --fixture "$base/qwen3-fixture" --spec "$base/profiles/operator-spec.json" \
-  --p-moduli-bits 30 30 30 30 30 30 30 30 --output "$base/qwen3-runner.json"
+  --p-moduli-bits 30 30 30 30 30 30 30 30 --output "$base/qwen3-runner-bsgs.json"
 ```
 
 目录必须尚不存在，脚本不会覆盖旧产物。`calibrate_fixture.py` 可重用已经完整核验的

@@ -1,0 +1,26 @@
+{
+  "status": "superseded_before_complete_forward",
+  "numerical_acceptance_completed": false,
+  "reason": "Prioritize final BSGS lowering, corrected Host accounting and 100us unified executor; not a timeout or deadlock diagnosis",
+  "pid": 22555,
+  "command": [
+    "/home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_gpu_qwen_e2e",
+    "/home/xuming/poseidon-waterline-20261013/qwen3-plans-n16384/gpu4/qwen3._hecate_qwen3_0_6b.runtime-plan-fixed-spec.bin",
+    "/home/xuming/poseidon-waterline-20261013/profiles/operator-spec.json",
+    "/home/xuming/poseidon-waterline-20261013/qwen3-runner-n16384.json",
+    "/home/xuming/poseidon-waterline-20261013/logs/qwen3-full-gpu-n16384-v3-report.json",
+    "/home/xuming/poseidon-waterline-20261013/logs/qwen3-full-gpu-n16384-v3-decoded.json",
+    "--bundle",
+    "/home/xuming/poseidon-waterline-20261013/qwen3-plans-n16384/gpu4/qwen3._hecate_qwen3_0_6b.bundle",
+    "--backend",
+    "gpu",
+    "--trace",
+    "/home/xuming/poseidon-waterline-20261013/logs/qwen3-full-gpu-n16384-v3.trace",
+    ""
+  ],
+  "recorded_at": "2026-10-13T19:56:37.875324+08:00",
+  "process_status": "Name:\tposeidon_runtim\nUmask:\t0002\nState:\tS (sleeping)\nTgid:\t22555\nNgid:\t22555\nPid:\t22555\nPPid:\t22554\nTracerPid:\t0\nUid:\t1012\t1012\t1012\t1012\nGid:\t1013\t1013\t1013\t1013\nFDSize:\t128\nGroups:\t1013 \nNStgid:\t22555\nNSpid:\t22555\nNSpgid:\t22544\nNSsid:\t22544\nKthread:\t0\nVmPeak:\t114768880 kB\nVmSize:\t114703344 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t31799860 kB\nVmRSS:\t31799860 kB\nRssAnon:\t31454180 kB\nRssFile:\t  302672 kB\nRssShmem:\t   43008 kB\nVmData:\t35161972 kB\nVmStk:\t     132 kB\nVmExe:\t    2172 kB\nVmLib:\t   20544 kB\nVmPTE:\t   62708 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nuntag_mask:\t0xffffffffffffffff\nThreads:\t15\nSigQ:\t0/3095283\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000000300000\nSigCgt:\t0000000100000000\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\tffff,ffffffff\nCpus_allowed_list:\t0-47\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000003\nMems_allowed_list:\t0-1\nvoluntary_ctxt_switches:\t4747636\nnonvoluntary_ctxt_switches:\t1647\nx86_Thread_features:\t\nx86_Thread_features_locked:\t\n",
+  "trace_bytes": 291414707,
+  "original_binary": "/home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_gpu_qwen_e2e-b551-scanner9e",
+  "signal": "SIGTERM"
+}

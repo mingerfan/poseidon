@@ -1,0 +1,19 @@
+{
+  "scope": "final BSGS single-card compile capacity rejection, not GPU execution",
+  "observed_at": "2026-10-13T20:04:26.991705+08:00",
+  "status": {
+    "devices": 1,
+    "pid": 28889,
+    "elapsed_seconds": 465.09898016555235,
+    "returncode": 1
+  },
+  "diagnostic": [
+    "/home/xuming/poseidon-waterline-20261013/qwen3_dsl-bsgs/qwen3/runtime.py:64:0: error: single-group baseline instruction #5388456 GPU0 front=26212827136 plain/workspace=3145728 capacity=26843545600 waterline=16642998272",
+    "Command exited with non-zero status 1"
+  ],
+  "time_v": [
+    "Elapsed (wall clock) time (h:mm:ss or m:ss): 7:41.38",
+    "Maximum resident set size (kbytes): 129037504",
+    "Exit status: 1"
+  ]
+}
