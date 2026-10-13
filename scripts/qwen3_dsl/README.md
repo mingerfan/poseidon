@@ -57,20 +57,31 @@ OPENBLAS_NUM_THREADS=4 /usr/bin/time -v \
   --output-dir "$base/qwen3-traced-bsgs"
 /opt/conda/bin/python compile_plans.py --workspace "$base" \
   --source "$base/qwen3-traced-bsgs/trace_qwen3.mlirbc" \
-  --output-name qwen3-plans-bsgs-final --devices 1 4
+  --output-name qwen3-plans-bsgs-q50 --devices 1 4
 /opt/conda/envs/apollo/bin/python export_runner_fixture.py \
   --signature "$base/qwen3-traced-bsgs/signature.json" \
   --fixture "$base/qwen3-fixture" --spec "$base/profiles/operator-spec.json" \
-  --p-moduli-bits 30 30 30 30 30 30 30 30 --output "$base/qwen3-runner-bsgs.json"
+  --p-moduli-bits 30 30 30 30 30 30 30 30 --output "$base/qwen3-runner-bsgs-q50.json"
 ```
 
 目录必须尚不存在，脚本不会覆盖旧产物。`calibrate_fixture.py` 可重用已经完整核验的
 转换权重生成当前 profile/reference。trace 使用项目原有 Hecate Python frontend。
 编译器继续使用 HEFT；latency profile 是估算 fixture，不能用于声称调度最优或模型加速。
 编译脚本保存精确命令、状态和 `/usr/bin/time -v` 日志，并仅接受单卡或全部四卡配置。
+默认依次编译单卡、全部四卡；单次完整模型编译曾记录峰值 RSS 137225352 KiB，
+因此不同时启动两份编译。任一编译子进程失败，脚本最终返回非零。可用
+`--devices 4` 单独编译全部卡，并用 `--source` 复用同一完整 BSGS bytecode。
 
-当前 CKKS 数值配置是 N=16384、40 个 30-bit Q、8 个 30-bit P、默认 scale 40，
-逻辑 rescale 消耗 4 个 Q，profile 的高 scale 是 120。这个配置使用 `sec_level_type::none`，
+当前 CKKS 数值配置是 N=16384、50 个 30-bit Q、8 个 30-bit P、默认 scale 40，
+计算图的输入、高 scale 和 Host refresh 输出 scale 是 120；runner 按计划描述显式
+编码输入，不使用上下文默认 scale 替代计划 scale。
+每个逻辑 level 对应 5 个物理 level，逻辑 level 0..9 映射到物理 level 4..49。
+一次逻辑 Rescale 为 120-bit scale 下降额外预留 30-bit 模数空间，运行时依据实际 Q
+选择原生除模次数、整数系数校正与剩余 ModSwitch；不只改写 scale 元数据。
+默认每算子工作空间上界为 1024 MiB，覆盖 Q50 Rotate 的保守上界。
+物理 latency 行 40..49 延用旧表最后一行估算，未作为新硬件测量；逻辑 latency 表
+及 HEFT 算法保持不变。此参数更新不代表完整 Qwen 数值验收已经通过。
+这个配置使用 `sec_level_type::none`，
 不声称满足标准安全级别。Host decrypt/re-encrypt refresh 使用秘密密钥；不是原生 FHE Boot。
 这些限制须与实际完整模型运行结果一起披露。N 的调整只改变 CKKS packing/capacity，
 不改变模型尺寸、权重、token 或输出范围。最终结果与运行命令见
