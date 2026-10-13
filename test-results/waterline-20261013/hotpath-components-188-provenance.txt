@@ -1,0 +1,6 @@
+1a149bd947567a5d9492c7c6d8b3b5992743e760cab70deb6ce97a596de8a84d  /home/xuming/poseidon-waterline-20261013/diagnostics/hotpath-components-20261013/hotpath-components-test.cpp
+41738f97f4b4b74261b101300874dc084a81c73af93e9731c980b2a38aabdd29  /home/xuming/poseidon-waterline-20261013/build/hotpath-components-test
+d04351a4f1583b013e2774077aeb52eebad6015c22c9c1fd1ca40d95a87fc027  /home/xuming/poseidon-waterline-20261013/build/libposeidon_runtime_gpu_api.a
+99278eb857bc2647c428c8f2594abed996f8e5ca3d46269d3e51cb9f3f73078d  /home/xuming/poseidon-waterline-20261013/build/libposeidon_gpu.a
+43103df50b2510fd95d6635a964e5bedb685c51aa924400543cd664a346ffd20  /home/xuming/poseidon-waterline-20261013/build/libposeidon_shared.so
+NVIDIA Nsight Systems version 2023.2.3.1004-33186433v0

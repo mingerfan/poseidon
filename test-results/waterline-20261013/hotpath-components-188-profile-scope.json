@@ -1,0 +1,52 @@
+{
+  "scope": "Only this synthetic diagnostic was profiled. Concurrent with root full Auto model PID30187 on physical GPU1. CUDA API cumulative durations are not full-model wall time; no end-to-end speedup claim.",
+  "profiled_program_started_utc": "2026-10-13T12:33:11Z",
+  "profiled_program_finished_utc": "2026-10-13T12:33:29Z",
+  "unprofiled_program_started_utc": "2026-10-13T12:28:08Z",
+  "unprofiled_program_finished_utc": "2026-10-13T12:28:20Z",
+  "profile_command": [
+    "env",
+    "CUDA_VISIBLE_DEVICES=1",
+    "OMP_NUM_THREADS=1",
+    "/usr/local/cuda-12.2/nsight-systems-2023.2.3/target-linux-x64/nsys",
+    "profile",
+    "--trace=cuda",
+    "--sample=none",
+    "--cpuctxsw=none",
+    "--output=/home/xuming/poseidon-waterline-20261013/diagnostics/hotpath-components-20261013/hotpath-cuda-profile",
+    "/home/xuming/poseidon-waterline-20261013/build/hotpath-components-test"
+  ],
+  "profile_stdout": "/home/xuming/poseidon-waterline-20261013/diagnostics/hotpath-components-20261013/hotpath-nsys.log",
+  "stats_command": [
+    "/usr/local/cuda-12.2/nsight-systems-2023.2.3/target-linux-x64/nsys",
+    "stats",
+    "--report",
+    "cuda_api_sum,cuda_gpu_kern_sum",
+    "--format",
+    "csv",
+    "--output=/home/xuming/poseidon-waterline-20261013/diagnostics/hotpath-components-20261013/hotpath-cuda-stats",
+    "/home/xuming/poseidon-waterline-20261013/diagnostics/hotpath-components-20261013/hotpath-cuda-profile.nsys-rep"
+  ],
+  "large_artifacts_retained_on_server": [
+    "/home/xuming/poseidon-waterline-20261013/diagnostics/hotpath-components-20261013/hotpath-cuda-profile.nsys-rep",
+    "/home/xuming/poseidon-waterline-20261013/diagnostics/hotpath-components-20261013/hotpath-cuda-profile.sqlite"
+  ],
+  "original_source_sha256": "1a149bd947567a5d9492c7c6d8b3b5992743e760cab70deb6ce97a596de8a84d",
+  "source_before_cache": "hotpath-components-before-cache-test.cpp",
+  "binary_library_provenance": "hotpath-components-188-provenance.txt",
+  "compiler_link_commands": "hotpath-components-188.commands.json",
+  "cuda_api_stats": "hotpath-components-188-nsys-cuda-api.csv",
+  "kernel_stats": "hotpath-components-188-nsys-kernels.csv",
+  "limits": {
+    "physical_gpu": 1,
+    "maximum_pool_mib": 1536,
+    "initial_pool_mib": 64,
+    "required_free_before_bytes": 2147483648,
+    "samples_per_component": 10,
+    "N": 16384,
+    "Q": 40,
+    "P": 8,
+    "scale_log2": 120
+  },
+  "context_barrier_probe": "Own-stream 50ms host callback followed by pinned allocation returned in 0.995816ms in the unprofiled run; this does not prove a global context synchronization barrier. No CUDA API in callback."
+}

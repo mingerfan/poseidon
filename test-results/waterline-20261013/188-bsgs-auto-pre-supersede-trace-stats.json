@@ -1,0 +1,222 @@
+{
+  "scope": "partial recorded runtime API calls only; no model completion, CUDA completed-task count, percentage or future-time inference",
+  "pid": 30187,
+  "source_revisions_at_launch": {
+    "poseidon": "69217e3e",
+    "runtime": "f41b930",
+    "dacapo": "ad35c87"
+  },
+  "runner_sha256_at_launch": "31bcc0e8973fff5d882018aa0c8d2fcc49f856613f4c767104f3fed41a1323a9",
+  "trace_file": "/home/xuming/poseidon-waterline-20261013/logs/qwen3-bsgs-auto-final/model.trace.rank0.csv",
+  "sample_started_at": "2026-10-13T20:55:29.332631+08:00",
+  "sample_finished_at": "2026-10-13T20:55:48.366755+08:00",
+  "trace_mtime_at_start": "2026-10-13T20:55:29.304864+08:00",
+  "trace_bytes_at_start": 134208551,
+  "complete_record_bytes_read": 134208551,
+  "row_count": 3552785,
+  "header": [
+    "rank",
+    "event",
+    "id",
+    "ordinal",
+    "consumer_ordinal",
+    "op",
+    "duration_ns"
+  ],
+  "last_record_in_snapshot": {
+    "rank": "0",
+    "event": "bundle_read",
+    "id": "6324632",
+    "ordinal": "171992",
+    "consumer_ordinal": "",
+    "op": "Read",
+    "duration_ns": "170518"
+  },
+  "events": {
+    "admit": {
+      "count": 1646987,
+      "sum_ns": 0,
+      "max_ns": 0,
+      "mean_ns": 0.0,
+      "sum_seconds": 0.0,
+      "mean_ms": 0.0,
+      "max_ms": 0.0
+    },
+    "bundle_read": {
+      "count": 128735,
+      "sum_ns": 21744957697,
+      "max_ns": 5340098,
+      "mean_ns": 168912.55444906204,
+      "sum_seconds": 21.744957697,
+      "mean_ms": 0.16891255444906203,
+      "max_ms": 5.340098
+    },
+    "comm_post": {
+      "count": 311375,
+      "sum_ns": 423774188627,
+      "max_ns": 1479909942,
+      "mean_ns": 1360976.920520273,
+      "sum_seconds": 423.774188627,
+      "mean_ms": 1.360976920520273,
+      "max_ms": 1479.909942
+    },
+    "comm_wait": {
+      "count": 1306,
+      "sum_ns": 10653867860,
+      "max_ns": 653828783,
+      "mean_ns": 8157632.358346095,
+      "sum_seconds": 10.65386786,
+      "mean_ms": 8.157632358346095,
+      "max_ms": 653.828783
+    },
+    "compute": {
+      "count": 449076,
+      "sum_ns": 927423180745,
+      "max_ns": 1870278378,
+      "mean_ns": 2065180.906450133,
+      "sum_seconds": 927.423180745,
+      "mean_ms": 2.065180906450133,
+      "max_ms": 1870.278378
+    },
+    "prepare_cpu": {
+      "count": 45688,
+      "sum_ns": 1970325002429,
+      "max_ns": 2666617898,
+      "mean_ns": 43125656.68072579,
+      "sum_seconds": 1970.325002429,
+      "mean_ms": 43.12565668072579,
+      "max_ms": 2666.617898
+    },
+    "prepare_gpu": {
+      "count": 83090,
+      "sum_ns": 1165199382686,
+      "max_ns": 2579320255,
+      "mean_ns": 14023340.747213865,
+      "sum_seconds": 1165.199382686,
+      "mean_ms": 14.023340747213865,
+      "max_ms": 2579.320255
+    },
+    "release": {
+      "count": 886528,
+      "sum_ns": 0,
+      "max_ns": 0,
+      "mean_ns": 0.0,
+      "sum_seconds": 0.0,
+      "mean_ms": 0.0,
+      "max_ms": 0.0
+    }
+  },
+  "prepare_by_backend": {
+    "prepare_cpu": {
+      "count": 45688,
+      "sum_ns": 1970325002429,
+      "max_ns": 2666617898,
+      "mean_ns": 43125656.68072579,
+      "sum_seconds": 1970.325002429,
+      "mean_ms": 43.12565668072579,
+      "max_ms": 2666.617898
+    },
+    "prepare_gpu": {
+      "count": 83090,
+      "sum_ns": 1165199382686,
+      "max_ns": 2579320255,
+      "mean_ns": 14023340.747213865,
+      "sum_seconds": 1165.199382686,
+      "mean_ms": 14.023340747213865,
+      "max_ms": 2579.320255
+    }
+  },
+  "compute_by_op": {
+    "AddCC": {
+      "count": 139459,
+      "sum_ns": 45470749682,
+      "max_ns": 451732039,
+      "mean_ns": 326051.0234692634,
+      "sum_seconds": 45.470749682,
+      "mean_ms": 0.3260510234692634,
+      "max_ms": 451.732039
+    },
+    "AddCP": {
+      "count": 2293,
+      "sum_ns": 432236640,
+      "max_ns": 2229033,
+      "mean_ns": 188502.67771478413,
+      "sum_seconds": 0.43223664,
+      "mean_ms": 0.18850267771478413,
+      "max_ms": 2.229033
+    },
+    "Boot": {
+      "count": 1301,
+      "sum_ns": 317055561703,
+      "max_ns": 348402547,
+      "mean_ns": 243701430.9784781,
+      "sum_seconds": 317.055561703,
+      "mean_ms": 243.7014309784781,
+      "max_ms": 348.402547
+    },
+    "ModSwitch": {
+      "count": 2364,
+      "sum_ns": 865572635,
+      "max_ns": 2444063,
+      "mean_ns": 366147.4767343486,
+      "sum_seconds": 0.865572635,
+      "mean_ms": 0.36614747673434855,
+      "max_ms": 2.444063
+    },
+    "MulCC": {
+      "count": 4453,
+      "sum_ns": 1797714881,
+      "max_ns": 344797655,
+      "mean_ns": 403708.70896025153,
+      "sum_seconds": 1.797714881,
+      "mean_ms": 0.4037087089602515,
+      "max_ms": 344.797655
+    },
+    "MulCP": {
+      "count": 143232,
+      "sum_ns": 321244452158,
+      "max_ns": 1870278378,
+      "mean_ns": 2242825.9897090034,
+      "sum_seconds": 321.244452158,
+      "mean_ms": 2.2428259897090035,
+      "max_ms": 1870.278378
+    },
+    "Negate": {
+      "count": 29,
+      "sum_ns": 10506357,
+      "max_ns": 2886241,
+      "mean_ns": 362288.1724137931,
+      "sum_seconds": 0.010506357,
+      "mean_ms": 0.3622881724137931,
+      "max_ms": 2.886241
+    },
+    "Relinearize": {
+      "count": 4453,
+      "sum_ns": 2324501784,
+      "max_ns": 359172349,
+      "mean_ns": 522008.03593083314,
+      "sum_seconds": 2.324501784,
+      "mean_ms": 0.5220080359308331,
+      "max_ms": 359.172349
+    },
+    "Rescale": {
+      "count": 141903,
+      "sum_ns": 223075161693,
+      "max_ns": 457755358,
+      "mean_ns": 1572025.6914441555,
+      "sum_seconds": 223.075161693,
+      "mean_ms": 1.5720256914441555,
+      "max_ms": 457.755358
+    },
+    "Rotate": {
+      "count": 9589,
+      "sum_ns": 15146723212,
+      "max_ns": 13951466,
+      "mean_ns": 1579593.6189383669,
+      "sum_seconds": 15.146723212,
+      "mean_ms": 1.5795936189383668,
+      "max_ms": 13.951466
+    }
+  },
+  "method": "Single streaming csv scan bounded by trace size sampled before opening; exclude an incomplete final line. duration_ns records API submission/synchronous host work, not GPU completion wall time."
+}

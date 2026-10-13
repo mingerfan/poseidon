@@ -1,68 +1,110 @@
 # Waterline 实现与 188Server 验证
 
-状态核对至2026-10-13 20:36（北京时间）。当前已推送版本为Poseidon `69217e3e`、ckks-runtime `f41b930`、DaCapo `ad35c87`。188最新单卡物理GPU1、全部四卡默认通信、全部四卡强制HostStaged的真实压力均通过CPU/GPU/Auto三模式。最终完整Qwen3-0.6B BSGS Auto正在全部物理0/1/2/3运行，完整输出和独立数值验收尚未完成。
+状态核对于 2026-10-13 22:45（北京时间）。已推送版本为 Poseidon `4fd76b9f`（数值修复 `acd6a27d`）、ckks-runtime `081e07c`、DaCapo `d5ed984`。**完整 Qwen3-0.6B 前向及独立数值验收尚未完成。** 旧 Q40 BSGS Auto 进程 PID30187 已按用户要求于服务器记录时间 21:16:36 发送 SIGTERM，退出码143；没有完整 decoded 或数值报告，见 [停止记录](qwen3-bsgs-q40-user-stopped.json)。本次更新时，188Server 新二进制的CPU API 9项、GPU API 20项、scalar、三配置压力及Q50 q_proj的CPU/GPU/Auto三后端检查均已通过，检查监督进程exit0。Q50全部四卡编译已启动（PID57547），尚无编译完成结果；Q50单卡容量检查和完整前向随后进行。
 
-当前已通过编译器 10 项回归、运行时 8 项回归与本地 GPU API 20 项回归。Waterline 使用后期 Prepare 改写、完整消费者组准入、每设备水位及共享 Host/pinned/raw 账本，并复用前台计算和通信执行函数。没有自动批末 Fence。HEFT 源码没有改动。
+Waterline 已接通后期 Prepare 改写、完整消费者组准入、每设备水位、共享 Host/pinned/raw 预算及事件回收，复用同一执行器的前台计算和通信函数。自动静态分批、批末 Fence 及相关独立执行分支已替换；显式 Encode/Transfer/Fence、drain、通信依赖、二进制计划、按需读取、CPU worker、Release/reuse 保留。具体引用与处理见 [清理清单](cleanup.tsv)。HEFT 源码未修改；[源码 hash 记录](heft-source-sha256.json)只证明所列源文件相同，不代表新旧完整图的 placement/order 指纹相同。
 
-本地真实 CKKS 生产路径已执行 CPU-only、GPU-only、Auto，N=65536、Q=32 个 30-bit 素数、scale=2^40，32768 个实数槽。图有五次 AddCP，使用真实加密输入与完整 dense 明文，并按全部槽位与明文算术参考比较。三种模式 max absolute complex error 均为 9.21178e-7，容差预设 1e-4；结束时计费 Device 明文和 pinned live 均为零。Auto 在这一单卡图中选择 CPU，不把该结果当作混合路径已覆盖。
+## 本轮修复与已通过的本地检查
 
-对应日志：`compiler-regressions.log`、`core-tests-commit.log`、`core-waterline.log`、`local-waterline-dense-current.log`。清理引用依据见 `cleanup.tsv`。临时失败和调试构建日志未作为通过证据。
+旧 Rescale 按实际 Q prime 除模后，仅将 scale 元数据改为目标 `2^scale`，没有校正密文系数。独立 q_proj 测得约1.090078倍幅值，旧完整模型运行不能作为数值验收。CPU/GPU 现共同按实际 prime 选择原生 Rescale 次数，用正 uint64 整数乘系数对齐 scale，再用 ModSwitch 消耗剩余计划层。原生 scale 至少保留 `2^40`，整数对齐相对舍入误差不超过 `1e-9`，目标须低于实际剩余模数空间；不满足时明确拒绝。这些检查不构成通用噪声、幅值或安全参数证明。GPU scalar 全链路保留 uint64，并修复原地 scalar 覆盖输入 storage 的错误。实现、失败负控及限制见 [数值修复说明](rescale-normalization-validation.md)、[scalar 验证](gpu-wide-scalar-validation.md)。
+
+| 本地检查 | 实际结果与证据 |
+| --- | --- |
+| CPU API | 9/9；N16384/Q50 的 dense Rescale 全8192复数槽最大误差约1.3e-11；另保留50-bit CPU prime 的单层近1对齐和低精度拒绝：[日志](cpu-rescale-normalization-tests.log) |
+| GPU API | 20/20；普通及多层 Rescale、MulCC/Relinearize/Rotate、完整槽 dense 参考：[日志](gpu-normalized-rescale-api.log) |
+| 正式 GPU scalar CTest | 16组原地/独立输出、974848个RNS word 与独立128-bit模乘完全相同，2048复数槽、非默认stream检查通过：[日志](gpu-wide-scalar-ctest.log) |
+| 统一执行器 | 8/8，包含 Auto lane 准入及资源边界：[日志](core-auto-idle-choice-tests.log) |
+| 编译器 | 10/10，新增物理模数及剩余空间检查：[日志](compiler-integer-rescale-tests.log) |
+| 隔离 Q50 q_proj | 合成权重的 cyclic 线性测试图，1025 Prepare、1025 Rescale、无 Boot；全部8192复数槽 maxabs=9.909881804e-10，虚部及尾部通过，forward=2.932s：[报告](q50-q-proj-corrected-report.json)、[日志](q50-q-proj-corrected.log) |
+
+隔离 q_proj 是独立回归，不是完整预训练模型，也没有替换正式 BSGS DSL。普通 GPU API 和 scalar 的本地结果不能替代 V100、全部 GPU 或完整模型验收。
+
+最新生产参数为 N16384、50个30-bit Q、8个30-bit P，上下文默认 scale40，计划输入、高 scale 和 Host refresh 输出 scale120。runner 按计划描述编码输入。逻辑 level0..9 对应物理 level4..49，每个逻辑 level 对应5个物理 level；120-bit scale 下降额外预留30-bit模数空间。每算子工作空间默认上界1024MiB，以覆盖Q50 Rotate的保守上界。物理 latency 行40..49沿用旧表最后行估算，未作为新硬件测量；逻辑 latency 表及 HEFT 算法不变。参数及编译入口见 [Qwen DSL 使用说明](../../scripts/qwen3_dsl/README.md)。
+
+## 慢因与 pinned 缓存对照
+
+已定位两项实际开销：旧 Auto 在 CPU worker 忙时仍给新组排入 CPU 准备，形成串行供应积压；GPU Prepare 每份原始槽数据都分配、释放 pinned Host 内存，增加 Host 提交及回收成本。最新 Auto 仅在 CPU lane 可用时给新组选择 CPU；CPU 和目标前台都忙时暂停新组准入，已准入组继续推进。GPU Waterline 每卡复用一份 N×4 字节 pinned 原始缓冲，计入整段执行的固定 Host/pinned 预算，真实 Ready 完成前禁止覆写，drain 后释放。普通未启用 Waterline 的 API 保持逐次分配语义。
+
+[旧模型局部 trace](188-bsgs-auto-pre-supersede-trace-stats.json)在固定快照中记录 CPU Prepare 45688次、均值43.126ms，GPU Prepare 83090次、均值14.023ms，Host Boot 1301次、均值243.701ms。duration是API提交或同步Host工作，多worker总和不可相加为墙钟占比；trace字节数、提交数均不表示CUDA完成比例或剩余时间，GPU利用率快照也不足以证明卡死。
+
+188 物理GPU1上的同二进制组件对照在旧模型停止后进行，两种模式均N16384/Q40/P8/scale120、10次GPU Prepare、全8192槽检查通过：
+
+| 指标 | 逐次 pinned 分配 | Waterline 缓存 |
+| --- | ---: | ---: |
+| pinned 分配次数 | 10 | 1 |
+| API提交均值 | 1.025306ms | 0.219797ms |
+| 完成回收均值 | 0.417778ms | 0.012027ms |
+| GPU Encode event均值 | 0.272096ms | 0.270313ms |
+| drain后 pinned live | 0 | 0 |
+
+这是组件开销改善，不是完整模型加速率。缓存首份分配计入均值，固定缓存65536字节；CPU Prepare仍有逐份分配成本。完整命令、scope及source/binary/library绑定见 [对照说明](hotpath-pinned-cache-comparison.md)、[状态](hotpath-cache-188-current-status.json)、[来源hash](hotpath-cache-188-current-provenance.txt)。[Nsight说明](hotpath-components-profile-validation.md)只解释诊断组件的CUDA API成本，不将其比例外推到完整模型墙钟。
+
+## 188Server 小图覆盖与完整模型边界
+
+当前数值修复版本在188实际通过CPU API 9/9、GPU API 20/20、scalar 16组，以及物理GPU1、全部物理0/1/2/3默认通信、全部卡强制HostStaged三配置压力。每配置均执行CPU/GPU/Auto，N65536/Q32×30-bit/scale40，比较全部32768复数槽。监督进程[退出码](188-rescale-exit-status)为0，实际二进制/源码绑定见 [hash](188-rescale-build.status)；CPU/GPU/scalar日志分别为 [CPU](188-rescale-cpu-api.log)、[GPU](188-rescale-gpu-api-single.log)、[scalar](188-rescale-gpu-scalar-single.log)。
+
+| 配置 | 三模式最大误差 | 进程墙钟 / RSS峰值 | 日志 |
+| --- | ---: | --- | --- |
+| 物理GPU1 | 9.93667e-7 | 34.41s / 3606328KiB | [single](188-rescale-waterline-single.log) |
+| 全部0/1/2/3 | 1.11503e-6 | 52.95s / 4001976KiB | [all](188-rescale-waterline-all.log) |
+| 全部0/1/2/3，HostStaged | 9.51937e-7 | 54.06s / 3985140KiB | [HostStaged](188-rescale-waterline-host-staged.log) |
+
+三份压力日志均exit0，结束动态plain/front及pinned live归零。全部卡测试的三张peer卡均在延迟GPU0之前实际完成；HostStaged每模式post20次，20次均观察到pinned。RMM活跃分配、保留池与固定资源分别报告，保留持久资源时不能要求RMM live归零。[检查结束设备快照](188-rescale-devices-after.csv)全部GPU占用0MiB、volatile uncorrected ECC为0；这是收尾快照，不是整个运行的连续峰值或无其他作业的历史保证。
+
+188物理GPU1也以正式runner执行了上述隔离Q50/P8合成q_proj计划，全部8192复数槽、虚部和尾部均通过：
+
+| 完整Prepare后端 | max absolute error | forward | 报告与日志 |
+| --- | ---: | ---: | --- |
+| CPU | 9.907332732e-10 | 20.328s | [报告](188-rescale-q-proj-cpu-report.json)、[日志](188-rescale-q-proj-cpu.log) |
+| GPU | 9.909530974e-10 | 4.572s | [报告](188-rescale-q-proj-gpu-report.json)、[日志](188-rescale-q-proj-gpu.log) |
+| Auto | 9.907328291e-10 | 8.053s | [报告](188-rescale-q-proj-auto-report.json)、[日志](188-rescale-q-proj-auto.log) |
+
+三种后端均结束pinned live=0。这是同一小图的真实CKKS数值和后端覆盖，不推导完整模型端到端加速。候选小图上下文默认scale120，与生产完整图的显式输入scale120一致；它不是完整模型的Q50容量或所有算子链证明。
+
+较早pinned缓存版三配置日志 `188-pinned-reuse-*` 及其 [source/binary hash](188-pinned-reuse-source-and-binary.status)保留，maxabs依次9.99418e-7 / 1.02392e-6 / 1.07219e-6；当时与旧模型有运行重叠，其墙钟不可作为独占性能对照。更早压力、资源反例、stream正负对照分别保留在 `188-final-waterline-*`、[CPU Host边界说明](cpu-prepare-host-budget-validation.md)、[stream Ready说明](stream-ready-validation.md)，不因旧实验产生失败便删除证据。
+
+官方目标是 Qwen/Qwen3-0.6B revision `c1899de289a04d12100db370d81485cdf75e47ca`。权重SHA256为 `f47f71177f32bcd101b7573ec9171e6a57f4f4d31148d38e382306f42996874b`；311个BF16张量、751632384个存储参数已核验，含重复tied LM head，去重596049920。模型完整28层，hidden1024、FFN3072、16个Q heads、8个KV heads、head dim128、vocab151936，Q/K norm在RoPE前、无attention bias、共享embedding/LM head。历史24层合成模型不能替代此目标。客户端对tokens `[9707,11]`、positions `[0,1]`查embedding后加密；不是密文token查表。
+
+完整验收要求2输入、261密文输出：最后位置的151936个logits分149份（最后384个有效值），加全部28层、两个位置的112份K/V（114688个有效值）。独立NumPy dense FP64 exact/approximate参考的logit maxabs=3.787683944267428e-9、RMS=7.210505850742908e-10、top1均358。runner与 [独立检查器](../../scripts/qwen3_dsl/validate_decoded.py)核对全部有效值、所有虚部和零尾部，并核验signature/fixture/参考/source绑定，固定 `atol=0.001, rtol=0.0001`。`checker-test.log`的20项是明确标注的模拟decoded，只验证检查器拒绝与映射。
+
+| 完整模型阶段 | 截至本次更新的实际状态 |
+| --- | --- |
+| 旧Q40 BSGS四卡编译/导出 | exit0，29:55.87，RSS137225352KiB；binary1182542616B、bundle61298262016B，19364300条指令；[编译日志](qwen3-bsgs-final-all-compile.log) |
+| 旧Q40 BSGS单卡容量 | 当前预算基线拒绝，非GPU执行；[摘要](188-final-single-capacity-summary.json)、[日志](qwen3-bsgs-final-single-capacity.log)；不能据此断言所有单卡配置不可行 |
+| 旧Q40完整前向 | GPU-only PID22555已superseded；BSGS Auto PID30187已按用户要求停止，exit143；两次均未完成数值验收 |
+| 新Q50全部四卡编译 | 正在进行，未记录成功、加载或完整执行 |
+| 新Q50单卡容量 | 尚待当前参数及计划检查，不能沿用Q40结论 |
+| 新Q50完整前向及数值验证 | 尚未启动；全部261输出、独立参考通过及模型端到端资源/耗时仍待交付 |
+
+所有完整模型CPU-only尚未启动；GPU-only旧图被superseded；Auto旧Q40图被停止。小图三模式和模型编译成功不补足完整模型后端覆盖。旧二进制scanner漏Prepare tag5、旧spec schema失败均已修复并保留原日志；[旧GPU-only停止记录](qwen3-full-gpu-n16384-v3-superseded.json)中的time-v同时显示signal15和exit0，不能算模型通过。
+
+## 复现与剩余交付
+
+大型权重、trace、plan、bundle、decoded及profiler文件保存在 `/home/xuming/poseidon-waterline-20261013`，不提交Git。远程编译、测试及取回结果全程保持一条独立长SSH；tmux只负责任务持久化，不能替代长连接。188单卡使用物理GPU1；多卡必须全部0/1/2/3，并记录UUID和ECC。
+
+公开 [build-188.sh](build-188.sh)使用188既有离线依赖、CUDA arch70，构建CPU API、GPU API、GPU scalar tests及Qwen runner四个target，保存精确构建日志及hash。新数值版本已用于上述188实际回归；其本轮构建记录在服务器 `logs/rescale-normalization-build/`。旧 `188-build-reproduce.log` 的成功仅是旧版本增量复现（0.61s），不能作为当前数值修复的新构建通过证据。
 
 ```sh
-cmake -S third_party/ckks-runtime -B build-waterline-core \
-  -DCKKS_RUNTIME_BUILD_TESTS=ON -DCKKS_RUNTIME_BUILD_EXPERIMENTS=OFF
-cmake --build build-waterline-core -j6
-ctest --test-dir build-waterline-core --output-on-failure --timeout 60
-ctest --test-dir third_party/ckks-runtime/third_party/dacapo/build/nix --output-on-failure
-cmake --build build-runtime-gpu-api-release --target poseidon_runtime_gpu_api_tests -j6
-POSEIDON_WATERLINE_ONLY=1 POSEIDON_WATERLINE_LOG_N=16 \
-POSEIDON_WATERLINE_Q_COUNT=32 POSEIDON_WATERLINE_SCALE=40 OMP_NUM_THREADS=1 \
-build-runtime-gpu-api-release/bin/poseidon_runtime_gpu_api_tests
+base=/home/xuming/poseidon-waterline-20261013
+POSEIDON_188_WORKSPACE="$base" bash build-188.sh
+# 此小图检查须先备好 "$base/q50-small-regression.tar"，并使用新检查日志目录。
+POSEIDON_188_WORKSPACE="$base" bash check-rescale-188.sh
+cd "$base/qwen3_dsl-bsgs"
+# 输出目录必须是新目录；已有Q50产物时为复现换一个新的output-name。
+/opt/conda/bin/python compile_plans.py --workspace "$base" \
+  --source "$base/qwen3-traced-bsgs/trace_qwen3.mlirbc" \
+  --output-name qwen3-plans-bsgs-q50 --devices 4
+/opt/conda/envs/apollo/bin/python export_runner_fixture.py \
+  --signature "$base/qwen3-traced-bsgs/signature.json" \
+  --fixture "$base/qwen3-fixture" --spec "$base/profiles/operator-spec.json" \
+  --p-moduli-bits 30 30 30 30 30 30 30 30 --output "$base/qwen3-runner-bsgs-q50.json"
+cd "$base"
+POSEIDON_188_WORKSPACE="$base" \
+POSEIDON_ACCEPTANCE_LABEL=qwen3-bsgs-q50-auto-final bash run-188-acceptance.sh
 ```
 
-188压力已通过，完整Qwen3-0.6B验收仍未完成。本地旧Qwen25 24层DSL配置与目标不符，不能复用作完整目标模型。官方目标revision `c1899de289a04d12100db370d81485cdf75e47ca` 为28层、hidden size1024、head dim128、16 Q heads、8 KV heads、词表151936、Q/K norm、共享embedding/LM head。固定revision权重SHA256为 `f47f71177f32bcd101b7573ec9171e6a57f4f4d31148d38e382306f42996874b`，311张量已核对；权重未提交到Git。客户端查embedding后加密tokens `[9707,11]`、positions `[0,1]`；目标为2输入、261输出（完整151936 logits、28层全部两位置KV）。
+先按 [DSL说明](../../scripts/qwen3_dsl/README.md)部署生产脚本/profile及匹配新编译器，复用相同完整BSGS trace和权重绑定。编译脚本只允许1/4卡、默认顺序编译，任一子进程失败最终非零。上面的独立4卡命令与后续单卡容量检查避免重复同时创建产物。[check-rescale-188.sh](check-rescale-188.sh)用于本轮服务器CPU/GPU/scalar、三配置压力及Q50 q_proj三后端检查；其小图tar必须先按脚本路径准备，脚本以 `latest-build.status` 校验当前实际二进制hash；需要等待异步构建时可指定 `POSEIDON_BUILD_EXIT_STATUS`。不能仅凭启动检查脚本就宣称通过。[run-188-acceptance.sh](run-188-acceptance.sh)检查Q50编译exit0，再执行三配置压力、全部卡Auto完整模型和独立数值检查；label目录禁止覆盖旧日志。
 
-GPU Encode 接受实数槽及上下文模数范围内的有限 FP64 系数；宽整数按 significand/exponent 作 RNS reduction。常数 scale 40/60/80/120 与 CPU 每个 RNS word 一致。配置 reserve 已核对实际参数表、单份 owning key backing、编码器表和持久 workspace 上界；RMM 有硬上限，并分别报告实际活跃分配和保留池空间。这里不声称完整模型加速。Native Boot 的 Waterline workspace 查询暂未接通，普通显式 Native Boot 能力保留。CPU decrypt/re-encrypt Boot 的安全与数值语义必须与原生 Boot 分开报告。
+`monitor_process.py`在CUDA setup前按本进程PID与身份采样RSS/HWM及driver GPU内存；采样峰值并非连续峰值。runner分别记录冷启动、setup/init/forward、首个及全部输出、Host Boot、CPU/GPU Prepare、GPU events、H2D、等待及收尾。外部time-v覆盖进程冷启动。最终仍需当前Q50编译/容量结果、真实完整261输出及独立数值报告、实际后端覆盖、每卡/Host/pinned峰值和收尾清单；这些未完成项不能报告为完成。
 
-后续资源阶段的有效日志为 `core-tests-validation-hook.log`（7/7）、`key-backing.log`（Q=3/5/7共享key且全槽与CPU一致）、`gpu-api-h2d-final.log`（19/19）、`h2d-timing.log`、`gpu-encode-timing.log`、`local-waterline-metrics.log`。后者是真实 managed-pool N=65536/Q32/scale40 图，三模式最大误差8.64e-7，实际持久表约1.15GB，RMM活跃峰值约1.19GB，保留池1.75GiB、硬cap3520MiB；结束pinned live和计费Device明文为0。时间指标是本机本次测试，不能据此推断V100或完整模型性能。
-
-`qwen-runner-metrics-smoke.log` 仅为2输入/2输出小图，证明多输出入口、固定容差与事件计量接通，不是完整Qwen。旧N65536单卡/四卡容量拒绝和旧BSGS编译日志保留。最新N16384最终BSGS四卡图见 `qwen3-bsgs-final-all-compile.log`（exit0、29分55.87秒、RSS137225352KiB）；binary1182542616 B、bundle61298262016 B、values9692017、instructions19364300。编译和导出完整模型不等于CKKS数值通过，eager对象估计报告不能替代Waterline实际峰值。
-
-2026-10-13 后续 stream 阶段已通过真实验证：所有计算 kernel 与 D2D/zero helper 使用实际执行 stream，跨设备回收暂用各设备合法 PTDS，并恢复调用者当前设备。`stream-ready-validation.md` 包含 AddCP c1 的确定性正/负对照；当前 helper 在 PTDS 阻塞时仍全部 28672 words 正确，旧 helper 全部错误。最新单卡 CUDA 库 `stream-reclaim-api-repeat-status.json` 连续 10×19 通过，旧数值失败和无法取 stack 的 hang 日志保留；不为旧 hang 虚构独立根因。
-
-188Server最新真实小图在当前版本使用N65536/Q32×30-bit/scale40，五轮各卡独立AddCP和ring，比较全部32768个complex槽。表中三列顺序均为CPU/GPU/Auto：
-
-| 配置与日志 | 最大绝对误差 | forward ms | 进程time-v / RSS峰值 |
-| --- | --- | --- | --- |
-| 物理1，`188-final-waterline-single.log` | 均8.96891e-7 | 125.398 / 35.5416 / 115.524 | 34.29s / 3605908KiB |
-| 全部0/1/2/3，`188-final-waterline-all.log` | 均9.3044e-7 | 564.622 / 217.861 / 356.733 | 47.96s / 4006584KiB |
-| 全部0/1/2/3强制HostStaged，`188-final-waterline-host-staged.log` | 均9.71521e-7 | 1026.95 / 759.282 / 796.408 | 49.39s / 4005672KiB |
-
-三份日志均exit0，结束各卡remaining front/plain和pinned live归零。四卡每模式四个输出、三张peer卡真实完成均早于延迟GPU0；默认/HostStaged的Auto均新增1 CPU+3 GPU Prepare。强制HostStaged每后端实际post20次，20次post时观察到pinned；Host/pinned/raw预算318767104 / 50331648 / 1048576 B，账本峰值268435456 / 50331648 / 1048576 B。实际pinned allocation进程累计峰值33554432 B，区别于账本承诺。各卡RMM reserved/cap均3690987520 B、活跃分配累计峰值最高1208922248 B；RMM live保留了持久资源，不能要求归零。API/event计时与time-v墙钟分别报告，不能把不同图或连续累计counter直接相减为模型加速。
-
-较早 `188-peer-completion-*` 对应 `b551ee2f`，其中GPU0已有其他作业的20280MiB outside快照单独记录并保留；它不是当前进程或整个run峰值。最新日志的initial outside和RMM仍分别报告，未将其他用户占用归给模型。
-
-完整模型N16384旧矩形对角线四卡编译见 `qwen3-n16384-all-compile.log`，旧单卡容量拒绝见 `qwen3-n16384-single-capacity.log`。旧四卡Waterline基线峰值约4.68/6.22/9.37/11.55GB，Prepare1417857、组9726229；这些是旧图编译基线，不是最终运行实际峰值。首次runner启动的生产binary scanner漏Prepare tag5已修复，正式file reader及直接编译往返通过，保留 `qwen3-n16384-binary-scan-failure.log`。第二次OperatorSpec说明字段不合schema，仅重绑定合法spec摘要，metadata外1356009044 B body SHA256仍为 `9fcdbfcb46bab88f92a3d90c3cfef4e947bf470632e03885e81e3801a8c9f709`。旧GPU-only PID22555已由主执行代理核对own cmdline后SIGTERM，以优先最终BSGS/Host修复/100µs版验收，见 `qwen3-full-gpu-n16384-v3-superseded.json`；未完成全部输出验收，不是timeout/deadlock诊断，time-v同时出现signal15和exit0不能算完整模型通过。
-
-最新最终BSGS单卡容量检查见 `qwen3-bsgs-final-single-capacity.log` / `188-final-single-capacity-summary.json`：instruction #5388456 front26212827136、plain/workspace3145728、capacity26843545600、waterline16642998272 B，exit1、7分41.38秒、RSS129037504KiB。这只说明当前预算/基线配置不足，不证明全部单卡配置不可行；最终四卡图已通过编译。
-
-CPU Host/pinned资源修复已通过：CPU Prepare的uint64 Host plaintext和uint32 pinned上传源同时存活，二者都计入Host，pinned另有子预算。degree8真实编译CPU/Auto Host480拒绝、512通过，GPU Host64仍通过；修复前误接收的反例保留为 `compiler-cpu-pinned-before-fix.log`。本地N4096/Q7及N65536/Q32真实CUDA边界见 `cpu-prepare-host-budget-validation.md`、`cpu-prepare-host-bound-full-api.log` 及legal/mode0/mode1日志。最新188三份压力日志均在消费者#8提交前拒绝Host157810688 B（CPU Prepare calls新增0），Host162004992 B足量全32768实虚槽通过，误差单卡/默认四卡/HostStaged依次9.18525e-7 / 9.2084e-7 / 9.17894e-7，动态front/plain/pinned归零。全四卡强制HostStaged已按上述实际post/pinned/数值验收完成。
-
-`scripts/qwen3_dsl/validate_decoded.py`核对fixture、signature、参考和runner报告绑定，分别汇总完整151936有效logits与全部KV的最大误差、RMS、cosine、top1，检查所有虚部和零尾部，固定atol=0.001/rtol=0.0001。`checker-test.log`的20项使用明确标注的模拟decoded，只证明映射/拒绝，不是模型CKKS结果。当前独立NumPy exact/approximate参考logit max3.787683944267428e-9、RMS7.210505850742908e-10、top1均358。N16384/Q40/P8、图scale120及Host秘密钥辅助decrypt-reencrypt refresh使用security level none，不声称标准安全FHE或原生Boot。
-
-公开 `build-188.sh` 已在188执行：`188-configure-reproduce.log` configure/generate完成，`188-build-reproduce.log` 正式API和Qwen runner target完成、time-v exit0（该次为增量复现0.61s、RSS15744KiB，不是全量冷构建）。hash见 `188-latest-build.status`。复现时先保持一条独立长SSH，再运行：
-
-```sh
-POSEIDON_188_WORKSPACE=/home/xuming/poseidon-waterline-20261013 bash build-188.sh
-POSEIDON_188_WORKSPACE=/home/xuming/poseidon-waterline-20261013 bash run-188-acceptance.sh
-```
-
-脚本位于本目录，部署到服务器时保持上述workspace结构和离线依赖；验收脚本run label目录必须是新目录。`run-188-acceptance.sh` 已完成前三项压力，最终Auto PID30187正在 `logs/qwen3-bsgs-auto-final` 实际前向。完整模型覆盖截至20:36：CPU-only未启动；GPU-only旧矩形图被superseded且最终BSGS GPU-only未启动；最终BSGS Auto正在全部四卡运行，尚无decoded/report/exit-status及独立验收结果。小图三模式不能补足完整模型三模式覆盖。
-
-服务器大型artifact保存在 `/home/xuming/poseidon-waterline-20261013`；远程期间始终保留独立SSH长连接，tmux不替代保活。`monitor_process.py` 按PID采样driver内存及RSS，区间采样不是连续峰值，晚启动披露首个timestamp。runner记录main到首个/全部输出、setup/init/forward及保存；外部time-v计进程冷启动。CSV duration只是API提交时间，trace字节数不表示完成百分比。仍需完整模型实际输出、独立数值报告、实际后端覆盖和最终资源/等待/收尾汇总。
-
-执行器无进展轮询由1ms缩至100µs，仍按原Ready/完整组/顺序检查；没有新调度路径或配置。`core-short-poll-tests.log`核心8/8，`core-short-poll-gpu-*`完整20/20及N65536/Q32 mode0/1各一次通过，源码/库hash保持一致。它可能增加CPU查询开销并改变Auto比例；本机host sleep探针与回归耗时不能外推188或完整模型加速。最终计划使用含Host/pinned修复的新编译器，产物目录为服务器`qwen3-plans-bsgs-final/gpu4`。
-
-针对完整Auto进度慢的后续修复：runtime `7a918fc` 限制Auto待处理CPU准备为一个完整组；CPU与目标前台都忙时暂停新组准入，待完成后重新按CPU优先选择，不改变已准入后端、HEFT或前台顺序。API的Waterline GPU准备每卡复用一份N×4字节的pinned原始槽缓冲，在整段执行的固定Host/pinned预算中计费，Ready完成前禁止覆写，drain后释放。普通未启用Waterline的API保持逐次分配语义。
-
-`core-bounded-auto-tests.log` 8/8，包括固定Host/pinned不足时在任何Prepare前拒绝、足量预算下全部算术正确。`gpu-raw-cache-full-api.log` 20/20；真实GPU每卡10次准备仅1次pinned分配，实际stream gate捕获未完成时覆写，Ready完成后重配仍要求drain，释放后live=0。`gpu-raw-cache-mode{0,1}-n65536-q32.log` 三模式及全32768复数槽通过，cache全槽误差2.84517e-10；源码/二进制绑定见 `gpu-raw-cache-status.json`。这些是本地验证，修复后的188压力、完整模型执行及端到端收益仍待测量。
+本参数使用 `sec_level_type::none`，不声称标准安全级别。Host decrypt/re-encrypt refresh使用秘密密钥，不是原生FHE Boot；固定两token非线性校准不构成其他输入的通用精度保证。Native Boot的Waterline workspace查询尚未接通，普通显式Native Boot能力保留。当前尚无完整模型端到端加速证据。

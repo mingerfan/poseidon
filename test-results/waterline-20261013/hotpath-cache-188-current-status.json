@@ -1,0 +1,32 @@
+{
+  "scope": "Same new binary/API, independent process for each mode on physical GPU1. Old full model PID30187 absent before baseline; parent pressure runs finished. Synthetic components, not full-model performance.",
+  "source": "hotpath-components-test.cpp",
+  "source_sha256": "2e005b1ce40b464d5ea21dd73bef2050ef6df29a6cfa50be6e84ee76e55408c1",
+  "provenance": "hotpath-cache-188-current-provenance.txt",
+  "compiler_link_commands": "hotpath-cache-188-current-baseline.commands.json",
+  "baseline_command": [
+    "env",
+    "CUDA_VISIBLE_DEVICES=1",
+    "OMP_NUM_THREADS=1",
+    "/home/xuming/poseidon-waterline-20261013/build/hotpath-components-cache-test"
+  ],
+  "cached_command": [
+    "env",
+    "CUDA_VISIBLE_DEVICES=1",
+    "OMP_NUM_THREADS=1",
+    "/home/xuming/poseidon-waterline-20261013/build/hotpath-components-cache-test",
+    "--cache"
+  ],
+  "baseline": {
+    "started_utc": "2026-10-13T13:17:48Z",
+    "finished_utc": "2026-10-13T13:17:58Z",
+    "report": "hotpath-cache-188-current-baseline-report.json"
+  },
+  "cached": {
+    "started_utc": "2026-10-13T13:19:09Z",
+    "finished_utc": "2026-10-13T13:19:19Z",
+    "report": "hotpath-cache-188-current-cached-report.json"
+  },
+  "assertions_passed": true,
+  "ordinary_operator_events_in_cached_mode": "omitted because enabling Waterline foreground stream makes caller-stream event incorrect; uncached ready input event evidence preserved."
+}

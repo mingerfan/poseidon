@@ -1,0 +1,4 @@
+PRESSURE_COMPLETE selection=single
+PRESSURE_COMPLETE selection=all
+PRESSURE_COMPLETE selection=host-staged
+ALL_PRESSURE_COMPLETE

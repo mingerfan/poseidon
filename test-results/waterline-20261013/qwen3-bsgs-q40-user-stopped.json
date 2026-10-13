@@ -1,0 +1,31 @@
+{
+  "pid": 30187,
+  "command": [
+    "/home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_gpu_qwen_e2e",
+    "/home/xuming/poseidon-waterline-20261013/qwen3-plans-bsgs-final/gpu4/qwen3._hecate_qwen3_0_6b.runtime-plan.bin",
+    "/home/xuming/poseidon-waterline-20261013/profiles/operator-spec.json",
+    "/home/xuming/poseidon-waterline-20261013/qwen3-runner-bsgs.json",
+    "/home/xuming/poseidon-waterline-20261013/logs/qwen3-bsgs-auto-final/model-report.json",
+    "/home/xuming/poseidon-waterline-20261013/logs/qwen3-bsgs-auto-final/model-decoded.json",
+    "--bundle",
+    "/home/xuming/poseidon-waterline-20261013/qwen3-plans-bsgs-final/gpu4/qwen3._hecate_qwen3_0_6b.bundle",
+    "--backend",
+    "auto",
+    "--trace",
+    "/home/xuming/poseidon-waterline-20261013/logs/qwen3-bsgs-auto-final/model.trace"
+  ],
+  "stopped_at": "2026-10-13T21:16:36.809123+08:00",
+  "signal": "SIGTERM",
+  "user_requested_stop": true,
+  "complete_model_execution": false,
+  "numerical_validation_complete": false,
+  "reason": "User requested stopping original Qwen graph; independently verified native Rescale target-scale retagging causes fixed multiplicative error. Fix before another complete run.",
+  "source_revisions_at_launch": {
+    "poseidon": "69217e3e",
+    "runtime": "f41b930",
+    "dacapo": "ad35c87"
+  },
+  "trace_bytes_before_stop": 186190568,
+  "runner_sha256_at_launch": "31bcc0e8973fff5d882018aa0c8d2fcc49f856613f4c767104f3fed41a1323a9",
+  "starttime_ticks": "236483910"
+}
