@@ -1,0 +1,18 @@
+{
+  "scope": "local single-GPU env 0/1 compatibility; not HostStaged D2D execution",
+  "runs": [
+    {
+      "mode": "0",
+      "returncode": 0,
+      "seconds": 10.735978001999683,
+      "log": "test-results/waterline-20261013/cpu-prepare-host-bound-mode-0-n65536-q32.log"
+    },
+    {
+      "mode": "1",
+      "returncode": 0,
+      "seconds": 10.037298537000424,
+      "log": "test-results/waterline-20261013/cpu-prepare-host-bound-mode-1-n65536-q32.log"
+    }
+  ],
+  "passed": true
+}

@@ -1,0 +1,21 @@
+{
+  "scope": "local RTX4060 single GPU; full4 HostStaged pending 188Server",
+  "cuda_architectures": "89",
+  "source_sha256": {
+    "src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp": "2c2a3cd67fb366c4e13d332eefc7057ad47b8805dc9982886d573fe76d8c3cda",
+    "src/poseidon/runtime_api/poseidon_gpu_api.cpp": "6f59e03f380627c5801b828fddd5a8ed94a0d1d9f1467178d899f499d1c4a4de"
+  },
+  "library_sha256": {
+    "libposeidon_runtime_gpu_api.a": "3b27593886c6c12d7020aa1af67c1647779f77e437edc1380327caf1715c3742",
+    "libposeidon_gpu.a": "c3a1d2339e0dbdd0a2a74585d67a5e359d038816cfeb0a57f9d37728c736aa8a",
+    "libruntime_core.a": "6c4d084c45728105ac9bd3ed63bcfd2b85462ebeb7510dc5b7f3335450f3d5bd"
+  },
+  "binary_sha256": "00a885b79f511a084bf44ed16be22a4254b95a91928ec88e1e404d6abd787709",
+  "full_suite_passes": 20,
+  "focused_logs": [
+    "cpu-prepare-host-bound-legal-n4096-q7.log",
+    "cpu-prepare-host-bound-legal-n65536-q32.log",
+    "cpu-prepare-host-bound-mode-0-n65536-q32.log",
+    "cpu-prepare-host-bound-mode-1-n65536-q32.log"
+  ]
+}

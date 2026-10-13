@@ -1646,7 +1646,11 @@ fhegpu::PrepareResources PoseidonGpuApi::prepare_resources(const fhegpu::ValueDe
         return {peak,resident,false};
     const std::size_t n=context_.parameters_literal()->degree(),q=q_count_for_level(desc.level),bytes=n*q*4;
     peak.raw=n*8;peak.host=n*8;
-    if(backend==fhegpu::PrepareBackend::Cpu) {peak.host+=bytes*2+n*32;peak.pinned=bytes;}
+    if(backend==fhegpu::PrepareBackend::Cpu) {
+        peak.pinned=bytes;
+        // The CPU RNS plaintext and pinned upload source coexist until H2D Ready.
+        peak.host+=bytes*2+n*32+peak.pinned;
+    }
     else if(backend==fhegpu::PrepareBackend::Gpu) {
         // Plans/tables are fixed setup allocations, charged to the configured reserve.
         auto &device=device_state(desc.place,"GPU Prepare resources");

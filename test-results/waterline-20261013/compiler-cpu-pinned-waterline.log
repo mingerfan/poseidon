@@ -1,0 +1,2 @@
+PASS: Prepare V4, no automatic Fence/reencode, frontend places/order, single-group rejections
+PASS: degree8 CPU/Auto Host480 rejects, Host512 completes unchanged 200-consumer graph; GPU Host64 remains feasible

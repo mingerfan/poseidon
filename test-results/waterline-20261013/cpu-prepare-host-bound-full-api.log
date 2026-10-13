@@ -1,0 +1,66 @@
+[PASS] internal RMM pool lifetime
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=5854700 retained_workspace_bound=0 reserve_required=72963564 reserve_configured=2147483648
+waterline GPU0 custom_memory_resource=true physical_pool_cap=provider_owned
+fatal runtime error: reason=Waterline single-group baseline infeasible at instruction #8 GPU0 front=458752 plain=114688 M=4294967296 reserve=2147483648 allocator_capacity=2147483648 Host=2342912 pinned=114688 raw=32768 plan_id=402 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=PoseidonGpuApi
+CPU_PREPARE_HOST_BOUND N=4096 Q=7 old_bound=393216 complete_bound=507904 prepare_host_resident=1835008 required_total=2342912 tight_budget=2285568 cpu_prepare_calls_delta=0 rejection=fatal runtime error: reason=Waterline single-group baseline infeasible at instruction #8 GPU0 front=458752 plain=114688 M=4294967296 reserve=2147483648 allocator_capacity=2147483648 Host=2342912 pinned=114688 raw=32768 plan_id=402 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=PoseidonGpuApi
+waterline fixed GPU0 persistent_bytes=5854700 retained_workspace_bound=0 reserve_required=72963564 reserve_configured=2147483648
+waterline GPU0 custom_memory_resource=true physical_pool_cap=provider_owned
+waterline GPU0 front_peak=458752 plain_peak=114688 remaining_front=0 remaining_plain=0
+waterline shared host_peak=2342912 pinned_peak=344064 raw_peak=32768
+CPU_PREPARE_HOST_BOUND positive_budget=2342912 pinned_budget=344064 slots_checked=2048 max_abs_including_imaginary=5.44973e-05 retained_external_final_host=917504 remaining_dynamic_front=0 remaining_plain=0 pinned_live=0
+[PASS] CPU Prepare complete Host budget negative/positive boundary
+WATERLINE mode=Auto backend=0 devices=1 host_budget=536870912 pinned_budget=67108864 raw_budget=33554432
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=5854700 retained_workspace_bound=0 reserve_required=72963564 reserve_configured=2147483648
+waterline GPU0 custom_memory_resource=true physical_pool_cap=provider_owned
+waterline GPU0 front_peak=1376256 plain_peak=114688 remaining_front=0 remaining_plain=0
+waterline shared host_peak=1605632 pinned_peak=344064 raw_peak=32768
+WATERLINE measurements cumulative_cpu_calls=1 cpu_encode_ms=0.491435 cpu_plain_h2d_bytes=114688 transport_h2d_bytes=688128 transport_h2d_ms=0.1288
+WATERLINE measurements GPU0 allocated_peak=0 allocated_live=0 pool_reserved=0 pool_cap=0 gpu_encode_calls=0 gpu_encode_ms=0 gpu_raw_h2d_bytes=0 consumer_wait_calls=0 consumer_wait_ms=0 gpu_raw_h2d_ms=0
+Waterline diagnostic max=4.77269e-05 outputs=1 peer_devices_completed_before_gpu0=0
+WATERLINE HostStaged posts=0 posts_observed_with_pinned=0 expected_posts=0
+WATERLINE backend=0 devices=1 max_abs_error=4.77269e-05 runtime_ms=18.8684 forward_ms=16.3994 pinned_live=0
+WATERLINE mode=Auto physical_pinned_peak_process=229376 pinned_budget=67108864
+WATERLINE mode=Auto backend=1 devices=1 host_budget=536870912 pinned_budget=67108864 raw_budget=33554432
+waterline fixed GPU0 persistent_bytes=5936620 retained_workspace_bound=0 reserve_required=73045484 reserve_configured=2147483648
+waterline GPU0 custom_memory_resource=true physical_pool_cap=provider_owned
+waterline GPU0 front_peak=1376256 plain_peak=311296 remaining_front=0 remaining_plain=0
+waterline shared host_peak=1605632 pinned_peak=344064 raw_peak=32768
+WATERLINE measurements cumulative_cpu_calls=1 cpu_encode_ms=0.491435 cpu_plain_h2d_bytes=114688 transport_h2d_bytes=917504 transport_h2d_ms=0.158912
+WATERLINE measurements GPU0 allocated_peak=0 allocated_live=0 pool_reserved=0 pool_cap=0 gpu_encode_calls=1 gpu_encode_ms=2.80019 gpu_raw_h2d_bytes=16384 consumer_wait_calls=0 consumer_wait_ms=0 gpu_raw_h2d_ms=0.010688
+Waterline diagnostic max=4.77269e-05 outputs=1 peer_devices_completed_before_gpu0=0
+WATERLINE HostStaged posts=0 posts_observed_with_pinned=0 expected_posts=0
+WATERLINE backend=1 devices=1 max_abs_error=4.77269e-05 runtime_ms=23.9051 forward_ms=19.6859 pinned_live=0
+WATERLINE mode=Auto physical_pinned_peak_process=229376 pinned_budget=67108864
+WATERLINE mode=Auto backend=2 devices=1 host_budget=536870912 pinned_budget=67108864 raw_budget=33554432
+waterline fixed GPU0 persistent_bytes=5936620 retained_workspace_bound=0 reserve_required=73045484 reserve_configured=2147483648
+waterline GPU0 custom_memory_resource=true physical_pool_cap=provider_owned
+waterline GPU0 front_peak=1376256 plain_peak=114688 remaining_front=0 remaining_plain=0
+waterline shared host_peak=1605632 pinned_peak=344064 raw_peak=32768
+WATERLINE measurements cumulative_cpu_calls=2 cpu_encode_ms=1.16823 cpu_plain_h2d_bytes=229376 transport_h2d_bytes=1261568 transport_h2d_ms=0.2096
+WATERLINE measurements GPU0 allocated_peak=0 allocated_live=0 pool_reserved=0 pool_cap=0 gpu_encode_calls=1 gpu_encode_ms=2.80019 gpu_raw_h2d_bytes=16384 consumer_wait_calls=0 consumer_wait_ms=0 gpu_raw_h2d_ms=0.010688
+Waterline diagnostic max=4.77269e-05 outputs=1 peer_devices_completed_before_gpu0=0
+WATERLINE HostStaged posts=0 posts_observed_with_pinned=0 expected_posts=0
+WATERLINE backend=2 devices=1 max_abs_error=4.77269e-05 runtime_ms=20.366 forward_ms=17.5738 pinned_live=0
+WATERLINE mode=Auto physical_pinned_peak_process=229376 pinned_budget=67108864
+[PASS] CPU/GPU/auto Waterline through encrypted consumers
+[PASS] selected Galois-key upload
+[PASS] application Q-prefix, sparse levels and hoisted rotations
+[PASS] GPU transfer publishes completion events
+[PASS] async computation and transfer storage cleanup
+[PASS] completed transfer releases pinned staging
+[PASS] Runtime drains work outside final output dependencies
+[PASS] Runtime Release during unfinished computation and transfer
+[PASS] online Encode/upload and explicit Fence in both execution modes
+[PASS] GPU AddCP/SubCP/Rotate reuse chains
+[PASS] device mapping rejects invalid CUDA device lists
+[PASS] preflight rejects unsupported configurations
+[PASS] Runtime Encode/Transfer/AddCP/Transfer
+[PASS] Runtime Transfer/AddCC/Transfer
+[PASS] Runtime Encode/Transfer/MulCP/Transfer
+[PASS] ordinary/lazy Rescale and Value validation
+[PASS] MulCC/Relinearize/Rescale/composite Rotate
+[PASS] Host decrypt/re-encrypt Boot
+[SKIP] two-GPU RuntimePlan requires two CUDA devices
+20 Poseidon GPU Runtime Api tests passed

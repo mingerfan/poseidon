@@ -1,0 +1,9 @@
+PASS: Prepare V4, no automatic Fence/reencode, frontend places/order, single-group rejections
+Traceback (most recent call last):
+  File "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/check-waterline.py", line 76, in <module>
+    if __name__=='__main__': main()
+                             ~~~~^^
+  File "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/check-waterline.py", line 61, in main
+    assert bad.returncode!=0 and 'single-group shared Host/pinned budget exceeded' in bad.stderr, \
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: cpu omitted CPU upload pinned bytes from Host at 480: exit=0 

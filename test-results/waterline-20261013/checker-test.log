@@ -1,0 +1,22 @@
+SCOPE checker-test-only: simulated 261 full-8192-slot outputs from independent reference prefixes and zero tails; no encryption, GPU, or model run.
+PASS checker-test-only positive-all-logits-kv-and-tails accepted
+PASS checker-test-only finite-all-zero-decoded rejected
+PASS checker-test-only last-valid-logit-151935 rejected
+PASS checker-test-only last-kv-layer27-value-position1-element1023 rejected
+PASS checker-test-only imaginary-prefix rejected
+PASS checker-test-only last-logit-real-tail-slot8191 rejected
+PASS checker-test-only last-kv-imaginary-tail-slot8191 rejected
+PASS checker-test-only missing-last-output rejected
+PASS checker-test-only reordered-outputs rejected
+PASS checker-test-only stale-decoded-fixture-hash rejected
+PASS checker-test-only stale-runner-report-fixture-hash rejected
+PASS checker-test-only mismatched-runner-output-value-id rejected
+PASS checker-test-only runner-not-complete rejected
+PASS checker-test-only runner-reported-failure rejected
+PASS checker-test-only nonfinite-last-imaginary-slot rejected
+PASS checker-test-only stale-signature-binding rejected
+PASS checker-test-only runner-expected-values-differ rejected
+PASS checker-test-only stale-reference-file-hash rejected
+PASS checker-test-only reference-extra-layer-with-rebound-checksum rejected
+PASS checker-test-only positive-after-all-restores accepted
+PASS 20 checker-only cases; positive acceptance is simulated data, not complete-model CKKS numerical acceptance.

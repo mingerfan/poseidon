@@ -107,3 +107,4 @@ def forward(weights, embeddings, positions, c, profiles=None):
     logits = np.concatenate([lm[start:start+1024] @ final for start in range(0, len(lm), 1024)])
     return dict(logits=logits, keys=np.array(keys), values=np.array(values)), dict(
         layers=bounds, final_norm_variance=final_bounds)
+

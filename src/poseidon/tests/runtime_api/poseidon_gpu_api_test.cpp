@@ -29,6 +29,7 @@
 #include <mutex>
 #include <optional>
 #include <set>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <thread>
@@ -1374,7 +1375,7 @@ void test_runtime_add_plain(PoseidonGpuApi &api, const poseidon::PoseidonContext
 }
 
 // Compare eager encoding with online uploads, then V3 online encoding/Fence.
-void test_runtime_plaintext_batches(const poseidon::PoseidonContext &context,
+void test_runtime_explicit_encode_fence(const poseidon::PoseidonContext &context,
                                    poseidon::KeyGenerator &key_generator,
                                    const fhegpu::LoadedOperatorSpec &spec)
 {
@@ -1400,8 +1401,8 @@ void test_runtime_plaintext_batches(const poseidon::PoseidonContext &context,
         plan.initialization = {base.initialization[1]};
         plan.execution.clear();
         fhegpu::ValueId previous = 2;
-        for (int batch = 0; batch < 3; ++batch) {
-            const fhegpu::ValueId weight = 10 + batch * 3, uploaded = weight + 1, output = weight + 2;
+        for (int round = 0; round < 3; ++round) {
+            const fhegpu::ValueId weight = 10 + round * 3, uploaded = weight + 1, output = weight + 2;
             for (auto entry : {base.values[1], base.values[3], base.values[4]}) {
                 entry.id = entry.kind == fhegpu::ValueKind::Ciphertext ? output :
                     entry.place.kind == fhegpu::PlaceKind::Host ? weight : uploaded;
@@ -1411,7 +1412,7 @@ void test_runtime_plaintext_batches(const poseidon::PoseidonContext &context,
             encoding.output = weight;
             (online_encode ? plan.execution : plan.initialization).push_back({0, encoding});
             auto upload = std::get<fhegpu::CommAction>(base.initialization[2].body);
-            upload.id = 10 + batch; upload.inputs = {weight}; upload.outputs = {uploaded};
+            upload.id = 10 + round; upload.inputs = {weight}; upload.outputs = {uploaded};
             plan.execution.push_back({0, upload});
             plan.execution.push_back({0, fhegpu::ReleaseOp{weight}});
             plan.execution.push_back({0, fhegpu::ComputeOp{fhegpu::ComputeKind::AddCP,
@@ -1437,7 +1438,7 @@ void test_runtime_plaintext_batches(const poseidon::PoseidonContext &context,
         const std::vector<double> expected{2.5, -1, 9, 13};
         for (std::size_t i = 0; i < expected.size(); ++i)
             require(std::abs(slots[i] - expected[i]) < 1e-4,
-                    "batched plaintext numerical mismatch");
+                    "explicit Encode/Fence plaintext numerical mismatch");
     }
 }
 
@@ -2026,17 +2027,17 @@ void test_two_gpu_runtime_plan(const poseidon::PoseidonContext &context,
     std::size_t ordinal = 0;
     for (auto *phase : {&release_plan.initialization, &release_plan.execution, &release_plan.finalization})
         for (auto &instruction : *phase) instruction.ordinal = ordinal++;
-    auto streaming = ordinary;
-    streaming.format_version = 3;
+    auto explicit_fence = ordinary;
+    explicit_fence.format_version = 3;
     auto second_weight = ordinary.values[1]; second_weight.id = 11;
-    streaming.values.push_back(second_weight);
+    explicit_fence.values.push_back(second_weight);
     auto second_encode = std::get<fhegpu::EncodeOp>(ordinary.initialization[0].body);
     second_encode.output = 11;
     auto second_upload = std::get<fhegpu::CommAction>(ordinary.initialization[2].body);
     second_upload.id = 40; second_upload.inputs = {11}; second_upload.outputs = {5};
     second_upload.destinations = {device_place(1)};
-    streaming.initialization = {ordinary.initialization[1]};
-    streaming.execution = {
+    explicit_fence.initialization = {ordinary.initialization[1]};
+    explicit_fence.execution = {
         {0, ordinary.initialization[0].body}, {0, ordinary.initialization[2].body},
         {0, fhegpu::ReleaseOp{1}}, {0, ordinary.execution[0].body},
         {0, fhegpu::ReleaseOp{4}}, {0, fhegpu::FenceOp{}},
@@ -2044,12 +2045,12 @@ void test_two_gpu_runtime_plan(const poseidon::PoseidonContext &context,
         {0, ordinary.execution[1].body}, {0, fhegpu::ReleaseOp{5}},
         {0, fhegpu::FenceOp{}}, {0, ordinary.execution[2].body}, {0, ordinary.execution[3].body}};
     ordinal = 0;
-    for (auto *phase : {&streaming.initialization, &streaming.execution, &streaming.finalization})
+    for (auto *phase : {&explicit_fence.initialization, &explicit_fence.execution, &explicit_fence.finalization})
         for (auto &instruction : *phase) instruction.ordinal = ordinal++;
     const fhegpu::RuntimeResources resources{loaded_spec, std::nullopt, false};
     std::unordered_map<fhegpu::ValueId, PoseidonGpuValue> inputs;
     inputs.emplace(0, PoseidonGpuValue::from_host_ciphertext(std::move(input_cipher)));
-    for (const auto &plan : {ordinary, release_plan, streaming})
+    for (const auto &plan : {ordinary, release_plan, explicit_fence})
     {
         for (auto mode : {fhegpu::DeviceExecutionMode::Sequential,
                           fhegpu::DeviceExecutionMode::PerDeviceWorkers})
@@ -2102,9 +2103,29 @@ public:
     using PoseidonGpuApi::PoseidonGpuApi;
     std::atomic<bool> delayed{false},waiting{false};
     std::atomic<unsigned> peers_while_waiting{0};
+    std::atomic<unsigned> host_staged_posts{0},host_staged_pinned_observed{0};
     void reset_delay() {
         std::lock_guard<std::mutex> lock(delay_mutex_);
         delayed=false;waiting=true;peers_while_waiting=0;peer_devices_.clear();
+        host_staged_posts=0;host_staged_pinned_observed=0;
+    }
+    CommHandle communicate_async(const fhegpu::CommAction &action,const std::vector<Value> &inputs,
+                                 const std::vector<fhegpu::ValueDesc> &outputs) {
+        const bool staged=action.hint==fhegpu::CommHint::HostStaged;
+        if(staged) {
+            require(action.sources.size()==1 && action.destinations.size()==1,"HostStaged ring must transfer one object");
+            const auto source=cuda_device_id(action.sources.front().index);
+            const auto destination=cuda_device_id(action.destinations.front().index);
+            require(poseidon::runtime_api::communication::CudaLocalTransfer::select_route(
+                destination,source,poseidon::runtime_api::communication::CudaTransferRoute::HostStaged)==
+                poseidon::runtime_api::communication::CudaTransferRoute::HostStaged,"ring did not resolve HostStaged route");
+        }
+        auto handle=PoseidonGpuApi::communicate_async(action,inputs,outputs);
+        if(staged) {
+            ++host_staged_posts;
+            if(poseidon::runtime_api::communication::PinnedHostBuffer::live_bytes()>0)++host_staged_pinned_observed;
+        }
+        return handle;
     }
     Value compute(const fhegpu::ComputeOp &op,const std::vector<Value> &inputs) {
         if(local_device_count()==1 || op.place.kind!=fhegpu::PlaceKind::Device)
@@ -2136,10 +2157,124 @@ private:
     std::set<int> peer_devices_;
 };
 
+void test_cpu_prepare_host_budget(const poseidon::PoseidonContext &context,
+                                  poseidon::KeyGenerator &key_generator,
+                                  const fhegpu::LoadedOperatorSpec &spec)
+{
+    PoseidonGpuApi api(kContextId,context,kDeviceId);
+    poseidon::PublicKey public_key;key_generator.create_public_key(public_key);
+    poseidon::Encryptor encryptor(context,public_key);
+    poseidon::Decryptor decryptor(context,key_generator.secret_key());
+    poseidon::CKKSEncoder encoder(context);
+    const auto n=context.parameters_literal()->degree();
+    const auto q=context.parameters_literal()->q().size();
+    const std::uint64_t bytes=n*q*sizeof(poseidon::gpu::GpuWord);
+    const std::uint64_t old_host_bound=2*bytes+40*n;
+    const std::uint64_t complete_host_bound=old_host_bound+bytes;
+    // Retain six legal Host Encode outputs after H2D and release them before
+    // D2H. This makes Prepare, rather than IO staging, determine the boundary.
+    const std::uint64_t prepare_host_resident=16*bytes;
+    const std::uint64_t tight_host_budget=prepare_host_resident+old_host_bound+bytes/2;
+    const std::uint64_t sufficient_host_budget=prepare_host_resident+complete_host_bound;
+    std::vector<double> input(encoder.slot_count()),weight(encoder.slot_count());
+    for(std::size_t i=0;i<input.size();++i) {
+        input[i]=std::sin(double(i)*.073)*.25;
+        weight[i]=std::cos(double(i)*.137)*.125;
+    }
+    poseidon::Plaintext plain;encoder.encode(input,std::ldexp(1.,kDefaultScaleLog2),plain);
+    poseidon::Ciphertext cipher;encryptor.encrypt(plain,cipher);
+    const int level=static_cast<int>(cipher.level());
+    fhegpu::RuntimePlan plan;plan.format_version=4;plan.plan_id=402;plan.target=make_target(spec);
+    plan.values={
+        {0,fhegpu::ValueKind::Ciphertext,host_place(),kContextId,level,kDefaultScaleLog2,true,2},
+        {1,fhegpu::ValueKind::Ciphertext,device_place(),kContextId,level,kDefaultScaleLog2,true,2},
+        {2,fhegpu::ValueKind::Plaintext,device_place(),kContextId,level,kDefaultScaleLog2,true,1},
+        {3,fhegpu::ValueKind::Ciphertext,device_place(),kContextId,level,kDefaultScaleLog2,true,2}};
+    plan.external_inputs={0};plan.final_outputs={10};
+    auto upload=transfer_action(1,fhegpu::ValueKind::Ciphertext,host_place(),device_place());
+    upload.inputs={0};upload.outputs={1};plan.initialization={{0,upload}};
+    for(fhegpu::ValueId id=4;id<10;++id) {
+        plan.values.push_back({id,fhegpu::ValueKind::Plaintext,host_place(),kContextId,level,kDefaultScaleLog2,true,1});
+        plan.execution.push_back({id-3,fhegpu::EncodeOp{fhegpu::InlineEncodePayload{weight},id}});
+    }
+    plan.values.push_back({10,fhegpu::ValueKind::Ciphertext,host_place(),kContextId,level,kDefaultScaleLog2,true,2});
+    plan.execution.push_back({7,fhegpu::PreparePlaintextOp{fhegpu::InlineEncodePayload{weight},2}});
+    plan.execution.push_back({8,fhegpu::ComputeOp{fhegpu::ComputeKind::AddCP,{1,2},3,device_place(),{}}});
+    plan.execution.push_back({9,fhegpu::ReleaseOp{1}});
+    plan.execution.push_back({10,fhegpu::ReleaseOp{2}});
+    for(fhegpu::ValueId id=4;id<10;++id)plan.execution.push_back({id+7,fhegpu::ReleaseOp{id}});
+    auto download=transfer_action(2,fhegpu::ValueKind::Ciphertext,device_place(),host_place());
+    download.inputs={3};download.outputs={10};plan.finalization={{17,download},{18,fhegpu::ReleaseOp{3}}};
+    fhegpu::WaterlineConfig config;config.backend=fhegpu::PrepareBackend::Cpu;
+    config.device_capacity_bytes={4ULL<<30};config.device_reserve_bytes={2ULL<<30};config.device_fractions={.02};
+    config.host_budget_bytes=tight_host_budget;config.pinned_budget_bytes=3*bytes;config.raw_budget_bytes=8*n;
+    config.lookahead_groups=1;plan.waterline=config;
+    const std::unordered_map<fhegpu::ValueId,PoseidonGpuValue> inputs{{0,PoseidonGpuValue::from_host_ciphertext(cipher)}};
+    const auto before=api.waterline_measurements().cpu_prepare_calls;
+    std::string rejection;
+    try {
+        fhegpu::SequentialRuntime<PoseidonGpuApi> runtime(0,1,1,api,fhegpu::DeviceExecutionMode::PerDeviceWorkers);
+        (void)runtime.run({plan,kPlanSha},{spec,std::nullopt,false},inputs);
+    } catch(const std::exception &error) {rejection=error.what();}
+    const auto rejected_calls=api.waterline_measurements().cpu_prepare_calls-before;
+    std::cout<<"CPU_PREPARE_HOST_BOUND N="<<n<<" Q="<<q<<" old_bound="<<old_host_bound
+             <<" complete_bound="<<complete_host_bound<<" prepare_host_resident="<<prepare_host_resident
+             <<" required_total="<<sufficient_host_budget<<" tight_budget="<<tight_host_budget
+             <<" cpu_prepare_calls_delta="<<rejected_calls<<" rejection="<<rejection<<'\n';
+    require(rejection.find("single-group baseline infeasible")!=std::string::npos,
+            "CPU Prepare Host budget did not reject before work submission: "+rejection);
+    require(rejection.find("instruction #8")!=std::string::npos,
+            "CPU Prepare boundary was masked by initialization/finalization workspace");
+    require(rejection.find("Host="+std::to_string(sufficient_host_budget))!=std::string::npos,
+            "CPU Prepare rejection did not include coexisting pinned storage in Host peak");
+    require(rejected_calls==0,"CPU Prepare started before its complete Host budget fit");
+
+    config.host_budget_bytes=sufficient_host_budget;plan.waterline=config;
+    const auto pinned_before=poseidon::runtime_api::communication::PinnedHostBuffer::live_bytes();
+    require(pinned_before==0,"CPU Prepare boundary test starts with pending pinned storage");
+    std::ostringstream diagnostics;
+    struct RestoreStderr {
+        std::streambuf *original;
+        ~RestoreStderr() {std::cerr.rdbuf(original);}
+    };
+    std::optional<fhegpu::RunArtifact<PoseidonGpuValue>> artifact;
+    {
+        RestoreStderr restore{std::cerr.rdbuf(diagnostics.rdbuf())};
+        fhegpu::SequentialRuntime<PoseidonGpuApi> runtime(0,1,1,api,fhegpu::DeviceExecutionMode::PerDeviceWorkers);
+        artifact.emplace(runtime.run({plan,kPlanSha},{spec,std::nullopt,false},inputs));
+    }
+    std::cerr<<diagnostics.str();
+    require(diagnostics.str().find("remaining_front=0 remaining_plain=0")!=std::string::npos,
+            "CPU Prepare retained dynamic foreground/plaintext credit after completion");
+    require(diagnostics.str().find("host_peak="+std::to_string(sufficient_host_budget))!=std::string::npos,
+            "CPU Prepare positive boundary did not charge its complete Host peak");
+    require(api.waterline_measurements().cpu_prepare_calls-before==1,"CPU Prepare positive boundary did not encode exactly once");
+    require(artifact->timing.encode_calls==7,"CPU Prepare pressure graph did not encode six Host values and one prepared plaintext");
+    require(poseidon::runtime_api::communication::PinnedHostBuffer::live_bytes()==pinned_before,
+            "CPU Prepare pinned upload outlived its Ready event");
+    poseidon::Plaintext decrypted;decryptor.decrypt(artifact->values.at(10).value.host_ciphertext(),decrypted);
+    std::vector<std::complex<double>> slots;encoder.decode(decrypted,slots);
+    require(slots.size()==input.size(),"CPU Prepare positive boundary changed slot layout");
+    double maximum=0;
+    for(std::size_t i=0;i<slots.size();++i) {
+        require(std::isfinite(slots[i].real()) && std::isfinite(slots[i].imag()),"CPU Prepare returned nonfinite slots");
+        maximum=std::max({maximum,std::abs(slots[i].real()-input[i]-weight[i]),std::abs(slots[i].imag())});
+    }
+    require(maximum<1e-4,"CPU Prepare positive boundary numerical mismatch");
+    std::cout<<"CPU_PREPARE_HOST_BOUND positive_budget="<<sufficient_host_budget<<" pinned_budget="<<config.pinned_budget_bytes
+             <<" slots_checked="<<slots.size()<<" max_abs_including_imaginary="<<maximum
+             <<" retained_external_final_host="<<8*bytes
+             <<" remaining_dynamic_front=0 remaining_plain=0 pinned_live="<<pinned_before<<'\n';
+}
+
 void test_waterline_runtime(const poseidon::PoseidonContext &context,
                            poseidon::KeyGenerator &key_generator,
                            const fhegpu::LoadedOperatorSpec &spec,int device_count)
 {
+    const auto *host_staged_env=std::getenv("POSEIDON_WATERLINE_HOST_STAGED");
+    const std::string host_staged_setting=host_staged_env?host_staged_env:"0";
+    require(host_staged_setting=="0" || host_staged_setting=="1","POSEIDON_WATERLINE_HOST_STAGED must be 0 or 1");
+    const bool host_staged=host_staged_setting=="1";
     std::vector<int> ids(device_count);for(int d=0;d<device_count;++d)ids[d]=d;
     DelayedWaterlineApi api(kContextId,context,ids);
     poseidon::PublicKey public_key;key_generator.create_public_key(public_key);
@@ -2182,6 +2317,7 @@ void test_waterline_runtime(const poseidon::PoseidonContext &context,
         for(int d=0;d<device_count;++d) {
             const int next=(d+1)%device_count;moved[next]=add_value(fhegpu::ValueKind::Ciphertext,device_place(next));
             auto action=transfer_action(transfer_id++,fhegpu::ValueKind::Ciphertext,device_place(d),device_place(next));
+            if(host_staged)action.hint=fhegpu::CommHint::HostStaged;
             action.inputs={current[d]};action.outputs={moved[next]};plan.execution.push_back({0,action});
         }
         for(auto id:current)plan.execution.push_back({0,fhegpu::ReleaseOp{id}});
@@ -2198,10 +2334,25 @@ void test_waterline_runtime(const poseidon::PoseidonContext &context,
     std::size_t ordinal=0;for(auto *phase:{&plan.initialization,&plan.execution,&plan.finalization})for(auto &i:*phase)i.ordinal=ordinal++;
     fhegpu::WaterlineConfig config;config.device_capacity_bytes.assign(device_count,4ULL<<30);config.device_reserve_bytes.assign(device_count,2ULL<<30);
     config.host_budget_bytes=512ULL<<20;config.pinned_budget_bytes=64ULL<<20;config.raw_budget_bytes=32ULL<<20;
+    if(host_staged) {
+        const std::uint64_t n=context.parameters_literal()->degree(),q=context.parameters_literal()->q().size();
+        const std::uint64_t bytes=n*q*sizeof(poseidon::gpu::GpuWord);
+        const auto host_cipher=4*bytes;
+        const auto cpu_prepare_host=3*bytes+40*n;
+        // At most two full-context communication workspace reservations fit
+        // simultaneously. Leave Host room for outputs and two CPU prepares.
+        config.pinned_budget_bytes=6*bytes;
+        config.host_budget_bytes=std::max(host_cipher*(device_count+1)+18*bytes,
+                                          host_cipher+2*cpu_prepare_host);
+        config.raw_budget_bytes=16*n;
+    }
     config.device_fractions.assign(device_count,.02);config.lookahead_groups=8;
     std::unordered_map<fhegpu::ValueId,PoseidonGpuValue> inputs{{arg,PoseidonGpuValue::from_host_ciphertext(cipher)}};
     for(auto backend:{fhegpu::PrepareBackend::Cpu,fhegpu::PrepareBackend::Gpu,fhegpu::PrepareBackend::Auto}) {
         config.backend=backend;plan.waterline=config;
+        std::cout<<"WATERLINE mode="<<(host_staged?"HostStaged":"Auto")<<" backend="<<int(backend)
+                 <<" devices="<<device_count<<" host_budget="<<config.host_budget_bytes
+                 <<" pinned_budget="<<config.pinned_budget_bytes<<" raw_budget="<<config.raw_budget_bytes<<'\n'<<std::flush;
         api.reset_delay();
         const auto begin=std::chrono::steady_clock::now();
         fhegpu::SequentialRuntime<DelayedWaterlineApi> runtime(0,1,device_count,api,fhegpu::DeviceExecutionMode::PerDeviceWorkers);
@@ -2240,14 +2391,25 @@ void test_waterline_runtime(const poseidon::PoseidonContext &context,
             }
         }
         if(device_count>1)require(api.peers_while_waiting.load()==static_cast<unsigned>(device_count-1),"not all peers completed before delayed GPU0");
+        const auto expected_staged_posts=host_staged && device_count>1?rounds*device_count:0;
+        require(api.host_staged_posts.load()==static_cast<unsigned>(expected_staged_posts),"HostStaged ring posts were omitted");
+        if(expected_staged_posts)require(api.host_staged_pinned_observed.load()>0,"HostStaged ring did not materialize pinned staging");
         std::cout << "Waterline diagnostic max=" << maximum << " outputs="<<plan.final_outputs.size()
                   <<" peer_devices_completed_before_gpu0="<<api.peers_while_waiting.load()<<'\n';
+        std::cout<<"WATERLINE HostStaged posts="<<api.host_staged_posts.load()
+                 <<" posts_observed_with_pinned="<<api.host_staged_pinned_observed.load()
+                 <<" expected_posts="<<expected_staged_posts<<'\n';
         require(maximum<1e-4,"Waterline plaintext consumer numerical mismatch");
         require(artifact.timing.encode_calls==static_cast<std::size_t>(device_count),"shared Prepare was encoded more than once");
         std::cout<<"WATERLINE backend="<<int(backend)<<" devices="<<device_count<<" max_abs_error="<<maximum
                  <<" runtime_ms="<<std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-begin).count()
                  <<" forward_ms="<<artifact.timing.online_execution_nanoseconds/1e6<<" pinned_live="
                  <<poseidon::runtime_api::communication::PinnedHostBuffer::live_bytes()<<'\n';
+        require(poseidon::runtime_api::communication::PinnedHostBuffer::live_bytes()==0,
+                "Waterline ring retained completed pinned staging");
+        std::cout<<"WATERLINE mode="<<(host_staged?"HostStaged":"Auto")
+                 <<" physical_pinned_peak_process="<<poseidon::runtime_api::communication::PinnedHostBuffer::peak_bytes()
+                 <<" pinned_budget="<<config.pinned_budget_bytes<<'\n';
     }
 }
 
@@ -2288,10 +2450,16 @@ int main()
         const auto loaded_spec = make_operator_spec(context);
         if (std::getenv("POSEIDON_WATERLINE_ONLY")) {
             test_gpu_plaintext_wide_coefficients(context);
+            run_test("CPU Prepare complete Host budget negative/positive boundary",[&] {
+                test_cpu_prepare_host_budget(context,key_generator,loaded_spec);
+            });
             test_waterline_runtime(context,key_generator,loaded_spec,device_count);
             return 0;
         }
         RmmPoolScope rmm_pool(kDeviceId);
+        run_test("CPU Prepare complete Host budget negative/positive boundary",[&] {
+            test_cpu_prepare_host_budget(context,key_generator,loaded_spec);
+        });
         run_test("CPU/GPU/auto Waterline through encrypted consumers",[&] {test_waterline_runtime(context,key_generator,loaded_spec,1);});
         run_test("selected Galois-key upload",
                  [&] { test_selected_galois_key_upload(context, *galois_keys); });
@@ -2310,7 +2478,7 @@ int main()
         run_test("Runtime Release during unfinished computation and transfer",
                  [&] { test_runtime_release(context, key_generator, loaded_spec, rmm_pool); });
         run_test("online Encode/upload and explicit Fence in both execution modes",
-                 [&] { test_runtime_plaintext_batches(context, key_generator, loaded_spec); });
+                 [&] { test_runtime_explicit_encode_fence(context, key_generator, loaded_spec); });
         run_test("GPU AddCP/SubCP/Rotate reuse chains",
                  [&] { test_runtime_reuse(context, key_generator, loaded_spec, rmm_pool); });
         run_test("device mapping rejects invalid CUDA device lists",
@@ -2367,7 +2535,7 @@ int main()
         }
 
         if (device_count >= 4)
-            run_test("GPU0/GPU3 cross-batch shared weight and ciphertext",
+            run_test("GPU0/GPU3 explicit Encode/Fence shared weight and ciphertext",
                 [&] { test_two_gpu_runtime_plan(context, key_generator, loaded_spec, 3); });
         std::cout << tests_run << " Poseidon GPU Runtime Api tests passed\n";
         return 0;
