@@ -1,0 +1,26 @@
+{
+  "scope": "local single GPU cached production Prepare and full-slot boundary/mode compatibility, not all-GPU acceptance",
+  "runs": [
+    {
+      "mode": "0",
+      "returncode": 0,
+      "seconds": 10.834284335998746,
+      "log": "test-results/waterline-20261013/gpu-raw-cache-mode0-n65536-q32.log"
+    },
+    {
+      "mode": "1",
+      "returncode": 0,
+      "seconds": 9.281600202000845,
+      "log": "test-results/waterline-20261013/gpu-raw-cache-mode1-n65536-q32.log"
+    }
+  ],
+  "passed": true,
+  "binary_sha256": "6885533f3cfcf6154b81bdb0b57ec1cfb10aa50220f9ef4bb51404763092ab3a",
+  "source_sha256": {
+    "src/poseidon/runtime_api/poseidon_gpu_api.cpp": "d07c43b57db0060e72679103520efd8c8716613a4faf7d74626fc9ee557f560b",
+    "src/poseidon/runtime_api/poseidon_gpu_api.h": "077ac8b38a019ebfd08c060516288112a2938e1bd5117d93d058abd5f0cfc76a",
+    "src/poseidon/runtime_api/communication/cuda_local_transfer.cpp": "1c2b6438b09f46ff82d1e5aabdbe139759482a86e78e409c5d32318cf6624e13",
+    "src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp": "6a2f3e5e0b81e723962ba364867113846dffe78ac1f4af8ee0ac93085f9629b0",
+    "third_party/ckks-runtime/runtime/runtime.hpp": "20116916fb0ae765fed7aadb8efc564892ecdab5c6a86e4e9370a8ce5aaf5d02"
+  }
+}

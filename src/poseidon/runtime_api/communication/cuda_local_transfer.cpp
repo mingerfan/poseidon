@@ -20,6 +20,7 @@ namespace
 {
 
 std::atomic<std::size_t> pinned_live{0}, pinned_peak{0};
+std::atomic<std::size_t> pinned_allocations{0},pinned_frees{0};
 std::atomic<std::uint64_t> h2d_completed_bytes{0}, h2d_elapsed_nanoseconds{0},
     h2d_completed_count{0};
 
@@ -114,6 +115,7 @@ PinnedHostBuffer::PinnedHostBuffer(std::size_t bytes) : bytes_(bytes)
         throw std::invalid_argument("CUDA pinned Host buffer must be non-empty");
     }
     check_cuda(cudaMallocHost(&data_, bytes_), "CUDA transfer cudaMallocHost");
+    pinned_allocations.fetch_add(1,std::memory_order_relaxed);
     const auto live = pinned_live.fetch_add(bytes_, std::memory_order_relaxed) + bytes_;
     auto peak = pinned_peak.load(std::memory_order_relaxed);
     while (peak < live && !pinned_peak.compare_exchange_weak(peak, live, std::memory_order_relaxed)) {}
@@ -125,12 +127,15 @@ PinnedHostBuffer::~PinnedHostBuffer()
     if (data_ != nullptr)
     {
         (void)cudaFreeHost(data_);
+        pinned_frees.fetch_add(1,std::memory_order_relaxed);
         pinned_live.fetch_sub(bytes_, std::memory_order_relaxed);
     }
 }
 
 std::size_t PinnedHostBuffer::live_bytes() noexcept { return pinned_live.load(std::memory_order_relaxed); }
 std::size_t PinnedHostBuffer::peak_bytes() noexcept { return pinned_peak.load(std::memory_order_relaxed); }
+std::size_t PinnedHostBuffer::allocation_calls() noexcept { return pinned_allocations.load(std::memory_order_relaxed); }
+std::size_t PinnedHostBuffer::free_calls() noexcept { return pinned_frees.load(std::memory_order_relaxed); }
 
 void *PinnedHostBuffer::data() noexcept
 {

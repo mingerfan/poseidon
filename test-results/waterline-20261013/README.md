@@ -62,3 +62,7 @@ POSEIDON_188_WORKSPACE=/home/xuming/poseidon-waterline-20261013 bash run-188-acc
 服务器大型artifact保存在 `/home/xuming/poseidon-waterline-20261013`；远程期间始终保留独立SSH长连接，tmux不替代保活。`monitor_process.py` 按PID采样driver内存及RSS，区间采样不是连续峰值，晚启动披露首个timestamp。runner记录main到首个/全部输出、setup/init/forward及保存；外部time-v计进程冷启动。CSV duration只是API提交时间，trace字节数不表示完成百分比。仍需完整模型实际输出、独立数值报告、实际后端覆盖和最终资源/等待/收尾汇总。
 
 执行器无进展轮询由1ms缩至100µs，仍按原Ready/完整组/顺序检查；没有新调度路径或配置。`core-short-poll-tests.log`核心8/8，`core-short-poll-gpu-*`完整20/20及N65536/Q32 mode0/1各一次通过，源码/库hash保持一致。它可能增加CPU查询开销并改变Auto比例；本机host sleep探针与回归耗时不能外推188或完整模型加速。最终计划使用含Host/pinned修复的新编译器，产物目录为服务器`qwen3-plans-bsgs-final/gpu4`。
+
+针对完整Auto进度慢的后续修复：runtime `7a918fc` 限制Auto待处理CPU准备为一个完整组；CPU与目标前台都忙时暂停新组准入，待完成后重新按CPU优先选择，不改变已准入后端、HEFT或前台顺序。API的Waterline GPU准备每卡复用一份N×4字节的pinned原始槽缓冲，在整段执行的固定Host/pinned预算中计费，Ready完成前禁止覆写，drain后释放。普通未启用Waterline的API保持逐次分配语义。
+
+`core-bounded-auto-tests.log` 8/8，包括固定Host/pinned不足时在任何Prepare前拒绝、足量预算下全部算术正确。`gpu-raw-cache-full-api.log` 20/20；真实GPU每卡10次准备仅1次pinned分配，实际stream gate捕获未完成时覆写，Ready完成后重配仍要求drain，释放后live=0。`gpu-raw-cache-mode{0,1}-n65536-q32.log` 三模式及全32768复数槽通过，cache全槽误差2.84517e-10；源码/二进制绑定见 `gpu-raw-cache-status.json`。这些是本地验证，修复后的188压力、完整模型执行及端到端收益仍待测量。

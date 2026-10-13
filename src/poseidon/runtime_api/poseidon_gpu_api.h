@@ -198,6 +198,7 @@ public:
     fhegpu::ResourceUsage instruction_workspace(const fhegpu::Instruction &instruction) const;
     void validate_waterline_resources(const fhegpu::RuntimePlan &plan);
     std::vector<std::uint64_t> waterline_allocator_capacity() const;
+    fhegpu::ResourceUsage waterline_fixed_resources() const;
     struct DeviceMeasurements {
         std::uint64_t allocated_live=0,allocated_peak=0,pool_reserved=0,pool_capacity=0;
         std::uint64_t gpu_encode_calls=0,gpu_raw_h2d_bytes=0,gpu_raw_h2d_nanoseconds=0,gpu_encode_nanoseconds=0;

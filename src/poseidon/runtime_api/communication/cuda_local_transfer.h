@@ -35,6 +35,8 @@ public:
     // Process-wide transfer staging counters (thread safe, excluding other CUDA users).
     static std::size_t live_bytes() noexcept;
     static std::size_t peak_bytes() noexcept;
+    static std::size_t allocation_calls() noexcept;
+    static std::size_t free_calls() noexcept;
 
 private:
     void *data_ = nullptr;

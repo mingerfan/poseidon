@@ -841,6 +841,10 @@ struct PoseidonGpuApi::DeviceState
         }
     }
     std::unique_ptr<GpuPlaintextEncoder> plaintext_encoder;
+    bool gpu_raw_pinned_cache_enabled=false;
+    std::mutex gpu_raw_pinned_mutex;
+    std::shared_ptr<communication::PinnedHostBuffer> gpu_raw_pinned;
+    std::shared_ptr<PoseidonGpuValue::ReadyEvent> gpu_raw_pinned_ready;
     std::shared_ptr<DeviceMemoryPool> memory_pool;
     std::unique_ptr<gpu::GpuParameterData> gpu_parameters;
     std::unique_ptr<gpu::GpuEvaluator> evaluator;
@@ -1554,6 +1558,11 @@ void PoseidonGpuApi::validate_waterline_resources(const fhegpu::RuntimePlan &pla
 {
     if(!plan.waterline)throw std::invalid_argument("Waterline resource validation requires configuration");
     const auto &config=*plan.waterline;
+    for(const auto &device:devices_) {
+        std::lock_guard<std::mutex> lock(device->gpu_raw_pinned_mutex);
+        if(device->gpu_raw_pinned || device->gpu_raw_pinned_ready)
+            throw std::runtime_error("drain cached GPU Prepare before reconfiguring Waterline");
+    }
     const auto n=context_.parameters_literal()->degree();
     const auto q=context_.parameters_literal()->q().size(),p=context_.parameters_literal()->p().size();
     for(const auto &value:plan.values)if(value.kind==fhegpu::ValueKind::Ciphertext && value.components>3)
@@ -1565,6 +1574,7 @@ void PoseidonGpuApi::validate_waterline_resources(const fhegpu::RuntimePlan &pla
     waterline_allocator_capacity_.clear();
     waterline_allocator_capacity_.resize(devices_.size());
     std::vector<bool> keyswitch(devices_.size()),rescale(devices_.size());
+    std::vector<bool> gpu_prepare(devices_.size());
     for(const auto *phase:{&plan.initialization,&plan.execution,&plan.finalization})for(const auto &instruction:*phase) {
         if(const auto *op=std::get_if<fhegpu::PreparePlaintextOp>(&instruction.body)) {
             if(config.backend!=fhegpu::PrepareBackend::Cpu) {
@@ -1572,6 +1582,7 @@ void PoseidonGpuApi::validate_waterline_resources(const fhegpu::RuntimePlan &pla
                     [](const auto *value,auto id){return value->id<id;});
                 if(desc==descriptors.end() || (*desc)->id!=op->output)
                     throw std::logic_error("Prepare descriptor missing during resource validation");
+                gpu_prepare.at((*desc)->place.index)=true;
                 if(!prepare_resources(**desc,fhegpu::PrepareBackend::Gpu).supported)
                     throw std::runtime_error("GPU complete Prepare resource bound unavailable");
             }
@@ -1591,6 +1602,10 @@ void PoseidonGpuApi::validate_waterline_resources(const fhegpu::RuntimePlan &pla
     };
     for(std::size_t d=0;d<devices_.size();++d) {
         auto &device=*devices_[d];gpu::gpu_check_cuda(cudaSetDevice(device.cuda_device_id),"Waterline reserve device");
+        {
+            std::lock_guard<std::mutex> lock(device.gpu_raw_pinned_mutex);
+            device.gpu_raw_pinned_cache_enabled=gpu_prepare[d];
+        }
         if(!device.foreground_stream) {
             int least=0,greatest=0;gpu::gpu_check_cuda(cudaDeviceGetStreamPriorityRange(&least,&greatest),"Waterline stream priorities");
             gpu::gpu_check_cuda(cudaStreamCreateWithPriority(&device.foreground_stream,cudaStreamNonBlocking,greatest),"Waterline foreground stream");
@@ -1639,6 +1654,17 @@ std::vector<std::uint64_t> PoseidonGpuApi::waterline_allocator_capacity() const
     return waterline_allocator_capacity_;
 }
 
+fhegpu::ResourceUsage PoseidonGpuApi::waterline_fixed_resources() const
+{
+    fhegpu::ResourceUsage usage(devices_.size());
+    const auto bytes=context_.parameters_literal()->degree()*4;
+    for(const auto &device:devices_)if(device->gpu_raw_pinned_cache_enabled) {
+        fhegpu::ResourceUsage::add(usage.host,bytes);
+        fhegpu::ResourceUsage::add(usage.pinned,bytes);
+    }
+    return usage;
+}
+
 fhegpu::PrepareResources PoseidonGpuApi::prepare_resources(const fhegpu::ValueDesc &desc, fhegpu::PrepareBackend backend)
 {
     auto resident=value_resources(desc),peak=resident;
@@ -1656,7 +1682,8 @@ fhegpu::PrepareResources PoseidonGpuApi::prepare_resources(const fhegpu::ValueDe
         auto &device=device_state(desc.place,"GPU Prepare resources");
         if(!device.plaintext_encoder)device.plaintext_encoder=std::make_unique<GpuPlaintextEncoder>(n,device.cuda_device_id);
         peak.plain[desc.place.index]+=device.plaintext_encoder->workspace_bytes(q);
-        peak.pinned=n*4;
+        if(device.gpu_raw_pinned_cache_enabled)peak.host-=n*4;
+        else peak.pinned=n*4;
     } else throw std::invalid_argument("Prepare resource query needs a fixed backend");
     return {peak,resident,true};
 }
@@ -1740,20 +1767,41 @@ PoseidonGpuApi::Value PoseidonGpuApi::prepare_plaintext_async(const fhegpu::Valu
     if(!std::isfinite(bound) || bound>=std::numeric_limits<double>::max()*(1-1e-10L) ||
         bound>=std::ldexp(1.0L,coefficient_bits-1)*(1-1e-10L))
         throw std::invalid_argument("GPU Prepare exceeds context coefficient range");
-    auto pinned=std::make_shared<communication::PinnedHostBuffer>(n*4);
+    gpu::gpu_check_cuda(cudaSetDevice(device.cuda_device_id),"GPU Prepare device");
+    std::unique_lock<std::mutex> cache_lock(device.gpu_raw_pinned_mutex);
+    std::shared_ptr<communication::PinnedHostBuffer> pinned;
+    const bool cached=device.gpu_raw_pinned_cache_enabled;
+    if(cached) {
+        if(device.gpu_raw_pinned_ready && !device.gpu_raw_pinned_ready->collect_completed())
+            throw std::runtime_error("cached GPU Prepare buffer is still in use");
+        if(!device.gpu_raw_pinned)device.gpu_raw_pinned=std::make_shared<communication::PinnedHostBuffer>(n*4);
+        pinned=device.gpu_raw_pinned;
+    } else {
+        cache_lock.unlock();
+        pinned=std::make_shared<communication::PinnedHostBuffer>(n*4);
+    }
     auto *raw=static_cast<double *>(pinned->data());std::fill(raw,raw+n/2,0.0);std::copy(slots.begin(),slots.end(),raw);
     gpu::gpu_check_cuda(cudaSetDevice(device.cuda_device_id),"GPU Prepare device");
     gpu::ScopedGpuExecutionStream stream(device.plaintext_encoder->stream());
-    const auto q=q_count_for_level(desc.level);
-    auto output=gpu::GpuPlaintextData::allocate_single_device(n,q,device.cuda_device_id);
-    output.meta.parms_id=context_.crt_context()->parms_id_map().at(static_cast<std::uint32_t>(desc.level));
-    output.meta.scale=scale;output.meta.is_ntt_form=true;
-    const auto &level=device.gpu_parameters->get_level_by_q_count(q);
-    auto scratch=device.plaintext_encoder->submit(raw,scale,level.shards.front(),output);
-    auto result=Value::from_device_plaintext(std::move(output));
-    result.ready_=PoseidonGpuValue::ReadyEvent::record(device.cuda_device_id);
-    retain_in_flight(result.ready_,{result},{pinned,scratch});
-    return result;
+    try {
+        const auto q=q_count_for_level(desc.level);
+        auto output=gpu::GpuPlaintextData::allocate_single_device(n,q,device.cuda_device_id);
+        output.meta.parms_id=context_.crt_context()->parms_id_map().at(static_cast<std::uint32_t>(desc.level));
+        output.meta.scale=scale;output.meta.is_ntt_form=true;
+        const auto &level=device.gpu_parameters->get_level_by_q_count(q);
+        auto scratch=device.plaintext_encoder->submit(raw,scale,level.shards.front(),output);
+        auto result=Value::from_device_plaintext(std::move(output));
+        result.ready_=PoseidonGpuValue::ReadyEvent::record(device.cuda_device_id);
+        retain_in_flight(result.ready_,{result},{pinned,scratch});
+        if(cached)device.gpu_raw_pinned_ready=result.ready_;
+        return result;
+    } catch(...) {
+        // A failed submission must finish using its pinned source before it
+        // can be reused or destroyed. Wait only this encoder's stream.
+        (void)cudaStreamSynchronize(device.plaintext_encoder->stream());
+        if(cached)device.gpu_raw_pinned_ready.reset();
+        throw;
+    }
 }
 
 bool PoseidonGpuApi::is_ready(Value &value)
@@ -3310,12 +3358,16 @@ void PoseidonGpuApi::collect_completed()
 void PoseidonGpuApi::drain()
 {
     ScopedCompletedReclamation reclamation;
-    std::lock_guard<std::mutex> lock(in_flight_mutex_);
-    for (auto &work : in_flight_work_)
     {
-        work.completion->wait();
+        std::lock_guard<std::mutex> lock(in_flight_mutex_);
+        for (auto &work : in_flight_work_)work.completion->wait();
+        in_flight_work_.clear();
     }
-    in_flight_work_.clear();
+    for(auto &device:devices_) {
+        std::lock_guard<std::mutex> lock(device->gpu_raw_pinned_mutex);
+        if(device->gpu_raw_pinned_ready)device->gpu_raw_pinned_ready->wait();
+        device->gpu_raw_pinned_ready.reset();device->gpu_raw_pinned.reset();
+    }
 }
 
 void PoseidonGpuApi::synchronize_device(int cuda_device_id) const

@@ -195,6 +195,32 @@ private:
     rmm::mr::device_memory_resource *previous_ = nullptr;
 };
 
+// Inject a gate into the actual stream supplied by a public RMM allocation.
+// The warmed GPU encoder allocates its output before submitting H2D/FFT/NTT.
+class GatedAllocationResource final : public rmm::mr::device_memory_resource
+{
+public:
+    GatedAllocationResource(rmm::mr::device_memory_resource *upstream,CudaHostGate &gate)
+        :upstream_(upstream),gate_(gate) {}
+private:
+    void *do_allocate(std::size_t bytes,rmm::cuda_stream_view stream) override {
+        auto *pointer=upstream_->allocate(bytes,stream);
+        if(!injected_) {
+            injected_=true;
+            require(cudaLaunchHostFunc(stream.value(),wait_for_cuda_host_gate,&gate_)==cudaSuccess,
+                    "failed to gate cached GPU Prepare allocation stream");
+        }
+        return pointer;
+    }
+    void do_deallocate(void *pointer,std::size_t bytes,rmm::cuda_stream_view stream) override {
+        upstream_->deallocate(pointer,bytes,stream);
+    }
+    bool do_is_equal(const rmm::mr::device_memory_resource &other) const noexcept override {return this==&other;}
+    rmm::mr::device_memory_resource *upstream_;
+    CudaHostGate &gate_;
+    bool injected_=false;
+};
+
 poseidon::ParametersLiteral make_parameters()
 {
     poseidon::ParametersLiteral parameters(
@@ -2157,6 +2183,85 @@ private:
     std::set<int> peer_devices_;
 };
 
+void test_gpu_raw_pinned_cache(const poseidon::PoseidonContext &context,
+                              const fhegpu::LoadedOperatorSpec &spec,int device_count)
+{
+    using Pinned=poseidon::runtime_api::communication::PinnedHostBuffer;
+    std::vector<int> ids(device_count);for(int d=0;d<device_count;++d)ids[d]=d;
+    PoseidonGpuApi api(kContextId,context,ids);
+    const auto n=context.parameters_literal()->degree();
+    const int level=static_cast<int>(context.parameters_literal()->q().size()-1);
+    std::vector<double> slots(n/2);for(std::size_t i=0;i<slots.size();++i)slots[i]=.125*std::sin(i*.071);
+    fhegpu::RuntimePlan plan;plan.format_version=4;plan.target=make_target(spec,device_count);
+    for(int d=0;d<device_count;++d) {
+        plan.values.push_back({static_cast<fhegpu::ValueId>(d),fhegpu::ValueKind::Plaintext,device_place(d),kContextId,level,kDefaultScaleLog2,true,1});
+        plan.execution.push_back({static_cast<std::uint64_t>(d),fhegpu::PreparePlaintextOp{fhegpu::InlineEncodePayload{slots},static_cast<fhegpu::ValueId>(d)}});
+    }
+    fhegpu::WaterlineConfig config;config.backend=fhegpu::PrepareBackend::Gpu;
+    config.device_capacity_bytes.assign(device_count,4ULL<<30);config.device_reserve_bytes.assign(device_count,2ULL<<30);
+    config.device_fractions.assign(device_count,.02);config.host_budget_bytes=64ULL<<20;
+    config.pinned_budget_bytes=16ULL<<20;config.raw_budget_bytes=8ULL<<20;plan.waterline=config;
+    api.validate_waterline_resources(plan);
+    const auto fixed=api.waterline_fixed_resources();
+    require(fixed.host==n*4*device_count && fixed.pinned==fixed.host && fixed.raw==0,
+            "GPU raw cache fixed Host/pinned cost is incomplete");
+    require(Pinned::live_bytes()==0,"GPU cache test starts with pending pinned buffers");
+    const auto allocations= Pinned::allocation_calls(),frees=Pinned::free_calls();
+    poseidon::CKKSEncoder encoder(context);double maximum=0;
+    for(int step=0;step<10;++step) {
+        slots[0]=.125+step*.01;
+        for(int d=0;d<device_count;++d) {
+            const auto cost=api.prepare_resources(plan.values[d],fhegpu::PrepareBackend::Gpu);
+            require(cost.peak.pinned==0 && cost.peak.host==n*4,"GPU cache was charged again as dynamic pinned/Host storage");
+            auto value=api.prepare_plaintext_async(plan.values[d],slots,fhegpu::PrepareBackend::Gpu);
+            api.synchronize(value);api.collect_completed();
+            if(step==9) {
+                poseidon::Plaintext host;poseidon::gpu::GpuUploader::download_plaintext(value.device_plaintext(),host,context);
+                std::vector<std::complex<double>> actual;encoder.decode(host,actual);
+                require(actual.size()==slots.size(),"GPU cache changed slot layout");
+                for(std::size_t i=0;i<actual.size();++i)maximum=std::max(maximum,std::abs(actual[i]-slots[i]));
+            }
+        }
+    }
+    require(maximum<1e-4,"reused GPU raw pinned buffer encoded stale or invalid slots");
+    require(Pinned::allocation_calls()-allocations==static_cast<std::size_t>(device_count),"ten GPU prepares did not share one pinned allocation per device");
+    require(Pinned::free_calls()==frees && Pinned::live_bytes()==fixed.pinned,"cached pinned storage was released before drain");
+    auto cpu_plan=plan;cpu_plan.waterline->backend=fhegpu::PrepareBackend::Cpu;
+    require_rejected([&]{api.validate_waterline_resources(cpu_plan);},"drain cached GPU Prepare");
+    require(api.waterline_fixed_resources().pinned==fixed.pinned,"rejected reconfiguration lost fixed pinned accounting");
+    // A deterministic pending-input counterexample, using only public RMM
+    // hooks: the actual encoder stream is blocked before its raw H2D.
+    require(cudaSetDevice(0)==cudaSuccess,"cache gate device selection failed");
+    {
+        CudaHostGate gate;CudaGateWatchdog watchdog(gate);
+        auto *upstream=rmm::mr::get_current_device_resource();
+        GatedAllocationResource resource(upstream,gate);
+        struct RestoreResource {
+            rmm::mr::device_memory_resource *original;
+            ~RestoreResource(){rmm::mr::set_current_device_resource(original);}
+        } restore{upstream};
+        rmm::mr::set_current_device_resource(&resource);
+        auto pending=api.prepare_plaintext_async(plan.values[0],slots,fhegpu::PrepareBackend::Gpu);
+        require(!api.is_ready(pending),"GPU Prepare gate did not leave an unfinished encode");
+        require_rejected([&]{(void)api.prepare_plaintext_async(plan.values[0],slots,fhegpu::PrepareBackend::Gpu);},"still in use");
+        require_rejected([&]{api.validate_waterline_resources(cpu_plan);},"drain cached GPU Prepare");
+        require(watchdog.finish_post(),"cached GPU Prepare submission waited for the allocation gate");
+        api.synchronize(pending);api.collect_completed();
+        require_rejected([&]{api.validate_waterline_resources(cpu_plan);},"drain cached GPU Prepare");
+    }
+    api.drain();
+    require(Pinned::free_calls()-frees==static_cast<std::size_t>(device_count) && Pinned::live_bytes()==0,
+            "drain did not reclaim all cached GPU raw pinned buffers");
+    require(api.waterline_fixed_resources().pinned==fixed.pinned,"drain changed the whole-run fixed reservation");
+    api.validate_waterline_resources(cpu_plan);
+    require(api.waterline_fixed_resources().host==0 && api.waterline_fixed_resources().pinned==0,
+            "CPU-only reconfiguration retained GPU pinned reservation");
+    std::cout<<"GPU_RAW_PINNED_CACHE devices="<<device_count<<" sequential_prepares_per_device=10"
+             <<" allocations="<<Pinned::allocation_calls()-allocations<<" frees="<<Pinned::free_calls()-frees
+             <<" fixed_host="<<fixed.host<<" fixed_pinned="<<fixed.pinned<<" pinned_live="<<Pinned::live_bytes()
+             <<" max_abs_including_imaginary="<<maximum<<" overlap_rejected=true ready_reconfigure_requires_drain=true\n";
+}
+
 void test_cpu_prepare_host_budget(const poseidon::PoseidonContext &context,
                                   poseidon::KeyGenerator &key_generator,
                                   const fhegpu::LoadedOperatorSpec &spec)
@@ -2450,6 +2555,7 @@ int main()
         const auto loaded_spec = make_operator_spec(context);
         if (std::getenv("POSEIDON_WATERLINE_ONLY")) {
             test_gpu_plaintext_wide_coefficients(context);
+            test_gpu_raw_pinned_cache(context,loaded_spec,device_count);
             run_test("CPU Prepare complete Host budget negative/positive boundary",[&] {
                 test_cpu_prepare_host_budget(context,key_generator,loaded_spec);
             });
@@ -2460,7 +2566,10 @@ int main()
         run_test("CPU Prepare complete Host budget negative/positive boundary",[&] {
             test_cpu_prepare_host_budget(context,key_generator,loaded_spec);
         });
-        run_test("CPU/GPU/auto Waterline through encrypted consumers",[&] {test_waterline_runtime(context,key_generator,loaded_spec,1);});
+        run_test("CPU/GPU/auto Waterline through encrypted consumers",[&] {
+            test_gpu_raw_pinned_cache(context,loaded_spec,1);
+            test_waterline_runtime(context,key_generator,loaded_spec,1);
+        });
         run_test("selected Galois-key upload",
                  [&] { test_selected_galois_key_upload(context, *galois_keys); });
         run_test("application Q-prefix, sparse levels and hoisted rotations",
