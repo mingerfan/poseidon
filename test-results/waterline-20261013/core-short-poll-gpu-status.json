@@ -1,0 +1,52 @@
+{
+  "scope": "local single RTX4060; no-progress poll1ms->100us; no full-model or multi-GPU acceptance claim",
+  "runs": [
+    {
+      "name": "full-api",
+      "returncode": 0,
+      "seconds": 12.934614085999783,
+      "pass_labels": 20,
+      "settings": {},
+      "log": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-20261013/core-short-poll-gpu-full-api.log",
+      "budget_boundary_passed": true,
+      "mode_correct": true,
+      "expected_count_passed": true
+    },
+    {
+      "name": "mode0-n65536-q32",
+      "returncode": 0,
+      "seconds": 8.230005827000241,
+      "pass_labels": 2,
+      "settings": {
+        "POSEIDON_WATERLINE_ONLY": "1",
+        "POSEIDON_WATERLINE_LOG_N": "16",
+        "POSEIDON_WATERLINE_Q_COUNT": "32",
+        "POSEIDON_WATERLINE_SCALE": "40",
+        "POSEIDON_WATERLINE_HOST_STAGED": "0"
+      },
+      "log": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-20261013/core-short-poll-gpu-mode0-n65536-q32.log",
+      "budget_boundary_passed": true,
+      "mode_correct": true,
+      "three_backends_passed": true
+    },
+    {
+      "name": "mode1-n65536-q32",
+      "returncode": 0,
+      "seconds": 8.78147650900064,
+      "pass_labels": 2,
+      "settings": {
+        "POSEIDON_WATERLINE_ONLY": "1",
+        "POSEIDON_WATERLINE_LOG_N": "16",
+        "POSEIDON_WATERLINE_Q_COUNT": "32",
+        "POSEIDON_WATERLINE_SCALE": "40",
+        "POSEIDON_WATERLINE_HOST_STAGED": "1"
+      },
+      "log": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-20261013/core-short-poll-gpu-mode1-n65536-q32.log",
+      "budget_boundary_passed": true,
+      "mode_correct": true,
+      "three_backends_passed": true
+    }
+  ],
+  "passed": true,
+  "source_library_hashes_unchanged": true
+}

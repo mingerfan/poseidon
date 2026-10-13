@@ -37,3 +37,5 @@ CPU Host/pinned资源修复已通过：CPU Prepare的uint64 Host plaintext和uin
 `scripts/qwen3_dsl/validate_decoded.py`核对fixture、signature、参考和runner报告绑定，分别汇总完整151936有效logits与全部KV的最大误差、RMS、cosine、top1，检查所有虚部和零尾部，固定atol=0.001/rtol=0.0001。`checker-test.log`的20项使用明确标注的模拟decoded，只证明映射/拒绝，不是模型CKKS结果。当前独立NumPy exact/approximate参考logit max3.787683944267428e-9、RMS7.210505850742908e-10、top1均358。N16384/Q40/P8、图scale120及Host秘密钥辅助decrypt-reencrypt refresh使用security level none，不声称标准安全FHE或原生Boot。
 
 `run-188-acceptance.sh`依次运行物理1、全部四卡默认通信、全部四卡强制Host-staged与完整BSGS Auto。全四卡staged每后端要求实际post20次、有真实pinned观测及全四个结果正确。服务器大型artifact保存在`/home/xuming/poseidon-waterline-20261013`；远程期间始终保留独立SSH长连接。`monitor_process.py`按PID采样driver内存及RSS，区间采样不是连续峰值，晚启动披露首个timestamp。runner记录main到首个/全部输出、setup/init/forward及保存；外部time-v计进程冷启动。完整模型最终输出、独立数值结果、最新全部四卡压力和资源测量仍待完成。
+
+执行器无进展轮询由1ms缩至100µs，仍按原Ready/完整组/顺序检查；没有新调度路径或配置。`core-short-poll-tests.log`核心8/8，`core-short-poll-gpu-*`完整20/20及N65536/Q32 mode0/1各一次通过，源码/库hash保持一致。它可能增加CPU查询开销并改变Auto比例；本机host sleep探针与回归耗时不能外推188或完整模型加速。最终计划使用含Host/pinned修复的新编译器，产物目录为服务器`qwen3-plans-bsgs-final/gpu4`。

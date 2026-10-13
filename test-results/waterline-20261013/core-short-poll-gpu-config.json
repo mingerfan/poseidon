@@ -1,0 +1,20 @@
+{
+  "scope": "local single RTX4060; no-progress poll1ms->100us; no full-model or multi-GPU acceptance claim",
+  "created_utc": "2026-10-13T11:28:03.790574+00:00",
+  "poseidon_commit": "6e360ac8dfb0a07d7a12e3ec5a4d250f4497aa5e",
+  "runtime_commit": "68628a6336941e0ceffe9b88d05d0f8b273f9a8f",
+  "source_sha256": {
+    "third_party/ckks-runtime/runtime/runtime.hpp": "231c40e4ce83fe8e4524f44ef08c1447857435184cb081d8bd9bb78e55b69b01",
+    "src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp": "2c2a3cd67fb366c4e13d332eefc7057ad47b8805dc9982886d573fe76d8c3cda",
+    "src/poseidon/runtime_api/poseidon_gpu_api.cpp": "6f59e03f380627c5801b828fddd5a8ed94a0d1d9f1467178d899f499d1c4a4de"
+  },
+  "library_sha256": {
+    "libposeidon_runtime_gpu_api.a": "3b27593886c6c12d7020aa1af67c1647779f77e437edc1380327caf1715c3742",
+    "libposeidon_gpu.a": "c3a1d2339e0dbdd0a2a74585d67a5e359d038816cfeb0a57f9d37728c736aa8a",
+    "libruntime_core.a": "6c4d084c45728105ac9bd3ed63bcfd2b85462ebeb7510dc5b7f3335450f3d5bd"
+  },
+  "binary_sha256": "ee4fee4bbf8bb45116642aca7641917ff8311a8b69d1d78e01c8fb6e8a629843",
+  "gpu": "index, name, uuid, driver_version, memory.total [MiB]\n0, NVIDIA GeForce RTX 4060 Laptop GPU, GPU-08fdbdc4-ecda-e2e3-ae01-a596e4e70914, 615.78.08, 8188 MiB\n",
+  "cuda_architectures": "89",
+  "repeats_per_configuration": 1
+}

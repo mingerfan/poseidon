@@ -16,7 +16,7 @@ fi
 test -f "$base/logs/latest-build.status"
 cat "$base/logs/latest-build.status"
 test "$(/opt/conda/bin/python -c 'import json,sys;print(json.load(open(sys.argv[1]))["returncode"])' \
-  "$base/qwen3-plans-bsgs/gpu4/status.json")" = 0
+  "$base/qwen3-plans-bsgs-final/gpu4/status.json")" = 0
 nvidia-smi --query-gpu=index,uuid,memory.total,memory.used,ecc.errors.uncorrected.volatile.total \
   --format=csv > "$base/logs/final-devices-before.csv"
 for selection in single all host-staged; do
@@ -32,8 +32,8 @@ for selection in single all host-staged; do
     > "$base/logs/final-waterline-$selection.log" 2>&1
   printf 'pressure_complete selection=%s\n' "$selection"
 done
-plan="$base/qwen3-plans-bsgs/gpu4/qwen3._hecate_qwen3_0_6b"
-prefix="$base/logs/qwen3-bsgs-auto"
+plan="$base/qwen3-plans-bsgs-final/gpu4/qwen3._hecate_qwen3_0_6b"
+prefix="$base/logs/qwen3-bsgs-auto-final"
 set +e
 /usr/bin/time -v env CUDA_VISIBLE_DEVICES=0,1,2,3 OMP_NUM_THREADS=1 \
   "$base/build/bin/poseidon_runtime_gpu_qwen_e2e" \

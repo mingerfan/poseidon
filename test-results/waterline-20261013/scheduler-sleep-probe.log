@@ -1,0 +1,3 @@
+scope=local-host-timer-only no-executor no-GPU no-model
+requested_us=1000 samples=1000 mean_us=1052.84 median_us=1052.93 p95_us=1054.52 wall_ms=1052.96 process_cpu_ms=1.231 voluntary_context_switches=1000
+requested_us=100 samples=1000 mean_us=149.996 median_us=151.753 p95_us=152.342 wall_ms=150.089 process_cpu_ms=0.876 voluntary_context_switches=1000
