@@ -1,0 +1,23 @@
+UpdateCTestConfiguration  from :/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release/DartConfiguration.tcl
+Test project /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 8
+    Start 8: poseidon_runtime_gpu_scalar_tests
+
+8: Test command: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release/bin/poseidon_runtime_gpu_scalar_tests
+8: Working Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-runtime-gpu-api-release/src/poseidon/runtime_api
+8: Test timeout computed to be: 10000000
+8: [PASS] GPU uint64 scalar: cases=16 checked_RNS_words=974848 decoded_complex_slots=2048 max_normalized_error=1.04083e-16 alias=true PTDS_blocked_nondefault_completed=true max_scalar=18446744073709551615
+1/1 Test #8: poseidon_runtime_gpu_scalar_tests ...   Passed    0.31 sec
+
+The following tests passed:
+	poseidon_runtime_gpu_scalar_tests
+
+100% tests passed out of 1
+
+Total Test time (real) =   0.31 sec

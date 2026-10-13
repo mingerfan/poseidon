@@ -1,0 +1,40 @@
+UpdateCTestConfiguration  from :/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-cpu-rescale-agent/DartConfiguration.tcl
+Test project /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-cpu-rescale-agent
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 1
+    Start 1: poseidon_runtime_cpu_api_tests
+
+1: Test command: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-cpu-rescale-agent/bin/poseidon_runtime_cpu_api_tests
+1: Working Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-cpu-rescale-agent/src/poseidon/runtime_api
+1: Test timeout computed to be: 10000000
+1: [PASS] single-process Host AddCP
+1: [PASS] decrypt_reencrypt Boot
+1: [PASS] binary rotation keys
+1: [PASS] CPU Negate/Rotate reuse chains
+1: CPU_RESCALE_DENSE N=4096 Q=10 input_scale=200 target_scale=80 planned_drops=5 slots_checked=2048 max_complex_error=1.59146e-11
+1: CPU_RESCALE_DENSE N=4096 Q=10 input_scale=200 target_scale=80 planned_drops=6 slots_checked=2048 max_complex_error=1.59146e-11
+1: CPU_RESCALE_DENSE N=16384 Q=50 input_scale=230 target_scale=120 planned_drops=5 slots_checked=8192 max_complex_error=1.6348e-14
+1: CPU_RESCALE_DENSE N=16384 Q=50 input_scale=230 target_scale=120 planned_drops=6 slots_checked=8192 max_complex_error=1.6348e-14
+1: CPU_RESCALE_DENSE N=16384 Q=50 input_scale=240 target_scale=120 planned_drops=5 slots_checked=8192 max_complex_error=1.26323e-11
+1: CPU_RESCALE_DENSE N=16384 Q=50 input_scale=240 target_scale=120 planned_drops=6 slots_checked=8192 max_complex_error=1.26323e-11
+1: [PASS] dense Rescale normalization and aligned AddCC/AddCP
+1: CPU_RESCALE_DENSE N=4096 Q=5 q_bits=50 input_scale=100 target_scale=50 planned_drops=1 slots_checked=2048 max_complex_error=8.20518e-11
+1: CPU_RESCALE_DENSE N=4096 Q=5 q_bits=50 input_scale=100 target_scale=90 planned_drops=1 slots_checked=2048 max_complex_error=3.01259e-11
+1: [PASS] single-drop Rescale on 50-bit RNS words
+1: [PASS] reject low-precision Rescale
+1: [PASS] reject low-precision scale40 absorption
+1: [PASS] reject multi-process target
+1: 9 Poseidon CPU Runtime Api tests passed
+1/1 Test #1: poseidon_runtime_cpu_api_tests ...   Passed    3.00 sec
+
+The following tests passed:
+	poseidon_runtime_cpu_api_tests
+
+100% tests passed out of 1
+
+Total Test time (real) =   3.00 sec

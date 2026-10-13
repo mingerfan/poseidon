@@ -90,12 +90,13 @@ public:
      * @brief destination_ciphertext = source_ciphertext * scalar mod q.
      *
      * CKKS bootstrap scale matching uses this for integer constant
-     * multiplication without constructing a full plaintext.
+     * multiplication without constructing a full plaintext. The full uint64
+     * scalar is reduced modulo each actual q prime before coefficient multiply.
      */
     void multiply_scalar_ciphertext(
         GpuCiphertextView &destination_view,
         const GpuConstCiphertextView &source_view,
-        GpuWord scalar,
+        std::uint64_t scalar,
         const GpuLevelInfo &level_info) const;
 
     /**

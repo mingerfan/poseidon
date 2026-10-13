@@ -230,7 +230,7 @@ __global__ void dyadic_product_poly_shard_kernel(
 __global__ void multiply_scalar_poly_shard_kernel(
     GpuWord *destination_values,
     const GpuWord *source_values,
-    GpuWord scalar,
+    std::uint64_t scalar,
     const GpuWord *q_primes,
     const GpuWide *q_modulus_constants,
     std::size_t limb_count,
@@ -250,7 +250,7 @@ __global__ void multiply_scalar_poly_shard_kernel(
     const GpuWord modulus = q_primes[local_limb];
     const GpuWide barrett_ratio = q_modulus_constants[local_limb];
     const GpuWord scalar_mod =
-        barrett_reduce_u64_u32(static_cast<GpuWide>(scalar), modulus, barrett_ratio);
+        barrett_reduce_u64_u32(scalar, modulus, barrett_ratio);
 
     const GpuWide product =
         static_cast<GpuWide>(source_values[offset]) *
@@ -1144,7 +1144,7 @@ void launch_copy_poly_shard(
 void launch_multiply_scalar_poly_shard(
     const GpuPolyShardView &destination_shard,
     const GpuConstPolyShardView &source_shard,
-    GpuWord scalar,
+    std::uint64_t scalar,
     const GpuParameterShard &parameter_shard,
     std::size_t degree)
 {

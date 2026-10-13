@@ -2762,10 +2762,6 @@ void GpuEvaluator::multiply_scalar(
     {
         throw std::invalid_argument("GpuEvaluator::multiply_scalar: p limbs are not supported yet");
     }
-    if (scalar > std::numeric_limits<GpuWord>::max())
-    {
-        throw std::invalid_argument("GpuEvaluator::multiply_scalar: scalar exceeds GPU word size");
-    }
     if (source_ciphertext.meta.component_count != source_ciphertext.size())
     {
         throw std::invalid_argument("GpuEvaluator::multiply_scalar: component metadata mismatch");
@@ -2785,22 +2781,26 @@ void GpuEvaluator::multiply_scalar(
         throw std::invalid_argument("GpuEvaluator::multiply_scalar: level shape mismatch");
     }
 
-    GpuCiphertextMeta result_meta = source_ciphertext.meta;
-    prepare_ciphertext_destination(
-        destination_ciphertext,
-        &source_ciphertext,
-        nullptr,
-        result_meta,
-        source_ciphertext.size(),
-        device_id,
-        reference_layout);
+    // Each coefficient is read and written independently, so the existing
+    // source storage is safe for an aliased scalar multiplication.
+    if (&destination_ciphertext != &source_ciphertext)
+    {
+        prepare_ciphertext_destination(
+            destination_ciphertext,
+            &source_ciphertext,
+            nullptr,
+            source_ciphertext.meta,
+            source_ciphertext.size(),
+            device_id,
+            reference_layout);
+    }
 
     auto source_view = source_ciphertext.make_const_view();
     auto destination_view = destination_ciphertext.make_view();
     elementwise_handler_.multiply_scalar_ciphertext(
         destination_view,
         source_view,
-        static_cast<GpuWord>(scalar),
+        scalar,
         level_info);
 }
 

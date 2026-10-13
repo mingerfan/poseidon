@@ -44,7 +44,7 @@ using poseidon::runtime_api::PoseidonGpuApi;
 using poseidon::runtime_api::PoseidonGpuValue;
 
 constexpr int kDeviceId = 0;
-int kDefaultScaleLog2 = 30;
+int kDefaultScaleLog2 = 80;
 const std::string kContextId = "poseidon-gpu-api-test-context";
 const std::string kOperatorSpecSha =
     "sha256:0000000000000000000000000000000000000000000000000000000000000000";
@@ -234,7 +234,7 @@ poseidon::ParametersLiteral make_parameters()
         {},
         {},
         poseidon::sec_level_type::none);
-    parameters.set_log_modulus(std::vector<std::uint32_t>(std::getenv("POSEIDON_WATERLINE_Q_COUNT") ? std::stoi(std::getenv("POSEIDON_WATERLINE_Q_COUNT")) : 7, 30),
+    parameters.set_log_modulus(std::vector<std::uint32_t>(std::getenv("POSEIDON_WATERLINE_Q_COUNT") ? std::stoi(std::getenv("POSEIDON_WATERLINE_Q_COUNT")) : 10, 30),
                                std::vector<std::uint32_t>(2, 30));
     return parameters;
 }
@@ -304,7 +304,7 @@ fhegpu::LoadedOperatorSpec make_operator_spec(const poseidon::PoseidonContext &c
 
     fhegpu::OperatorSupport rescale;
     rescale.supported = true;
-    rescale.max_levels_per_op = 4;
+    rescale.max_levels_per_op = 8;
     spec.operators.emplace(fhegpu::ComputeKind::Rescale, std::move(rescale));
 
     fhegpu::OperatorSupport unsupported;
@@ -1577,7 +1577,7 @@ void test_rescale_and_value_validation(PoseidonGpuApi &api,
     poseidon::CKKSEncoder encoder(context);
     poseidon::EvaluatorCkksSoftware cpu_evaluator(context);
 
-    constexpr int input_scale_log2 = 140;
+    constexpr int input_scale_log2 = 240;
     poseidon::Plaintext plain;
     encoder.encode(std::vector<double>{1.0, -2.0, 3.0, 4.0},
                    std::ldexp(1.0, input_scale_log2), plain);
@@ -1585,13 +1585,12 @@ void test_rescale_and_value_validation(PoseidonGpuApi &api,
     encryptor.encrypt(plain, cipher);
 
     poseidon::Ciphertext expected_lazy = cipher;
-    for (int dropped = 0; dropped < 4; ++dropped)
+    for (int dropped = 0; dropped < 5; ++dropped)
     {
         poseidon::Ciphertext next;
         cpu_evaluator.rescale(expected_lazy, next);
         expected_lazy = std::move(next);
     }
-    expected_lazy.scale() = std::ldexp(1.0, input_scale_log2 - 120);
     const int input_level = static_cast<int>(cipher.level());
     auto device_value = transfer_value(
         api, 10, PoseidonGpuValue::from_host_ciphertext(cipher),
@@ -1634,19 +1633,21 @@ void test_rescale_and_value_validation(PoseidonGpuApi &api,
     fhegpu::ComputeOp ordinary;
     ordinary.kind = fhegpu::ComputeKind::Rescale;
     ordinary.place = device_place();
-    ordinary.attrs = fhegpu::RescaleAttrs{input_level - 1, input_scale_log2 - 30};
+    ordinary.attrs = fhegpu::RescaleAttrs{input_level - 2, input_scale_log2 - 30};
     auto ordinary_result = api.compute(ordinary, {device_value});
     api.validate_value(
         ordinary_result,
-        {11, fhegpu::ValueKind::Ciphertext, device_place(), kContextId, input_level - 1,
+        {11, fhegpu::ValueKind::Ciphertext, device_place(), kContextId, input_level - 2,
          input_scale_log2 - 30, true, 2});
 
     fhegpu::ComputeOp lazy = ordinary;
     lazy.attrs = fhegpu::RescaleAttrs{input_level - 4, input_scale_log2 - 120};
+    require_rejected([&]{(void)api.compute(lazy,{device_value});},"modulus/precision space");
+    lazy.attrs = fhegpu::RescaleAttrs{input_level - 5, input_scale_log2 - 120};
     auto lazy_result = api.compute(lazy, {device_value});
     api.validate_value(
         lazy_result,
-        {12, fhegpu::ValueKind::Ciphertext, device_place(), kContextId, input_level - 4,
+        {12, fhegpu::ValueKind::Ciphertext, device_place(), kContextId, input_level - 5,
          input_scale_log2 - 120, true, 2});
 
     auto lazy_host =
@@ -1660,27 +1661,28 @@ void test_rescale_and_value_validation(PoseidonGpuApi &api,
     std::vector<std::complex<double>> expected_lazy_slots;
     encoder.decode(lazy_plain, lazy_slots);
     encoder.decode(expected_lazy_plain, expected_lazy_slots);
-    for (std::size_t i = 0; i < original_slots.size(); ++i)
+    for (std::size_t i = 0; i < lazy_slots.size(); ++i)
     {
         require(std::abs(lazy_slots[i].real() - expected_lazy_slots[i].real()) < 1e-4,
                 "GPU/CPU lazy Rescale mismatch at slot " + std::to_string(i) +
                     ": CPU " + std::to_string(expected_lazy_slots[i].real()) +
                     ", GPU " + std::to_string(lazy_slots[i].real()));
-        require(std::abs(lazy_slots[i].real() - original_slots[i]) < 5e-3,
+        const auto dense_expected=i<original_slots.size()?original_slots[i]:0.0;
+        require(std::abs(lazy_slots[i]-dense_expected) < 1e-4,
                 "lazy Rescale result mismatch at slot " + std::to_string(i) +
-                    ": expected " + std::to_string(original_slots[i]) +
+                    ": expected " + std::to_string(dense_expected) +
                     ", got " + std::to_string(lazy_slots[i].real()));
     }
 
     fhegpu::ComputeOp mod_switch;
     mod_switch.kind = fhegpu::ComputeKind::ModSwitch;
     mod_switch.place = device_place();
-    mod_switch.attrs = fhegpu::ModSwitchAttrs{input_level - 2};
+    mod_switch.attrs = fhegpu::ModSwitchAttrs{input_level - 1};
     auto mod_switched = api.compute(mod_switch, {device_value});
     api.validate_value(
         mod_switched,
         {13, fhegpu::ValueKind::Ciphertext, device_place(), kContextId,
-         input_level - 2, input_scale_log2, true, 2});
+         input_level - 1, input_scale_log2, true, 2});
 
     auto mod_switched_host =
         transfer_value(api, 14, mod_switched, fhegpu::ValueKind::Ciphertext,
@@ -1768,8 +1770,11 @@ void test_multiply_relinearize_rescale_rotate(
     poseidon::Ciphertext expected_rotate;
     cpu_evaluator.multiply(cipher0, cipher1, expected_multiply);
     cpu_evaluator.relinearize(expected_multiply, expected_relinearize, relin_keys);
-    cpu_evaluator.rescale(expected_relinearize, expected_rescale);
-    expected_rescale.scale() = std::ldexp(1.0, kDefaultScaleLog2);
+    expected_rescale=expected_relinearize;
+    for(int dropped=0;dropped<4;++dropped) {
+        poseidon::Ciphertext next;
+        cpu_evaluator.rescale(expected_rescale,next);expected_rescale=std::move(next);
+    }
     poseidon::Ciphertext expected_rotate_once;
     cpu_evaluator.rotate(expected_rescale, expected_rotate_once, 1, galois_keys);
     cpu_evaluator.rotate(expected_rotate_once, expected_rotate, 2, galois_keys);
@@ -1792,7 +1797,7 @@ void test_multiply_relinearize_rescale_rotate(
     fhegpu::ComputeOp rescale;
     rescale.kind = fhegpu::ComputeKind::Rescale;
     rescale.place = device;
-    rescale.attrs = fhegpu::RescaleAttrs{static_cast<int>(cipher0.level()) - 1,
+    rescale.attrs = fhegpu::RescaleAttrs{static_cast<int>(cipher0.level()) - 4,
                                         kDefaultScaleLog2};
     auto rescaled = api.compute(rescale, {relinearized});
 
@@ -1820,8 +1825,12 @@ void test_multiply_relinearize_rescale_rotate(
     encoder.decode(expected_plain, expected);
     encoder.decode(actual_plain, actual);
     encoder.decode(replay_plain, replay);
-    for (std::size_t i = 0; i < 4; ++i)
+    const std::vector<double> dense_product{.5,-3,-3,9};
+    for (std::size_t i = 0; i < actual.size(); ++i)
     {
+        const auto original_index=(i+3)%actual.size();
+        const auto dense_expected=original_index<dense_product.size()?dense_product[original_index]:0.0;
+        require(std::abs(actual[i]-dense_expected)<1e-4,"normalized MulCC/Rescale/Rotate differs from dense arithmetic");
         require(std::abs(actual[i].real() - expected[i].real()) < 1e-4,
                 "GPU chain result mismatch at slot " + std::to_string(i));
         require(std::abs(actual[i].imag() - expected[i].imag()) < 1e-4,

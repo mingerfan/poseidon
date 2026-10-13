@@ -385,7 +385,7 @@ void GpuElementwiseHandler::negate_ciphertext(
 void GpuElementwiseHandler::multiply_scalar_ciphertext(
     GpuCiphertextView &destination_view,
     const GpuConstCiphertextView &source_view,
-    GpuWord scalar,
+    std::uint64_t scalar,
     const GpuLevelInfo &level_info) const
 {
     if (!(source_view.meta.parms_id == destination_view.meta.parms_id) ||

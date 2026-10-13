@@ -1,11 +1,13 @@
 #include "poseidon/runtime_api/poseidon_cpu_api.h"
 
+#include "poseidon/basics/util/polyarithsmallmod.h"
 #include "poseidon/ckks_encoder.h"
 #include "poseidon/decryptor.h"
 #include "poseidon/encryptor.h"
 #include "poseidon/evaluator/software/evaluator_ckks_software.h"
 #include "poseidon/key/galoiskeys.h"
 #include "poseidon/key/relinkeys.h"
+#include "poseidon/runtime_api/rescale_normalization.h"
 #include "poseidon/runtime_api/rotation_key_basis.h"
 #include "runtime/utils/sha256.hpp"
 
@@ -593,14 +595,40 @@ PoseidonCpuApi::Value PoseidonCpuApi::compute(const fhegpu::ComputeOp &op,
         {
             throw std::invalid_argument("Poseidon CPU Rescale target level is invalid");
         }
+        const auto input_parameters = context_.crt_context()->get_context_data(input.parms_id());
+        if (!input_parameters)
+            throw std::invalid_argument("Poseidon CPU Rescale input parameters do not match context");
+        const auto target_scale = exact_scale(attrs.target_scale_log2);
+        const auto normalization = make_rescale_normalization(
+            input_parameters->parms().q(), input.scale(),
+            input.level() - static_cast<std::size_t>(attrs.target_level), target_scale);
         output = input;
-        while (output.level() > static_cast<std::size_t>(attrs.target_level))
+        for (std::size_t drop = 0; drop < normalization.native_drop_count; ++drop)
         {
             Ciphertext next;
             evaluator_->rescale(output, next);
             output = std::move(next);
         }
-        output.scale() = exact_scale(attrs.target_scale_log2);
+        if (normalization.coefficient_multiplier != 1)
+        {
+            const auto parameters = context_.crt_context()->get_context_data(output.parms_id());
+            const auto &q = parameters->parms().q();
+            const auto degree = parameters->parms().degree();
+            for (std::size_t component = 0; component < output.size(); ++component)
+                for (std::size_t limb = 0; limb < q.size(); ++limb)
+                {
+                    auto *words = output.data(component) + limb * degree;
+                    util::multiply_poly_scalar_coeffmod(
+                        words, degree, normalization.coefficient_multiplier, q[limb], words);
+                }
+        }
+        if (output.level() > static_cast<std::size_t>(attrs.target_level))
+        {
+            Ciphertext next;
+            evaluator_->drop_modulus(output, next, static_cast<std::uint32_t>(attrs.target_level));
+            output = std::move(next);
+        }
+        output.scale() = target_scale;
         break;
     }
     case fhegpu::ComputeKind::ModSwitch:

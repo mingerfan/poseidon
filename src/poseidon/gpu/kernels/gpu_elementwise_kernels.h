@@ -94,11 +94,12 @@ void launch_dyadic_product_poly_shard(
  * @brief Launch modular multiplication by one host scalar for one aligned shard.
  *
  * Used by bootstrap scale matching: destination = source * scalar mod q_i.
+ * The uint64 scalar is reduced before multiplying the 32-bit coefficient.
  */
 void launch_multiply_scalar_poly_shard(
     const GpuPolyShardView &destination_shard,
     const GpuConstPolyShardView &source_shard,
-    GpuWord scalar,
+    std::uint64_t scalar,
     const GpuParameterShard &parameter_shard,
     std::size_t degree);
 

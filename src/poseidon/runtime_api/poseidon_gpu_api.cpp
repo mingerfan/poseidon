@@ -1,6 +1,7 @@
 #include "poseidon/runtime_api/poseidon_gpu_api.h"
 
 #include "gpu_plaintext_encoder.h"
+#include "rescale_normalization.h"
 #include "poseidon/ckks_encoder.h"
 #include "poseidon/decryptor.h"
 #include "poseidon/encryptor.h"
@@ -1591,6 +1592,20 @@ void PoseidonGpuApi::validate_waterline_resources(const fhegpu::RuntimePlan &pla
                 throw std::runtime_error("Waterline native Boot persistent/workspace bound is not implemented");
             keyswitch.at(op->place.index)=keyswitch.at(op->place.index) || op->kind==fhegpu::ComputeKind::Relinearize;
             rescale.at(op->place.index)=rescale.at(op->place.index) || op->kind==fhegpu::ComputeKind::Rescale;
+            if(op->kind==fhegpu::ComputeKind::Rescale) {
+                const auto input=std::lower_bound(descriptors.begin(),descriptors.end(),op->inputs.front(),
+                    [](const auto *value,auto id){return value->id<id;});
+                if(input==descriptors.end() || (*input)->id!=op->inputs.front())
+                    throw std::logic_error("Rescale input descriptor missing during resource validation");
+                const auto attrs=std::get<fhegpu::RescaleAttrs>(op->attrs);
+                const auto gap=(*input)->level-attrs.target_level;
+                if(gap<=0 || !max_rescale_levels_per_op_ || gap>*max_rescale_levels_per_op_)
+                    throw std::invalid_argument("Waterline Rescale level range is unsupported");
+                const auto active=context_.crt_context()->get_context_data(
+                    context_.crt_context()->parms_id_map().at(static_cast<std::uint32_t>((*input)->level)));
+                make_rescale_normalization(active->parms().q(),exact_scale((*input)->scale_log2),
+                    static_cast<std::size_t>(gap),exact_scale(attrs.target_scale_log2));
+            }
         }
     }
     const auto key_bytes=[](const auto *key) {
@@ -2141,16 +2156,27 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
             {
                 throw std::invalid_argument("Poseidon GPU Rescale target level is unsupported");
             }
-
+            const auto normalization=make_rescale_normalization(context_data->parms().q(),
+                input.meta.scale,static_cast<std::size_t>(drop_count),exact_scale(attrs.target_scale_log2));
             temporaries.reserve(static_cast<std::size_t>(drop_count));
             std::shared_ptr<gpu::GpuCiphertextData> next;
             const gpu::GpuCiphertextData *source = &input;
-            for (int dropped = 0; dropped < drop_count; ++dropped)
+            for (std::size_t dropped = 0; dropped < normalization.native_drop_count; ++dropped)
             {
                 next = std::make_shared<gpu::GpuCiphertextData>();
                 temporaries.push_back(next);
                 device.evaluator->rescale(*source, *next);
                 source = next.get();
+            }
+            if(normalization.coefficient_multiplier!=1) {
+                next=std::make_shared<gpu::GpuCiphertextData>();temporaries.push_back(next);
+                device.evaluator->multiply_scalar(*source,normalization.coefficient_multiplier,*next);
+                source=next.get();
+            }
+            if(normalization.native_drop_count<static_cast<std::size_t>(drop_count)) {
+                next=std::make_shared<gpu::GpuCiphertextData>();temporaries.push_back(next);
+                device.evaluator->drop_modulus(*source,*next,
+                    context_.crt_context()->parms_id_map().at(static_cast<std::uint32_t>(attrs.target_level)));
             }
             next->meta.scale = exact_scale(attrs.target_scale_log2);
             output = std::move(*next);

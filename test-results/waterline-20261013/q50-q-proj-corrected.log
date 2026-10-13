@@ -1,0 +1,13 @@
+QWEN inputs=1 outputs=1 devices=1 slots=8192 backend=gpu host_boot_instructions=0
+KEYS ready rotation_basis=13 key_generation_ms=2609.784632
+GPU_POOL maximum_mb=6592 source=waterline_and_free_memory outside_pool_reserve_bytes=603979776
+FORWARD begin
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=1487808608 retained_workspace_bound=41418752 reserve_required=1596336224 reserve_configured=3221225472
+waterline physical GPU0 pool_reserved=2040987648 pool_cap=6912212992 initial_outside_used=108068864 outside_pool_growth=10027008 allocator_graph_capacity=5315876768
+waterline GPU0 front_peak=4293918720 plain_peak=14155776 remaining_front=1966080 remaining_plain=0
+waterline shared host_peak=32833536 pinned_peak=9895936 raw_peak=524288
+FORWARD complete runtime_ms=2931.625961
+PASS output=0 name=q_proj max_abs=9.90988e-10 max_relative=4.19906e-10 max_imaginary=7.51719e-13 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS ALL_OUTPUTS count=1 slots=8192 max_abs=9.90988e-10 max_relative=4.19906e-10 max_imaginary=7.51719e-13 bad_real=0 bad_imaginary=0 nonfinite=0
+report=test-results/waterline-20261013/q50-q-proj-corrected-report.json decoded=test-results/waterline-20261013/q50-q-proj-corrected-decoded.json
