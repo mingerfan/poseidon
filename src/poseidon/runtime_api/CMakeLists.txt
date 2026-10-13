@@ -175,6 +175,18 @@ if(POSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS)
         COMMAND poseidon_runtime_gpu_scalar_tests
     )
 
+    add_executable(poseidon_runtime_gpu_prepare_oom_tests
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/runtime_api/poseidon_gpu_prepare_oom_test.cpp
+    )
+    target_link_libraries(poseidon_runtime_gpu_prepare_oom_tests
+        PRIVATE
+            poseidon_runtime_gpu_api
+    )
+    add_test(
+        NAME poseidon_runtime_gpu_prepare_oom_tests
+        COMMAND poseidon_runtime_gpu_prepare_oom_tests
+    )
+
     add_executable(poseidon_runtime_gpu_plan_e2e
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/runtime_api/poseidon_gpu_plan_e2e.cpp
     )

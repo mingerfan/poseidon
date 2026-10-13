@@ -1,0 +1,229 @@
+UpdateCTestConfiguration  from :/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-prefix-audit/DartConfiguration.tcl
+Test project /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-prefix-audit
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 1
+    Start 1: runtime_binary_plan_tests
+
+1: Test command: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-prefix-audit/runtime_binary_plan_tests
+1: Working Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-prefix-audit
+1: Test timeout computed to be: 10000000
+1: PASS production V4 binary file reader: inline/bundle Prepare, 1/4 threads, 16384-record blocks, scan/decode corruption positions
+1/8 Test #1: runtime_binary_plan_tests ........   Passed    0.03 sec
+test 2
+    Start 2: runtime_waterline_tests
+
+2: Test command: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-prefix-audit/runtime_waterline_tests
+2: Working Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-prefix-audit
+2: Test timeout computed to be: 10000000
+2: waterline GPU0 front_peak=600 plain_peak=100 remaining_front=0 remaining_plain=0
+2: waterline shared host_peak=600 pinned_peak=50 raw_peak=20
+2: PASS Host waiter leaves the single CPU worker available for required Prepare
+2: waterline GPU0 front_peak=700 plain_peak=100 remaining_front=0 remaining_plain=0
+2: waterline shared host_peak=400 pinned_peak=50 raw_peak=20
+2: PASS one-plaintext waterline backend=0 resumes 20 consumers, oversized GPU candidate keeps legal CPU path
+2: waterline GPU0 front_peak=700 plain_peak=100 remaining_front=0 remaining_plain=0
+2: waterline shared host_peak=400 pinned_peak=50 raw_peak=20
+2: PASS one-plaintext waterline backend=2 resumes 20 consumers, oversized GPU candidate keeps legal CPU path
+2: PASS V4 JSON/binary inline and bundle round trips, strict config and Prepare rejection
+2: fatal runtime error: reason=Waterline single-group baseline infeasible at instruction #4 GPU0 front=500 plain=100 M=450 reserve=0 Host=300 pinned=50 raw=20 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+2: PASS later infeasible group rejects before initialization Encode/Transfer submission
+2: waterline GPU0 front_peak=800 plain_peak=200 remaining_front=0 remaining_plain=0
+2: waterline shared host_peak=400 pinned_peak=100 raw_peak=40
+2: PASS Prepare crosses explicit Fence and unused Prepare finishes without submission
+2: fatal runtime error: reason=injected Prepare allocation failure at attempt 2 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+2: waterline GPU0 front_peak=800 plain_peak=200 remaining_front=0 remaining_plain=0
+2: waterline shared host_peak=400 pinned_peak=100 raw_peak=40
+2: PASS injected second Prepare failure backend=0 surfaces exact error, workers converge, explicit same-runtime restart completes
+2: fatal runtime error: reason=injected Prepare allocation failure at attempt 2 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+2: waterline GPU0 front_peak=700 plain_peak=250 remaining_front=0 remaining_plain=0
+2: waterline shared host_peak=400 pinned_peak=50 raw_peak=20
+2: PASS injected second Prepare failure backend=1 surfaces exact error, workers converge, explicit same-runtime restart completes
+2: PASS four logical GPUs, GPU1/2/3 complete before GPU0, shared Host limits Prepare concurrency to 2, temporary/device credits returned
+2: waterline GPU0 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+2: waterline GPU1 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+2: waterline GPU2 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+2: waterline GPU3 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+2: waterline shared host_peak=1200 pinned_peak=100 raw_peak=40
+2: PASS four logical GPUs, GPU1/2/3 complete before GPU0, shared pinned limits Prepare concurrency to 2, temporary/device credits returned
+2: waterline GPU0 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+2: waterline GPU1 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+2: waterline GPU2 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+2: waterline GPU3 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+2: waterline shared host_peak=1200 pinned_peak=100 raw_peak=40
+2: PASS executor shared Host head blocks later fitting groups atomically, completion resumes all four without Fence
+2: waterline GPU0 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+2: waterline GPU1 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+2: waterline GPU2 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+2: waterline GPU3 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+2: waterline shared host_peak=1000 pinned_peak=150 raw_peak=60
+2: PASS executor shared pinned head blocks later fitting groups atomically, completion resumes all four without Fence
+2: waterline GPU0 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+2: waterline GPU1 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+2: waterline GPU2 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+2: waterline GPU3 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+2: waterline shared host_peak=1000 pinned_peak=600 raw_peak=60
+2: fatal runtime error: reason=Waterline single-group baseline infeasible at instruction #4 GPU0 front=500 plain=100 M=1000 reserve=0 allocator_capacity=550 Host=300 pinned=50 raw=20 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+2: waterline GPU0 front_peak=500 plain_peak=100 remaining_front=0 remaining_plain=0
+2: waterline shared host_peak=400 pinned_peak=50 raw_peak=20
+2: PASS allocator cap backend=0 rejects 550 before initialization, rolls at 600
+2: fatal runtime error: reason=Waterline single-group baseline infeasible at instruction #4 GPU0 front=500 plain=150 M=1000 reserve=0 allocator_capacity=550 Host=300 pinned=50 raw=20 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+2: waterline GPU0 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+2: waterline shared host_peak=400 pinned_peak=50 raw_peak=20
+2: PASS allocator cap backend=1 rejects 550 before initialization, rolls at 650
+2: fatal runtime error: reason=Waterline single-group baseline infeasible at instruction #4 GPU0 front=500 plain=100 M=1000 reserve=0 allocator_capacity=550 Host=300 pinned=50 raw=20 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+2: waterline GPU0 front_peak=500 plain_peak=100 remaining_front=0 remaining_plain=0
+2: waterline shared host_peak=400 pinned_peak=50 raw_peak=20
+2: PASS allocator cap backend=2 rejects 550 before initialization, rolls at 650
+2: waterline GPU0 front_peak=800 plain_peak=200 remaining_front=0 remaining_plain=0
+2: waterline shared host_peak=400 pinned_peak=50 raw_peak=20
+2: PASS empty allocator capacity leaves configured budgets unchanged, malformed table rejects
+2: fatal runtime error: reason=Waterline single-group baseline infeasible at instruction #81 GPU0 front=200 plain=0 M=1000 reserve=0 Host=480 pinned=60 raw=0 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+2: fatal runtime error: reason=Waterline single-group baseline infeasible at instruction #2 GPU0 front=500 plain=100 M=1000 reserve=0 Host=380 pinned=110 raw=20 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+2: waterline GPU0 front_peak=800 plain_peak=200 remaining_front=0 remaining_plain=0
+2: waterline shared host_peak=480 pinned_peak=110 raw_peak=20
+2: PASS fixed Host/pinned buffers remain charged through rolling completions
+2: waterline GPU0 front_peak=700 plain_peak=250 remaining_front=0 remaining_plain=0
+2: waterline shared host_peak=400 pinned_peak=50 raw_peak=20
+2: PASS ordinary CPU Encode and GPU Prepare share protected timing counters
+2: waterline GPU0 front_peak=800 plain_peak=200 remaining_front=0 remaining_plain=0
+2: waterline shared host_peak=400 pinned_peak=100 raw_peak=40
+2: PASS rolling backend=0 cpu=20 gpu=0
+2: waterline GPU0 front_peak=700 plain_peak=250 remaining_front=0 remaining_plain=0
+2: waterline shared host_peak=400 pinned_peak=50 raw_peak=20
+2: PASS rolling backend=1 cpu=0 gpu=20
+2: waterline GPU0 front_peak=1000 plain_peak=250 remaining_front=0 remaining_plain=0
+2: waterline shared host_peak=400 pinned_peak=100 raw_peak=40
+2: PASS rolling backend=2 cpu=13 gpu=7
+2: fatal runtime error: reason=Waterline single-group baseline infeasible at instruction #2 GPU0 front=500 plain=100 M=1000 reserve=0 Host=300 pinned=50 raw=20 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+2: fatal runtime error: reason=unsupported complete Prepare backend at ValueId 1 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+2: fatal runtime error: reason=Waterline single-group baseline infeasible at instruction #2 GPU0 front=500 plain=100 M=450 reserve=0 Host=300 pinned=50 raw=20 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+2: fatal runtime error: reason=Waterline single-group baseline infeasible at instruction #2 GPU0 front=500 plain=100 M=1000 reserve=0 Host=300 pinned=50 raw=20 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+2: fatal runtime error: reason=Waterline single-group baseline infeasible at instruction #2 GPU0 front=500 plain=100 M=1000 reserve=0 Host=300 pinned=50 raw=20 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+2: fatal runtime error: reason=Waterline single-group baseline infeasible at instruction #2 GPU0 front=500 plain=100 M=1000 reserve=0 Host=300 pinned=50 raw=20 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+2: PASS complete atomic group, delayed events, continuous reclaim, no partial start on failure, V4 binary
+2/8 Test #2: runtime_waterline_tests ..........   Passed    3.78 sec
+test 3
+    Start 3: pack_plaintext_bundle_tests
+
+3: Test command: /usr/bin/python3.14 "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/tests/pack_plaintext_bundle_tests.py"
+3: Working Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-prefix-audit
+3: Test timeout computed to be: 10000000
+3: ....
+3: ----------------------------------------------------------------------
+3: Ran 4 tests in 0.168s
+3: 
+3: OK
+3/8 Test #3: pack_plaintext_bundle_tests ......   Passed    0.22 sec
+test 4
+    Start 4: runtime_tests
+
+4: Test command: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-prefix-audit/runtime_tests
+4: Working Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-prefix-audit
+4: Test timeout computed to be: 10000000
+4: [PASS] requirements and Vec operations
+4: [PASS] all compute metadata rules
+4: [PASS] inline Encode and Host compute
+4: fatal runtime error: reason=Api value metadata does not match ValueDesc 2 plan_id=2 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi op_ordinal=0 op=Transfer transfer_id=100
+4: fatal runtime error: reason=Api value metadata does not match ValueDesc 1 plan_id=2 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+4: [PASS] Device compute and full value validation
+4: [PASS] bundle reuse and rank-local files
+4: [PASS] Host and Device Boot paths
+4: fatal runtime error: reason=Api lacks required galois key at Device(rank=0,index=0) for rotation step 16383 at level 4 plan_id=2 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+4: fatal runtime error: reason=Api lacks required capability: transfer plan_id=2 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+4: fatal runtime error: reason=plan verification failed: OperatorSpec source SHA-256 mismatch plan_id=1 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+4: WARNING: rank 0 is running with skip_artifact_digest_checks=true; artifact digest comparisons are disabled
+4: WARNING: rank 0 is running with skip_artifact_digest_checks=true; artifact digest comparisons are disabled
+4: fatal runtime error: reason=plan verification failed: OperatorSpec id/version mismatch plan_id=1 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+4: [PASS] preflight and digest debug mode
+4: [PASS] Mock sync/async multi-rank matrix
+4: [PASS] multi-rank per-device workers
+4: [PASS] multi-rank bidirectional dependency chain
+4: [PASS] single-rank worker Replicate
+4: fatal runtime error: reason=injected compute failure plan_id=19791515590413388 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=1 api=MockVecApi
+4: fatal runtime error: reason=injected compute failure plan_id=19791515590413388 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+4: fatal runtime error: reason=injected communicate_async failure plan_id=19791515590413388 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=1 api=MockVecApi
+4: fatal runtime error: reason=injected communicate_async failure plan_id=19791515590413388 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+4: [PASS] multi-rank device-worker failures
+4: [PASS] drain reports unobserved async failure
+4: [PASS] communication results are delivered once
+4: [PASS] mixed posted and waited output slots
+4: ALL 15 TEST GROUPS PASSED
+4/8 Test #4: runtime_tests ....................   Passed    0.05 sec
+test 5
+    Start 5: runtime_plan_json_tests
+
+5: Test command: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-prefix-audit/runtime_plan_json_tests
+5: Working Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-prefix-audit
+5: Test timeout computed to be: 10000000
+5: [PASS] SHA-256 covers raw file bytes
+5: [PASS] streaming plan order and buffer boundaries
+5: [PASS] valid RuntimePlan V1 samples
+5: [PASS] invalid RuntimePlan V1 samples
+5: [PASS] strict JSON and OperatorSpec constraints
+5: [PASS] strict SAX container parsing
+5: [PASS] Dacapo OperatorSpec V2 profiles
+5: [PASS] rank-local bundle loading
+5: [PASS] packed bundle offsets, residency and V3 execution
+5: ALL 9 JSON TEST GROUPS PASSED
+5/8 Test #5: runtime_plan_json_tests ..........   Passed    0.04 sec
+test 6
+    Start 6: runtime_plan_memory_tests
+
+6: Test command: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-prefix-audit/runtime_plan_memory_tests
+6: Working Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-prefix-audit
+6: Test timeout computed to be: 10000000
+6: [PASS] V2 CPU/GPU reuse chains and printing
+6: [PASS] version gates and strict memory fields
+6: [PASS] Release lifetime errors
+6: [PASS] reuse ownership, operation and metadata rules
+6: [PASS] operand uses across phases and communication
+6: [PASS] ordinary V1/V2 compatibility
+6: fatal runtime error: reason=AllValuesAfterRun is incompatible with Release/reuse_input plan_id=2001 plan_source_sha256=sha256:aa500c281c82dde14695d61488de9506987462497f337d64993a4401f206ce4f local_rank=0 api=MockVecApi op_ordinal=2 op=Release value_id=1
+6: fatal runtime error: reason=AllValuesAfterRun is incompatible with Release/reuse_input plan_id=2001 plan_source_sha256=sha256:96f7003f8293c70a7d813e5d3f5a4bcaff4805e59f7c2ce675c0de9d048b0543 local_rank=0 api=MockVecApi op_ordinal=2 op=Negate output=4 place=Host(rank=0)
+6: fatal runtime error: reason=AllValuesAfterRun is incompatible with Release/reuse_input plan_id=2001 plan_source_sha256=sha256:aa500c281c82dde14695d61488de9506987462497f337d64993a4401f206ce4f local_rank=0 api=MockVecApi op_ordinal=2 op=Release value_id=1
+6: fatal runtime error: reason=AllValuesAfterRun is incompatible with Release/reuse_input plan_id=2001 plan_source_sha256=sha256:96f7003f8293c70a7d813e5d3f5a4bcaff4805e59f7c2ce675c0de9d048b0543 local_rank=0 api=MockVecApi op_ordinal=2 op=Negate output=4 place=Host(rank=0)
+6: [PASS] memory execution rejected before API work
+6: [PASS] Release-only CPU/GPU V2 plans execute
+6: fatal runtime error: reason=Api does not support reuse_input for Negate plan_id=2001 plan_source_sha256=sha256:aa500c281c82dde14695d61488de9506987462497f337d64993a4401f206ce4f local_rank=0 api=MockVecApi op_ordinal=4 op=Negate output=4 place=Host(rank=0)
+6: [PASS] reuse chains preserve allocation and caller input
+6: [PASS] dense, sparse uint64 and reordered ValueId indexing
+6: ALL 10 MEMORY TEST GROUPS PASSED
+6/8 Test #6: runtime_plan_memory_tests ........   Passed    0.01 sec
+test 7
+    Start 7: runtime_release_tests
+
+7: Test command: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-prefix-audit/runtime_release_tests
+7: Working Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-prefix-audit
+7: Test timeout computed to be: 10000000
+7: fatal runtime error: reason=injected Encode failure plan_id=19791515590413388 plan_source_sha256=sha256:test local_rank=0 api=TrackingApi op_ordinal=8 op=Encode output=13
+7: fatal runtime error: reason=injected Encode failure plan_id=19791515590413388 plan_source_sha256=sha256:test local_rank=0 api=TrackingApi op_ordinal=8 op=Encode output=13
+7: fatal runtime error: reason=injected Encode failure plan_id=19791515590413388 plan_source_sha256=sha256:test local_rank=0 api=TrackingApi
+7: fatal runtime error: reason=injected Encode failure plan_id=19791515590413388 plan_source_sha256=sha256:test local_rank=0 api=TrackingApi
+7: [PASS] V3 online Encode, explicit Fence reclamation, deferred outputs and CPU failure
+7: [PASS] 20000 transfers and 625 Fence boundaries in each execution mode
+7: fatal runtime error: reason=AllValuesAfterRun is incompatible with Release/reuse_input plan_id=19791515590413388 plan_source_sha256=sha256:test local_rank=0 api=TrackingApi op_ordinal=3 op=Release value_id=1
+7: [PASS] cross-phase counts, repeated operands and repeated runs
+7: [PASS] Release before split Replicate submissions
+7: fatal runtime error: reason=injected second-send failure plan_id=19791515590413388 plan_source_sha256=sha256:test local_rank=0 api=TrackingApi
+7: [PASS] failed submission preserves source until drain, then releases runtime ownership
+7: [PASS] abandoned posted/pending outputs in both execution modes
+7: [PASS] Mock multi-device and multi-rank Release fanout
+7: ALL 7 RELEASE TEST GROUPS PASSED
+7/8 Test #7: runtime_release_tests ............   Passed    5.21 sec
+test 8
+    Start 8: thread_trace_tests
+
+8: Test command: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-prefix-audit/thread_trace_tests
+8: Working Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-prefix-audit
+8: Test timeout computed to be: 10000000
+8: thread trace test passed
+8/8 Test #8: thread_trace_tests ...............   Passed    0.00 sec
+
+100% tests passed out of 8
+
+Total Test time (real) =   9.35 sec

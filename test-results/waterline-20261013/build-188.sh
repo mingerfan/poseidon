@@ -22,11 +22,13 @@ mkdir -p "$base/logs"
   -DPOSEIDON_BUNDLED_RMM_DIR="$rmm_dir" > "$base/logs/configure-reproduce.log" 2>&1
 /usr/bin/time -v "$cmake_bin" --build "$base/build" \
   --target poseidon_runtime_cpu_api_tests poseidon_runtime_gpu_api_tests \
-  poseidon_runtime_gpu_scalar_tests poseidon_runtime_gpu_qwen_e2e -j12 \
+  poseidon_runtime_gpu_scalar_tests poseidon_runtime_gpu_prepare_oom_tests \
+  poseidon_runtime_gpu_qwen_e2e -j12 \
   > "$base/logs/build-reproduce.log" 2>&1
 sha256sum "$base/build/bin/poseidon_runtime_cpu_api_tests" \
   "$base/build/bin/poseidon_runtime_gpu_api_tests" \
   "$base/build/bin/poseidon_runtime_gpu_scalar_tests" \
+  "$base/build/bin/poseidon_runtime_gpu_prepare_oom_tests" \
   "$base/build/bin/poseidon_runtime_gpu_qwen_e2e" \
   "$base/src/src/poseidon/runtime_api/poseidon_gpu_api.cpp" \
   "$base/src/third_party/ckks-runtime/runtime/runtime.hpp" \

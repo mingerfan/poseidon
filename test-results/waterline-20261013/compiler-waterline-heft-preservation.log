@@ -1,0 +1,3 @@
+PASS: Prepare V4, no automatic Fence/reencode, frontend places/order, single-group rejections
+PASS: degree8 CPU/Auto Host480 rejects, Host512 completes unchanged 200-consumer graph; GPU Host64 remains feasible
+PASS: actual HEFT on 4 GPUs, same placed IR eager/Waterline: 65 CT computes, 37 CT transfers, Host Boot, 8 shared Prepare outputs; places/parameters/IDs/order identical

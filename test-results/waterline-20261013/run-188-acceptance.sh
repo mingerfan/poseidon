@@ -4,6 +4,8 @@ set -euo pipefail
 base=${POSEIDON_188_WORKSPACE:-/home/xuming/poseidon-waterline-20261013}
 wait_pid=${POSEIDON_WAIT_FOR_PID:-0}
 run_label=${POSEIDON_ACCEPTANCE_LABEL:-qwen3-bsgs-q50-auto-final}
+full_backend=${POSEIDON_QWEN_BACKEND:-auto}
+case "$full_backend" in cpu|gpu|auto) ;; *) printf 'invalid Qwen backend: %s\n' "$full_backend" >&2; exit 2 ;; esac
 run_logs="$base/logs/$run_label"
 cd "$base"
 if (( wait_pid > 0 )); then
@@ -17,6 +19,7 @@ if (( wait_pid > 0 )); then
 fi
 test -f "$base/logs/latest-build.status"
 cat "$base/logs/latest-build.status"
+sha256sum -c "$base/logs/latest-build.status"
 test "$(/opt/conda/bin/python -c 'import json,sys;print(json.load(open(sys.argv[1]))["returncode"])' \
   "$base/qwen3-plans-bsgs-q50/gpu4/status.json")" = 0
 mkdir "$run_logs"
@@ -42,7 +45,7 @@ set +e
   "$base/build/bin/poseidon_runtime_gpu_qwen_e2e" \
   "$plan.runtime-plan.bin" "$base/profiles/operator-spec.json" \
   "$base/qwen3-runner-bsgs-q50.json" "$prefix-report.json" "$prefix-decoded.json" \
-  --bundle "$plan.bundle" --backend auto --trace "$prefix.trace" \
+  --bundle "$plan.bundle" --backend "$full_backend" --trace "$prefix.trace" \
   > "$prefix.log" 2>&1 &
 timed_pid=$!
 set -e
@@ -50,7 +53,7 @@ while kill -0 "$timed_pid" 2>/dev/null; do
   children=$(cat "/proc/$timed_pid/task/$timed_pid/children")
   if test -n "$children"; then
     read -r model_pid _ <<< "$children"
-    printf 'full_bsgs_auto_model_pid=%s\n' "$model_pid"
+    printf 'full_model_backend=%s pid=%s\n' "$full_backend" "$model_pid"
     /opt/conda/bin/python "$base/monitor_process.py" --pid "$model_pid" \
       --output "$prefix-memory.jsonl" > "$prefix-monitor.log" 2>&1 &
     monitor_pid=$!
@@ -67,7 +70,7 @@ if test -n "${monitor_pid:-}"; then wait "$monitor_pid"; fi
 nvidia-smi --query-gpu=index,uuid,memory.total,memory.used,ecc.errors.uncorrected.volatile.total \
   --format=csv > "$run_logs/devices-after.csv"
 if (( model_status != 0 )); then
-  printf 'full_bsgs_auto_failed status=%s\n' "$model_status"
+  printf 'full_model_failed backend=%s status=%s\n' "$full_backend" "$model_status"
   exit "$model_status"
 fi
 cd "$base/qwen3_dsl-bsgs"
@@ -76,4 +79,4 @@ cd "$base/qwen3_dsl-bsgs"
   --runner-fixture "$base/qwen3-runner-bsgs-q50.json" \
   --decoded "$prefix-decoded.json" --runner-report "$prefix-report.json" \
   --output "$prefix-independent-validation.json" > "$prefix-independent-validation.log" 2>&1
-printf 'full_bsgs_auto_numerical_acceptance_complete\n'
+printf 'full_model_numerical_acceptance_complete backend=%s\n' "$full_backend"
