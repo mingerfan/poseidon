@@ -14,6 +14,56 @@ Dacapo is then available at `third_party/ckks-runtime/third_party/dacapo`. It
 remains source-only in the normal Poseidon build and is built separately when
 compiler artifacts need to be regenerated.
 
+## Waterline plaintext preparation
+
+The late Dacapo option `--runtime-plan-plaintext-schedule=waterline` emits V4
+Device Prepare operations after the existing HEFT placement and communication
+passes. Supply positive GPU, Host, pinned and raw budgets, a reserve and a
+waterline fraction. The runtime admits complete direct-dependency groups in
+one topological prefix and reuses its existing per-device executor. Explicit
+Fence operations remain boundaries; the compiler inserts no batch Fence.
+
+Prepare supports complete CPU Encode plus upload, complete GPU Encode from
+real raw slots, and `auto` queue-based selection among legal candidates. GPU
+Encode uses the context degree, level and scale, with explicit cuFFT scratch,
+RNS reduction and CUDA NTT. Wide finite FP64 integer coefficients are supported
+within the context modulus range. Foreground streams have higher CUDA priority
+than the preparation stream, with one active preparation per GPU.
+
+The backend checks the configured reserve against actual parameter/key storage
+and bounds for retained workspaces. Evaluation keys share one owning allocation
+across active Q levels. `POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB` caps the managed
+RMM pool; its cap plus measured outside-pool GPU usage must fit `M`. Active
+allocation peaks and retained pool bytes are reported separately. Custom memory
+resources used by allocation tests must provide their own physical limits.
+Shared Host credits cover runtime objects, raw payloads, encoder temporaries
+and pinned staging; process RSS also includes context, Host keys and graph
+metadata and is measured separately.
+
+For complete fixture inputs and outputs, build and run:
+
+```bash
+cmake --build BUILD --target poseidon_runtime_gpu_qwen_e2e
+CUDA_VISIBLE_DEVICES=1 /usr/bin/time -v \
+  BUILD/bin/poseidon_runtime_gpu_qwen_e2e \
+  PLAN OPERATOR_SPEC FIXTURE REPORT DECODED \
+  --bundle BUNDLE_DIR --backend auto --trace TRACE
+```
+
+The fixture contains explicit Q/P bits, all inputs and reference outputs. The
+runner verifies every real and imaginary slot with fixed `atol=0.001` and
+`rtol=0.0001`. It sets a pool cap from the per-device capacities and records
+CPU encoding wall time and actual CUDA Encode/H2D event durations. Transport
+H2D counters include Host cipher and CPU plaintext uploads; GPU raw uploads
+are counted separately, and direct setup key uploads are excluded.
+
+V4 Waterline currently supports one rank and ciphertexts with at most three
+components. Native Boot resource bounds are not implemented and cause an
+explicit error. Host decrypt/re-encrypt Boot uses the secret key and is reported
+as a test refresh, with its actual semantics stated in each model result.
+Validation status and reproducible evidence are in
+[the Waterline results](test-results/waterline-20261013/README.md).
+
 ## Optional CKKS Runtime CPU/GPU Api
 
 The integration is disabled by default. When disabled, Poseidon does not inspect

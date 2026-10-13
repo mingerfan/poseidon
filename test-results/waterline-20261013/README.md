@@ -20,4 +20,8 @@ build-runtime-gpu-api-release/bin/poseidon_runtime_gpu_api_tests
 
 服务器验收和完整 Qwen3-0.6B 尚未完成。本地旧 Qwen25 24 层 DSL 的配置与目标不符，不能复用作完整目标模型。官方目标 revision `c1899de289a04d12100db370d81485cdf75e47ca` 为 28 层、hidden size 1024、head dim 128、16 Q heads、8 KV heads、词表 151936、Q/K norm、共享 embedding/LM head。权重下载使用该固定 revision；权重未提交到 Git。
 
-GPU Encode 仅接受实数槽和可由 uint64 幅值表示的完整系数，错误明确暴露。当前 workspace 账本使用保守后端上界，配置 reserve 还须覆盖持久缓存、密钥与参数表；此记录不声称已证明总显存上界或完整模型加速。Native Boot 的 Waterline workspace 查询暂未接通，普通显式 Native Boot 能力保留。CPU decrypt/re-encrypt Boot 的安全与数值语义必须与原生 Boot 分开报告。
+GPU Encode 接受实数槽及上下文模数范围内的有限 FP64 系数；宽整数按 significand/exponent 作 RNS reduction。常数 scale 40/60/80/120 与 CPU 每个 RNS word 一致。配置 reserve 已核对实际参数表、单份 owning key backing、编码器表和持久 workspace 上界；RMM 有硬上限，并分别报告实际活跃分配和保留池空间。这里不声称完整模型加速。Native Boot 的 Waterline workspace 查询暂未接通，普通显式 Native Boot 能力保留。CPU decrypt/re-encrypt Boot 的安全与数值语义必须与原生 Boot 分开报告。
+
+后续资源阶段的有效日志为 `core-tests-validation-hook.log`（7/7）、`key-backing.log`（Q=3/5/7共享key且全槽与CPU一致）、`gpu-api-h2d-final.log`（19/19）、`h2d-timing.log`、`gpu-encode-timing.log`、`local-waterline-metrics.log`。后者是真实 managed-pool N=65536/Q32/scale40 图，三模式最大误差8.64e-7，实际持久表约1.15GB，RMM活跃峰值约1.19GB，保留池1.75GiB、硬cap3520MiB；结束pinned live和计费Device明文为0。时间指标是本机本次测试，不能据此推断V100或完整模型性能。
+
+`qwen-runner-metrics-smoke.log` 仅为2输入/2输出的小图，证明多输出入口、固定容差与实际事件计量接通，不是完整Qwen。原始完整Qwen3图已生成无损12GB bytecode；单卡与四卡在31GiB M/4GiB reserve的容量预检失败，四卡报前台对象约27GiB。正在收窄逐头归一化和宽区间SiLU的算术图后重新编译；完整模型未执行、未通过数值验收。

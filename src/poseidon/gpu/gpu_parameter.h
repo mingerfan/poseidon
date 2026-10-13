@@ -308,6 +308,14 @@ public:
 
     bool empty() const;
 
+    /**
+     * @brief Bytes owned by all device parameter vectors across all levels/shards.
+     *
+     * Counts actual vector allocations, excluding Host metadata and memory
+     * retained by the allocator. Throws on size_t overflow.
+     */
+    std::size_t allocated_bytes() const;
+
     std::size_t level_count() const noexcept
     {
         return levels_.size();

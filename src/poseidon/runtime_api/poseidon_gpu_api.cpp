@@ -18,9 +18,11 @@
 #endif
 #include "poseidon/runtime_api/rotation_key_basis.h"
 #include "runtime/thread_trace.hpp"
+#include <rmm/mr/device/statistics_resource_adaptor.hpp>
 
 #include <algorithm>
 #include <cmath>
+#include <chrono>
 #include <complex>
 #include <cstdlib>
 #include <cstdint>
@@ -128,6 +130,23 @@ std::size_t initial_device_pool_size()
     return std::min(kMaximumInitialDevicePoolSize, free_bytes / 4);
 }
 
+std::size_t maximum_device_pool_size()
+{
+    std::size_t free_bytes=0,total_bytes=0;
+    gpu::gpu_check_cuda(cudaMemGetInfo(&free_bytes,&total_bytes),"GPU pool capacity");
+    std::size_t capacity=(free_bytes-free_bytes/10)&~std::size_t(255);
+    if(const char *raw=std::getenv("POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB");raw && *raw) {
+        const std::string text(raw);std::size_t end=0;
+        const auto mb=std::stoull(text,&end);
+        if(text.empty() || text.front()=='-' || end!=text.size() || mb<64 ||
+           mb>std::numeric_limits<std::size_t>::max()/(1ULL<<20))
+            throw std::invalid_argument("POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB must be an integer >=64");
+        capacity=std::size_t(mb)<<20;
+        if(capacity>free_bytes-free_bytes/10)throw std::invalid_argument("GPU pool cap exceeds available device-memory headroom");
+    }
+    return capacity;
+}
+
 #ifdef POSEIDON_RUNTIME_GPU_NCCL
 void check_mpi_status(int status, const char *what)
 {
@@ -191,11 +210,13 @@ public:
         gpu::gpu_check_cuda(cudaSetDevice(cuda_device_id_), "cudaSetDevice");
         previous_resource_ = rmm::mr::get_current_device_resource();
         upstream_ = std::make_unique<rmm::mr::cuda_memory_resource>();
+        maximum_size_=maximum_device_pool_size();
         pool_ = std::make_unique<
             rmm::mr::pool_memory_resource<rmm::mr::cuda_memory_resource>>(
-            upstream_.get(), initial_device_pool_size());
+            upstream_.get(), std::min(initial_device_pool_size(),maximum_size_),maximum_size_);
+        statistics_=std::make_unique<Statistics>(pool_.get());
         rmm::mr::set_per_device_resource(
-            rmm::cuda_device_id{cuda_device_id_}, pool_.get());
+            rmm::cuda_device_id{cuda_device_id_}, resource());
     }
 
     DeviceMemoryPool(const DeviceMemoryPool &) = delete;
@@ -203,10 +224,10 @@ public:
 
     ~DeviceMemoryPool()
     {
-        gpu::unregister_device_memory_resource_owner(pool_.get(), this);
+        gpu::unregister_device_memory_resource_owner(resource(), this);
         (void)cudaSetDevice(cuda_device_id_);
         if (rmm::mr::get_per_device_resource(
-                rmm::cuda_device_id{cuda_device_id_}) == pool_.get())
+                rmm::cuda_device_id{cuda_device_id_}) == resource())
         {
             rmm::mr::set_per_device_resource(
                 rmm::cuda_device_id{cuda_device_id_}, previous_resource_);
@@ -215,8 +236,12 @@ public:
 
     rmm::mr::device_memory_resource *resource() const noexcept
     {
-        return pool_.get();
+        return statistics_.get();
     }
+
+    std::size_t capacity_bytes() const {return maximum_size_;}
+    std::size_t reserved_bytes() const {return pool_->pool_size();}
+    auto bytes_counter() const {return statistics_->get_bytes_counter();}
 
 private:
     int cuda_device_id_ = 0;
@@ -224,6 +249,9 @@ private:
     std::unique_ptr<rmm::mr::cuda_memory_resource> upstream_;
     std::unique_ptr<
         rmm::mr::pool_memory_resource<rmm::mr::cuda_memory_resource>> pool_;
+    using Statistics=rmm::mr::statistics_resource_adaptor<rmm::mr::pool_memory_resource<rmm::mr::cuda_memory_resource>>;
+    std::unique_ptr<Statistics> statistics_;
+    std::size_t maximum_size_=0;
 };
 
 std::shared_ptr<DeviceMemoryPool> acquire_device_memory_pool(int cuda_device_id)
@@ -730,16 +758,18 @@ struct PoseidonGpuApi::DeviceState
     };
 
     int cuda_device_id = 0;
+    cudaStream_t foreground_stream=nullptr;
+    ~DeviceState() {
+        if(foreground_stream) {(void)cudaSetDevice(cuda_device_id);(void)cudaStreamSynchronize(foreground_stream);(void)cudaStreamDestroy(foreground_stream);}
+    }
     std::unique_ptr<GpuPlaintextEncoder> plaintext_encoder;
     std::shared_ptr<DeviceMemoryPool> memory_pool;
     std::unique_ptr<gpu::GpuParameterData> gpu_parameters;
     std::unique_ptr<gpu::GpuEvaluator> evaluator;
-    std::unordered_map<std::size_t, std::unique_ptr<gpu::GpuRelinKeysData>>
-        relin_keys_by_q_count;
-    std::unordered_map<std::size_t, std::unique_ptr<gpu::GpuGaloisKeysData>>
-        galois_keys_by_q_count;
-    std::unordered_map<std::size_t, std::set<std::uint32_t>>
-        galois_elements_by_q_count;
+    // One owning Q prefix per key family; evaluator calls create active-level views.
+    std::unique_ptr<gpu::GpuRelinKeysData> relin_keys;
+    std::unique_ptr<gpu::GpuGaloisKeysData> galois_keys;
+    std::set<std::uint32_t> galois_elements;
     std::unordered_map<std::string, std::unique_ptr<NativeBootstrapState>>
         native_bootstrap_by_profile;
 };
@@ -1436,6 +1466,72 @@ fhegpu::ResourceUsage PoseidonGpuApi::value_resources(const fhegpu::ValueDesc &d
     return usage;
 }
 
+void PoseidonGpuApi::validate_waterline_resources(const fhegpu::RuntimePlan &plan)
+{
+    if(!plan.waterline)throw std::invalid_argument("Waterline resource validation requires configuration");
+    const auto &config=*plan.waterline;
+    const auto n=context_.parameters_literal()->degree();
+    const auto q=context_.parameters_literal()->q().size(),p=context_.parameters_literal()->p().size();
+    for(const auto &value:plan.values)if(value.kind==fhegpu::ValueKind::Ciphertext && value.components>3)
+        throw std::runtime_error("Waterline workspace bounds support at most three ciphertext components");
+    std::vector<bool> keyswitch(devices_.size()),rescale(devices_.size());
+    for(const auto *phase:{&plan.initialization,&plan.execution,&plan.finalization})for(const auto &instruction:*phase) {
+        if(const auto *op=std::get_if<fhegpu::PreparePlaintextOp>(&instruction.body)) {
+            if(config.backend!=fhegpu::PrepareBackend::Cpu) {
+                const auto desc=std::find_if(plan.values.begin(),plan.values.end(),[&](const auto &v){return v.id==op->output;});
+                if(desc==plan.values.end())throw std::logic_error("Prepare descriptor missing during resource validation");
+                if(!prepare_resources(*desc,fhegpu::PrepareBackend::Gpu).supported)
+                    throw std::runtime_error("GPU complete Prepare resource bound unavailable");
+            }
+        } else if(const auto *op=std::get_if<fhegpu::ComputeOp>(&instruction.body);op && op->place.kind==fhegpu::PlaceKind::Device) {
+            if(op->kind==fhegpu::ComputeKind::Boot && std::get<fhegpu::BootAttrs>(op->attrs).implementation==fhegpu::BootImplementation::Native)
+                throw std::runtime_error("Waterline native Boot persistent/workspace bound is not implemented");
+            keyswitch.at(op->place.index)=keyswitch.at(op->place.index) || op->kind==fhegpu::ComputeKind::Relinearize;
+            rescale.at(op->place.index)=rescale.at(op->place.index) || op->kind==fhegpu::ComputeKind::Rescale;
+        }
+    }
+    const auto key_bytes=[](const auto *key) {
+        std::uint64_t bytes=0;if(!key)return bytes;
+        for(const auto &field:key->fields_)fhegpu::ResourceUsage::add(bytes,field.size()*sizeof(gpu::GpuWord));
+        fhegpu::ResourceUsage::add(bytes,(key->galois_key_q0_ptrs.size()+key->galois_key_q1_ptrs.size()+
+            key->galois_key_p0_ptrs.size()+key->galois_key_p1_ptrs.size())*sizeof(const gpu::GpuWord *));
+        return bytes;
+    };
+    for(std::size_t d=0;d<devices_.size();++d) {
+        auto &device=*devices_[d];gpu::gpu_check_cuda(cudaSetDevice(device.cuda_device_id),"Waterline reserve device");
+        if(!device.foreground_stream) {
+            int least=0,greatest=0;gpu::gpu_check_cuda(cudaDeviceGetStreamPriorityRange(&least,&greatest),"Waterline stream priorities");
+            gpu::gpu_check_cuda(cudaStreamCreateWithPriority(&device.foreground_stream,cudaStreamNonBlocking,greatest),"Waterline foreground stream");
+            std::cerr<<"waterline stream GPU"<<d<<" foreground_priority="<<greatest<<" prepare_priority="<<least<<'\n';
+        }
+        std::uint64_t persistent=device.gpu_parameters->allocated_bytes();
+        fhegpu::ResourceUsage::add(persistent,key_bytes(device.relin_keys.get()));
+        fhegpu::ResourceUsage::add(persistent,key_bytes(device.galois_keys.get()));
+        if(device.plaintext_encoder)fhegpu::ResourceUsage::add(persistent,device.plaintext_encoder->persistent_bytes());
+        // Bounds for retained relinearize and rescale caches. They remain in
+        // the reserve after per-instruction transient credit is returned.
+        const auto retained=(keyswitch[d]?n*4*(12*q+8*p):0)+(rescale[d]?n*4*(12*q+32):0);
+        const std::uint64_t reserve_required=persistent+retained+(64ULL<<20);
+        std::cerr<<"waterline fixed GPU"<<d<<" persistent_bytes="<<persistent<<" retained_workspace_bound="<<retained
+                 <<" reserve_required="<<reserve_required<<" reserve_configured="<<config.device_reserve_bytes.at(d)<<'\n';
+        if(reserve_required>config.device_reserve_bytes.at(d))
+            throw std::runtime_error("Waterline persistent tables/keys/workspace exceed reserve on GPU"+std::to_string(d));
+        if(!device.memory_pool) {
+            // Explicit custom resources are used by allocation/lifetime tests.
+            // The provider owns the physical cap; production uses the managed pool.
+            std::cerr<<"waterline GPU"<<d<<" custom_memory_resource=true physical_pool_cap=provider_owned\n";
+            continue;
+        }
+        std::size_t free=0,total=0;gpu::gpu_check_cuda(cudaMemGetInfo(&free,&total),"Waterline physical memory");
+        const auto pool_reserved=device.memory_pool->reserved_bytes();
+        const auto outside=total-free>pool_reserved?total-free-pool_reserved:0;
+        const auto capacity=device.memory_pool->capacity_bytes();
+        std::cerr<<"waterline physical GPU"<<d<<" pool_reserved="<<pool_reserved<<" pool_cap="<<capacity<<" outside_pool_used="<<outside<<'\n';
+        if(capacity>config.device_capacity_bytes.at(d) || outside+(64ULL<<20)>config.device_capacity_bytes.at(d)-capacity)
+            throw std::runtime_error("Waterline managed pool cap plus outside GPU memory exceed M; configure POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB");
+    }
+}
+
 fhegpu::PrepareResources PoseidonGpuApi::prepare_resources(const fhegpu::ValueDesc &desc, fhegpu::PrepareBackend backend)
 {
     auto resident=value_resources(desc),peak=resident;
@@ -1460,7 +1556,9 @@ fhegpu::ResourceUsage PoseidonGpuApi::instruction_workspace(const fhegpu::Instru
     const auto n=context_.parameters_literal()->degree();
     const auto q=context_.crt_context()->first_context_data()->parms().q().size();
     const auto p=context_.crt_context()->first_context_data()->parms().p().size();
-    if(const auto *op=std::get_if<fhegpu::ComputeOp>(&instruction.body)) {
+    if(std::holds_alternative<fhegpu::EncodeOp>(instruction.body)) {
+        usage.host=n*40;usage.raw=n*8;
+    } else if(const auto *op=std::get_if<fhegpu::ComputeOp>(&instruction.body)) {
         if(op->place.kind==fhegpu::PlaceKind::Host)usage.host=n*(32+(q+p)*8*8);
         else {
             std::uint64_t bytes=0;
@@ -1469,7 +1567,10 @@ fhegpu::ResourceUsage PoseidonGpuApi::instruction_workspace(const fhegpu::Instru
             case fhegpu::ComputeKind::SubCC:case fhegpu::ComputeKind::SubCP:
             case fhegpu::ComputeKind::Negate:case fhegpu::ComputeKind::MulCP:break;
             case fhegpu::ComputeKind::MulCC:bytes=n*q*4*8;break;
-            case fhegpu::ComputeKind::Rescale:case fhegpu::ComputeKind::ModSwitch:bytes=n*q*4*8;break;
+            case fhegpu::ComputeKind::Rescale:
+                if(!max_rescale_levels_per_op_)throw std::runtime_error("Waterline Rescale bound needs completed preflight");
+                bytes=n*q*4*(4+3*std::uint64_t(*max_rescale_levels_per_op_));break;
+            case fhegpu::ComputeKind::ModSwitch:bytes=n*q*4*8;break;
             case fhegpu::ComputeKind::Rotate:case fhegpu::ComputeKind::Relinearize:
                 // Conservative bound on HYBRID digit expansion, accumulation,
                 // automorphism/copy and retained intermediate rotations.
@@ -1498,7 +1599,10 @@ PoseidonGpuApi::Value PoseidonGpuApi::prepare_plaintext_async(const fhegpu::Valu
     if(!resources.supported)throw std::invalid_argument("unsupported PreparePlaintext descriptor");
     if(backend==fhegpu::PrepareBackend::Cpu) {
         auto host_desc=desc;host_desc.place={fhegpu::PlaceKind::Host,mpi_rank_,0};
+        const auto start=std::chrono::steady_clock::now();
         auto host=encode_plaintext(host_desc,slots);
+        cpu_encode_nanoseconds_.fetch_add(std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now()-start).count());
+        cpu_prepare_calls_.fetch_add(1);cpu_plain_h2d_bytes_.fetch_add(value_resources(desc).plain.at(desc.place.index));
         fhegpu::CommAction action{desc.id,fhegpu::CommKind::Transfer,fhegpu::CommHint::PointToPoint,
             {desc.id},{desc.id},{host_desc.place},{desc.place},{fhegpu::ValueKind::Plaintext}};
         auto handle=communicate_async(action,{host},{desc});
@@ -1511,11 +1615,20 @@ PoseidonGpuApi::Value PoseidonGpuApi::prepare_plaintext_async(const fhegpu::Valu
     const auto n=context_.parameters_literal()->degree();
     if(slots.empty() || slots.size()>n/2)throw std::invalid_argument("GPU Prepare slot count outside context");
     const auto scale=exact_scale(desc.scale_log2);
-    double maximum=0;
-    for(double value:slots) {if(!std::isfinite(value))throw std::invalid_argument("GPU Prepare non-finite slot");maximum=std::max(maximum,std::abs(value));}
-    // The normalized inverse embedding has magnitude <= max|slot|. A margin
-    // avoids undefined FP64-to-uint64 conversion at the boundary under FFT rounding.
-    if(maximum>=std::ldexp(1.0,64)/scale*(1-1e-10))throw std::invalid_argument("GPU Prepare coefficient range exceeds uint64");
+    long double absolute_sum=0;
+    for(double value:slots) {
+        if(!std::isfinite(value))throw std::invalid_argument("GPU Prepare non-finite slot");
+        absolute_sum+=std::abs(static_cast<long double>(value));
+    }
+    // L1 bound on the normalized inverse embedding, including zero padding.
+    // Wide rounded FP64 integers are reduced exactly through their significand/exponent.
+    const auto context_data=context_.crt_context()->get_context_data(
+        context_.crt_context()->parms_id_map().at(static_cast<std::uint32_t>(desc.level)));
+    int coefficient_bits=0;for(const auto &q:context_data->parms().q())coefficient_bits+=q.bit_count();
+    const long double bound=absolute_sum/(n/2)*scale;
+    if(!std::isfinite(bound) || bound>=std::numeric_limits<double>::max()*(1-1e-10L) ||
+        bound>=std::ldexp(1.0L,coefficient_bits-1)*(1-1e-10L))
+        throw std::invalid_argument("GPU Prepare exceeds context coefficient range");
     auto pinned=std::make_shared<communication::PinnedHostBuffer>(n*4);
     auto *raw=static_cast<double *>(pinned->data());std::fill(raw,raw+n/2,0.0);std::copy(slots.begin(),slots.end(),raw);
     gpu::gpu_check_cuda(cudaSetDevice(device.cuda_device_id),"GPU Prepare device");
@@ -1537,6 +1650,31 @@ bool PoseidonGpuApi::is_ready(Value &value)
     return !value.ready_ || value.ready_->collect_completed();
 }
 
+PoseidonGpuApi::WaterlineMeasurements PoseidonGpuApi::waterline_measurements()
+{
+    WaterlineMeasurements result;
+    result.cpu_prepare_calls=cpu_prepare_calls_.load();result.cpu_encode_nanoseconds=cpu_encode_nanoseconds_.load();
+    result.cpu_plain_h2d_bytes=cpu_plain_h2d_bytes_.load();
+    result.transport_h2d_calls=communication::CudaLocalTransfer::h2d_completed_calls();
+    result.transport_h2d_bytes=communication::CudaLocalTransfer::h2d_bytes();
+    result.transport_h2d_nanoseconds=communication::CudaLocalTransfer::h2d_nanoseconds();
+    for(auto &device:devices_) {
+        DeviceMeasurements item;
+        if(device->memory_pool) {
+            item.managed_pool=true;const auto bytes=device->memory_pool->bytes_counter();
+            item.allocated_live=bytes.value;item.allocated_peak=bytes.peak;
+            item.pool_reserved=device->memory_pool->reserved_bytes();item.pool_capacity=device->memory_pool->capacity_bytes();
+        }
+        if(device->plaintext_encoder) {
+            const auto timing=device->plaintext_encoder->completed_timing(true);
+            item.gpu_encode_calls=timing.calls;item.gpu_raw_h2d_bytes=timing.raw_h2d_bytes;
+            item.gpu_raw_h2d_nanoseconds=timing.raw_h2d_nanoseconds;item.gpu_encode_nanoseconds=timing.encode_nanoseconds;
+        }
+        result.devices.push_back(item);
+    }
+    return result;
+}
+
 bool PoseidonGpuApi::supports_reuse(const fhegpu::ComputeOp &op) const
 {
     return op.place.kind == fhegpu::PlaceKind::Device &&
@@ -1553,6 +1691,7 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute_reuse(
         throw std::invalid_argument("unsupported Poseidon GPU compute_reuse");
     auto &device = device_state(op.place, "Poseidon GPU compute_reuse");
     gpu::gpu_check_cuda(cudaSetDevice(device.cuda_device_id), "cudaSetDevice");
+    gpu::ScopedGpuExecutionStream foreground(device.foreground_stream?device.foreground_stream:gpu::gpu_execution_stream());
     const auto prepare = [&](const Value &value) {
         if (value_cuda_device_id(value, "Poseidon GPU compute_reuse input") != device.cuda_device_id)
             throw std::invalid_argument("Poseidon GPU compute_reuse input is on the wrong device");
@@ -1701,6 +1840,7 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
 
     auto &device = device_state(op.place, "Poseidon GPU compute");
     gpu::gpu_check_cuda(cudaSetDevice(device.cuda_device_id), "cudaSetDevice");
+    gpu::ScopedGpuExecutionStream foreground(device.foreground_stream?device.foreground_stream:gpu::gpu_execution_stream());
     for (const auto &input : inputs)
     {
         if (value_cuda_device_id(input, "Poseidon GPU compute input") !=
@@ -2703,8 +2843,9 @@ void PoseidonGpuApi::preflight(std::string_view plan_source_sha256,
         }
     }
 
-    std::map<std::pair<fhegpu::Place, std::size_t>, std::set<std::uint32_t>>
-        required_galois_elements;
+    std::map<fhegpu::Place, std::size_t> required_relin_q_counts;
+    std::map<fhegpu::Place,
+             std::pair<std::size_t, std::set<std::uint32_t>>> required_galois_keys;
     const auto galois_tool = context_.crt_context()->galois_tool();
 
     for (const auto &key : requirements.keys)
@@ -2723,7 +2864,7 @@ void PoseidonGpuApi::preflight(std::string_view plan_source_sha256,
             continue;
         }
 
-        auto &device = device_state(key.place, "Poseidon GPU key");
+        device_state(key.place, "Poseidon GPU key");
         if (!key.level)
         {
             throw std::runtime_error("Poseidon GPU evaluation-key requirement has no level");
@@ -2735,7 +2876,8 @@ void PoseidonGpuApi::preflight(std::string_view plan_source_sha256,
             {
                 throw std::runtime_error("Poseidon GPU Api lacks RelinKeys");
             }
-            materialize_relin_keys(device, q_count);
+            auto &required_q_count = required_relin_q_counts[key.place];
+            required_q_count = std::max(required_q_count, q_count);
         }
         else if (key.kind == fhegpu::KeyKind::Galois)
         {
@@ -2745,7 +2887,8 @@ void PoseidonGpuApi::preflight(std::string_view plan_source_sha256,
             }
             const auto steps = available_rotation_steps(
                 context_, *galois_keys_, *key.rotation_step);
-            auto &galois_elts = required_galois_elements[{key.place, q_count}];
+            auto &[required_q_count, galois_elts] = required_galois_keys[key.place];
+            required_q_count = std::max(required_q_count, q_count);
             for (int step : steps)
             {
                 galois_elts.insert(galois_tool->get_elt_from_step(step));
@@ -2757,12 +2900,14 @@ void PoseidonGpuApi::preflight(std::string_view plan_source_sha256,
         }
     }
 
-    for (const auto &[place_and_q_count, galois_elts] : required_galois_elements)
+    for (const auto &[place, q_count] : required_relin_q_counts)
     {
-        auto &device = device_state(
-            place_and_q_count.first, "Poseidon GPU GaloisKeys");
-        materialize_galois_keys(
-            device, place_and_q_count.second, galois_elts);
+        materialize_relin_keys(device_state(place, "Poseidon GPU RelinKeys"), q_count);
+    }
+    for (const auto &[place, required] : required_galois_keys)
+    {
+        materialize_galois_keys(device_state(place, "Poseidon GPU GaloisKeys"),
+                               required.first, required.second);
     }
 
     synchronize_all_devices();
@@ -2997,12 +3142,14 @@ void PoseidonGpuApi::retain_communication(
 
 void PoseidonGpuApi::collect_completed()
 {
-    std::unique_lock<std::mutex> lock(in_flight_mutex_, std::try_to_lock);
-    if (!lock.owns_lock()) return;
-    in_flight_work_.erase(
-        std::remove_if(in_flight_work_.begin(), in_flight_work_.end(),
-                       [](auto &work) { return work.completion->collect_completed(); }),
-        in_flight_work_.end());
+    {
+        std::unique_lock<std::mutex> lock(in_flight_mutex_, std::try_to_lock);
+        if(lock.owns_lock())in_flight_work_.erase(
+            std::remove_if(in_flight_work_.begin(), in_flight_work_.end(),
+                           [](auto &work) { return work.completion->collect_completed(); }),
+            in_flight_work_.end());
+    }
+    for(auto &device:devices_)if(device->plaintext_encoder)device->plaintext_encoder->completed_timing(false);
 }
 
 void PoseidonGpuApi::drain()
@@ -3048,7 +3195,7 @@ std::size_t PoseidonGpuApi::q_count_for_level(int level) const
 void PoseidonGpuApi::materialize_relin_keys(DeviceState &device,
                                             std::size_t q_count)
 {
-    if (device.relin_keys_by_q_count.count(q_count) != 0)
+    if (device.relin_keys && device.relin_keys->meta.q_count >= q_count)
     {
         return;
     }
@@ -3057,14 +3204,15 @@ void PoseidonGpuApi::materialize_relin_keys(DeviceState &device,
         throw std::runtime_error("Poseidon GPU Relinearize requires RelinKeys");
     }
 
-    auto keys = std::make_unique<gpu::GpuRelinKeysData>(
-        gpu::GpuUploader::upload_relin_keys(*relin_keys_, device.cuda_device_id, q_count));
-    const auto [inserted, ok] =
-        device.relin_keys_by_q_count.emplace(q_count, std::move(keys));
-    if (!ok)
+    if (device.relin_keys)
     {
-        throw std::logic_error("Poseidon GPU RelinKeys cache insertion failed");
+        // A later run may require a larger prefix. Retire the old owning backing
+        // after its readers complete, before allocating its replacement.
+        synchronize_device(device.cuda_device_id);
+        device.relin_keys.reset();
     }
+    device.relin_keys = std::make_unique<gpu::GpuRelinKeysData>(
+        gpu::GpuUploader::upload_relin_keys(*relin_keys_, device.cuda_device_id, q_count));
 }
 
 void PoseidonGpuApi::materialize_galois_keys(
@@ -3081,49 +3229,47 @@ void PoseidonGpuApi::materialize_galois_keys(
     }
 
     auto combined_galois_elts = galois_elts;
-    const auto existing_elements = device.galois_elements_by_q_count.find(q_count);
-    if (existing_elements != device.galois_elements_by_q_count.end())
+    combined_galois_elts.insert(device.galois_elements.begin(), device.galois_elements.end());
+    if (device.galois_keys)
     {
-        combined_galois_elts.insert(
-            existing_elements->second.begin(), existing_elements->second.end());
-        if (combined_galois_elts == existing_elements->second)
+        q_count = std::max(q_count, device.galois_keys->meta.q_count);
+        if (q_count == device.galois_keys->meta.q_count &&
+            combined_galois_elts == device.galois_elements)
         {
             return;
         }
+        synchronize_device(device.cuda_device_id);
+        device.galois_keys.reset();
     }
 
     const std::vector<std::uint32_t> selected_galois_elts(
         combined_galois_elts.begin(), combined_galois_elts.end());
-    auto keys = std::make_unique<gpu::GpuGaloisKeysData>(
+    device.galois_keys = std::make_unique<gpu::GpuGaloisKeysData>(
         gpu::GpuUploader::upload_galois_keys(*galois_keys_, device.cuda_device_id,
                                              q_count, selected_galois_elts));
-    device.galois_keys_by_q_count.insert_or_assign(q_count, std::move(keys));
-    device.galois_elements_by_q_count.insert_or_assign(
-        q_count, std::move(combined_galois_elts));
+    device.galois_elements = std::move(combined_galois_elts);
 }
 
 const gpu::GpuRelinKeysData &PoseidonGpuApi::relin_keys_for(
     DeviceState &device, std::size_t q_count)
 {
-    const auto existing = device.relin_keys_by_q_count.find(q_count);
-    if (existing == device.relin_keys_by_q_count.end())
+    if (!device.relin_keys || device.relin_keys->meta.q_count < q_count)
     {
         throw std::runtime_error(
             "Poseidon GPU RelinKeys were not preloaded for the input level");
     }
-    return *existing->second;
+    return *device.relin_keys;
 }
 
 const gpu::GpuGaloisKeysData &PoseidonGpuApi::galois_keys_for(
     DeviceState &device, std::size_t q_count)
 {
-    const auto existing = device.galois_keys_by_q_count.find(q_count);
-    if (existing == device.galois_keys_by_q_count.end())
+    if (!device.galois_keys || device.galois_keys->meta.q_count < q_count)
     {
         throw std::runtime_error(
             "Poseidon GPU GaloisKeys were not preloaded for the input level");
     }
-    return *existing->second;
+    return *device.galois_keys;
 }
 
 } // namespace poseidon::runtime_api

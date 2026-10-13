@@ -5,6 +5,7 @@
 #include <cuda_runtime_api.h>
 
 #include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <vector>
 
@@ -73,6 +74,13 @@ public:
     CudaLocalTransfer &operator=(const CudaLocalTransfer &) = delete;
 
     static int visible_device_count();
+    // Completed copy_host_to_device_async transfers across this process. CUDA
+    // event time excludes destination readiness waits. Includes ciphertext and
+    // CPU plaintext uploads through this class; excludes direct key uploads.
+    // Nanoseconds sum transfer intervals, rather than elapsed program time.
+    static std::uint64_t h2d_bytes() noexcept;
+    static std::uint64_t h2d_nanoseconds() noexcept;
+    static std::uint64_t h2d_completed_calls() noexcept;
     static bool can_access_peer(int destination_device, int source_device);
     // Required once per directed device pair before submitting a PeerToPeer copy.
     static void enable_peer_access(int destination_device, int source_device);

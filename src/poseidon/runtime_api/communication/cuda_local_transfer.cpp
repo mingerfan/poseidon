@@ -6,6 +6,8 @@
 
 #include <algorithm>
 #include <atomic>
+#include <cmath>
+#include <map>
 #include <mutex>
 #include <stdexcept>
 #include <string>
@@ -18,6 +20,8 @@ namespace
 {
 
 std::atomic<std::size_t> pinned_live{0}, pinned_peak{0};
+std::atomic<std::uint64_t> h2d_completed_bytes{0}, h2d_elapsed_nanoseconds{0},
+    h2d_completed_count{0};
 
 void check_cuda(cudaError_t status, const char *what)
 {
@@ -75,11 +79,11 @@ cudaStream_t create_stream(int device)
     return stream;
 }
 
-cudaEvent_t create_event(int device)
+cudaEvent_t create_event(int device, unsigned int flags = cudaEventDisableTiming)
 {
     check_cuda(cudaSetDevice(device), "CUDA transfer cudaSetDevice");
     cudaEvent_t event = nullptr;
-    check_cuda(cudaEventCreateWithFlags(&event, cudaEventDisableTiming),
+    check_cuda(cudaEventCreateWithFlags(&event, flags),
                "CUDA transfer cudaEventCreateWithFlags");
     return event;
 }
@@ -162,7 +166,10 @@ struct CudaTransferRequest::State
         if (!waited && completion_recorded)
         {
             (void)cudaSetDevice(completion.device);
-            (void)cudaEventSynchronize(completion.value);
+            if (cudaEventSynchronize(completion.value) == cudaSuccess)
+            {
+                try { record_h2d_completion(); } catch (...) {}
+            }
         }
         else if (!waited)
         {
@@ -185,6 +192,28 @@ struct CudaTransferRequest::State
             (void)cudaSetDevice(completion.device);
             (void)cudaEventDestroy(completion.value);
         }
+        if (h2d_start.value != nullptr)
+        {
+            (void)cudaSetDevice(h2d_start.device);
+            (void)cudaEventDestroy(h2d_start.value);
+        }
+    }
+
+    // Caller holds wait_mutex, or owns the State exclusively during destruction.
+    void record_h2d_completion()
+    {
+        if (h2d_start.value == nullptr || h2d_counted) return;
+        float milliseconds = 0;
+        check_cuda(cudaEventElapsedTime(&milliseconds, h2d_start.value, completion.value),
+                   "CUDA transfer cudaEventElapsedTime Host to device");
+        if (!std::isfinite(milliseconds) || milliseconds < 0)
+            throw std::runtime_error("CUDA Host-to-device event duration is invalid");
+        const auto nanoseconds = static_cast<std::uint64_t>(
+            std::llround(static_cast<double>(milliseconds) * 1000000.0));
+        h2d_completed_bytes.fetch_add(h2d_transfer_bytes, std::memory_order_relaxed);
+        h2d_elapsed_nanoseconds.fetch_add(nanoseconds, std::memory_order_relaxed);
+        h2d_completed_count.fetch_add(1, std::memory_order_relaxed);
+        h2d_counted = true;
     }
 
     void retain_stream(int device, cudaStream_t stream)
@@ -204,10 +233,13 @@ struct CudaTransferRequest::State
     std::vector<Stream> submitted_streams;
     std::vector<Event> events;
     Event completion;
+    Event h2d_start;
+    std::uint64_t h2d_transfer_bytes = 0;
     std::shared_ptr<PinnedHostBuffer> staging;
     std::mutex wait_mutex;
     bool completion_recorded = false;
     bool waited = false;
+    bool h2d_counted = false;
 };
 
 struct CudaLocalTransfer::State
@@ -239,6 +271,7 @@ struct CudaLocalTransfer::State
                     throw std::invalid_argument(
                         "CUDA transfer device ids must be nonnegative and unique");
                 }
+                submission_mutexes.try_emplace(device);
                 streams.push_back({device, create_stream(device)});
             }
         }
@@ -275,6 +308,14 @@ struct CudaLocalTransfer::State
         return found->value;
     }
 
+    std::mutex &submission_mutex(int device)
+    {
+        const auto found = submission_mutexes.find(device);
+        if (found == submission_mutexes.end())
+            throw std::invalid_argument("CUDA transfer device is not configured");
+        return found->second;
+    }
+
 private:
     void destroy_streams() noexcept
     {
@@ -290,6 +331,7 @@ private:
     }
 
     std::vector<Stream> streams;
+    std::map<int, std::mutex> submission_mutexes;
 };
 
 CudaLocalTransfer::CudaLocalTransfer(std::vector<int> cuda_device_ids)
@@ -340,6 +382,7 @@ bool CudaTransferRequest::collect_completed()
         return false;
     }
     check_cuda(status, "CUDA transfer cudaEventQuery");
+    state_->record_h2d_completion();
     state_->waited = true;
     state_->staging.reset();
     return true;
@@ -361,6 +404,7 @@ void CudaTransferRequest::wait()
                "CUDA transfer cudaSetDevice");
     check_cuda(cudaEventSynchronize(state_->completion.value),
                "CUDA transfer cudaEventSynchronize");
+    state_->record_h2d_completion();
     state_->waited = true;
     state_->staging.reset();
 }
@@ -376,6 +420,21 @@ int CudaLocalTransfer::visible_device_count()
     }
     check_cuda(status, "CUDA transfer cudaGetDeviceCount");
     return device_count;
+}
+
+std::uint64_t CudaLocalTransfer::h2d_bytes() noexcept
+{
+    return h2d_completed_bytes.load(std::memory_order_relaxed);
+}
+
+std::uint64_t CudaLocalTransfer::h2d_nanoseconds() noexcept
+{
+    return h2d_elapsed_nanoseconds.load(std::memory_order_relaxed);
+}
+
+std::uint64_t CudaLocalTransfer::h2d_completed_calls() noexcept
+{
+    return h2d_completed_count.load(std::memory_order_relaxed);
 }
 
 bool CudaLocalTransfer::can_access_peer(int destination_device, int source_device)
@@ -511,6 +570,19 @@ CudaTransferRequest CudaLocalTransfer::copy_async(
     const CudaTransferRoute route = select_route(
         request.destination_device, request.source_device, requested);
 
+    // Keep each stream's dependency/copy/event sequence indivisible. Otherwise
+    // another submitter's readiness wait can enter an H2D timing interval.
+    std::unique_lock<std::mutex> destination_lock(
+        state_->submission_mutex(request.destination_device), std::defer_lock);
+    std::unique_lock<std::mutex> source_lock;
+    if (route == CudaTransferRoute::HostStaged)
+    {
+        source_lock = std::unique_lock<std::mutex>(
+            state_->submission_mutex(request.source_device), std::defer_lock);
+        std::lock(destination_lock, source_lock);
+    }
+    else destination_lock.lock();
+
     CudaTransferRequest result;
     result.state_ = std::make_unique<CudaTransferRequest::State>();
     auto &state = *result.state_;
@@ -606,6 +678,7 @@ CudaTransferRequest CudaLocalTransfer::copy_host_to_device_async(
     {
         throw std::invalid_argument("CUDA Host-to-device transfer is invalid");
     }
+    std::lock_guard<std::mutex> submission_lock(state_->submission_mutex(destination_device));
     CudaTransferRequest result;
     result.state_ = std::make_unique<CudaTransferRequest::State>();
     auto &state = *result.state_;
@@ -617,10 +690,14 @@ CudaTransferRequest CudaLocalTransfer::copy_host_to_device_async(
     state.events.push_back({destination_device, destination_ready});
     check_cuda(cudaStreamWaitEvent(stream, destination_ready, 0),
                "CUDA transfer cudaStreamWaitEvent destination ready");
+    state.h2d_start = {destination_device, create_event(destination_device, cudaEventDefault)};
+    state.completion = {destination_device, create_event(destination_device, cudaEventDefault)};
+    state.h2d_transfer_bytes = bytes;
+    check_cuda(cudaEventRecord(state.h2d_start.value, stream),
+               "CUDA transfer cudaEventRecord Host to device start");
     check_cuda(cudaMemcpyAsync(destination, source->data(), bytes,
                                cudaMemcpyHostToDevice, stream),
                "CUDA transfer cudaMemcpyAsync Host to device");
-    state.completion = {destination_device, create_event(destination_device)};
     check_cuda(cudaEventRecord(state.completion.value, stream),
                "CUDA transfer cudaEventRecord Host to device");
     state.completion_recorded = true;
@@ -637,6 +714,7 @@ CudaTransferRequest CudaLocalTransfer::copy_device_to_host_async(
     {
         throw std::invalid_argument("CUDA device-to-Host transfer is invalid");
     }
+    std::lock_guard<std::mutex> submission_lock(state_->submission_mutex(source_device));
     CudaTransferRequest result;
     result.state_ = std::make_unique<CudaTransferRequest::State>();
     auto &state = *result.state_;

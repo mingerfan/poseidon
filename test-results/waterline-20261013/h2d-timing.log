@@ -1,0 +1,2 @@
+PASS parallel H2D submissions=8 event_sum_ns=2653728 dependency_plus_copies_wall_ns=80603368
+PASS H2D exactly_once calls=13 bytes=54525952 event_nanoseconds=4359584 delayed_copy_event_ns=345152 dependency_plus_copy_wall_ns=80511840

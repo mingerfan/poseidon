@@ -1,0 +1,5 @@
+Command: build-waterline-encoder-timing-agent/encoder_timing_smoke
+Exit status: 0
+PASS N=4096 calls=1 raw_h2d_bytes=16384 raw_h2d_nanoseconds=8799 encode_nanoseconds=2346400
+PASS N=65536 calls=1 raw_h2d_bytes=262144 raw_h2d_nanoseconds=27103 encode_nanoseconds=165248
+Checks: concurrent collect/submit, low-priority stream, Scratch-independent timing, repeated polls without double counting.

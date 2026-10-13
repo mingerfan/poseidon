@@ -1,0 +1,14 @@
+QWEN inputs=2 outputs=2 devices=1 slots=2048 backend=gpu host_boot_instructions=0
+KEYS ready rotation_basis=0 key_generation_ms=1.588983
+GPU_POOL maximum_mb=448 source=waterline outside_pool_reserve_bytes=603979776
+FORWARD begin
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=5936620 retained_workspace_bound=0 reserve_required=73045484 reserve_configured=536870912
+waterline physical GPU0 pool_reserved=469762048 pool_cap=469762048 outside_pool_used=118423552
+waterline GPU0 front_peak=917504 plain_peak=311296 remaining_front=458752 remaining_plain=0
+waterline shared host_peak=2293760 pinned_peak=688128 raw_peak=32768
+FORWARD complete runtime_ms=41.454038
+PASS output=0 name=sum max_abs=4.95159e-08 max_relative=4.95159e-05 max_imaginary=5.49284e-08 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS output=1 name=sum_plus_plain max_abs=4.95218e-08 max_relative=4.95218e-05 max_imaginary=5.49284e-08 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS ALL_OUTPUTS count=2 slots=4096 max_abs=4.95218e-08 max_relative=4.95218e-05 max_imaginary=5.49284e-08 bad_real=0 bad_imaginary=0 nonfinite=0
+report=build-waterline-qwen-agent/fixture-smoke/report-metrics.json decoded=build-waterline-qwen-agent/fixture-smoke/decoded-metrics.json

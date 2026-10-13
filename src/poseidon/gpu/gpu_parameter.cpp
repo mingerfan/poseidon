@@ -2528,5 +2528,74 @@ bool GpuParameterData::empty() const
     return levels_.empty();
 }
 
+std::size_t GpuParameterData::allocated_bytes() const
+{
+    std::size_t bytes = 0;
+    const auto add = [&bytes](const auto &vector)
+    {
+        constexpr std::size_t element_bytes = sizeof(*vector.data());
+        const auto count = vector.size();
+        if (count > (std::numeric_limits<std::size_t>::max() - bytes) / element_bytes)
+        {
+            throw std::overflow_error("GpuParameterData allocated byte count overflow");
+        }
+        bytes += count * element_bytes;
+    };
+
+    for (const auto &level : levels_)
+    {
+        for (const auto &shard : level.shards)
+        {
+            add(shard.q_primes);
+            add(shard.p_primes);
+            add(shard.rns_primes);
+            add(shard.q_modulus_constants);
+            add(shard.p_modulus_constants);
+            add(shard.rns_modulus_constants);
+            add(shard.half_q_last_mod_q);
+            add(shard.inv_q_last_mod_q);
+            add(shard.q_last_two_product_mod_q);
+            add(shard.inv_q_last_two_product_mod_q);
+            add(shard.rescale_q_inv_mod_q);
+            add(shard.hybrid_decomp_start);
+            add(shard.hybrid_decomp_end);
+            add(shard.hybrid_p_mod_q);
+            add(shard.hybrid_inv_p_mod_q);
+            add(shard.hybrid_q_conv_matrix_offsets);
+            add(shard.hybrid_p_conv_matrix_offsets);
+            add(shard.hybrid_q_conv_matrices);
+            add(shard.hybrid_p_conv_matrices);
+            add(shard.hybrid_moddown_p_to_q_matrix);
+            add(shard.hybrid_qi_inv_punctured);
+            add(shard.hybrid_p_inv_punctured);
+            add(shard.bootstrap_raise_inv_punctured);
+            add(shard.bootstrap_raise_matrix);
+            add(shard.ntt_tables);
+            add(shard.intt_tables);
+            add(shard.fourstep_intt_tables);
+            add(shard.intt_tables_normalized);
+            add(shard.inv_degree_modulo);
+            add(shard.montgomery_ntt_tables);
+            add(shard.montgomery_intt_tables);
+            add(shard.montgomery_intt_tables_normalized);
+            add(shard.montgomery_inv_degree_modulo);
+            add(shard.montgomery_neg_inv_modulo);
+            add(shard.ntt_fused_matrix_stage_counts);
+            add(shard.ntt_fused_matrix_group_counts);
+            add(shard.ntt_fused_matrix_stage_offsets);
+            add(shard.ntt_fused_matrices);
+            add(shard.ntt_fused_matrices_fp64_lo);
+            add(shard.ntt_fused_matrices_fp64_hi);
+            add(shard.intt_fused_matrix_stage_counts);
+            add(shard.intt_fused_matrix_group_counts);
+            add(shard.intt_fused_matrix_stage_offsets);
+            add(shard.intt_fused_matrices);
+            add(shard.intt_fused_matrices_fp64_lo);
+            add(shard.intt_fused_matrices_fp64_hi);
+        }
+    }
+    return bytes;
+}
+
 }  // namespace gpu
 }  // namespace poseidon

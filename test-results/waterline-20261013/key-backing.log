@@ -1,0 +1,10 @@
+PASS single key backing relin_bytes=1179648 galois_one_bytes=1179648 galois_two_bytes=2359296 active_levels=2,4,6 stored_q=7
+PASS Relinearize q=3 max_abs_error=0
+PASS composite Rotate q=3 max_abs_error=0
+PASS reuse Rotate q=3 max_abs_error=0
+PASS Relinearize q=5 max_abs_error=0
+PASS composite Rotate q=5 max_abs_error=0
+PASS reuse Rotate q=5 max_abs_error=0
+PASS Relinearize q=7 max_abs_error=0
+PASS composite Rotate q=7 max_abs_error=0
+PASS reuse Rotate q=7 max_abs_error=0

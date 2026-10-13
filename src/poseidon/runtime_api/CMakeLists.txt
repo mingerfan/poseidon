@@ -172,6 +172,15 @@ if(POSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS)
             ckks_runtime::plan_json
     )
 
+    add_executable(poseidon_runtime_gpu_qwen_e2e
+        ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/runtime_api/poseidon_gpu_qwen_e2e.cpp
+    )
+    target_link_libraries(poseidon_runtime_gpu_qwen_e2e
+        PRIVATE
+            poseidon_runtime_gpu_api
+            ckks_runtime::plan_json
+    )
+
     add_executable(poseidon_runtime_gpu_mlp_e2e
         ${POSEIDON_INCLUDES_DIR}/src/poseidon/tests/runtime_api/poseidon_gpu_mlp_e2e_test.cpp
     )

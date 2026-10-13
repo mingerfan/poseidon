@@ -11,6 +11,7 @@
 #include "runtime/plan.hpp"
 
 #include <cstdint>
+#include <atomic>
 #include <memory>
 #include <mutex>
 #include <optional>
@@ -195,6 +196,18 @@ public:
     fhegpu::ResourceUsage value_resources(const fhegpu::ValueDesc &desc) const;
     fhegpu::PrepareResources prepare_resources(const fhegpu::ValueDesc &desc, fhegpu::PrepareBackend backend);
     fhegpu::ResourceUsage instruction_workspace(const fhegpu::Instruction &instruction) const;
+    void validate_waterline_resources(const fhegpu::RuntimePlan &plan);
+    struct DeviceMeasurements {
+        std::uint64_t allocated_live=0,allocated_peak=0,pool_reserved=0,pool_capacity=0;
+        std::uint64_t gpu_encode_calls=0,gpu_raw_h2d_bytes=0,gpu_raw_h2d_nanoseconds=0,gpu_encode_nanoseconds=0;
+        bool managed_pool=false;
+    };
+    struct WaterlineMeasurements {
+        std::uint64_t cpu_prepare_calls=0,cpu_encode_nanoseconds=0,cpu_plain_h2d_bytes=0;
+        std::uint64_t transport_h2d_calls=0,transport_h2d_bytes=0,transport_h2d_nanoseconds=0;
+        std::vector<DeviceMeasurements> devices;
+    };
+    WaterlineMeasurements waterline_measurements();
     Value prepare_plaintext_async(const fhegpu::ValueDesc &desc, const std::vector<double> &slots, fhegpu::PrepareBackend backend);
     bool is_ready(Value &value);
     Value compute(const fhegpu::ComputeOp &op, const std::vector<Value> &inputs);
@@ -269,6 +282,7 @@ private:
     std::vector<int> rank_to_node_;
     std::vector<InFlightWork> in_flight_work_;
     std::mutex in_flight_mutex_;
+    std::atomic<std::uint64_t> cpu_prepare_calls_{0},cpu_encode_nanoseconds_{0},cpu_plain_h2d_bytes_{0};
 };
 
 } // namespace runtime_api

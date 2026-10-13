@@ -2074,6 +2074,27 @@ void test_two_gpu_runtime_plan(const poseidon::PoseidonContext &context,
     }
 }
 
+void test_gpu_plaintext_wide_coefficients(const poseidon::PoseidonContext &context)
+{
+    PoseidonGpuApi api(kContextId,context,kDeviceId);
+    poseidon::CKKSEncoder encoder(context);
+    const int level=static_cast<int>(context.parameters_literal()->q().size()-1);
+    const auto parms=context.crt_context()->parms_id_map().at(static_cast<std::uint32_t>(level));
+    const auto n=context.parameters_literal()->degree();
+    for(int scale:{40,60,80,120}) {
+        fhegpu::ValueDesc desc{999,fhegpu::ValueKind::Plaintext,device_place(),kContextId,level,scale,true,1};
+        const std::vector<double> input(n/2,std::ldexp(1.,20));
+        poseidon::Plaintext reference;encoder.encode(input,parms,std::ldexp(1.,scale),reference);
+        auto value=api.prepare_plaintext_async(desc,input,fhegpu::PrepareBackend::Gpu);
+        api.synchronize(value);poseidon::Plaintext actual;
+        poseidon::gpu::GpuUploader::download_plaintext(value.device_plaintext(),actual,context);
+        require(reference.coeff_count()==actual.coeff_count(),"wide coefficient shape changed");
+        for(std::size_t i=0;i<reference.coeff_count();++i)require(reference.data()[i]==actual.data()[i],"wide constant RNS differs from CPU Encode");
+        std::cout<<"PASS complete GPU Encode wide constant scale="<<scale<<" coefficient_bits="<<scale+21<<'\n';
+        api.drain();
+    }
+}
+
 void test_waterline_runtime(const poseidon::PoseidonContext &context,
                            poseidon::KeyGenerator &key_generator,
                            const fhegpu::LoadedOperatorSpec &spec,int device_count)
@@ -2119,7 +2140,7 @@ void test_waterline_runtime(const poseidon::PoseidonContext &context,
     auto download=transfer_action(transfer_id,fhegpu::ValueKind::Ciphertext,device_place(),host_place());download.inputs={current};download.outputs={result};
     plan.finalization={{0,download},{0,fhegpu::ReleaseOp{current}}};plan.final_outputs={result};
     std::size_t ordinal=0;for(auto *phase:{&plan.initialization,&plan.execution,&plan.finalization})for(auto &i:*phase)i.ordinal=ordinal++;
-    fhegpu::WaterlineConfig config;config.device_capacity_bytes.assign(device_count,4ULL<<30);config.device_reserve_bytes.assign(device_count,256ULL<<20);
+    fhegpu::WaterlineConfig config;config.device_capacity_bytes.assign(device_count,4ULL<<30);config.device_reserve_bytes.assign(device_count,2ULL<<30);
     config.host_budget_bytes=512ULL<<20;config.pinned_budget_bytes=64ULL<<20;config.raw_budget_bytes=32ULL<<20;
     config.device_fractions.assign(device_count,.02);config.lookahead_groups=8;
     std::unordered_map<fhegpu::ValueId,PoseidonGpuValue> inputs{{arg,PoseidonGpuValue::from_host_ciphertext(cipher)}};
@@ -2128,6 +2149,19 @@ void test_waterline_runtime(const poseidon::PoseidonContext &context,
         const auto begin=std::chrono::steady_clock::now();
         fhegpu::SequentialRuntime<PoseidonGpuApi> runtime(0,1,device_count,api,fhegpu::DeviceExecutionMode::PerDeviceWorkers);
         auto artifact=runtime.run({plan,kPlanSha},{spec,std::nullopt,false},inputs);
+        const auto measurements=api.waterline_measurements();
+        std::cout<<"WATERLINE measurements cumulative_cpu_calls="<<measurements.cpu_prepare_calls
+                 <<" cpu_encode_ms="<<measurements.cpu_encode_nanoseconds/1e6
+                 <<" cpu_plain_h2d_bytes="<<measurements.cpu_plain_h2d_bytes
+                 <<" transport_h2d_bytes="<<measurements.transport_h2d_bytes
+                 <<" transport_h2d_ms="<<measurements.transport_h2d_nanoseconds/1e6<<'\n';
+        for(std::size_t d=0;d<measurements.devices.size();++d) {
+            const auto &m=measurements.devices[d];
+            std::cout<<"WATERLINE measurements GPU"<<d<<" allocated_peak="<<m.allocated_peak<<" allocated_live="<<m.allocated_live
+                     <<" pool_reserved="<<m.pool_reserved<<" pool_cap="<<m.pool_capacity<<" gpu_encode_calls="<<m.gpu_encode_calls
+                     <<" gpu_encode_ms="<<m.gpu_encode_nanoseconds/1e6<<" gpu_raw_h2d_bytes="<<m.gpu_raw_h2d_bytes
+                     <<" gpu_raw_h2d_ms="<<m.gpu_raw_h2d_nanoseconds/1e6<<'\n';
+        }
         poseidon::Plaintext decoded;decryptor.decrypt(artifact.values.at(result).value.host_ciphertext(),decoded);
         std::vector<std::complex<double>> slots;encoder.decode(decoded,slots);double maximum=0;
         for(std::size_t i=0;i<slots.size();++i) {
@@ -2138,7 +2172,7 @@ void test_waterline_runtime(const poseidon::PoseidonContext &context,
         require(maximum<1e-4,"Waterline plaintext consumer numerical mismatch");
         require(artifact.timing.encode_calls==static_cast<std::size_t>(device_count),"shared Prepare was encoded more than once");
         std::cout<<"WATERLINE backend="<<int(backend)<<" devices="<<device_count<<" max_abs_error="<<maximum
-                 <<" cold_ms="<<std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-begin).count()
+                 <<" runtime_ms="<<std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-begin).count()
                  <<" forward_ms="<<artifact.timing.online_execution_nanoseconds/1e6<<" pinned_live="
                  <<poseidon::runtime_api::communication::PinnedHostBuffer::live_bytes()<<'\n';
     }
@@ -2160,13 +2194,14 @@ int main()
 
     try
     {
+        if(std::getenv("POSEIDON_WATERLINE_ONLY") && !std::getenv("POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB"))
+            setenv("POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB","3520",1);
         if (std::getenv("POSEIDON_WATERLINE_SCALE")) kDefaultScaleLog2=std::stoi(std::getenv("POSEIDON_WATERLINE_SCALE"));
         const auto parameters = make_parameters();
         poseidon::PoseidonContext context(parameters);
         run_test("internal RMM pool lifetime",
                  [&] { test_internal_memory_pool_lifetime(context); });
 
-        RmmPoolScope rmm_pool(kDeviceId);
         poseidon::KeyGenerator key_generator(context);
         auto relin_keys = std::make_shared<poseidon::RelinKeys>();
         auto galois_keys = std::make_shared<poseidon::GaloisKeys>();
@@ -2179,9 +2214,11 @@ int main()
 
         const auto loaded_spec = make_operator_spec(context);
         if (std::getenv("POSEIDON_WATERLINE_ONLY")) {
+            test_gpu_plaintext_wide_coefficients(context);
             test_waterline_runtime(context,key_generator,loaded_spec,device_count);
             return 0;
         }
+        RmmPoolScope rmm_pool(kDeviceId);
         run_test("CPU/GPU/auto Waterline through encrypted consumers",[&] {test_waterline_runtime(context,key_generator,loaded_spec,1);});
         run_test("selected Galois-key upload",
                  [&] { test_selected_galois_key_upload(context, *galois_keys); });
