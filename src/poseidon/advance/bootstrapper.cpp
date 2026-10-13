@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <cmath>
+#include <cstdint>
 #include <cstring>
 #include <fstream>
 #include <iostream>
@@ -18,6 +19,17 @@ namespace poseidon
 namespace
 {
 constexpr double kPi = 3.141592653589793238462643383279502884;
+constexpr std::size_t kMaxCosineHeapNodes = 1U << 20;
+constexpr std::size_t kMaxCosineHeapCoefficients = 1U << 20;
+
+long checked_slot_count(long log_slots)
+{
+    if (log_slots <= 0 || log_slots >= std::numeric_limits<long>::digits)
+    {
+        throw std::invalid_argument("bootstrap log_slots is out of range");
+    }
+    return 1L << log_slots;
+}
 
 struct CosineHeapNode
 {

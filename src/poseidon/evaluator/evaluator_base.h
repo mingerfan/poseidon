@@ -73,7 +73,7 @@ public:
     void transform_from_ntt_inplace(Ciphertext &ciph) const;
 
     virtual void multiply_plain_inplace(Ciphertext &ciph, const Plaintext &plain,
-                                       MemoryPoolHandle pool = MemoryManager::GetPool()) const = 0;
+                                        MemoryPoolHandle pool = MemoryManager::GetPool()) const = 0;
 
 protected:
     EvaluatorBase(const PoseidonContext &context, MemoryPoolHandle pool = MemoryManager::GetPool());
@@ -82,11 +82,10 @@ protected:
     template <typename T, typename S>
     POSEIDON_NODISCARD inline bool are_same_scale(const T &value1, const S &value2) noexcept
     {
-        return util::are_approximate<double>(value1.scale(), value2.scale());
+        return util::is_approximate<double>(value1.scale(), value2.scale());
     }
 
 protected:
-    
     static void ntt_fwd_b(const Plaintext &plain, Plaintext &result);
     static void ntt_fwd_b(const Ciphertext &ciph, Ciphertext &result);
     static void ntt_inv_b(const Plaintext &plain, Plaintext &result);

@@ -468,7 +468,7 @@ public:
                            util::is_zero<pt_coeff_type>) &&
                std::all_of(compare.data_.cbegin() + sig_coeff_count, compare.data_.cend(),
                            util::is_zero<pt_coeff_type>) &&
-               util::are_approximate(scale_, compare.scale_);
+               util::is_approximate(scale_, compare.scale_);
     }
 
     /**
@@ -755,7 +755,7 @@ private:
                       PoseidonVersion version);
 
     std::size_t coeff_count_ = 0;  // degree
-    double scale_ = 1.0;  // for ckks
+    double scale_ = 1.0;           // for ckks
     parms_id_type parms_id_ = parms_id_zero;
     DynArray<pt_coeff_type> data_;
 
