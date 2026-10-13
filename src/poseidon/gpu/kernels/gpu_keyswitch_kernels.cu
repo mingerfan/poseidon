@@ -1,4 +1,5 @@
 #include "poseidon/gpu/kernels/gpu_keyswitch_kernels.h"
+#include "poseidon/gpu/gpu_memory.h"
 
 #include <cstdint>
 #include <limits>
@@ -3298,7 +3299,7 @@ void launch_hybrid_forward_ntt_q_two_components_stages(
         if (stage_count == 1)
         {
             hybrid_forward_ntt_q_two_components_fused_stage_kernel<1>
-                <<<grid_size, block_size>>>(
+                <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
                     values0,
                     values1,
                     parameter_shard.rns_primes.data(),
@@ -3312,7 +3313,7 @@ void launch_hybrid_forward_ntt_q_two_components_stages(
         else if (stage_count == 2)
         {
             hybrid_forward_ntt_q_two_components_fused_stage_kernel<2>
-                <<<grid_size, block_size>>>(
+                <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
                     values0,
                     values1,
                     parameter_shard.rns_primes.data(),
@@ -3326,7 +3327,7 @@ void launch_hybrid_forward_ntt_q_two_components_stages(
         else
         {
             hybrid_forward_ntt_q_two_components_fused_stage_kernel<3>
-                <<<grid_size, block_size>>>(
+                <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
                     values0,
                     values1,
                     parameter_shard.rns_primes.data(),
@@ -3390,7 +3391,7 @@ void launch_hybrid_modup_decomposition(
         degree,
         "launch_hybrid_modup_decomposition");
     /* 发射模升kernel */
-    hybrid_modup_qp_kernel<<<grid_size, block_size>>>(
+    hybrid_modup_qp_kernel<<<grid_size, block_size, 0, gpu_execution_stream()>>>(
         modup_q,
         modup_p,
         c2_coeff,
@@ -3467,7 +3468,7 @@ void launch_hybrid_modup_decomposition_forward_ntt_first_stage(
 
 #define POSEIDON_LAUNCH_MODUP_NTT_HEAD(FIXED_COUNT)                         \
     hybrid_modup_qp_forward_ntt_first_stage_kernel<FIXED_COUNT>            \
-        <<<grid_size, block_size>>>(                                       \
+        <<<grid_size, block_size, 0, gpu_execution_stream()>>>(                                       \
             modup_q,                                                       \
             modup_p,                                                       \
             c2_coeff,                                                      \
@@ -3581,7 +3582,7 @@ void launch_hybrid_modup_decomposition_forward_ntt_first_stage_row_tiled(
             (active_limb_count + kTargetRows - 1) / kTargetRows));
 
     hybrid_modup_qp_forward_ntt_first_stage_row_tiled2_kernel
-        <<<grid_size, block_size>>>(
+        <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
             modup_q,
             modup_p,
             c2_coeff,
@@ -3670,7 +3671,7 @@ void launch_hybrid_modup_decomposition_forward_ntt_first_stage_row_tiled8(
             (active_limb_count + kTargetRows - 1) / kTargetRows));
 
     hybrid_modup_qp_forward_ntt_first_stage_row_tiled8_kernel
-        <<<grid_size, block_size>>>(
+        <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
             modup_q,
             modup_p,
             c2_coeff,
@@ -3743,7 +3744,7 @@ void launch_hybrid_modup_decomposition_row_tiled8(
     if (decomp_limb_count == 2)
     {
         hybrid_modup_qp_row_tiled8_kernel
-            <<<grid_size, block_size>>>(
+            <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
                 modup_q,
                 modup_p,
                 c2_coeff,
@@ -3764,7 +3765,7 @@ void launch_hybrid_modup_decomposition_row_tiled8(
     {
 #define POSEIDON_LAUNCH_P9_MODUP_ROW_TILED8(FIXED_COUNT)                   \
         hybrid_modup_qp_p9_row_tiled8_kernel<FIXED_COUNT>                 \
-            <<<grid_size, block_size>>>(                                  \
+            <<<grid_size, block_size, 0, gpu_execution_stream()>>>(                                  \
                 modup_q,                                                  \
                 modup_p,                                                  \
                 c2_coeff,                                                 \
@@ -3861,7 +3862,7 @@ void launch_hybrid_preweight_modup_source_p9(
 
 #define POSEIDON_LAUNCH_P9_MODUP_PREWEIGHT(FIXED_COUNT)                   \
     hybrid_preweight_modup_source_p9_kernel<FIXED_COUNT>                 \
-        <<<grid_size, kBlockSize>>>(                                     \
+        <<<grid_size, kBlockSize, 0, gpu_execution_stream()>>>(                                     \
             weighted_source,                                             \
             c2_coeff,                                                     \
             parameter_shard.rns_primes.data(),                           \
@@ -3965,7 +3966,7 @@ void launch_hybrid_forward_ntt_qp(
 
         if (stage_count == 1)
         {
-            hybrid_forward_ntt_modup_qp_stage_kernel<<<grid_size, block_size>>>(
+            hybrid_forward_ntt_modup_qp_stage_kernel<<<grid_size, block_size, 0, gpu_execution_stream()>>>(
                 modup_q,
                 modup_p,
                 parameter_shard.rns_primes.data(),
@@ -3982,7 +3983,7 @@ void launch_hybrid_forward_ntt_qp(
         else if (stage_count == 2)
         {
             hybrid_forward_ntt_modup_qp_fused_stage_kernel<2>
-                <<<grid_size, block_size>>>(
+                <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
                     modup_q,
                     modup_p,
                     parameter_shard.rns_primes.data(),
@@ -3999,7 +4000,7 @@ void launch_hybrid_forward_ntt_qp(
         else
         {
             hybrid_forward_ntt_modup_qp_fused_stage_kernel<3>
-                <<<grid_size, block_size>>>(
+                <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
                     modup_q,
                     modup_p,
                     parameter_shard.rns_primes.data(),
@@ -4099,7 +4100,7 @@ void launch_hybrid_forward_ntt_qp_prepare_final_tail(
 
         if (stage_count == 1)
         {
-            hybrid_forward_ntt_modup_qp_stage_kernel<<<grid_size, block_size>>>(
+            hybrid_forward_ntt_modup_qp_stage_kernel<<<grid_size, block_size, 0, gpu_execution_stream()>>>(
                 modup_q,
                 modup_p,
                 parameter_shard.rns_primes.data(),
@@ -4116,7 +4117,7 @@ void launch_hybrid_forward_ntt_qp_prepare_final_tail(
         else if (stage_count == 2)
         {
             hybrid_forward_ntt_modup_qp_fused_stage_kernel<2>
-                <<<grid_size, block_size>>>(
+                <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
                     modup_q,
                     modup_p,
                     parameter_shard.rns_primes.data(),
@@ -4133,7 +4134,7 @@ void launch_hybrid_forward_ntt_qp_prepare_final_tail(
         else
         {
             hybrid_forward_ntt_modup_qp_fused_stage_kernel<3>
-                <<<grid_size, block_size>>>(
+                <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
                     modup_q,
                     modup_p,
                     parameter_shard.rns_primes.data(),
@@ -4270,7 +4271,7 @@ void launch_hybrid_forward_ntt_qp_mul_accumulate_two_components(
                 if (fuse_decomp_q)
                 {
                     hybrid_forward_ntt_modup_qp_final_mul_accumulate_fused_decomp_q_kernel<1>
-                        <<<grid_size, block_size>>>(
+                        <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
                             accum_q0,
                             accum_p0,
                             accum_q1,
@@ -4298,7 +4299,7 @@ void launch_hybrid_forward_ntt_qp_mul_accumulate_two_components(
                 else
                 {
                     hybrid_forward_ntt_modup_qp_final_mul_accumulate_kernel<1>
-                        <<<grid_size, block_size>>>(
+                        <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
                             accum_q0,
                             accum_p0,
                             accum_q1,
@@ -4327,7 +4328,7 @@ void launch_hybrid_forward_ntt_qp_mul_accumulate_two_components(
                 if (fuse_decomp_q)
                 {
                     hybrid_forward_ntt_modup_qp_final_mul_accumulate_fused_decomp_q_kernel<2>
-                        <<<grid_size, block_size>>>(
+                        <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
                             accum_q0,
                             accum_p0,
                             accum_q1,
@@ -4355,7 +4356,7 @@ void launch_hybrid_forward_ntt_qp_mul_accumulate_two_components(
                 else
                 {
                     hybrid_forward_ntt_modup_qp_final_mul_accumulate_kernel<2>
-                        <<<grid_size, block_size>>>(
+                        <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
                             accum_q0,
                             accum_p0,
                             accum_q1,
@@ -4384,7 +4385,7 @@ void launch_hybrid_forward_ntt_qp_mul_accumulate_two_components(
                 if (fuse_decomp_q)
                 {
                     hybrid_forward_ntt_modup_qp_final_mul_accumulate_fused_decomp_q_kernel<3>
-                        <<<grid_size, block_size>>>(
+                        <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
                             accum_q0,
                             accum_p0,
                             accum_q1,
@@ -4412,7 +4413,7 @@ void launch_hybrid_forward_ntt_qp_mul_accumulate_two_components(
                 else
                 {
                     hybrid_forward_ntt_modup_qp_final_mul_accumulate_kernel<3>
-                        <<<grid_size, block_size>>>(
+                        <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
                             accum_q0,
                             accum_p0,
                             accum_q1,
@@ -4439,7 +4440,7 @@ void launch_hybrid_forward_ntt_qp_mul_accumulate_two_components(
         }
         else if (stage_count == 1)
         {
-            hybrid_forward_ntt_modup_qp_stage_kernel<<<grid_size, block_size>>>(
+            hybrid_forward_ntt_modup_qp_stage_kernel<<<grid_size, block_size, 0, gpu_execution_stream()>>>(
                 modup_q,
                 modup_p,
                 parameter_shard.rns_primes.data(),
@@ -4456,7 +4457,7 @@ void launch_hybrid_forward_ntt_qp_mul_accumulate_two_components(
         else if (stage_count == 2)
         {
             hybrid_forward_ntt_modup_qp_fused_stage_kernel<2>
-                <<<grid_size, block_size>>>(
+                <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
                     modup_q,
                     modup_p,
                     parameter_shard.rns_primes.data(),
@@ -4473,7 +4474,7 @@ void launch_hybrid_forward_ntt_qp_mul_accumulate_two_components(
         else
         {
             hybrid_forward_ntt_modup_qp_fused_stage_kernel<3>
-                <<<grid_size, block_size>>>(
+                <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
                     modup_q,
                     modup_p,
                     parameter_shard.rns_primes.data(),
@@ -4502,7 +4503,7 @@ void launch_hybrid_forward_ntt_qp_mul_accumulate_two_components(
         const int decomp_grid_size = static_cast<int>(
             (decomp_total + block_size - 1) / block_size);
         hybrid_decomp_q_multiply_accumulate_two_components_kernel
-            <<<decomp_grid_size, block_size>>>(
+            <<<decomp_grid_size, block_size, 0, gpu_execution_stream()>>>(
                 accum_q0,
                 accum_q1,
                 c2_ntt,
@@ -4585,7 +4586,7 @@ void launch_hybrid_paccum_all_dnum_two_components(
         "launch_hybrid_paccum_all_dnum_two_components");
 
     hybrid_paccum_all_dnum_two_components_kernel
-        <<<grid_size, block_size>>>(
+        <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
             accum_q0,
             accum_p0,
             accum_q1,
@@ -4672,7 +4673,7 @@ void launch_hybrid_final_ntt_paccum_all_dnum_two_components(
         (total_tiles + block_size - 1) / block_size);
 
     hybrid_final_ntt_paccum_all_dnum_two_components_kernel
-        <<<grid_size, block_size>>>(
+        <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
             accum_q0,
             accum_p0,
             accum_q1,
@@ -4760,7 +4761,7 @@ void launch_hybrid_forward_ntt_qp_active(
         if (stage_count == 1)
         {
             hybrid_forward_ntt_modup_qp_stage_kernel
-                <<<grid_size, block_size>>>(
+                <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
                     modup_q,
                     modup_p,
                     parameter_shard.rns_primes.data(),
@@ -4777,7 +4778,7 @@ void launch_hybrid_forward_ntt_qp_active(
         else if (stage_count == 2)
         {
             hybrid_forward_ntt_modup_qp_fused_stage_kernel<2>
-                <<<grid_size, block_size>>>(
+                <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
                     modup_q,
                     modup_p,
                     parameter_shard.rns_primes.data(),
@@ -4794,7 +4795,7 @@ void launch_hybrid_forward_ntt_qp_active(
         else
         {
             hybrid_forward_ntt_modup_qp_fused_stage_kernel<3>
-                <<<grid_size, block_size>>>(
+                <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
                     modup_q,
                     modup_p,
                     parameter_shard.rns_primes.data(),
@@ -4849,7 +4850,7 @@ void launch_hybrid_multiply_accumulate(
         degree,
         "launch_hybrid_multiply_accumulate");
 
-    hybrid_multiply_accumulate_kernel<<<grid_size, block_size>>>(
+    hybrid_multiply_accumulate_kernel<<<grid_size, block_size, 0, gpu_execution_stream()>>>(
         accum_q,
         accum_p,
         modup_q,
@@ -4918,7 +4919,7 @@ void launch_hybrid_multiply_accumulate_two_components(
         degree,
         "launch_hybrid_multiply_accumulate_two_components");
 
-    hybrid_multiply_accumulate_two_components_kernel<<<grid_size, block_size>>>(
+    hybrid_multiply_accumulate_two_components_kernel<<<grid_size, block_size, 0, gpu_execution_stream()>>>(
         accum_q0,
         accum_p0,
         accum_q1,
@@ -4972,7 +4973,7 @@ void launch_hybrid_moddown(
         degree,
         "launch_hybrid_moddown");
 
-    hybrid_moddown_kernel<<<grid_size, block_size>>>(
+    hybrid_moddown_kernel<<<grid_size, block_size, 0, gpu_execution_stream()>>>(
         accum_q,
         accum_p,
         parameter_shard.rns_primes.data(),
@@ -5020,7 +5021,7 @@ void launch_hybrid_convert_p_to_q(
         degree,
         "launch_hybrid_convert_p_to_q");
 
-    hybrid_convert_p_to_q_two_components_kernel<<<grid_size, block_size>>>(
+    hybrid_convert_p_to_q_two_components_kernel<<<grid_size, block_size, 0, gpu_execution_stream()>>>(
         converted_q0,
         converted_q1,
         accum_p0,
@@ -5081,7 +5082,7 @@ void launch_hybrid_convert_p_to_q_forward_ntt(
     if (base_p_size == 2 && source_preweighted)
     {
         hybrid_convert_p_to_q_forward_ntt_first_stage_kernel<2, true>
-            <<<first_stage_grid, block_size>>>(
+            <<<first_stage_grid, block_size, 0, gpu_execution_stream()>>>(
                 converted_q0,
                 converted_q1,
                 accum_p0,
@@ -5099,7 +5100,7 @@ void launch_hybrid_convert_p_to_q_forward_ntt(
     else if (base_p_size == 2)
     {
         hybrid_convert_p_to_q_forward_ntt_first_stage_kernel<2, false>
-            <<<first_stage_grid, block_size>>>(
+            <<<first_stage_grid, block_size, 0, gpu_execution_stream()>>>(
                 converted_q0,
                 converted_q1,
                 accum_p0,
@@ -5117,7 +5118,7 @@ void launch_hybrid_convert_p_to_q_forward_ntt(
     else if (base_p_size == 9 && source_preweighted)
     {
         hybrid_convert_p_to_q_forward_ntt_first_stage_kernel<9, true>
-            <<<first_stage_grid, block_size>>>(
+            <<<first_stage_grid, block_size, 0, gpu_execution_stream()>>>(
                 converted_q0,
                 converted_q1,
                 accum_p0,
@@ -5135,7 +5136,7 @@ void launch_hybrid_convert_p_to_q_forward_ntt(
     else if (base_p_size == 9)
     {
         hybrid_convert_p_to_q_forward_ntt_first_stage_kernel<9, false>
-            <<<first_stage_grid, block_size>>>(
+            <<<first_stage_grid, block_size, 0, gpu_execution_stream()>>>(
                 converted_q0,
                 converted_q1,
                 accum_p0,
@@ -5153,7 +5154,7 @@ void launch_hybrid_convert_p_to_q_forward_ntt(
     else if (source_preweighted)
     {
         hybrid_convert_p_to_q_forward_ntt_first_stage_kernel<0, true>
-            <<<first_stage_grid, block_size>>>(
+            <<<first_stage_grid, block_size, 0, gpu_execution_stream()>>>(
                 converted_q0,
                 converted_q1,
                 accum_p0,
@@ -5171,7 +5172,7 @@ void launch_hybrid_convert_p_to_q_forward_ntt(
     else
     {
         hybrid_convert_p_to_q_forward_ntt_first_stage_kernel<0, false>
-            <<<first_stage_grid, block_size>>>(
+            <<<first_stage_grid, block_size, 0, gpu_execution_stream()>>>(
                 converted_q0,
                 converted_q1,
                 accum_p0,
@@ -5230,7 +5231,7 @@ void launch_hybrid_preweight_p_two_components(
         degree,
         "launch_hybrid_preweight_p_two_components");
 
-    hybrid_preweight_p_two_components_kernel<<<grid_size, block_size>>>(
+    hybrid_preweight_p_two_components_kernel<<<grid_size, block_size, 0, gpu_execution_stream()>>>(
         accum_p0,
         accum_p1,
         parameter_shard.rns_primes.data(),
@@ -5305,7 +5306,7 @@ void launch_hybrid_convert_p_to_q_forward_ntt_row_tiled8(
                 "launch_hybrid_convert_p_to_q_forward_ntt_row_tiled8: preweighted P=2 source is unsupported");
         }
         hybrid_convert_p_to_q_forward_ntt_first_stage_row_tiled8_kernel
-            <<<grid_dim, block_dim>>>(
+            <<<grid_dim, block_dim, 0, gpu_execution_stream()>>>(
                 converted_q0,
                 converted_q1,
                 accum_p0,
@@ -5321,7 +5322,7 @@ void launch_hybrid_convert_p_to_q_forward_ntt_row_tiled8(
     else if (source_preweighted)
     {
         hybrid_convert_p9_to_q_forward_ntt_first_stage_row_tiled8_kernel<true>
-            <<<grid_dim, block_dim>>>(
+            <<<grid_dim, block_dim, 0, gpu_execution_stream()>>>(
                 converted_q0,
                 converted_q1,
                 accum_p0,
@@ -5337,7 +5338,7 @@ void launch_hybrid_convert_p_to_q_forward_ntt_row_tiled8(
     else
     {
         hybrid_convert_p9_to_q_forward_ntt_first_stage_row_tiled8_kernel<false>
-            <<<grid_dim, block_dim>>>(
+            <<<grid_dim, block_dim, 0, gpu_execution_stream()>>>(
                 converted_q0,
                 converted_q1,
                 accum_p0,
@@ -5427,7 +5428,7 @@ void launch_hybrid_apply_moddown_ntt(
         degree,
         "launch_hybrid_apply_moddown_ntt");
 
-    hybrid_apply_moddown_ntt_two_components_kernel<<<grid_size, block_size>>>(
+    hybrid_apply_moddown_ntt_two_components_kernel<<<grid_size, block_size, 0, gpu_execution_stream()>>>(
         accum_q0,
         accum_q1,
         converted_q0,
@@ -5479,7 +5480,7 @@ void launch_hybrid_apply_moddown_ntt_out_of_place(
         "launch_hybrid_apply_moddown_ntt_out_of_place");
 
     hybrid_apply_moddown_ntt_out_of_place_two_components_kernel
-        <<<grid_size, block_size>>>(
+        <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
             destination_q0,
             destination_q1,
             source_q0,
@@ -5527,7 +5528,7 @@ void launch_hybrid_apply_moddown_ntt_out_of_place_batch(
     const int grid_size =
         static_cast<int>((total + block_size - 1) / block_size);
     hybrid_apply_moddown_ntt_out_of_place_batch_kernel
-        <<<grid_size, block_size>>>(
+        <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
             destination_q,
             source_q,
             converted_q,
@@ -5576,7 +5577,7 @@ void launch_hybrid_apply_moddown_ntt_from_q_groups(
     const int grid_size =
         static_cast<int>((total + block_size - 1) / block_size);
     hybrid_apply_moddown_ntt_from_q_groups_kernel
-        <<<grid_size, block_size>>>(
+        <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
             destination_q0,
             destination_q1,
             group_q,
@@ -5707,7 +5708,7 @@ void launch_hybrid_apply_moddown_ntt_add_back(
         degree,
         "launch_hybrid_apply_moddown_ntt_add_back");
     hybrid_apply_moddown_ntt_add_back_two_components_kernel
-        <<<grid_size, block_size>>>(
+        <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
             destination_shard0.ptr,
             destination_shard1.ptr,
             add_source_shard0 == nullptr
@@ -5831,7 +5832,7 @@ void launch_hybrid_apply_moddown_ntt_add_back_rescale_x2(
     const int grid_size = static_cast<int>(
         (total + block_size - 1) / block_size);
     hybrid_apply_moddown_ntt_add_back_rescale_x2_two_components_kernel
-        <<<grid_size, block_size>>>(
+        <<<grid_size, block_size, 0, gpu_execution_stream()>>>(
             destination_shard0.ptr,
             destination_shard1.ptr,
             add_source_shard0->ptr,
@@ -5910,7 +5911,7 @@ void launch_apply_galois_ntt_poly_shard(
     const int grid_size = static_cast<int>(
         (total + block_size - 1) / block_size);
 
-    apply_galois_ntt_poly_shard_kernel<<<grid_size, block_size>>>(
+    apply_galois_ntt_poly_shard_kernel<<<grid_size, block_size, 0, gpu_execution_stream()>>>(
         destination_shard.ptr,
         source_shard.ptr,
         galois_elt,

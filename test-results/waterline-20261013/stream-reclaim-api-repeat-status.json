@@ -1,0 +1,99 @@
+{
+  "binary": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-qwen-agent/bin/poseidon_runtime_gpu_api_tests",
+  "binary_sha256": "5ee5e059c7c104b2e216e8885ef11fb846c342185d00b8df4f99428414476c65",
+  "repeats_requested": 10,
+  "runs": [
+    {
+      "index": 0,
+      "returncode": 0,
+      "timeout": false,
+      "passes": 19,
+      "failures": [],
+      "seconds": 14.889927579000073,
+      "log": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-20261013/stream-reclaim-api-repeat-00.log"
+    },
+    {
+      "index": 1,
+      "returncode": 0,
+      "timeout": false,
+      "passes": 19,
+      "failures": [],
+      "seconds": 12.987147503000074,
+      "log": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-20261013/stream-reclaim-api-repeat-01.log"
+    },
+    {
+      "index": 2,
+      "returncode": 0,
+      "timeout": false,
+      "passes": 19,
+      "failures": [],
+      "seconds": 13.08643374799999,
+      "log": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-20261013/stream-reclaim-api-repeat-02.log"
+    },
+    {
+      "index": 3,
+      "returncode": 0,
+      "timeout": false,
+      "passes": 19,
+      "failures": [],
+      "seconds": 13.136243256999933,
+      "log": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-20261013/stream-reclaim-api-repeat-03.log"
+    },
+    {
+      "index": 4,
+      "returncode": 0,
+      "timeout": false,
+      "passes": 19,
+      "failures": [],
+      "seconds": 13.036309906999918,
+      "log": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-20261013/stream-reclaim-api-repeat-04.log"
+    },
+    {
+      "index": 5,
+      "returncode": 0,
+      "timeout": false,
+      "passes": 19,
+      "failures": [],
+      "seconds": 13.084915505000026,
+      "log": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-20261013/stream-reclaim-api-repeat-05.log"
+    },
+    {
+      "index": 6,
+      "returncode": 0,
+      "timeout": false,
+      "passes": 19,
+      "failures": [],
+      "seconds": 13.086438573999999,
+      "log": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-20261013/stream-reclaim-api-repeat-06.log"
+    },
+    {
+      "index": 7,
+      "returncode": 0,
+      "timeout": false,
+      "passes": 19,
+      "failures": [],
+      "seconds": 13.086012458000027,
+      "log": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-20261013/stream-reclaim-api-repeat-07.log"
+    },
+    {
+      "index": 8,
+      "returncode": 0,
+      "timeout": false,
+      "passes": 19,
+      "failures": [],
+      "seconds": 13.036288581999997,
+      "log": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-20261013/stream-reclaim-api-repeat-08.log"
+    },
+    {
+      "index": 9,
+      "returncode": 0,
+      "timeout": false,
+      "passes": 19,
+      "failures": [],
+      "seconds": 13.036728249000134,
+      "log": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-20261013/stream-reclaim-api-repeat-09.log"
+    }
+  ],
+  "passed": true,
+  "scope": "existing full GPU API regression suite; not a complete model test"
+}

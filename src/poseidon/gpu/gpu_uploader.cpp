@@ -2994,12 +2994,13 @@ GpuGaloisKeysData GpuUploader::upload_double_hoist_galois_keys(
             inverse_elt,
             result.meta.degree);
         gpu_check_cuda(
-            cudaMemcpy(
+            cudaMemcpyAsync(
                 destination.ptr,
                 temporary.data(),
                 poly_words * sizeof(GpuWord),
-                cudaMemcpyDeviceToDevice),
-            "upload_double_hoist_galois_keys copy pre-rotated key");
+                cudaMemcpyDeviceToDevice,
+                gpu_execution_stream()),
+            "upload_double_hoist_galois_keys cudaMemcpyAsync pre-rotated key");
     }
 
     const std::size_t pointer_count =

@@ -130,19 +130,45 @@ std::size_t initial_device_pool_size()
     return std::min(kMaximumInitialDevicePoolSize, free_bytes / 4);
 }
 
-std::size_t maximum_device_pool_size()
+std::size_t maximum_device_pool_size(int cuda_device_id)
 {
     std::size_t free_bytes=0,total_bytes=0;
     gpu::gpu_check_cuda(cudaMemGetInfo(&free_bytes,&total_bytes),"GPU pool capacity");
-    std::size_t capacity=(free_bytes-free_bytes/10)&~std::size_t(255);
+    constexpr std::size_t setup_headroom=64ULL<<20;
+    if(free_bytes<=setup_headroom)
+        throw std::runtime_error("GPU pool has no free capacity beyond 64 MiB setup headroom");
+    std::size_t capacity=std::min(free_bytes-free_bytes/10,free_bytes-setup_headroom)&~std::size_t(255);
     if(const char *raw=std::getenv("POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB");raw && *raw) {
-        const std::string text(raw);std::size_t end=0;
-        const auto mb=std::stoull(text,&end);
-        if(text.empty() || text.front()=='-' || end!=text.size() || mb<64 ||
-           mb>std::numeric_limits<std::size_t>::max()/(1ULL<<20))
-            throw std::invalid_argument("POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB must be an integer >=64");
-        capacity=std::size_t(mb)<<20;
-        if(capacity>free_bytes-free_bytes/10)throw std::invalid_argument("GPU pool cap exceeds available device-memory headroom");
+        const std::string text(raw);
+        std::vector<std::size_t> capacities;
+        std::size_t begin=0;
+        for(;;) {
+            const auto end=text.find(',',begin);
+            const auto field=text.substr(begin,end==std::string::npos?end:end-begin);
+            std::size_t consumed=0;unsigned long long mb=0;
+            try {mb=std::stoull(field,&consumed,10);}
+            catch(const std::exception &) {
+                throw std::invalid_argument("POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB requires integers >=64");
+            }
+            if(field.empty() || field.front()=='-' || consumed!=field.size() || mb<64 ||
+               mb>std::numeric_limits<std::size_t>::max()/(1ULL<<20))
+                throw std::invalid_argument("POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB requires integers >=64");
+            capacities.push_back(std::size_t(mb)<<20);
+            if(end==std::string::npos)break;
+            begin=end+1;
+        }
+        if(capacities.size()==1)capacity=capacities.front();
+        else {
+            int visible_devices=0;
+            gpu::gpu_check_cuda(cudaGetDeviceCount(&visible_devices),"GPU pool visible device count");
+            if(capacities.size()!=static_cast<std::size_t>(visible_devices))
+                throw std::invalid_argument("POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB list must have one entry per visible CUDA ordinal");
+            if(cuda_device_id<0 || cuda_device_id>=visible_devices)
+                throw std::invalid_argument("GPU pool CUDA ordinal is outside visible devices");
+            capacity=capacities.at(static_cast<std::size_t>(cuda_device_id));
+        }
+        if(capacity>free_bytes-setup_headroom)
+            throw std::invalid_argument("GPU pool cap exceeds free memory with 64 MiB setup headroom");
     }
     return capacity;
 }
@@ -201,6 +227,20 @@ void require_same_mpi_string(MPI_Comm communicator, int world_size,
 }
 #endif
 
+// Reaping completed work may destroy buffers from any device. A caller's
+// explicit stream belongs to only one device; PTDS is valid on each device.
+class ScopedCompletedReclamation
+{
+public:
+    ScopedCompletedReclamation() : stream_(cudaStreamPerThread) {
+        gpu::gpu_check_cuda(cudaGetDevice(&caller_device_), "reclamation caller device");
+    }
+    ~ScopedCompletedReclamation() { (void)cudaSetDevice(caller_device_); }
+private:
+    gpu::ScopedGpuExecutionStream stream_;
+    int caller_device_=0;
+};
+
 class DeviceMemoryPool
 {
 public:
@@ -208,9 +248,12 @@ public:
         : cuda_device_id_(cuda_device_id)
     {
         gpu::gpu_check_cuda(cudaSetDevice(cuda_device_id_), "cudaSetDevice");
+        std::size_t free_bytes=0,total_bytes=0;
+        gpu::gpu_check_cuda(cudaMemGetInfo(&free_bytes,&total_bytes),"GPU pool initial external memory");
+        initial_external_bytes_=total_bytes-free_bytes;
         previous_resource_ = rmm::mr::get_current_device_resource();
         upstream_ = std::make_unique<rmm::mr::cuda_memory_resource>();
-        maximum_size_=maximum_device_pool_size();
+        maximum_size_=maximum_device_pool_size(cuda_device_id_);
         pool_ = std::make_unique<
             rmm::mr::pool_memory_resource<rmm::mr::cuda_memory_resource>>(
             upstream_.get(), std::min(initial_device_pool_size(),maximum_size_),maximum_size_);
@@ -241,10 +284,13 @@ public:
 
     std::size_t capacity_bytes() const {return maximum_size_;}
     std::size_t reserved_bytes() const {return pool_->pool_size();}
+    // Driver memory already used before this pool: other processes/current context.
+    std::size_t initial_external_bytes() const noexcept {return initial_external_bytes_;}
     auto bytes_counter() const {return statistics_->get_bytes_counter();}
 
 private:
     int cuda_device_id_ = 0;
+    std::size_t initial_external_bytes_ = 0;
     rmm::mr::device_memory_resource *previous_resource_ = nullptr;
     std::unique_ptr<rmm::mr::cuda_memory_resource> upstream_;
     std::unique_ptr<
@@ -759,8 +805,40 @@ struct PoseidonGpuApi::DeviceState
 
     int cuda_device_id = 0;
     cudaStream_t foreground_stream=nullptr;
+    std::mutex consumer_wait_mutex;
+    std::optional<std::pair<cudaEvent_t,cudaEvent_t>> consumer_wait_pending;
+    std::uint64_t consumer_wait_calls=0,consumer_wait_nanoseconds=0;
+    void collect_consumer_wait_locked() {
+        if(!consumer_wait_pending)return;
+        gpu::gpu_check_cuda(cudaSetDevice(cuda_device_id),"consumer wait timing device");
+        auto &events=*consumer_wait_pending;
+        const auto status=cudaEventQuery(events.second);
+        if(status==cudaErrorNotReady)return;
+        gpu::gpu_check_cuda(status,"consumer wait timing query");
+        float milliseconds=0;
+        gpu::gpu_check_cuda(cudaEventElapsedTime(&milliseconds,events.first,events.second),"consumer wait elapsed time");
+        const long double nanoseconds=static_cast<long double>(milliseconds)*1000000;
+        if(!std::isfinite(milliseconds) || milliseconds<0 || nanoseconds>std::numeric_limits<std::uint64_t>::max())
+            throw std::runtime_error("consumer wait elapsed time is outside uint64 nanoseconds");
+        gpu::gpu_check_cuda(cudaEventDestroy(events.first),"consumer wait start destroy");events.first=nullptr;
+        gpu::gpu_check_cuda(cudaEventDestroy(events.second),"consumer wait end destroy");events.second=nullptr;
+        fhegpu::ResourceUsage::add(consumer_wait_calls,1);
+        fhegpu::ResourceUsage::add(consumer_wait_nanoseconds,static_cast<std::uint64_t>(nanoseconds));
+        consumer_wait_pending.reset();
+    }
+    void collect_consumer_wait() {
+        std::unique_lock<std::mutex> lock(consumer_wait_mutex,std::try_to_lock);
+        if(lock.owns_lock())collect_consumer_wait_locked();
+    }
     ~DeviceState() {
-        if(foreground_stream) {(void)cudaSetDevice(cuda_device_id);(void)cudaStreamSynchronize(foreground_stream);(void)cudaStreamDestroy(foreground_stream);}
+        if(foreground_stream) {
+            (void)cudaSetDevice(cuda_device_id);(void)cudaStreamSynchronize(foreground_stream);
+            if(consumer_wait_pending) {
+                if(consumer_wait_pending->first)(void)cudaEventDestroy(consumer_wait_pending->first);
+                if(consumer_wait_pending->second)(void)cudaEventDestroy(consumer_wait_pending->second);
+            }
+            (void)cudaStreamDestroy(foreground_stream);
+        }
     }
     std::unique_ptr<GpuPlaintextEncoder> plaintext_encoder;
     std::shared_ptr<DeviceMemoryPool> memory_pool;
@@ -923,7 +1001,7 @@ public:
         return event_;
     }
 
-    void wait_on_execution_stream(int cuda_device_id) const
+    bool requires_execution_stream_wait(int cuda_device_id) const
     {
         if (!transfer_request_
 #ifdef POSEIDON_RUNTIME_GPU_NCCL
@@ -933,8 +1011,14 @@ public:
             producer_thread_ == std::this_thread::get_id() &&
             producer_stream_ == gpu::gpu_execution_stream())
         {
-            return;
+            return false;
         }
+        return true;
+    }
+
+    void wait_on_execution_stream(int cuda_device_id) const
+    {
+        if(!requires_execution_stream_wait(cuda_device_id))return;
         gpu::gpu_check_cuda(
             cudaStreamWaitEvent(gpu::gpu_execution_stream(), event(), 0),
             "cudaStreamWaitEvent compute input");
@@ -1474,13 +1558,21 @@ void PoseidonGpuApi::validate_waterline_resources(const fhegpu::RuntimePlan &pla
     const auto q=context_.parameters_literal()->q().size(),p=context_.parameters_literal()->p().size();
     for(const auto &value:plan.values)if(value.kind==fhegpu::ValueKind::Ciphertext && value.components>3)
         throw std::runtime_error("Waterline workspace bounds support at most three ciphertext components");
+    std::vector<const fhegpu::ValueDesc *> descriptors;
+    descriptors.reserve(plan.values.size());
+    for(const auto &value:plan.values)descriptors.push_back(&value);
+    std::sort(descriptors.begin(),descriptors.end(),[](const auto *a,const auto *b){return a->id<b->id;});
+    waterline_allocator_capacity_.clear();
+    waterline_allocator_capacity_.resize(devices_.size());
     std::vector<bool> keyswitch(devices_.size()),rescale(devices_.size());
     for(const auto *phase:{&plan.initialization,&plan.execution,&plan.finalization})for(const auto &instruction:*phase) {
         if(const auto *op=std::get_if<fhegpu::PreparePlaintextOp>(&instruction.body)) {
             if(config.backend!=fhegpu::PrepareBackend::Cpu) {
-                const auto desc=std::find_if(plan.values.begin(),plan.values.end(),[&](const auto &v){return v.id==op->output;});
-                if(desc==plan.values.end())throw std::logic_error("Prepare descriptor missing during resource validation");
-                if(!prepare_resources(*desc,fhegpu::PrepareBackend::Gpu).supported)
+                const auto desc=std::lower_bound(descriptors.begin(),descriptors.end(),op->output,
+                    [](const auto *value,auto id){return value->id<id;});
+                if(desc==descriptors.end() || (*desc)->id!=op->output)
+                    throw std::logic_error("Prepare descriptor missing during resource validation");
+                if(!prepare_resources(**desc,fhegpu::PrepareBackend::Gpu).supported)
                     throw std::runtime_error("GPU complete Prepare resource bound unavailable");
             }
         } else if(const auto *op=std::get_if<fhegpu::ComputeOp>(&instruction.body);op && op->place.kind==fhegpu::PlaceKind::Device) {
@@ -1520,16 +1612,31 @@ void PoseidonGpuApi::validate_waterline_resources(const fhegpu::RuntimePlan &pla
             // Explicit custom resources are used by allocation/lifetime tests.
             // The provider owns the physical cap; production uses the managed pool.
             std::cerr<<"waterline GPU"<<d<<" custom_memory_resource=true physical_pool_cap=provider_owned\n";
+            waterline_allocator_capacity_[d]=config.device_capacity_bytes.at(d)-config.device_reserve_bytes.at(d);
             continue;
         }
         std::size_t free=0,total=0;gpu::gpu_check_cuda(cudaMemGetInfo(&free,&total),"Waterline physical memory");
         const auto pool_reserved=device.memory_pool->reserved_bytes();
-        const auto outside=total-free>pool_reserved?total-free-pool_reserved:0;
+        const auto global_outside=total-free>pool_reserved?total-free-pool_reserved:0;
+        const auto initial_outside=device.memory_pool->initial_external_bytes();
+        const auto outside=global_outside>initial_outside?global_outside-initial_outside:0;
         const auto capacity=device.memory_pool->capacity_bytes();
-        std::cerr<<"waterline physical GPU"<<d<<" pool_reserved="<<pool_reserved<<" pool_cap="<<capacity<<" outside_pool_used="<<outside<<'\n';
+        // Fixed RMM allocations and retained caches cannot be spent again as
+        // graph credit. Alignment/fragmentation stays in the explicit margin.
+        const auto fixed_pool=std::max(persistent,std::uint64_t(device.memory_pool->bytes_counter().value))+retained+(64ULL<<20);
+        if(fixed_pool>=capacity)throw std::runtime_error("Waterline managed pool below fixed allocation reserve");
+        waterline_allocator_capacity_[d]=capacity-fixed_pool;
+        std::cerr<<"waterline physical GPU"<<d<<" pool_reserved="<<pool_reserved<<" pool_cap="<<capacity
+                 <<" initial_outside_used="<<initial_outside<<" outside_pool_growth="<<outside
+                 <<" allocator_graph_capacity="<<waterline_allocator_capacity_[d]<<'\n';
         if(capacity>config.device_capacity_bytes.at(d) || outside+(64ULL<<20)>config.device_capacity_bytes.at(d)-capacity)
             throw std::runtime_error("Waterline managed pool cap plus outside GPU memory exceed M; configure POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB");
     }
+}
+
+std::vector<std::uint64_t> PoseidonGpuApi::waterline_allocator_capacity() const
+{
+    return waterline_allocator_capacity_;
 }
 
 fhegpu::PrepareResources PoseidonGpuApi::prepare_resources(const fhegpu::ValueDesc &desc, fhegpu::PrepareBackend backend)
@@ -1652,6 +1759,7 @@ bool PoseidonGpuApi::is_ready(Value &value)
 
 PoseidonGpuApi::WaterlineMeasurements PoseidonGpuApi::waterline_measurements()
 {
+    ScopedCompletedReclamation reclamation;
     WaterlineMeasurements result;
     result.cpu_prepare_calls=cpu_prepare_calls_.load();result.cpu_encode_nanoseconds=cpu_encode_nanoseconds_.load();
     result.cpu_plain_h2d_bytes=cpu_plain_h2d_bytes_.load();
@@ -1659,7 +1767,13 @@ PoseidonGpuApi::WaterlineMeasurements PoseidonGpuApi::waterline_measurements()
     result.transport_h2d_bytes=communication::CudaLocalTransfer::h2d_bytes();
     result.transport_h2d_nanoseconds=communication::CudaLocalTransfer::h2d_nanoseconds();
     for(auto &device:devices_) {
+        device->collect_consumer_wait();
         DeviceMeasurements item;
+        {
+            std::lock_guard<std::mutex> lock(device->consumer_wait_mutex);
+            item.consumer_wait_calls=device->consumer_wait_calls;
+            item.consumer_wait_nanoseconds=device->consumer_wait_nanoseconds;
+        }
         if(device->memory_pool) {
             item.managed_pool=true;const auto bytes=device->memory_pool->bytes_counter();
             item.allocated_live=bytes.value;item.allocated_peak=bytes.peak;
@@ -1673,6 +1787,45 @@ PoseidonGpuApi::WaterlineMeasurements PoseidonGpuApi::waterline_measurements()
         result.devices.push_back(item);
     }
     return result;
+}
+
+void PoseidonGpuApi::wait_on_compute_inputs(
+    DeviceState &device, const std::vector<Value> &inputs, const Value *first)
+{
+    const auto visit=[&](const auto &function) {
+        if(first)function(*first);
+        for(const auto &input:inputs)function(input);
+    };
+    bool measure=false;
+    if(device.foreground_stream)visit([&](const Value &input) {
+        if(!input.ready_ || !input.ready_->requires_execution_stream_wait(device.cuda_device_id))return;
+        const auto status=cudaEventQuery(input.ready_->event());
+        if(status==cudaErrorNotReady)measure=true;
+        else gpu::gpu_check_cuda(status,"consumer input readiness query");
+    });
+    std::unique_lock<std::mutex> lock(device.consumer_wait_mutex,std::defer_lock);
+    std::pair<cudaEvent_t,cudaEvent_t> events{nullptr,nullptr};
+    try {
+        if(measure) {
+            lock.lock();device.collect_consumer_wait_locked();
+            if(device.consumer_wait_pending)
+                throw std::logic_error("Waterline consumer wait slot is still pending; foreground submission must remain bounded");
+            gpu::gpu_check_cuda(cudaEventCreate(&events.first),"consumer wait start create");
+            gpu::gpu_check_cuda(cudaEventCreate(&events.second),"consumer wait end create");
+            gpu::gpu_check_cuda(cudaEventRecord(events.first,gpu::gpu_execution_stream()),"consumer wait start record");
+        }
+        visit([&](const Value &input) {
+            if(input.ready_)input.ready_->wait_on_execution_stream(device.cuda_device_id);
+        });
+        if(measure) {
+            gpu::gpu_check_cuda(cudaEventRecord(events.second,gpu::gpu_execution_stream()),"consumer wait end record");
+            device.consumer_wait_pending=events;
+        }
+    } catch(...) {
+        if(events.first)(void)cudaEventDestroy(events.first);
+        if(events.second)(void)cudaEventDestroy(events.second);
+        throw;
+    }
 }
 
 bool PoseidonGpuApi::supports_reuse(const fhegpu::ComputeOp &op) const
@@ -1695,10 +1848,10 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute_reuse(
     const auto prepare = [&](const Value &value) {
         if (value_cuda_device_id(value, "Poseidon GPU compute_reuse input") != device.cuda_device_id)
             throw std::invalid_argument("Poseidon GPU compute_reuse input is on the wrong device");
-        if (value.ready_) value.ready_->wait_on_execution_stream(device.cuda_device_id);
     };
     prepare(input);
     for (const auto &value : other_inputs) prepare(value);
+    wait_on_compute_inputs(device,other_inputs,&input);
     std::vector<std::shared_ptr<void>> temporaries;
     try
     {
@@ -1850,13 +2003,7 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
                 "Poseidon GPU compute input is not on the operation CUDA device");
         }
     }
-    for (const auto &input : inputs)
-    {
-        if (input.ready_ != nullptr)
-        {
-            input.ready_->wait_on_execution_stream(device.cuda_device_id);
-        }
-    }
+    wait_on_compute_inputs(device,inputs);
     gpu::GpuCiphertextData output;
     std::vector<std::shared_ptr<void>> temporaries;
 
@@ -3142,6 +3289,7 @@ void PoseidonGpuApi::retain_communication(
 
 void PoseidonGpuApi::collect_completed()
 {
+    ScopedCompletedReclamation reclamation;
     {
         std::unique_lock<std::mutex> lock(in_flight_mutex_, std::try_to_lock);
         if(lock.owns_lock())in_flight_work_.erase(
@@ -3149,11 +3297,15 @@ void PoseidonGpuApi::collect_completed()
                            [](auto &work) { return work.completion->collect_completed(); }),
             in_flight_work_.end());
     }
-    for(auto &device:devices_)if(device->plaintext_encoder)device->plaintext_encoder->completed_timing(false);
+    for(auto &device:devices_) {
+        device->collect_consumer_wait();
+        if(device->plaintext_encoder)device->plaintext_encoder->completed_timing(false);
+    }
 }
 
 void PoseidonGpuApi::drain()
 {
+    ScopedCompletedReclamation reclamation;
     std::lock_guard<std::mutex> lock(in_flight_mutex_);
     for (auto &work : in_flight_work_)
     {

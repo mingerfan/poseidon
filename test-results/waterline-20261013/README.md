@@ -25,3 +25,9 @@ GPU Encode 接受实数槽及上下文模数范围内的有限 FP64 系数；宽
 后续资源阶段的有效日志为 `core-tests-validation-hook.log`（7/7）、`key-backing.log`（Q=3/5/7共享key且全槽与CPU一致）、`gpu-api-h2d-final.log`（19/19）、`h2d-timing.log`、`gpu-encode-timing.log`、`local-waterline-metrics.log`。后者是真实 managed-pool N=65536/Q32/scale40 图，三模式最大误差8.64e-7，实际持久表约1.15GB，RMM活跃峰值约1.19GB，保留池1.75GiB、硬cap3520MiB；结束pinned live和计费Device明文为0。时间指标是本机本次测试，不能据此推断V100或完整模型性能。
 
 `qwen-runner-metrics-smoke.log` 仅为2输入/2输出的小图，证明多输出入口、固定容差与实际事件计量接通，不是完整Qwen。原始完整Qwen3图已生成无损12GB bytecode；单卡与四卡在31GiB M/4GiB reserve的容量预检失败，四卡报前台对象约27GiB。正在收窄逐头归一化和宽区间SiLU的算术图后重新编译；完整模型未执行、未通过数值验收。
+
+2026-10-13 后续 stream 阶段已通过真实验证：所有计算 kernel 与 D2D/zero helper 使用实际执行 stream，跨设备回收暂用各设备合法 PTDS，并恢复调用者当前设备。`stream-ready-validation.md` 包含 AddCP c1 的确定性正/负对照；当前 helper 在 PTDS 阻塞时仍全部 28672 words 正确，旧 helper 全部错误。最新单卡 CUDA 库 `stream-reclaim-api-repeat-status.json` 连续 10×19 通过，旧数值失败和无法取 stack 的 hang 日志保留；不为旧 hang 虚构独立根因。
+
+188Server 新小图证据为 `188-peer-completion-single.log` 和 `188-peer-completion-all.log`。单卡物理 GPU1，四卡物理0/1/2/3；全部三模式已通过。四卡每模式全四个输出、32768个complex槽最大误差9.37752e-7，全部三张peer卡的真实计算完成都早于延迟GPU0。Auto实际后端比例见累计CPU/GPU计数，不用队列名称当执行证据。结束各卡明文计费与pinned live均为零。GPU0同时存在其他进程约13.6GiB占用，保留原进程，初始outside快照与执行器RMM预算分开。
+
+完整模型N16384的旧矩形对角线图已完成四卡编译/导出，见 `qwen3-n16384-all-compile.log`；单卡在更晚消费者处仍容量失败，见 `qwen3-n16384-single-capacity.log`。四卡Waterline基线峰值约4.68/6.22/9.37/11.55GB，Prepare数1417857、消费者及Release等组9726229；普通串行对象报告按eager Prepare记账，不能替代Waterline基线。完整模型首次runner启动暴露生产并行binary扫描器漏Prepare tag5，见 `qwen3-n16384-binary-scan-failure.log`，正在修复。当前仍没有完整模型执行/数值通过证据。BSGS lowering的FP64独立矩阵检查通过，后续新图仍需单独CKKS验收。

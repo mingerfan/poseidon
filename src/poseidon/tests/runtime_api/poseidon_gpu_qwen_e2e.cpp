@@ -222,37 +222,55 @@ Json configure_pool_cap(const fhegpu::RuntimePlan &plan)
 {
     if (!plan.waterline) return nullptr;
     constexpr std::uint64_t mib = 1ULL << 20;
-    constexpr std::uint64_t cuda_objects_bytes = 512 * mib;
-    constexpr std::uint64_t stream_headroom_bytes = 64 * mib;
-    constexpr std::uint64_t outside_pool_bytes = cuda_objects_bytes + stream_headroom_bytes;
+    constexpr std::uint64_t outside_pool_bytes = 576 * mib;
     constexpr const char *environment = "POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB";
     const auto &capacities = plan.waterline->device_capacity_bytes;
-    const auto minimum = *std::min_element(capacities.begin(), capacities.end());
-    if (minimum < outside_pool_bytes + 64 * mib)
-        throw std::runtime_error("Waterline requires at least 640 MiB per card for a 64 MiB pool, CUDA objects and stream headroom");
-    const std::uint64_t maximum_mb = (minimum - outside_pool_bytes) / mib;
-    std::uint64_t selected_mb = maximum_mb;
+    std::vector<std::uint64_t> maximum_mb, selected_mb;
+    for (std::size_t device=0;device<capacities.size();++device)
+    {
+        check_cuda(cudaSetDevice(static_cast<int>(device)), "pool cap device");
+        std::size_t free=0,total=0;
+        check_cuda(cudaMemGetInfo(&free,&total), "pool cap free memory");
+        const auto available=std::min(std::uint64_t(free),capacities[device]);
+        if (available < outside_pool_bytes + 64 * mib)
+            throw std::runtime_error("Waterline requires 640 MiB available per card for pool and CUDA objects");
+        maximum_mb.push_back((available-outside_pool_bytes)/mib);
+    }
     const char *existing = std::getenv(environment);
     if (existing)
     {
         const std::string text(existing);
-        const auto parsed = std::from_chars(text.data(), text.data() + text.size(), selected_mb);
-        if (parsed.ec != std::errc{} || parsed.ptr != text.data() + text.size() ||
-            selected_mb < 64 || selected_mb > maximum_mb)
-            throw std::runtime_error(std::string(environment) + " must be an integer in [64," +
-                                     std::to_string(maximum_mb) + "] for the configured Waterline capacity");
+        std::size_t begin=0;
+        do {
+            const auto end=text.find(',',begin);
+            const auto part=text.substr(begin,end==std::string::npos?end:end-begin);
+            std::uint64_t value=0;
+            const auto parsed=std::from_chars(part.data(),part.data()+part.size(),value);
+            if(parsed.ec!=std::errc{} || parsed.ptr!=part.data()+part.size() || value<64)
+                throw std::runtime_error(std::string(environment)+" requires integer MiB caps >=64");
+            selected_mb.push_back(value);
+            if(end==std::string::npos)break;
+            begin=end+1;
+        } while(true);
+        if(selected_mb.size()==1)selected_mb.resize(capacities.size(),selected_mb.front());
+        if(selected_mb.size()!=capacities.size())
+            throw std::runtime_error("GPU pool caps require one scalar or one cap for every visible GPU");
+        for(std::size_t device=0;device<capacities.size();++device)
+            if(selected_mb[device]>maximum_mb[device])
+                throw std::runtime_error("GPU pool cap exceeds configured or physically available capacity on GPU"+std::to_string(device));
     }
-    else if (setenv(environment, std::to_string(selected_mb).c_str(), 1) != 0)
-        throw std::runtime_error(std::string("cannot set ") + environment);
-    std::cout << "GPU_POOL maximum_mb=" << selected_mb << " source="
-              << (existing ? "user_environment" : "waterline")
+    else selected_mb=maximum_mb;
+    std::string caps;
+    for(auto value:selected_mb){if(!caps.empty())caps+=',';caps+=std::to_string(value);}
+    if(setenv(environment,caps.c_str(),1)!=0)
+        throw std::runtime_error(std::string("cannot set ")+environment);
+    std::cout << "GPU_POOL maximum_mb=" << caps << " source="
+              << (existing ? "user_environment" : "waterline_and_free_memory")
               << " outside_pool_reserve_bytes=" << outside_pool_bytes << '\n' << std::flush;
     return {{"environment", environment}, {"maximum_mb", selected_mb},
-            {"maximum_bytes", selected_mb * mib}, {"maximum_allowed_mb", maximum_mb},
-            {"source", existing ? "user_environment" : "waterline"},
-            {"outside_pool_reserve_bytes", outside_pool_bytes},
-            {"cuda_objects_reserve_bytes", cuda_objects_bytes},
-            {"later_stream_headroom_bytes", stream_headroom_bytes}};
+            {"maximum_allowed_mb", maximum_mb},
+            {"source", existing ? "user_environment" : "waterline_and_free_memory"},
+            {"outside_pool_reserve_bytes", outside_pool_bytes}};
 }
 
 Json device_report(int device_count, const fhegpu::RuntimePlan &plan)
@@ -492,7 +510,8 @@ int main(int argc, char **argv)
                        {"execution_mode", "per_device_workers"}, {"device_worker_count", device_count},
                        {"boot_implementation", host_boots ? "host_decrypt_reencrypt" : "none"},
                        {"host_boot_instructions", host_boots}, {"native_boot_instructions", 0},
-                       {"secret_key_assisted_refresh", host_boots != 0}});
+                       {"secret_key_assisted_refresh", host_boots != 0},
+                       {"security_level", "none; numerical validation context"}});
         int visible_device_count = 0;
         check_cuda(cudaGetDeviceCount(&visible_device_count), "cudaGetDeviceCount");
         if (visible_device_count != device_count)
@@ -601,6 +620,7 @@ int main(int argc, char **argv)
             report["device_measurements"].push_back({{"logical_device",d},{"managed_pool",m.managed_pool},
                 {"allocated_live_bytes",m.allocated_live},{"allocated_peak_bytes",m.allocated_peak},
                 {"pool_reserved_bytes",m.pool_reserved},{"pool_capacity_bytes",m.pool_capacity},
+                {"consumer_wait_calls",m.consumer_wait_calls},{"consumer_wait_ms",m.consumer_wait_nanoseconds/1e6},
                 {"gpu_encode_calls",m.gpu_encode_calls},{"gpu_raw_h2d_bytes",m.gpu_raw_h2d_bytes},
                 {"gpu_raw_h2d_ms",m.gpu_raw_h2d_nanoseconds/1e6},{"gpu_encode_ms",m.gpu_encode_nanoseconds/1e6}});
         }
@@ -660,6 +680,8 @@ int main(int argc, char **argv)
         report["comparison"] = total.report();
         report["decoded_path"] = argv[5];
         report["passed"] = total.passed();
+        if(total.passed() && report["model"].value("complete_qwen",false))
+            report["model"]["full_model_ckks_validated"]=true;
         api.drain();
         report["pinned_transfer_peak_including_validation_bytes"] = PinnedHostBuffer::peak_bytes();
         report["pinned_transfer_live_after_validation_bytes"] = PinnedHostBuffer::live_bytes();

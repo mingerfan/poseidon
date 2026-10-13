@@ -197,9 +197,13 @@ public:
     fhegpu::PrepareResources prepare_resources(const fhegpu::ValueDesc &desc, fhegpu::PrepareBackend backend);
     fhegpu::ResourceUsage instruction_workspace(const fhegpu::Instruction &instruction) const;
     void validate_waterline_resources(const fhegpu::RuntimePlan &plan);
+    std::vector<std::uint64_t> waterline_allocator_capacity() const;
     struct DeviceMeasurements {
         std::uint64_t allocated_live=0,allocated_peak=0,pool_reserved=0,pool_capacity=0;
         std::uint64_t gpu_encode_calls=0,gpu_raw_h2d_bytes=0,gpu_raw_h2d_nanoseconds=0,gpu_encode_nanoseconds=0;
+        // Completed CUDA intervals around foreground input dependencies;
+        // excludes CPU scheduling waits and same-stream ordering.
+        std::uint64_t consumer_wait_calls=0,consumer_wait_nanoseconds=0;
         bool managed_pool=false;
     };
     struct WaterlineMeasurements {
@@ -246,6 +250,8 @@ private:
                                        const std::vector<fhegpu::ValueDesc> &output_descs);
 #endif
     struct InFlightWork;
+    void wait_on_compute_inputs(DeviceState &device, const std::vector<Value> &inputs,
+                                const Value *first = nullptr);
     void retain_in_flight(std::shared_ptr<PoseidonGpuValue::ReadyEvent> completion,
                           const std::vector<Value> &values,
                           const std::vector<std::shared_ptr<void>> &resources = {});
@@ -273,6 +279,7 @@ private:
     std::shared_ptr<const RelinKeys> relin_keys_;
     std::shared_ptr<const GaloisKeys> galois_keys_;
     std::optional<int> max_rescale_levels_per_op_;
+    std::vector<std::uint64_t> waterline_allocator_capacity_;
 #ifdef POSEIDON_RUNTIME_GPU_NCCL
     std::unique_ptr<communication::NcclMpiTransport> nccl_transport_;
 #endif

@@ -1,0 +1,60 @@
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=5854700 retained_workspace_bound=0 reserve_required=72963564 reserve_configured=536870912
+waterline physical GPU0 pool_reserved=134217728 pool_cap=134217728 initial_outside_used=108068864 outside_pool_growth=0 allocator_graph_capacity=61254164
+{
+  "injected_delay_ms": 80,
+  "passed": true,
+  "rounds": [
+    {
+      "c1_mismatches": 0,
+      "gate_still_blocked_at_snapshot": true,
+      "ready_snapshot_ms": 0.035688,
+      "reused_warmed_c1_address": true,
+      "round": 0,
+      "submit_ms": 0.017819,
+      "watchdog": false,
+      "words_checked": 28672
+    },
+    {
+      "c1_mismatches": 0,
+      "gate_still_blocked_at_snapshot": true,
+      "ready_snapshot_ms": 0.030165,
+      "reused_warmed_c1_address": false,
+      "round": 1,
+      "submit_ms": 0.009465,
+      "watchdog": false,
+      "words_checked": 28672
+    },
+    {
+      "c1_mismatches": 0,
+      "gate_still_blocked_at_snapshot": true,
+      "ready_snapshot_ms": 0.029855,
+      "reused_warmed_c1_address": false,
+      "round": 2,
+      "submit_ms": 0.008844,
+      "watchdog": false,
+      "words_checked": 28672
+    },
+    {
+      "c1_mismatches": 0,
+      "gate_still_blocked_at_snapshot": true,
+      "ready_snapshot_ms": 0.026953,
+      "reused_warmed_c1_address": false,
+      "round": 3,
+      "submit_ms": 0.007534,
+      "watchdog": false,
+      "words_checked": 28672
+    },
+    {
+      "c1_mismatches": 0,
+      "gate_still_blocked_at_snapshot": true,
+      "ready_snapshot_ms": 0.033227,
+      "reused_warmed_c1_address": false,
+      "round": 4,
+      "submit_ms": 0.013847,
+      "watchdog": false,
+      "words_checked": 28672
+    }
+  ],
+  "scope": "public AddCP Ready under blocked caller PTDS"
+}

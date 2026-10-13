@@ -1,4 +1,5 @@
 #include "poseidon/gpu/kernels/gpu_elementwise_kernels.h"
+#include "poseidon/gpu/gpu_memory.h"
 
 #include <stdexcept>
 #include <string>
@@ -763,7 +764,7 @@ void launch_add_poly_shard(
     const int grid_size = static_cast<int>(
         (total_count + block_size - 1) / block_size);
 
-    add_poly_shard_kernel<<<grid_size, block_size>>>(
+    add_poly_shard_kernel<<<grid_size, block_size, 0, gpu_execution_stream()>>>(
         destination_shard.ptr,
         left_shard.ptr,
         right_shard.ptr,
@@ -886,7 +887,7 @@ void launch_add_two_poly_shards(
     const int grid_size = static_cast<int>(
         (total_count + block_size - 1) / block_size);
 
-    add_two_poly_shards_kernel<<<grid_size, block_size>>>(
+    add_two_poly_shards_kernel<<<grid_size, block_size, 0, gpu_execution_stream()>>>(
         destination_shard0.ptr,
         destination_shard1.ptr,
         left_shard0.ptr,
@@ -984,7 +985,7 @@ void launch_sub_poly_shard(
     const int grid_size = static_cast<int>(
         (total_count + block_size - 1) / block_size);
 
-    sub_poly_shard_kernel<<<grid_size, block_size>>>(
+    sub_poly_shard_kernel<<<grid_size, block_size, 0, gpu_execution_stream()>>>(
         destination_shard.ptr,
         left_shard.ptr,
         right_shard.ptr,
@@ -1072,7 +1073,7 @@ void launch_negate_poly_shard(
     const int grid_size = static_cast<int>(
         (total_count + block_size - 1) / block_size);
 
-    negate_poly_shard_kernel<<<grid_size, block_size>>>(
+    negate_poly_shard_kernel<<<grid_size, block_size, 0, gpu_execution_stream()>>>(
         destination_shard.ptr,
         source_shard.ptr,
         parameter_shard.q_primes.data(),
@@ -1129,12 +1130,13 @@ void launch_copy_poly_shard(
         destination_shard.limb_count * destination_shard.coeff_count;
 
     gpu_check_cuda(
-        cudaMemcpy(
+        cudaMemcpyAsync(
             destination_shard.ptr,
             source_shard.ptr,
             word_count * sizeof(GpuWord),
-            cudaMemcpyDeviceToDevice),
-        "launch_copy_poly_shard cudaMemcpyDeviceToDevice");
+            cudaMemcpyDeviceToDevice,
+            gpu_execution_stream()),
+        "launch_copy_poly_shard cudaMemcpyAsyncDeviceToDevice");
 
     (void)degree;
 }
@@ -1217,7 +1219,7 @@ void launch_multiply_scalar_poly_shard(
     const int grid_size =
         static_cast<int>((total_count + block_size - 1) / block_size);
 
-    multiply_scalar_poly_shard_kernel<<<grid_size, block_size>>>(
+    multiply_scalar_poly_shard_kernel<<<grid_size, block_size, 0, gpu_execution_stream()>>>(
         destination_shard.ptr,
         source_shard.ptr,
         scalar,
@@ -1322,7 +1324,7 @@ void launch_bootstrap_modraise_poly_shard(
     const int grid_size =
         static_cast<int>((total_count + block_size - 1) / block_size);
 
-    bootstrap_modraise_poly_shard_kernel<<<grid_size, block_size>>>(
+    bootstrap_modraise_poly_shard_kernel<<<grid_size, block_size, 0, gpu_execution_stream()>>>(
         destination_shard.ptr,
         source_shard.ptr,
         target_parameter_shard.q_primes.data(),
@@ -1430,7 +1432,7 @@ void launch_dyadic_product_poly_shard(
     const int grid_size =
         static_cast<int>((total_count + block_size - 1) / block_size);
 
-    dyadic_product_poly_shard_kernel<<<grid_size, block_size>>>(
+    dyadic_product_poly_shard_kernel<<<grid_size, block_size, 0, gpu_execution_stream()>>>(
         destination_shard.ptr,
         left_shard.ptr,
         right_shard.ptr,
@@ -1541,7 +1543,7 @@ void launch_multiply_accumulate_poly_shard(
     const int grid_size =
         static_cast<int>((total_count + block_size - 1) / block_size);
 
-    multiply_accumulate_poly_shard_kernel<<<grid_size, block_size>>>(
+    multiply_accumulate_poly_shard_kernel<<<grid_size, block_size, 0, gpu_execution_stream()>>>(
         destination_shard.ptr,
         left_shard.ptr,
         right_shard.ptr,
@@ -1621,7 +1623,7 @@ void launch_multiply_plain_accumulate_two_components(
         (total + block_size - 1) / block_size);
     multiply_plain_accumulate_two_components_kernel<<<
         dim3(grid_size, 2),
-        block_size>>>(
+        block_size, 0, gpu_execution_stream()>>>(
         destination0.ptr,
         destination1.ptr,
         ciphertext0.ptr,
@@ -1730,7 +1732,7 @@ void launch_multiply_plain_caccumulate_two_components_4(
         (total + block_size - 1) / block_size);
     multiply_plain_caccumulate_two_components_4_kernel<<<
         dim3(grid_size, 2),
-        block_size>>>(
+        block_size, 0, gpu_execution_stream()>>>(
         destination0.ptr,
         destination1.ptr,
         ptr_or_null(ciphertexts0, 0),
@@ -1784,12 +1786,12 @@ void launch_double_sub_plain_two_components(
     constexpr int block = 256;
     const dim3 grid((dst0.limb_count * dst0.coeff_count + block - 1) / block, 2);
     if (correction0)
-        double_sub_plain_two_components_kernel<true><<<grid, block>>>(
+        double_sub_plain_two_components_kernel<true><<<grid, block, 0, gpu_execution_stream()>>>(
             dst0.ptr, dst1.ptr, src0.ptr, src1.ptr, plain.ptr, correction0->ptr, correction1->ptr,
             parameters.q_primes.data() + offset, parameters.q_modulus_constants.data() + offset,
             dst0.limb_count, dst0.coeff_count);
     else
-        double_sub_plain_two_components_kernel<false><<<grid, block>>>(
+        double_sub_plain_two_components_kernel<false><<<grid, block, 0, gpu_execution_stream()>>>(
             dst0.ptr, dst1.ptr, src0.ptr, src1.ptr, plain.ptr, nullptr, nullptr,
             parameters.q_primes.data() + offset, parameters.q_modulus_constants.data() + offset,
             dst0.limb_count, dst0.coeff_count);
@@ -1905,7 +1907,7 @@ void launch_multiply_two_component_ciphertexts(
     constexpr int block_size = 256;
     const unsigned int grid_size =
         static_cast<int>((total + block_size - 1) / block_size);
-    multiply_outer_components_kernel<<<dim3(grid_size, 2), block_size>>>(
+    multiply_outer_components_kernel<<<dim3(grid_size, 2), block_size, 0, gpu_execution_stream()>>>(
         destination_shard0.ptr,
         destination_shard2.ptr,
         left_shard0.ptr,
@@ -1919,7 +1921,7 @@ void launch_multiply_two_component_ciphertexts(
     gpu_check_cuda(
         cudaGetLastError(),
         "launch_multiply_two_component_ciphertexts outer kernel launch");
-    multiply_cross_component_kernel<<<grid_size, block_size>>>(
+    multiply_cross_component_kernel<<<grid_size, block_size, 0, gpu_execution_stream()>>>(
         destination_shard1.ptr,
         left_shard0.ptr,
         left_shard1.ptr,
@@ -1970,7 +1972,7 @@ void launch_square_two_component_ciphertext(
     constexpr int block_size = 256;
     const unsigned int grid_size =
         static_cast<int>((total + block_size - 1) / block_size);
-    multiply_outer_components_kernel<<<dim3(grid_size, 2), block_size>>>(
+    multiply_outer_components_kernel<<<dim3(grid_size, 2), block_size, 0, gpu_execution_stream()>>>(
         destination_shard0.ptr,
         destination_shard2.ptr,
         source_shard0.ptr,
@@ -1984,7 +1986,7 @@ void launch_square_two_component_ciphertext(
     gpu_check_cuda(
         cudaGetLastError(),
         "launch_square_two_component_ciphertext outer kernel launch");
-    square_cross_component_kernel<<<grid_size, block_size>>>(
+    square_cross_component_kernel<<<grid_size, block_size, 0, gpu_execution_stream()>>>(
         destination_shard1.ptr,
         source_shard0.ptr,
         source_shard1.ptr,

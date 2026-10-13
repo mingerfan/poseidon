@@ -1,4 +1,5 @@
 #include "poseidon/gpu/kernels/gpu_double_hoist_kernels.h"
+#include "poseidon/gpu/gpu_memory.h"
 
 #include <cuda_runtime_api.h>
 
@@ -1239,7 +1240,7 @@ void launch_double_hoist_pre_rotated_keymul_digit(
     const std::size_t p_count = parameter_shard.hybrid_base_p_count;
     const int q_grid = static_cast<int>(
         (q_count * degree + block_size - 1) / block_size);
-    pre_rotated_keymul_digit_kernel<<<q_grid, block_size>>>(
+    pre_rotated_keymul_digit_kernel<<<q_grid, block_size, 0, gpu_execution_stream()>>>(
         destination_q0,
         destination_q1,
         digit_q,
@@ -1256,7 +1257,7 @@ void launch_double_hoist_pre_rotated_keymul_digit(
 
     const int p_grid = static_cast<int>(
         (p_count * degree + block_size - 1) / block_size);
-    pre_rotated_keymul_digit_kernel<<<p_grid, block_size>>>(
+    pre_rotated_keymul_digit_kernel<<<p_grid, block_size, 0, gpu_execution_stream()>>>(
         destination_p0,
         destination_p1,
         digit_p,
@@ -1317,7 +1318,7 @@ void launch_double_hoist_pre_rotated_keymul_batch(
         (q_count * degree + block_size - 1) / block_size);
     if (dnum == 1 && lifted_c0_source_q != nullptr)
     {
-        pre_rotated_keymul_dnum1_kernel<true><<<q_grid, block_size>>>(
+        pre_rotated_keymul_dnum1_kernel<true><<<q_grid, block_size, 0, gpu_execution_stream()>>>(
             destination_q0,
             destination_q1,
             digits_q,
@@ -1335,7 +1336,7 @@ void launch_double_hoist_pre_rotated_keymul_batch(
     }
     else if (dnum == 1)
     {
-        pre_rotated_keymul_dnum1_kernel<false><<<q_grid, block_size>>>(
+        pre_rotated_keymul_dnum1_kernel<false><<<q_grid, block_size, 0, gpu_execution_stream()>>>(
             destination_q0,
             destination_q1,
             digits_q,
@@ -1353,7 +1354,7 @@ void launch_double_hoist_pre_rotated_keymul_batch(
     }
     else
     {
-        pre_rotated_keymul_batch_kernel<false><<<q_grid, block_size>>>(
+        pre_rotated_keymul_batch_kernel<false><<<q_grid, block_size, 0, gpu_execution_stream()>>>(
             destination_q0,
             destination_q1,
             digits_q,
@@ -1376,7 +1377,7 @@ void launch_double_hoist_pre_rotated_keymul_batch(
         (p_count * degree + block_size - 1) / block_size);
     if (dnum == 1)
     {
-        pre_rotated_keymul_dnum1_kernel<false><<<p_grid, block_size>>>(
+        pre_rotated_keymul_dnum1_kernel<false><<<p_grid, block_size, 0, gpu_execution_stream()>>>(
             destination_p0,
             destination_p1,
             digits_p,
@@ -1394,7 +1395,7 @@ void launch_double_hoist_pre_rotated_keymul_batch(
     }
     else
     {
-        pre_rotated_keymul_batch_kernel<false><<<p_grid, block_size>>>(
+        pre_rotated_keymul_batch_kernel<false><<<p_grid, block_size, 0, gpu_execution_stream()>>>(
             destination_p0,
             destination_p1,
             digits_p,
@@ -1440,7 +1441,7 @@ void launch_double_hoist_lift_identity(
     const std::size_t total = 2 * q_count * degree;
     constexpr int block_size = 256;
     const int grid_size = static_cast<int>((total + block_size - 1) / block_size);
-    lift_identity_kernel<<<grid_size, block_size>>>(
+    lift_identity_kernel<<<grid_size, block_size, 0, gpu_execution_stream()>>>(
         destination_q0,
         destination_q1,
         source_q0,
@@ -1457,10 +1458,12 @@ void launch_double_hoist_lift_identity(
     if (!accumulate)
     {
         gpu_check_cuda(
-            cudaMemset(destination_p0, 0, p_count * degree * sizeof(GpuWord)),
+            cudaMemsetAsync(destination_p0, 0, p_count * degree * sizeof(GpuWord),
+                            gpu_execution_stream()),
             name);
         gpu_check_cuda(
-            cudaMemset(destination_p1, 0, p_count * degree * sizeof(GpuWord)),
+            cudaMemsetAsync(destination_p1, 0, p_count * degree * sizeof(GpuWord),
+                            gpu_execution_stream()),
             name);
     }
 }
@@ -1484,7 +1487,7 @@ void launch_double_hoist_add_lifted_galois_c0(
     const std::size_t total = q_count * degree;
     constexpr int block_size = 256;
     const int grid_size = static_cast<int>((total + block_size - 1) / block_size);
-    add_lifted_galois_c0_kernel<<<grid_size, block_size>>>(
+    add_lifted_galois_c0_kernel<<<grid_size, block_size, 0, gpu_execution_stream()>>>(
         destination_q0,
         source_q0,
         galois_elt,
@@ -1564,7 +1567,7 @@ void launch_double_hoist_pre_rotated_giant_group_reduce(
         (active_group_count * q_count * degree +
          block_size - 1) /
         block_size);
-    pre_rotated_giant_group_reduce_kernel<<<q_grid, block_size>>>(
+    pre_rotated_giant_group_reduce_kernel<<<q_grid, block_size, 0, gpu_execution_stream()>>>(
         scratch_group_q,
         inner_q_batch,
         q_group_args,
@@ -1587,7 +1590,7 @@ void launch_double_hoist_pre_rotated_giant_group_reduce(
         (active_group_count * p_count * degree +
          block_size - 1) /
         block_size);
-    pre_rotated_giant_group_reduce_kernel<<<p_grid, block_size>>>(
+    pre_rotated_giant_group_reduce_kernel<<<p_grid, block_size, 0, gpu_execution_stream()>>>(
         scratch_group_p,
         inner_q_batch,
         p_group_args,
@@ -1677,7 +1680,7 @@ void launch_double_hoist_pre_rotated_giant_group_accumulate(
     const std::size_t p_count = parameter_shard.hybrid_base_p_count;
     const int q_grid = static_cast<int>(
         (q_count * degree + block_size - 1) / block_size);
-    pre_rotated_giant_group_accumulate_kernel<<<q_grid, block_size>>>(
+    pre_rotated_giant_group_accumulate_kernel<<<q_grid, block_size, 0, gpu_execution_stream()>>>(
         destination_q0,
         destination_q1,
         inner_q_batch,
@@ -1700,7 +1703,7 @@ void launch_double_hoist_pre_rotated_giant_group_accumulate(
 
     const int p_grid = static_cast<int>(
         (p_count * degree + block_size - 1) / block_size);
-    pre_rotated_giant_group_accumulate_kernel<<<p_grid, block_size>>>(
+    pre_rotated_giant_group_accumulate_kernel<<<p_grid, block_size, 0, gpu_execution_stream()>>>(
         destination_p0,
         destination_p1,
         inner_q_batch,
@@ -1745,7 +1748,7 @@ void launch_double_hoist_reduce_p_groups(
         parameter_shard.hybrid_base_p_count;
     const int p_reduce_grid = static_cast<int>(
         (2 * p_count * degree + block_size - 1) / block_size);
-    reduce_qp_groups_kernel<<<p_reduce_grid, block_size>>>(
+    reduce_qp_groups_kernel<<<p_reduce_grid, block_size, 0, gpu_execution_stream()>>>(
         destination_p0,
         group_p,
         parameter_shard.rns_primes.data() + q_count,
@@ -1834,7 +1837,7 @@ void launch_double_hoist_qp_plain_mul_accumulate_groups(
             {
                 qp_plain_mul_accumulate_group_component_fused_kernel<
                     4, kCompressed>
-                    <<<q_grid, block>>>(
+                    <<<q_grid, block, 0, gpu_execution_stream()>>>(
                         group_q,
                         baby_q,
                         diagonal_q_ptrs,
@@ -1855,7 +1858,7 @@ void launch_double_hoist_qp_plain_mul_accumulate_groups(
             else
             {
                 qp_plain_mul_accumulate_group_tiled_kernel<4, kCompressed>
-                    <<<q_grid, block>>>(
+                    <<<q_grid, block, 0, gpu_execution_stream()>>>(
                     group_q,
                     baby_q,
                     diagonal_q_ptrs,
@@ -1880,7 +1883,7 @@ void launch_double_hoist_qp_plain_mul_accumulate_groups(
             {
                 qp_plain_mul_accumulate_group_component_fused_kernel<
                     8, kCompressed>
-                    <<<q_grid, block>>>(
+                    <<<q_grid, block, 0, gpu_execution_stream()>>>(
                         group_q,
                         baby_q,
                         diagonal_q_ptrs,
@@ -1901,7 +1904,7 @@ void launch_double_hoist_qp_plain_mul_accumulate_groups(
             else
             {
                 qp_plain_mul_accumulate_group_tiled_kernel<8, kCompressed>
-                    <<<q_grid, block>>>(
+                    <<<q_grid, block, 0, gpu_execution_stream()>>>(
                     group_q,
                     baby_q,
                     diagonal_q_ptrs,
@@ -1927,7 +1930,7 @@ void launch_double_hoist_qp_plain_mul_accumulate_groups(
         const int q_grid = static_cast<int>(
             (q_total + block_size - 1) / block_size);
         qp_plain_mul_accumulate_kernel<kCompressed>
-            <<<q_grid, block_size>>>(
+            <<<q_grid, block_size, 0, gpu_execution_stream()>>>(
             group_q,
             baby_q,
             diagonal_q_ptrs,
@@ -1965,7 +1968,7 @@ void launch_double_hoist_qp_plain_mul_accumulate_groups(
             {
                 qp_plain_mul_accumulate_group_component_fused_kernel<
                     4, kCompressed>
-                    <<<p_grid, block>>>(
+                    <<<p_grid, block, 0, gpu_execution_stream()>>>(
                         group_p,
                         baby_p,
                         diagonal_p_ptrs,
@@ -1986,7 +1989,7 @@ void launch_double_hoist_qp_plain_mul_accumulate_groups(
             else
             {
                 qp_plain_mul_accumulate_group_tiled_kernel<4, kCompressed>
-                    <<<p_grid, block>>>(
+                    <<<p_grid, block, 0, gpu_execution_stream()>>>(
                     group_p,
                     baby_p,
                     diagonal_p_ptrs,
@@ -2011,7 +2014,7 @@ void launch_double_hoist_qp_plain_mul_accumulate_groups(
             {
                 qp_plain_mul_accumulate_group_component_fused_kernel<
                     8, kCompressed>
-                    <<<p_grid, block>>>(
+                    <<<p_grid, block, 0, gpu_execution_stream()>>>(
                         group_p,
                         baby_p,
                         diagonal_p_ptrs,
@@ -2032,7 +2035,7 @@ void launch_double_hoist_qp_plain_mul_accumulate_groups(
             else
             {
                 qp_plain_mul_accumulate_group_tiled_kernel<8, kCompressed>
-                    <<<p_grid, block>>>(
+                    <<<p_grid, block, 0, gpu_execution_stream()>>>(
                     group_p,
                     baby_p,
                     diagonal_p_ptrs,
@@ -2058,7 +2061,7 @@ void launch_double_hoist_qp_plain_mul_accumulate_groups(
         const int p_grid = static_cast<int>(
             (p_total + block_size - 1) / block_size);
         qp_plain_mul_accumulate_kernel<kCompressed>
-            <<<p_grid, block_size>>>(
+            <<<p_grid, block_size, 0, gpu_execution_stream()>>>(
             group_p,
             baby_p,
             diagonal_p_ptrs,
@@ -2196,7 +2199,7 @@ void launch_double_hoist_fused_baby_keyswitch_plain_accumulate(
         if (group_count == 1)
         {
             fused_baby_keyswitch_plain_accumulate_kernel<1, true, kCompressed>
-                <<<q_grid, block_size>>>(
+                <<<q_grid, block_size, 0, gpu_execution_stream()>>>(
                     group_q, digits_q, source_q0, source_q1, arguments,
                     key_q0_ptrs, key_q1_ptrs, diagonal_q_ptrs,
                     diagonal_periods, parameter_shard.hybrid_p_mod_q.data(),
@@ -2205,7 +2208,7 @@ void launch_double_hoist_fused_baby_keyswitch_plain_accumulate(
                     group_count, term_count, tile_count, dnum, storage_dnum,
                     q_count, degree, degree_power, initialize_accumulators);
             fused_baby_keyswitch_plain_accumulate_kernel<1, false, kCompressed>
-                <<<p_grid, block_size>>>(
+                <<<p_grid, block_size, 0, gpu_execution_stream()>>>(
                     group_p, digits_p, nullptr, nullptr, arguments,
                     key_p0_ptrs, key_p1_ptrs, diagonal_p_ptrs,
                     diagonal_periods, nullptr,
@@ -2217,7 +2220,7 @@ void launch_double_hoist_fused_baby_keyswitch_plain_accumulate(
         else
         {
             fused_baby_keyswitch_plain_accumulate_kernel<4, true, kCompressed>
-                <<<q_grid, block_size>>>(
+                <<<q_grid, block_size, 0, gpu_execution_stream()>>>(
                     group_q, digits_q, source_q0, source_q1, arguments,
                     key_q0_ptrs, key_q1_ptrs, diagonal_q_ptrs,
                     diagonal_periods, parameter_shard.hybrid_p_mod_q.data(),
@@ -2226,7 +2229,7 @@ void launch_double_hoist_fused_baby_keyswitch_plain_accumulate(
                     group_count, term_count, tile_count, dnum, storage_dnum,
                     q_count, degree, degree_power, initialize_accumulators);
             fused_baby_keyswitch_plain_accumulate_kernel<4, false, kCompressed>
-                <<<p_grid, block_size>>>(
+                <<<p_grid, block_size, 0, gpu_execution_stream()>>>(
                     group_p, digits_p, nullptr, nullptr, arguments,
                     key_p0_ptrs, key_p1_ptrs, diagonal_p_ptrs,
                     diagonal_periods, nullptr,

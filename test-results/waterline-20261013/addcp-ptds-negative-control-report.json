@@ -1,0 +1,22 @@
+{
+  "expected_failure": true,
+  "returncode": 1,
+  "single_change": "copy helper cudaMemcpy instead of execution-stream cudaMemcpyAsync",
+  "test_report": {
+    "error": "Ready published before unchanged c1 copy completed",
+    "passed": false,
+    "rounds": [
+      {
+        "c1_mismatches": 28672,
+        "gate_still_blocked_at_snapshot": true,
+        "ready_snapshot_ms": 0.041329,
+        "reused_warmed_c1_address": true,
+        "round": 0,
+        "submit_ms": 0.023945,
+        "watchdog": false,
+        "words_checked": 28672
+      }
+    ],
+    "scope": "public AddCP Ready under blocked caller PTDS"
+  }
+}

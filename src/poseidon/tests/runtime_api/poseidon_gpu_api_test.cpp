@@ -28,6 +28,7 @@
 #include <memory>
 #include <mutex>
 #include <optional>
+#include <set>
 #include <stdexcept>
 #include <string>
 #include <thread>
@@ -2095,12 +2096,52 @@ void test_gpu_plaintext_wide_coefficients(const poseidon::PoseidonContext &conte
     }
 }
 
+class DelayedWaterlineApi : public PoseidonGpuApi
+{
+public:
+    using PoseidonGpuApi::PoseidonGpuApi;
+    std::atomic<bool> delayed{false},waiting{false};
+    std::atomic<unsigned> peers_while_waiting{0};
+    void reset_delay() {
+        std::lock_guard<std::mutex> lock(delay_mutex_);
+        delayed=false;waiting=true;peers_while_waiting=0;peer_devices_.clear();
+    }
+    Value compute(const fhegpu::ComputeOp &op,const std::vector<Value> &inputs) {
+        if(local_device_count()==1 || op.place.kind!=fhegpu::PlaceKind::Device)
+            return PoseidonGpuApi::compute(op,inputs);
+        const bool first_gpu0=op.place.index==0 && !delayed.exchange(true);
+        if(first_gpu0) {
+            std::unique_lock<std::mutex> lock(delay_mutex_);
+            if(!delay_condition_.wait_for(lock,std::chrono::seconds(5),[&]{
+                return peer_devices_.size()==static_cast<std::size_t>(local_device_count()-1);
+            }))throw std::runtime_error("other GPUs did not complete during GPU0 delay");
+            lock.unlock();std::this_thread::sleep_for(std::chrono::milliseconds(80));
+        }
+        auto result=PoseidonGpuApi::compute(op,inputs);
+        if(first_gpu0 || (op.place.index!=0 && waiting.load())) {
+            // The test observes true device completion, including peers that
+            // finish before GPU0's worker enters its first compute call.
+            synchronize(result);
+            std::lock_guard<std::mutex> lock(delay_mutex_);
+            if(first_gpu0)waiting=false;
+            else if(waiting.load() && peer_devices_.insert(op.place.index).second) {
+                ++peers_while_waiting;delay_condition_.notify_all();
+            }
+        }
+        return result;
+    }
+private:
+    std::mutex delay_mutex_;
+    std::condition_variable delay_condition_;
+    std::set<int> peer_devices_;
+};
+
 void test_waterline_runtime(const poseidon::PoseidonContext &context,
                            poseidon::KeyGenerator &key_generator,
                            const fhegpu::LoadedOperatorSpec &spec,int device_count)
 {
     std::vector<int> ids(device_count);for(int d=0;d<device_count;++d)ids[d]=d;
-    PoseidonGpuApi api(kContextId,context,ids);
+    DelayedWaterlineApi api(kContextId,context,ids);
     poseidon::PublicKey public_key;key_generator.create_public_key(public_key);
     poseidon::Encryptor encryptor(context,public_key);poseidon::Decryptor decryptor(context,key_generator.secret_key());
     poseidon::CKKSEncoder encoder(context);poseidon::Plaintext plain;
@@ -2115,30 +2156,45 @@ void test_waterline_runtime(const poseidon::PoseidonContext &context,
         const auto id=plan.values.size();plan.values.push_back({id,kind,place,kContextId,level,kDefaultScaleLog2,true,kind==fhegpu::ValueKind::Plaintext?1:2});return id;
     };
     const auto arg=add_value(fhegpu::ValueKind::Ciphertext,host_place());plan.external_inputs={arg};
-    auto current=add_value(fhegpu::ValueKind::Ciphertext,device_place());
-    auto initial=transfer_action(1,fhegpu::ValueKind::Ciphertext,host_place(),device_place());initial.inputs={arg};initial.outputs={current};
-    plan.initialization={{0,initial}};
+    std::vector<fhegpu::ValueId> current;
+    std::uint64_t transfer_id=1;
+    for(int d=0;d<device_count;++d) {
+        current.push_back(add_value(fhegpu::ValueKind::Ciphertext,device_place(d)));
+        auto initial=transfer_action(transfer_id++,fhegpu::ValueKind::Ciphertext,host_place(),device_place(d));
+        initial.inputs={arg};initial.outputs={current.back()};plan.initialization.push_back({0,initial});
+    }
     std::vector<fhegpu::ValueId> weights;
     for(int d=0;d<device_count;++d) {
         auto w=add_value(fhegpu::ValueKind::Plaintext,device_place(d));weights.push_back(w);
         plan.execution.push_back({0,fhegpu::PreparePlaintextOp{fhegpu::InlineEncodePayload{weight},w}});
     }
-    const int rounds=5;std::uint64_t transfer_id=2;
-    for(int r=0;r<rounds;++r)for(int d=0;d<device_count;++d) {
+    const int rounds=5;
+    for(int r=0;r<rounds;++r) {
+      for(int d=0;d<device_count;++d) {
         const auto out=add_value(fhegpu::ValueKind::Ciphertext,device_place(d));
-        plan.execution.push_back({0,fhegpu::ComputeOp{fhegpu::ComputeKind::AddCP,{current,weights[d]},out,device_place(d),{}}});
-        plan.execution.push_back({0,fhegpu::ReleaseOp{current}});
+        plan.execution.push_back({0,fhegpu::ComputeOp{fhegpu::ComputeKind::AddCP,{current[d],weights[d]},out,device_place(d),{}}});
+        plan.execution.push_back({0,fhegpu::ReleaseOp{current[d]}});
         if(r==rounds-1)plan.execution.push_back({0,fhegpu::ReleaseOp{weights[d]}});
-        current=out;
-        if(device_count>1) {
-            const int next=(d+1)%device_count;const auto moved=add_value(fhegpu::ValueKind::Ciphertext,device_place(next));
-            auto action=transfer_action(transfer_id++,fhegpu::ValueKind::Ciphertext,device_place(d),device_place(next));action.inputs={current};action.outputs={moved};
-            plan.execution.push_back({0,action});plan.execution.push_back({0,fhegpu::ReleaseOp{current}});current=moved;
+        current[d]=out;
+      }
+      if(device_count>1) {
+        std::vector<fhegpu::ValueId> moved(device_count);
+        for(int d=0;d<device_count;++d) {
+            const int next=(d+1)%device_count;moved[next]=add_value(fhegpu::ValueKind::Ciphertext,device_place(next));
+            auto action=transfer_action(transfer_id++,fhegpu::ValueKind::Ciphertext,device_place(d),device_place(next));
+            action.inputs={current[d]};action.outputs={moved[next]};plan.execution.push_back({0,action});
         }
+        for(auto id:current)plan.execution.push_back({0,fhegpu::ReleaseOp{id}});
+        current=std::move(moved);
+      }
     }
-    const auto result=add_value(fhegpu::ValueKind::Ciphertext,host_place());
-    auto download=transfer_action(transfer_id,fhegpu::ValueKind::Ciphertext,device_place(),host_place());download.inputs={current};download.outputs={result};
-    plan.finalization={{0,download},{0,fhegpu::ReleaseOp{current}}};plan.final_outputs={result};
+    for(int d=0;d<device_count;++d) {
+        const auto result=add_value(fhegpu::ValueKind::Ciphertext,host_place());
+        auto download=transfer_action(transfer_id++,fhegpu::ValueKind::Ciphertext,device_place(d),host_place());
+        download.inputs={current[d]};download.outputs={result};
+        plan.finalization.push_back({0,download});plan.finalization.push_back({0,fhegpu::ReleaseOp{current[d]}});
+        plan.final_outputs.push_back(result);
+    }
     std::size_t ordinal=0;for(auto *phase:{&plan.initialization,&plan.execution,&plan.finalization})for(auto &i:*phase)i.ordinal=ordinal++;
     fhegpu::WaterlineConfig config;config.device_capacity_bytes.assign(device_count,4ULL<<30);config.device_reserve_bytes.assign(device_count,2ULL<<30);
     config.host_budget_bytes=512ULL<<20;config.pinned_budget_bytes=64ULL<<20;config.raw_budget_bytes=32ULL<<20;
@@ -2146,8 +2202,9 @@ void test_waterline_runtime(const poseidon::PoseidonContext &context,
     std::unordered_map<fhegpu::ValueId,PoseidonGpuValue> inputs{{arg,PoseidonGpuValue::from_host_ciphertext(cipher)}};
     for(auto backend:{fhegpu::PrepareBackend::Cpu,fhegpu::PrepareBackend::Gpu,fhegpu::PrepareBackend::Auto}) {
         config.backend=backend;plan.waterline=config;
+        api.reset_delay();
         const auto begin=std::chrono::steady_clock::now();
-        fhegpu::SequentialRuntime<PoseidonGpuApi> runtime(0,1,device_count,api,fhegpu::DeviceExecutionMode::PerDeviceWorkers);
+        fhegpu::SequentialRuntime<DelayedWaterlineApi> runtime(0,1,device_count,api,fhegpu::DeviceExecutionMode::PerDeviceWorkers);
         auto artifact=runtime.run({plan,kPlanSha},{spec,std::nullopt,false},inputs);
         const auto measurements=api.waterline_measurements();
         std::cout<<"WATERLINE measurements cumulative_cpu_calls="<<measurements.cpu_prepare_calls
@@ -2160,15 +2217,31 @@ void test_waterline_runtime(const poseidon::PoseidonContext &context,
             std::cout<<"WATERLINE measurements GPU"<<d<<" allocated_peak="<<m.allocated_peak<<" allocated_live="<<m.allocated_live
                      <<" pool_reserved="<<m.pool_reserved<<" pool_cap="<<m.pool_capacity<<" gpu_encode_calls="<<m.gpu_encode_calls
                      <<" gpu_encode_ms="<<m.gpu_encode_nanoseconds/1e6<<" gpu_raw_h2d_bytes="<<m.gpu_raw_h2d_bytes
+                     <<" consumer_wait_calls="<<m.consumer_wait_calls<<" consumer_wait_ms="<<m.consumer_wait_nanoseconds/1e6
                      <<" gpu_raw_h2d_ms="<<m.gpu_raw_h2d_nanoseconds/1e6<<'\n';
         }
-        poseidon::Plaintext decoded;decryptor.decrypt(artifact.values.at(result).value.host_ciphertext(),decoded);
-        std::vector<std::complex<double>> slots;encoder.decode(decoded,slots);double maximum=0;
-        for(std::size_t i=0;i<slots.size();++i) {
-            const double expected=(i<input.size()?input[i]:0)+rounds*device_count*weight[i];
-            maximum=std::max(maximum,std::abs(slots[i]-expected));
+        double maximum=0;
+        for(auto result:plan.final_outputs) {
+            poseidon::Plaintext decoded;decryptor.decrypt(artifact.values.at(result).value.host_ciphertext(),decoded);
+            std::vector<std::complex<double>> slots;encoder.decode(decoded,slots);
+            for(std::size_t i=0;i<slots.size();++i) {
+                const double expected=(i<input.size()?input[i]:0)+rounds*weight[i];
+                maximum=std::max(maximum,std::abs(slots[i]-expected));
+            }
+            if(maximum>=1e-4) {
+                const auto &actual=artifact.values.at(result).value.host_ciphertext();
+                std::cout<<"Waterline failure output="<<result<<" components="<<actual.size()
+                         <<" level="<<actual.level()<<" scale="<<actual.scale()<<'\n';
+                for(std::size_t i=0;i<std::min<std::size_t>(4,slots.size());++i) {
+                    const double expected=(i<input.size()?input[i]:0)+rounds*weight[i];
+                    std::cout<<"Waterline failure slot="<<i<<" real="<<slots[i].real()
+                             <<" imag="<<slots[i].imag()<<" expected="<<expected<<'\n';
+                }
+            }
         }
-        std::cout << "Waterline diagnostic max=" << maximum << " slot0=" << slots[0] << " slot1=" << slots[1] << '\n';
+        if(device_count>1)require(api.peers_while_waiting.load()==static_cast<unsigned>(device_count-1),"not all peers completed before delayed GPU0");
+        std::cout << "Waterline diagnostic max=" << maximum << " outputs="<<plan.final_outputs.size()
+                  <<" peer_devices_completed_before_gpu0="<<api.peers_while_waiting.load()<<'\n';
         require(maximum<1e-4,"Waterline plaintext consumer numerical mismatch");
         require(artifact.timing.encode_calls==static_cast<std::size_t>(device_count),"shared Prepare was encoded more than once");
         std::cout<<"WATERLINE backend="<<int(backend)<<" devices="<<device_count<<" max_abs_error="<<maximum
@@ -2236,7 +2309,7 @@ int main()
                      context, key_generator, loaded_spec, rmm_pool); });
         run_test("Runtime Release during unfinished computation and transfer",
                  [&] { test_runtime_release(context, key_generator, loaded_spec, rmm_pool); });
-        run_test("online uploads and V3 plaintext batches in both execution modes",
+        run_test("online Encode/upload and explicit Fence in both execution modes",
                  [&] { test_runtime_plaintext_batches(context, key_generator, loaded_spec); });
         run_test("GPU AddCP/SubCP/Rotate reuse chains",
                  [&] { test_runtime_reuse(context, key_generator, loaded_spec, rmm_pool); });

@@ -1,0 +1,233 @@
+Start testing: Oct 13 16:59 CST
+----------------------------------------------------------
+1/7 Testing: runtime_waterline_tests
+1/7 Test: runtime_waterline_tests
+Command: "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-agent-tests/runtime_waterline_tests"
+Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-agent-tests
+"runtime_waterline_tests" start time: Oct 13 16:59 CST
+Output:
+----------------------------------------------------------
+waterline GPU0 front_peak=500 plain_peak=100 remaining_front=0 remaining_plain=0
+waterline shared host_peak=600 pinned_peak=50 raw_peak=20
+PASS Host waiter leaves the single CPU worker available for required Prepare
+waterline GPU0 front_peak=700 plain_peak=100 remaining_front=0 remaining_plain=0
+waterline shared host_peak=400 pinned_peak=50 raw_peak=20
+PASS one-plaintext waterline backend=0 resumes 20 consumers, oversized GPU candidate keeps legal CPU path
+waterline GPU0 front_peak=700 plain_peak=100 remaining_front=0 remaining_plain=0
+waterline shared host_peak=400 pinned_peak=50 raw_peak=20
+PASS one-plaintext waterline backend=2 resumes 20 consumers, oversized GPU candidate keeps legal CPU path
+PASS V4 JSON/binary inline and bundle round trips, strict config and Prepare rejection
+fatal runtime error: reason=Waterline single-group baseline infeasible at instruction #4 GPU0 front=500 plain=100 M=450 reserve=0 Host=300 pinned=50 raw=20 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+PASS later infeasible group rejects before initialization Encode/Transfer submission
+waterline GPU0 front_peak=800 plain_peak=200 remaining_front=0 remaining_plain=0
+waterline shared host_peak=400 pinned_peak=100 raw_peak=40
+PASS Prepare crosses explicit Fence and unused Prepare finishes without submission
+fatal runtime error: reason=injected Prepare allocation failure at attempt 2 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+waterline GPU0 front_peak=800 plain_peak=200 remaining_front=0 remaining_plain=0
+waterline shared host_peak=400 pinned_peak=100 raw_peak=40
+PASS injected second Prepare failure backend=0 surfaces exact error, workers converge, explicit same-runtime restart completes
+fatal runtime error: reason=injected Prepare allocation failure at attempt 2 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+waterline GPU0 front_peak=700 plain_peak=250 remaining_front=0 remaining_plain=0
+waterline shared host_peak=400 pinned_peak=50 raw_peak=20
+PASS injected second Prepare failure backend=1 surfaces exact error, workers converge, explicit same-runtime restart completes
+PASS four logical GPUs, GPU1/2/3 complete before GPU0, shared Host limits Prepare concurrency to 2, temporary/device credits returned
+waterline GPU0 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+waterline GPU1 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+waterline GPU2 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+waterline GPU3 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+waterline shared host_peak=1200 pinned_peak=100 raw_peak=40
+PASS four logical GPUs, GPU1/2/3 complete before GPU0, shared pinned limits Prepare concurrency to 2, temporary/device credits returned
+waterline GPU0 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+waterline GPU1 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+waterline GPU2 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+waterline GPU3 front_peak=500 plain_peak=150 remaining_front=0 remaining_plain=0
+waterline shared host_peak=1200 pinned_peak=100 raw_peak=40
+waterline GPU0 front_peak=800 plain_peak=200 remaining_front=0 remaining_plain=0
+waterline shared host_peak=400 pinned_peak=100 raw_peak=40
+PASS rolling backend=0 cpu=20 gpu=0
+waterline GPU0 front_peak=700 plain_peak=250 remaining_front=0 remaining_plain=0
+waterline shared host_peak=400 pinned_peak=50 raw_peak=20
+PASS rolling backend=1 cpu=0 gpu=20
+waterline GPU0 front_peak=1000 plain_peak=250 remaining_front=0 remaining_plain=0
+waterline shared host_peak=400 pinned_peak=100 raw_peak=40
+PASS rolling backend=2 cpu=19 gpu=1
+fatal runtime error: reason=Waterline single-group baseline infeasible at instruction #2 GPU0 front=500 plain=100 M=1000 reserve=0 Host=300 pinned=50 raw=20 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+fatal runtime error: reason=unsupported complete Prepare backend at ValueId 1 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+fatal runtime error: reason=Waterline single-group baseline infeasible at instruction #2 GPU0 front=500 plain=100 M=450 reserve=0 Host=300 pinned=50 raw=20 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+fatal runtime error: reason=Waterline single-group baseline infeasible at instruction #2 GPU0 front=500 plain=100 M=1000 reserve=0 Host=300 pinned=50 raw=20 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+fatal runtime error: reason=Waterline single-group baseline infeasible at instruction #2 GPU0 front=500 plain=100 M=1000 reserve=0 Host=300 pinned=50 raw=20 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+fatal runtime error: reason=Waterline single-group baseline infeasible at instruction #2 GPU0 front=500 plain=100 M=1000 reserve=0 Host=300 pinned=50 raw=20 plan_id=404 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+PASS complete atomic group, delayed events, continuous reclaim, no partial start on failure, V4 binary
+<end of output>
+Test time =   2.65 sec
+----------------------------------------------------------
+Test Passed.
+"runtime_waterline_tests" end time: Oct 13 16:59 CST
+"runtime_waterline_tests" time elapsed: 00:00:02
+----------------------------------------------------------
+
+2/7 Testing: pack_plaintext_bundle_tests
+2/7 Test: pack_plaintext_bundle_tests
+Command: "/usr/bin/python3.14" "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/tests/pack_plaintext_bundle_tests.py"
+Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-agent-tests
+"pack_plaintext_bundle_tests" start time: Oct 13 16:59 CST
+Output:
+----------------------------------------------------------
+....
+----------------------------------------------------------------------
+Ran 4 tests in 0.201s
+
+OK
+<end of output>
+Test time =   0.27 sec
+----------------------------------------------------------
+Test Passed.
+"pack_plaintext_bundle_tests" end time: Oct 13 16:59 CST
+"pack_plaintext_bundle_tests" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/7 Testing: runtime_tests
+3/7 Test: runtime_tests
+Command: "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-agent-tests/runtime_tests"
+Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-agent-tests
+"runtime_tests" start time: Oct 13 16:59 CST
+Output:
+----------------------------------------------------------
+[PASS] requirements and Vec operations
+[PASS] all compute metadata rules
+[PASS] inline Encode and Host compute
+fatal runtime error: reason=Api value metadata does not match ValueDesc 2 plan_id=2 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi op_ordinal=0 op=Transfer transfer_id=100
+fatal runtime error: reason=Api value metadata does not match ValueDesc 1 plan_id=2 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+[PASS] Device compute and full value validation
+[PASS] bundle reuse and rank-local files
+[PASS] Host and Device Boot paths
+fatal runtime error: reason=Api lacks required galois key at Device(rank=0,index=0) for rotation step 16383 at level 4 plan_id=2 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+fatal runtime error: reason=Api lacks required capability: transfer plan_id=2 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+fatal runtime error: reason=plan verification failed: OperatorSpec source SHA-256 mismatch plan_id=1 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+WARNING: rank 0 is running with skip_artifact_digest_checks=true; artifact digest comparisons are disabled
+WARNING: rank 0 is running with skip_artifact_digest_checks=true; artifact digest comparisons are disabled
+fatal runtime error: reason=plan verification failed: OperatorSpec id/version mismatch plan_id=1 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+[PASS] preflight and digest debug mode
+[PASS] Mock sync/async multi-rank matrix
+[PASS] multi-rank per-device workers
+[PASS] multi-rank bidirectional dependency chain
+[PASS] single-rank worker Replicate
+fatal runtime error: reason=injected compute failure plan_id=19791515590413388 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=1 api=MockVecApi
+fatal runtime error: reason=injected compute failure plan_id=19791515590413388 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+fatal runtime error: reason=injected communicate_async failure plan_id=19791515590413388 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=MockVecApi
+fatal runtime error: reason=injected communicate_async failure plan_id=19791515590413388 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=1 api=MockVecApi
+[PASS] multi-rank device-worker failures
+[PASS] drain reports unobserved async failure
+[PASS] communication results are delivered once
+[PASS] mixed posted and waited output slots
+ALL 15 TEST GROUPS PASSED
+<end of output>
+Test time =   0.09 sec
+----------------------------------------------------------
+Test Passed.
+"runtime_tests" end time: Oct 13 16:59 CST
+"runtime_tests" time elapsed: 00:00:00
+----------------------------------------------------------
+
+4/7 Testing: runtime_plan_json_tests
+4/7 Test: runtime_plan_json_tests
+Command: "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-agent-tests/runtime_plan_json_tests"
+Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-agent-tests
+"runtime_plan_json_tests" start time: Oct 13 16:59 CST
+Output:
+----------------------------------------------------------
+[PASS] SHA-256 covers raw file bytes
+[PASS] streaming plan order and buffer boundaries
+[PASS] valid RuntimePlan V1 samples
+[PASS] invalid RuntimePlan V1 samples
+[PASS] strict JSON and OperatorSpec constraints
+[PASS] strict SAX container parsing
+[PASS] Dacapo OperatorSpec V2 profiles
+[PASS] rank-local bundle loading
+[PASS] packed bundle offsets, residency and V3 execution
+ALL 9 JSON TEST GROUPS PASSED
+<end of output>
+Test time =   0.31 sec
+----------------------------------------------------------
+Test Passed.
+"runtime_plan_json_tests" end time: Oct 13 16:59 CST
+"runtime_plan_json_tests" time elapsed: 00:00:00
+----------------------------------------------------------
+
+5/7 Testing: runtime_plan_memory_tests
+5/7 Test: runtime_plan_memory_tests
+Command: "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-agent-tests/runtime_plan_memory_tests"
+Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-agent-tests
+"runtime_plan_memory_tests" start time: Oct 13 16:59 CST
+Output:
+----------------------------------------------------------
+[PASS] V2 CPU/GPU reuse chains and printing
+[PASS] version gates and strict memory fields
+[PASS] Release lifetime errors
+[PASS] reuse ownership, operation and metadata rules
+[PASS] operand uses across phases and communication
+[PASS] ordinary V1/V2 compatibility
+fatal runtime error: reason=AllValuesAfterRun is incompatible with Release/reuse_input plan_id=2001 plan_source_sha256=sha256:aa500c281c82dde14695d61488de9506987462497f337d64993a4401f206ce4f local_rank=0 api=MockVecApi op_ordinal=2 op=Release value_id=1
+fatal runtime error: reason=AllValuesAfterRun is incompatible with Release/reuse_input plan_id=2001 plan_source_sha256=sha256:96f7003f8293c70a7d813e5d3f5a4bcaff4805e59f7c2ce675c0de9d048b0543 local_rank=0 api=MockVecApi op_ordinal=2 op=Negate output=4 place=Host(rank=0)
+fatal runtime error: reason=AllValuesAfterRun is incompatible with Release/reuse_input plan_id=2001 plan_source_sha256=sha256:aa500c281c82dde14695d61488de9506987462497f337d64993a4401f206ce4f local_rank=0 api=MockVecApi op_ordinal=2 op=Release value_id=1
+fatal runtime error: reason=AllValuesAfterRun is incompatible with Release/reuse_input plan_id=2001 plan_source_sha256=sha256:96f7003f8293c70a7d813e5d3f5a4bcaff4805e59f7c2ce675c0de9d048b0543 local_rank=0 api=MockVecApi op_ordinal=2 op=Negate output=4 place=Host(rank=0)
+[PASS] memory execution rejected before API work
+[PASS] Release-only CPU/GPU V2 plans execute
+fatal runtime error: reason=Api does not support reuse_input for Negate plan_id=2001 plan_source_sha256=sha256:aa500c281c82dde14695d61488de9506987462497f337d64993a4401f206ce4f local_rank=0 api=MockVecApi op_ordinal=4 op=Negate output=4 place=Host(rank=0)
+[PASS] reuse chains preserve allocation and caller input
+[PASS] dense, sparse uint64 and reordered ValueId indexing
+ALL 10 MEMORY TEST GROUPS PASSED
+<end of output>
+Test time =   0.09 sec
+----------------------------------------------------------
+Test Passed.
+"runtime_plan_memory_tests" end time: Oct 13 16:59 CST
+"runtime_plan_memory_tests" time elapsed: 00:00:00
+----------------------------------------------------------
+
+6/7 Testing: runtime_release_tests
+6/7 Test: runtime_release_tests
+Command: "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-agent-tests/runtime_release_tests"
+Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-agent-tests
+"runtime_release_tests" start time: Oct 13 16:59 CST
+Output:
+----------------------------------------------------------
+fatal runtime error: reason=injected Encode failure plan_id=19791515590413388 plan_source_sha256=sha256:test local_rank=0 api=TrackingApi op_ordinal=8 op=Encode output=13
+fatal runtime error: reason=injected Encode failure plan_id=19791515590413388 plan_source_sha256=sha256:test local_rank=0 api=TrackingApi op_ordinal=8 op=Encode output=13
+fatal runtime error: reason=injected Encode failure plan_id=19791515590413388 plan_source_sha256=sha256:test local_rank=0 api=TrackingApi
+fatal runtime error: reason=injected Encode failure plan_id=19791515590413388 plan_source_sha256=sha256:test local_rank=0 api=TrackingApi
+[PASS] V3 streaming, Fence reclamation, deferred outputs and CPU failure
+[PASS] 20000 transfers and 625 Fence boundaries in each execution mode
+fatal runtime error: reason=AllValuesAfterRun is incompatible with Release/reuse_input plan_id=19791515590413388 plan_source_sha256=sha256:test local_rank=0 api=TrackingApi op_ordinal=3 op=Release value_id=1
+[PASS] cross-phase counts, repeated operands and repeated runs
+[PASS] Release before split Replicate submissions
+fatal runtime error: reason=injected second-send failure plan_id=19791515590413388 plan_source_sha256=sha256:test local_rank=0 api=TrackingApi
+[PASS] failed submission preserves source
+[PASS] abandoned posted/pending outputs in both execution modes
+[PASS] Mock multi-device and multi-rank Release fanout
+ALL 7 RELEASE TEST GROUPS PASSED
+<end of output>
+Test time =  32.88 sec
+----------------------------------------------------------
+Test Passed.
+"runtime_release_tests" end time: Oct 13 17:00 CST
+"runtime_release_tests" time elapsed: 00:00:32
+----------------------------------------------------------
+
+7/7 Testing: thread_trace_tests
+7/7 Test: thread_trace_tests
+Command: "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-agent-tests/thread_trace_tests"
+Directory: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-agent-tests
+"thread_trace_tests" start time: Oct 13 17:00 CST
+Output:
+----------------------------------------------------------
+thread trace test passed
+<end of output>
+Test time =   0.03 sec
+----------------------------------------------------------
+Test Passed.
+"thread_trace_tests" end time: Oct 13 17:00 CST
+"thread_trace_tests" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Oct 13 17:00 CST

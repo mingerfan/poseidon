@@ -766,11 +766,12 @@ void copy_poly_shard(
         "GpuKeySwitchHandler copy word count overflow");
     gpu_check_cuda(cudaSetDevice(destination.device_id), name);
     gpu_check_cuda(
-        cudaMemcpy(
+        cudaMemcpyAsync(
             destination.ptr,
             source.ptr,
             word_count * sizeof(GpuWord),
-            cudaMemcpyDeviceToDevice),
+            cudaMemcpyDeviceToDevice,
+            gpu_execution_stream()),
         name);
 }
 
@@ -2416,7 +2417,7 @@ void GpuKeySwitchHandler::hoist_decompose_modup_ntt(
                 source_shard.ptr + limb_begin * level_info.degree,
                 copied_q_words * sizeof(GpuWord),
                 cudaMemcpyDeviceToDevice,
-                nullptr),
+                gpu_execution_stream()),
             "double-hoist copy decomposition Q limbs");
         if (qp_fourstep)
         {

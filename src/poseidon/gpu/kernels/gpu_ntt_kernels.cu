@@ -57,9 +57,9 @@ void launch_profiled_ntt_stage(
     cudaEvent_t stop = nullptr;
     gpu_check_cuda(cudaEventCreate(&start), name);
     gpu_check_cuda(cudaEventCreate(&stop), name);
-    gpu_check_cuda(cudaEventRecord(start), name);
+    gpu_check_cuda(cudaEventRecord(start, gpu_execution_stream()), name);
     launch();
-    gpu_check_cuda(cudaEventRecord(stop), name);
+    gpu_check_cuda(cudaEventRecord(stop, gpu_execution_stream()), name);
     gpu_check_cuda(cudaEventSynchronize(stop), name);
 
     float elapsed_ms = 0.0f;
@@ -3611,11 +3611,12 @@ void copy_component_sources_to_destination(
     }
     const std::size_t count = component_count * component_stride;
     gpu_check_cuda(
-        cudaMemcpy(
+        cudaMemcpyAsync(
             first_destination_shard.ptr,
             first_source_shard.ptr,
             count * sizeof(GpuWord),
-            cudaMemcpyDeviceToDevice),
+            cudaMemcpyDeviceToDevice,
+            gpu_execution_stream()),
         name);
 }
 

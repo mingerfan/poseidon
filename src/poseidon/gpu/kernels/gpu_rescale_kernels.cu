@@ -1,4 +1,5 @@
 #include "poseidon/gpu/kernels/gpu_rescale_kernels.h"
+#include "poseidon/gpu/gpu_memory.h"
 
 #include <stdexcept>
 #include <string>
@@ -729,7 +730,7 @@ void launch_build_q_last_rescale_correction_poly_shard(
     const int grid_size = static_cast<int>(
         (total + block_size - 1) / block_size);
 
-    build_q_last_rescale_correction_kernel<<<grid_size, block_size>>>(
+    build_q_last_rescale_correction_kernel<<<grid_size, block_size, 0, gpu_execution_stream()>>>(
         correction_shard.ptr,
         q_last_coeff_shard.ptr,
         parameter_shard.rns_primes.data(),
@@ -769,7 +770,7 @@ void launch_apply_q_last_rescale_correction_poly_shard(
     const int grid_size = static_cast<int>(
         (total + block_size - 1) / block_size);
 
-    apply_q_last_rescale_correction_kernel<<<grid_size, block_size>>>(
+    apply_q_last_rescale_correction_kernel<<<grid_size, block_size, 0, gpu_execution_stream()>>>(
         destination_shard.ptr,
         source_shard.ptr,
         correction_ntt_shard.ptr,
@@ -822,7 +823,7 @@ void launch_reconstruct_q_last_two_centered_remainders(
         (total + block_size - 1) / block_size);
     reconstruct_q_last_two_centered_remainders_kernel<<<
         grid_size,
-        block_size>>>(
+        block_size, 0, gpu_execution_stream()>>>(
         centered_remainders,
         dropped_coefficients,
         parameter_shard.q_second_last,
@@ -872,7 +873,7 @@ void launch_build_q_last_two_rescale_correction_batch(
         (total + block_size - 1) / block_size);
     build_q_last_two_rescale_correction_batch_kernel<<<
         grid_size,
-        block_size>>>(
+        block_size, 0, gpu_execution_stream()>>>(
         correction,
         centered_remainders,
         parameter_shard.rns_primes.data(),
@@ -929,7 +930,7 @@ void launch_build_q_last_two_rescale_correction_batch_fused(
         (total + block_size - 1) / block_size);
     build_q_last_two_rescale_correction_batch_fused_kernel<<<
         grid_size,
-        block_size>>>(
+        block_size, 0, gpu_execution_stream()>>>(
         correction,
         dropped_coefficients,
         parameter_shard.rns_primes.data(),
@@ -992,7 +993,7 @@ void launch_apply_q_last_two_rescale_correction_batch2(
         (total + block_size - 1) / block_size);
     apply_q_last_two_rescale_correction_batch2_kernel<<<
         grid_size,
-        block_size>>>(
+        block_size, 0, gpu_execution_stream()>>>(
         destination0.ptr,
         destination1.ptr,
         source0.ptr,
@@ -1041,7 +1042,7 @@ void launch_convert_rescale_dropped_to_mixed_radix(
     const std::size_t total = component_count * degree;
     const int grid_size = static_cast<int>(
         (total + block_size - 1) / block_size);
-    convert_rescale_dropped_to_mixed_radix_kernel<<<grid_size, block_size>>>(
+    convert_rescale_dropped_to_mixed_radix_kernel<<<grid_size, block_size, 0, gpu_execution_stream()>>>(
         dropped_coefficients,
         parameter_shard.q_primes.data(),
         parameter_shard.q_modulus_constants.data(),
@@ -1090,7 +1091,7 @@ void launch_build_rescale_many_correction_batch(
         component_count * destination_q_count * degree;
     const int grid_size = static_cast<int>(
         (total + block_size - 1) / block_size);
-    build_rescale_many_correction_batch_kernel<<<grid_size, block_size>>>(
+    build_rescale_many_correction_batch_kernel<<<grid_size, block_size, 0, gpu_execution_stream()>>>(
         correction,
         mixed_radix_digits,
         parameter_shard.q_primes.data(),
@@ -1150,7 +1151,7 @@ void launch_apply_rescale_many_correction_poly_shard(
     const std::size_t total = destination_q_count * degree;
     const int grid_size = static_cast<int>(
         (total + block_size - 1) / block_size);
-    apply_rescale_many_correction_kernel<<<grid_size, block_size>>>(
+    apply_rescale_many_correction_kernel<<<grid_size, block_size, 0, gpu_execution_stream()>>>(
         destination_shard.ptr,
         source_shard.ptr,
         correction_ntt_shard.ptr,

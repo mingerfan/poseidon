@@ -33,7 +33,11 @@ than the preparation stream, with one active preparation per GPU.
 The backend checks the configured reserve against actual parameter/key storage
 and bounds for retained workspaces. Evaluation keys share one owning allocation
 across active Q levels. `POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB` caps the managed
-RMM pool; its cap plus measured outside-pool GPU usage must fit `M`. Active
+RMM pool; a scalar sets every visible device cap and a comma-separated list
+sets caps by CUDA ordinal. Admission also checks the allocator capacity after
+fixed allocations and retained cache reserves. Initial outside memory is
+recorded separately from subsequent usage so existing device occupancy is not
+charged as model storage. Active
 allocation peaks and retained pool bytes are reported separately. Custom memory
 resources used by allocation tests must provide their own physical limits.
 Shared Host credits cover runtime objects, raw payloads, encoder temporaries
@@ -53,7 +57,7 @@ CUDA_VISIBLE_DEVICES=1 /usr/bin/time -v \
 The fixture contains explicit Q/P bits, all inputs and reference outputs. The
 runner verifies every real and imaginary slot with fixed `atol=0.001` and
 `rtol=0.0001`. It sets a pool cap from the per-device capacities and records
-CPU encoding wall time and actual CUDA Encode/H2D event durations. Transport
+CPU encoding wall time and actual CUDA Encode/H2D/consumer-wait event durations. Transport
 H2D counters include Host cipher and CPU plaintext uploads; GPU raw uploads
 are counted separately, and direct setup key uploads are excluded.
 

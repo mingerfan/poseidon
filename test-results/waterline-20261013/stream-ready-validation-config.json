@@ -1,0 +1,26 @@
+{
+  "source_sha256": {
+    "src/poseidon/gpu/kernels/gpu_elementwise_kernels.cu": "e870f9bfffebeb8811722ea94907cd72b8a3e74676afdf81df31dd62f875773a",
+    "src/poseidon/gpu/kernels/gpu_ntt_kernels.cu": "9d192a9f7fcc180cf9be68c75b52334711f5dd5a5a11290250cb12c104ddbdc8",
+    "src/poseidon/gpu/kernels/gpu_double_hoist_kernels.cu": "39ec48d4f58a92a3fe5030b31244909eafcc4344c8d3f383b070a23a335dd13e",
+    "src/poseidon/gpu/kernels/gpu_keyswitch_kernels.cu": "ab486eda4ea60f391dcad6964b2eaba776c179725ddbb9b2cf4f9cb870a138e4",
+    "src/poseidon/gpu/kernels/gpu_rescale_kernels.cu": "b013ebdcf06f079d3d2c13f3eaea00ce146dddb394f7378bfcd1f9c90b8adc19",
+    "src/poseidon/gpu/gpu_evaluator.cpp": "e25955c95a9f6bdeab617e8d395fbf196c8100131eae66291b359fc7897bdf3e",
+    "src/poseidon/gpu/gpu_keyswitch_handler.cpp": "aaa96a3ecaa7011e3f9ab6d4ba06ea7aff8e9d18178b79e020d14e69ecf81a16",
+    "src/poseidon/gpu/gpu_uploader.cpp": "0df1b7cce11a15c917ed4b93a531f451d1319296bed9a4a041efd3fa4b233c3f",
+    "src/poseidon/runtime_api/poseidon_gpu_api.cpp": "13c33d8dca3833c0030b9a190bdabb539497d50af0ef635e615c0996dd50ef90",
+    "src/poseidon/runtime_api/poseidon_gpu_api.h": "82c6cb98f4222d2d980eddb0aaa13069c061db83074216467da25fdd5b7e246b"
+  },
+  "gpu": "index, name, uuid, driver_version, memory.total [MiB]\n0, NVIDIA GeForce RTX 4060 Laptop GPU, GPU-08fdbdc4-ecda-e2e3-ae01-a596e4e70914, 615.78.08, 8188 MiB\n",
+  "cuda_architectures": "89",
+  "cmake_build_type": "Release",
+  "build": "build-waterline-qwen-agent",
+  "scope": "local RTX4060 real CUDA dependency and regression tests; not the 188Server/full-model result",
+  "library_sha256": {
+    "libposeidon_gpu.a": "b6546d6371730e1995545bddbd805c02d1fb47c99b9b131b79220ab0113ad95b",
+    "libposeidon_runtime_gpu_api.a": "e1046cf865de365da7e7dd8eb06567ae794025f4ea400cf1473042533dc6dd80",
+    "libposeidon_shared.so": "d21625ce20553434c3be1ee793408f8cba480e369932dd5646c3d43c33d137ab",
+    "libruntime_core.a": "6c4d084c45728105ac9bd3ed63bcfd2b85462ebeb7510dc5b7f3335450f3d5bd"
+  },
+  "source_snapshot_note": "source_sha256 was captured before subsequent parent-agent source edits; library_sha256 identifies the libraries linked during this verification"
+}
