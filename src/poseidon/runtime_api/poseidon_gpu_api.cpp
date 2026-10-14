@@ -1697,8 +1697,11 @@ fhegpu::PrepareResources PoseidonGpuApi::prepare_resources(const fhegpu::ValueDe
         auto &device=device_state(desc.place,"GPU Prepare resources");
         if(!device.plaintext_encoder)device.plaintext_encoder=std::make_unique<GpuPlaintextEncoder>(n,device.cuda_device_id);
         peak.plain[desc.place.index]+=device.plaintext_encoder->workspace_bytes(q);
-        if(device.gpu_raw_pinned_cache_enabled)peak.host-=n*4;
-        else peak.pinned=n*4;
+        // Packed offset reads hold both byte storage and decoded slots (n*8)
+        // while an earlier Prepare's cached pinned buffer remains resident.
+        // The cache has separate fixed Host/pinned credit; it cannot replace
+        // either of those simultaneous ordinary Host read buffers.
+        if(!device.gpu_raw_pinned_cache_enabled)peak.pinned=n*4;
     } else throw std::invalid_argument("Prepare resource query needs a fixed backend");
     return {peak,resident,true};
 }

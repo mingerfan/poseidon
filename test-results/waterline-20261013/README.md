@@ -45,6 +45,8 @@ Waterline 已接通后期 Prepare 改写、完整消费者组准入、每设备�
 
 真实 CUDA OOM 清理还保留 [修复前负控](gpu-prepare-oom-local-v5-beforefix-negative-control.log) 与 [修复后正控](gpu-prepare-oom-local-v5-after-cleanup-fix.log)：旧 header 返回时 drain=0、dynamic=229376B、pinned=16384B，新版自动 drain 一次后归零。这是分配路径故障注入，不是耗尽整卡显存。完整 Qwen 同配置 HEFT 前后指纹仍未采集，缺少独立前态，见 [审计范围](full-qwen-heft-audit-scope.json)；最终 IR 自比不能补足该证据。
 
+额外修复了GPU缓存路径的Host读取额度：非resident packed读取会同时持有原始字节和decoded double数组，动态Host须保持`N*8`，已存活的pinned缓存另计固定`N*4`。旧公式每次读取少计`N*4`（N16384时64KiB）。本地 [新版API 21/21](gpu-packed-host-budget-tests.log) 通过；真实packed暖缓存、公开Ledger/API边界的紧预算拒绝、足额预算编码全部2048复数槽通过，旧公式隔离负控确实错误接受紧预算并失败，见 [绑定与范围](gpu-packed-host-budget-result.json)。这条专门边界未执行完整Runtime结构，不能扩大为该结构的端到端反例。当前188完整模型仍使用修复前的Host计费公式和已验证的预乘数学路径；此修正不改Rescale、编码或HEFT，后续资源结论须单列差额，不能把运行中旧二进制当作新公式的验证。
+
 ## 完整 Qwen 目标与执行边界
 
 正式模型为 `Qwen/Qwen3-0.6B`，revision `c1899de289a04d12100db370d81485cdf75e47ca`，权重 SHA256 `f47f71177f32bcd101b7573ec9171e6a57f4f4d31148d38e382306f42996874b`。已核验 311 个 BF16 张量、751632384 个存储参数（含重复 tied LM head；去重 596049920）。模型完整 28 层、hidden1024、FFN3072、16 Q heads、8 KV heads、head dim128、vocab151936；Q/K norm 在 RoPE 前，无 attention bias，共享 embedding/LM head。历史 24 层合成模型不能替代此目标。

@@ -1,0 +1,71 @@
+{
+  "scope": "Local GPU API and public WaterlineLedger resource boundary; real packed nonresident reads, warmed persistent cache, full-slot GPU encoding. The same tight-boundary full Runtime plan was not executed.",
+  "fix": "Retain n*8 dynamic Host charge for packed byte storage plus decoded slots. Cached pinned allocation remains a separate fixed n*4 Host and n*4 pinned reservation, so no dynamic pinned charge.",
+  "lifetime": {
+    "nonresident_byte_storage": "n*4 bytes survives through decode_slots return expression",
+    "decoded_vector": "n*4 bytes coexists with byte storage",
+    "cache": "n*4 pinned bytes remains alive from first GPU Prepare until drain",
+    "runtime_read_serialization": "prepare_read_mutex_ serializes read_encode_slots, so simultaneous global read temporary peaks are serialized; per-request bound was short n*4.",
+    "n16384_missing_per_prepare_host_bytes": 65536
+  },
+  "positive": {
+    "command": [
+      "env",
+      "CUDA_VISIBLE_DEVICES=0",
+      "OMP_NUM_THREADS=1",
+      "build-runtime-gpu-api-release/bin/poseidon_runtime_gpu_api_tests"
+    ],
+    "exit_code": 0,
+    "api_test_count": 21,
+    "n": 4096,
+    "fixed_host_bytes": 16384,
+    "dynamic_host_bytes": 32768,
+    "tight_host_budget_bytes": 40960,
+    "tight_admitted": false,
+    "adequate_host_budget_bytes": 49152,
+    "adequate_admitted": true,
+    "packed_resident_bytes": 0,
+    "packed_reads": 2,
+    "second_read_with_warm_cache": true,
+    "cache_allocations": 1,
+    "cache_frees": 1,
+    "slots_checked": 2048,
+    "maximum_complex_absolute_error": 6.3145e-17,
+    "evidence_lines": [
+      "GPU_PACKED_PREPARE_HOST_BOUND N=4096 fixed_host=16384 dynamic_host=32768 tight_budget=40960 complete_budget=49152 warm_cache_live=16384 tight_admitted=0",
+      "GPU_PACKED_PREPARE_HOST_BOUND positive_budget=49152 resident_bytes=0 packed_reads=2 second_read_with_cache=true allocations=1 frees=1 slots_checked=2048 max_abs_including_imaginary=6.3145e-17 scope=API_Ledger_boundary_not_full_Runtime",
+      "GPU_RAW_PINNED_CACHE devices=1 sequential_prepares_per_device=10 allocations=1 frees=1 fixed_host=16384 fixed_pinned=16384 pinned_live=0 max_abs_including_imaginary=1.26179e-16 overlap_rejected=true ready_reconfigure_requires_drain=true",
+      "21 Poseidon GPU Runtime Api tests passed"
+    ]
+  },
+  "old_formula_negative_control": {
+    "command": [
+      "python3",
+      "test-results/waterline-20261013/gpu-packed-host-budget-negative-control.py",
+      "--output",
+      "build-waterline-sync/gpu-packed-host-budget-negative-v1"
+    ],
+    "private_api_exit_code": 1,
+    "old_dynamic_host_bytes": 16384,
+    "tight_admitted": true,
+    "expected_assertion": "cached GPU packed-read Host boundary incorrectly admitted the tight budget",
+    "detected": true,
+    "shared_inputs_unchanged": true,
+    "exact_private_diff": "--- production/poseidon_gpu_api.cpp\n+++ private/poseidon_gpu_api_old.cpp\n@@ -1697,11 +1697,8 @@\n         auto &device=device_state(desc.place,\"GPU Prepare resources\");\n         if(!device.plaintext_encoder)device.plaintext_encoder=std::make_unique<GpuPlaintextEncoder>(n,device.cuda_device_id);\n         peak.plain[desc.place.index]+=device.plaintext_encoder->workspace_bytes(q);\n-        // Packed offset reads hold both byte storage and decoded slots (n*8)\n-        // while an earlier Prepare's cached pinned buffer remains resident.\n-        // The cache has separate fixed Host/pinned credit; it cannot replace\n-        // either of those simultaneous ordinary Host read buffers.\n-        if(!device.gpu_raw_pinned_cache_enabled)peak.pinned=n*4;\n+        if(device.gpu_raw_pinned_cache_enabled)peak.host-=n*4;\n+        else peak.pinned=n*4;\n     } else throw std::invalid_argument(\"Prepare resource query needs a fixed backend\");\n     return {peak,resident,true};\n }\n",
+    "private_binary_sha256": "sha256:8d76dbd841571cacc72eb2fe23d3d50ee07eb2d7f799fd861f699e9b294f46f8",
+    "private_build_and_binding_evidence": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-sync/gpu-packed-host-budget-negative-v1/result.json"
+  },
+  "source_and_artifact_sha256": {
+    "src/poseidon/runtime_api/poseidon_gpu_api.cpp": "sha256:6c0eb3f2979a5a1af150c1b38b342a85d9c92c9e9cc8a3412d597416b852586d",
+    "src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp": "sha256:d0eea37498e6a84dc08d8068e1faecc24544b94f34ecfe4261ce2092e35e625f",
+    "third_party/ckks-runtime/runtime/plaintext_bundle.cpp": "sha256:915744e48e6e2240ccc932bf0beed0adad57dd13966b529bdf64b7d29c2c5a8c",
+    "third_party/ckks-runtime/runtime/runtime.hpp": "sha256:7bab128568d96fb8b74eecd05cc4e8b11092cf02c3ea99bc886c3074f084282a",
+    "build-runtime-gpu-api-release/bin/poseidon_runtime_gpu_api_tests": "sha256:b0b6e815e31bb27a149f464aa38fb10f2e229e022ad8c0c9a6247d5ef433a184",
+    "build-runtime-gpu-api-release/bin/poseidon_runtime_gpu_qwen_e2e": "sha256:81f8cf10fd2e614462333398a9e110a85e0a8f1a4092f8f84d3c335b6727959c",
+    "test-results/waterline-20261013/gpu-packed-host-budget-negative-control.py": "sha256:ff3f445ddae183aeabdedd6ae06db9b314b878b969f04d9cf1fd0994f9f6cb33",
+    "test-results/waterline-20261013/gpu-packed-host-budget-tests.log": "sha256:69517c8e414e6f66c0028f6e8462d7ee0baf1a2421bb3235be64be4775a65554",
+    "test-results/waterline-20261013/gpu-packed-host-budget-negative-control.log": "sha256:efc0cfd287435e6b4433be86a8911f81b606d5de8b76f433e9a14336206409b2"
+  },
+  "server_or_deployment_actions": false,
+  "staged_or_committed": false
+}

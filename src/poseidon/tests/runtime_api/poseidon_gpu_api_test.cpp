@@ -8,6 +8,7 @@
 #include "poseidon/runtime_api/poseidon_gpu_api.h"
 #include "poseidon/runtime_api/communication/cuda_local_transfer.h"
 #include "runtime/runtime.hpp"
+#include "runtime/utils/sha256.hpp"
 
 #include <cuda_runtime_api.h>
 #include <rmm/mr/device/cuda_memory_resource.hpp>
@@ -21,6 +22,9 @@
 #include <cmath>
 #include <complex>
 #include <condition_variable>
+#include <cstring>
+#include <filesystem>
+#include <fstream>
 #include <functional>
 #include <future>
 #include <iostream>
@@ -2221,7 +2225,8 @@ void test_gpu_raw_pinned_cache(const poseidon::PoseidonContext &context,
         slots[0]=.125+step*.01;
         for(int d=0;d<device_count;++d) {
             const auto cost=api.prepare_resources(plan.values[d],fhegpu::PrepareBackend::Gpu);
-            require(cost.peak.pinned==0 && cost.peak.host==n*4,"GPU cache was charged again as dynamic pinned/Host storage");
+            require(cost.peak.pinned==0 && cost.peak.host==n*8,
+                    "GPU cached Prepare omitted coexisting packed byte storage and decoded slots");
             auto value=api.prepare_plaintext_async(plan.values[d],slots,fhegpu::PrepareBackend::Gpu);
             api.synchronize(value);api.collect_completed();
             if(step==9) {
@@ -2269,6 +2274,108 @@ void test_gpu_raw_pinned_cache(const poseidon::PoseidonContext &context,
              <<" allocations="<<Pinned::allocation_calls()-allocations<<" frees="<<Pinned::free_calls()-frees
              <<" fixed_host="<<fixed.host<<" fixed_pinned="<<fixed.pinned<<" pinned_live="<<Pinned::live_bytes()
              <<" max_abs_including_imaginary="<<maximum<<" overlap_rejected=true ready_reconfigure_requires_drain=true\n";
+}
+
+void test_gpu_packed_prepare_host_budget(const poseidon::PoseidonContext &context,
+                                         const fhegpu::LoadedOperatorSpec &spec)
+{
+    using Pinned=poseidon::runtime_api::communication::PinnedHostBuffer;
+    PoseidonGpuApi api(kContextId,context,kDeviceId);
+    const auto n=context.parameters_literal()->degree();
+    const auto level=static_cast<int>(context.parameters_literal()->q().size()-1);
+    const std::uint64_t fixed_host=4*n,read_host=8*n;
+    const std::uint64_t tight_budget=10*n,sufficient_budget=fixed_host+read_host;
+    const auto directory=std::filesystem::temp_directory_path()/
+        ("poseidon-gpu-packed-host-"+std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
+    require(std::filesystem::create_directory(directory),"cannot create packed Host-budget fixture directory");
+    struct RemoveFixture {
+        std::filesystem::path path;
+        ~RemoveFixture(){std::error_code error;std::filesystem::remove_all(path,error);}
+    } cleanup{directory};
+    std::vector<double> first(n/2),second(n/2);
+    for(std::size_t i=0;i<first.size();++i) {
+        first[i]=.125*std::cos(i*.137);
+        second[i]=.0625*std::sin(i*.191);
+    }
+    std::ofstream pack(directory/"data.bin",std::ios::binary);
+    const auto write_payload=[&](const std::vector<double> &values) {
+        std::string bytes(values.size()*8,'\0');
+        for(std::size_t i=0;i<values.size();++i) {
+            std::uint64_t bits;std::memcpy(&bits,&values[i],sizeof(bits));
+            for(int b=0;b<8;++b)bytes[i*8+b]=static_cast<char>((bits>>(b*8))&255);
+        }
+        pack.write(bytes.data(),static_cast<std::streamsize>(bytes.size()));
+        return "sha256:"+fhegpu::sha256_hex(bytes);
+    };
+    const auto first_content=write_payload(first),second_content=write_payload(second);
+    pack.close();require(bool(pack),"cannot write packed Host-budget fixture");
+    const std::uint64_t payload_bytes=first.size()*sizeof(double);
+    std::ostringstream manifest;
+    manifest<<"{\"bundle_format_version\":2,\"bundle_id\":\"gpu-packed-host\",\"version\":1,\"pack_byte_length\":"
+            <<2*payload_bytes<<",\"blobs\":[{\"content\":\""<<first_content<<"\",\"offset\":0,\"byte_length\":"
+            <<payload_bytes<<"},{\"content\":\""<<second_content<<"\",\"offset\":"<<payload_bytes
+            <<",\"byte_length\":"<<payload_bytes<<"}]}";
+    std::ofstream manifest_file(directory/"manifest.json");manifest_file<<manifest.str();manifest_file.close();
+    require(bool(manifest_file),"cannot write packed Host-budget manifest");
+    const fhegpu::PlaintextBundleRef reference{"gpu-packed-host",1,"sha256:"+fhegpu::sha256_hex(manifest.str())};
+    auto loader=fhegpu::PlaintextBundleLoader::open(directory,reference,{first_content,second_content},n/2,false);
+    require(loader.resident_bytes()==0,"packed Host-budget fixture unexpectedly uses resident mode");
+    fhegpu::RuntimePlan plan;plan.format_version=4;plan.target=make_target(spec);
+    plan.values={{0,fhegpu::ValueKind::Plaintext,device_place(),kContextId,level,kDefaultScaleLog2,true,1}};
+    plan.execution={{0,fhegpu::PreparePlaintextOp{fhegpu::BundleEncodePayload{first_content},0}}};
+    fhegpu::WaterlineConfig config;config.backend=fhegpu::PrepareBackend::Gpu;
+    config.device_capacity_bytes={4ULL<<30};config.device_reserve_bytes={2ULL<<30};config.device_fractions={.02};
+    config.host_budget_bytes=sufficient_budget;config.pinned_budget_bytes=fixed_host;config.raw_budget_bytes=read_host;
+    plan.waterline=config;api.validate_waterline_resources(plan);
+    const auto fixed=api.waterline_fixed_resources();
+    require(fixed.host==fixed_host && fixed.pinned==fixed_host,"packed cache fixed reservation is incomplete");
+    require(Pinned::live_bytes()==0,"packed Host-budget test starts with pending pinned storage");
+    const auto allocations=Pinned::allocation_calls(),frees=Pinned::free_calls();
+    {
+        auto slots=loader.read(first_content);
+        auto warm=api.prepare_plaintext_async(plan.values[0],slots,fhegpu::PrepareBackend::Gpu);
+        api.synchronize(warm);api.collect_completed();
+    }
+    require(Pinned::allocation_calls()-allocations==1 && Pinned::live_bytes()==fixed_host,
+            "first packed Prepare did not leave one persistent pinned cache");
+    const auto cost=api.prepare_resources(plan.values[0],fhegpu::PrepareBackend::Gpu);
+    auto tight_config=config;tight_config.host_budget_bytes=tight_budget;
+    fhegpu::WaterlineLedger tight(tight_config);tight.reserve(fixed);
+    std::cout<<"GPU_PACKED_PREPARE_HOST_BOUND N="<<n<<" fixed_host="<<fixed.host<<" dynamic_host="<<cost.peak.host
+             <<" tight_budget="<<tight_budget<<" complete_budget="<<sufficient_budget
+             <<" warm_cache_live="<<Pinned::live_bytes()<<" tight_admitted="<<tight.fits(cost.peak)<<'\n';
+    require(!tight.fits(cost.peak),"cached GPU packed-read Host boundary incorrectly admitted the tight budget");
+    fhegpu::WaterlineLedger sufficient(config);sufficient.reserve(fixed);
+    require(sufficient.fits(cost.peak),"complete cached GPU packed-read budget was rejected");
+    sufficient.reserve(cost.peak);
+    std::optional<PoseidonGpuValue> encoded;
+    {
+        // The loader owns byte storage while decode_slots allocates its result.
+        // The first Prepare's pinned cache remains live throughout this read.
+        require(Pinned::live_bytes()==fixed_host,"warm GPU cache disappeared before the second packed read");
+        auto slots=loader.read(second_content);
+        require(slots==second,"second packed payload was decoded incorrectly");
+        encoded.emplace(api.prepare_plaintext_async(plan.values[0],slots,fhegpu::PrepareBackend::Gpu));
+        api.synchronize(*encoded);api.collect_completed();
+    }
+    auto temporary=cost.peak;temporary-=cost.resident;sufficient.release(temporary);
+    poseidon::Plaintext host;poseidon::gpu::GpuUploader::download_plaintext(encoded->device_plaintext(),host,context);
+    poseidon::CKKSEncoder encoder(context);std::vector<std::complex<double>> actual;encoder.decode(host,actual);
+    require(actual.size()==second.size(),"GPU packed-read boundary changed slot count");
+    double maximum=0;
+    for(std::size_t i=0;i<actual.size();++i) {
+        require(std::isfinite(actual[i].real()) && std::isfinite(actual[i].imag()),"GPU packed-read returned nonfinite slots");
+        maximum=std::max(maximum,std::abs(actual[i]-second[i]));
+    }
+    require(maximum<1e-4,"GPU packed-read positive boundary numerical mismatch");
+    encoded.reset();sufficient.release(cost.resident);api.drain();
+    require(Pinned::allocation_calls()-allocations==1 && Pinned::free_calls()-frees==1 && Pinned::live_bytes()==0,
+            "packed positive case did not reuse and drain exactly one GPU pinned cache");
+    require(sufficient.peak.host==sufficient_budget && sufficient.used.host==fixed.host,
+            "packed positive case did not charge the complete read peak or release temporary Host credit");
+    std::cout<<"GPU_PACKED_PREPARE_HOST_BOUND positive_budget="<<sufficient_budget<<" resident_bytes="<<loader.resident_bytes()
+             <<" packed_reads=2 second_read_with_cache=true allocations=1 frees=1 slots_checked="<<actual.size()
+             <<" max_abs_including_imaginary="<<maximum<<" scope=API_Ledger_boundary_not_full_Runtime\n";
 }
 
 void test_cpu_prepare_host_budget(const poseidon::PoseidonContext &context,
@@ -2564,6 +2671,9 @@ int main()
         const auto loaded_spec = make_operator_spec(context);
         if (std::getenv("POSEIDON_WATERLINE_ONLY")) {
             test_gpu_plaintext_wide_coefficients(context);
+            run_test("GPU cached packed-read complete Host budget negative/positive boundary",[&] {
+                test_gpu_packed_prepare_host_budget(context,loaded_spec);
+            });
             test_gpu_raw_pinned_cache(context,loaded_spec,device_count);
             run_test("CPU Prepare complete Host budget negative/positive boundary",[&] {
                 test_cpu_prepare_host_budget(context,key_generator,loaded_spec);
@@ -2572,6 +2682,9 @@ int main()
             return 0;
         }
         RmmPoolScope rmm_pool(kDeviceId);
+        run_test("GPU cached packed-read complete Host budget negative/positive boundary",[&] {
+            test_gpu_packed_prepare_host_budget(context,loaded_spec);
+        });
         run_test("CPU Prepare complete Host budget negative/positive boundary",[&] {
             test_cpu_prepare_host_budget(context,key_generator,loaded_spec);
         });

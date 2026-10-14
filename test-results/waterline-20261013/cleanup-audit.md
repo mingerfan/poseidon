@@ -17,7 +17,7 @@
 
 ## 资源与语义
 
-统一执行器按完整消费者组、拓扑前缀与真实 Ready 推进；同时限制每卡 plain、水位、front/工作区/通信、allocator容量及共享Host/pinned/raw。固定GPU表、key backing和retained workspace先核对reserve。CPU plaintext与pinned上传源同时计Host；GPU raw pinned按每卡固定缓存计费，Ready前禁止覆写。失败返回前drain并清理runtime所有权，原始错误直接传播，不自动重试或换后端。
+统一执行器按完整消费者组、拓扑前缀与真实 Ready 推进；同时限制每卡 plain、水位、front/工作区/通信、allocator容量及共享Host/pinned/raw。固定GPU表、key backing和retained workspace先核对reserve。CPU plaintext与pinned上传源同时计Host；GPU raw pinned按每卡固定缓存计费，Ready前禁止覆写。非resident packed读取的字节存储与decoded数组同时存活，动态Host保持N*8，不能因固定缓存另计而减去其中一份，专门正负控见 [Host读取边界](gpu-packed-host-budget-result.json)。失败返回前drain并清理runtime所有权，原始错误直接传播，不自动重试或换后端。
 
 计费Host不包括调用者context、Host keys、fixture/reference和图元数据，另记录进程RSS。RMM live、reserved和driver占用分别报告；外部占用不归给模型。GPU event与Host API时长不相加为端到端墙钟。Native Boot的Waterline工作区界尚不支持，普通显式Native Boot保留。模型Host refresh使用秘密钥，security level none。
 

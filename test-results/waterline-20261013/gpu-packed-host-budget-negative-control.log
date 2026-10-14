@@ -1,0 +1,7 @@
+[PASS] internal RMM pool lifetime
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=10071128 retained_workspace_bound=0 reserve_required=77179992 reserve_configured=2147483648
+waterline GPU0 custom_memory_resource=true physical_pool_cap=provider_owned
+GPU_PACKED_PREPARE_HOST_BOUND N=4096 fixed_host=16384 dynamic_host=16384 tight_budget=40960 complete_budget=49152 warm_cache_live=16384 tight_admitted=1
+[FAIL] cached GPU packed-read Host boundary incorrectly admitted the tight budget
+PASS: private old-resource API incorrectly admitted the tight budget, as expected
