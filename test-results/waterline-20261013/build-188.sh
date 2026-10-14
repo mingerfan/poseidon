@@ -31,6 +31,8 @@ sha256sum "$base/build/bin/poseidon_runtime_cpu_api_tests" \
   "$base/build/bin/poseidon_runtime_gpu_prepare_oom_tests" \
   "$base/build/bin/poseidon_runtime_gpu_qwen_e2e" \
   "$base/src/src/poseidon/runtime_api/poseidon_gpu_api.cpp" \
+  "$base/src/src/poseidon/runtime_api/poseidon_cpu_api.cpp" \
+  "$base/src/src/poseidon/runtime_api/rescale_normalization.h" \
   "$base/src/third_party/ckks-runtime/runtime/runtime.hpp" \
   > "$base/logs/latest-build.status"
 printf 'BUILD_COMPLETE\n'

@@ -7,6 +7,7 @@ run_label=${POSEIDON_ACCEPTANCE_LABEL:-qwen3-bsgs-q50-auto-final}
 full_backend=${POSEIDON_QWEN_BACKEND:-auto}
 case "$full_backend" in cpu|gpu|auto) ;; *) printf 'invalid Qwen backend: %s\n' "$full_backend" >&2; exit 2 ;; esac
 run_logs="$base/logs/$run_label"
+prior_checks=${POSEIDON_VERIFIED_PRESSURE_DIR:-}
 cd "$base"
 if (( wait_pid > 0 )); then
   printf 'waiting_for_existing_model_pid=%s\n' "$wait_pid"
@@ -23,14 +24,25 @@ sha256sum -c "$base/logs/latest-build.status"
 test "$(/opt/conda/bin/python -c 'import json,sys;print(json.load(open(sys.argv[1]))["returncode"])' \
   "$base/qwen3-plans-bsgs-q50/gpu4/status.json")" = 0
 mkdir "$run_logs"
+if test -n "$prior_checks"; then
+  test "$(cat "$prior_checks/exit-status")" = 0
+  cmp "$base/logs/latest-build.status" "$prior_checks/build.status"
+  printf '%s\n' "$prior_checks" > "$run_logs/reused-pressure-source.txt"
+fi
 nvidia-smi --query-gpu=index,uuid,memory.total,memory.used,ecc.errors.uncorrected.volatile.total \
   --format=csv > "$run_logs/devices-before.csv"
 for selection in single all host-staged; do
+  if test -n "$prior_checks" && test -f "$prior_checks/waterline-$selection.log"; then
+    cp -p "$prior_checks/waterline-$selection.log" "$run_logs/waterline-$selection.log"
+    printf 'pressure_reused selection=%s source=%s\n' "$selection" "$prior_checks"
+    continue
+  fi
   visible=0,1,2,3
   staged=0
   if test "$selection" = single; then visible=1; fi
   if test "$selection" = host-staged; then staged=1; fi
   /usr/bin/time -v env CUDA_VISIBLE_DEVICES="$visible" OMP_NUM_THREADS=1 \
+    POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB="${POSEIDON_PRESSURE_POOL_MB:-2560}" \
     POSEIDON_WATERLINE_ONLY=1 POSEIDON_WATERLINE_LOG_N=16 \
     POSEIDON_WATERLINE_Q_COUNT=32 POSEIDON_WATERLINE_SCALE=40 \
     POSEIDON_WATERLINE_HOST_STAGED="$staged" \

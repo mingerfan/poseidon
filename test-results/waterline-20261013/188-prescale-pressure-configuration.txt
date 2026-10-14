@@ -1,0 +1,3 @@
+pressure_pool_cap_mib=2560
+reason=bound pool below M with headroom for changing outside process memory
+prior_failed_checks=/home/xuming/poseidon-waterline-20261013/logs/prescale-lazy40-checks

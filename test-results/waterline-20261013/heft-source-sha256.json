@@ -1,0 +1,20 @@
+{
+  "scope": "HEFT source content unchanged only; not complete-model placement/order comparison",
+  "repository": "third_party/ckks-runtime/third_party/dacapo",
+  "baseline_revision": "39c1fb2",
+  "current_revision": "ad35c87",
+  "sources": [
+    {
+      "path": "lib/Dialect/CKKS/Transforms/AssignPlacement.cpp",
+      "39c1fb2_sha256": "6c0738775b77e3131376e8c49467f8dc6f4b8fa5aef666c81d08e3eb28ae5e46",
+      "ad35c87_sha256": "6c0738775b77e3131376e8c49467f8dc6f4b8fa5aef666c81d08e3eb28ae5e46",
+      "identical": true
+    },
+    {
+      "path": "lib/Dialect/Earth/Transforms/LatencyEstimator.cpp",
+      "39c1fb2_sha256": "848b5fab24e69321f21abbf151d74214a673a177cc61e3d8e2c34ca3b3222e19",
+      "ad35c87_sha256": "848b5fab24e69321f21abbf151d74214a673a177cc61e3d8e2c34ca3b3222e19",
+      "identical": true
+    }
+  ]
+}

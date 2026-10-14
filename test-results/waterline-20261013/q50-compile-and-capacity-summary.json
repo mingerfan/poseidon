@@ -1,0 +1,33 @@
+{
+  "complete_model_execution": false,
+  "numerical_validation_complete": false,
+  "model": "Qwen/Qwen3-0.6B",
+  "all_gpu_compile": {
+    "devices": 4,
+    "pid": 57546,
+    "elapsed_seconds": 1801.7053502649069,
+    "returncode": 0
+  },
+  "all_gpu_single_group_bytes": [
+    8401649664,
+    8391819264,
+    8415412224,
+    8138522624
+  ],
+  "prepare_count": 1419183,
+  "groups": 8291298,
+  "single_gpu_capacity": {
+    "returncode": 1,
+    "instruction": 5350733,
+    "front_objects_bytes": 25766133760,
+    "foreground_workspace_bytes": 1073741824,
+    "plain_and_prepare_workspace_bytes": 3932160,
+    "required_total_bytes": 26843807744,
+    "capacity_after_reserve_bytes": 26843545600,
+    "excess_bytes": 262144,
+    "scope": "This configured Q50 single-card baseline is infeasible; not a proof that every possible single-card model implementation is impossible."
+  },
+  "full_model_backend_planned_first": "gpu",
+  "scope": "Q50 logical40 lazy compile/capacity. The earlier postmultiply API rejected Rescale preflight; the prescale correction reuses this same compiled plan.",
+  "historical_hold": "User requested clearing every GPU occupation before full execution; current xuming SSH account cannot signal UID1020 PID61592 and sudo -n requires password."
+}

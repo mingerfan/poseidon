@@ -1,0 +1,37 @@
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=5936620 retained_workspace_bound=0 reserve_required=73045484 reserve_configured=268435456
+waterline physical GPU0 pool_reserved=67108864 pool_cap=536870912 initial_outside_used=323747840 outside_pool_growth=6291456 allocator_graph_capacity=463825428
+waterline GPU0 front_peak=458752 plain_peak=311312 remaining_front=0 remaining_plain=0
+waterline shared host_peak=1622016 pinned_peak=360448 raw_peak=32768
+waterline fixed GPU0 persistent_bytes=5936620 retained_workspace_bound=0 reserve_required=73045484 reserve_configured=268435456
+waterline physical GPU0 pool_reserved=67108864 pool_cap=536870912 initial_outside_used=323747840 outside_pool_growth=6291456 allocator_graph_capacity=463825428
+fatal runtime error: reason=std::bad_alloc plan_id=491 plan_source_sha256=sha256:1111111111111111111111111111111111111111111111111111111111111111 local_rank=0 api=PoseidonGpuApi
+OOM propagated=true gpu_attempts=1 cpu_attempts=0 consumer_calls=0 real_allocation_calls=2 allocator_failures=1 stream_gate_inflight=true run_waited_for_gate=true fixed_bytes=5936620 allocated_live_after_failed_run=5936620 injected_dynamic_live_after_failed_run=0 pinned_live_after_failed_run=0 automatic_drain_calls=1
+waterline fixed GPU0 persistent_bytes=5936620 retained_workspace_bound=0 reserve_required=73045484 reserve_configured=268435456
+waterline physical GPU0 pool_reserved=67108864 pool_cap=536870912 initial_outside_used=323747840 outside_pool_growth=6291456 allocator_graph_capacity=463825428
+waterline GPU0 front_peak=458752 plain_peak=311312 remaining_front=0 remaining_plain=0
+waterline shared host_peak=1622016 pinned_peak=360448 raw_peak=32768
+[PASS] real CUDA GPU Prepare allocation failure: propagated=true automatic_drain=true dynamic_live=0 pinned_live=0 implicit_retry=false cpu_fallback=false runtime_kept_alive=true explicit_same_runtime_next_run=true complex_slots=2048 max_abs_error=4.00156e-08
+	Command being timed: "env CUDA_VISIBLE_DEVICES=1 OMP_NUM_THREADS=1 /home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_gpu_prepare_oom_tests"
+	User time (seconds): 0.13
+	System time (seconds): 1.04
+	Percent of CPU this job got: 74%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:01.57
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 134076
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 13641
+	Voluntary context switches: 760
+	Involuntary context switches: 6
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 8
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

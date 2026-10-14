@@ -1,0 +1,63 @@
+runtime memory _hecate_qwen3_0_6b rank=0 device=-1 peak=2.500000e+02 MiB
+runtime memory _hecate_qwen3_0_6b rank=0 device=0 peak=5.127059e+05 MiB
+runtime memory _hecate_qwen3_0_6b rank=0 device=1 peak=5.198512e+05 MiB
+runtime memory _hecate_qwen3_0_6b rank=0 device=2 peak=5.235181e+05 MiB
+runtime memory _hecate_qwen3_0_6b rank=0 device=3 peak=5.228234e+05 MiB
+runtime-plan-io {"build_seconds":922.013901919,"bundle_bytes":61298262016,"bundle_format_version":2,"bundle_reuse_verify_seconds":0.0,"constant_conversion_seconds":399.07801396503487,"constant_hash_seconds":331.40247948298367,"constant_write_seconds":49.33215686100038,"duplicate_hits":483661,"export_seconds":924.693548782,"instructions":19401319,"layout_seconds":16.142576293,"manifest_bytes":44902487,"manifest_seconds":1.045505634,"plan_bytes":1185203847,"plan_format":"binary","plan_hash_seconds":0.0,"plan_serialize_seconds":null,"plan_sha256":"","plan_write_seconds":0.7140086419999998,"pretty":false,"process_peak_rss_bytes":136268066816,"rss_end_bytes":135440965632,"rss_start_bytes":134492946432,"unique_blobs":935465,"values":9710483}
+===-------------------------------------------------------------------------===
+                         ... Execution time report ...
+===-------------------------------------------------------------------------===
+  Total Execution Time: 1790.6033 seconds
+
+  ----Wall Time----  ----Name----
+   77.2064 (  4.3%)  Parser
+   55.5511 (  3.1%)  'func.func' Pipeline
+    5.6256 (  0.3%)    RemoveBootstrap
+   32.1662 (  1.8%)    GreedyBootstrapPlacement
+   17.7593 (  1.0%)    EarlyModswitch
+   41.5572 (  2.3%)  Canonicalizer
+   19.8828 (  1.1%)  CSE
+    0.0000 (  0.0%)    (A) DominanceInfo
+   10.6370 (  0.6%)  CSE
+   17.2033 (  1.0%)  Canonicalizer
+  1431.8270 ( 80.0%)  'func.func' Pipeline
+   25.5540 (  1.4%)    EarthToCKKSConversion
+    6.7602 (  0.4%)    UpscaleToMulcpConversion
+    7.2751 (  0.4%)    CSE
+    0.0000 (  0.0%)      (A) DominanceInfo
+    9.4035 (  0.5%)    Canonicalizer
+    7.6412 (  0.4%)    MaterializePhysicalLevels
+  101.1219 (  5.6%)    AssignPlacement
+   56.1528 (  3.1%)    MaterializeCommunication
+  108.1362 (  6.0%)    PlanPlaintextWaterline
+   72.7724 (  4.1%)    PlanRuntimeMemory
+   75.3776 (  4.2%)    EstimateRuntimeMemory
+  961.6319 ( 53.7%)    EmitRuntimePlan
+  126.9271 (  7.1%)  Output
+    6.7896 (  0.4%)  Rest
+  1790.6033 (100.0%)  Total
+Depth-DP bootstrap boundaries: 1147
+Number of Bootstrapping: 13275
+	Command being timed: "/home/xuming/poseidon-waterline-20261013/toolchain/lib/ld-linux-x86-64.so.2 --library-path /home/xuming/poseidon-waterline-20261013/toolchain/lib:/opt/conda/lib:/lib/x86_64-linux-gnu /home/xuming/poseidon-waterline-20261013/toolchain/bin/hecate-opt --dacapo --boot-placement=depth-dp --ckks-config=/home/xuming/poseidon-waterline-20261013/profiles/compiler-profile.json --waterline=40 --mlir-timing --mlir-print-op-on-diagnostic=false --mlir-elide-elementsattrs-if-larger=16 --runtime-plan-id=3104 --runtime-plan-target-id=poseidon-ckks-gpu --runtime-plan-capability-version=1 --runtime-plan-operator-spec-id=poseidon-ckks-gpu-16384-q50-estimated-v1 --runtime-plan-operator-spec-version=1 --runtime-plan-operator-spec-sha256=sha256:e8f930e66494a3cce6ecf9b46a196fbde9974490ae62b08429fa4452f3e1770d --runtime-plan-context-id=poseidon-ckks-gpu-16384-q50-estimated --runtime-plan-ntt=true --runtime-plan-boot-profile=poseidon-gpu-host-boot-v1 --runtime-plan-boot-implementation=decrypt_reencrypt --runtime-plan-inline-payload-max-bytes=4096 --runtime-plan-physical-level-operator-spec-path=/home/xuming/poseidon-waterline-20261013/profiles/operator-spec.json --runtime-plan-levels-per-logical-level=5 --runtime-plan-device-count=4 --runtime-plan-device-counts=4 --runtime-plan-operator-spec-path=/home/xuming/poseidon-waterline-20261013/profiles/operator-spec.json --runtime-plan-communication-profile-path=/home/xuming/poseidon-waterline-20261013/profiles/communication-profile.json --runtime-plan-memory=true --runtime-plan-memory-reuse=true --runtime-plan-memory-report=true --runtime-plan-plaintext-schedule=waterline --runtime-plan-prepare-backend=auto --runtime-plan-gpu-budget-bytes=33285996544 --runtime-plan-reserve-bytes=6442450944 --runtime-plan-workspace-bytes-per-op=1073741824 --runtime-plan-host-budget-bytes=68719476736 --runtime-plan-pinned-budget-bytes=1073741824 --runtime-plan-raw-budget-bytes=67108864 --runtime-plan-waterline-fraction=0.5 --runtime-plan-lookahead-groups=8 --runtime-plan-format=binary --runtime-plan-bundle-format=pack --runtime-plan-report-io=true /home/xuming/poseidon-waterline-20261013/qwen3-traced-bsgs/trace_qwen3.mlirbc -o /home/xuming/poseidon-waterline-20261013/qwen3-plans-bsgs-q50/gpu4/qwen3.mlir"
+	User time (seconds): 1622.96
+	System time (seconds): 172.77
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 30:00.36
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 137245980
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 55849414
+	Voluntary context switches: 183
+	Involuntary context switches: 5027
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 132364872
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

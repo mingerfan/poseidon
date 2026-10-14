@@ -21,3 +21,7 @@ CPU/GPU 共同按实际 prime 选择原生 Rescale 次数。设输入 scale 为 
 预乘修复新增 CPU API 9/9 正控：scale40、drop5/6，54次全2048复数槽独立dense oracle，包含两层CP/CC交叉及AddCC/AddCP，最坏maxabs=5.0261e-8；见 `cpu-rescale-prescale-tests.log`。原target80/120、50-bit模数与target20拒绝回归通过。GPU与组合图、188Server当前修复版及完整模型另行记录；完整模型尚未验收。完整模型容差保持 atol=0.001、rtol=0.0001，未因修复放宽。
 
 预乘最终版本地组合正控见 [脚本](lazy-rescale-composite-regression.py)、[结果](lazy-rescale-composite-regression.json)、[日志](lazy-rescale-composite-regression.log)：生产BSGS线性、平方/全槽求和、polynomial/mask、RMS和深层polynomial共6输出，每后端检查49152槽。逻辑40的CPU/GPU/Auto最大误差分别4.44192e-5 / 8.73261e-5 / 5.26052e-5；120约2.15e-10。原定atol=.001、rtol=.0001未改；两者均5次Host refresh，但41/36次Rescale、部分最终level/scale不同，因此不把120称为原lazy40图的等价配置。实际Q对应的77条normalizer检查全部通过，相对误差最大4.7473e-10。脚本、header、compiler与runner hash绑定已核对。旧后乘API的scale40失败见 [负控日志](rescale-postmultiply-composite-negative-control.log)。
+
+188新预乘版通过CPU9/9、GPU20/20、scalar16组、Prepare真实分配失败清理，以及单卡/全部四卡默认通信/全部四卡HostStaged压力；[源码与binary绑定](188-prescale-build.status)、[监督退出0](188-prescale-exit-status)。同一小图40/120六路也在物理GPU1通过，[40 GPU报告](188-prescale-composite-scale40-gpu-report.json)。使用公开 [组合运行脚本](run-lazy-rescale-composite-188.sh) 可复用生成的两个小图目录，生成目录及日志label必须新建。
+
+组合图复现：`python test-results/waterline-20261013/lazy-rescale-composite-regression.py --output build-lazy-rescale-fresh`。将其 `scale40/`、`scale120/` 中的plan、spec、fixture及bundle复制到188的输入目录后，设置 `POSEIDON_COMPOSITE_INPUT_DIR` 和新的 `POSEIDON_COMPOSITE_LABEL` 执行上述脚本。单独保存 `latest-build.status`；不复制大模型权重或大模型plan到仓库。

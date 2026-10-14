@@ -1,0 +1,9 @@
+/home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_cpu_api_tests: OK
+/home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_gpu_api_tests: OK
+/home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_gpu_scalar_tests: OK
+/home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_gpu_prepare_oom_tests: OK
+/home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_gpu_qwen_e2e: OK
+/home/xuming/poseidon-waterline-20261013/src/src/poseidon/runtime_api/poseidon_gpu_api.cpp: OK
+/home/xuming/poseidon-waterline-20261013/src/src/poseidon/runtime_api/poseidon_cpu_api.cpp: OK
+/home/xuming/poseidon-waterline-20261013/src/src/poseidon/runtime_api/rescale_normalization.h: OK
+/home/xuming/poseidon-waterline-20261013/src/third_party/ckks-runtime/runtime/runtime.hpp: OK
