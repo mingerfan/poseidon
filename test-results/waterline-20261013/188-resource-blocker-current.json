@@ -1,0 +1,57 @@
+{
+  "timestamp": "2026-10-14T19:09:53.543447+08:00",
+  "devices": [
+    {
+      "physical_gpu": 0,
+      "uuid": "GPU-3adfe50d-ee5b-8583-e867-04cbc0e21509",
+      "total_MiB": 32768,
+      "used_MiB": 22736,
+      "free_MiB": 9764,
+      "volatile_uncorrected_ECC": 0
+    },
+    {
+      "physical_gpu": 1,
+      "uuid": "GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5",
+      "total_MiB": 32768,
+      "used_MiB": 2,
+      "free_MiB": 32498,
+      "volatile_uncorrected_ECC": 0
+    },
+    {
+      "physical_gpu": 2,
+      "uuid": "GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6",
+      "total_MiB": 32768,
+      "used_MiB": 25272,
+      "free_MiB": 7228,
+      "volatile_uncorrected_ECC": 0
+    },
+    {
+      "physical_gpu": 3,
+      "uuid": "GPU-0650e59e-7268-0a1a-8c3e-58f09c3e7fa2",
+      "total_MiB": 32768,
+      "used_MiB": 2,
+      "free_MiB": 32498,
+      "volatile_uncorrected_ECC": 0
+    }
+  ],
+  "processes": [
+    {
+      "physical_gpu": 0,
+      "pid": 148819,
+      "uid": 1016,
+      "owner": "songxingnuo",
+      "memory_MiB": 22734
+    },
+    {
+      "physical_gpu": 2,
+      "pid": 185614,
+      "uid": 1020,
+      "owner": "hanshubin",
+      "memory_MiB": 25270
+    }
+  ],
+  "our_uid": 1012,
+  "our_gpu_process_count": 0,
+  "other_user_processes_untouched": true,
+  "full_qwen_numeric_acceptance_complete": false
+}

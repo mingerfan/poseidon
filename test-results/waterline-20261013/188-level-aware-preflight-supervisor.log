@@ -1,0 +1,29 @@
+9538b7a3a38089888ce674f8c84cb24de46878d9711b643924ba1bbd23860364  /home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_cpu_api_tests
+73c59fc4bcefb4c0ccec9eb8066b4938cbb7f7c0fbbb25f3994ca0f4501cd0a3  /home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_gpu_api_tests
+6afcc863fdef7fac3d530b97b3f4ca5feee320fabe58384d4b3d5bbf2fab55a6  /home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_gpu_scalar_tests
+18cd3ed496bbd9de4024d9bb62c057727c74051b3ccb851d56016543556ba33d  /home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_gpu_prepare_oom_tests
+c261b9a5846b53fdab32f189e3b86a13923fc073fbced9630f22e42fb4422e73  /home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_gpu_qwen_e2e
+af90f47096fd338a95d17d48850f549eb271e7725e2c2e1e82e86475b259d2bd  /home/xuming/poseidon-waterline-20261013/src/src/poseidon/runtime_api/poseidon_gpu_api.cpp
+af575c6157a7ea632d3deeb4a74a5d0806b9fa0ef2fd975243891f656ad856eb  /home/xuming/poseidon-waterline-20261013/src/src/poseidon/runtime_api/poseidon_gpu_api.h
+7c28ff9e1b744546f32303845b37374c85248e3c2177330562f6c2b48ede35c4  /home/xuming/poseidon-waterline-20261013/src/src/poseidon/runtime_api/poseidon_cpu_api.cpp
+7a3aea61b4a1446505bbca9b7b666d5f5fac57d9ef32a65b8e6fda2421d0e42b  /home/xuming/poseidon-waterline-20261013/src/src/poseidon/runtime_api/rescale_normalization.h
+962f909e152d705e8e3a68e190437bc6b0eb09abe6099b5ec0470711ad46962c  /home/xuming/poseidon-waterline-20261013/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp
+2df303eeef2d1d3fb86dca2c59b3b6a68b8da42268f75065d8a081d23e2efbe3  /home/xuming/poseidon-waterline-20261013/src/src/poseidon/tests/runtime_api/poseidon_gpu_prepare_oom_test.cpp
+7bab128568d96fb8b74eecd05cc4e8b11092cf02c3ea99bc886c3074f084282a  /home/xuming/poseidon-waterline-20261013/src/third_party/ckks-runtime/runtime/runtime.hpp
+/home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_cpu_api_tests: OK
+/home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_gpu_api_tests: OK
+/home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_gpu_scalar_tests: OK
+/home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_gpu_prepare_oom_tests: OK
+/home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_gpu_qwen_e2e: OK
+/home/xuming/poseidon-waterline-20261013/src/src/poseidon/runtime_api/poseidon_gpu_api.cpp: OK
+/home/xuming/poseidon-waterline-20261013/src/src/poseidon/runtime_api/poseidon_gpu_api.h: OK
+/home/xuming/poseidon-waterline-20261013/src/src/poseidon/runtime_api/poseidon_cpu_api.cpp: OK
+/home/xuming/poseidon-waterline-20261013/src/src/poseidon/runtime_api/rescale_normalization.h: OK
+/home/xuming/poseidon-waterline-20261013/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp: OK
+/home/xuming/poseidon-waterline-20261013/src/src/poseidon/tests/runtime_api/poseidon_gpu_prepare_oom_test.cpp: OK
+/home/xuming/poseidon-waterline-20261013/src/third_party/ckks-runtime/runtime/runtime.hpp: OK
+pressure_reused selection=single source=/home/xuming/poseidon-waterline-20261013/logs/level-aware-rescale-final-checks-20261014
+pressure_reused selection=all source=/home/xuming/poseidon-waterline-20261013/logs/level-aware-rescale-final-checks-20261014
+pressure_reused selection=host-staged source=/home/xuming/poseidon-waterline-20261013/logs/level-aware-rescale-final-checks-20261014
+full_model_backend=gpu pid=188271
+full_model_failed backend=gpu status=1

@@ -48,3 +48,5 @@ ctest --test-dir build-waterline-prefix-audit -V
 实际被测测试源码 SHA-256 为 `eef77e8dac64d591705554fbf97cf81691eba8fa5b227b83352f3e63f1f9221e`，独立 `runtime_waterline_tests` binary 为 `5d50201a7db5f0efd49f7bc5cfd3c04def59cc62744cab794fd7a2717c40521d`。新两个反例全部卡 front_peak=500/plain_peak=150、Host_peak=1000，Host 受限版 pinned_peak=150，pinned 受限版 pinned_peak=600；所有卡 remaining_front/plain 都为 0。峰值在完整测试日志内是对应 PASS 紧接的 stderr 输出；输出次序受缓冲影响。
 
 以上缺项应按其专门结构补证据，或者在交付中明确验证范围；不能将有实现代码、CTest 总通过或有限小图数值通过扩大成尚未执行的反例及完整模型验收。
+
+最新完整尝试仍未验收：[现有资源阻塞](188-resource-blocker.md)。physical2他人占用使actual reserved graph credit低于MulCP完整组；该条workspace为0，尚未进入图计算，不是新的Rescale工作区回归。需要可用全四卡窗口继续，不以编译器保守额度诊断充当不可优化的物理下界。

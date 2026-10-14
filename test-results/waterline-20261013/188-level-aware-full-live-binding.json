@@ -1,0 +1,38 @@
+{
+  "timestamp": "2026-10-14T18:57:22.584464+08:00",
+  "pid": 188271,
+  "uid": 1012,
+  "start_ticks": "244752127",
+  "argv": [
+    "/home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_gpu_qwen_e2e",
+    "/home/xuming/poseidon-waterline-20261013/qwen3-plans-bsgs-q50/gpu4/qwen3._hecate_qwen3_0_6b.runtime-plan.bin",
+    "/home/xuming/poseidon-waterline-20261013/profiles/operator-spec.json",
+    "/home/xuming/poseidon-waterline-20261013/qwen3-runner-bsgs-q50.json",
+    "/home/xuming/poseidon-waterline-20261013/logs/qwen3-bsgs-q50-level-aware-gpu-20261014/model-report.json",
+    "/home/xuming/poseidon-waterline-20261013/logs/qwen3-bsgs-q50-level-aware-gpu-20261014/model-decoded.json",
+    "--bundle",
+    "/home/xuming/poseidon-waterline-20261013/qwen3-plans-bsgs-q50/gpu4/qwen3._hecate_qwen3_0_6b.bundle",
+    "--backend",
+    "gpu",
+    "--trace",
+    "/home/xuming/poseidon-waterline-20261013/logs/qwen3-bsgs-q50-level-aware-gpu-20261014/model.trace"
+  ],
+  "exe_sha256": "c261b9a5846b53fdab32f189e3b86a13923fc073fbced9630f22e42fb4422e73",
+  "environment": {
+    "CUDA_VISIBLE_DEVICES": "1,2,3,0",
+    "OMP_NUM_THREADS": "1",
+    "POSEIDON_GPU_RUNTIME_INITIAL_POOL_MB": null,
+    "POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB": null
+  },
+  "plan": {
+    "path": "/home/xuming/poseidon-waterline-20261013/qwen3-plans-bsgs-q50/gpu4/qwen3._hecate_qwen3_0_6b.runtime-plan.bin",
+    "bytes": 1185203847,
+    "mtime_ns": 1791903803228194232,
+    "inode": 219103946,
+    "previous_verified_sha256": "9e906c0d32983dccbea866a7d506e677d039b57d537caa4d9bd0c568f61de813",
+    "unchanged_stat_from_full_heft_audit": true,
+    "rehash_during_live_run": false
+  },
+  "poseidon_source_commit": "c17effa2",
+  "numerical_acceptance_complete": false
+}

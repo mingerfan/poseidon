@@ -25,3 +25,5 @@
 该版本的完整预检随后在#17049920又遇7,350,368B缺口，仍为Rescale/physical0且零compute，见 [报告](188-plan-bound-preflight-model-report.json)。输入level14/Q15、target9/drop5，按Qfull50仍过计。当前再用`Qb=min(Qfull,target_level+validated_plan_max_gap+1)`计算该Rescale的临时上界，保留全部`(4+3g)`系数、三分量界及完整Q的固定scratch reserve。ContextData level恒为Q数量减1，且实际gap≤计划最大gap；故Qb覆盖输入及所有中间前缀。无需描述符缓存，数学和HEFT不动。该条workspace变为18,677,760B；单条静态余量不替代整图新预检。
 
 当前 [本地24/24](level-aware-rescale-api-validation.json)与 [188最终同版检查](188-level-aware-checks-summary.json)已通过。新增真实3分量Q8/160→40/drop5，临时分配1,474,560B低于2,490,368B额度，2048复数槽独立dense square最大误差5.93641e-11；原5/6、cap8/50、全Q clamp、重复/失败验证状态检查保留。188单卡/全部四卡/HostStaged三后端压力max均<1e-6、动态front/plain与pinned收尾为0；CPU9、GPU24、scalar16、真实Prepare故障及q_proj三后端通过。当前runner `c261b9a5…`，完整模型仍待新运行与独立数值验收。
+
+最新c17effa2完整尝试在另一张受占用卡（logical1/physical2）的MulCP组被拒绝，workspace=0，当前reserved graph credit小于完整组；还没有图计算或完整数值结果。详见 [当前资源阻塞](188-resource-blocker.md)。不能用此次资源拒绝证明或否定完整模型数值精度，也不从不存在的MulCP workspace继续扣预算。

@@ -1,0 +1,51 @@
+{
+  "pid": 153204,
+  "samples": 756,
+  "first_timestamp": "2026-10-14T15:09:54.093810+08:00",
+  "last_timestamp": "2026-10-14T17:39:06.706725+08:00",
+  "sample_span_seconds": 8952.612895604689,
+  "peak_sampled_rss_bytes": 34421383168,
+  "peak_observed_hwm_bytes": 34421383168,
+  "gpu": [
+    {
+      "physical_gpu": 0,
+      "uuid": "GPU-3adfe50d-ee5b-8583-e867-04cbc0e21509",
+      "sampled_peak_bytes": 10202644480
+    },
+    {
+      "physical_gpu": 1,
+      "uuid": "GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5",
+      "sampled_peak_bytes": 11125391360
+    },
+    {
+      "physical_gpu": 2,
+      "uuid": "GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6",
+      "sampled_peak_bytes": 20891828224
+    },
+    {
+      "physical_gpu": 3,
+      "uuid": "GPU-0650e59e-7268-0a1a-8c3e-58f09c3e7fa2",
+      "sampled_peak_bytes": 20891828224
+    }
+  ],
+  "missing_rss_samples": 0,
+  "missing_hwm_samples": 0,
+  "inputs": {
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-20261013/188-q50-lazy40-failed-model-memory.jsonl": "sha256:e970d667fac242b3c9f16b028a71309c5fd82a8788d75b55fc45474498799061",
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-20261013/188-q50-lazy40-failed-devices-before.csv": "sha256:ce431cf40e00140e32e5ec2ce724189dc794b71670305d99d4625812432efe5e"
+  },
+  "command": [
+    "/usr/bin/python3",
+    "test-results/waterline-20261013/plot-model-resources.py",
+    "--memory",
+    "test-results/waterline-20261013/188-q50-lazy40-failed-model-memory.jsonl",
+    "--devices",
+    "test-results/waterline-20261013/188-q50-lazy40-failed-devices-before.csv",
+    "--output",
+    "test-results/waterline-20261013/188-q50-lazy40-failed-resource-history",
+    "--label",
+    "Failed Qwen forward (PID 153204): sampled process memory"
+  ],
+  "scope": "Interval samples, not continuous allocator peaks; no other PID's GPU memory is included.",
+  "host_scope": "RSS includes context, keys, graph and caller data outside the managed Host budget."
+}

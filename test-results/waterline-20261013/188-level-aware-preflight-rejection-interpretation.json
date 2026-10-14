@@ -1,0 +1,158 @@
+{
+  "scope": "Failed level-aware sourcec17effa2/af90f470 full-run preflight, PID188271, all4 GPU-only mask1,2,3,0. No online compute or numerical full-forward acceptance.",
+  "model_exit_code": 1,
+  "supervisor_exit_code": 1,
+  "zero_compute_evidence": {
+    "trace_bytes": 54,
+    "trace_header_only": true,
+    "report_passed": false,
+    "report_stage": "execute_complete_plan",
+    "full_model_ckks_validated": false
+  },
+  "failure": {
+    "ordinal": 16527122,
+    "reason": "Waterline single-group baseline infeasible",
+    "logical_gpu": 1,
+    "physical_gpu": 2,
+    "uuid": "GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6",
+    "pci_bus_id": "0000:07:00.0",
+    "front_bytes": 6064701440,
+    "plain_bytes": 3538944,
+    "front_plus_plain_bytes": 6068240384,
+    "allocator_graph_capacity_bytes": 6067443616,
+    "deficit_bytes": 796768,
+    "deficit_MiB": 0.759857177734375,
+    "pool_reserved_equals_cap_bytes": 8399093760,
+    "initial_outside_used_bytes": 25076432896
+  },
+  "instruction": {
+    "ordinal": 16527122,
+    "binary_offset": 1066193838,
+    "compute_kind": "MulCP",
+    "inputs": [
+      10307782,
+      7569536
+    ],
+    "output": 6143417,
+    "place_kind": "Device",
+    "rank": 0,
+    "logical_gpu": 1,
+    "physical_gpu": 2,
+    "attribute_tag": 0,
+    "attributes": null,
+    "reuse_input": null
+  },
+  "descriptors": {
+    "10307782": {
+      "id": 10307782,
+      "kind": "Ciphertext",
+      "place_kind": "Device",
+      "rank": 0,
+      "logical_gpu": 1,
+      "physical_gpu": 2,
+      "context_string_index": 0,
+      "level": 14,
+      "scale_log2": 40,
+      "ntt": true,
+      "components": 2,
+      "binary_value_record_index": 9025639,
+      "binary_offset": 386058193
+    },
+    "7569536": {
+      "id": 7569536,
+      "kind": "Plaintext",
+      "place_kind": "Device",
+      "rank": 0,
+      "logical_gpu": 1,
+      "physical_gpu": 2,
+      "context_string_index": 0,
+      "level": 14,
+      "scale_log2": 120,
+      "ntt": true,
+      "components": 1,
+      "binary_value_record_index": 6287393,
+      "binary_offset": 290219583
+    },
+    "6143417": {
+      "id": 6143417,
+      "kind": "Ciphertext",
+      "place_kind": "Device",
+      "rank": 0,
+      "logical_gpu": 1,
+      "physical_gpu": 2,
+      "context_string_index": 0,
+      "level": 14,
+      "scale_log2": 160,
+      "ntt": true,
+      "components": 2,
+      "binary_value_record_index": 4863567,
+      "binary_offset": 240385673
+    }
+  },
+  "workspace_scope": {
+    "MulCP_instruction_workspace_bytes": 0,
+    "source_fact": "instruction_workspace handles MulCP with break and zero extra front bytes. Output value storage is separately charged.",
+    "Prepare_input": "Plaintext7569536 is device level14/scale120, components1. GPU-only admission includes its resident value plus GPU encoder scratch peak.",
+    "gpu_prepare_workspace_formula": "degree*20 + degree*active_Q*4 + fft_work_bytes, in addition to the plaintext resident allocation; cuFFT work bytes come from plan construction.",
+    "plain_total_is_combined_ledger_usage": "The rejected group plain field is a combined ledger demand. The bounded decoder alone cannot exclude another already-resident plaintext or determine the exact per-buffer decomposition.",
+    "conclusion": "This failed group is MulCP, not Rescale. Its own instruction workspace is already zero. No additional Rescale resource-bound change is justified by this rejection."
+  },
+  "live_execution_binding": {
+    "parent_file": "188-level-aware-full-live-binding.json",
+    "parent_file_sha256": "fc056b99f0d697af04ab997cdec2f4e1686b12f620136aeb0cff6fe25f6585c9",
+    "pid": 188271,
+    "start_ticks": "244752127",
+    "exe_sha256": "c261b9a5846b53fdab32f189e3b86a13923fc073fbced9630f22e42fb4422e73",
+    "mask": "1,2,3,0",
+    "plan": {
+      "path": "/home/xuming/poseidon-waterline-20261013/qwen3-plans-bsgs-q50/gpu4/qwen3._hecate_qwen3_0_6b.runtime-plan.bin",
+      "bytes": 1185203847,
+      "mtime_ns": 1791903803228194232,
+      "inode": 219103946,
+      "previous_verified_sha256": "9e906c0d32983dccbea866a7d506e677d039b57d537caa4d9bd0c568f61de813",
+      "unchanged_stat_from_full_heft_audit": true,
+      "rehash_during_live_run": false
+    }
+  },
+  "source_bindings": {
+    "src/poseidon/runtime_api/poseidon_gpu_api.cpp": {
+      "source": "/home/xuming/poseidon-waterline-20261013/src/src/poseidon/runtime_api/poseidon_gpu_api.cpp",
+      "bytes": 150442,
+      "sha256": "af90f47096fd338a95d17d48850f549eb271e7725e2c2e1e82e86475b259d2bd",
+      "local_sha256_at_collection": "af90f47096fd338a95d17d48850f549eb271e7725e2c2e1e82e86475b259d2bd",
+      "matches_local_at_collection": true
+    },
+    "src/poseidon/runtime_api/rescale_normalization.h": {
+      "source": "/home/xuming/poseidon-waterline-20261013/src/src/poseidon/runtime_api/rescale_normalization.h",
+      "bytes": 2452,
+      "sha256": "7a3aea61b4a1446505bbca9b7b666d5f5fac57d9ef32a65b8e6fda2421d0e42b",
+      "local_sha256_at_collection": "7a3aea61b4a1446505bbca9b7b666d5f5fac57d9ef32a65b8e6fda2421d0e42b",
+      "matches_local_at_collection": true
+    },
+    "src/poseidon/runtime_api/gpu_plaintext_encoder.cu": {
+      "source": "/home/xuming/poseidon-waterline-20261013/src/src/poseidon/runtime_api/gpu_plaintext_encoder.cu",
+      "bytes": 8594,
+      "sha256": "1e376e8a17a6c7ffdbe96e9c5fa236af6768b84f67e8a6dd11e485453fb0f59c",
+      "local_sha256_at_collection": "1e376e8a17a6c7ffdbe96e9c5fa236af6768b84f67e8a6dd11e485453fb0f59c",
+      "matches_local_at_collection": true
+    }
+  },
+  "existing_parent_files_unchanged": {
+    "188-level-aware-full-launch.json": {
+      "bytes": 1555,
+      "sha256": "80c5e4907027f9fe0d0fe0db776836135f8f9ca8fd647904196fa771f64acdad"
+    },
+    "188-level-aware-full-live-binding.json": {
+      "bytes": 1748,
+      "sha256": "fc056b99f0d697af04ab997cdec2f4e1686b12f620136aeb0cff6fe25f6585c9"
+    }
+  },
+  "limitations": [
+    "No API submit/GPU completion or numerical output was recorded. FORWARD begin alone was not treated as preflight success.",
+    "This was a shared-device run. Actual physically reserved capacity, not exclusive-device performance, determined the rejection.",
+    "The guard checks front plus plain. Front alone is slightly below capacity and must not be used to dismiss this failure.",
+    "The collector did not alter Q, any budget or allocator guard, HEFT placement, source, profiles, other users jobs or remote files.",
+    "Only small logs and a bounded binary lookup were read; no complete trace or full plan scan was performed."
+  ],
+  "collector_started_gpu_work_or_committed": false
+}

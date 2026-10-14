@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026-10-14T18:56:53.396281+08:00",
+  "poseidon_source_commit": "c17effa2",
+  "mask": "1,2,3,0",
+  "logical_to_physical_gpu": [
+    1,
+    2,
+    3,
+    0
+  ],
+  "all_four_physical_gpus": true,
+  "backend": "gpu",
+  "same_heft_logical_plan": true,
+  "lazy_scale_log2": 40,
+  "initial_and_maximum_pool_env": "explicitly unset; actual default reservation from available memory",
+  "source_sha256": "af90f47096fd338a95d17d48850f549eb271e7725e2c2e1e82e86475b259d2bd",
+  "test_sha256": "962f909e152d705e8e3a68e190437bc6b0eb09abe6099b5ec0470711ad46962c",
+  "runner_sha256": "c261b9a5846b53fdab32f189e3b86a13923fc073fbced9630f22e42fb4422e73",
+  "frozen_executed_runner": "/home/xuming/poseidon-waterline-20261013/level-aware-rescale-final-update-20261014/executed-runner",
+  "acceptance_helper_sha256": "a7ae521c8248991220064f89ef1a3c45d1d7ff138ccb1459cf38e583d316723e",
+  "supervisor_script": "/home/xuming/poseidon-waterline-20261013/level-aware-rescale-final-update-20261014/run-full-level-aware-rescale-188.sh",
+  "supervisor_script_sha256": "ec42e2535c583c037eee5b6457fc04501fee60b1e52eba4664b407fb31fe002a",
+  "command": [
+    "/home/xuming/.local/bin/tmux",
+    "new-session",
+    "-d",
+    "-s",
+    "poseidon-q50-level-aware-full",
+    "bash /home/xuming/poseidon-waterline-20261013/level-aware-rescale-final-update-20261014/run-full-level-aware-rescale-188.sh > /home/xuming/poseidon-waterline-20261013/logs/level-aware-rescale-full-20261014.supervisor.log 2>&1"
+  ],
+  "status": "launched",
+  "numerical_acceptance_complete": false
+}

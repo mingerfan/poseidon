@@ -1,0 +1,89 @@
+{
+  "pid": 188271,
+  "samples": 17,
+  "first_three": [
+    {
+      "timestamp": "2026-10-14T18:56:56.450330+08:00",
+      "elapsed_seconds": 1.3755012080073357,
+      "pid": 188271,
+      "host": {
+        "VmHWM_bytes": 23760896,
+        "VmRSS_bytes": 23760896
+      },
+      "gpu_process_bytes": {}
+    },
+    {
+      "timestamp": "2026-10-14T18:57:07.757368+08:00",
+      "elapsed_seconds": 12.68256427301094,
+      "pid": 188271,
+      "host": {
+        "VmHWM_bytes": 6238986240,
+        "VmRSS_bytes": 5711822848
+      },
+      "gpu_process_bytes": {}
+    },
+    {
+      "timestamp": "2026-10-14T18:57:19.129050+08:00",
+      "elapsed_seconds": 24.054238099139184,
+      "pid": 188271,
+      "host": {
+        "VmHWM_bytes": 7291748352,
+        "VmRSS_bytes": 7291748352
+      },
+      "gpu_process_bytes": {}
+    }
+  ],
+  "last_three": [
+    {
+      "timestamp": "2026-10-14T18:59:35.022817+08:00",
+      "elapsed_seconds": 159.94797585206106,
+      "pid": 188271,
+      "host": {
+        "VmHWM_bytes": 21940174848,
+        "VmRSS_bytes": 21940174848
+      },
+      "gpu_process_bytes": {
+        "GPU-3adfe50d-ee5b-8583-e867-04cbc0e21509": 9640607744,
+        "GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5": 33009172480,
+        "GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6": 8726249472,
+        "GPU-0650e59e-7268-0a1a-8c3e-58f09c3e7fa2": 33009172480
+      }
+    },
+    {
+      "timestamp": "2026-10-14T18:59:46.257272+08:00",
+      "elapsed_seconds": 171.1824588929303,
+      "pid": 188271,
+      "host": {
+        "VmHWM_bytes": 22056083456,
+        "VmRSS_bytes": 22056083456
+      },
+      "gpu_process_bytes": {
+        "GPU-3adfe50d-ee5b-8583-e867-04cbc0e21509": 9640607744,
+        "GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5": 33009172480,
+        "GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6": 8726249472,
+        "GPU-0650e59e-7268-0a1a-8c3e-58f09c3e7fa2": 33009172480
+      }
+    },
+    {
+      "timestamp": "2026-10-14T18:59:57.612376+08:00",
+      "elapsed_seconds": 182.5375584489666,
+      "pid": 188271,
+      "host": {
+        "VmHWM_bytes": 22091567104,
+        "VmRSS_bytes": 21900189696
+      },
+      "gpu_process_bytes": {
+        "GPU-3adfe50d-ee5b-8583-e867-04cbc0e21509": 9640607744,
+        "GPU-5aaf51d1-a1db-e8f5-19bd-db86599054c5": 33009172480,
+        "GPU-0768eaf5-15f4-6cca-f263-141df9bae9c6": 8726249472,
+        "GPU-0650e59e-7268-0a1a-8c3e-58f09c3e7fa2": 33009172480
+      }
+    }
+  ],
+  "host_peak_VmRSS_bytes": 22056083456,
+  "host_peak_VmHWM_bytes": 22091567104,
+  "first_compute_observed": false,
+  "trace_bytes": 54,
+  "model_exit_code": 1,
+  "supervisor_exit_code": 1
+}

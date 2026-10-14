@@ -1,6 +1,6 @@
 # Waterline 实现与 188Server 验证
 
-状态核对于 **2026-10-14（北京时间）**。已推送 Poseidon 数学修复 `3d4cff66`、Host读取计费修复 `579012ad`，ckks-runtime `369bdc5`（相对 `f29775a` 仅追加测试）、DaCapo `6e75be2`（生产编译器与 `d5ed984` 相同）。**完整 Qwen3-0.6B 数值验收尚未完成。** 新预乘 API 已通过本地及 188 小图回归；原 Q50/逻辑 scale40 四卡 GPU-only 前向 PID153204 在2:29:19后因RMM分配失败退出1，未产生完整decoded或数值通过报告，见 [失败报告](188-q50-lazy40-failed-model-report.json)、[日志](188-q50-lazy40-failed-model.log)及 [事实/推断范围](188-q50-lazy40-failed-tail-interpretation.json)。物理池预留与完成回收已修正，并通过本地及188检查。包含池修正的新完整尝试在单组预检退出，未执行计算：[报告](188-reserved-pool-preflight-model-report.json)、[诊断](188-reserved-pool-preflight-workspace-analysis.json)。Rescale工作区使用OperatorSpec能力上限50，而完整图实际最大drop5；实际计划降层计费已通过本地24/24及188完整检查，见 [新绑定与结果](188-plan-bound-checks-summary.json)；仍无完整数值结论。
+状态核对于 **2026-10-14（北京时间）**。生产源已推送至Poseidon `c17effa2`，ckks-runtime `369bdc5`、DaCapo `6e75be2`。本地及188最终回归通过，**完整Qwen3-0.6B前向与数值验收尚未完成**。最新四卡GPU-only尝试在资源预检退出1：physical2被另一账号作业占用，MulCP完整组所需额度高于当前实际reserved graph capacity；没有提交图计算。详见 [当前资源阻塞、全部证据与恢复命令](188-resource-blocker.md)。先前旧前向2:29:19后的RMM失败、两次Rescale过计预检及各次修正均保留独立绑定，不混作完整成功结果。
 
 Waterline 已接通后期 Prepare 改写、完整消费者组准入、每设备水位、共享 Host/pinned/raw 预算和事件回收，复用统一执行器的前台计算与通信。自动静态分批和批末 Fence 已替换；显式 Encode/Transfer/Fence、drain、按需读取、Release/reuse 保留，见 [清理清单](cleanup.tsv)。
 
@@ -155,3 +155,7 @@ Rescale工作区计费现使用完整已验证plan的实际最大降层数，保
 在188保留SSH长连接后，可用最新源码执行 [构建脚本](build-188.sh)和新的`POSEIDON_RESCALE_CHECK_LABEL`运行 [回归脚本](check-rescale-188.sh)。完整运行继续使用 [同一验收入口](run-188-acceptance.sh)：设置`POSEIDON_QWEN_CUDA_VISIBLE_DEVICES=1,2,3,0 POSEIDON_QWEN_BACKEND=gpu`及全新的`POSEIDON_ACCEPTANCE_LABEL`；仅在`latest-build.status`完全一致时，用`POSEIDON_VERIFIED_PRESSURE_DIR`指向成功的`logs/level-aware-rescale-final-checks-20261014`。不设置旧initial/max pool环境变量，保持模型及既定容差；入口会核对261输出并运行独立检查器。
 
 另核对了level map复制这一可疑开销：[局部CPU审计](context-level-map-audit.md)。本地每百万次按值查找约450ms，const引用约3ms；未测其在完整模型中的次数或墙钟贡献，不能解释约149分钟慢跑或声称模型收益。本阶段不改这一公开getter、不引入私有缓存，继续完整模型验收。
+
+最新分层上界的源提交为`c17effa2`，已推送；全模型新进程PID188271于188时间18:56:53启动，[launch](188-level-aware-full-launch.json)、[实际exe/argv/plan绑定](188-level-aware-full-live-binding.json)。该次随后在logical1/physical2的MulCP完整组预检退出1，workspace=0，现有reserved graph额度不足；没有图计算提交。详见 [当前资源阻塞及复现](188-resource-blocker.md)。
+
+**当前资源阻塞，完整模型未验收。** 最新源`c17effa2`及全部回归已推送；全模型GPU-only的最新尝试因physical2他人作业占用，保证式单组预检拒绝，见 [完整证据、限制与恢复命令](188-resource-blocker.md)。没有完整261输出成功数值报告。旧失败模型的 [已关闭资源采样图](188-q50-lazy40-failed-resource-history.png)仅作失败历史测量，不能替代新代码完整验收。
