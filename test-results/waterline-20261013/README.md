@@ -47,7 +47,7 @@ Waterline 已接通后期 Prepare 改写、完整消费者组准入、每设备�
 
 额外修复了GPU缓存路径的Host读取额度：非resident packed读取会同时持有原始字节和decoded double数组，动态Host须保持`N*8`，已存活的pinned缓存另计固定`N*4`。旧公式每次读取少计`N*4`（N16384时64KiB）。本地 [新版API 21/21](gpu-packed-host-budget-tests.log) 通过；真实packed暖缓存、公开Ledger/API边界的紧预算拒绝、足额预算编码全部2048复数槽通过，旧公式隔离负控确实错误接受紧预算并失败，见 [绑定与范围](gpu-packed-host-budget-result.json)。这条专门边界未执行完整Runtime结构，不能扩大为该结构的端到端反例。当前188完整模型仍使用修复前的Host计费公式和已验证的预乘数学路径；此修正不改Rescale、编码或HEFT，后续资源结论须单列差额，不能把运行中旧二进制当作新公式的验证。
 
-同一修复在188物理GPU1的 [隔离构建21/21](188-gpu-packed-host-budget-tests.log) 通过，UUID/ECC、精确编译链接命令、二进制及源hash、前后未改共享文件均见 [结果](188-gpu-packed-host-budget-result.json)。[复现脚本](check-packed-host-budget-188.py)读取既有Makefiles的flags，在新目录编译两份更新cpp并优先链接新object；link.map确认旧API cpp成员没有被抽取。该测试与完整模型共存，不用于性能比较；原server源码、build、runner及`logs/latest-build.status`均保持原样。
+同一修复在188物理GPU1的 [隔离构建21/21](188-gpu-packed-host-budget-tests.log) 通过，UUID/ECC、精确编译链接命令、二进制及源hash、前后未改共享文件均见 [结果](188-gpu-packed-host-budget-result.json)。[复现脚本](check-packed-host-budget-188.py)读取既有Makefiles的flags，在新目录编译两份更新cpp并优先链接新object；link.map确认旧API cpp成员没有被抽取。该测试与完整模型共存，不用于性能比较；原server源码、build、runner及`logs/latest-build.status`均保持原样。 完整模型结束后使用 [压力脚本](check-packed-host-pressure-188.sh)复查新API的单卡/全部卡/HostStaged配置；该步骤目前尚未执行。旧运行的Host差额须从最终共享账本检查，方法与限制见 [回溯上界](packed-host-retrospective-bound.md)，不能用report的单次读取峰值替代。
 
 ## 完整模型 HEFT 保持审计
 
@@ -136,6 +136,6 @@ POSEIDON_188_WORKSPACE="$base" POSEIDON_RESCALE_CHECK_LABEL=rescale-prescale-fre
 
 [run-188-acceptance.sh](run-188-acceptance.sh)通过 `POSEIDON_QWEN_BACKEND=cpu|gpu|auto` 选完整 Prepare 后端；复用压力须满足脚本的同构建 hash、既有 exit0 与配置要求。原 Q50 精确编译命令见上表 JSON，`--waterline=40` 保持有效；用新构建及新 label 执行，重新编译只允许 1/4 卡顺序运行，失败最终返回非零。启动脚本本身不构成模型通过。
 
-`monitor_process.py`在 CUDA setup 前按 PID/身份采样 RSS/HWM 和 driver 显存；采样峰值不是连续峰值。runner 分列冷启动、setup/init/forward、首个/全部输出、Host Boot、Prepare、GPU events、H2D、等待和收尾，外部 time-v 覆盖进程冷启动。首输出时间指完整run返回后首个解密结果，并非流式首个密文Ready时刻。共享Host/raw承诺峰值取最终stdout的Waterline账本统计，`runtime_timing.raw_peak_bytes`仅是单次读取峰值。CSV 字节数、提交数、ordinal 均不能当 CUDA 完成率或剩余时间，利用率快照也不足以证明卡死。
+`monitor_process.py`在 CUDA setup 前按 PID/身份采样 RSS/HWM 和 driver 显存；采样峰值不是连续峰值。runner 分列冷启动、setup/init/forward、首个/全部输出、Host Boot、Prepare、GPU events、H2D、等待和收尾，外部 time-v 覆盖进程冷启动。首输出时间指完整run返回后首个解密结果，并非流式首个密文Ready时刻。共享Host/raw承诺峰值取最终stdout的Waterline账本统计，`runtime_timing.raw_peak_bytes`仅是单次读取峰值。CSV 字节数、提交数、ordinal 均不能当 CUDA 完成率或剩余时间，利用率快照也不足以证明卡死。 [流式trace汇总器](summarize-api-trace.py)只读取已关闭trace，统计Host API调用；跨worker与嵌套调用的时间会重叠，不能作为墙钟占比或CUDA kernel时长。
 
 仍需交付完整261输出和独立数值报告、实际完整后端覆盖、每卡/Host/pinned峰值、收尾清单；完整模型同配置 HEFT 前后保持证据已通过，见 [覆盖审计](waterline-coverage-audit.md)。本参数为 `sec_level_type::none`；计划含13275条 Host decrypt/re-encrypt refresh，使用秘密密钥，**不是原生 FHE Boot**。固定两 token 校准不证明其他输入精度；Native Boot 的 Waterline workspace 查询尚未接通。当前没有完整模型端到端加速证据。

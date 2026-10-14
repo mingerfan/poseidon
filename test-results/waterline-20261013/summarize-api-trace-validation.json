@@ -1,0 +1,86 @@
+{
+  "passed": true,
+  "scope": "Local small fixtures only. No server access, full/active trace scan, compiler, GPU work, production changes, or commits.",
+  "script": "summarize-api-trace.py",
+  "script_sha256": "fc374d5c92bdaad5d9fec06007cbbeefc4926bd4ae49684fc39d4b5bfe33aa51",
+  "csv_writer": "third_party/ckks-runtime/runtime/runtime.hpp",
+  "csv_writer_sha256_at_validation": "7bab128568d96fb8b74eecd05cc4e8b11092cf02c3ea99bc886c3074f084282a",
+  "interpretation": "Host API timing can overlap across workers and nesting; no CUDA kernel, wall-clock fraction, progress, remaining-time or run-completion claim.",
+  "checks": [
+    {
+      "case": "single-pass input SHA256, byte count and stable metadata",
+      "passed": true,
+      "bytes": 297
+    },
+    {
+      "case": "independent explicit timing oracle across event/op groups and ranks",
+      "passed": true,
+      "rows": 9,
+      "measured_count": 6,
+      "sum_ns": 80
+    },
+    {
+      "case": "marker zero and blank durations count as rows but never timing samples",
+      "passed": true
+    },
+    {
+      "case": "zero duration on a measured API remains a valid timing sample",
+      "passed": true
+    },
+    {
+      "case": "wrong header rejected with no partial summary",
+      "passed": true
+    },
+    {
+      "case": "short row rejected with no partial summary",
+      "passed": true
+    },
+    {
+      "case": "negative duration rejected with no partial summary",
+      "passed": true
+    },
+    {
+      "case": "missing id rejected with no partial summary",
+      "passed": true
+    },
+    {
+      "case": "invalid consumer ordinal rejected with no partial summary",
+      "passed": true
+    },
+    {
+      "case": "empty op rejected with no partial summary",
+      "passed": true
+    },
+    {
+      "case": "malformed CSV rejected with no partial summary",
+      "passed": true
+    },
+    {
+      "case": "genuine during-read append detected; no summary returned",
+      "passed": true
+    },
+    {
+      "case": "genuine during-read same_size_write detected; no summary returned",
+      "passed": true
+    },
+    {
+      "case": "genuine during-read path_replacement detected; no summary returned",
+      "passed": true
+    },
+    {
+      "case": "small existing writer-generated CSV accepted",
+      "passed": true,
+      "fixture": "single.trace.rank0.csv",
+      "bytes": 938,
+      "rows": 30
+    },
+    {
+      "case": "header and marker zero placeholders checked against actual runtime writer",
+      "passed": true
+    },
+    {
+      "case": "trace path is mandatory; no implicit trace discovery",
+      "passed": true
+    }
+  ]
+}
