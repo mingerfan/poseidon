@@ -1,0 +1,5 @@
+scale=120 backend=cpu code=0 stage=complete
+scale=120 backend=gpu code=0 stage=complete
+scale=120 backend=auto code=0 stage=complete
+scale=40 backend=gpu code=1 stage=execute_complete_plan
+PASS /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-sync/scale120-composite-regression-v4/summary.json

@@ -2158,20 +2158,24 @@ PoseidonGpuApi::Value PoseidonGpuApi::compute(const fhegpu::ComputeOp &op,
             }
             const auto normalization=make_rescale_normalization(context_data->parms().q(),
                 input.meta.scale,static_cast<std::size_t>(drop_count),exact_scale(attrs.target_scale_log2));
-            temporaries.reserve(static_cast<std::size_t>(drop_count));
+            temporaries.reserve(static_cast<std::size_t>(drop_count)+1);
             std::shared_ptr<gpu::GpuCiphertextData> next;
             const gpu::GpuCiphertextData *source = &input;
+            // Align before division. Multiplying after native Rescale would
+            // amplify its rounding error when a lazy 160->40 drop uses five
+            // actual 30-bit primes instead of an exact 2^120 divisor.
+            if(normalization.coefficient_multiplier!=1) {
+                next=std::make_shared<gpu::GpuCiphertextData>();temporaries.push_back(next);
+                device.evaluator->multiply_scalar(*source,normalization.coefficient_multiplier,*next);
+                next->meta.scale=input.meta.scale*static_cast<double>(normalization.coefficient_multiplier);
+                source=next.get();
+            }
             for (std::size_t dropped = 0; dropped < normalization.native_drop_count; ++dropped)
             {
                 next = std::make_shared<gpu::GpuCiphertextData>();
                 temporaries.push_back(next);
                 device.evaluator->rescale(*source, *next);
                 source = next.get();
-            }
-            if(normalization.coefficient_multiplier!=1) {
-                next=std::make_shared<gpu::GpuCiphertextData>();temporaries.push_back(next);
-                device.evaluator->multiply_scalar(*source,normalization.coefficient_multiplier,*next);
-                source=next.get();
             }
             if(normalization.native_drop_count<static_cast<std::size_t>(drop_count)) {
                 next=std::make_shared<gpu::GpuCiphertextData>();temporaries.push_back(next);

@@ -603,17 +603,12 @@ PoseidonCpuApi::Value PoseidonCpuApi::compute(const fhegpu::ComputeOp &op,
             input_parameters->parms().q(), input.scale(),
             input.level() - static_cast<std::size_t>(attrs.target_level), target_scale);
         output = input;
-        for (std::size_t drop = 0; drop < normalization.native_drop_count; ++drop)
-        {
-            Ciphertext next;
-            evaluator_->rescale(output, next);
-            output = std::move(next);
-        }
         if (normalization.coefficient_multiplier != 1)
         {
-            const auto parameters = context_.crt_context()->get_context_data(output.parms_id());
-            const auto &q = parameters->parms().q();
-            const auto degree = parameters->parms().degree();
+            // Apply the integer correction to every input RNS limb before
+            // native rounding, with matching scale to preserve the value.
+            const auto &q = input_parameters->parms().q();
+            const auto degree = input_parameters->parms().degree();
             for (std::size_t component = 0; component < output.size(); ++component)
                 for (std::size_t limb = 0; limb < q.size(); ++limb)
                 {
@@ -621,6 +616,13 @@ PoseidonCpuApi::Value PoseidonCpuApi::compute(const fhegpu::ComputeOp &op,
                     util::multiply_poly_scalar_coeffmod(
                         words, degree, normalization.coefficient_multiplier, q[limb], words);
                 }
+            output.scale() *= static_cast<double>(normalization.coefficient_multiplier);
+        }
+        for (std::size_t drop = 0; drop < normalization.native_drop_count; ++drop)
+        {
+            Ciphertext next;
+            evaluator_->rescale(output, next);
+            output = std::move(next);
         }
         if (output.level() > static_cast<std::size_t>(attrs.target_level))
         {

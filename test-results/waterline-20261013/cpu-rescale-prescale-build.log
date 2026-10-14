@@ -1,0 +1,108 @@
+-- CROSS_COMPILE_ARRCH64: OFF
+-- AddressSanitizer disabled.
+-- Build type (CMAKE_BUILD_TYPE): Release
+-- POSEIDON_USE_CXX17: ON
+-- Install Path: /usr/local
+-- POSEIDON_BUILD_DEPS: OFF
+-- POSEIDON_USE_ZLIB: OFF
+-- POSEIDON_USE_ZSTD: OFF
+-- POSEIDON_USE_MSGSL: OFF
+-- POSEIDON_USE_INTEL_HEXL: OFF
+-- POSEIDON_USE_HARDWARE: OFF
+-- POSEIDON_BUILD_EXAMPLES: OFF
+-- POSEIDON_BUILD_BENCH: OFF
+-- POSEIDON_BUILD_CKKS_RUNTIME_API: ON
+-- POSEIDON_BUILD_CKKS_RUNTIME_TESTS: ON
+-- POSEIDON_BUILD_CKKS_RUNTIME_GPU_TESTS: OFF
+-- POSEIDON_BUILD_CKKS_RUNTIME_MPI: OFF
+-- POSEIDON_BUILD_CKKS_RUNTIME_GPU_NCCL: OFF
+-- RMM: RMM_LOGGING_LEVEL = 'OFF'
+-- CPM: Adding package fmt@ (/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/rmm/../fmt)
+CMake Warning (author) at /usr/share/cmake/Modules/FetchContent.cmake:1968 (message):
+  Calling FetchContent_Populate(fmt) is deprecated, call
+  FetchContent_MakeAvailable(fmt) instead.  Policy CMP0169 can be set to OLD
+  to allow FetchContent_Populate(fmt) to be called directly for now, but the
+  ability to call it with declared details will be removed completely in a
+  future version.
+Call Stack (most recent call first):
+  third_party/cpm/cpm/CPM_0.40.0.cmake:1074 (FetchContent_Populate)
+  third_party/cpm/cpm/CPM_0.40.0.cmake:868 (cpm_fetch_package)
+  third_party/cpm/cpm/CPM_0.40.0.cmake:689 (CPMAddPackage)
+  third_party/rapids-cmake/rapids-cmake/cpm/find.cmake:187 (CPMAddPackage)
+  third_party/rapids-cmake/rapids-cmake/cpm/fmt.cmake:66 (rapids_cpm_find)
+  third_party/rapids-cmake/rapids-cmake/cpm/spdlog.cmake:123 (rapids_cpm_fmt)
+  third_party/rmm/cmake/thirdparty/get_spdlog.cmake:19 (rapids_cpm_spdlog)
+  third_party/rmm/cmake/thirdparty/get_spdlog.cmake:26 (find_and_configure_spdlog)
+  third_party/rmm/CMakeLists.txt:76 (include)
+This warning is for project developers.  Use -Wno-author to suppress it.
+
+-- {fmt} version: 11.0.2
+-- Build type: Release
+-- CPM: Adding package spdlog@ (/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/rmm/../spdlog)
+CMake Warning (author) at /usr/share/cmake/Modules/FetchContent.cmake:1968 (message):
+  Calling FetchContent_Populate(spdlog) is deprecated, call
+  FetchContent_MakeAvailable(spdlog) instead.  Policy CMP0169 can be set to
+  OLD to allow FetchContent_Populate(spdlog) to be called directly for now,
+  but the ability to call it with declared details will be removed completely
+  in a future version.
+Call Stack (most recent call first):
+  third_party/cpm/cpm/CPM_0.40.0.cmake:1074 (FetchContent_Populate)
+  third_party/cpm/cpm/CPM_0.40.0.cmake:868 (cpm_fetch_package)
+  third_party/cpm/cpm/CPM_0.40.0.cmake:689 (CPMAddPackage)
+  third_party/rapids-cmake/rapids-cmake/cpm/find.cmake:187 (CPMAddPackage)
+  third_party/rapids-cmake/rapids-cmake/cpm/spdlog.cmake:127 (rapids_cpm_find)
+  third_party/rmm/cmake/thirdparty/get_spdlog.cmake:19 (rapids_cpm_spdlog)
+  third_party/rmm/cmake/thirdparty/get_spdlog.cmake:26 (find_and_configure_spdlog)
+  third_party/rmm/CMakeLists.txt:76 (include)
+This warning is for project developers.  Use -Wno-author to suppress it.
+
+-- Build spdlog: 1.14.1
+-- Build type: Release
+-- Generating install
+-- CPM: Adding package CCCL@ (/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/rmm/../cccl)
+CMake Warning (author) at /usr/share/cmake/Modules/FetchContent.cmake:1968 (message):
+  Calling FetchContent_Populate(CCCL) is deprecated, call
+  FetchContent_MakeAvailable(CCCL) instead.  Policy CMP0169 can be set to OLD
+  to allow FetchContent_Populate(CCCL) to be called directly for now, but the
+  ability to call it with declared details will be removed completely in a
+  future version.
+Call Stack (most recent call first):
+  third_party/cpm/cpm/CPM_0.40.0.cmake:1074 (FetchContent_Populate)
+  third_party/cpm/cpm/CPM_0.40.0.cmake:868 (cpm_fetch_package)
+  third_party/cpm/cpm/CPM_0.40.0.cmake:689 (CPMAddPackage)
+  third_party/rapids-cmake/rapids-cmake/cpm/find.cmake:187 (CPMAddPackage)
+  third_party/rapids-cmake/rapids-cmake/cpm/cccl.cmake:81 (rapids_cpm_find)
+  third_party/rmm/cmake/thirdparty/get_cccl.cmake:19 (rapids_cpm_cccl)
+  third_party/rmm/cmake/thirdparty/get_cccl.cmake:23 (find_and_configure_cccl)
+  third_party/rmm/CMakeLists.txt:77 (include)
+This warning is for project developers.  Use -Wno-author to suppress it.
+
+-- CPM: Adding package nvtx3@ (/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/rmm/../nvtx)
+CMake Warning (author) at /usr/share/cmake/Modules/FetchContent.cmake:1968 (message):
+  Calling FetchContent_Populate(nvtx3) is deprecated, call
+  FetchContent_MakeAvailable(nvtx3) instead.  Policy CMP0169 can be set to
+  OLD to allow FetchContent_Populate(nvtx3) to be called directly for now,
+  but the ability to call it with declared details will be removed completely
+  in a future version.
+Call Stack (most recent call first):
+  third_party/cpm/cpm/CPM_0.40.0.cmake:1074 (FetchContent_Populate)
+  third_party/cpm/cpm/CPM_0.40.0.cmake:868 (cpm_fetch_package)
+  third_party/cpm/cpm/CPM_0.40.0.cmake:689 (CPMAddPackage)
+  third_party/rapids-cmake/rapids-cmake/cpm/find.cmake:187 (CPMAddPackage)
+  third_party/rapids-cmake/rapids-cmake/cpm/nvtx3.cmake:75 (rapids_cpm_find)
+  third_party/rmm/cmake/thirdparty/get_nvtx.cmake:19 (rapids_cpm_nvtx3)
+  third_party/rmm/cmake/thirdparty/get_nvtx.cmake:23 (find_and_configure_nvtx3)
+  third_party/rmm/CMakeLists.txt:78 (include)
+This warning is for project developers.  Use -Wno-author to suppress it.
+
+-- Configuring done (0.3s)
+-- Generating done (0.1s)
+-- Build files have been written to: /mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-cpu-rescale-agent
+[  7%] Built target ckks_runtime_core
+[ 93%] Built target poseidon_shared
+[ 95%] Building CXX object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_cpu_api.dir/poseidon_cpu_api.cpp.o
+[ 96%] Linking CXX static library ../../../libposeidon_runtime_cpu_api.a
+[ 96%] Built target poseidon_runtime_cpu_api
+[ 98%] Building CXX object src/poseidon/runtime_api/CMakeFiles/poseidon_runtime_cpu_api_tests.dir/__/tests/runtime_api/poseidon_cpu_api_test.cpp.o
+[100%] Linking CXX executable ../../../bin/poseidon_runtime_cpu_api_tests
+[100%] Built target poseidon_runtime_cpu_api_tests

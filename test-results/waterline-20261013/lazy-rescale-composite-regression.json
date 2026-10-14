@@ -1,0 +1,720 @@
+{
+  "passed": true,
+  "scope": "synthetic small production BSGS/RMS graph; not full Qwen",
+  "oracle": "independent numpy dense W@x; exact polynomial RMS, not exact inverse sqrt",
+  "slots": 8192,
+  "input_size": 8,
+  "output_size": 12,
+  "logical_to_physical_levels": 5,
+  "q_count": 50,
+  "p_count": 8,
+  "dirty_tail_max_abs": 3951.185370779043,
+  "regression_script_sha256": "sha256:840ca5cc4a527bb494d441496b1a17ad6c71ac77dc78d02a706f3b2f08825932",
+  "compiler_sha256": "sha256:4da42373f40bdd215c882a997d1be4ffcc6d22a41d7de2fefdcf9b9b6f0105c8",
+  "runner_sha256": "sha256:81f8cf10fd2e614462333398a9e110a85e0a8f1a4092f8f84d3c335b6727959c",
+  "normalizer_header_sha256": "sha256:7a3aea61b4a1446505bbca9b7b666d5f5fac57d9ef32a65b8e6fda2421d0e42b",
+  "frontend": {
+    "original_expr_sha256": "sha256:2e45ebe6aa5631687c1ec7a84ae8096b4d5ac1f9262f9465b298dbf09d97f142",
+    "numpy_adapter_sha256": "sha256:193a4b96e55dc6f41d8057a31b2060f74a934856312d1aa7289499cb31357fac",
+    "native_library_sha256": "sha256:910b0717f724c9734c4e5089508e84357ec2779f879c3a9c3be1492ab1d73594"
+  },
+  "cli_spec_mismatch_negative_control": "compiler --waterline must equal operator-spec context.default_scale_log2",
+  "normalization_order": "coefficient and metadata multiplied before native rescale",
+  "source_and_binary_bindings_verified": true,
+  "reproduce": [
+    "python",
+    "test-results/waterline-20261013/lazy-rescale-composite-regression.py",
+    "--output",
+    "build-waterline-sync/scale40-prescale-composite-regression-fresh"
+  ],
+  "artifacts": "build-waterline-sync/scale40-prescale-composite-regression-v6",
+  "log": "test-results/waterline-20261013/lazy-rescale-composite-regression.log",
+  "boot_semantics": "Host decrypt/re-encrypt using secret key; no native cryptographic bootstrap",
+  "historical_v4": {
+    "artifacts": "build-waterline-sync/scale120-composite-regression-v4",
+    "log": "test-results/waterline-20261013/rescale-postmultiply-composite-negative-control.log",
+    "status": "Preserved unchanged evidence from the previous post-rescale integer correction: 40-bit plan rejected; 120-bit plan passed. Both configurations are positive controls after the correction is moved before rescale."
+  },
+  "production_dsl_sha256": {
+    "scripts/qwen3_dsl/qwen3/kernels/qwen_layers.py": "sha256:a20fa7659919c84c76981a9daf880651e22f7c88507be9af8bdba2c54597bd27",
+    "scripts/qwen3_dsl/qwen3/kernels/ops.py": "sha256:0391b61de20839a24c23892ff8905787f2ecb763c22f4942b0e4daa20963fb2a"
+  },
+  "cases": [
+    {
+      "scale": 40,
+      "cli_spec_scale_match": true,
+      "minimum_typed_scale_log2": 40,
+      "scale_histogram": {
+        "40": 122,
+        "160": 41,
+        "80": 21,
+        "120": 53
+      },
+      "op_histogram": {
+        "transfer": 11,
+        "release": 220,
+        "prepare_plaintext": 47,
+        "rotate": 22,
+        "mul_cp": 46,
+        "rescale": 41,
+        "add_cc": 31,
+        "add_cp": 9,
+        "mul_cc": 7,
+        "relinearize": 7,
+        "mod_switch": 10,
+        "boot": 5
+      },
+      "value_count": 237,
+      "operation_count": 456,
+      "final_types": [
+        {
+          "level": 9,
+          "scale_log2": 40
+        },
+        {
+          "level": 9,
+          "scale_log2": 40
+        },
+        {
+          "level": 9,
+          "scale_log2": 40
+        },
+        {
+          "level": 9,
+          "scale_log2": 40
+        },
+        {
+          "level": 9,
+          "scale_log2": 40
+        },
+        {
+          "level": 9,
+          "scale_log2": 40
+        }
+      ],
+      "boot_boundaries": [
+        {
+          "ordinal": 315,
+          "inputs": [
+            {
+              "level": 9,
+              "scale_log2": 120
+            }
+          ],
+          "output": {
+            "level": 49,
+            "scale_log2": 120
+          }
+        },
+        {
+          "ordinal": 355,
+          "inputs": [
+            {
+              "level": 9,
+              "scale_log2": 120
+            }
+          ],
+          "output": {
+            "level": 49,
+            "scale_log2": 120
+          }
+        },
+        {
+          "ordinal": 419,
+          "inputs": [
+            {
+              "level": 9,
+              "scale_log2": 120
+            }
+          ],
+          "output": {
+            "level": 49,
+            "scale_log2": 120
+          }
+        },
+        {
+          "ordinal": 429,
+          "inputs": [
+            {
+              "level": 9,
+              "scale_log2": 120
+            }
+          ],
+          "output": {
+            "level": 49,
+            "scale_log2": 120
+          }
+        },
+        {
+          "ordinal": 439,
+          "inputs": [
+            {
+              "level": 9,
+              "scale_log2": 120
+            }
+          ],
+          "output": {
+            "level": 49,
+            "scale_log2": 120
+          }
+        }
+      ],
+      "rescale_count": 41,
+      "rescale_shapes": [
+        {
+          "input_scale_log2": 160,
+          "output_scale_log2": 40,
+          "physical_levels_dropped": 5
+        }
+      ],
+      "production_normalizer": {
+        "checked": 41,
+        "accepted": 41,
+        "rejected": 0,
+        "requested_target_floor_log2": 40,
+        "relative_rounding_error_limit": 1e-09,
+        "min_prescale_log2": 189.89229862368276,
+        "min_corrected_native_scale_log2": 39.99999999931511,
+        "min_uncorrected_native_scale_log2": 10.025142335772195,
+        "max_relative_rounding_error": 4.747292559059701e-10,
+        "max_corrected_native_relative_error": 4.747291448836677e-10,
+        "coefficient_multiplier_min": 996502804,
+        "coefficient_multiplier_max": 1055191472
+      },
+      "runs": [
+        {
+          "backend": "cpu",
+          "returncode": 0,
+          "stage": "complete",
+          "passed": true,
+          "comparison": {
+            "bad_imaginary_slots": 0,
+            "bad_prefix_slots": 0,
+            "bad_real_slots": 0,
+            "bad_tail_slots": 0,
+            "finite_slots": 49152,
+            "max_abs_error": 4.441919113926107e-05,
+            "max_imaginary": 7.699493255203745e-05,
+            "max_relative_error_floor_atol": 0.006770813228652651,
+            "max_tail_abs": 0.0,
+            "nonfinite_slots": 0,
+            "passed": true,
+            "rms_error": 7.616979193006044e-06,
+            "slots_checked": 49152
+          },
+          "runtime_ms": 952.769857,
+          "key_generation_ms": 3268.280429,
+          "host_boot_instructions": 5,
+          "native_boot_instructions": 0,
+          "security_level": "none; numerical validation context",
+          "preparation_measurements": {
+            "cpu_encode_ms": 363.501084,
+            "cpu_plain_h2d_bytes": 112721920,
+            "cpu_prepare_calls": 47,
+            "transport_h2d_bytes": 152043520,
+            "transport_h2d_calls": 53,
+            "transport_h2d_ms": 12.53776,
+            "transport_scope": "Host cipher and CPU plaintext uploads; excludes direct key uploader and direct GPU raw upload"
+          },
+          "device_measurements": [
+            {
+              "allocated_live_bytes": 1674848352,
+              "allocated_peak_bytes": 1811556448,
+              "consumer_wait_calls": 40,
+              "consumer_wait_ms": 4.172878,
+              "gpu_encode_calls": 0,
+              "gpu_encode_ms": 0.0,
+              "gpu_raw_h2d_bytes": 0,
+              "gpu_raw_h2d_ms": 0.0,
+              "logical_device": 0,
+              "managed_pool": true,
+              "pool_capacity_bytes": 6912212992,
+              "pool_reserved_bytes": 2040512512
+            }
+          ],
+          "cuda_visible_devices": "0",
+          "devices": [
+            {
+              "logical_device": 0,
+              "name": "NVIDIA GeForce RTX 4060 Laptop GPU",
+              "pci_bus_id": "0000:64:00.0",
+              "total_global_bytes": 8272019456,
+              "uuid": "GPU-08fdbdc4-ecda-e2e3-ae01-a596e4e70914"
+            }
+          ],
+          "plan_source_sha256": "sha256:94ca91206f414621a1684ee61484ff699ed91277298abfe098e34c9befe6e9b7",
+          "operator_spec_sha256": "sha256:2f688f6cacf319e2bc868d5a4095f62d4db3c9f40ff1078b7796d490395aa9f2",
+          "independent_zero_tail_max_abs": 6.770813228652651e-06,
+          "independent_zero_tail_max_imaginary": 6.912134537419021e-06
+        },
+        {
+          "backend": "gpu",
+          "returncode": 0,
+          "stage": "complete",
+          "passed": true,
+          "comparison": {
+            "bad_imaginary_slots": 0,
+            "bad_prefix_slots": 0,
+            "bad_real_slots": 0,
+            "bad_tail_slots": 0,
+            "finite_slots": 49152,
+            "max_abs_error": 8.732610437436894e-05,
+            "max_imaginary": 9.559939676333926e-05,
+            "max_relative_error_floor_atol": 0.011753467472500851,
+            "max_tail_abs": 0.0,
+            "nonfinite_slots": 0,
+            "passed": true,
+            "rms_error": 9.910061746595574e-06,
+            "slots_checked": 49152
+          },
+          "runtime_ms": 677.469568,
+          "key_generation_ms": 3244.377975,
+          "host_boot_instructions": 5,
+          "native_boot_instructions": 0,
+          "security_level": "none; numerical validation context",
+          "preparation_measurements": {
+            "cpu_encode_ms": 0.0,
+            "cpu_plain_h2d_bytes": 0,
+            "cpu_prepare_calls": 0,
+            "transport_h2d_bytes": 39321600,
+            "transport_h2d_calls": 6,
+            "transport_h2d_ms": 3.211808,
+            "transport_scope": "Host cipher and CPU plaintext uploads; excludes direct key uploader and direct GPU raw upload"
+          },
+          "device_measurements": [
+            {
+              "allocated_live_bytes": 1675176032,
+              "allocated_peak_bytes": 1811884128,
+              "consumer_wait_calls": 43,
+              "consumer_wait_ms": 10.56606,
+              "gpu_encode_calls": 47,
+              "gpu_encode_ms": 16.517064,
+              "gpu_raw_h2d_bytes": 3080192,
+              "gpu_raw_h2d_ms": 0.546534,
+              "logical_device": 0,
+              "managed_pool": true,
+              "pool_capacity_bytes": 6912212992,
+              "pool_reserved_bytes": 2040512512
+            }
+          ],
+          "cuda_visible_devices": "0",
+          "devices": [
+            {
+              "logical_device": 0,
+              "name": "NVIDIA GeForce RTX 4060 Laptop GPU",
+              "pci_bus_id": "0000:64:00.0",
+              "total_global_bytes": 8272019456,
+              "uuid": "GPU-08fdbdc4-ecda-e2e3-ae01-a596e4e70914"
+            }
+          ],
+          "plan_source_sha256": "sha256:94ca91206f414621a1684ee61484ff699ed91277298abfe098e34c9befe6e9b7",
+          "operator_spec_sha256": "sha256:2f688f6cacf319e2bc868d5a4095f62d4db3c9f40ff1078b7796d490395aa9f2",
+          "independent_zero_tail_max_abs": 1.1753467472500851e-05,
+          "independent_zero_tail_max_imaginary": 7.921175837525673e-06
+        },
+        {
+          "backend": "auto",
+          "returncode": 0,
+          "stage": "complete",
+          "passed": true,
+          "comparison": {
+            "bad_imaginary_slots": 0,
+            "bad_prefix_slots": 0,
+            "bad_real_slots": 0,
+            "bad_tail_slots": 0,
+            "finite_slots": 49152,
+            "max_abs_error": 5.2605240817182874e-05,
+            "max_imaginary": 5.636809139509347e-05,
+            "max_relative_error_floor_atol": 0.011327491786513376,
+            "max_tail_abs": 0.0,
+            "nonfinite_slots": 0,
+            "passed": true,
+            "rms_error": 7.357630307000295e-06,
+            "slots_checked": 49152
+          },
+          "runtime_ms": 958.711412,
+          "key_generation_ms": 3284.746289,
+          "host_boot_instructions": 5,
+          "native_boot_instructions": 0,
+          "security_level": "none; numerical validation context",
+          "preparation_measurements": {
+            "cpu_encode_ms": 242.289131,
+            "cpu_plain_h2d_bytes": 50790400,
+            "cpu_prepare_calls": 21,
+            "transport_h2d_bytes": 90112000,
+            "transport_h2d_calls": 27,
+            "transport_h2d_ms": 7.61808,
+            "transport_scope": "Host cipher and CPU plaintext uploads; excludes direct key uploader and direct GPU raw upload"
+          },
+          "device_measurements": [
+            {
+              "allocated_live_bytes": 1675176032,
+              "allocated_peak_bytes": 1811884128,
+              "consumer_wait_calls": 17,
+              "consumer_wait_ms": 1.750555,
+              "gpu_encode_calls": 26,
+              "gpu_encode_ms": 8.379923,
+              "gpu_raw_h2d_bytes": 1703936,
+              "gpu_raw_h2d_ms": 0.502421,
+              "logical_device": 0,
+              "managed_pool": true,
+              "pool_capacity_bytes": 6912212992,
+              "pool_reserved_bytes": 2040512512
+            }
+          ],
+          "cuda_visible_devices": "0",
+          "devices": [
+            {
+              "logical_device": 0,
+              "name": "NVIDIA GeForce RTX 4060 Laptop GPU",
+              "pci_bus_id": "0000:64:00.0",
+              "total_global_bytes": 8272019456,
+              "uuid": "GPU-08fdbdc4-ecda-e2e3-ae01-a596e4e70914"
+            }
+          ],
+          "plan_source_sha256": "sha256:94ca91206f414621a1684ee61484ff699ed91277298abfe098e34c9befe6e9b7",
+          "operator_spec_sha256": "sha256:2f688f6cacf319e2bc868d5a4095f62d4db3c9f40ff1078b7796d490395aa9f2",
+          "independent_zero_tail_max_abs": 1.1327491786513377e-05,
+          "independent_zero_tail_max_imaginary": 6.084555274372402e-06
+        }
+      ]
+    },
+    {
+      "scale": 120,
+      "cli_spec_scale_match": true,
+      "minimum_typed_scale_log2": 120,
+      "scale_histogram": {
+        "120": 163,
+        "240": 43
+      },
+      "op_histogram": {
+        "transfer": 11,
+        "release": 189,
+        "prepare_plaintext": 38,
+        "rotate": 22,
+        "mul_cp": 29,
+        "rescale": 36,
+        "add_cc": 31,
+        "add_cp": 9,
+        "mul_cc": 7,
+        "relinearize": 7,
+        "mod_switch": 10,
+        "boot": 5
+      },
+      "value_count": 206,
+      "operation_count": 394,
+      "final_types": [
+        {
+          "level": 14,
+          "scale_log2": 120
+        },
+        {
+          "level": 14,
+          "scale_log2": 120
+        },
+        {
+          "level": 14,
+          "scale_log2": 120
+        },
+        {
+          "level": 14,
+          "scale_log2": 120
+        },
+        {
+          "level": 14,
+          "scale_log2": 120
+        },
+        {
+          "level": 14,
+          "scale_log2": 120
+        }
+      ],
+      "boot_boundaries": [
+        {
+          "ordinal": 295,
+          "inputs": [
+            {
+              "level": 9,
+              "scale_log2": 120
+            }
+          ],
+          "output": {
+            "level": 49,
+            "scale_log2": 120
+          }
+        },
+        {
+          "ordinal": 324,
+          "inputs": [
+            {
+              "level": 9,
+              "scale_log2": 120
+            }
+          ],
+          "output": {
+            "level": 49,
+            "scale_log2": 120
+          }
+        },
+        {
+          "ordinal": 374,
+          "inputs": [
+            {
+              "level": 9,
+              "scale_log2": 120
+            }
+          ],
+          "output": {
+            "level": 49,
+            "scale_log2": 120
+          }
+        },
+        {
+          "ordinal": 380,
+          "inputs": [
+            {
+              "level": 9,
+              "scale_log2": 120
+            }
+          ],
+          "output": {
+            "level": 49,
+            "scale_log2": 120
+          }
+        },
+        {
+          "ordinal": 386,
+          "inputs": [
+            {
+              "level": 9,
+              "scale_log2": 120
+            }
+          ],
+          "output": {
+            "level": 49,
+            "scale_log2": 120
+          }
+        }
+      ],
+      "rescale_count": 36,
+      "rescale_shapes": [
+        {
+          "input_scale_log2": 240,
+          "output_scale_log2": 120,
+          "physical_levels_dropped": 5
+        }
+      ],
+      "production_normalizer": {
+        "checked": 36,
+        "accepted": 36,
+        "rejected": 0,
+        "requested_target_floor_log2": 40,
+        "relative_rounding_error_limit": 1e-09,
+        "min_prescale_log2": 269.89229862368273,
+        "min_corrected_native_scale_log2": 119.99999999931511,
+        "min_uncorrected_native_scale_log2": 90.02514233577219,
+        "max_relative_rounding_error": 4.747292559059701e-10,
+        "max_corrected_native_relative_error": 4.747291448836677e-10,
+        "coefficient_multiplier_min": 996502804,
+        "coefficient_multiplier_max": 1055191472
+      },
+      "runs": [
+        {
+          "backend": "cpu",
+          "returncode": 0,
+          "stage": "complete",
+          "passed": true,
+          "comparison": {
+            "bad_imaginary_slots": 0,
+            "bad_prefix_slots": 0,
+            "bad_real_slots": 0,
+            "bad_tail_slots": 0,
+            "finite_slots": 49152,
+            "max_abs_error": 2.142446220432248e-10,
+            "max_imaginary": 3.800119744933914e-13,
+            "max_relative_error_floor_atol": 1.3289846052254287e-09,
+            "max_tail_abs": 0.0,
+            "nonfinite_slots": 0,
+            "passed": true,
+            "rms_error": 4.5052074452909436e-11,
+            "slots_checked": 49152
+          },
+          "runtime_ms": 920.675875,
+          "key_generation_ms": 3123.074324,
+          "host_boot_instructions": 5,
+          "native_boot_instructions": 0,
+          "security_level": "none; numerical validation context",
+          "preparation_measurements": {
+            "cpu_encode_ms": 339.839108,
+            "cpu_plain_h2d_bytes": 98959360,
+            "cpu_prepare_calls": 38,
+            "transport_h2d_bytes": 138280960,
+            "transport_h2d_calls": 44,
+            "transport_h2d_ms": 11.41568,
+            "transport_scope": "Host cipher and CPU plaintext uploads; excludes direct key uploader and direct GPU raw upload"
+          },
+          "device_measurements": [
+            {
+              "allocated_live_bytes": 1678780512,
+              "allocated_peak_bytes": 1811556448,
+              "consumer_wait_calls": 35,
+              "consumer_wait_ms": 3.870702,
+              "gpu_encode_calls": 0,
+              "gpu_encode_ms": 0.0,
+              "gpu_raw_h2d_bytes": 0,
+              "gpu_raw_h2d_ms": 0.0,
+              "logical_device": 0,
+              "managed_pool": true,
+              "pool_capacity_bytes": 6912212992,
+              "pool_reserved_bytes": 2040512512
+            }
+          ],
+          "cuda_visible_devices": "0",
+          "devices": [
+            {
+              "logical_device": 0,
+              "name": "NVIDIA GeForce RTX 4060 Laptop GPU",
+              "pci_bus_id": "0000:64:00.0",
+              "total_global_bytes": 8272019456,
+              "uuid": "GPU-08fdbdc4-ecda-e2e3-ae01-a596e4e70914"
+            }
+          ],
+          "plan_source_sha256": "sha256:b2fcd2a752588955b2fa4959c447d3828a14c2b8bb556c08cb4675c2b8077ee8",
+          "operator_spec_sha256": "sha256:59756b136c6a0952e210c06576db59a147b48db2e20aba730e59691b1f16c915",
+          "independent_zero_tail_max_abs": 3.5679807802949004e-14,
+          "independent_zero_tail_max_imaginary": 2.6087878209746322e-14
+        },
+        {
+          "backend": "gpu",
+          "returncode": 0,
+          "stage": "complete",
+          "passed": true,
+          "comparison": {
+            "bad_imaginary_slots": 0,
+            "bad_prefix_slots": 0,
+            "bad_real_slots": 0,
+            "bad_tail_slots": 0,
+            "finite_slots": 49152,
+            "max_abs_error": 2.1424562124394697e-10,
+            "max_imaginary": 3.703223788788965e-13,
+            "max_relative_error_floor_atol": 1.328961572654245e-09,
+            "max_tail_abs": 0.0,
+            "nonfinite_slots": 0,
+            "passed": true,
+            "rms_error": 4.5054747330149944e-11,
+            "slots_checked": 49152
+          },
+          "runtime_ms": 658.883534,
+          "key_generation_ms": 3185.294753,
+          "host_boot_instructions": 5,
+          "native_boot_instructions": 0,
+          "security_level": "none; numerical validation context",
+          "preparation_measurements": {
+            "cpu_encode_ms": 0.0,
+            "cpu_plain_h2d_bytes": 0,
+            "cpu_prepare_calls": 0,
+            "transport_h2d_bytes": 39321600,
+            "transport_h2d_calls": 6,
+            "transport_h2d_ms": 3.304128,
+            "transport_scope": "Host cipher and CPU plaintext uploads; excludes direct key uploader and direct GPU raw upload"
+          },
+          "device_measurements": [
+            {
+              "allocated_live_bytes": 1679108192,
+              "allocated_peak_bytes": 1811884128,
+              "consumer_wait_calls": 36,
+              "consumer_wait_ms": 9.294416,
+              "gpu_encode_calls": 38,
+              "gpu_encode_ms": 14.939247,
+              "gpu_raw_h2d_bytes": 2490368,
+              "gpu_raw_h2d_ms": 0.455945,
+              "logical_device": 0,
+              "managed_pool": true,
+              "pool_capacity_bytes": 6912212992,
+              "pool_reserved_bytes": 2040512512
+            }
+          ],
+          "cuda_visible_devices": "0",
+          "devices": [
+            {
+              "logical_device": 0,
+              "name": "NVIDIA GeForce RTX 4060 Laptop GPU",
+              "pci_bus_id": "0000:64:00.0",
+              "total_global_bytes": 8272019456,
+              "uuid": "GPU-08fdbdc4-ecda-e2e3-ae01-a596e4e70914"
+            }
+          ],
+          "plan_source_sha256": "sha256:b2fcd2a752588955b2fa4959c447d3828a14c2b8bb556c08cb4675c2b8077ee8",
+          "operator_spec_sha256": "sha256:59756b136c6a0952e210c06576db59a147b48db2e20aba730e59691b1f16c915",
+          "independent_zero_tail_max_abs": 3.6321983092283195e-14,
+          "independent_zero_tail_max_imaginary": 4.40728210040554e-14
+        },
+        {
+          "backend": "auto",
+          "returncode": 0,
+          "stage": "complete",
+          "passed": true,
+          "comparison": {
+            "bad_imaginary_slots": 0,
+            "bad_prefix_slots": 0,
+            "bad_real_slots": 0,
+            "bad_tail_slots": 0,
+            "finite_slots": 49152,
+            "max_abs_error": 2.1424506613243466e-10,
+            "max_imaginary": 3.783216461545521e-13,
+            "max_relative_error_floor_atol": 1.329020903391408e-09,
+            "max_tail_abs": 0.0,
+            "nonfinite_slots": 0,
+            "passed": true,
+            "rms_error": 4.5053591976119316e-11,
+            "slots_checked": 49152
+          },
+          "runtime_ms": 715.139611,
+          "key_generation_ms": 3143.497247,
+          "host_boot_instructions": 5,
+          "native_boot_instructions": 0,
+          "security_level": "none; numerical validation context",
+          "preparation_measurements": {
+            "cpu_encode_ms": 152.163734,
+            "cpu_plain_h2d_bytes": 45875200,
+            "cpu_prepare_calls": 18,
+            "transport_h2d_bytes": 85196800,
+            "transport_h2d_calls": 24,
+            "transport_h2d_ms": 6.868352,
+            "transport_scope": "Host cipher and CPU plaintext uploads; excludes direct key uploader and direct GPU raw upload"
+          },
+          "device_measurements": [
+            {
+              "allocated_live_bytes": 1679108192,
+              "allocated_peak_bytes": 1811884128,
+              "consumer_wait_calls": 18,
+              "consumer_wait_ms": 2.23983,
+              "gpu_encode_calls": 20,
+              "gpu_encode_ms": 8.017592,
+              "gpu_raw_h2d_bytes": 1310720,
+              "gpu_raw_h2d_ms": 0.286133,
+              "logical_device": 0,
+              "managed_pool": true,
+              "pool_capacity_bytes": 6912212992,
+              "pool_reserved_bytes": 2040512512
+            }
+          ],
+          "cuda_visible_devices": "0",
+          "devices": [
+            {
+              "logical_device": 0,
+              "name": "NVIDIA GeForce RTX 4060 Laptop GPU",
+              "pci_bus_id": "0000:64:00.0",
+              "total_global_bytes": 8272019456,
+              "uuid": "GPU-08fdbdc4-ecda-e2e3-ae01-a596e4e70914"
+            }
+          ],
+          "plan_source_sha256": "sha256:b2fcd2a752588955b2fa4959c447d3828a14c2b8bb556c08cb4675c2b8077ee8",
+          "operator_spec_sha256": "sha256:59756b136c6a0952e210c06576db59a147b48db2e20aba730e59691b1f16c915",
+          "independent_zero_tail_max_abs": 2.6958640447426524e-14,
+          "independent_zero_tail_max_imaginary": 4.1890133109591845e-14
+        }
+      ]
+    }
+  ]
+}

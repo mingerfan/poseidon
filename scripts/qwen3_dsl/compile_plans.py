@@ -16,6 +16,7 @@ def main():
     a=p.parse_args();base=a.workspace.resolve();tool=base/'toolchain';profiles=base/'profiles'
     source=a.source.resolve() if a.source else base/'qwen3-traced-bsgs/trace_qwen3.mlirbc'
     spec_path=profiles/'operator-spec.json';spec=json.loads(spec_path.read_text());boot=spec['boot_profiles'][0]
+    scale=spec['context']['default_scale_log2']
     digest='sha256:'+hashlib.sha256(spec_path.read_bytes()).hexdigest()
     prefix=[str(tool/'lib/ld-linux-x86-64.so.2'),'--library-path',
             f'{tool}/lib:/opt/conda/lib:/lib/x86_64-linux-gnu',str(tool/'bin/hecate-opt')]
@@ -24,7 +25,7 @@ def main():
     for count in a.devices:
         out=base/a.output_name/f'gpu{count}';out.mkdir(parents=True,exist_ok=False)
         command=prefix+['--dacapo','--boot-placement=depth-dp',f'--ckks-config={profiles}/compiler-profile.json',
-          '--waterline=40','--mlir-timing','--mlir-print-op-on-diagnostic=false',
+          f'--waterline={scale}','--mlir-timing','--mlir-print-op-on-diagnostic=false',
           '--mlir-elide-elementsattrs-if-larger=16',f'--runtime-plan-id={3100+count}',
           f'--runtime-plan-target-id={spec["target_id"]}','--runtime-plan-capability-version=1',
           f'--runtime-plan-operator-spec-id={spec["spec_id"]}',f'--runtime-plan-operator-spec-version={spec["version"]}',

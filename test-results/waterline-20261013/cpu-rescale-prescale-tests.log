@@ -1,0 +1,72 @@
+[PASS] single-process Host AddCP
+[PASS] decrypt_reencrypt Boot
+[PASS] binary rotation keys
+[PASS] CPU Negate/Rotate reuse chains
+CPU_RESCALE_DENSE N=4096 Q=10 input_scale=200 target_scale=80 planned_drops=5 slots_checked=2048 max_complex_error=1.58867e-11
+CPU_RESCALE_DENSE N=4096 Q=10 input_scale=200 target_scale=80 planned_drops=6 slots_checked=2048 max_complex_error=1.58867e-11
+CPU_RESCALE_DENSE N=16384 Q=50 input_scale=230 target_scale=120 planned_drops=5 slots_checked=8192 max_complex_error=1.6348e-14
+CPU_RESCALE_DENSE N=16384 Q=50 input_scale=230 target_scale=120 planned_drops=6 slots_checked=8192 max_complex_error=1.6348e-14
+CPU_RESCALE_DENSE N=16384 Q=50 input_scale=240 target_scale=120 planned_drops=5 slots_checked=8192 max_complex_error=1.26323e-11
+CPU_RESCALE_DENSE N=16384 Q=50 input_scale=240 target_scale=120 planned_drops=6 slots_checked=8192 max_complex_error=1.26323e-11
+[PASS] dense Rescale normalization and aligned AddCC/AddCP
+CPU_RESCALE_DENSE N=4096 Q=5 q_bits=50 input_scale=100 target_scale=50 planned_drops=1 slots_checked=2048 max_complex_error=8.65749e-11
+CPU_RESCALE_DENSE N=4096 Q=5 q_bits=50 input_scale=100 target_scale=90 planned_drops=1 slots_checked=2048 max_complex_error=2.95491e-11
+[PASS] single-drop Rescale on 50-bit RNS words
+[PASS] reject low-precision Rescale
+CPU_RESCALE_SCALE40 path=CP weight_kind=0 planned_drops=5 slots_checked=2048 max_complex_error=2.57331e-08
+CPU_RESCALE_SCALE40 path=CC weight_kind=0 planned_drops=5 slots_checked=2048 max_complex_error=2.57331e-08
+CPU_RESCALE_SCALE40 path=split_CP_CP weight_kind=0 planned_drops=5 slots_checked=2048 max_complex_error=2.57378e-08
+CPU_RESCALE_SCALE40 path=CP_CC weight_kind=0 planned_drops=5 slots_checked=2048 max_complex_error=1.44684e-08
+CPU_RESCALE_SCALE40 path=CC_CP weight_kind=0 planned_drops=5 slots_checked=2048 max_complex_error=1.44684e-08
+CPU_RESCALE_SCALE40 path=CP_CC_AddCC weight_kind=0 planned_drops=5 slots_checked=2048 max_complex_error=4.66574e-08
+CPU_RESCALE_SCALE40 path=CC_CP_AddCP weight_kind=0 planned_drops=5 slots_checked=2048 max_complex_error=1.44631e-08
+CPU_RESCALE_SCALE40 path=CP_CC_plus_CC_CP weight_kind=0 planned_drops=5 slots_checked=2048 max_complex_error=2.89368e-08
+CPU_RESCALE_SCALE40 path=branch_sum_AddCP weight_kind=0 planned_drops=5 slots_checked=2048 max_complex_error=2.89316e-08
+CPU_RESCALE_SCALE40 path=CP weight_kind=0 planned_drops=6 slots_checked=2048 max_complex_error=2.57331e-08
+CPU_RESCALE_SCALE40 path=CC weight_kind=0 planned_drops=6 slots_checked=2048 max_complex_error=2.57331e-08
+CPU_RESCALE_SCALE40 path=split_CP_CP weight_kind=0 planned_drops=6 slots_checked=2048 max_complex_error=2.57378e-08
+CPU_RESCALE_SCALE40 path=CP_CC weight_kind=0 planned_drops=6 slots_checked=2048 max_complex_error=1.44912e-08
+CPU_RESCALE_SCALE40 path=CC_CP weight_kind=0 planned_drops=6 slots_checked=2048 max_complex_error=1.44912e-08
+CPU_RESCALE_SCALE40 path=CP_CC_AddCC weight_kind=0 planned_drops=6 slots_checked=2048 max_complex_error=4.48648e-08
+CPU_RESCALE_SCALE40 path=CC_CP_AddCP weight_kind=0 planned_drops=6 slots_checked=2048 max_complex_error=1.4486e-08
+CPU_RESCALE_SCALE40 path=CP_CC_plus_CC_CP weight_kind=0 planned_drops=6 slots_checked=2048 max_complex_error=2.89825e-08
+CPU_RESCALE_SCALE40 path=branch_sum_AddCP weight_kind=0 planned_drops=6 slots_checked=2048 max_complex_error=2.89772e-08
+CPU_RESCALE_SCALE40 path=CP weight_kind=1 planned_drops=5 slots_checked=2048 max_complex_error=1.02058e-08
+CPU_RESCALE_SCALE40 path=CC weight_kind=1 planned_drops=5 slots_checked=2048 max_complex_error=1.02058e-08
+CPU_RESCALE_SCALE40 path=split_CP_CP weight_kind=1 planned_drops=5 slots_checked=2048 max_complex_error=1.02063e-08
+CPU_RESCALE_SCALE40 path=CP_CC weight_kind=1 planned_drops=5 slots_checked=2048 max_complex_error=3.71172e-09
+CPU_RESCALE_SCALE40 path=CC_CP weight_kind=1 planned_drops=5 slots_checked=2048 max_complex_error=3.71172e-09
+CPU_RESCALE_SCALE40 path=CP_CC_AddCC weight_kind=1 planned_drops=5 slots_checked=2048 max_complex_error=4.54946e-08
+CPU_RESCALE_SCALE40 path=CC_CP_AddCP weight_kind=1 planned_drops=5 slots_checked=2048 max_complex_error=3.7132e-09
+CPU_RESCALE_SCALE40 path=CP_CC_plus_CC_CP weight_kind=1 planned_drops=5 slots_checked=2048 max_complex_error=7.42344e-09
+CPU_RESCALE_SCALE40 path=branch_sum_AddCP weight_kind=1 planned_drops=5 slots_checked=2048 max_complex_error=7.42492e-09
+CPU_RESCALE_SCALE40 path=CP weight_kind=1 planned_drops=6 slots_checked=2048 max_complex_error=1.02058e-08
+CPU_RESCALE_SCALE40 path=CC weight_kind=1 planned_drops=6 slots_checked=2048 max_complex_error=1.02058e-08
+CPU_RESCALE_SCALE40 path=split_CP_CP weight_kind=1 planned_drops=6 slots_checked=2048 max_complex_error=1.02063e-08
+CPU_RESCALE_SCALE40 path=CP_CC weight_kind=1 planned_drops=6 slots_checked=2048 max_complex_error=3.7187e-09
+CPU_RESCALE_SCALE40 path=CC_CP weight_kind=1 planned_drops=6 slots_checked=2048 max_complex_error=3.7187e-09
+CPU_RESCALE_SCALE40 path=CP_CC_AddCC weight_kind=1 planned_drops=6 slots_checked=2048 max_complex_error=5.0261e-08
+CPU_RESCALE_SCALE40 path=CC_CP_AddCP weight_kind=1 planned_drops=6 slots_checked=2048 max_complex_error=3.72017e-09
+CPU_RESCALE_SCALE40 path=CP_CC_plus_CC_CP weight_kind=1 planned_drops=6 slots_checked=2048 max_complex_error=7.43739e-09
+CPU_RESCALE_SCALE40 path=branch_sum_AddCP weight_kind=1 planned_drops=6 slots_checked=2048 max_complex_error=7.43887e-09
+CPU_RESCALE_SCALE40 path=CP weight_kind=-1 planned_drops=5 slots_checked=2048 max_complex_error=1.02058e-08
+CPU_RESCALE_SCALE40 path=CC weight_kind=-1 planned_drops=5 slots_checked=2048 max_complex_error=1.02058e-08
+CPU_RESCALE_SCALE40 path=split_CP_CP weight_kind=-1 planned_drops=5 slots_checked=2048 max_complex_error=1.02063e-08
+CPU_RESCALE_SCALE40 path=CP_CC weight_kind=-1 planned_drops=5 slots_checked=2048 max_complex_error=3.71172e-09
+CPU_RESCALE_SCALE40 path=CC_CP weight_kind=-1 planned_drops=5 slots_checked=2048 max_complex_error=3.71172e-09
+CPU_RESCALE_SCALE40 path=CP_CC_AddCC weight_kind=-1 planned_drops=5 slots_checked=2048 max_complex_error=4.17999e-08
+CPU_RESCALE_SCALE40 path=CC_CP_AddCP weight_kind=-1 planned_drops=5 slots_checked=2048 max_complex_error=3.71024e-09
+CPU_RESCALE_SCALE40 path=CP_CC_plus_CC_CP weight_kind=-1 planned_drops=5 slots_checked=2048 max_complex_error=7.42344e-09
+CPU_RESCALE_SCALE40 path=branch_sum_AddCP weight_kind=-1 planned_drops=5 slots_checked=2048 max_complex_error=7.42196e-09
+CPU_RESCALE_SCALE40 path=CP weight_kind=-1 planned_drops=6 slots_checked=2048 max_complex_error=1.02058e-08
+CPU_RESCALE_SCALE40 path=CC weight_kind=-1 planned_drops=6 slots_checked=2048 max_complex_error=1.02058e-08
+CPU_RESCALE_SCALE40 path=split_CP_CP weight_kind=-1 planned_drops=6 slots_checked=2048 max_complex_error=1.02063e-08
+CPU_RESCALE_SCALE40 path=CP_CC weight_kind=-1 planned_drops=6 slots_checked=2048 max_complex_error=3.7187e-09
+CPU_RESCALE_SCALE40 path=CC_CP weight_kind=-1 planned_drops=6 slots_checked=2048 max_complex_error=3.7187e-09
+CPU_RESCALE_SCALE40 path=CP_CC_AddCC weight_kind=-1 planned_drops=6 slots_checked=2048 max_complex_error=3.84446e-08
+CPU_RESCALE_SCALE40 path=CC_CP_AddCP weight_kind=-1 planned_drops=6 slots_checked=2048 max_complex_error=3.71722e-09
+CPU_RESCALE_SCALE40 path=CP_CC_plus_CC_CP weight_kind=-1 planned_drops=6 slots_checked=2048 max_complex_error=7.43739e-09
+CPU_RESCALE_SCALE40 path=branch_sum_AddCP weight_kind=-1 planned_drops=6 slots_checked=2048 max_complex_error=7.43592e-09
+[PASS] scale40 Rescale dense arithmetic and aligned sums
+[PASS] reject multi-process target
+9 Poseidon CPU Runtime Api tests passed

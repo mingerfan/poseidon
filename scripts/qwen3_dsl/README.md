@@ -72,9 +72,11 @@ OPENBLAS_NUM_THREADS=4 /usr/bin/time -v \
 因此不同时启动两份编译。任一编译子进程失败，脚本最终返回非零。可用
 `--devices 4` 单独编译全部卡，并用 `--source` 复用同一完整 BSGS bytecode。
 
-当前 CKKS 数值配置是 N=16384、50 个 30-bit Q、8 个 30-bit P、默认 scale 40，
-计算图的输入、高 scale 和 Host refresh 输出 scale 是 120；runner 按计划描述显式
-编码输入，不使用上下文默认 scale 替代计划 scale。
+当前 CKKS 数值配置是 N=16384、50 个 30-bit Q、8 个 30-bit P、默认 scale40。
+编译器从该 profile 取 `--waterline=40`，保持 lazy rescale 的触发时机；明文与
+Host refresh 输出 scale 为120。runner 按计划描述显式编码输入。逻辑160→40
+Rescale 在原生除模前先乘整数校正系数并同步中间 scale，避免先降到约10-bit
+再放大舍入误差；不要通过提高 waterline 改变原图的 lazy/Boot 布局来绕过问题。
 每个逻辑 level 对应 5 个物理 level，逻辑 level 0..9 映射到物理 level 4..49。
 一次逻辑 Rescale 为 120-bit scale 下降额外预留 30-bit 模数空间，运行时依据实际 Q
 选择原生除模次数、整数系数校正与剩余 ModSwitch；不只改写 scale 元数据。

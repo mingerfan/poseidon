@@ -634,11 +634,14 @@ void test_rescale_single_drop_50_bit_moduli()
     }
 }
 
-void test_rejects_low_precision_scale_absorption()
+void test_scale40_rescale_value_normalization()
 {
-    // Match the compiler's 40-bit waterline and four 30-bit prime drops.
+    // Match the lazy compiler's normal 160 -> 40 Rescale. Both reserved
+    // level counts must retain precision when the integer correction is
+    // applied before native rounding, including across multiple layers.
     constexpr std::uint32_t degree = 4096;
-    constexpr std::size_t q_count = 9;
+    constexpr std::size_t q_count = 24;
+    constexpr double tolerance = 1e-4;
     const auto moduli = poseidon::CoeffModulus::Create(
         degree, std::vector<int>(q_count + 2, 30));
     const std::vector<poseidon::Modulus> q(moduli.begin(), moduli.begin() + q_count);
@@ -652,49 +655,137 @@ void test_rejects_low_precision_scale_absorption()
     key_generator.create_public_key(public_key);
     poseidon::CKKSEncoder encoder(context);
     poseidon::Encryptor encryptor(context, public_key);
-    PoseidonCpuApi api("scale-absorption-test", context);
-    std::vector<double> slots(degree / 2);
+    poseidon::Decryptor decryptor(context, key_generator.secret_key());
+    // The production Api receives no secret key. Expected results below use
+    // independent dense arithmetic rather than another Rescale execution.
+    PoseidonCpuApi api("scale40-rescale-test", context);
+    std::vector<double> slots(degree / 2), next_weights(degree / 2), addend(degree / 2);
     for (std::size_t i = 0; i < slots.size(); ++i)
-        slots[i] = 0.125 * (1 + i % 7); // Nonzero tails expose lost masks.
+    {
+        slots[i] = 0.25 * std::sin(0.017 * i) + 0.0625 * (static_cast<int>(i % 7) - 3);
+        next_weights[i] = 0.5 + 0.03125 * (static_cast<int>(i % 11) - 5);
+        addend[i] = 0.015625 * (static_cast<int>(i % 13) - 6);
+    }
     poseidon::Plaintext input_plain;
     encoder.encode(slots, parameters.scale(), input_plain);
     poseidon::Ciphertext input;
     encryptor.encrypt(input_plain, input);
-    const auto parms_id = input.parms_id();
-    const int target_level = static_cast<int>(input.level()) - 4;
+    const auto encrypted = PoseidonCpuValue::from_ciphertext(input);
     const fhegpu::Place host{fhegpu::PlaceKind::Host, 0, 0};
-    const fhegpu::ComputeOp multiply{fhegpu::ComputeKind::MulCP, {0, 1}, 2, host, {}};
-    const fhegpu::ComputeOp rescale{fhegpu::ComputeKind::Rescale, {0}, 1, host,
-                                    fhegpu::RescaleAttrs{target_level, 40}};
-    auto encode = [&](const std::vector<double> &payload, int scale_log2) {
+    const fhegpu::ComputeOp multiply_cp{fhegpu::ComputeKind::MulCP, {0, 1}, 2, host, {}};
+    const fhegpu::ComputeOp multiply_cc{fhegpu::ComputeKind::MulCC, {0, 1}, 2, host, {}};
+    auto encode = [&](const std::vector<double> &payload,
+                      const poseidon::Ciphertext &reference, int scale_log2) {
         poseidon::Plaintext plaintext;
-        encoder.encode(payload, parms_id, std::ldexp(1.0, scale_log2), plaintext);
-        return PoseidonCpuValue::from_plaintext(std::move(plaintext));
+        encoder.encode(payload, reference.parms_id(), std::ldexp(1.0, scale_log2), plaintext);
+        return plaintext;
     };
-    const auto unit = encode(std::vector<double>(slots.size(), 1.0), 80);
+    auto encrypt = [&](const poseidon::Plaintext &plaintext) {
+        poseidon::Ciphertext ciphertext;
+        encryptor.encrypt(plaintext, ciphertext);
+        return PoseidonCpuValue::from_ciphertext(std::move(ciphertext));
+    };
+    auto normalize = [&](const PoseidonCpuValue &product, int drops) {
+        require(product.ciphertext().scale() == std::ldexp(1.0, 160),
+                "scale40 fixture did not reach its planned 160-bit product scale");
+        const int target_level = static_cast<int>(product.ciphertext().level()) - drops;
+        const auto result = api.compute(
+            {fhegpu::ComputeKind::Rescale, {0}, 1, host,
+             fhegpu::RescaleAttrs{target_level, 40}}, {product});
+        require(result.ciphertext().level() == static_cast<std::size_t>(target_level) &&
+                    result.ciphertext().scale() == std::ldexp(1.0, 40),
+                "scale40 Rescale published incorrect planned level/scale");
+        require(product.ciphertext().scale() == std::ldexp(1.0, 160) &&
+                    product.ciphertext().level() == static_cast<std::size_t>(target_level + drops),
+                "scale40 Rescale changed its caller input");
+        return result;
+    };
+    auto check = [&](const PoseidonCpuValue &value, const std::vector<double> &expected,
+                     const char *path, int kind, int drops) {
+        poseidon::Plaintext plaintext;
+        decryptor.decrypt(value.ciphertext(), plaintext);
+        std::vector<std::complex<double>> decoded;
+        encoder.decode(plaintext, decoded);
+        require(decoded.size() == expected.size(), "scale40 oracle did not cover every slot");
+        double maximum = 0;
+        for (std::size_t i = 0; i < expected.size(); ++i)
+        {
+            require(std::isfinite(decoded[i].real()) && std::isfinite(decoded[i].imag()),
+                    "scale40 Rescale produced a nonfinite slot");
+            maximum = std::max(maximum, std::abs(decoded[i] - expected[i]));
+        }
+        std::cout << "CPU_RESCALE_SCALE40 path=" << path << " weight_kind=" << kind
+                  << " planned_drops=" << drops << " slots_checked=" << decoded.size()
+                  << " max_complex_error=" << maximum << '\n';
+        require(maximum < tolerance, "scale40 Rescale differs from independent dense arithmetic");
+    };
+    const auto unit = PoseidonCpuValue::from_plaintext(
+        encode(std::vector<double>(slots.size(), 1.0), input, 80));
     for (int kind : {0, 1, -1})
     {
         const bool mask = kind != 0;
-        std::vector<double> weights(slots.size());
+        std::vector<double> weights(slots.size()), first_expected(slots.size()),
+            second_expected(slots.size());
         for (std::size_t i = 0; i < weights.size(); ++i)
+        {
             weights[i] = mask ? (i < 3 ? static_cast<double>(kind) : 0.0)
                               : (0.25 + 0.125 * (i % 3));
-        const auto old_weight = encode(weights, 40);
-        const auto new_weight = encode(weights, 120);
-        const auto old_product = api.compute(
-            multiply, {PoseidonCpuValue::from_ciphertext(input), old_weight});
-        const auto old_scaled = api.compute(multiply, {old_product, unit});
-        const auto new_product = api.compute(
-            multiply, {PoseidonCpuValue::from_ciphertext(input), new_weight});
-        for (const auto *product : {&old_scaled, &new_product})
+            first_expected[i] = slots[i] * weights[i];
+            second_expected[i] = first_expected[i] * next_weights[i];
+        }
+        const auto old_product = api.compute(multiply_cp,
+            {encrypted, PoseidonCpuValue::from_plaintext(encode(weights, input, 40))});
+        const auto split_product = api.compute(multiply_cp, {old_product, unit});
+        const auto weight120 = encode(weights, input, 120);
+        const auto cp_product = api.compute(multiply_cp,
+            {encrypted, PoseidonCpuValue::from_plaintext(weight120)});
+        const auto cc_product = api.compute(multiply_cc, {encrypted, encrypt(weight120)});
+        require(cc_product.ciphertext().size() == 3,
+                "scale40 MulCC fixture must exercise every one of three components");
+        for (int drops : {5, 6})
         {
-            bool rejected = false;
-            try { api.compute(rescale, {*product}); }
-            catch (const std::invalid_argument &error)
+            const auto first_cp = normalize(cp_product, drops);
+            const auto first_cc = normalize(cc_product, drops);
+            const auto first_split = normalize(split_product, drops);
+            check(first_cp, first_expected, "CP", kind, drops);
+            check(first_cc, first_expected, "CC", kind, drops);
+            check(first_split, first_expected, "split_CP_CP", kind, drops);
+
+            const auto second_weight = encode(next_weights, first_cp.ciphertext(), 120);
+            const auto cp_cc = normalize(
+                api.compute(multiply_cc, {first_cp, encrypt(second_weight)}), drops);
+            const auto cc_cp = normalize(api.compute(multiply_cp,
+                {first_cc, PoseidonCpuValue::from_plaintext(second_weight)}), drops);
+            check(cp_cc, second_expected, "CP_CC", kind, drops);
+            check(cc_cp, second_expected, "CC_CP", kind, drops);
+
+            // Fresh operands at exact target40 expose incorrect metadata even
+            // if both independently evaluated product branches share a bug.
+            const auto aligned = encode(addend, cp_cc.ciphertext(), 40);
+            const auto add_cc = api.compute(
+                {fhegpu::ComputeKind::AddCC, {0, 1}, 2, host, {}}, {cp_cc, encrypt(aligned)});
+            const auto add_cp = api.compute(
+                {fhegpu::ComputeKind::AddCP, {0, 1}, 2, host, {}},
+                {cc_cp, PoseidonCpuValue::from_plaintext(aligned)});
+            auto expected_sum = second_expected;
+            for (std::size_t i = 0; i < slots.size(); ++i)
+                expected_sum[i] += addend[i];
+            check(add_cc, expected_sum, "CP_CC_AddCC", kind, drops);
+            check(add_cp, expected_sum, "CC_CP_AddCP", kind, drops);
+
+            const auto branch_sum = api.compute(
+                {fhegpu::ComputeKind::AddCC, {0, 1}, 2, host, {}}, {cp_cc, cc_cp});
+            const auto accumulated = api.compute(
+                {fhegpu::ComputeKind::AddCP, {0, 1}, 2, host, {}},
+                {branch_sum, PoseidonCpuValue::from_plaintext(aligned)});
+            for (std::size_t i = 0; i < slots.size(); ++i)
             {
-                rejected = std::string(error.what()).find("precision space") != std::string::npos;
+                expected_sum[i] = 2 * second_expected[i];
             }
-            require(rejected, "scale40 absorption silently accepted insufficient normalization space");
+            check(branch_sum, expected_sum, "CP_CC_plus_CC_CP", kind, drops);
+            for (std::size_t i = 0; i < slots.size(); ++i)
+                expected_sum[i] += addend[i];
+            check(accumulated, expected_sum, "branch_sum_AddCP", kind, drops);
         }
     }
 }
@@ -985,7 +1076,7 @@ int main(int argc, char **argv)
     {
         if (argc == 2 && std::string(argv[1]) == "--plaintext-scale-absorption")
         {
-            run_test("reject low-precision scale40 absorption", test_rejects_low_precision_scale_absorption);
+            run_test("scale40 Rescale dense arithmetic and aligned sums", test_scale40_rescale_value_normalization);
             return 0;
         }
         if (argc == 2 && std::string(argv[1]) == "--rescale-value-normalization")
@@ -1001,7 +1092,7 @@ int main(int argc, char **argv)
         run_test("dense Rescale normalization and aligned AddCC/AddCP", test_rescale_value_normalization);
         run_test("single-drop Rescale on 50-bit RNS words", test_rescale_single_drop_50_bit_moduli);
         run_test("reject low-precision Rescale", test_rejects_low_precision_rescale);
-        run_test("reject low-precision scale40 absorption", test_rejects_low_precision_scale_absorption);
+        run_test("scale40 Rescale dense arithmetic and aligned sums", test_scale40_rescale_value_normalization);
         run_test("reject multi-process target", test_rejects_multi_process_target);
         std::cout << tests_run << " Poseidon CPU Runtime Api tests passed\n";
         return 0;
