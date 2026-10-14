@@ -2,7 +2,7 @@
 
 **状态：首版实现与小图/压力检查已通过；完整预训练模型正在188Server执行，数值验收尚未完成。更新日期：2026-10-14。**
 
-当前提交、检查日志和未完成项见 [验证入口](../test-results/waterline-20261013/README.md)与 [覆盖审计](../test-results/waterline-20261013/waterline-coverage-audit.md)。完整模型数值验收及同配置完整 HEFT 前后保持审计仍在进行中，尚未通过。本文以下实施、清理和验收要求继续适用；运行中不能报告整阶段完成。
+当前提交、检查日志和未完成项见 [验证入口](../test-results/waterline-20261013/README.md)与 [覆盖审计](../test-results/waterline-20261013/waterline-coverage-audit.md)。同配置完整 HEFT 前后保持审计已通过，见验证入口；完整模型数值验收仍在进行中，尚未通过。本文以下实施、清理和验收要求继续适用；运行中不能报告整阶段完成。
 
 本文是本阶段的实施与交接入口，取代此前的“静态分批、批末 Fence”实施要求。目标是完成简化后的 Waterline、清理被替代的旧机制，并在 `ssh 188Server` 上实际运行完整 Qwen-0.6B。算法、IR、资源约束和前进条件统一见 [Waterline 设计](poseidon-waterline-hybrid-encode-plan.zh-CN.md)；本文规定清理边界、提交方式、服务器操作和最终验收。两份文档共同构成本阶段任务，不再按 Git 历史中的旧计划继续叠加功能。
 

@@ -8,7 +8,7 @@
 | --- | --- |
 | 旧静态分批 | DaCapo 删除 `PlanPlaintextStreaming.cpp` / `check-streaming.py`，以 `PlanPlaintextWaterline.cpp` / `check-waterline.py` 替换；不按批克隆、重编码或插自动 Fence |
 | 旧生产选项 | 删除 `=stream`、`runtime-plan-prefetch-bytes`、`runtime.streaming`；optimizer 只接受 `eager` / `waterline`，运行时使用 `lookahead_groups` |
-| HEFT | `AssignPlacement.cpp` / `LatencyEstimator.cpp` 在 `39c1fb2..6e75be2` 无差异；Prepare 改写在 placement/communication 后运行。实际 HEFT 后的四GPU小图保持65条密文计算、37条密文通信及Host Boot的设备与相对顺序；另保留200消费者回归 |
+| HEFT | `AssignPlacement.cpp` / `LatencyEstimator.cpp` 在 `39c1fb2..6e75be2` 无差异；Prepare 改写在 placement/communication 后运行。实际 HEFT 后的四GPU小图保持65条密文计算、37条密文通信及Host Boot的设备与相对顺序；另保留200消费者回归；完整Q50同pass前后4,870,497条CT计算与3,420,801条CT传输逐项一致，[完整摘要](188-full-qwen-heft-audit-canonical-summary.json)，新旧binary hash相同 |
 | 单一执行器 | `run_parallel_tasks` 复用原计算/通信执行函数，按完整组和一个拓扑准入前缀推进；没有另一套静态批次执行器 |
 | 有用能力 | 保留普通 Encode/Transfer、串行 CPU worker、按需 bundle、binary plan/manifest、Ready、Release/reuse、显式 Fence 和收尾 drain；普通 Sequential 仍可执行，Waterline 要求 PerDeviceWorkers |
 | GPU 编码 | 正式 API 使用上下文 N/Q/scale 的完整 FP64 FFT、宽整数 RNS reduction 和 CUDA NTT；独立实验数学回归保留，但不当作模型或加速证明 |

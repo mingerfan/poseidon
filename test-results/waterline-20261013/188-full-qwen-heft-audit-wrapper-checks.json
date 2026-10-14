@@ -1,0 +1,54 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "case": "CLI fresh destination command preview",
+      "passed": true,
+      "compiler_argv_only_changes": [
+        "-o output path",
+        "same two pass-print flags"
+      ],
+      "writes_or_launches": false
+    },
+    {
+      "case": "environment-selected fresh destination preview",
+      "passed": true,
+      "writes_or_launches": false
+    },
+    {
+      "case": "existing status.json rejected before launch",
+      "passed": true,
+      "existing_bytes_and_directory_preserved": true
+    },
+    {
+      "case": "existing compile.log rejected before launch",
+      "passed": true,
+      "existing_bytes_and_directory_preserved": true
+    },
+    {
+      "case": "existing qwen3._hecate_qwen3_0_6b.runtime-plan.bin rejected before launch",
+      "passed": true,
+      "existing_bytes_and_directory_preserved": true
+    },
+    {
+      "case": "original plan directory rejected",
+      "passed": true
+    },
+    {
+      "case": "help documents output and preview arguments",
+      "passed": true
+    },
+    {
+      "case": "compiler audit and binding execution block identical to frozen first runner",
+      "passed": true
+    },
+    {
+      "case": "frozen first runner and unchanged auditor SHA256 match recorded server inputs",
+      "passed": true
+    },
+    {
+      "case": "published wrapper syntax parsed",
+      "passed": true
+    }
+  ]
+}

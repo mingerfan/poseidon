@@ -1,0 +1,6 @@
+{"stage": "compiling", "time_pid": 160399, "compiler_pids": [160400]}
+{"compiler_returncode": 0}
+{"stage": "canonical_comparison", "inputs_unchanged_during_compile": true}
+{"canonical_returncode": 0}
+{"stage": "binding_original_binary"}
+{"stage": "complete", "complete": true, "passed": true, "binary_identical_to_original": true, "numerical_model_validation": false}

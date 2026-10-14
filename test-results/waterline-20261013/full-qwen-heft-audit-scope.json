@@ -1,39 +1,36 @@
 {
-  "scope": "Read-only feasibility check; strict full-Qwen same-placement Waterline before/after fingerprint remains unmeasured.",
-  "full_same_configuration_preservation_fingerprint_measured": false,
-  "reason": "The existing qwen3.mlir is already after Waterline and memory planning. Its prefix contains dist.prepare_plain, dist.release and runtime.value_id. No independent pre-Waterline placed IR/eager plan was found in the inspected full-model artifacts, and saved command.json has no before/after IR print flags. Final-IR-to-binary or retained-annotation-only comparison cannot supply the missing independent pre-state.",
-  "artifacts": {
-    "directory": "/home/xuming/poseidon-waterline-20261013/qwen3-plans-bsgs-q50/gpu4",
-    "mlir": {
-      "file": "qwen3.mlir",
-      "bytes": 4127245139,
-      "large_constants": "dense_resource<__elided__>"
-    },
-    "binary_plan": {
-      "file": "qwen3._hecate_qwen3_0_6b.runtime-plan.bin",
-      "bytes": 1185203847
-    },
-    "bundle": {
-      "file": "qwen3._hecate_qwen3_0_6b.bundle/data.bin",
-      "bytes": 61298262016,
-      "read": false,
-      "hashed": false
-    },
-    "configuration": "Q50 / scale40 / 5 physical levels per logical level / 4 GPUs / Waterline"
+  "scope": "Full Qwen3-0.6B Q50 logical scale40, one identical HEFT placement, immediate before/after the same Waterline pass invocation.",
+  "full_same_configuration_preservation_fingerprint_measured": true,
+  "passed": true,
+  "numerical_model_validation": false,
+  "method": "Exact ordered canonical CT computation/transfer records, descriptors, stable logical/transfer IDs, places, parameters, types/levels/scales, argument/return signatures and phase order. Plaintext preparation/lifetime and newly attached runtime.value_id metadata are excluded.",
+  "ct_compute_count_each": 4870497,
+  "ct_transfer_count_each": 3420801,
+  "host_boot_count_each": 13275,
+  "foreground_sha256": "3a587b926bb6406e776bf0b16d38f7a61e5c204a38069098aaafb8bbf893ef24",
+  "runtime_binary_identical_to_original": true,
+  "runtime_binary_sha256": "9e906c0d32983dccbea866a7d506e677d039b57d537caa4d9bd0c568f61de813",
+  "evidence": {
+    "summary": "188-full-qwen-heft-audit-canonical-summary.json",
+    "status": "188-full-qwen-heft-audit-status.json",
+    "command": "188-full-qwen-heft-audit-command.json",
+    "inputs": "188-full-qwen-heft-audit-input-bindings.json",
+    "binding": "188-full-qwen-heft-audit-runtime-plan-binding.json"
+  },
+  "reproduction": "188-full-qwen-heft-audit-runner.py",
+  "comparator": "full-qwen-heft-stream-audit.py",
+  "method_controls": "full-qwen-heft-method-validation.json",
+  "large_artifacts": "Before/after IR and canonical spool remain on 188Server; the 61 GB input trace/bundle were not additionally hashed for this audit.",
+  "previous_read_only_feasibility_record": {
+    "scope": "Read-only feasibility check; strict full-Qwen same-placement Waterline before/after fingerprint remains unmeasured.",
+    "full_same_configuration_preservation_fingerprint_measured": false,
+    "reason": "The existing qwen3.mlir is already after Waterline and memory planning. Its prefix contains dist.prepare_plain, dist.release and runtime.value_id. No independent pre-Waterline placed IR/eager plan was found in the inspected full-model artifacts, and saved command.json has no before/after IR print flags. Final-IR-to-binary or retained-annotation-only comparison cannot supply the missing independent pre-state.",
+    "actions_taken": "Read-only SSH through /tmp/poseidon-188-20261014.sock: listings, small command/log reads and MLIR prefix reads. No full scan, GPU execution, compiler changes, new compile, weak annotation-only audit, server writes or process kills."
   },
   "existing_valid_regression": {
     "file": "third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/check-waterline.py",
     "entry": "check_heft_preservation",
     "method": "Run real HEFT and materialize communication once, save one placed IR, export eager and Waterline from it, then compare CT computes/transfers and ciphertext descriptors without absolute ordinals. This is a small multi-GPU graph, not full Qwen.",
     "source_sha256": "sha256:412383d8499cbe48d156b3cce9c50cb68965fe17bf48b5ee98614d47fad4ad76"
-  },
-  "cheapest_strict_capture_if_a_later_full_compile_is_otherwise_needed": {
-    "flags": [
-      "--mlir-print-ir-before=plan-plaintext-waterline",
-      "--mlir-print-ir-after=plan-plaintext-waterline",
-      "--mlir-elide-elementsattrs-if-larger=16"
-    ],
-    "method": "Stream canonical foreground CT compute/CT transfer records, descriptors, stable IDs, places and relative phase order from both sides of the same pass invocation; exclude preparation/lifetime instructions and absolute ordinals. Compare both hashes from that single HEFT placement. No separate HEFT run or 61 GB bundle scan is needed."
-  },
-  "actions_taken": "Read-only SSH through /tmp/poseidon-188-20261014.sock: listings, small command/log reads and MLIR prefix reads. No full scan, GPU execution, compiler changes, new compile, weak annotation-only audit, server writes or process kills."
+  }
 }

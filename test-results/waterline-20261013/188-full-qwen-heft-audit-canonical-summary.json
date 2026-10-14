@@ -1,0 +1,89 @@
+{
+  "passed": true,
+  "method": "one invocation immediate pre/post plan-plaintext-waterline IR; stable logical IDs, transfer IDs and original RuntimePlan transfer layout; exact ordered ciphertext operation/descriptor records",
+  "scope": "foreground CT computation/transfers, parameters, operands/results, rank/device, types/scales/levels, HEFT schedule attrs, argument/return signatures and phase-relative order; excludes plaintext preparation/lifetime and newly attached runtime.value_id metadata",
+  "snapshots": {
+    "before": {
+      "function": "_hecate_qwen3_0_6b",
+      "counts": {
+        "ct_values": 8291300,
+        "all_ops": 10992624,
+        "ct_transfer": 3420801,
+        "dist.transfer": 3420801,
+        "ct_compute": 4870497,
+        "ckks.modswitchc": 22214,
+        "ckks.mulcc": 42942,
+        "ckks.relinearize": 42942,
+        "ckks.mulcp": 1564926,
+        "ckks.rescalec": 1551651,
+        "ckks.rotatec": 88328,
+        "ckks.addcc": 1521653,
+        "ckks.addcp": 22315,
+        "ckks.bootstrapc": 13275,
+        "ckks.negatec": 251,
+        "returns": 1
+      },
+      "device_operation_counts": {
+        "(0, 1)": 2055543,
+        "(0, 3)": 1961898,
+        "(0, 2)": 1991330,
+        "(0, 0)": 2255977,
+        "(0, -1)": 26550
+      },
+      "hashes": {
+        "foreground": "3a587b926bb6406e776bf0b16d38f7a61e5c204a38069098aaafb8bbf893ef24",
+        "initialization": "3e573911ed6918bcc229229a0330705b62a50c1e767e968958b4528e90405989",
+        "execution": "f27de0c0c66ecdd18abeda26ca6a17d54ec624d8b5ef7e2c34859007f67318cb",
+        "ct_descriptors": "0c5f9af8bfa4d2ec4be07ab99884101207a52e94891f92ee34cc9d205fc0a1b1"
+      },
+      "records": 8291300,
+      "max_logical_id": 6152641,
+      "ir_bytes": 3275826360,
+      "ir_sha256": "7f8d91b56794ad2fbd5a05d4cfa1dee41aeae3510e05e62a17fd10403f03c956",
+      "first_mismatch": null
+    },
+    "after": {
+      "function": "_hecate_qwen3_0_6b",
+      "counts": {
+        "ct_values": 8291300,
+        "all_ops": 9710481,
+        "ct_transfer": 3420801,
+        "dist.transfer": 3420801,
+        "prepare": 1419183,
+        "ct_compute": 4870497,
+        "ckks.modswitchc": 22214,
+        "ckks.mulcc": 42942,
+        "ckks.relinearize": 42942,
+        "ckks.mulcp": 1564926,
+        "ckks.rescalec": 1551651,
+        "ckks.rotatec": 88328,
+        "ckks.addcc": 1521653,
+        "ckks.addcp": 22315,
+        "ckks.bootstrapc": 13275,
+        "ckks.negatec": 251,
+        "returns": 1
+      },
+      "device_operation_counts": {
+        "(0, 1)": 2055543,
+        "(0, 3)": 1961898,
+        "(0, 2)": 1991330,
+        "(0, 0)": 2255977,
+        "(0, -1)": 26550
+      },
+      "hashes": {
+        "foreground": "3a587b926bb6406e776bf0b16d38f7a61e5c204a38069098aaafb8bbf893ef24",
+        "initialization": "3e573911ed6918bcc229229a0330705b62a50c1e767e968958b4528e90405989",
+        "execution": "f27de0c0c66ecdd18abeda26ca6a17d54ec624d8b5ef7e2c34859007f67318cb",
+        "ct_descriptors": "0c5f9af8bfa4d2ec4be07ab99884101207a52e94891f92ee34cc9d205fc0a1b1"
+      },
+      "records": 8291300,
+      "max_logical_id": 6152641,
+      "ir_bytes": 3137653866,
+      "ir_sha256": "061b3151328ed56582d38f89bbe40c977e609129ad34bdae3a1052f0a5f01888",
+      "first_mismatch": null
+    }
+  },
+  "spool_has_unmatched_before_records": false,
+  "dump_path": "/home/xuming/poseidon-waterline-20261013/qwen3-plans-bsgs-q50-heft-audit/gpu4/compile.log",
+  "scan_seconds": 1231.8057523467578
+}

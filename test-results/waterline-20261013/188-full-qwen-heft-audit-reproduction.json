@@ -1,0 +1,126 @@
+{
+  "scope": "Full same-config Q50 logical40 HEFT preservation at one immediate before/after Waterline pass boundary; not numerical full-model completion.",
+  "first_run": {
+    "remote_output_directory": "/home/xuming/poseidon-waterline-20261013/qwen3-plans-bsgs-q50-heft-audit/gpu4",
+    "remote_runner": "/home/xuming/poseidon-waterline-20261013/qwen3-plans-bsgs-q50-heft-audit/gpu4/188-full-qwen-heft-audit-runner.py",
+    "runner_sha256": "f6f223a5fc65dd6da0b06a3c55e953f50a55499456ff2f8af84af15ae3abee5c",
+    "frozen_runner_local": "188-full-qwen-heft-audit-first-runner.py.txt",
+    "exact_command_local": "188-full-qwen-heft-audit-command.json",
+    "exact_command_sha256": "4c1d23a103ed6abe5b3299df4a014e9e713f2c7ebd840faeab58248e73ca0dbc",
+    "launch_local": "188-full-qwen-heft-audit-launch.json",
+    "remote_scripts_and_evidence_modified_by_wrapper_publication": false,
+    "canonical_result": {
+      "passed": true,
+      "ct_compute": 4870497,
+      "ct_transfer": 3420801,
+      "ct_values": 8291300,
+      "ordered_records": 8291300,
+      "hashes": {
+        "foreground": "3a587b926bb6406e776bf0b16d38f7a61e5c204a38069098aaafb8bbf893ef24",
+        "initialization": "3e573911ed6918bcc229229a0330705b62a50c1e767e968958b4528e90405989",
+        "execution": "f27de0c0c66ecdd18abeda26ca6a17d54ec624d8b5ef7e2c34859007f67318cb",
+        "ct_descriptors": "0c5f9af8bfa4d2ec4be07ab99884101207a52e94891f92ee34cc9d205fc0a1b1"
+      }
+    },
+    "binary_binding": {
+      "identical": true,
+      "bytes": 1185203847,
+      "sha256": "9e906c0d32983dccbea866a7d506e677d039b57d537caa4d9bd0c568f61de813",
+      "bundle_hashed": false
+    },
+    "fetched_evidence_matches_recorded_server_sha256": true,
+    "numerical_model_validation": false
+  },
+  "published_wrapper": {
+    "file": "188-full-qwen-heft-audit-runner.py",
+    "sha256": "e11536b3519f7a913d57333975db8cb06c5263124aca55cfd13765903b11efb6",
+    "changes": [
+      "CLI --output-dir or POSEIDON_HEFT_AUDIT_OUT selects a fresh directory; optional workspace argument/environment",
+      "Reject existing output artifacts, including status, compile log and plan binary; reserve status with exclusive creation",
+      "Generate command.json from original command by changing only -o and appending the same two pass-print flags",
+      "Require the unchanged sibling auditor and copy it into fresh output when needed",
+      "Read-only --print-command validates and previews without directory writes or process launch"
+    ],
+    "compiler_audit_binding_execution_block_identical_to_first_runner": true,
+    "unchanged_execution_block_sha256": "8debfbe2c4925f8ebea40cdb2de7a642f28f8bb60a20f3c7c3ccc698275746a3",
+    "auditor_local": "full-qwen-heft-stream-audit.py",
+    "auditor_sha256": "1eb7262ad237e58af7c903943199ffd8358765d72e029625d84d6590c9d9bfbb",
+    "wrapper_check_results": "188-full-qwen-heft-audit-wrapper-checks.json",
+    "checks_do_not_launch_compiler_auditor_or_gpu_work": true,
+    "preview_example_argv": [
+      "python3",
+      "188-full-qwen-heft-audit-runner.py",
+      "--output-dir",
+      "/home/xuming/poseidon-waterline-20261013/qwen3-plans-bsgs-q50-heft-audit-reproduce-NEW/gpu4",
+      "--print-command"
+    ],
+    "run_example_argv": [
+      "nice",
+      "-n",
+      "10",
+      "python3",
+      "-u",
+      "188-full-qwen-heft-audit-runner.py",
+      "--output-dir",
+      "/home/xuming/poseidon-waterline-20261013/qwen3-plans-bsgs-q50-heft-audit-reproduce-NEW/gpu4"
+    ]
+  },
+  "local_artifacts": {
+    "188-full-qwen-heft-audit-canonical-summary.json": {
+      "bytes": 3460,
+      "sha256": "ef6c3939357e40efa1d5e7355c5ea7a5ef644f64de187e85addfe14495b65236"
+    },
+    "188-full-qwen-heft-audit-command.json": {
+      "bytes": 2597,
+      "sha256": "4c1d23a103ed6abe5b3299df4a014e9e713f2c7ebd840faeab58248e73ca0dbc"
+    },
+    "188-full-qwen-heft-audit-compile-io.json": {
+      "bytes": 830,
+      "sha256": "37ed46b6eeb23524ba5f87aefeea9f695eb3e206019a889ebd8f098debecc8bd"
+    },
+    "188-full-qwen-heft-audit-compile.exit-status": {
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    "188-full-qwen-heft-audit-compile.time.log": {
+      "bytes": 3092,
+      "sha256": "c57bf6a2c8f26f5ebd168899d0f2792f74769d11ac817c6eba1574fb0759d100"
+    },
+    "188-full-qwen-heft-audit-first-runner.py.txt": {
+      "bytes": 5043,
+      "sha256": "f6f223a5fc65dd6da0b06a3c55e953f50a55499456ff2f8af84af15ae3abee5c"
+    },
+    "188-full-qwen-heft-audit-input-bindings.json": {
+      "bytes": 1831,
+      "sha256": "d5e4547388bbdc453f94ab3f18601d858c4bae77ed61f0c1bd56190168f81b6d"
+    },
+    "188-full-qwen-heft-audit-launch.json": {
+      "bytes": 558,
+      "sha256": "4667e246a5b23cdb6877415c1fa3780113385a103b1b82ad12ea5d1f01117c3a"
+    },
+    "188-full-qwen-heft-audit-runner.py": {
+      "bytes": 7696,
+      "sha256": "e11536b3519f7a913d57333975db8cb06c5263124aca55cfd13765903b11efb6"
+    },
+    "188-full-qwen-heft-audit-runtime-plan-binding.json": {
+      "bytes": 682,
+      "sha256": "bbc7519ff976dc065e4149988b8cbdb70cd0191f128884e9061f186291b506f7"
+    },
+    "188-full-qwen-heft-audit-status.json": {
+      "bytes": 549,
+      "sha256": "cacfdbe09dc29e8238a5a5a9cc6b3fd9f5d32053a9710ceaf7f103f510742a25"
+    },
+    "188-full-qwen-heft-audit-supervisor.log": {
+      "bytes": 368,
+      "sha256": "1f8c851f6c3f24fc653da7fce2a686a4e616bf931b8bff8a154a5c369708a1de"
+    },
+    "188-full-qwen-heft-audit-waterline.json": {
+      "bytes": 775,
+      "sha256": "aa9a7ab2a1c0caf5f666a1ffe71d3a63eb511e7b86a1cbcdeb46c38d55f79967"
+    },
+    "188-full-qwen-heft-audit-wrapper-checks.json": {
+      "bytes": 1400,
+      "sha256": "5b933959d82ca4d650ad330e18badaab0a68c622214a5f7df92ff4407a1161be"
+    }
+  }
+}

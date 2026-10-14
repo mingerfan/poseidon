@@ -43,11 +43,19 @@ Waterline 已接通后期 Prepare 改写、完整消费者组准入、每设备�
 | 统一执行器 | 最新 core 8/8：[日志](bundle-read-core-tests.log)；新增 [真实 lazy bundle 缺失 blob](bundle-read-worker-tests.log) 在 CPU/GPU Prepare worker 报错，失败消费者不提交，drain 时源保活、返回后释放；修复源后同 runtime/紧预算完成 20 组。此用例不声称错误瞬间另有 pending Prepare |
 | 编译器/HEFT | 10/10：[日志](compiler-heft-preservation-tests.log)；实际四卡小图在同一 placed IR 上比较 eager/Waterline，65 条密文计算、37 条密文通信及 Host Boot 的设备、参数、ValueId、相对顺序一致，8 个 Prepare 输出共享：[逐项证据](compiler-waterline-heft-preservation.log) |
 
-真实 CUDA OOM 清理还保留 [修复前负控](gpu-prepare-oom-local-v5-beforefix-negative-control.log) 与 [修复后正控](gpu-prepare-oom-local-v5-after-cleanup-fix.log)：旧 header 返回时 drain=0、dynamic=229376B、pinned=16384B，新版自动 drain 一次后归零。这是分配路径故障注入，不是耗尽整卡显存。完整 Qwen 同配置 HEFT 前后指纹仍未采集，缺少独立前态，见 [审计范围](full-qwen-heft-audit-scope.json)；最终 IR 自比不能补足该证据。
+真实 CUDA OOM 清理还保留 [修复前负控](gpu-prepare-oom-local-v5-beforefix-negative-control.log) 与 [修复后正控](gpu-prepare-oom-local-v5-after-cleanup-fix.log)：旧 header 返回时 drain=0、dynamic=229376B、pinned=16384B，新版自动 drain 一次后归零。这是分配路径故障注入，不是耗尽整卡显存。完整 Qwen 同配置 HEFT 前后保持现已通过独立前态审计，见下述证据。
 
 额外修复了GPU缓存路径的Host读取额度：非resident packed读取会同时持有原始字节和decoded double数组，动态Host须保持`N*8`，已存活的pinned缓存另计固定`N*4`。旧公式每次读取少计`N*4`（N16384时64KiB）。本地 [新版API 21/21](gpu-packed-host-budget-tests.log) 通过；真实packed暖缓存、公开Ledger/API边界的紧预算拒绝、足额预算编码全部2048复数槽通过，旧公式隔离负控确实错误接受紧预算并失败，见 [绑定与范围](gpu-packed-host-budget-result.json)。这条专门边界未执行完整Runtime结构，不能扩大为该结构的端到端反例。当前188完整模型仍使用修复前的Host计费公式和已验证的预乘数学路径；此修正不改Rescale、编码或HEFT，后续资源结论须单列差额，不能把运行中旧二进制当作新公式的验证。
 
 同一修复在188物理GPU1的 [隔离构建21/21](188-gpu-packed-host-budget-tests.log) 通过，UUID/ECC、精确编译链接命令、二进制及源hash、前后未改共享文件均见 [结果](188-gpu-packed-host-budget-result.json)。[复现脚本](check-packed-host-budget-188.py)读取既有Makefiles的flags，在新目录编译两份更新cpp并优先链接新object；link.map确认旧API cpp成员没有被抽取。该测试与完整模型共存，不用于性能比较；原server源码、build、runner及`logs/latest-build.status`均保持原样。
+
+## 完整模型 HEFT 保持审计
+
+188 使用原 Q50/逻辑40配置及同一编译器，在同一次 `plan-plaintext-waterline` 调用两侧直接保存 IR；只更换输出目录并增加前后打印选项。前后逐项比较 **4,870,497 条密文计算、3,420,801 条密文传输**及密文描述、稳定ID、参数、设备、phase相对顺序、输入/返回签名，均一致，且无遗漏记录；13,275 条 Host Boot 保持。前台规范记录 SHA256 为 `3a587b926bb6406e776bf0b16d38f7a61e5c204a38069098aaafb8bbf893ef24`，见 [完整比较摘要](188-full-qwen-heft-audit-canonical-summary.json)。Prepare/lifetime 与新增 `runtime.value_id` 元数据不属于前台记录。
+
+[监督状态](188-full-qwen-heft-audit-status.json)为 compile=0、canonical=0、complete/passed=true；[新旧计划绑定](188-full-qwen-heft-audit-runtime-plan-binding.json)两份 binary 均为1,185,203,847B，SHA256均为 `9e906c0d32983dccbea866a7d506e677d039b57d537caa4d9bd0c568f61de813`，严格绑定在跑原计划。CPU编译墙钟1:11:17、MaxRSS137280764KiB，流式比较1231.81s；6.41GB诊断IR留服务器，未为本审计全量读取/散列61GB bundle。这是编译期保持证据，**不是模型数值或性能结果**。
+
+精确 [命令](188-full-qwen-heft-audit-command.json)、[输入绑定](188-full-qwen-heft-audit-input-bindings.json)、[审计范围](full-qwen-heft-audit-scope.json)、[可复现监督脚本](188-full-qwen-heft-audit-runner.py)及 [流式比较器](full-qwen-heft-stream-audit.py)一并保留。比较器另经真实小HEFT图的SSA改名正控、设备/参数/类型/顺序及缺前态负控，见 [方法验证](full-qwen-heft-method-validation.json)。
 
 ## 完整 Qwen 目标与执行边界
 
@@ -130,4 +138,4 @@ POSEIDON_188_WORKSPACE="$base" POSEIDON_RESCALE_CHECK_LABEL=rescale-prescale-fre
 
 `monitor_process.py`在 CUDA setup 前按 PID/身份采样 RSS/HWM 和 driver 显存；采样峰值不是连续峰值。runner 分列冷启动、setup/init/forward、首个/全部输出、Host Boot、Prepare、GPU events、H2D、等待和收尾，外部 time-v 覆盖进程冷启动。首输出时间指完整run返回后首个解密结果，并非流式首个密文Ready时刻。共享Host/raw承诺峰值取最终stdout的Waterline账本统计，`runtime_timing.raw_peak_bytes`仅是单次读取峰值。CSV 字节数、提交数、ordinal 均不能当 CUDA 完成率或剩余时间，利用率快照也不足以证明卡死。
 
-仍需交付完整261输出和独立数值报告、实际完整后端覆盖、每卡/Host/pinned峰值、收尾清单及完整模型同配置 HEFT 前后保持证据，见 [覆盖审计](waterline-coverage-audit.md)。本参数为 `sec_level_type::none`；计划含13275条 Host decrypt/re-encrypt refresh，使用秘密密钥，**不是原生 FHE Boot**。固定两 token 校准不证明其他输入精度；Native Boot 的 Waterline workspace 查询尚未接通。当前没有完整模型端到端加速证据。
+仍需交付完整261输出和独立数值报告、实际完整后端覆盖、每卡/Host/pinned峰值、收尾清单；完整模型同配置 HEFT 前后保持证据已通过，见 [覆盖审计](waterline-coverage-audit.md)。本参数为 `sec_level_type::none`；计划含13275条 Host decrypt/re-encrypt refresh，使用秘密密钥，**不是原生 FHE Boot**。固定两 token 校准不证明其他输入精度；Native Boot 的 Waterline workspace 查询尚未接通。当前没有完整模型端到端加速证据。

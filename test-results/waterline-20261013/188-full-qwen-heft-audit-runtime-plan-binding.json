@@ -1,0 +1,18 @@
+{
+  "original": {
+    "path": "/home/xuming/poseidon-waterline-20261013/qwen3-plans-bsgs-q50/gpu4/qwen3._hecate_qwen3_0_6b.runtime-plan.bin",
+    "bytes": 1185203847,
+    "mtime_ns": 1791903803228194232,
+    "inode": 219103946,
+    "sha256": "9e906c0d32983dccbea866a7d506e677d039b57d537caa4d9bd0c568f61de813"
+  },
+  "audit": {
+    "path": "/home/xuming/poseidon-waterline-20261013/qwen3-plans-bsgs-q50-heft-audit/gpu4/qwen3._hecate_qwen3_0_6b.runtime-plan.bin",
+    "bytes": 1185203847,
+    "mtime_ns": 1791967576929938500,
+    "inode": 222450495,
+    "sha256": "9e906c0d32983dccbea866a7d506e677d039b57d537caa4d9bd0c568f61de813"
+  },
+  "identical": true,
+  "bundle_hashed": false
+}

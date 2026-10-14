@@ -1,0 +1,19 @@
+{
+  "scope": "one CPU-only Q50 logical40 full compile; immediate before/after the same Waterline pass invocation",
+  "started_at": "2026-10-14T15:38:24.991297+08:00",
+  "supervisor_pid": 160395,
+  "nice": 10,
+  "numerical_model_validation": false,
+  "complete": true,
+  "passed": true,
+  "stage": "complete",
+  "time_pid": 160399,
+  "compiler_pids": [
+    160400
+  ],
+  "elapsed_seconds": 5517.165627154056,
+  "compiler_returncode": 0,
+  "inputs_unchanged_during_compile": true,
+  "canonical_returncode": 0,
+  "binary_identical_to_original": true
+}

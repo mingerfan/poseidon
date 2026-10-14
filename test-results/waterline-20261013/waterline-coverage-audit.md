@@ -18,7 +18,7 @@
 | 未完成真实 Ready 不能被消费者使用；Release/reuse 不能提前回收 | 当前 `188-rescale-gpu-api-single.log` 及本地 `gpu-normalized-rescale-api.log` 通过 upload completion、unfinished compute/transfer Release、非最终输出依赖 drain、reuse 等公开 API 测试。`stream-ready-validation.md` 引用同一生产 stream 的六个 80 ms CUDA gate 案例及 AddCP c1 的逐 word 正负控；正控 Ready 后全字正确，恢复旧默认流 copy 的隔离负控稳定失败。原始日志和源代码保留。 | 有真实 CUDA 事件及有判别力的负控；80 ms gate 是本地单卡，不能当作 188 完整模型 trace。188 四卡不均衡检查对 peers 调用 synchronize 后才计完成，真实三张 peer 均在慢 GPU0 前完成。 |
 | 不需要批末 Fence，显式 Fence 保留整体边界语义 | 编译器检查 200 计算无任何自动 Fence；Mock 20 组滚动 `fence_calls==0`，`test_prepare_across_fence_and_unused` 保留一条显式 Fence、跨界注册的 Prepare 能被后续消费、未使用 Prepare 不提交。真实 `test_runtime_explicit_encode_fence` 在两种执行模式执行显式 Encode/Fence 数值对照，当前 188 单卡 API 日志 PASS。 | 自动批次路径的替换与显式 Fence 的单卡语义已覆盖。该显式 Prepare 跨界结构的专门用例是 Mock；188 全部卡 Waterline ring 无 Fence。 |
 | 读取/后端/分配失败后，错误可见、依赖唤醒、在途工作安全结束 | Mock `test_prepare_failure_and_explicit_restart` 对固定 CPU/GPU 的第二次 Prepare 注入异常，错误可见、无换后端或自动重跑，另一次显式调用同runtime完成。新增正式 `poseidon_gpu_prepare_oom_test.cpp` 通过公开RMM hook，让真实CUDA Prepare输出分配及stream先在途，再在第二次Scratch分配请求注入 `std::bad_alloc`。188日志确认消费者0次、GPU尝试1次、CPU尝试0次；`run()`返回前等待gate结束、自动drain1次、dynamic/pinned live=0，同runtime保持存活并显式再跑成功，2048复数槽maxabs=4.2764e-8。当前Release suite也验证失败send的源保活至drain后释放所有权。 | **生产CUDA分配路径的故障收敛已补齐**，不是整卡显存耗尽实验。本地 [修复后正控](gpu-prepare-oom-local-v5-after-cleanup-fix.log) 通过；[旧header负控](gpu-prepare-oom-local-v5-beforefix-negative-control.log) 确实失败，返回时drain=0、dynamic=229376B、pinned=16384B，判别出缺陷。新增 [真实缺失blob测试](bundle-read-worker-tests.log) 在CPU/GPU Prepare worker内失败，失败消费者无提交、无换后端/重试，源保活至drain结束并在返回后释放；显式修复后同runtime/紧预算20组完成。[core8/8](bundle-read-core-tests.log)通过。这条测试不声称错误瞬间另有pending Prepare，异步在途失败由前述用例覆盖。 |
-| HEFT 前台设备与相对顺序保持 | 新增 `check_heft_preservation` 从未placement的共享权重fanout/Rotate/reduction/Host Boot图实际执行四卡HEFT及通信物化一次，再从同一placed IR分别导出eager和Waterline。逐项比较initialization/execution的前台密文子序列（仅去除绝对ordinal）、密文descriptor、external/final output ID；65条密文计算、37条密文通信的设备/参数/ID/相对顺序一致，8个Prepare输出均被复用。[专门日志](compiler-waterline-heft-preservation.log) 和当前10/10 suite通过；原200 AddCP回归保留。 | **实际HEFT多卡图的后期改写保持已补齐**，含真实编译生成的跨卡边及Host边。该测试不是CUDA执行，也不是完整Qwen图。**完整Qwen同一配置在Waterline前后的前台assignment/order指纹仍未交付**；不能把源码相同或该小图通过扩写为全模型对照。 |
+| HEFT 前台设备与相对顺序保持 | 新增 `check_heft_preservation` 从未placement的共享权重fanout/Rotate/reduction/Host Boot图实际执行四卡HEFT及通信物化一次，再从同一placed IR分别导出eager和Waterline。逐项比较initialization/execution的前台密文子序列（仅去除绝对ordinal）、密文descriptor、external/final output ID；65条密文计算、37条密文通信的设备/参数/ID/相对顺序一致，8个Prepare输出均被复用。[专门日志](compiler-waterline-heft-preservation.log) 和当前10/10 suite通过；原200 AddCP回归保留。 | **实际HEFT多卡图的后期改写保持已补齐**，含真实编译生成的跨卡边及Host边。该测试不是CUDA执行，也不是完整Qwen图。**完整Qwen同配置审计现已通过**：同一pass调用两侧直接捕获IR，4,870,497条CT计算、3,420,801条CT传输及描述/ID/设备/参数/相对顺序逐项一致，[完整摘要](188-full-qwen-heft-audit-canonical-summary.json)；新旧binary SHA256完全一致，[绑定](188-full-qwen-heft-audit-runtime-plan-binding.json)。这是独立全图保持审计，不能当作数值执行证据。 |
 
 ## HEFT 源码核对
 
@@ -29,7 +29,7 @@
 | `lib/Dialect/CKKS/Transforms/AssignPlacement.cpp` | `6c0738775b77e3131376e8c49467f8dc6f4b8fa5aef666c81d08e3eb28ae5e46` |
 | `lib/Dialect/Earth/Transforms/LatencyEstimator.cpp` | `848b5fab24e69321f21abbf151d74214a673a177cc61e3d8e2c34ca3b3222e19` |
 
-这补充 [旧hash记录](heft-source-sha256.json) 原来只到 `ad35c87` 的范围。实际物理参数/profile已改变，源码相同不保证新Q50与旧Q40产生相同placement；完整模型应在**同一配置**开启/关闭后期Waterline改写后比较前台计算及密文通信顺序。
+这补充 [旧hash记录](heft-source-sha256.json) 原来只到 `ad35c87` 的范围。实际物理参数/profile已改变，源码相同不保证新Q50与旧Q40产生相同placement；本次已对完整模型**同一配置、同一pass调用的前后IR**完成该比较；未声称新Q50与旧Q40 placement相同。
 
 ## core 前缀反例的复现
 

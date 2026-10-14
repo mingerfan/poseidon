@@ -1,0 +1,16 @@
+{
+  "launched_at": "2026-10-14T15:38:24.936550+08:00",
+  "command": [
+    "/home/xuming/.local/bin/tmux",
+    "new-session",
+    "-d",
+    "-s",
+    "poseidon-q50-heft-audit-20261014",
+    "nice -n 10 python3 -u /home/xuming/poseidon-waterline-20261013/qwen3-plans-bsgs-q50-heft-audit/gpu4/188-full-qwen-heft-audit-runner.py > /home/xuming/poseidon-waterline-20261013/qwen3-plans-bsgs-q50-heft-audit/gpu4/supervisor.log 2>&1"
+  ],
+  "original_command_only_changes": [
+    "output path",
+    "two Waterline IR print flags"
+  ],
+  "gpu_work_launched": false
+}

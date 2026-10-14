@@ -1,0 +1,44 @@
+{
+  "files": {
+    "/home/xuming/poseidon-waterline-20261013/toolchain/bin/hecate-opt": {
+      "sha256": "4da42373f40bdd215c882a997d1be4ffcc6d22a41d7de2fefdcf9b9b6f0105c8",
+      "path": "/home/xuming/poseidon-waterline-20261013/toolchain/bin/hecate-opt",
+      "bytes": 40675960,
+      "mtime_ns": 1791902138065122578,
+      "inode": 30814525
+    },
+    "/home/xuming/poseidon-waterline-20261013/profiles/compiler-profile.json": {
+      "sha256": "4ca708b21ccc953ffd5818f83814d871e27690f0fbff656908f803e91d239df3",
+      "path": "/home/xuming/poseidon-waterline-20261013/profiles/compiler-profile.json",
+      "bytes": 1453,
+      "mtime_ns": 1791961092033659446,
+      "inode": 30814531
+    },
+    "/home/xuming/poseidon-waterline-20261013/profiles/operator-spec.json": {
+      "sha256": "e8f930e66494a3cce6ecf9b46a196fbde9974490ae62b08429fa4452f3e1770d",
+      "path": "/home/xuming/poseidon-waterline-20261013/profiles/operator-spec.json",
+      "bytes": 10295,
+      "mtime_ns": 1791961092033659446,
+      "inode": 30814532
+    },
+    "/home/xuming/poseidon-waterline-20261013/profiles/communication-profile.json": {
+      "sha256": "a7abb07495f547e19b9722b7753cadc34a2447a861ff616aa7c55f76162d1fcc",
+      "path": "/home/xuming/poseidon-waterline-20261013/profiles/communication-profile.json",
+      "bytes": 1363,
+      "mtime_ns": 1791961092032659446,
+      "inode": 30814533
+    }
+  },
+  "trace_stat_only": {
+    "path": "/home/xuming/poseidon-waterline-20261013/qwen3-traced-bsgs/trace_qwen3.mlirbc",
+    "bytes": 61353321306,
+    "mtime_ns": 1791887376996487390,
+    "inode": 241435420
+  },
+  "source_command": "/home/xuming/poseidon-waterline-20261013/qwen3-plans-bsgs-q50/gpu4/command.json",
+  "changes": [
+    "output path",
+    "before/after Waterline IR print flags"
+  ],
+  "large_input_or_bundle_hashed": false
+}
