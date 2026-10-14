@@ -2,7 +2,7 @@
 
 **状态：首版实现与小图/压力检查已通过；完整预训练模型正在188Server执行，数值验收尚未完成。更新日期：2026-10-14。**
 
-当前提交、检查日志和未完成项见 [验证入口](../test-results/waterline-20261013/README.md)。本文以下实施、清理和验收要求继续适用；运行中不能报告整阶段完成。
+当前提交、检查日志和未完成项见 [验证入口](../test-results/waterline-20261013/README.md)与 [覆盖审计](../test-results/waterline-20261013/waterline-coverage-audit.md)。完整模型数值验收及同配置完整 HEFT 前后保持审计仍在进行中，尚未通过。本文以下实施、清理和验收要求继续适用；运行中不能报告整阶段完成。
 
 本文是本阶段的实施与交接入口，取代此前的“静态分批、批末 Fence”实施要求。目标是完成简化后的 Waterline、清理被替代的旧机制，并在 `ssh 188Server` 上实际运行完整 Qwen-0.6B。算法、IR、资源约束和前进条件统一见 [Waterline 设计](poseidon-waterline-hybrid-encode-plan.zh-CN.md)；本文规定清理边界、提交方式、服务器操作和最终验收。两份文档共同构成本阶段任务，不再按 Git 历史中的旧计划继续叠加功能。
 
@@ -10,9 +10,9 @@
 
 先阅读适用的 `AGENTS.md`，检查当前分支、`git status`、子模块版本及近期提交，以源码确认实际状态。工作区可能有其他工作的未提交修改，不覆盖、不混入自己的提交。
 
-2026-10-10 新增的可选 `stream` 路径采用静态明文分批与 Fence：DaCapo `b60fb1d` 加入分批与 V3 导出，ckks-runtime `d858a84` 加入在线 Encode、Fence 和串行 CPU worker，Poseidon `71dc4fe1` 集成这些修改。默认编译选项仍为 `eager`；执行计划没有 Fence 时，runtime 不会自行定期插入 Fence。不要把可选分批路径当成原有 runtime 的唯一架构，也不要据此预设必须重写整个执行器。
+2026-10-10 新增的可选 `stream` 路径采用静态明文分批与 Fence：DaCapo `b60fb1d` 加入分批与 V3 导出，ckks-runtime `d858a84` 加入在线 Encode、Fence 和串行 CPU worker，Poseidon `71dc4fe1` 集成这些修改。当前该静态分批路径已由 Waterline 替换，编译选项为 `eager` 或 `waterline`，默认仍为 `eager`；执行计划没有 Fence 时，runtime 不会自行定期插入 Fence。不要把历史可选分批路径当成原有 runtime 的唯一架构，也不要据此预设必须重写整个执行器。
 
-已有按需读取、在线 CPU Encode、异步上传、完成事件、Release/reuse、多 GPU worker 与二进制计划加载能力可以复用。GPU Encode 仍需从实验接入正式 API；实验中的固定 degree、设备编号和参数限制不能直接带入生产路径。旧测试范围见 [已有验证记录](poseidon-plaintext-prefetch-validation.zh-CN.md)，不代表 Waterline 已经实现或完整 Qwen 已经跑通。
+已有按需读取、在线 CPU Encode、异步上传、完成事件、Release/reuse、多 GPU worker 与二进制计划加载能力已被复用。正式 API 的 `prepare_plaintext_async(desc, slots, fixed_backend)` 已接通 CPU/GPU 完整准备路径，由 runtime 选择固定后端并通过 `prepare_resources` 等接口取得资源上界。当前 V4 Waterline 支持单 rank 管理一张或多张本地 GPU；实验中的固定 degree、设备编号和参数限制不能直接带入生产路径。测试范围统一见上述验证入口与覆盖审计，小图通过不代表完整 Qwen 已经跑通。
 
 本阶段必须完成：
 

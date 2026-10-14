@@ -128,6 +128,6 @@ POSEIDON_188_WORKSPACE="$base" POSEIDON_RESCALE_CHECK_LABEL=rescale-prescale-fre
 
 [run-188-acceptance.sh](run-188-acceptance.sh)通过 `POSEIDON_QWEN_BACKEND=cpu|gpu|auto` 选完整 Prepare 后端；复用压力须满足脚本的同构建 hash、既有 exit0 与配置要求。原 Q50 精确编译命令见上表 JSON，`--waterline=40` 保持有效；用新构建及新 label 执行，重新编译只允许 1/4 卡顺序运行，失败最终返回非零。启动脚本本身不构成模型通过。
 
-`monitor_process.py`在 CUDA setup 前按 PID/身份采样 RSS/HWM 和 driver 显存；采样峰值不是连续峰值。runner 分列冷启动、setup/init/forward、首个/全部输出、Host Boot、Prepare、GPU events、H2D、等待和收尾，外部 time-v 覆盖进程冷启动。CSV 字节数、提交数、ordinal 均不能当 CUDA 完成率或剩余时间，利用率快照也不足以证明卡死。
+`monitor_process.py`在 CUDA setup 前按 PID/身份采样 RSS/HWM 和 driver 显存；采样峰值不是连续峰值。runner 分列冷启动、setup/init/forward、首个/全部输出、Host Boot、Prepare、GPU events、H2D、等待和收尾，外部 time-v 覆盖进程冷启动。首输出时间指完整run返回后首个解密结果，并非流式首个密文Ready时刻。共享Host/raw承诺峰值取最终stdout的Waterline账本统计，`runtime_timing.raw_peak_bytes`仅是单次读取峰值。CSV 字节数、提交数、ordinal 均不能当 CUDA 完成率或剩余时间，利用率快照也不足以证明卡死。
 
 仍需交付完整261输出和独立数值报告、实际完整后端覆盖、每卡/Host/pinned峰值、收尾清单及完整模型同配置 HEFT 前后保持证据，见 [覆盖审计](waterline-coverage-audit.md)。本参数为 `sec_level_type::none`；计划含13275条 Host decrypt/re-encrypt refresh，使用秘密密钥，**不是原生 FHE Boot**。固定两 token 校准不证明其他输入精度；Native Boot 的 Waterline workspace 查询尚未接通。当前没有完整模型端到端加速证据。

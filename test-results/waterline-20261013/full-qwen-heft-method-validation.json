@@ -1,0 +1,157 @@
+{
+  "scope": "local method validation before the one authorized additional full CPU compile; not full-model proof",
+  "hecate_opt_sha256": "4da42373f40bdd215c882a997d1be4ffcc6d22a41d7de2fefdcf9b9b6f0105c8",
+  "remote_compiler_identical": true,
+  "parser_sha256": "1eb7262ad237e58af7c903943199ffd8358765d72e029625d84d6590c9d9bfbb",
+  "local_fixture_sha256": "1ac5856982dd7c601bac6849fe313651dbec3f8702ae31dbf3eef10da8fae0ce",
+  "local_compiler_cwd": "third_party/ckks-runtime/third_party/dacapo",
+  "pass_print_flags": [
+    "--mlir-print-ir-before=plan-plaintext-waterline",
+    "--mlir-print-ir-after=plan-plaintext-waterline",
+    "--mlir-elide-elementsattrs-if-larger=16"
+  ],
+  "positive_small_same_invocation": {
+    "passed": true,
+    "method": "one invocation immediate pre/post plan-plaintext-waterline IR; stable logical IDs, transfer IDs and original RuntimePlan transfer layout; exact ordered ciphertext operation/descriptor records",
+    "scope": "foreground CT computation/transfers, parameters, operands/results, rank/device, types/scales/levels, HEFT schedule attrs, argument/return signatures and phase-relative order; excludes plaintext preparation/lifetime and newly attached runtime.value_id metadata",
+    "snapshots": {
+      "before": {
+        "function": "heft_waterline",
+        "counts": {
+          "ct_values": 103,
+          "all_ops": 112,
+          "ct_transfer": 37,
+          "dist.transfer": 37,
+          "ct_compute": 65,
+          "ckks.rotatec": 16,
+          "ckks.addcp": 32,
+          "ckks.addcc": 15,
+          "ckks.bootstrapc": 1,
+          "ckks.negatec": 1,
+          "returns": 1
+        },
+        "device_operation_counts": {
+          "(0, 0)": 25,
+          "(0, 1)": 29,
+          "(0, 2)": 25,
+          "(0, 3)": 21,
+          "(0, -1)": 2
+        },
+        "hashes": {
+          "foreground": "fa7f74af16e25fcafba926b72826daccd45272b034c4a6035c0dfb6977bcc43c",
+          "initialization": "e2c2c1515247c67e189eb8ff01b34252f84b264f6f9b4d7a62da5ff5037f9ef1",
+          "execution": "11ed8f257a685da24ce315c0298878008df5ea223b180c82ad7be6fc9a9cc814",
+          "ct_descriptors": "0db2fd83b0d6ef568a08a641163d7c3e5e3de495b7537352b626557f3b2cf556"
+        },
+        "records": 104,
+        "max_logical_id": 67,
+        "ir_bytes": 32341,
+        "ir_sha256": "1657b2ba8e1bd98e05fbd22a5054b72578fdb8ebca362c8e83a6281fce9cf175",
+        "first_mismatch": null
+      },
+      "after": {
+        "function": "heft_waterline",
+        "counts": {
+          "ct_values": 103,
+          "all_ops": 110,
+          "ct_transfer": 37,
+          "dist.transfer": 37,
+          "prepare": 8,
+          "ct_compute": 65,
+          "ckks.rotatec": 16,
+          "ckks.addcp": 32,
+          "ckks.addcc": 15,
+          "ckks.bootstrapc": 1,
+          "ckks.negatec": 1,
+          "returns": 1
+        },
+        "device_operation_counts": {
+          "(0, 0)": 25,
+          "(0, 1)": 29,
+          "(0, 2)": 25,
+          "(0, 3)": 21,
+          "(0, -1)": 2
+        },
+        "hashes": {
+          "foreground": "fa7f74af16e25fcafba926b72826daccd45272b034c4a6035c0dfb6977bcc43c",
+          "initialization": "e2c2c1515247c67e189eb8ff01b34252f84b264f6f9b4d7a62da5ff5037f9ef1",
+          "execution": "11ed8f257a685da24ce315c0298878008df5ea223b180c82ad7be6fc9a9cc814",
+          "ct_descriptors": "0db2fd83b0d6ef568a08a641163d7c3e5e3de495b7537352b626557f3b2cf556"
+        },
+        "records": 104,
+        "max_logical_id": 67,
+        "ir_bytes": 34374,
+        "ir_sha256": "52370d6324f1e2adc6ad75a27350f88bc5aa8bb15049fc324a5a4e389364d54f",
+        "first_mismatch": null
+      }
+    },
+    "spool_has_unmatched_before_records": false,
+    "dump_path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-20261013/full-heft-local-method/pass-dumps.log",
+    "scan_seconds": 0.004136824994930066
+  },
+  "controls": {
+    "original": {
+      "expected_acceptance": true,
+      "accepted": true,
+      "error": null,
+      "first_mismatch": null
+    },
+    "ssa_renamed": {
+      "expected_acceptance": true,
+      "accepted": true,
+      "error": null,
+      "first_mismatch": null
+    },
+    "device": {
+      "expected_acceptance": false,
+      "accepted": false,
+      "error": null,
+      "first_mismatch": {
+        "record": 6,
+        "expected": "[\"ct_operation\",[\"execution\",\"v:9\",\"ckks.rotatec\",[\"t:0\"],\"<{offset = array<i64: 3>}> {dist.device = 0 : i64, dist.logical_id = 9 : i64, dist.rank = 0 : i64, dist.schedule_finish = 2019 : i64, dist.schedule_start = 19 : i64} : (tensor<1x!ckks.poly<2 * 40 * 5>>) -> tensor<1x!ckks.poly<2 * 40 * 5>>\"]]",
+        "actual": "[\"ct_operation\",[\"execution\",\"v:9\",\"ckks.rotatec\",[\"t:0\"],\"<{offset = array<i64: 3>}> {dist.device = 1 : i64, dist.logical_id = 9 : i64, dist.rank = 0 : i64, dist.schedule_finish = 2019 : i64, dist.schedule_start = 19 : i64} : (tensor<1x!ckks.poly<2 * 40 * 5>>) -> tensor<1x!ckks.poly<2 * 40 * 5>>\"]]"
+      }
+    },
+    "parameter": {
+      "expected_acceptance": false,
+      "accepted": false,
+      "error": null,
+      "first_mismatch": {
+        "record": 6,
+        "expected": "[\"ct_operation\",[\"execution\",\"v:9\",\"ckks.rotatec\",[\"t:0\"],\"<{offset = array<i64: 3>}> {dist.device = 0 : i64, dist.logical_id = 9 : i64, dist.rank = 0 : i64, dist.schedule_finish = 2019 : i64, dist.schedule_start = 19 : i64} : (tensor<1x!ckks.poly<2 * 40 * 5>>) -> tensor<1x!ckks.poly<2 * 40 * 5>>\"]]",
+        "actual": "[\"ct_operation\",[\"execution\",\"v:9\",\"ckks.rotatec\",[\"t:0\"],\"<{offset = array<i64: 4>}> {dist.device = 0 : i64, dist.logical_id = 9 : i64, dist.rank = 0 : i64, dist.schedule_finish = 2019 : i64, dist.schedule_start = 19 : i64} : (tensor<1x!ckks.poly<2 * 40 * 5>>) -> tensor<1x!ckks.poly<2 * 40 * 5>>\"]]"
+      }
+    },
+    "type": {
+      "expected_acceptance": false,
+      "accepted": false,
+      "error": null,
+      "first_mismatch": {
+        "record": 6,
+        "expected": "[\"ct_operation\",[\"execution\",\"v:9\",\"ckks.rotatec\",[\"t:0\"],\"<{offset = array<i64: 3>}> {dist.device = 0 : i64, dist.logical_id = 9 : i64, dist.rank = 0 : i64, dist.schedule_finish = 2019 : i64, dist.schedule_start = 19 : i64} : (tensor<1x!ckks.poly<2 * 40 * 5>>) -> tensor<1x!ckks.poly<2 * 40 * 5>>\"]]",
+        "actual": "[\"ct_operation\",[\"execution\",\"v:9\",\"ckks.rotatec\",[\"t:0\"],\"<{offset = array<i64: 3>}> {dist.device = 0 : i64, dist.logical_id = 9 : i64, dist.rank = 0 : i64, dist.schedule_finish = 2019 : i64, dist.schedule_start = 19 : i64} : (tensor<1x!ckks.poly<2 * 41 * 5>>) -> tensor<1x!ckks.poly<2 * 40 * 5>>\"]]"
+      }
+    },
+    "relative_transfer_order": {
+      "expected_acceptance": false,
+      "accepted": false,
+      "error": null,
+      "first_mismatch": {
+        "record": 2,
+        "expected": "[\"ct_operation\",[\"initialization\",\"t:0\",\"dist.transfer\",[\"v:0\"],\"<{destination_device = 0 : i64, destination_rank = 0 : i64, initialization = true, source_device = -1 : i64, source_rank = 0 : i64, transfer_id = 0 : i64}> {dist.device = 0 : i64, dist.rank = 0 : i64} : (tensor<1x!ckks.poly<2 * 40 * 5>>) -> tensor<1x!ckks.poly<2 * 40 * 5>>\"]]",
+        "actual": "[\"ct_operation\",[\"initialization\",\"t:1\",\"dist.transfer\",[\"v:0\"],\"<{destination_device = 1 : i64, destination_rank = 0 : i64, initialization = true, source_device = -1 : i64, source_rank = 0 : i64, transfer_id = 1 : i64}> {dist.device = 1 : i64, dist.rank = 0 : i64} : (tensor<1x!ckks.poly<2 * 40 * 5>>) -> tensor<1x!ckks.poly<2 * 40 * 5>>\"]]"
+      }
+    },
+    "missing_before": {
+      "expected_acceptance": false,
+      "accepted": false,
+      "error": "after dump has no completed independent before dump",
+      "first_mismatch": null
+    }
+  },
+  "stable_identity_mapping": "CKKS dist.logical_id; CT transfers transfer_id; replaced PT transfers map from runtime.value_id via the unchanged original RuntimePlanLayout CKKS maximum and physical transfer sequence, including original argument IDs",
+  "failure_policy": "unsupported IR, missing independent before/after, mismatched records, compiler failure, changing inputs or binary mismatch stays failed; no fallback comparison",
+  "full_compile_started_at": "2026-10-14T15:38:25+08:00",
+  "full_compile_pid": 160400,
+  "full_compile_nice": 10
+}

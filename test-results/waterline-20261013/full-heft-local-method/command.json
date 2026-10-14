@@ -1,0 +1,10 @@
+[
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/build/nix/bin/hecate-opt",
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-20261013/full-heft-local-method/unplaced.mlir",
+  "-p=builtin.module(func.func(assign-ckks-placement{device-counts=4 operator-spec=/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/placement-operator-spec.json boot-profile=test-boot communication-profile=/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/placement-communication-profile.json},materialize-ckks-communication,plan-plaintext-waterline{operator-spec=/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/ckks-runtime/third_party/dacapo/test/runtime-plan/placement-operator-spec.json prefix=/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-20261013/full-heft-local-method/small gpu-budget-bytes=1048576 fraction=0.5 host-budget-bytes=1048576 pinned-budget-bytes=1048576 raw-budget-bytes=128}))",
+  "--mlir-print-ir-before=plan-plaintext-waterline",
+  "--mlir-print-ir-after=plan-plaintext-waterline",
+  "--mlir-elide-elementsattrs-if-larger=16",
+  "-o",
+  "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-20261013/full-heft-local-method/after.mlir"
+]

@@ -2,11 +2,11 @@
 
 **状态：首版Waterline与CPU/GPU完整编码及动态选择已接通，小图和压力验证通过；完整模型数值验收进行中。** 更新日期：2026-10-14。
 
-已执行范围与限制见 [验证入口](../test-results/waterline-20261013/README.md)；下述算法、IR与资源要求保持不变，不能以局部通过替代完整模型验收。
+已执行范围与限制见 [验证入口](../test-results/waterline-20261013/README.md)与 [覆盖审计](../test-results/waterline-20261013/waterline-coverage-audit.md)。完整模型数值验收及同配置完整 HEFT 前后保持审计仍在进行中，尚未通过；下述算法、IR与资源要求保持不变，不能以局部通过替代完整模型验收。
 
 本版明确首版边界：保持现有 HEFT 的 Encode 已就绪假设、设备分配和前台顺序，后期增加物理准备操作；runtime 按消费者完整依赖成组准入，超过水位就暂停新组，依据真实 Ready 事件执行并滚动回收。首版不增加 Encode 成本模拟、最晚启动点推导、后端比例搜索或 HEFT 反馈迭代。设计从开始就面向单机多 GPU，单卡只是最小验证配置；成本驱动的编译器协同作为后续研究。
 
-本文规定算法、IR 和资源语义；[实施、清理与 Qwen-0.6B 验收](poseidon-plaintext-prefetch-implementation-plan.zh-CN.md)规定任务次序、清理边界、提交及服务器操作，两者共同构成本阶段要求。最终目标是在 188Server 实际运行完整 Qwen-0.6B，不止交付设计或微基准。已有 CPU worker、按需读取与独立 GPU Encode 实验可复用；旧 V3 静态分批属于待替换路径，不要求长期保留另一套执行器。已有验证范围见[实现记录](poseidon-plaintext-prefetch-validation.zh-CN.md)与 [GPU Encode 实验说明](../src/poseidon/tests/gpu_encode/README.md)，不代表 Waterline 已有端到端收益。
+本文规定算法、IR 和资源语义；[实施、清理与 Qwen-0.6B 验收](poseidon-plaintext-prefetch-implementation-plan.zh-CN.md)规定任务次序、清理边界、提交及服务器操作，两者共同构成本阶段要求。最终目标是在 188Server 实际运行完整 Qwen-0.6B，不止交付设计或微基准。CPU worker、按需读取与 GPU Encode 能力已接入统一准备路径；旧 V3 静态分批已被替换，不要求长期保留另一套执行器。上述验证入口与覆盖审计界定已有证据，不代表 Waterline 已有完整模型端到端收益。
 
 ## 1. 目标与范围
 
@@ -130,7 +130,7 @@ runtime 根据分配、提交和完成事件更新实际占用与已承诺额度
 
 ### 3.5 为什么能够前进，以及配置不可行时如何处理
 
-编译时先检查一个简单基线：按照同一拓扑顺序，每次仅准入、执行一个完整依赖组；上一组结束后保留后续仍要使用的对象。这个顺序必须在给定 waterline、各设备容量及 Host/pinned 预算内完成全图。此检查不依赖耗时预测，不搜索所有可能的执行顺序。工作区上界需要由后端分配规则或容量接口给出；当前串行对象内存报告还缺少工作区和通信暂存，不能直接当作完整检查。
+编译时先检查一个简单基线：按照同一拓扑顺序，每次仅准入、执行一个完整依赖组；上一组结束后保留后续仍要使用的对象。这个顺序必须在给定 waterline、各设备容量及 Host/pinned 预算内完成全图。此检查不依赖耗时预测，不搜索所有可能的执行顺序。当前已有 Waterline 编译期单组检查与 runtime 后端资源预检；工作区上界仍须由后端分配规则或容量接口给出，只统计对象的串行内存报告不能直接当作完整检查。
 
 在基线可行的前提下，按组准入的前进论证是：
 
@@ -148,13 +148,13 @@ runtime 根据分配、提交和完成事件更新实际占用与已承诺额度
 
 ### 4.1 当前实现的起点
 
-默认 `eager` 不运行静态明文分批 pass。2026-10-10 加入的可选 `stream` 路径才生成批次 Fence；计划没有 Fence 时，runtime 不会自动定期切批。因此本阶段是在现有 worker 上增加资源准入、异步准备和完成回收，不能把“将原有 runtime 从分批改成持续执行”作为必然的大规模重构。具体清理边界见实施文档第 2 节。
+默认 `eager` 不运行明文准备改写；当前可选 `waterline` 路径运行 `PlanPlaintextWaterline`，替换了 2026-10-10 加入的静态 `stream` 分批路径，不生成批次 Fence。计划没有 Fence 时，runtime 不会自动定期切批。资源准入、异步准备和完成回收已接入现有 worker；不能把历史可选分批路径视为原有 runtime 的唯一架构。具体清理边界见实施文档第 2 节。
 
 当前代码有三种不同的估算，不能混用：
 
 - [Earth LatencyEstimator](../third_party/ckks-runtime/third_party/dacapo/lib/Dialect/Earth/Transforms/LatencyEstimator.cpp)累加算子成本，用于较早阶段的估算，不模拟异步准备队列。
 - [AssignPlacement](../third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/AssignPlacement.cpp)使用 HEFT 风格列表调度，并写出 `dist.schedule_start/finish`。其 `buildGraph` 将 Encode 设为 Host 上时刻 0 已就绪的源，Encode 不进入计算调度节点。因此它尚未模拟在线编码。
-- `PlanPlaintextStreaming` 按容量划批，并按 `prefetchBytes` 提前一段 Encode/Transfer；`EstimateRuntimeMemory` 按顺序完成假设统计对象生命周期。它们都不是包含实际异步准备的时间模拟器。
+- [PlanPlaintextWaterline](../third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/PlanPlaintextWaterline.cpp) 在 HEFT 后改写 Prepare 并检查单组容量；`EstimateRuntimeMemory` 按顺序完成假设统计对象生命周期。它们都不是包含实际异步准备的时间模拟器。
 
 首版保持现有耗时估算器和 HEFT 算法不变，用后期准备改写、分组及资源检查替换旧静态分批策略。早期 scale/boot 优化器和所有数学算子的语义不因此改变。
 
@@ -183,7 +183,7 @@ dist.release %p
 
 两条内部路径的传输均需真实执行、计入资源和 trace，封装不意味着传输免费；首版不将新路径耗时反馈给 HEFT。原有密文、普通明文 Transfer 的语义不变。共享 Host Encode 还有其他消费者时，仅改写满足该模式的分支，不删除仍被引用的原操作；每个目标设备分别有自己的物理准备结果。
 
-`ckks.encode` 与 `dist.prepare_plain` 可以共存于同一份新版本计划。例如一份明文保留 Host Encode 后显式上传，另一份由 Prepare 选择后端。被替换路径只执行 Prepare，原 Encode 无其他使用者时删除，不重复编码。同一个逻辑 Encode 可以对应不同设备或不同使用时段的多个物理 Prepare。当前 runtime 尚不认识 Prepare，新指令的读取、校验和执行必须一起实现；混用设计不代表现有 V3 已经支持它。
+`ckks.encode` 与 `dist.prepare_plain` 可以共存于同一份 V4 Waterline 计划。例如一份明文保留 Host Encode 后显式上传，另一份由 Prepare 选择后端。被替换路径只执行 Prepare，原 Encode 无其他使用者时删除，不重复编码。同一个逻辑 Encode 可以对应不同设备或不同使用时段的多个物理 Prepare。当前 reader、writer、二进制 I/O、Verifier 和 runtime 已共同支持 Prepare；它要求 V4 Waterline，不能把新操作写入旧 V3 计划。
 
 ### 4.3 不增加时间锚点
 
@@ -215,7 +215,7 @@ Waterline 不在每组权重之间自动插入 Fence。某份明文完成最后�
 
 首版不修改 `AssignPlacement` 的调度算法。继续把 Encode 当成时刻 0 已完成的 Host 源，沿用既有设备分配、算子优先级和每设备前台顺序。这里的“Encode 已就绪”不等于所有 GPU 上的数据都已就绪：已有通信成本项仍按原配置计算，真实的数据传输和 Ready 依赖也继续保留。
 
-当前 `AssignPlacement::applyPlacement` 用预计起止时刻形成编译期排列，并写出 `dist.schedule_start/finish`；runtime 计划的 Compute 指令没有按这些时刻启动的字段。当前 `execute_parallel_compute` 先解析真实输入，再调用计算 API。新 Prepare 需要接入同样的就绪关系，而不是把编译器的“已就绪假设”带入执行器。
+当前 `AssignPlacement::applyPlacement` 用预计起止时刻形成编译期排列，并写出 `dist.schedule_start/finish`；runtime 计划的 Compute 指令没有按这些时刻启动的字段。当前 `execute_parallel_compute` 先解析真实输入，再调用计算 API；Prepare 已接入真实完成依赖，不能把编译器的“已就绪假设”带入执行器。
 
 因此两者可以组合：HEFT 决定既定设备和顺序，Waterline runtime 决定准备何时真正开始；消费者在输入 Ready、前驱满足、执行空间已落实时执行，晚到就等待。首版不因等待而重新 placement 或改排其他前台指令。独立设备上已准入且依赖满足的工作仍可并行。
 
@@ -225,7 +225,7 @@ HEFT 时间戳保留为原成本假设下的估计，不要求首版重新预测
 
 编译器在 HEFT 之后做 Prepare 改写、完整依赖分组、类型/位置检查、Release/reuse 与单组容量检查。这些是功能和生命周期改造，不建立新的 Encode 时间模拟器，不计算 CPU/GPU 比例、最早/最晚时间或资源空隙的最优插入位置。
 
-runtime 先支持 CPU-only 和 GPU-only 两种配置，验证各自的准备、上传、等待和回收。简单混合策略先筛选受支持、能满足整组额度的路径，再采用 CPU 优先：组准入时 CPU worker 空闲则选 CPU；CPU 忙、目标 GPU 无在途前台计算且无可运行前台工作时，可选 GPU 路径；GPU 路径暂不可用时可以排入有额度的 CPU 队列等待，不据此修改前台顺序。前台因缺少这份明文而等待，不应被误判为禁止其必需 GPU Encode 的理由。没有路径满足额度时暂停新组，启动后不迁移。
+runtime 已支持 CPU-only、GPU-only 和 Auto 配置，各自准备、上传、等待和回收的测试范围见验证入口与覆盖审计。简单混合策略先筛选受支持、能满足整组额度的路径，再采用 CPU 优先：组准入时 CPU worker 空闲则选 CPU；CPU 忙、目标 GPU 无在途前台计算且无可运行前台工作时，可选 GPU 路径；GPU 路径暂不可用时可以排入有额度的 CPU 队列等待，不据此修改前台顺序。前台因缺少这份明文而等待，不应被误判为禁止其必需 GPU Encode 的理由。没有路径满足额度时暂停新组，启动后不迁移。
 
 该策略只查询实际队列、事件和容量，不依赖编码耗时预测。所有已准入准备按公平规则取得执行机会，消费者请求可提升所依赖的准备。首版只在 GPU 实际空闲或前台等待其必需准备时执行 GPU Encode；与运行中前台算子重叠作为后续实测选项。不能将两个 stream 当成两张独立 GPU。
 
@@ -257,7 +257,7 @@ runtime 先支持 CPU-only 和 GPU-only 两种配置，验证各自的准备、�
 
 ### 6.2 让路语义与 stream
 
-建议使用独立的前台计算 stream、低优先级 GPU Encode stream，以及有序管理的 H2D stream，通过每份明文的 Ready 事件连接消费者。
+当前 GPU API 使用独立的前台计算 stream 与较低优先级 GPU Encode stream，异步上传通过传输完成事件管理；每份明文的 Ready 事件连接消费者。生产 stream 核对已实现，相关正确性证据范围见验证入口与覆盖审计。
 
 CUDA stream 优先级不保证抢占已经执行的工作，也不保证传输优先级。因此，“立即终止填充”定义为**立即停止提交新的非紧急后台工作，在已提交的小段完成后让路**，不表示取消正在执行的 kernel 或复制。参见 [CUDA 异步执行与 stream 优先级说明](https://docs.nvidia.com/cuda/cuda-programming-guide/02-basics/asynchronous-execution.html)。
 
@@ -303,43 +303,43 @@ on 前台请求、任务完成、资源回收:
 
 ### 7.1 复用边界与代码入口
 
-| 部分 | 现有入口 | 计划中的工作 |
+| 部分 | 现有入口 | 当前实现与保留要求 |
 | --- | --- | --- |
-| 后期明文准备改写 | [PlanPlaintextStreaming.cpp](../third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/PlanPlaintextStreaming.cpp) | 保持 HEFT，复用依赖收集与大小计算，替换静态划批；生成 Prepare 并检查容量 |
+| 后期明文准备改写 | [PlanPlaintextWaterline.cpp](../third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/PlanPlaintextWaterline.cpp) | 保持 HEFT，已替换静态划批；生成 Prepare 并检查单组容量 |
 | 生命周期与内存估算 | [PlanRuntimeMemory.cpp](../third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/PlanRuntimeMemory.cpp)、[EstimateRuntimeMemory.cpp](../third_party/ckks-runtime/third_party/dacapo/lib/Dialect/CKKS/Transforms/EstimateRuntimeMemory.cpp) | 覆盖替代路径、在途准备、工作区和事件完成后的回收 |
-| 计划格式与校验 | [plan.hpp](../third_party/ckks-runtime/runtime/plan.hpp)、[json_plan_reader.cpp](../third_party/ckks-runtime/runtime/json_plan_reader.cpp)、[verifier.cpp](../third_party/ckks-runtime/runtime/verifier.cpp) | 增加最小准备描述与新语义校验，同步 JSON 和二进制 I/O；能力从后端查询，不复制每任务声明 |
-| 执行器与 CPU worker | [runtime.hpp](../third_party/ckks-runtime/runtime/runtime.hpp) | 复用现有 worker，补预算准入、有限在途提交、准备状态和完成回收；按实际需要调整队列 |
-| GPU 适配层 | [poseidon_gpu_api.cpp](../src/poseidon/runtime_api/poseidon_gpu_api.cpp) | 增加 GPU 完整 Encode 能力、工作区管理与 Ready 事件发布 |
+| 计划格式与校验 | [plan.hpp](../third_party/ckks-runtime/runtime/plan.hpp)、[json_plan_reader.cpp](../third_party/ckks-runtime/runtime/json_plan_reader.cpp)、[verifier.cpp](../third_party/ckks-runtime/runtime/verifier.cpp) | V4 已支持 Prepare、语义校验及 JSON/二进制 I/O；能力从后端查询，不复制每任务声明 |
+| 执行器与 CPU worker | [runtime.hpp](../third_party/ckks-runtime/runtime/runtime.hpp) | 已复用现有 worker，接入预算准入、有限在途提交、准备状态和完成回收；保持单一执行器 |
+| GPU 适配层 | [poseidon_gpu_api.cpp](../src/poseidon/runtime_api/poseidon_gpu_api.cpp) | 已接入 CPU/GPU 完整 Prepare、资源查询、工作区管理与 Ready 事件发布 |
 | 异步上传 | [cuda_local_transfer.cpp](../src/poseidon/runtime_api/communication/cuda_local_transfer.cpp) | 明确目标存储可写与数据就绪依赖，验证真实传输重叠 |
-| Encode 原型与测量 | [gpu_encode](../src/poseidon/tests/gpu_encode/README.md) | 提取已验证能力，补运行时支持范围和并发成本表 |
+| Encode 实现与测量 | [gpu_plaintext_encoder.cu](../src/poseidon/runtime_api/gpu_plaintext_encoder.cu) | 正式 GPU 完整编码实现；支持与测量范围以验证入口及覆盖审计为准，仍须补齐所需并发成本对照 |
 
-当前生产 API 的 `encode_plaintext` 要求 Host 输出。不能仅改变调度器队列就获得 GPU 编码路径，也不能将固定参数的实验 kernel 直接当成通用实现。
+生产 API 的 `encode_plaintext` 仍要求 Host 输出；目标设备上的准备由 `prepare_plaintext_async` 提供，已接通 CPU/GPU 两条完整路径。不能仅改变调度器队列就获得 GPU 编码路径，也不能将固定参数的实验 kernel 直接当成通用实现。
 
 当前上传的目标计算流等待还保护异步分配和内存复用顺序。改进重叠时应分别表达“目标缓冲可写”和“结果可读”，不能直接删除等待。只有 trace 中观察到实际重叠，才能报告重叠收益。
 
-### 7.2 必须做的工程修改
+### 7.2 工程实现与持续要求
 
-**编译器：** 保持 `AssignPlacement` 的 HEFT 和成本查询不变。在 Dist dialect 定义准备操作及 verifier；将后期静态分批 pass 替换为 Prepare 改写、依赖组派生和容量检查，删除仅服务旧划批的选项。`RuntimePlanUtils` 目前只为 CKKS 和 Transfer 结果注册 ValueId，需要接受准备结果；初始化判定、bundle 导出、Release/reuse 和内存估算都要认识该操作。定稿调度后不再运行可能跨生命周期边界合并或移动准备任务的 CSE。首版不增加准备时间线分析或生成时间锚点。
+**编译器：** 保持 `AssignPlacement` 的 HEFT 和成本查询不变。Dist dialect 已定义准备操作及 verifier；`PlanPlaintextWaterline` 已替换后期静态分批 pass，完成 Prepare 改写、依赖组派生和容量检查，旧划批专属选项已删除。`RuntimePlanUtils` 已接受 Prepare 结果的 ValueId，初始化判定、bundle 导出、Release/reuse 和内存估算也已接入；各项验收范围仍以覆盖审计为准。定稿调度后不再运行可能跨生命周期边界合并或移动准备任务的 CSE。首版不增加准备时间线分析或生成时间锚点。
 
 依赖 batch 从消费者操作数和已有 ValueId/生产者关系派生，不新增 `dist.batch` 或复制依赖列表。共享 Prepare 由首次需要它的组取得准备额度；其余组引用该结果。Prepare 描述可以提前注册，实际准备须等所属组准入。编译器检查同一拓扑顺序的单组基线，runtime 维护准入位置、组内待完成任务及资源额度；这个准入位置不充当所有 GPU 的共同完成游标。
 
-**Runtime：** 复用现有 worker 和计算/通信执行函数，加入完整组准入、准备状态、有界在途资源和持续完成回收。当前 `execute_device_parallel_phases/run_parallel_batch` 仅在计划有 Fence 时按它切段，无 Fence 时会为整个阶段建立队列。因此不预设必须换一套线程池或通用执行框架；可以在现有分派路径加入预算控制，按实际需要调整队列补充和结束任务清理。任务元数据预先构建不等于 GPU 工作可以无界提交。替换旧批次专属执行逻辑后，只保留一套清晰的执行实现。
+**Runtime：** 已复用现有 worker 和计算/通信执行函数，接入完整组准入、准备状态、有界在途资源和持续完成回收。当前 `execute_device_parallel_phases` 调用 `run_parallel_tasks`，仅在计划有显式 Fence 时按它切段；无 Fence 时为整个阶段建立任务元数据，再由同一调度循环按组准入和有界分派。单组基线预检也复用该入口。任务元数据预先构建不等于 GPU 工作可以无界提交；后续按实际需要调整队列补充和结束任务清理，不预设必须换一套线程池或通用执行框架，仍只保留一套清晰的执行实现。
 
-添加一个拥有任务状态的小调度器，接收完成点通知、管理每卡水位和共享预算、分派 CPU/GPU 工作；沿用现有值存储、引用计数和 worker 失败通知。当前 `ValueStore::Pending` 主要对应通信组，需增加准备任务来源，不能假装 GPU Encode 是已有通信句柄。消费者请求尚未开始的准备时负责提升任务，然后由独立准备执行路径推进，不能让等待者同时成为唯一准备执行者。
+当前调度循环统一拥有任务状态，接收完成点通知、管理每卡水位和共享预算、分派 CPU/GPU 工作；沿用值存储、引用计数和 worker 失败通知。准备任务由 `ParallelTask::preparation` 标识，通过 `ParallelValue` 发布值及完成依赖，不假装 GPU Encode 是已有通信句柄。消费者请求尚未开始的准备时负责提升任务，再由对应准备 worker 推进，不能让等待者同时成为唯一准备执行者。
 
 CPU Encode 和 Host Boot 继续共用串行 CPU worker 时，只分派依赖已齐全的 Host 计算；不能让它占住 worker 等待一份还需要同一 worker 编码的明文。为每张卡复制一个不受约束的 CPU worker 会破坏共享 encoder 和 Host 预算，不作为自然扩展方式。
 
-**API：** 保留现有 Host `encode_plaintext` 和通信接口，增加一个面向目标设备的异步完整 Encode 入口，例如 `encode_plaintext_device_async(desc, slots, stream)`。返回现有 Device Value 及 Ready 事件，保留输入、pinned 和工作区直至完成。CPU 路径由 runtime 组合原 Host Encode 和上传，不让 API 自己决定 CPU/GPU 比例或水位。API 另外提供必要的支持范围、工作区大小和完成状态查询，供准入及实际完成回收使用，不暴露通用调度框架。
+**API：** 保留 Host `encode_plaintext` 和通信接口，正式入口为 `prepare_plaintext_async(desc, slots, fixed_backend)`；`fixed_backend` 必须是 CPU 或 GPU，由 runtime 预先选择，API 不决定比例或水位。CPU 路径在该入口内完成 Host Encode 与异步上传，GPU 路径上传原始槽并完整编码；两者返回带 Ready 的目标 Device Value，保留异步传输源、pinned 和工作区直至完成。准入使用 `prepare_resources(desc, fixed_backend)` 的支持标志、峰值及驻留额度，并查询 `value_resources`、`instruction_workspace` 和 `waterline_fixed_resources`；`is_ready`、`collect_completed`、`drain` 负责完成查询和回收，不暴露通用调度框架。
 
-有一个必须随独立 stream 一起修改的具体点：当前 `ReadyEvent::record` 记录 `gpu_execution_stream()`，`wait_on_execution_stream` 在相同生产线程/设备时可以跳过等待。新增同线程不同 stream 后，这一判断不再足够，必须记录或核对实际生产 stream，并在跨 stream 使用时插入等待。线程相同不能证明两个操作已经有序。
+独立 stream 的生产端核对已实现：`ReadyEvent::record` 保存实际 `producer_stream_`；对仍在途的 CUDA 事件，`requires_execution_stream_wait` 仅在设备、生产线程和当前执行 stream 均一致等条件满足时跳过等待，跨 stream 使用由 `wait_on_execution_stream` 插入事件等待。线程相同不能证明两个操作已经有序；后续修改必须保留这一约束。对应正负控范围见验证入口与覆盖审计。
 
 首版复用实际完成事件推进依赖组和回收，不增加 `after/start_by` 锚点事件或每算子定时器。主机入队进度与设备完成进度分别处理。已有 `collect_completed`、`retain_in_flight`、`drain` 应覆盖准备任务；正常执行持续查询完成和回收，drain 只用于显式整体边界与收尾。
 
 ### 7.3 计划格式与兼容性
 
-采用最小且显式的协议扩展表达准备结果；需要改变版本时可使用新版本，例如 V4。先核对现存使用方，不要求长期保留旧 V3 批次执行路径。旧实验计划可以重新生成；仍支持的普通 Encode/Transfer/Release 等必须保持其语义，不支持的旧版本或新操作明确拒绝，不能忽略后继续执行。保留必要的 reader 兼容不等于维护两套执行器。
+当前采用 V4 协议扩展表达 Waterline 准备结果，要求单 rank，并允许该 rank 管理多张本地 GPU；这不表示已支持多 rank Waterline。继续核对现存使用方，不要求长期保留旧 V3 批次执行路径。旧实验计划可以重新生成；仍支持的普通 Encode/Transfer/Release 等必须保持其语义，不支持的旧版本或新操作明确拒绝，不能忽略后继续执行。保留必要的 reader 兼容不等于维护两套执行器。
 
-新版本增加一个对应 `dist.prepare_plain` 的 `PreparePlaintext` 指令。相关 reader、writer、二进制 I/O、Verifier、打印、能力检查和计划导出同步更新。其余算子格式保持原义；不通过给所有 Compute 指令附加准备字段来实现。
+V4 已增加对应 `dist.prepare_plain` 的 `PreparePlaintext` 指令，相关 reader、writer、二进制 I/O、Verifier、打印、能力检查和计划导出已同步更新。其余算子格式保持原义；不通过给所有 Compute 指令附加准备字段来实现。
 
 编译器与 runtime 使用稳定标识关联准备任务、消费依赖和实际测量。暂时不增加独立的 ForwardNTT/InverseNTT IR；完整 Encode 的成本、内存和完成依赖已足够支持本阶段调度。
 
@@ -355,7 +355,7 @@ CPU Encode 和 Host Boot 继续共用串行 CPU worker 时，只分派依赖已�
 
 A–E 均为本阶段范围，不以局部原型作为交付。准备成本模拟、时间锚点和反馈 HEFT 不属于本阶段。重要阶段通过检查后 commit 并 push；子模块由内向外提交和推送，再更新父仓库指针。
 
-服务器必须保持一条长时间存活的 SSH 连接，单卡优先物理 GPU 1，多卡只能用全部 GPU。模型、连接、设备映射、ECC 故障处理及最终交付要求以[实施文档第 4–7 节](poseidon-plaintext-prefetch-implementation-plan.zh-CN.md#4-188server-连接与设备要求)为准。本次文档修改本身不宣称已经完成这些实现或测试。
+服务器必须保持一条长时间存活的 SSH 连接，单卡优先物理 GPU 1，多卡只能用全部 GPU。模型、连接、设备映射、ECC 故障处理及最终交付要求以[实施文档第 4–7 节](poseidon-plaintext-prefetch-implementation-plan.zh-CN.md#4-188server-连接与设备要求)为准。各阶段实际通过范围见验证入口与覆盖审计；完整模型与同配置完整 HEFT 审计尚未通过，不因实现已接通而视为验收完成。
 
 ### 7.5 保持简洁：首版明确不做什么
 
@@ -367,7 +367,7 @@ A–E 均为本阶段范围，不以局部原型作为交付。准备成本模�
 
 ### 7.6 多 GPU：共用语义，区分每卡资源和共享资源
 
-**现有基础不是单 GPU 限定。** 当前 V3 限制为单 rank，但一个 rank 可以管理多张 GPU：计划已有 `Place(kind, rank, index)` 和设备数量，runtime 为每张 GPU 分派工作，GPU API 创建各设备上下文并支持设备间传输。已有[验证记录](poseidon-plaintext-prefetch-validation.zh-CN.md)覆盖四卡 MLP。本文的 Waterline 尚未在单卡或多卡实现，不能将这些既有结果当成新机制的验证。
+**现有基础不是单 GPU 限定。** 当前 V4 Waterline 限制为单 rank，但一个 rank 可以管理多张 GPU：计划使用 `Place(kind, rank, index)` 和设备数量，runtime 为每张 GPU 分派工作，GPU API 创建各设备上下文并支持设备间传输。Waterline 单卡与全部四卡已有小图及压力验证，范围见验证入口与覆盖审计；这些结果不能替代完整模型数值验收或完整 HEFT 前后保持审计。
 
 多卡沿用同一个 `dist.prepare_plain`：其目标设备已经确定，CPU 路径编码后上传到该卡，GPU 路径在该卡完整编码。每张卡拥有自己的水位、前台进度和 Ready 事件。单卡是设备数为 1 的特例，不需要新增多卡专用指令或改动 `mulcp` 等数学算子的语义。首版不增加“在空闲 GPU 上编码，再转发给另一张 GPU”的第三条路径。
 
@@ -414,7 +414,7 @@ HEFT 分工的专门验证：开启后期准备改写前后，核对前台计算
 | GPU stream 或通信队列把生产者排在等待者之后 | 检出执行依赖环，或通过正确分派/配对提交避免形成环 |
 | 预测顺序与实际完成顺序不同，Release 已提交但使用未完成 | 未完成引用继续计费，不提前归还已准入组的额度 |
 
-小图测试改变已准入组的合法完成顺序，验证准入始终为前缀、承诺资源不超限、暂停补充后已有组能够完成，以及恢复到单组基线状态后能够继续。额外测量整组预留和队首等待损失了多少预取机会，再决定是否细化工作区复用或并发准入；这些测试与条件化的前进论证共同构成验证，尚未在当前 runtime 实现。
+小图测试改变已准入组的合法完成顺序，验证准入始终为前缀、承诺资源不超限、暂停补充后已有组能够完成，以及恢复到单组基线状态后能够继续。对应机制和部分专门反例已实现并测试，逐项已覆盖、Mock/真实 CUDA 及未覆盖范围见覆盖审计，不能统一宣称所有反例已通过。仍须测量整组预留和队首等待损失了多少预取机会，再决定是否细化工作区复用或并发准入；这些测试与条件化的前进论证共同构成验证。
 
 ### 8.2 性能对照与消融
 
@@ -435,4 +435,4 @@ HEFT 分工的专门验证：开启后期准备改写前后，核对前台计算
 
 测试既包含有空闲间隙的负载，也包含 GPU 持续忙、CPU 供应不足和预测明显失准的情况。扫描 waterline 时保持其他预算和工作负载一致；初始填充不得从冷启动指标中隐藏。使用 CUDA events 与 trace 核对跨 stream 重叠，并记录温度、时钟、重复运行与采样方法。
 
-论文中的每项收益都应对应完整对照实验。实现完成前，这些内容是待检验的设计假设，不写成实验结论。
+论文中的每项收益都应对应完整对照实验。相应实验完成前，这些内容仍是待检验的设计假设，不因实现已接通而写成实验结论。
