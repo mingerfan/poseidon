@@ -46,8 +46,8 @@
       "sha256": "6ea4199a6b8ff0472bae6c820dbd828df0a52348dbaa00704ffe0436de5c7bcb"
     },
     "README.md": {
-      "bytes": 7539,
-      "sha256": "0ec1a4ee090d683b69903b11b28ff1260dfee8b0e1b1a8710ba31f7653618aec"
+      "bytes": 7861,
+      "sha256": "2dc855d62140b9b52783a59aedfac60d3dc94e9adc8e8c73442020c7425af805"
     },
     "source/Qwen25_24Layer_DSL/config/approximations.provisional.json": {
       "bytes": 55601,
@@ -136,6 +136,18 @@
     "verify_manifest.py": {
       "bytes": 1083,
       "sha256": "da542b9d92533e5aef2f202a7f11f3c33dc4b6ae0b540a93a1a30ab30565738c"
+    },
+    "BOOTSTRAP_LEVEL_AND_MEMORY_REPORT.md": {
+      "bytes": 13948,
+      "sha256": "08a92f90c101a6f4169b4f922bc6085480d9a1338c3fae2d0622b8f422eccbf0"
+    },
+    "evidence/full-ckks-result.json": {
+      "bytes": 169811,
+      "sha256": "8540154b0da2e6f8400c709ef6edc0da76732cfdf98d7acfb9aeec3852412f3a"
+    },
+    "evidence/levels-and-boot.json": {
+      "bytes": 536326,
+      "sha256": "429739f9d208b0d968b4f84e720d2d325ed20815ba2f2b99c0730de50aefb1e3"
     }
   }
 }
