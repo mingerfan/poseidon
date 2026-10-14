@@ -206,13 +206,13 @@ def main():
         lines = [line for line in text.splitlines() if "GPU_PACKED_PREPARE_HOST_BOUND" in line or
                  "GPU_RAW_PINNED_CACHE" in line or "Poseidon GPU Runtime Api tests passed" in line]
         match = re.search(r"(\d+) Poseidon GPU Runtime Api tests passed", text)
-        valid = (run.returncode == 0 and match is not None and int(match.group(1)) == 21 and
+        valid = (run.returncode == 0 and match is not None and int(match.group(1)) == 23 and
                  "tight_admitted=0" in text and "second_read_with_cache=true" in text and
                  "scope=API_Ledger_boundary_not_full_Runtime" in text and "[FAIL]" not in text)
         save(test_exit_code=run.returncode, api_test_count=int(match.group(1)) if match else None,
              test_evidence_lines=lines, test_log=binding(output / "run.log"), numerical_and_boundary_passed=valid)
         if not valid:
-            raise RuntimeError("expected 21 passing tests and the new warm packed Host-boundary evidence")
+            raise RuntimeError("expected 23 passing tests and the new warm packed Host-boundary evidence")
     except Exception as error:
         failure = str(error)
     finally:

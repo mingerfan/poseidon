@@ -16,6 +16,7 @@ nvidia-smi --query-gpu=index,uuid,memory.total,memory.used,ecc.errors.uncorrecte
 /usr/bin/time -v env OMP_NUM_THREADS=1 "$base/build/bin/poseidon_runtime_cpu_api_tests" \
   > "$logs/cpu-api.log" 2>&1
 /usr/bin/time -v env CUDA_VISIBLE_DEVICES=1 OMP_NUM_THREADS=1 \
+  POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB=512 \
   "$base/build/bin/poseidon_runtime_gpu_api_tests" > "$logs/gpu-api-single.log" 2>&1
 /usr/bin/time -v env CUDA_VISIBLE_DEVICES=1 OMP_NUM_THREADS=1 \
   "$base/build/bin/poseidon_runtime_gpu_scalar_tests" > "$logs/gpu-scalar-single.log" 2>&1

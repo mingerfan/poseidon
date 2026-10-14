@@ -206,11 +206,13 @@ class GatedAllocationResource final : public rmm::mr::device_memory_resource
 public:
     GatedAllocationResource(rmm::mr::device_memory_resource *upstream,CudaHostGate &gate)
         :upstream_(upstream),gate_(gate) {}
+    cudaStream_t injected_stream() const {return injected_stream_;}
 private:
     void *do_allocate(std::size_t bytes,rmm::cuda_stream_view stream) override {
         auto *pointer=upstream_->allocate(bytes,stream);
         if(!injected_) {
             injected_=true;
+            injected_stream_=stream.value();
             require(cudaLaunchHostFunc(stream.value(),wait_for_cuda_host_gate,&gate_)==cudaSuccess,
                     "failed to gate cached GPU Prepare allocation stream");
         }
@@ -223,6 +225,7 @@ private:
     rmm::mr::device_memory_resource *upstream_;
     CudaHostGate &gate_;
     bool injected_=false;
+    cudaStream_t injected_stream_=nullptr;
 };
 
 poseidon::ParametersLiteral make_parameters()
@@ -352,6 +355,51 @@ fhegpu::TargetConfig make_target(const fhegpu::LoadedOperatorSpec &loaded_spec,
     target.operator_spec =
         {loaded_spec.spec.id, loaded_spec.spec.version, loaded_spec.source_sha256};
     return target;
+}
+
+void test_waterline_reserved_pool_capacity(const poseidon::PoseidonContext &context,
+                                           const fhegpu::LoadedOperatorSpec &spec)
+{
+    struct RestoreEnvironment {
+        std::optional<std::string> initial,maximum;
+        RestoreEnvironment() {
+            if(const auto *value=std::getenv("POSEIDON_GPU_RUNTIME_INITIAL_POOL_MB"))initial=value;
+            if(const auto *value=std::getenv("POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB"))maximum=value;
+        }
+        ~RestoreEnvironment() {
+            if(initial)setenv("POSEIDON_GPU_RUNTIME_INITIAL_POOL_MB",initial->c_str(),1);
+            else unsetenv("POSEIDON_GPU_RUNTIME_INITIAL_POOL_MB");
+            if(maximum)setenv("POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB",maximum->c_str(),1);
+            else unsetenv("POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB");
+        }
+    } restore;
+    setenv("POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB","256",1);
+    for(bool small_initial:{false,true}) {
+        if(small_initial)setenv("POSEIDON_GPU_RUNTIME_INITIAL_POOL_MB","128",1);
+        else unsetenv("POSEIDON_GPU_RUNTIME_INITIAL_POOL_MB");
+        PoseidonGpuApi api(kContextId,context,kDeviceId);
+        fhegpu::RuntimePlan plan;plan.format_version=4;plan.target=make_target(spec);
+        fhegpu::WaterlineConfig config;config.backend=fhegpu::PrepareBackend::Cpu;
+        config.device_capacity_bytes={4ULL<<30};config.device_reserve_bytes={2ULL<<30};
+        config.device_fractions={.5};config.host_budget_bytes=64ULL<<20;
+        config.pinned_budget_bytes=16ULL<<20;config.raw_budget_bytes=8ULL<<20;plan.waterline=config;
+        api.validate_waterline_resources(plan);
+        const auto measured=api.waterline_measurements().devices.at(0);
+        const auto expected_reserved=(small_initial?128ULL:256ULL)<<20;
+        require(measured.managed_pool && measured.pool_capacity==256ULL<<20 &&
+                    measured.pool_reserved==expected_reserved,
+                "managed pool did not physically reserve its default maximum or explicit initial size");
+        // Empty plan has no retained workspace: only setup allocations and the
+        // existing 64 MiB margin are removed from actual reserved pool bytes.
+        require(measured.pool_reserved>measured.allocated_live+(64ULL<<20),
+                "reserved pool test context does not fit its fixed setup margin");
+        const auto expected_graph=measured.pool_reserved-measured.allocated_live-(64ULL<<20);
+        require(api.waterline_allocator_capacity().at(0)==expected_graph,
+                "Waterline counted unreserved future pool growth as available graph capacity");
+        std::cout<<"WATERLINE_RESERVED_POOL explicit_initial="<<small_initial
+                 <<" reserved="<<measured.pool_reserved<<" maximum="<<measured.pool_capacity
+                 <<" graph_capacity="<<expected_graph<<'\n';
+    }
 }
 
 fhegpu::Place host_place()
@@ -601,6 +649,107 @@ void test_async_memory_cleanup(const poseidon::PoseidonContext &context,
     require(completed.size() == 1 && !completed.front(), "upload was delivered twice");
     require(pool.allocated_bytes() == baseline,
             "communication handle retains a delivered GPU result");
+}
+
+void test_is_ready_reclaims_completed_temporaries(
+    const poseidon::PoseidonContext &context,poseidon::KeyGenerator &key_generator,
+    const fhegpu::LoadedOperatorSpec &spec,const RmmPoolScope &pool)
+{
+    PoseidonGpuApi api(kContextId,context,kDeviceId);
+    api.preflight(kPlanSha,false,make_target(spec),spec.spec,{});
+    const auto n=context.parameters_literal()->degree();
+    const int level=static_cast<int>(context.parameters_literal()->q().size()-1);
+    fhegpu::RuntimePlan plan;plan.format_version=4;plan.target=make_target(spec);
+    fhegpu::WaterlineConfig config;config.backend=fhegpu::PrepareBackend::Cpu;
+    config.device_capacity_bytes={4ULL<<30};config.device_reserve_bytes={2ULL<<30};
+    config.device_fractions={.5};config.host_budget_bytes=64ULL<<20;
+    config.pinned_budget_bytes=16ULL<<20;config.raw_budget_bytes=8ULL<<20;plan.waterline=config;
+    // Use the actual foreground stream, rather than assuming PTDS is where
+    // the Rescale allocation or kernels will be submitted.
+    api.validate_waterline_resources(plan);
+    poseidon::PublicKey public_key;key_generator.create_public_key(public_key);
+    poseidon::Encryptor encryptor(context,public_key);
+    poseidon::Decryptor decryptor(context,key_generator.secret_key());
+    poseidon::CKKSEncoder encoder(context);
+    std::vector<double> slots(n/2);
+    for(std::size_t i=0;i<slots.size();++i)slots[i]=.125*std::sin(i*.071);
+    poseidon::Plaintext plain;encoder.encode(slots,std::ldexp(1.,160),plain);
+    poseidon::Ciphertext cipher;encryptor.encrypt(plain,cipher);
+    auto input=transfer_value(api,181,PoseidonGpuValue::from_host_ciphertext(cipher),
+        fhegpu::ValueKind::Ciphertext,host_place(),device_place());
+    fhegpu::ComputeOp rescale;rescale.kind=fhegpu::ComputeKind::Rescale;
+    rescale.place=device_place();rescale.attrs=fhegpu::RescaleAttrs{level-5,40};
+    {auto warm=api.compute(rescale,{input});api.drain();}
+    api.collect_completed();
+    const auto run_gated=[&](const char *path,const std::function<PoseidonGpuValue()> &submit,
+                            const std::function<void(const PoseidonGpuValue &)> &validate) {
+        const auto baseline=pool.allocated_bytes();
+        const auto pinned_before=poseidon::runtime_api::communication::PinnedHostBuffer::live_bytes();
+        CudaHostGate gate;CudaGateWatchdog watchdog(gate);
+        auto *upstream=rmm::mr::get_current_device_resource();
+        GatedAllocationResource resource(upstream,gate);
+        struct RestoreResource {
+            rmm::mr::device_memory_resource *original;
+            ~RestoreResource(){rmm::mr::set_current_device_resource(original);}
+        } restore{upstream};
+        rmm::mr::set_current_device_resource(&resource);
+        std::optional<PoseidonGpuValue> output;
+        try {
+            output.emplace(submit());
+            const auto output_bytes=(output->kind()==fhegpu::ValueKind::Ciphertext
+                ?output->device_ciphertext().fields_.front().size()
+                :output->device_plaintext().fields_.front().size())*sizeof(poseidon::gpu::GpuWord);
+            const auto pending=pool.allocated_bytes();
+            require(pending>baseline+output_bytes,"Ready test did not retain real temporary GPU storage");
+            require(!api.is_ready(*output),"Ready test gate did not keep the submitted work unfinished");
+            require(watchdog.finish_post(),"Ready test submission or query waited for the actual allocation stream");
+            // Complete CUDA work without entering any API synchronization or
+            // collection path. The next call must itself settle the retainer.
+            require(cudaStreamSynchronize(resource.injected_stream())==cudaSuccess,
+                    "Ready test external stream synchronization failed");
+            require(pool.allocated_bytes()==pending,"external CUDA completion unexpectedly released API temporaries");
+            require(api.is_ready(*output),"completed Ready did not become usable after reclaim");
+            const auto ready_bytes=pool.allocated_bytes();
+            require(ready_bytes==baseline+output_bytes,
+                    std::string("is_ready(true) still retains completed GPU temporaries: ")+path);
+            require(poseidon::runtime_api::communication::PinnedHostBuffer::live_bytes()==pinned_before,
+                    std::string("is_ready(true) still retains its completed pinned source: ")+path);
+            validate(*output);
+            output.reset();
+            require(pool.allocated_bytes()==baseline,"Ready test output deletion retained GPU allocation");
+            std::cout<<"IS_READY_RECLAIM path="<<path<<" pending_bytes="<<pending
+                     <<" ready_bytes="<<ready_bytes<<" output_bytes="<<output_bytes
+                     <<" baseline_bytes="<<baseline<<" pinned_live="<<pinned_before<<'\n';
+        } catch(...) {
+            // Negative controls must also destroy every allocation while its
+            // public resource wrapper is still alive.
+            (void)watchdog.finish_post();(void)cudaDeviceSynchronize();
+            api.drain();output.reset();throw;
+        }
+    };
+    run_gated("Rescale",[&]{return api.compute(rescale,{input});},[&](const PoseidonGpuValue &value) {
+        require(value.device_ciphertext().meta.scale==std::ldexp(1.,40) &&
+                    value.device_ciphertext().meta.q_count==static_cast<std::size_t>(level-4),
+                "Ready test Rescale changed planned level or scale");
+        poseidon::Ciphertext host;poseidon::gpu::GpuUploader::download_ciphertext(value.device_ciphertext(),host,context);
+        poseidon::Plaintext decoded;decryptor.decrypt(host,decoded);
+        std::vector<std::complex<double>> actual;encoder.decode(decoded,actual);
+        require(actual.size()==slots.size(),"Ready test Rescale changed slot count");
+        for(std::size_t i=0;i<slots.size();++i)
+            require(std::abs(actual[i]-slots[i])<1e-4,"Ready test Rescale differs from dense input");
+    });
+    fhegpu::ValueDesc plaintext{182,fhegpu::ValueKind::Plaintext,device_place(),kContextId,level,80,true,1};
+    api.prepare_resources(plaintext,fhegpu::PrepareBackend::Gpu);
+    {auto warm=api.prepare_plaintext_async(plaintext,slots,fhegpu::PrepareBackend::Gpu);api.drain();}
+    run_gated("GPU_Prepare",[&]{return api.prepare_plaintext_async(plaintext,slots,fhegpu::PrepareBackend::Gpu);},
+        [&](const PoseidonGpuValue &value) {
+            poseidon::Plaintext host;poseidon::gpu::GpuUploader::download_plaintext(value.device_plaintext(),host,context);
+            std::vector<std::complex<double>> actual;encoder.decode(host,actual);
+            require(actual.size()==slots.size(),"Ready test Prepare changed slot count");
+            for(std::size_t i=0;i<slots.size();++i)
+                require(std::abs(actual[i]-slots[i])<1e-4,"Ready test Prepare differs from dense slots");
+        });
+    api.drain();
 }
 
 void test_transfer_staging_cleanup()
@@ -2681,6 +2830,9 @@ int main()
             test_waterline_runtime(context,key_generator,loaded_spec,device_count);
             return 0;
         }
+        run_test("Waterline counts only physically reserved pool capacity",[&] {
+            test_waterline_reserved_pool_capacity(context,loaded_spec);
+        });
         RmmPoolScope rmm_pool(kDeviceId);
         run_test("GPU cached packed-read complete Host budget negative/positive boundary",[&] {
             test_gpu_packed_prepare_host_budget(context,loaded_spec);
@@ -2702,6 +2854,9 @@ int main()
                  });
         run_test("async computation and transfer storage cleanup",
                  [&] { test_async_memory_cleanup(context, key_generator, rmm_pool); });
+        run_test("is_ready settles completed Rescale and GPU Prepare storage",[&] {
+            test_is_ready_reclaims_completed_temporaries(context,key_generator,loaded_spec,rmm_pool);
+        });
         run_test("completed transfer releases pinned staging", test_transfer_staging_cleanup);
         run_test("Runtime drains work outside final output dependencies",
                  [&] { test_runtime_drains_unreturned_work(

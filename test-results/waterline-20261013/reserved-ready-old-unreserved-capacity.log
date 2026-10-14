@@ -1,0 +1,12 @@
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=536870912 maximum_bytes=536870912
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=268435456 maximum_bytes=268435456
+[PASS] internal RMM pool lifetime
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=9989208 retained_workspace_bound=0 reserve_required=77098072 reserve_configured=2147483648
+waterline physical GPU0 pool_reserved=268435456 pool_cap=268435456 initial_outside_used=109969408 outside_pool_growth=0 allocator_graph_capacity=191337384
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=134217728 maximum_bytes=268435456
+WATERLINE_RESERVED_POOL explicit_initial=0 reserved=268435456 maximum=268435456 graph_capacity=191337384
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=9989208 retained_workspace_bound=0 reserve_required=77098072 reserve_configured=2147483648
+waterline physical GPU0 pool_reserved=134217728 pool_cap=268435456 initial_outside_used=109969408 outside_pool_growth=0 allocator_graph_capacity=191337384
+[FAIL] Waterline counted unreserved future pool growth as available graph capacity

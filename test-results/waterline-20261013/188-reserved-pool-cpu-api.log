@@ -1,0 +1,95 @@
+[PASS] single-process Host AddCP
+[PASS] decrypt_reencrypt Boot
+[PASS] binary rotation keys
+[PASS] CPU Negate/Rotate reuse chains
+CPU_RESCALE_DENSE N=4096 Q=10 input_scale=200 target_scale=80 planned_drops=5 slots_checked=2048 max_complex_error=1.58867e-11
+CPU_RESCALE_DENSE N=4096 Q=10 input_scale=200 target_scale=80 planned_drops=6 slots_checked=2048 max_complex_error=1.58867e-11
+CPU_RESCALE_DENSE N=16384 Q=50 input_scale=230 target_scale=120 planned_drops=5 slots_checked=8192 max_complex_error=1.63203e-14
+CPU_RESCALE_DENSE N=16384 Q=50 input_scale=230 target_scale=120 planned_drops=6 slots_checked=8192 max_complex_error=1.63203e-14
+CPU_RESCALE_DENSE N=16384 Q=50 input_scale=240 target_scale=120 planned_drops=5 slots_checked=8192 max_complex_error=1.26323e-11
+CPU_RESCALE_DENSE N=16384 Q=50 input_scale=240 target_scale=120 planned_drops=6 slots_checked=8192 max_complex_error=1.26323e-11
+[PASS] dense Rescale normalization and aligned AddCC/AddCP
+CPU_RESCALE_DENSE N=4096 Q=5 q_bits=50 input_scale=100 target_scale=50 planned_drops=1 slots_checked=2048 max_complex_error=8.86433e-11
+CPU_RESCALE_DENSE N=4096 Q=5 q_bits=50 input_scale=100 target_scale=90 planned_drops=1 slots_checked=2048 max_complex_error=3.48525e-11
+[PASS] single-drop Rescale on 50-bit RNS words
+[PASS] reject low-precision Rescale
+CPU_RESCALE_SCALE40 path=CP weight_kind=0 planned_drops=5 slots_checked=2048 max_complex_error=1.89227e-08
+CPU_RESCALE_SCALE40 path=CC weight_kind=0 planned_drops=5 slots_checked=2048 max_complex_error=1.89227e-08
+CPU_RESCALE_SCALE40 path=split_CP_CP weight_kind=0 planned_drops=5 slots_checked=2048 max_complex_error=1.89243e-08
+CPU_RESCALE_SCALE40 path=CP_CC weight_kind=0 planned_drops=5 slots_checked=2048 max_complex_error=8.94121e-09
+CPU_RESCALE_SCALE40 path=CC_CP weight_kind=0 planned_drops=5 slots_checked=2048 max_complex_error=8.94121e-09
+CPU_RESCALE_SCALE40 path=CP_CC_AddCC weight_kind=0 planned_drops=5 slots_checked=2048 max_complex_error=5.50715e-08
+CPU_RESCALE_SCALE40 path=CC_CP_AddCP weight_kind=0 planned_drops=5 slots_checked=2048 max_complex_error=8.93524e-09
+CPU_RESCALE_SCALE40 path=CP_CC_plus_CC_CP weight_kind=0 planned_drops=5 slots_checked=2048 max_complex_error=1.78824e-08
+CPU_RESCALE_SCALE40 path=branch_sum_AddCP weight_kind=0 planned_drops=5 slots_checked=2048 max_complex_error=1.78765e-08
+CPU_RESCALE_SCALE40 path=CP weight_kind=0 planned_drops=6 slots_checked=2048 max_complex_error=1.89227e-08
+CPU_RESCALE_SCALE40 path=CC weight_kind=0 planned_drops=6 slots_checked=2048 max_complex_error=1.89227e-08
+CPU_RESCALE_SCALE40 path=split_CP_CP weight_kind=0 planned_drops=6 slots_checked=2048 max_complex_error=1.89243e-08
+CPU_RESCALE_SCALE40 path=CP_CC weight_kind=0 planned_drops=6 slots_checked=2048 max_complex_error=8.87579e-09
+CPU_RESCALE_SCALE40 path=CC_CP weight_kind=0 planned_drops=6 slots_checked=2048 max_complex_error=8.87579e-09
+CPU_RESCALE_SCALE40 path=CP_CC_AddCC weight_kind=0 planned_drops=6 slots_checked=2048 max_complex_error=5.68597e-08
+CPU_RESCALE_SCALE40 path=CC_CP_AddCP weight_kind=0 planned_drops=6 slots_checked=2048 max_complex_error=8.86982e-09
+CPU_RESCALE_SCALE40 path=CP_CC_plus_CC_CP weight_kind=0 planned_drops=6 slots_checked=2048 max_complex_error=1.77516e-08
+CPU_RESCALE_SCALE40 path=branch_sum_AddCP weight_kind=0 planned_drops=6 slots_checked=2048 max_complex_error=1.77456e-08
+CPU_RESCALE_SCALE40 path=CP weight_kind=1 planned_drops=5 slots_checked=2048 max_complex_error=8.61229e-09
+CPU_RESCALE_SCALE40 path=CC weight_kind=1 planned_drops=5 slots_checked=2048 max_complex_error=8.61229e-09
+CPU_RESCALE_SCALE40 path=split_CP_CP weight_kind=1 planned_drops=5 slots_checked=2048 max_complex_error=8.60084e-09
+CPU_RESCALE_SCALE40 path=CP_CC weight_kind=1 planned_drops=5 slots_checked=2048 max_complex_error=3.22321e-09
+CPU_RESCALE_SCALE40 path=CC_CP weight_kind=1 planned_drops=5 slots_checked=2048 max_complex_error=3.22321e-09
+CPU_RESCALE_SCALE40 path=CP_CC_AddCC weight_kind=1 planned_drops=5 slots_checked=2048 max_complex_error=5.28888e-08
+CPU_RESCALE_SCALE40 path=CC_CP_AddCP weight_kind=1 planned_drops=5 slots_checked=2048 max_complex_error=3.23758e-09
+CPU_RESCALE_SCALE40 path=CP_CC_plus_CC_CP weight_kind=1 planned_drops=5 slots_checked=2048 max_complex_error=6.44642e-09
+CPU_RESCALE_SCALE40 path=branch_sum_AddCP weight_kind=1 planned_drops=5 slots_checked=2048 max_complex_error=6.46079e-09
+CPU_RESCALE_SCALE40 path=CP weight_kind=1 planned_drops=6 slots_checked=2048 max_complex_error=8.61229e-09
+CPU_RESCALE_SCALE40 path=CC weight_kind=1 planned_drops=6 slots_checked=2048 max_complex_error=8.61229e-09
+CPU_RESCALE_SCALE40 path=split_CP_CP weight_kind=1 planned_drops=6 slots_checked=2048 max_complex_error=8.60084e-09
+CPU_RESCALE_SCALE40 path=CP_CC weight_kind=1 planned_drops=6 slots_checked=2048 max_complex_error=3.19661e-09
+CPU_RESCALE_SCALE40 path=CC_CP weight_kind=1 planned_drops=6 slots_checked=2048 max_complex_error=3.19661e-09
+CPU_RESCALE_SCALE40 path=CP_CC_AddCC weight_kind=1 planned_drops=6 slots_checked=2048 max_complex_error=4.99133e-08
+CPU_RESCALE_SCALE40 path=CC_CP_AddCP weight_kind=1 planned_drops=6 slots_checked=2048 max_complex_error=3.21098e-09
+CPU_RESCALE_SCALE40 path=CP_CC_plus_CC_CP weight_kind=1 planned_drops=6 slots_checked=2048 max_complex_error=6.39322e-09
+CPU_RESCALE_SCALE40 path=branch_sum_AddCP weight_kind=1 planned_drops=6 slots_checked=2048 max_complex_error=6.40759e-09
+CPU_RESCALE_SCALE40 path=CP weight_kind=-1 planned_drops=5 slots_checked=2048 max_complex_error=8.61229e-09
+CPU_RESCALE_SCALE40 path=CC weight_kind=-1 planned_drops=5 slots_checked=2048 max_complex_error=8.61229e-09
+CPU_RESCALE_SCALE40 path=split_CP_CP weight_kind=-1 planned_drops=5 slots_checked=2048 max_complex_error=8.60084e-09
+CPU_RESCALE_SCALE40 path=CP_CC weight_kind=-1 planned_drops=5 slots_checked=2048 max_complex_error=3.22321e-09
+CPU_RESCALE_SCALE40 path=CC_CP weight_kind=-1 planned_drops=5 slots_checked=2048 max_complex_error=3.22321e-09
+CPU_RESCALE_SCALE40 path=CP_CC_AddCC weight_kind=-1 planned_drops=5 slots_checked=2048 max_complex_error=4.1764e-08
+CPU_RESCALE_SCALE40 path=CC_CP_AddCP weight_kind=-1 planned_drops=5 slots_checked=2048 max_complex_error=3.20884e-09
+CPU_RESCALE_SCALE40 path=CP_CC_plus_CC_CP weight_kind=-1 planned_drops=5 slots_checked=2048 max_complex_error=6.44642e-09
+CPU_RESCALE_SCALE40 path=branch_sum_AddCP weight_kind=-1 planned_drops=5 slots_checked=2048 max_complex_error=6.43204e-09
+CPU_RESCALE_SCALE40 path=CP weight_kind=-1 planned_drops=6 slots_checked=2048 max_complex_error=8.61229e-09
+CPU_RESCALE_SCALE40 path=CC weight_kind=-1 planned_drops=6 slots_checked=2048 max_complex_error=8.61229e-09
+CPU_RESCALE_SCALE40 path=split_CP_CP weight_kind=-1 planned_drops=6 slots_checked=2048 max_complex_error=8.60084e-09
+CPU_RESCALE_SCALE40 path=CP_CC weight_kind=-1 planned_drops=6 slots_checked=2048 max_complex_error=3.19661e-09
+CPU_RESCALE_SCALE40 path=CC_CP weight_kind=-1 planned_drops=6 slots_checked=2048 max_complex_error=3.19661e-09
+CPU_RESCALE_SCALE40 path=CP_CC_AddCC weight_kind=-1 planned_drops=6 slots_checked=2048 max_complex_error=4.02437e-08
+CPU_RESCALE_SCALE40 path=CC_CP_AddCP weight_kind=-1 planned_drops=6 slots_checked=2048 max_complex_error=3.18224e-09
+CPU_RESCALE_SCALE40 path=CP_CC_plus_CC_CP weight_kind=-1 planned_drops=6 slots_checked=2048 max_complex_error=6.39322e-09
+CPU_RESCALE_SCALE40 path=branch_sum_AddCP weight_kind=-1 planned_drops=6 slots_checked=2048 max_complex_error=6.37885e-09
+[PASS] scale40 Rescale dense arithmetic and aligned sums
+[PASS] reject multi-process target
+9 Poseidon CPU Runtime Api tests passed
+	Command being timed: "env OMP_NUM_THREADS=1 /home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_cpu_api_tests"
+	User time (seconds): 10.36
+	System time (seconds): 1.01
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:11.38
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1693936
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 429112
+	Voluntary context switches: 1
+	Involuntary context switches: 28
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 16
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

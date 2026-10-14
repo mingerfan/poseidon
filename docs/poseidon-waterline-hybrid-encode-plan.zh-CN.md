@@ -1,6 +1,6 @@
 # Waterline：编译器与运行时协同的明文准备计划
 
-**状态：首版Waterline与CPU/GPU完整编码及动态选择已接通，小图和压力验证通过；完整模型前向分配失败正在修正，数值验收尚未通过。** 更新日期：2026-10-14。
+**状态：首版Waterline与CPU/GPU完整编码及动态选择已接通，小图和压力验证通过；RMM分配失败修正已通过检查，完整模型复跑中，数值验收尚未通过。** 更新日期：2026-10-14。
 
 已执行范围与限制见 [验证入口](../test-results/waterline-20261013/README.md)与 [覆盖审计](../test-results/waterline-20261013/waterline-coverage-audit.md)。同配置完整 HEFT 前后保持审计已通过，见验证入口；完整模型数值验收仍在进行中，尚未通过；下述算法、IR与资源要求保持不变，不能以局部通过替代完整模型验收。
 
@@ -84,6 +84,8 @@ W_d(t) = min(alpha_d × M_d, H_d(t))
 runtime 根据分配、提交和完成事件更新实际占用与已承诺额度，设备内存查询用于核对。前台空间随已准入的完整依赖组计算，不固定预留全模型峰值。已有分配/复用顺序可以继续使用，但前一使用未真正结束时不能归还额度；分析窗口切换也不代表旧任务完成。第 3.4 节给出按组准入规则。
 
 首版严格按整组检查水位：加入下一依赖 batch 后超过 `W_d(t)`，就不准入该组。检查使用加入该组前台预留后的 `F_d`，同时覆盖 GPU 硬容量和共享 Host/pinned 预算。消费者请求只提升优先级，不绕过水位。若即使先前各组执行结束，必要的一组与仍须保留的对象也装不下，则报告所需容量及配置水位，不能永久等待。调整水位或改变计算划分应显式进行。
+
+GPU分配器的可用容量另作硬门槛。当前RMM后端默认在建池时实际预留经过可用显存与配置上限检查的最大池容量；若显式设置更小的初始池，Waterline只计预检时已经reserved的容量，扣除固定分配、保留工作区及安全余量，不把未来可能扩容的最大值当作已取得的显存。分配失败直接暴露，并记录CUDA设备、请求字节、pool live/peak/reserved/cap及driver空闲量；没有OOM重试或自动换后端。
 
 例如，假设配置容量为 32 GiB、`alpha=1/2`，扣除常驻、前台和安全预留后剩余 18 GiB，则明文水位为 16 GiB。若加入下一组的前台预留后只剩余 12 GiB，该次准入的有效水位就是 12 GiB。这里的数字仅解释定义，不是测量结果或默认推荐值。
 
@@ -329,7 +331,7 @@ on 前台请求、任务完成、资源回收:
 
 CPU Encode 和 Host Boot 继续共用串行 CPU worker 时，只分派依赖已齐全的 Host 计算；不能让它占住 worker 等待一份还需要同一 worker 编码的明文。为每张卡复制一个不受约束的 CPU worker 会破坏共享 encoder 和 Host 预算，不作为自然扩展方式。
 
-**API：** 保留 Host `encode_plaintext` 和通信接口，正式入口为 `prepare_plaintext_async(desc, slots, fixed_backend)`；`fixed_backend` 必须是 CPU 或 GPU，由 runtime 预先选择，API 不决定比例或水位。CPU 路径在该入口内完成 Host Encode 与异步上传，GPU 路径上传原始槽并完整编码；两者返回带 Ready 的目标 Device Value，保留异步传输源、pinned 和工作区直至完成。准入使用 `prepare_resources(desc, fixed_backend)` 的支持标志、峰值及驻留额度，并查询 `value_resources`、`instruction_workspace` 和 `waterline_fixed_resources`；`is_ready`、`collect_completed`、`drain` 负责完成查询和回收，不暴露通用调度框架。
+**API：** 保留 Host `encode_plaintext` 和通信接口，正式入口为 `prepare_plaintext_async(desc, slots, fixed_backend)`；`fixed_backend` 必须是 CPU 或 GPU，由 runtime 预先选择，API 不决定比例或水位。CPU 路径在该入口内完成 Host Encode 与异步上传，GPU 路径上传原始槽并完整编码；两者返回带 Ready 的目标 Device Value，保留异步传输源、pinned 和工作区直至完成。准入使用 `prepare_resources(desc, fixed_backend)` 的支持标志、峰值及驻留额度，并查询 `value_resources`、`instruction_workspace` 和 `waterline_fixed_resources`；`is_ready`、`collect_completed`、`drain` 负责完成查询和回收，不暴露通用调度框架。 GPU API的`is_ready(true)`还保证该完成点保活的临时对象已回收，之后执行器才归还临时额度；若回收锁暂时不可用则返回false。已计入固定预算的缓存可以继续保留，直到drain。
 
 独立 stream 的生产端核对已实现：`ReadyEvent::record` 保存实际 `producer_stream_`；对仍在途的 CUDA 事件，`requires_execution_stream_wait` 仅在设备、生产线程和当前执行 stream 均一致等条件满足时跳过等待，跨 stream 使用由 `wait_on_execution_stream` 插入事件等待。线程相同不能证明两个操作已经有序；后续修改必须保留这一约束。对应正负控范围见验证入口与覆盖审计。
 

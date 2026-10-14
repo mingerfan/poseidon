@@ -1,0 +1,210 @@
+{
+  "passed": true,
+  "scope": "Completed reserved-pool v2 build/component checks only; not complete full-Qwen numerical acceptance. v1 initial64 OOM fixture preflight rejection is excluded and preserved separately.",
+  "remote_stage": "logs/reserved-pool-stage-v2-20261014",
+  "remote_tests": "logs/rescale-reserved-pool-v2-20261014",
+  "stage_exit_code": 0,
+  "tests_exit_code": 0,
+  "all_10_timed_commands_exit_zero": true,
+  "build_verification_ok_files": 11,
+  "source_sha256_matches_server_build_status_and_local": {
+    "src/poseidon/runtime_api/poseidon_gpu_api.cpp": "9cc4827c0c24522f0e0916da3b3898726bd1ba4351379ad58ab6d20eb71dc23b",
+    "src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp": "e30f8cfe5054a3bc2e8ba0545d148097272a43f4cb9c801bfdaf291a174bf4fc",
+    "src/poseidon/tests/runtime_api/poseidon_gpu_prepare_oom_test.cpp": "2df303eeef2d1d3fb86dca2c59b3b6a68b8da42268f75065d8a081d23e2efbe3"
+  },
+  "suites": {
+    "cpu_api_passed": 9,
+    "gpu_api_passed": 23,
+    "physical_reserved_pool_capacity_test_passed": true,
+    "scalar_cases_passed": 16,
+    "scalar_max_normalized_error": 1.01032e-16,
+    "real_gpu_prepare_oom": {
+      "passed": true,
+      "initial_pool_bytes": 134217728,
+      "maximum_pool_bytes": 536870912,
+      "actual_allocation_calls": 2,
+      "allocator_failures": 1,
+      "consumer_calls_on_failure": 0,
+      "automatic_drain_calls": 1,
+      "failed_run_dynamic_live_bytes": 0,
+      "failed_run_pinned_live_bytes": 0,
+      "implicit_retry_or_cpu_fallback": false,
+      "explicit_same_runtime_repaired_run_passed": true,
+      "complex_slots_checked": 2048,
+      "max_abs_error": 4.609e-08
+    }
+  },
+  "waterline_pressure": [
+    {
+      "configuration": "single",
+      "log": "188-reserved-pool-waterline-single.log",
+      "exit_code": 0,
+      "devices": 1,
+      "N": 65536,
+      "Q": 32,
+      "slots_checked_per_output": 32768,
+      "pool_reserved_equals_cap_bytes": 2684354560,
+      "backends": [
+        {
+          "backend": "cpu",
+          "max_abs_complex_error": 9.40267e-07,
+          "remaining_front_max_bytes": 0,
+          "remaining_plain_max_bytes": 0,
+          "pinned_live_bytes": 0,
+          "peer_devices_completed_before_gpu0": 0,
+          "host_staged_posts_with_pinned": 0
+        },
+        {
+          "backend": "gpu",
+          "max_abs_complex_error": 9.40267e-07,
+          "remaining_front_max_bytes": 0,
+          "remaining_plain_max_bytes": 0,
+          "pinned_live_bytes": 0,
+          "peer_devices_completed_before_gpu0": 0,
+          "host_staged_posts_with_pinned": 0
+        },
+        {
+          "backend": "auto",
+          "max_abs_complex_error": 9.40267e-07,
+          "remaining_front_max_bytes": 0,
+          "remaining_plain_max_bytes": 0,
+          "pinned_live_bytes": 0,
+          "peer_devices_completed_before_gpu0": 0,
+          "host_staged_posts_with_pinned": 0
+        }
+      ]
+    },
+    {
+      "configuration": "all",
+      "log": "188-reserved-pool-waterline-all.log",
+      "exit_code": 0,
+      "devices": 4,
+      "N": 65536,
+      "Q": 32,
+      "slots_checked_per_output": 32768,
+      "pool_reserved_equals_cap_bytes": 2684354560,
+      "backends": [
+        {
+          "backend": "cpu",
+          "max_abs_complex_error": 1.21636e-06,
+          "remaining_front_max_bytes": 0,
+          "remaining_plain_max_bytes": 0,
+          "pinned_live_bytes": 0,
+          "peer_devices_completed_before_gpu0": 3,
+          "host_staged_posts_with_pinned": 0
+        },
+        {
+          "backend": "gpu",
+          "max_abs_complex_error": 1.21636e-06,
+          "remaining_front_max_bytes": 0,
+          "remaining_plain_max_bytes": 0,
+          "pinned_live_bytes": 0,
+          "peer_devices_completed_before_gpu0": 3,
+          "host_staged_posts_with_pinned": 0
+        },
+        {
+          "backend": "auto",
+          "max_abs_complex_error": 1.21636e-06,
+          "remaining_front_max_bytes": 0,
+          "remaining_plain_max_bytes": 0,
+          "pinned_live_bytes": 0,
+          "peer_devices_completed_before_gpu0": 3,
+          "host_staged_posts_with_pinned": 0
+        }
+      ]
+    },
+    {
+      "configuration": "host-staged",
+      "log": "188-reserved-pool-waterline-host-staged.log",
+      "exit_code": 0,
+      "devices": 4,
+      "N": 65536,
+      "Q": 32,
+      "slots_checked_per_output": 32768,
+      "pool_reserved_equals_cap_bytes": 2684354560,
+      "backends": [
+        {
+          "backend": "cpu",
+          "max_abs_complex_error": 9.15958e-07,
+          "remaining_front_max_bytes": 0,
+          "remaining_plain_max_bytes": 0,
+          "pinned_live_bytes": 0,
+          "peer_devices_completed_before_gpu0": 3,
+          "host_staged_posts_with_pinned": 20
+        },
+        {
+          "backend": "gpu",
+          "max_abs_complex_error": 9.15958e-07,
+          "remaining_front_max_bytes": 0,
+          "remaining_plain_max_bytes": 0,
+          "pinned_live_bytes": 0,
+          "peer_devices_completed_before_gpu0": 3,
+          "host_staged_posts_with_pinned": 20
+        },
+        {
+          "backend": "auto",
+          "max_abs_complex_error": 9.15958e-07,
+          "remaining_front_max_bytes": 0,
+          "remaining_plain_max_bytes": 0,
+          "pinned_live_bytes": 0,
+          "peer_devices_completed_before_gpu0": 3,
+          "host_staged_posts_with_pinned": 20
+        }
+      ]
+    }
+  ],
+  "pressure_fixed_tolerance": 0.0001,
+  "pressure_max_abs_complex_error": 1.21636e-06,
+  "q_proj": {
+    "scope": "Synthetic isolated q-proj, N16384/Q50/scale120; 8192 complex slots per backend; not full Qwen.",
+    "fixed_tolerances": {
+      "atol": 0.001,
+      "rtol": 0.0001
+    },
+    "backend_results": [
+      {
+        "backend": "cpu",
+        "passed": true,
+        "slots_checked": 8192,
+        "max_abs_error": 9.907332731984297e-10,
+        "rms_error": 1.4677525071249817e-10,
+        "max_imaginary": 8.110142986862361e-13,
+        "nonfinite_or_bad_slots": 0,
+        "cpu_prepare_calls": 1025,
+        "gpu_prepare_calls": 0,
+        "pinned_live_after_validation_bytes": 0
+      },
+      {
+        "backend": "gpu",
+        "passed": true,
+        "slots_checked": 8192,
+        "max_abs_error": 9.909530973573055e-10,
+        "rms_error": 1.4677470832023918e-10,
+        "max_imaginary": 7.122170137258947e-13,
+        "nonfinite_or_bad_slots": 0,
+        "cpu_prepare_calls": 0,
+        "gpu_prepare_calls": 1025,
+        "pinned_live_after_validation_bytes": 0
+      },
+      {
+        "backend": "auto",
+        "passed": true,
+        "slots_checked": 8192,
+        "max_abs_error": 9.907328291092199e-10,
+        "rms_error": 1.4677522558976244e-10,
+        "max_imaginary": 8.108521369998935e-13,
+        "nonfinite_or_bad_slots": 0,
+        "cpu_prepare_calls": 361,
+        "gpu_prepare_calls": 664,
+        "pinned_live_after_validation_bytes": 0
+      }
+    ],
+    "max_abs_error_range": [
+      9.907328291092199e-10,
+      9.909530973573055e-10
+    ]
+  },
+  "source_bindings_and_all_copied_file_hashes": "188-reserved-pool-source-bindings.json",
+  "preserved_v1_fixture_rejection_unchanged": true,
+  "no_remote_mutation_gpu_work_or_commit_by_collector": true
+}

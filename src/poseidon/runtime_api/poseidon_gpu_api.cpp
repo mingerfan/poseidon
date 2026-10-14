@@ -25,12 +25,14 @@
 #include <cmath>
 #include <chrono>
 #include <complex>
+#include <cstdio>
 #include <cstdlib>
 #include <cstdint>
 #include <cstring>
 #include <limits>
 #include <map>
 #include <mutex>
+#include <new>
 #include <optional>
 #include <set>
 #include <stdexcept>
@@ -78,10 +80,9 @@ fhegpu::BootProfile make_native_boot_profile(
 namespace
 {
 
-constexpr std::size_t kMaximumInitialDevicePoolSize = 24ULL << 30;
 constexpr std::size_t kMinimumInitialDevicePoolSize = 64ULL << 20;
 
-std::size_t initial_device_pool_size()
+std::size_t initial_device_pool_size(std::size_t maximum)
 {
     std::size_t free_bytes = 0;
     std::size_t total_bytes = 0;
@@ -128,7 +129,9 @@ std::size_t initial_device_pool_size()
         return requested;
     }
 
-    return std::min(kMaximumInitialDevicePoolSize, free_bytes / 4);
+    // Admission must be backed by memory already owned by this process.
+    // A maximum alone cannot reserve capacity against other GPU users.
+    return maximum;
 }
 
 std::size_t maximum_device_pool_size(int cuda_device_id)
@@ -244,6 +247,43 @@ private:
 
 class DeviceMemoryPool
 {
+    using Pool = rmm::mr::pool_memory_resource<rmm::mr::cuda_memory_resource>;
+    using Statistics = rmm::mr::statistics_resource_adaptor<Pool>;
+    class AllocationDiagnostics final : public rmm::mr::device_memory_resource
+    {
+    public:
+        AllocationDiagnostics(Statistics &statistics, Pool &pool, std::size_t capacity, int device)
+            : statistics_(statistics), pool_(pool), capacity_(capacity), device_(device) {}
+    private:
+        void *do_allocate(std::size_t bytes, rmm::cuda_stream_view stream) override
+        {
+            try { return statistics_.allocate(bytes, stream); }
+            catch (const std::bad_alloc &) {
+                const auto counter = statistics_.get_bytes_counter();
+                std::size_t free = 0, total = 0;
+                int active_device = -1;
+                const auto device_status = cudaGetDevice(&active_device);
+                const auto status = cudaMemGetInfo(&free, &total);
+                // RMM uses the same error text for cap and upstream failures.
+                // Preserve that exception while recording the missing context.
+                std::fprintf(stderr, "GPU_ALLOCATION_FAILURE cuda_device=%d active_cuda_device=%d requested_bytes=%zu stream=%p "
+                    "allocated_live=%zu allocated_peak=%zu pool_reserved=%zu pool_cap=%zu "
+                    "driver_free=%zu driver_total=%zu driver_query_status=%d device_query_status=%d\n",
+                    device_, active_device, bytes, static_cast<void *>(stream.value()),
+                    static_cast<std::size_t>(counter.value), static_cast<std::size_t>(counter.peak),
+                    pool_.pool_size(), capacity_, free, total, static_cast<int>(status), static_cast<int>(device_status));
+                throw;
+            }
+        }
+        void do_deallocate(void *ptr, std::size_t bytes, rmm::cuda_stream_view stream) override
+        { statistics_.deallocate(ptr, bytes, stream); }
+        bool do_is_equal(const rmm::mr::device_memory_resource &other) const noexcept override
+        { return this == &other; }
+        Statistics &statistics_;
+        Pool &pool_;
+        std::size_t capacity_;
+        int device_;
+    };
 public:
     explicit DeviceMemoryPool(int cuda_device_id)
         : cuda_device_id_(cuda_device_id)
@@ -255,10 +295,14 @@ public:
         previous_resource_ = rmm::mr::get_current_device_resource();
         upstream_ = std::make_unique<rmm::mr::cuda_memory_resource>();
         maximum_size_=maximum_device_pool_size(cuda_device_id_);
+        const auto initial=std::min(initial_device_pool_size(maximum_size_),maximum_size_);
+        std::fprintf(stderr,"GPU_POOL_RESERVE cuda_device=%d initial_bytes=%zu maximum_bytes=%zu\n",
+            cuda_device_id_,initial,maximum_size_);
         pool_ = std::make_unique<
             rmm::mr::pool_memory_resource<rmm::mr::cuda_memory_resource>>(
-            upstream_.get(), std::min(initial_device_pool_size(),maximum_size_),maximum_size_);
+            upstream_.get(), initial,maximum_size_);
         statistics_=std::make_unique<Statistics>(pool_.get());
+        diagnostics_=std::make_unique<AllocationDiagnostics>(*statistics_,*pool_,maximum_size_,cuda_device_id_);
         rmm::mr::set_per_device_resource(
             rmm::cuda_device_id{cuda_device_id_}, resource());
     }
@@ -280,7 +324,7 @@ public:
 
     rmm::mr::device_memory_resource *resource() const noexcept
     {
-        return statistics_.get();
+        return diagnostics_.get();
     }
 
     std::size_t capacity_bytes() const {return maximum_size_;}
@@ -296,8 +340,8 @@ private:
     std::unique_ptr<rmm::mr::cuda_memory_resource> upstream_;
     std::unique_ptr<
         rmm::mr::pool_memory_resource<rmm::mr::cuda_memory_resource>> pool_;
-    using Statistics=rmm::mr::statistics_resource_adaptor<rmm::mr::pool_memory_resource<rmm::mr::cuda_memory_resource>>;
     std::unique_ptr<Statistics> statistics_;
+    std::unique_ptr<AllocationDiagnostics> diagnostics_;
     std::size_t maximum_size_=0;
 };
 
@@ -1654,8 +1698,8 @@ void PoseidonGpuApi::validate_waterline_resources(const fhegpu::RuntimePlan &pla
         // Fixed RMM allocations and retained caches cannot be spent again as
         // graph credit. Alignment/fragmentation stays in the explicit margin.
         const auto fixed_pool=std::max(persistent,std::uint64_t(device.memory_pool->bytes_counter().value))+retained+(64ULL<<20);
-        if(fixed_pool>=capacity)throw std::runtime_error("Waterline managed pool below fixed allocation reserve");
-        waterline_allocator_capacity_[d]=capacity-fixed_pool;
+        if(fixed_pool>=pool_reserved)throw std::runtime_error("Waterline reserved pool below fixed allocation reserve");
+        waterline_allocator_capacity_[d]=pool_reserved-fixed_pool;
         std::cerr<<"waterline physical GPU"<<d<<" pool_reserved="<<pool_reserved<<" pool_cap="<<capacity
                  <<" initial_outside_used="<<initial_outside<<" outside_pool_growth="<<outside
                  <<" allocator_graph_capacity="<<waterline_allocator_capacity_[d]<<'\n';
@@ -1824,7 +1868,18 @@ PoseidonGpuApi::Value PoseidonGpuApi::prepare_plaintext_async(const fhegpu::Valu
 
 bool PoseidonGpuApi::is_ready(Value &value)
 {
-    return !value.ready_ || value.ready_->collect_completed();
+    const auto completion=value.ready_;
+    if(!completion)return true;
+    if(!completion->collect_completed())return false;
+    ScopedCompletedReclamation reclamation;
+    std::unique_lock<std::mutex> lock(in_flight_mutex_,std::try_to_lock);
+    if(!lock.owns_lock())return false;
+    // The executor returns temporary credit immediately after true. Reclaim
+    // completed retainers first, including a Ready that completed after the
+    // dispatcher's preceding collect_completed() query.
+    in_flight_work_.erase(std::remove_if(in_flight_work_.begin(),in_flight_work_.end(),
+        [&](auto &work){return work.completion==completion || work.completion->collect_completed();}),in_flight_work_.end());
+    return true;
 }
 
 PoseidonGpuApi::WaterlineMeasurements PoseidonGpuApi::waterline_measurements()

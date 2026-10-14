@@ -1,0 +1,37 @@
+QWEN inputs=1 outputs=1 devices=1 slots=8192 backend=cpu host_boot_instructions=0
+KEYS ready rotation_basis=13 key_generation_ms=7575.140268
+GPU_POOL maximum_mb=6592 source=waterline_and_free_memory outside_pool_reserve_bytes=603979776
+GPU_POOL_RESERVE cuda_device=0 initial_bytes=6912212992 maximum_bytes=6912212992
+FORWARD begin
+waterline stream GPU0 foreground_priority=-5 prepare_priority=0
+waterline fixed GPU0 persistent_bytes=1487480928 retained_workspace_bound=41418752 reserve_required=1596008544 reserve_configured=3221225472
+waterline physical GPU0 pool_reserved=6912212992 pool_cap=6912212992 initial_outside_used=323747840 outside_pool_growth=0 allocator_graph_capacity=5316204448
+waterline GPU0 front_peak=4293918720 plain_peak=6553600 remaining_front=1966080 remaining_plain=0
+waterline shared host_peak=32768000 pinned_peak=9830400 raw_peak=524288
+FORWARD complete runtime_ms=20308.98393
+PASS output=0 name=q_proj max_abs=9.90733e-10 max_relative=3.603e-10 max_imaginary=8.11014e-13 bad_real=0 bad_imaginary=0 nonfinite=0
+PASS ALL_OUTPUTS count=1 slots=8192 max_abs=9.90733e-10 max_relative=3.603e-10 max_imaginary=8.11014e-13 bad_real=0 bad_imaginary=0 nonfinite=0
+report=/home/xuming/poseidon-waterline-20261013/logs/rescale-reserved-pool-v2-20261014/q-proj-cpu-report.json decoded=/home/xuming/poseidon-waterline-20261013/logs/rescale-reserved-pool-v2-20261014/q-proj-cpu-decoded.json
+	Command being timed: "env CUDA_VISIBLE_DEVICES=1 OMP_NUM_THREADS=1 /home/xuming/poseidon-waterline-20261013/build/bin/poseidon_runtime_gpu_qwen_e2e /home/xuming/poseidon-waterline-20261013/logs/rescale-reserved-pool-v2-20261014/q50-small-regression/q_proj/optimized._hecate_cyclic_linear_smoke.runtime-plan.json /home/xuming/poseidon-waterline-20261013/logs/rescale-reserved-pool-v2-20261014/q50-small-regression/profiles/operator-spec.json /home/xuming/poseidon-waterline-20261013/logs/rescale-reserved-pool-v2-20261014/q50-small-regression/q_proj/fixture.json /home/xuming/poseidon-waterline-20261013/logs/rescale-reserved-pool-v2-20261014/q-proj-cpu-report.json /home/xuming/poseidon-waterline-20261013/logs/rescale-reserved-pool-v2-20261014/q-proj-cpu-decoded.json --bundle /home/xuming/poseidon-waterline-20261013/logs/rescale-reserved-pool-v2-20261014/q50-small-regression/q_proj/optimized._hecate_cyclic_linear_smoke.bundle --backend cpu"
+	User time (seconds): 29.05
+	System time (seconds): 5.07
+	Percent of CPU this job got: 100%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:33.98
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 2390136
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 1306778
+	Voluntary context switches: 133336
+	Involuntary context switches: 105
+	Swaps: 0
+	File system inputs: 0
+	File system outputs: 744
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

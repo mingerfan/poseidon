@@ -6,6 +6,13 @@ wait_pid=${POSEIDON_WAIT_FOR_PID:-0}
 run_label=${POSEIDON_ACCEPTANCE_LABEL:-qwen3-bsgs-q50-auto-final}
 full_backend=${POSEIDON_QWEN_BACKEND:-auto}
 case "$full_backend" in cpu|gpu|auto) ;; *) printf 'invalid Qwen backend: %s\n' "$full_backend" >&2; exit 2 ;; esac
+full_visible=${POSEIDON_QWEN_CUDA_VISIBLE_DEVICES:-0,1,2,3}
+python3 - "$full_visible" <<'PY'
+import sys
+cards = sys.argv[1].split(',')
+if len(cards) != 4 or set(cards) != {'0', '1', '2', '3'}:
+    raise SystemExit('full Qwen requires all four physical GPUs, each exactly once')
+PY
 run_logs="$base/logs/$run_label"
 prior_checks=${POSEIDON_VERIFIED_PRESSURE_DIR:-}
 cd "$base"
@@ -53,7 +60,7 @@ done
 plan="$base/qwen3-plans-bsgs-q50/gpu4/qwen3._hecate_qwen3_0_6b"
 prefix="$run_logs/model"
 set +e
-/usr/bin/time -v env CUDA_VISIBLE_DEVICES=0,1,2,3 OMP_NUM_THREADS=1 \
+/usr/bin/time -v env CUDA_VISIBLE_DEVICES="$full_visible" OMP_NUM_THREADS=1 \
   "$base/build/bin/poseidon_runtime_gpu_qwen_e2e" \
   "$plan.runtime-plan.bin" "$base/profiles/operator-spec.json" \
   "$base/qwen3-runner-bsgs-q50.json" "$prefix-report.json" "$prefix-decoded.json" \

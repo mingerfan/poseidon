@@ -1,0 +1,229 @@
+{
+  "scope": "Only completed reserved-pool v2 stage and tests; excludes v1 initial64 preflight rejection",
+  "files": {
+    "build.status": {
+      "source": "/home/xuming/poseidon-waterline-20261013/logs/rescale-reserved-pool-v2-20261014/build.status",
+      "stat": {
+        "bytes": 1724,
+        "mtime_ns": 1791971994378128588,
+        "inode": 221781457
+      },
+      "sha256": "493d72e4dbf73f4da2489fb8b401ef6121ce0494c4f68dd0497733ad39d97e4b"
+    },
+    "build-verification.log": {
+      "source": "/home/xuming/poseidon-waterline-20261013/logs/rescale-reserved-pool-v2-20261014/build-verification.log",
+      "stat": {
+        "bytes": 1042,
+        "mtime_ns": 1791971994376128588,
+        "inode": 221781456
+      },
+      "sha256": "d11de166b99c1b4aece9c5e9577e7f7b54a6ed2cda6ba112ba34634a056b3df3"
+    },
+    "cpu-api.log": {
+      "source": "/home/xuming/poseidon-waterline-20261013/logs/rescale-reserved-pool-v2-20261014/cpu-api.log",
+      "stat": {
+        "bytes": 8431,
+        "mtime_ns": 1791972007125129137,
+        "inode": 221781459
+      },
+      "sha256": "4edd312b8a6f8127c31fee2571d15e13d3e814aeeed0b361d71f92594640e4e9"
+    },
+    "gpu-api-single.log": {
+      "source": "/home/xuming/poseidon-waterline-20261013/logs/rescale-reserved-pool-v2-20261014/gpu-api-single.log",
+      "stat": {
+        "bytes": 10606,
+        "mtime_ns": 1791972022488129798,
+        "inode": 221781460
+      },
+      "sha256": "1751dca2737fcf5dbabc6cb83b831927ee6cbae473da69c25543c39a639131f8"
+    },
+    "gpu-scalar-single.log": {
+      "source": "/home/xuming/poseidon-waterline-20261013/logs/rescale-reserved-pool-v2-20261014/gpu-scalar-single.log",
+      "stat": {
+        "bytes": 1127,
+        "mtime_ns": 1791972024001129863,
+        "inode": 221781461
+      },
+      "sha256": "a1eebc698bd573f074eb45acc3f371a64236f9b8a06705f34a2dc254a3b812b2"
+    },
+    "gpu-prepare-oom-single.log": {
+      "source": "/home/xuming/poseidon-waterline-20261013/logs/rescale-reserved-pool-v2-20261014/gpu-prepare-oom-single.log",
+      "stat": {
+        "bytes": 2933,
+        "mtime_ns": 1791972025651129934,
+        "inode": 221781462
+      },
+      "sha256": "c179ca8a40df7380292dcb9731830cae01387b72d06e8458853353fd156a58a7"
+    },
+    "waterline-single.log": {
+      "source": "/home/xuming/poseidon-waterline-20261013/logs/rescale-reserved-pool-v2-20261014/waterline-single.log",
+      "stat": {
+        "bytes": 9610,
+        "mtime_ns": 1791972062833131534,
+        "inode": 221781463
+      },
+      "sha256": "436360bf600520a12a1c173330f0dac236be69dcdee94cc72a334532069f2783"
+    },
+    "waterline-all.log": {
+      "source": "/home/xuming/poseidon-waterline-20261013/logs/rescale-reserved-pool-v2-20261014/waterline-all.log",
+      "stat": {
+        "bytes": 18048,
+        "mtime_ns": 1791972119228133961,
+        "inode": 221781464
+      },
+      "sha256": "9e35d66a14c0177dd8cd652eda37e0a831306021d23814f9f8be463c11dbaa5d"
+    },
+    "waterline-host-staged.log": {
+      "source": "/home/xuming/poseidon-waterline-20261013/logs/rescale-reserved-pool-v2-20261014/waterline-host-staged.log",
+      "stat": {
+        "bytes": 18081,
+        "mtime_ns": 1791972177234136457,
+        "inode": 221781465
+      },
+      "sha256": "a1511f38d1ba09e83f2d94622e400e795599dbc43db6a11be8b1834ade0ae60a"
+    },
+    "q-proj-cpu.log": {
+      "source": "/home/xuming/poseidon-waterline-20261013/logs/rescale-reserved-pool-v2-20261014/q-proj-cpu.log",
+      "stat": {
+        "bytes": 3057,
+        "mtime_ns": 1791972211527137933,
+        "inode": 221781479
+      },
+      "sha256": "b20f7a1bd739033eaabbfe3dd25dee37955a9c9339929d356ab2a2878d0332dd"
+    },
+    "q-proj-cpu-report.json": {
+      "source": "/home/xuming/poseidon-waterline-20261013/logs/rescale-reserved-pool-v2-20261014/q-proj-cpu-report.json",
+      "stat": {
+        "bytes": 7103,
+        "mtime_ns": 1791972211199137918,
+        "inode": 221781481
+      },
+      "sha256": "360c6f08d441501b13e3d0e2d6fb1eca7355a6aa89b22aef30fbc8480579dccb"
+    },
+    "q-proj-gpu.log": {
+      "source": "/home/xuming/poseidon-waterline-20261013/logs/rescale-reserved-pool-v2-20261014/q-proj-gpu.log",
+      "stat": {
+        "bytes": 3063,
+        "mtime_ns": 1791972229675138713,
+        "inode": 221781482
+      },
+      "sha256": "f1a17d3d49cf12065957515f6802d4730341830b7a44ab485ccbfaba0b069628"
+    },
+    "q-proj-gpu-report.json": {
+      "source": "/home/xuming/poseidon-waterline-20261013/logs/rescale-reserved-pool-v2-20261014/q-proj-gpu-report.json",
+      "stat": {
+        "bytes": 7092,
+        "mtime_ns": 1791972229395138701,
+        "inode": 221781484
+      },
+      "sha256": "491dacc3b6ac714396630f49aa27c40651c9f41780a2c8cbea59cddde95f6c55"
+    },
+    "q-proj-auto.log": {
+      "source": "/home/xuming/poseidon-waterline-20261013/logs/rescale-reserved-pool-v2-20261014/q-proj-auto.log",
+      "stat": {
+        "bytes": 3071,
+        "mtime_ns": 1791972251466139651,
+        "inode": 221781485
+      },
+      "sha256": "355a022836e560d0d15860e74ba7f29d8fdebdcd4956ee027f7b1b8b4684c219"
+    },
+    "q-proj-auto-report.json": {
+      "source": "/home/xuming/poseidon-waterline-20261013/logs/rescale-reserved-pool-v2-20261014/q-proj-auto-report.json",
+      "stat": {
+        "bytes": 7114,
+        "mtime_ns": 1791972251131139637,
+        "inode": 221781487
+      },
+      "sha256": "adb78338f33f780c2d213388b393bee5a82f8f69f8e34f5187db88622315bc37"
+    },
+    "devices-before.csv": {
+      "source": "/home/xuming/poseidon-waterline-20261013/logs/rescale-reserved-pool-v2-20261014/devices-before.csv",
+      "stat": {
+        "bytes": 358,
+        "mtime_ns": 1791971995736128647,
+        "inode": 221781458
+      },
+      "sha256": "5f7859c204799c7220af3cbb521e17afd70cd8a192f3033d0fdb559340ea60ae"
+    },
+    "devices-after.csv": {
+      "source": "/home/xuming/poseidon-waterline-20261013/logs/rescale-reserved-pool-v2-20261014/devices-after.csv",
+      "stat": {
+        "bytes": 354,
+        "mtime_ns": 1791972252859139711,
+        "inode": 221781488
+      },
+      "sha256": "983e190b5c59f9bfc24f25b46a183ab4fd547f1edd2f53caccd9603ee016935f"
+    },
+    "exit-status": {
+      "source": "/home/xuming/poseidon-waterline-20261013/logs/rescale-reserved-pool-v2-20261014/exit-status",
+      "stat": {
+        "bytes": 2,
+        "mtime_ns": 1791972252864139711,
+        "inode": 221781489
+      },
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    "stage-build.status": {
+      "source": "/home/xuming/poseidon-waterline-20261013/logs/reserved-pool-stage-v2-20261014/build.status",
+      "stat": {
+        "bytes": 1724,
+        "mtime_ns": 1791971994108128577,
+        "inode": 221781454
+      },
+      "sha256": "493d72e4dbf73f4da2489fb8b401ef6121ce0494c4f68dd0497733ad39d97e4b"
+    },
+    "stage-supervisor.log": {
+      "source": "/home/xuming/poseidon-waterline-20261013/logs/reserved-pool-stage-v2-20261014/supervisor.log",
+      "stat": {
+        "bytes": 106,
+        "mtime_ns": 1791972252865139711,
+        "inode": 221781453
+      },
+      "sha256": "aa4822bd20807687e2a6df20512f480123b1240dcb3992bfcac611790984fc1d"
+    },
+    "stage-exit-status": {
+      "source": "/home/xuming/poseidon-waterline-20261013/logs/reserved-pool-stage-v2-20261014/exit-status",
+      "stat": {
+        "bytes": 2,
+        "mtime_ns": 1791972252865139711,
+        "inode": 221781490
+      },
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    }
+  },
+  "sources": {
+    "src/poseidon/runtime_api/poseidon_gpu_api.cpp": {
+      "source": "/home/xuming/poseidon-waterline-20261013/src/src/poseidon/runtime_api/poseidon_gpu_api.cpp",
+      "stat": {
+        "bytes": 149060,
+        "mtime_ns": 1791971717981116695,
+        "inode": 231362437
+      },
+      "sha256": "9cc4827c0c24522f0e0916da3b3898726bd1ba4351379ad58ab6d20eb71dc23b",
+      "local_sha256": "9cc4827c0c24522f0e0916da3b3898726bd1ba4351379ad58ab6d20eb71dc23b",
+      "matches_local": true
+    },
+    "src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp": {
+      "source": "/home/xuming/poseidon-waterline-20261013/src/src/poseidon/tests/runtime_api/poseidon_gpu_api_test.cpp",
+      "stat": {
+        "bytes": 152619,
+        "mtime_ns": 1791971717982116695,
+        "inode": 231428768
+      },
+      "sha256": "e30f8cfe5054a3bc2e8ba0545d148097272a43f4cb9c801bfdaf291a174bf4fc",
+      "local_sha256": "e30f8cfe5054a3bc2e8ba0545d148097272a43f4cb9c801bfdaf291a174bf4fc",
+      "matches_local": true
+    },
+    "src/poseidon/tests/runtime_api/poseidon_gpu_prepare_oom_test.cpp": {
+      "source": "/home/xuming/poseidon-waterline-20261013/src/src/poseidon/tests/runtime_api/poseidon_gpu_prepare_oom_test.cpp",
+      "stat": {
+        "bytes": 16664,
+        "mtime_ns": 1791971976752127830,
+        "inode": 231428905
+      },
+      "sha256": "2df303eeef2d1d3fb86dca2c59b3b6a68b8da42268f75065d8a081d23e2efbe3",
+      "local_sha256": "2df303eeef2d1d3fb86dca2c59b3b6a68b8da42268f75065d8a081d23e2efbe3",
+      "matches_local": true
+    }
+  }
+}

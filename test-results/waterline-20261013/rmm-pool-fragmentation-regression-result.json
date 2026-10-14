@@ -1,0 +1,57 @@
+{
+  "scope": "three small real-CUDA RMM allocator mechanism controls; not replay of full Qwen failure",
+  "recorded_at": "2026-10-14T17:56:32.368950+08:00",
+  "returncode": 0,
+  "passed": true,
+  "full_model_oom_replayed": false,
+  "new_full_model_validated": false,
+  "tests": {
+    "fragmented_pool_negative": true,
+    "preallocated_pool_positive": true,
+    "geometric_backoff_positive": true
+  },
+  "elapsed_seconds": 0.23591716100054327,
+  "gpu_before": "0, NVIDIA GeForce RTX 4060 Laptop GPU, GPU-08fdbdc4-ecda-e2e3-ae01-a596e4e70914, 00000000:64:00.0, 615.78.08, 3 MiB, 8188 MiB",
+  "gpu_after": "0, NVIDIA GeForce RTX 4060 Laptop GPU, GPU-08fdbdc4-ecda-e2e3-ae01-a596e4e70914, 00000000:64:00.0, 615.78.08, 3 MiB, 8188 MiB",
+  "inputs": {
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-20261013/rmm-pool-fragmentation-regression.cpp": {
+      "bytes": 6838,
+      "sha256": "sha256:5c382230c69bcdf970e3f783f6d5fdafbc6aae07c2181f64ec5e716bd85733a1"
+    },
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/build-waterline-rmm-fragmentation-agent/rmm-pool-fragmentation-regression": {
+      "bytes": 459352,
+      "sha256": "sha256:0b89e36adf2a46095ed68165ea92d7fd2464ce806d551ae668a86eab3b680558"
+    },
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/rmm/include/rmm/mr/device/pool_memory_resource.hpp": {
+      "bytes": 19836,
+      "sha256": "sha256:f7c673f9bd6cec2a51c8f3f2cc7132f72f1b7658a833c1da1f983126a9da69a9"
+    },
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/rmm/include/rmm/mr/device/detail/stream_ordered_memory_resource.hpp": {
+      "bytes": 19245,
+      "sha256": "sha256:6ee4c56df5765ec9e164e8ae6e32a98d790756feafb4874ef504923d435854be"
+    },
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/rmm/include/rmm/mr/device/detail/coalescing_free_list.hpp": {
+      "bytes": 9160,
+      "sha256": "sha256:cd6fb5559f2269cac68fc3a9dc95fa821d3ead640d4e47bd735d2bd0fa3a9a9a"
+    },
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/rmm/include/rmm/mr/device/limiting_resource_adaptor.hpp": {
+      "bytes": 8130,
+      "sha256": "sha256:c518108d8ffc66121d5e947884f5670156525627acd05e45a046c5c831606e0f"
+    },
+    "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/third_party/rmm/include/rmm/mr/device/statistics_resource_adaptor.hpp": {
+      "bytes": 10486,
+      "sha256": "sha256:c4a6121ef997fc90d29e1e0ebd5cd2c577331e2bdf719dab564f7546a02c4871"
+    }
+  },
+  "log": {
+    "path": "/mnt/zhitai/KnowledgeLib/Research/FHE-GPU/poseidon/test-results/waterline-20261013/rmm-pool-fragmentation-regression.log",
+    "bytes": 811,
+    "sha256": "sha256:39080469ec6e2e28257082dd7f64fe9a3573afa6d8f6d6a2567e3b41f5b4cd2a"
+  },
+  "commands_file": "rmm-pool-fragmentation-regression-commands.json",
+  "maximum_test_pool_bytes": 16777216,
+  "api_default_and_reserved_capacity_tests": "coordinated separately with numeric_review; not these standalone controls",
+  "poseidon_git_revision_at_run": "36ed54f17e0838a8e115c2cbe79b3494df53ab55",
+  "rmm_git_revision": null,
+  "rmm_source_binding": "Vendored headers are bound by SHA256 above; git discovery here resolves to the enclosing Poseidon repository, not an independent RMM revision."
+}

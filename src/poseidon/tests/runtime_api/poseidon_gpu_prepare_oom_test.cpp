@@ -183,7 +183,9 @@ fhegpu::RuntimePlan make_plan(const fhegpu::LoadedOperatorSpec &spec, const std:
 int main() {
     try {
         setenv("POSEIDON_GPU_RUNTIME_MAXIMUM_POOL_MB", "512", 1);
-        setenv("POSEIDON_GPU_RUNTIME_INITIAL_POOL_MB", "64", 1);
+        // The fixed resources plus the 64 MiB margin must already be reserved
+        // before the intended second-allocation failure is injected.
+        setenv("POSEIDON_GPU_RUNTIME_INITIAL_POOL_MB", "128", 1);
         int count = 0; check(cudaGetDeviceCount(&count), "OOM test CUDA devices");
         require(count == 1, "OOM test requires one explicitly selected GPU");
         check(cudaSetDevice(0), "OOM test device");

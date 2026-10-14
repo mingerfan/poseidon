@@ -1,0 +1,25 @@
+{
+  "scope": "Local RTX4060; true second-RMM-allocation GPU Prepare fault after reserved-capacity fix; no full model validation",
+  "command": [
+    "env",
+    "CUDA_VISIBLE_DEVICES=0",
+    "OMP_NUM_THREADS=1",
+    "build-runtime-gpu-api-release/bin/poseidon_runtime_gpu_prepare_oom_tests"
+  ],
+  "returncode": 0,
+  "second_allocation_failure_injected": true,
+  "implicit_retry": false,
+  "cpu_fallback": false,
+  "dynamic_gpu_and_pinned_live_at_return": 0,
+  "explicit_same_runtime_restart_complex_slots": 2048,
+  "max_abs_error": 4.91877e-08,
+  "fixture_initial_pool_mib": 128,
+  "fixture_maximum_pool_mib": 512,
+  "sha256": {
+    "src/poseidon/runtime_api/poseidon_gpu_api.cpp": "9cc4827c0c24522f0e0916da3b3898726bd1ba4351379ad58ab6d20eb71dc23b",
+    "src/poseidon/tests/runtime_api/poseidon_gpu_prepare_oom_test.cpp": "2df303eeef2d1d3fb86dca2c59b3b6a68b8da42268f75065d8a081d23e2efbe3",
+    "build-runtime-gpu-api-release/bin/poseidon_runtime_gpu_prepare_oom_tests": "059e9c01dee23da3a471b09ea96e4e20c924cd3627cbd967d37840cbcb77db29"
+  },
+  "log": "reserved-ready-oom-test.log",
+  "log_sha256": "e3f4c8a5837816372c51c4ca5c183639abf31c428c96b618a9c0868a7cfb441b"
+}

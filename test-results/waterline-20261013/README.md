@@ -1,6 +1,6 @@
 # Waterline 实现与 188Server 验证
 
-状态核对于 **2026-10-14（北京时间）**。已推送 Poseidon 数学修复 `3d4cff66`、Host读取计费修复 `579012ad`，ckks-runtime `369bdc5`（相对 `f29775a` 仅追加测试）、DaCapo `6e75be2`（生产编译器与 `d5ed984` 相同）。**完整 Qwen3-0.6B 数值验收尚未完成。** 新预乘 API 已通过本地及 188 小图回归；原 Q50/逻辑 scale40 四卡 GPU-only 前向 PID153204 在2:29:19后因RMM分配失败退出1，未产生完整decoded或数值通过报告，见 [失败报告](188-q50-lazy40-failed-model-report.json)、[日志](188-q50-lazy40-failed-model.log)及 [事实/推断范围](188-q50-lazy40-failed-tail-interpretation.json)。正在修正物理池预留与完成回收，不把该次失败归为lazy数学错误。
+状态核对于 **2026-10-14（北京时间）**。已推送 Poseidon 数学修复 `3d4cff66`、Host读取计费修复 `579012ad`，ckks-runtime `369bdc5`（相对 `f29775a` 仅追加测试）、DaCapo `6e75be2`（生产编译器与 `d5ed984` 相同）。**完整 Qwen3-0.6B 数值验收尚未完成。** 新预乘 API 已通过本地及 188 小图回归；原 Q50/逻辑 scale40 四卡 GPU-only 前向 PID153204 在2:29:19后因RMM分配失败退出1，未产生完整decoded或数值通过报告，见 [失败报告](188-q50-lazy40-failed-model-report.json)、[日志](188-q50-lazy40-failed-model.log)及 [事实/推断范围](188-q50-lazy40-failed-tail-interpretation.json)。物理池预留与完成回收已修正，并通过本地及188检查。包含全部修正的新完整前向已启动，[启动记录](188-reserved-pool-full-launch.json)，仍无完整数值结论。
 
 Waterline 已接通后期 Prepare 改写、完整消费者组准入、每设备水位、共享 Host/pinned/raw 预算和事件回收，复用统一执行器的前台计算与通信。自动静态分批和批末 Fence 已替换；显式 Encode/Transfer/Fence、drain、按需读取、Release/reuse 保留，见 [清理清单](cleanup.tsv)。
 
@@ -47,7 +47,9 @@ Waterline 已接通后期 Prepare 改写、完整消费者组准入、每设备�
 
 额外修复了GPU缓存路径的Host读取额度：非resident packed读取会同时持有原始字节和decoded double数组，动态Host须保持`N*8`，已存活的pinned缓存另计固定`N*4`。旧公式每次读取少计`N*4`（N16384时64KiB）。本地 [新版API 21/21](gpu-packed-host-budget-tests.log) 通过；真实packed暖缓存、公开Ledger/API边界的紧预算拒绝、足额预算编码全部2048复数槽通过，旧公式隔离负控确实错误接受紧预算并失败，见 [绑定与范围](gpu-packed-host-budget-result.json)。这条专门边界未执行完整Runtime结构，不能扩大为该结构的端到端反例。当前188完整模型仍使用修复前的Host计费公式和已验证的预乘数学路径；此修正不改Rescale、编码或HEFT，后续资源结论须单列差额，不能把运行中旧二进制当作新公式的验证。
 
-同一修复在188物理GPU1的 [隔离构建21/21](188-gpu-packed-host-budget-tests.log) 通过，UUID/ECC、精确编译链接命令、二进制及源hash、前后未改共享文件均见 [结果](188-gpu-packed-host-budget-result.json)。[复现脚本](check-packed-host-budget-188.py)读取既有Makefiles的flags，在新目录编译两份更新cpp并优先链接新object；link.map确认旧API cpp成员没有被抽取。该测试与完整模型共存，不用于性能比较；原server源码、build、runner及`logs/latest-build.status`均保持原样。 [压力脚本](check-packed-host-pressure-188.sh)原安排在模型成功结束后复查新API；模型失败后该监督未启动压力。物理池修正后的复测须另用新的构建和日志。旧运行的Host差额须从最终共享账本检查，方法与限制见 [回溯上界](packed-host-retrospective-bound.md)，不能用report的单次读取峰值替代。
+同一修复在188物理GPU1的 [隔离构建21/21](188-gpu-packed-host-budget-tests.log) 通过，UUID/ECC、精确编译链接命令、二进制及源hash、前后未改共享文件均见 [结果](188-gpu-packed-host-budget-result.json)。[复现脚本](check-packed-host-budget-188.py)读取既有Makefiles的flags，在新目录编译两份更新cpp并优先链接新object；link.map确认旧API cpp成员没有被抽取。该测试与完整模型共存，不用于性能比较；原server源码、build、runner及`logs/latest-build.status`均保持原样。 [压力脚本](check-packed-host-pressure-188.sh)原安排在模型成功结束后复查新API；模型失败后该监督未启动压力。物理池修正后的复测须另用新的构建和日志。失败旧轨迹缺少成功最终账本，不使用回溯上界替代新版完整运行；原临时回溯工具已移除。
+
+物理池与Ready额度修正的行为、真实正负控和边界见 [验证说明](pool-reservation-and-ready-validation.md)。本地API23/23、独立RMM机制3/3、真实GPU Prepare故障收敛通过；188完整复查也已通过，[构建绑定](188-reserved-pool-build.status)、[监督exit0](188-reserved-pool-stage-exit-status)。新完整前向使用相同HEFT逻辑计划、全部四卡的物理顺序`1,2,3,0`；逻辑GPU3的固定key及单组需求较小，将它映射共享的物理GPU0，UUID由runner报告。新binary `449cf933…` 包含Host计费、物理池及Ready修复，仍待完整数值验收。
 
 ## 完整模型 HEFT 保持审计
 
