@@ -5,11 +5,11 @@
 namespace poseidon
 {
 using namespace util;
-ParametersLiteral::ParametersLiteral(SchemeType type, uint32_t log_n, uint32_t log_slots,
-                                     uint32_t log_scale, uint32_t hamming_weight, uint32_t q0_level,
-                                     Modulus plain_modulus, const vector<Modulus> &q,
-                                     const vector<Modulus> &p, sec_level_type sec_level,
-                                     MemoryPoolHandle pool)
+ParametersLiteral::ParametersLiteral(SchemeType type, std::uint32_t log_n, std::uint32_t log_slots,
+                                     std::uint32_t log_scale, std::uint32_t hamming_weight,
+                                     std::uint32_t q0_level, Modulus plain_modulus,
+                                     const std::vector<Modulus> &q, const std::vector<Modulus> &p,
+                                     sec_level_type sec_level, MemoryPoolHandle pool)
     : type_(type), log_n_(log_n), log_slots_(log_slots), q_(q), p_(p), log_scale_(log_scale),
       hamming_weight_(hamming_weight), plain_modulus_(plain_modulus), q0_level_(q0_level),
       pool_(std::move(pool)), sec_level_(sec_level)
@@ -24,22 +24,22 @@ void ParametersLiteral::save_members(std::ostream &stream) const
     auto old_except_mask = stream.exceptions();
     try
     {
-        stream.exceptions(ios_base::badbit | ios_base::failbit);
+        stream.exceptions(std::ios_base::badbit | std::ios_base::failbit);
         uint8_t type = static_cast<uint8_t>(type_);
         int sec_level = static_cast<int>(sec_level_);
-        uint32_t log_n = static_cast<uint32_t>(log_n_);
-        uint32_t log_slots = static_cast<uint32_t>(log_slots_);
-        uint32_t log_scale = static_cast<uint32_t>(log_scale_);
-        uint32_t hamming_weight = static_cast<uint32_t>(hamming_weight_);
-        uint32_t q0_level = static_cast<uint32_t>(q0_level_);
+        std::uint32_t log_n = static_cast<std::uint32_t>(log_n_);
+        std::uint32_t log_slots = static_cast<std::uint32_t>(log_slots_);
+        std::uint32_t log_scale = static_cast<std::uint32_t>(log_scale_);
+        std::uint32_t hamming_weight = static_cast<std::uint32_t>(hamming_weight_);
+        std::uint32_t q0_level = static_cast<std::uint32_t>(q0_level_);
 
         stream.write(reinterpret_cast<const char *>(&type), sizeof(uint8_t));
         stream.write(reinterpret_cast<const char *>(&sec_level), sizeof(int));
-        stream.write(reinterpret_cast<const char *>(&log_n), sizeof(uint32_t));
-        stream.write(reinterpret_cast<const char *>(&log_slots), sizeof(uint32_t));
-        stream.write(reinterpret_cast<const char *>(&log_scale), sizeof(uint32_t));
-        stream.write(reinterpret_cast<const char *>(&hamming_weight), sizeof(uint32_t));
-        stream.write(reinterpret_cast<const char *>(&q0_level), sizeof(uint32_t));
+        stream.write(reinterpret_cast<const char *>(&log_n), sizeof(std::uint32_t));
+        stream.write(reinterpret_cast<const char *>(&log_slots), sizeof(std::uint32_t));
+        stream.write(reinterpret_cast<const char *>(&log_scale), sizeof(std::uint32_t));
+        stream.write(reinterpret_cast<const char *>(&hamming_weight), sizeof(std::uint32_t));
+        stream.write(reinterpret_cast<const char *>(&q0_level), sizeof(std::uint32_t));
 
         uint64_t q_size64 = static_cast<uint64_t>(q_.size());
         uint64_t p_size64 = static_cast<uint64_t>(p_.size());
@@ -58,10 +58,10 @@ void ParametersLiteral::save_members(std::ostream &stream) const
         // Only BFV and BGV uses plain_modulus but save it in any case for simplicity
         plain_modulus_.save(stream, compr_mode_type::none);
     }
-    catch (const ios_base::failure &)
+    catch (const std::ios_base::failure &)
     {
         stream.exceptions(old_except_mask);
-        throw runtime_error("I/O error");
+        POSEIDON_THROW_RUNTIME_ERROR("I/O error");
     }
     catch (...)
     {
@@ -77,29 +77,29 @@ void ParametersLiteral::load_members(std::istream &stream)
     auto old_except_mask = stream.exceptions();
     try
     {
-        stream.exceptions(ios_base::badbit | ios_base::failbit);
+        stream.exceptions(std::ios_base::badbit | std::ios_base::failbit);
 
         // Read the scheme identifier
         uint8_t type;
         int sec_level;
-        uint32_t log_n;
-        uint32_t log_slots;
-        uint32_t log_scale;
-        uint32_t hamming_weight;
-        uint32_t q0_level;
+        std::uint32_t log_n;
+        std::uint32_t log_slots;
+        std::uint32_t log_scale;
+        std::uint32_t hamming_weight;
+        std::uint32_t q0_level;
 
         stream.read(reinterpret_cast<char *>(&type), sizeof(uint8_t));
         stream.read(reinterpret_cast<char *>(&sec_level), sizeof(int));
-        stream.read(reinterpret_cast<char *>(&log_n), sizeof(uint32_t));
-        stream.read(reinterpret_cast<char *>(&log_slots), sizeof(uint32_t));
-        stream.read(reinterpret_cast<char *>(&log_scale), sizeof(uint32_t));
-        stream.read(reinterpret_cast<char *>(&hamming_weight), sizeof(uint32_t));
-        stream.read(reinterpret_cast<char *>(&q0_level), sizeof(uint32_t));
+        stream.read(reinterpret_cast<char *>(&log_n), sizeof(std::uint32_t));
+        stream.read(reinterpret_cast<char *>(&log_slots), sizeof(std::uint32_t));
+        stream.read(reinterpret_cast<char *>(&log_scale), sizeof(std::uint32_t));
+        stream.read(reinterpret_cast<char *>(&hamming_weight), sizeof(std::uint32_t));
+        stream.read(reinterpret_cast<char *>(&q0_level), sizeof(std::uint32_t));
 
         uint64_t q_size64;
         uint64_t p_size64;
-        vector<Modulus> q;
-        vector<Modulus> p;
+        std::vector<Modulus> q;
+        std::vector<Modulus> p;
 
         stream.read(reinterpret_cast<char *>(&q_size64), sizeof(uint64_t));
         stream.read(reinterpret_cast<char *>(&p_size64), sizeof(uint64_t));
@@ -124,14 +124,14 @@ void ParametersLiteral::load_members(std::istream &stream)
                                 static_cast<poseidon::sec_level_type>(sec_level));
 
         // Set the loaded parameters
-        swap(*this, parms);
+        std::swap(*this, parms);
 
         stream.exceptions(old_except_mask);
     }
-    catch (const ios_base::failure &)
+    catch (const std::ios_base::failure &)
     {
         stream.exceptions(old_except_mask);
-        throw runtime_error("I/O error");
+        POSEIDON_THROW_RUNTIME_ERROR("I/O error");
     }
     catch (...)
     {
@@ -145,11 +145,11 @@ void ParametersLiteral::set_poly_modulus_degree(std::size_t poly_modulus_degree)
 {
     if (poly_modulus_degree)
     {
-        throw std::logic_error("poly_modulus_degree is not supported for this scheme");
+        POSEIDON_THROW_LOGIC_ERROR("poly_modulus_degree is not supported for this scheme");
     }
 
     // Set the degree
-    log_n_ = static_cast<uint32_t>(log2(poly_modulus_degree));
+    log_n_ = static_cast<std::uint32_t>(log2(poly_modulus_degree));
 
     // Re-compute the parms_id
     compute_params_id();
@@ -159,7 +159,7 @@ void ParametersLiteral::set_plain_modulus(const Modulus &plain_modulus)
 {
     if (type_ != BFV && type_ != BGV && !plain_modulus.is_zero())
     {
-        throw std::logic_error("plain_modulus is not supported for this scheme");
+        POSEIDON_THROW_LOGIC_ERROR("plain_modulus is not supported for this scheme");
     }
     plain_modulus_ = plain_modulus;
 
@@ -167,14 +167,14 @@ void ParametersLiteral::set_plain_modulus(const Modulus &plain_modulus)
     compute_params_id();
 }
 
-void ParametersLiteral::set_log_modulus(const vector<uint32_t> &log_q,
-                                        const vector<uint32_t> &log_p)
+void ParametersLiteral::set_log_modulus(const std::vector<std::uint32_t> &log_q,
+                                        const std::vector<std::uint32_t> &log_p)
 {
     //<prime_size, primes_num>
     auto factor = (uint64_t)2 << log_n_;
-    //<prime_size, primes_vector>
-    map<uint32_t, vector<Modulus>> primes_map;
-    map<uint32_t, int> primes_num_map;
+    //<prime_size, primes_std::vector>
+    std::map<std::uint32_t, std::vector<Modulus>> primes_map;
+    std::map<std::uint32_t, int> primes_num_map;
     for (unsigned int i : log_q)
     {
         auto f = primes_num_map.find(i);
@@ -303,13 +303,14 @@ GetDefaultCoeffModulus128()
             Total bit count: 1857 = 31 * 58 + 59
             */
             {65536,
-            {{ 0x3fffffffa320001, 0x3fffffffa800001, 0x3fffffffaa20001, 0x3fffffffaa40001, 0x3fffffffad20001,
-               0x3fffffffaf20001, 0x3fffffffb4a0001, 0x3fffffffbb20001, 0x3fffffffbbc0001, 0x3fffffffc600001,
-               0x3fffffffc8a0001, 0x3fffffffcb20001, 0x3fffffffcc00001, 0x3fffffffcca0001, 0x3fffffffce80001,
-               0x3fffffffd3c0001, 0x3fffffffd900001, 0x3fffffffdc80001, 0x3fffffffdd80001, 0x3fffffffdfe0001,
-               0x3fffffffe2c0001, 0x3fffffffe320001, 0x3fffffffe440001, 0x3fffffffe800001, 0x3fffffffea00001,
-               0x3fffffffeb00001, 0x3fffffffed00001, 0x3fffffffed60001, 0x3ffffffff040001, 0x3ffffffff3a0001,
-               0x3ffffffffbe0001},
+             {{0x3fffffffa320001, 0x3fffffffa800001, 0x3fffffffaa20001, 0x3fffffffaa40001,
+               0x3fffffffad20001, 0x3fffffffaf20001, 0x3fffffffb4a0001, 0x3fffffffbb20001,
+               0x3fffffffbbc0001, 0x3fffffffc600001, 0x3fffffffc8a0001, 0x3fffffffcb20001,
+               0x3fffffffcc00001, 0x3fffffffcca0001, 0x3fffffffce80001, 0x3fffffffd3c0001,
+               0x3fffffffd900001, 0x3fffffffdc80001, 0x3fffffffdd80001, 0x3fffffffdfe0001,
+               0x3fffffffe2c0001, 0x3fffffffe320001, 0x3fffffffe440001, 0x3fffffffe800001,
+               0x3fffffffea00001, 0x3fffffffeb00001, 0x3fffffffed00001, 0x3fffffffed60001,
+               0x3ffffffff040001, 0x3ffffffff3a0001, 0x3ffffffffbe0001},
               {0x7ffffffffcc0001},
               40}}};
 
@@ -405,10 +406,12 @@ GetDefaultCoeffModulus256()
     return default_coeff_modulus_256;
 }
 
-const map<size_t, tuple<vector<uint32_t>, vector<uint32_t>, uint32_t>> &
+const std::map<size_t,
+               std::tuple<std::vector<std::uint32_t>, std::vector<std::uint32_t>, std::uint32_t>> &
 GetDefaultLogCoeffModulus128()
 {
-    static const map<size_t, tuple<vector<uint32_t>, vector<uint32_t>, uint32_t>>
+    static const std::map<
+        size_t, std::tuple<std::vector<std::uint32_t>, std::vector<std::uint32_t>, std::uint32_t>>
         default_log_coeff_modulus_128{
             /*
             Polynomial modulus: 1x^4096 + 1
@@ -443,16 +446,21 @@ GetDefaultLogCoeffModulus128()
             Modulus count: 32
             Total bit count: 1857 = 31 * 58 + 59
             */
-            {65536, {{58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58,
-                  58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58}, {59}, 40}}};
+            {65536,
+             {{58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58,
+               58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58, 58},
+              {59},
+              40}}};
 
     return default_log_coeff_modulus_128;
 }
 
-const map<size_t, tuple<vector<uint32_t>, vector<uint32_t>, uint32_t>> &
+const std::map<size_t,
+               std::tuple<std::vector<std::uint32_t>, std::vector<std::uint32_t>, std::uint32_t>> &
 GetDefaultLogCoeffModulus192()
 {
-    static const map<size_t, tuple<vector<uint32_t>, vector<uint32_t>, uint32_t>>
+    static const std::map<
+        size_t, std::tuple<std::vector<std::uint32_t>, std::vector<std::uint32_t>, std::uint32_t>>
         default_log_coeff_modulus_192{
             /*
             Polynomial modulus: 1x^1024 + 1
@@ -499,10 +507,12 @@ GetDefaultLogCoeffModulus192()
     return default_log_coeff_modulus_192;
 }
 
-const map<size_t, tuple<vector<uint32_t>, vector<uint32_t>, uint32_t>> &
+const std::map<size_t,
+               std::tuple<std::vector<std::uint32_t>, std::vector<std::uint32_t>, std::uint32_t>> &
 GetDefaultLogCoeffModulus256()
 {
-    static const map<size_t, tuple<vector<uint32_t>, vector<uint32_t>, uint32_t>>
+    static const std::map<
+        size_t, std::tuple<std::vector<std::uint32_t>, std::vector<std::uint32_t>, std::uint32_t>>
         default_log_coeff_modulus_256{/*
                                       Polynomial modulus: 1x^1024 + 1
                                       Modulus count: 1
@@ -548,7 +558,7 @@ GetDefaultLogCoeffModulus256()
     return default_log_coeff_modulus_256;
 }
 
-ParametersLiteralDefault::ParametersLiteralDefault(SchemeType scheme_type, uint32_t degree,
+ParametersLiteralDefault::ParametersLiteralDefault(SchemeType scheme_type, std::uint32_t degree,
                                                    sec_level_type sec_level, MemoryPoolHandle pool)
     : ParametersLiteral(sec_level)
 {
@@ -556,12 +566,12 @@ ParametersLiteralDefault::ParametersLiteralDefault(SchemeType scheme_type, uint3
     init(scheme_type, degree, sec_level);
 };
 
-void ParametersLiteralDefault::init(SchemeType scheme_type, uint32_t degree,
+void ParametersLiteralDefault::init(SchemeType scheme_type, std::uint32_t degree,
                                     sec_level_type sec_level)
 {
     type_ = scheme_type;
     q0_level_ = 0;
-    log_n_ = static_cast<uint32_t>(log2(static_cast<double>(degree)));
+    log_n_ = static_cast<std::uint32_t>(log2(static_cast<double>(degree)));
     hamming_weight_ = 5;
     if (scheme_type == CKKS)
     {

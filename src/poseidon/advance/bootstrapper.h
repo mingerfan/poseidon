@@ -8,6 +8,7 @@
 #include "poseidon/advance/homomorphic_linear_transform.h"
 
 #include <complex>
+#include <cstdint>
 #include <string>
 #include <vector>
 

@@ -27,7 +27,7 @@ project(Poseidon VERSION 1.0.0 LANGUAGES CXX C)
 
 find_package(GMP REQUIRED MODULE)
 
-# 根据ASAN的值来设置编译器标志  
+# 根据ASAN的值来设置编译器标志
 option(ASAN "Enable AddressSanitizer" OFF)  
 if(ASAN)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fsanitize-recover=address -fno-stack-protector -fno-omit-frame-pointer")
@@ -177,7 +177,6 @@ endif()
 
 # [option] POSEIDON_USE_INTEL_HEXL (default: OFF)
 set(POSEIDON_USE_INTEL_HEXL_OPTION_STR "Use Intel HEXL library")
-unset(POSEIDON_USE_INTEL_HEXL CACHE)
 option(POSEIDON_USE_INTEL_HEXL ${POSEIDON_USE_INTEL_HEXL_OPTION_STR} OFF)
 message(STATUS "POSEIDON_USE_INTEL_HEXL: ${POSEIDON_USE_INTEL_HEXL}")
 
@@ -190,6 +189,30 @@ if(POSEIDON_USE_INTEL_HEXL)
         if (NOT TARGET HEXL::hexl)
             message(FATAL_ERROR "Intel HEXL: not found")
         endif()
+    endif()
+endif()
+
+# [option] POSEIDON_USE_OPENMP (default: OFF)
+option(POSEIDON_USE_OPENMP "Enable OpenMP for POSEIDON" OFF)
+message(STATUS "POSEIDON_USE_OPENMP: ${POSEIDON_USE_OPENMP}")
+if(POSEIDON_USE_OPENMP)
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
+    find_package(OpenMP REQUIRED)
+    if(OpenMP_CXX_FOUND)
+        set(USING_OPENMP ON)
+    endif()
+endif()
+
+
+# [option] POSEIDON_USE_SPDLOG (default: ON)
+option(POSEIDON_USE_SPDLOG "Enable spdlog for POSEIDON" ON)
+message(STATUS "POSEIDON_USE_SPDLOG: ${POSEIDON_USE_SPDLOG}")
+if(POSEIDON_USE_SPDLOG)
+    if(POSEIDON_BUILD_DEPS)
+        message(STATUS "spdlog: download ...")
+        poseidon_fetch_thirdparty_content(ExternalSpdlog)
+    else()
+        find_package(spdlog REQUIRED)
     endif()
 endif()
 
@@ -273,6 +296,19 @@ if(POSEIDON_USE_INTEL_HEXL)
             DESTINATION ${CMAKE_INSTALL_PREFIX}/${CMAKE_LIBRARY_PREFIX}
             FILES_MATCHING PATTERN "*hexl*"
     )
+endif()
+
+if(POSEIDON_USE_OPENMP)
+    target_link_libraries(poseidon_shared PRIVATE OpenMP::OpenMP_CXX)
+    target_compile_definitions(poseidon_shared PRIVATE POSEIDON_USE_OPENMP)
+endif()
+
+if(POSEIDON_USE_SPDLOG)
+    if(POSEIDON_BUILD_DEPS)
+        target_include_directories(poseidon_shared PUBLIC $<BUILD_INTERFACE:${spdlog_SOURCE_DIR}/include>)
+    else()
+        target_link_libraries(poseidon_shared PUBLIC spdlog::spdlog)
+    endif()
 endif()
 
 # [option] POSEIDON_BUILD_CKKS_RUNTIME_API (default: OFF)

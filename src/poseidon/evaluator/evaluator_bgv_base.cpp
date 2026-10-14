@@ -55,7 +55,7 @@ void EvaluatorBgvBase::square_inplace(Ciphertext &ciph, MemoryPoolHandle pool) c
     // Size check
     if (!product_fits_in(dest_size, coeff_count, coeff_modulus_size))
     {
-        throw logic_error("invalid parameters");
+        POSEIDON_THROW_LOGIC_ERROR("invalid parameters");
     }
 
     // Set up iterator for the base
@@ -78,8 +78,7 @@ void EvaluatorBgvBase::square_inplace(Ciphertext &ciph, MemoryPoolHandle pool) c
     // Compute 2*c0*c1
     dyadic_product_coeffmod(ciph_iter[0], ciph_iter[1], coeff_modulus_size, coeff_modulus,
                             ciph_iter[1]);
-    add_poly_coeffmod(ciph_iter[1], ciph_iter[1], coeff_modulus_size, coeff_modulus,
-                      ciph_iter[1]);
+    add_poly_coeffmod(ciph_iter[1], ciph_iter[1], coeff_modulus_size, coeff_modulus, ciph_iter[1]);
 
     // Compute c0^2
     dyadic_product_coeffmod(ciph_iter[0], ciph_iter[0], coeff_modulus_size, coeff_modulus,
@@ -150,11 +149,13 @@ void EvaluatorBgvBase::rescale(Ciphertext &ciph) const
     Ciphertext ciphertext_copy(pool);
     ciphertext_copy = ciphertext;
 
-    POSEIDON_ITERATE(iter(ciphertext_copy), ciphertext_size, [&](auto I)
+    POSEIDON_ITERATE(iter(ciphertext_copy), ciphertext_size,
+                     [&](auto I)
                      { rns_tool->mod_t_and_divide_q_last_ntt_inplace(I, ntt_table, pool); });
 
     result.resize(context_, next_context_data.parms().parms_id(), ciphertext_size);
-    POSEIDON_ITERATE(iter(ciphertext_copy, result), ciphertext_size, [&](auto I)
+    POSEIDON_ITERATE(iter(ciphertext_copy, result), ciphertext_size,
+                     [&](auto I)
                      { set_poly(get<0>(I), coeff_count, next_coeff_modulus_size, get<1>(I)); });
 
     // Set other attributes
@@ -206,7 +207,7 @@ void EvaluatorBgvBase::sub(const Ciphertext &ciph1, const Ciphertext &ciph2,
     {
         POSEIDON_THROW(invalid_argument_error, "sub : NTT form mismatch");
     }
-    if (!util::are_approximate<double>(ciph1.scale(), ciph2.scale()))
+    if (!util::is_approximate<double>(ciph1.scale(), ciph2.scale()))
     {
         POSEIDON_THROW(invalid_argument_error, "sub : scale mismatch");
     }
@@ -218,14 +219,14 @@ void EvaluatorBgvBase::sub(const Ciphertext &ciph1, const Ciphertext &ciph2,
     size_t coeff_count = parms.degree();
     size_t coeff_modulus_size = coeff_modulus.size();
     size_t ciph1_size = ciph1.size();
-    size_t ciph2_size = ciph1.size();
+    size_t ciph2_size = ciph2.size();
     size_t max_count = max(ciph1_size, ciph2_size);
     size_t min_count = min(ciph1_size, ciph2_size);
 
     // Size check
     if (!product_fits_in(max_count, coeff_count))
     {
-        throw logic_error("invalid parameters");
+        POSEIDON_THROW_LOGIC_ERROR("invalid parameters");
     }
 
     // Prepare result
@@ -317,7 +318,6 @@ void EvaluatorBgvBase::drop_modulus(const Ciphertext &ciph, Ciphertext &result,
     {
         drop_modulus_to_next(result, result);
     }
-
 }
 
 void EvaluatorBgvBase::add_plain_inplace(Ciphertext &ciph, const Plaintext &plain) const
@@ -394,7 +394,7 @@ void EvaluatorBgvBase::add_inplace(Ciphertext &ciph1, const Ciphertext &ciph2) c
     // Size check
     if (!product_fits_in(max_count, coeff_count))
     {
-        throw logic_error("invalid parameters");
+        POSEIDON_THROW_LOGIC_ERROR("invalid parameters");
     }
     // Prepare result
     ciph1.resize(context_, context_data.parms().parms_id(), max_count);
@@ -476,42 +476,78 @@ void EvaluatorBgvBase::bgv_multiply(Ciphertext &ciph1, const Ciphertext &ciph2,
         // Given input tuples of polynomials x = (x[0], x[1], x[2]), y = (y[0], y[1]), computes
         // x = (x[0] * y[0], x[0] * y[1] + x[1] * y[0], x[1] * y[1])
         // with appropriate modular reduction
-        POSEIDON_ITERATE(coeff_modulus, coeff_modulus_size,
-                         [&](auto I)
-                         {
-                             POSEIDON_ITERATE(
-                                 iter(size_t(0)), num_tiles,
-                                 [&](POSEIDON_MAYBE_UNUSED auto J)
-                                 {
-                                     // Compute third output polynomial, overwriting input
-                                     // x[2] = x[1] * y[1]
-                                     dyadic_product_coeffmod(ciph1_1_iter[0], ciph2_1_iter[0],
-                                                             tile_size, I, ciph1_2_iter[0]);
+        // Optimized OpenMP parallelization with collapse(2)
+#ifdef USING_OPENMP
+#pragma omp parallel if (coeff_modulus_size * num_tiles > 16)
+        {
+            std::vector<uint64_t> thread_local_temp_tile(tile_size);
+            uint64_t *thread_local_temp = thread_local_temp_tile.data();
 
-                                     // Compute second output polynomial, overwriting input
-                                     // temp = x[1] * y[0]
-                                     dyadic_product_coeffmod(ciph1_1_iter[0], ciph2_0_iter[0],
-                                                             tile_size, I, temp);
-                                     // x[1] = x[0] * y[1]
-                                     dyadic_product_coeffmod(ciph1_0_iter[0], ciph2_1_iter[0],
-                                                             tile_size, I, ciph1_1_iter[0]);
-                                     // x[1] += temp
-                                     add_poly_coeffmod(ciph1_1_iter[0], temp, tile_size, I,
-                                                       ciph1_1_iter[0]);
+#pragma omp for collapse(2) schedule(dynamic, 4)
+#else
+        std::vector<uint64_t> local_temp_tile(tile_size);
+        uint64_t *local_temp = local_temp_tile.data();
+#endif
+            for (size_t i = 0; i < coeff_modulus_size; i++)
+            {
+                for (size_t j = 0; j < num_tiles; j++)
+                {
+#ifdef USING_OPENMP
+                    auto &I = coeff_modulus[i];
 
-                                     // Compute first output polynomial, overwriting input
-                                     // x[0] = x[0] * y[0]
-                                     dyadic_product_coeffmod(ciph1_0_iter[0], ciph2_0_iter[0],
-                                                             tile_size, I, ciph1_0_iter[0]);
+                    RNSIter ciph1_0_tile_iter(ciph1_iter[0][i], tile_size);
+                    RNSIter ciph1_1_tile_iter(ciph1_iter[1][i], tile_size);
+                    RNSIter ciph1_2_tile_iter(ciph1_iter[2][i], tile_size);
+                    ConstRNSIter ciph2_0_tile_iter(ciph2_iter[0][i], tile_size);
+                    ConstRNSIter ciph2_1_tile_iter(ciph2_iter[1][i], tile_size);
 
-                                     // Manually increment iterators
-                                     ciph1_0_iter++;
-                                     ciph1_1_iter++;
-                                     ciph1_2_iter++;
-                                     ciph2_0_iter++;
-                                     ciph2_1_iter++;
-                                 });
-                         });
+                    ciph1_0_tile_iter += j;
+                    ciph1_1_tile_iter += j;
+                    ciph1_2_tile_iter += j;
+                    ciph2_0_tile_iter += j;
+                    ciph2_1_tile_iter += j;
+
+                    dyadic_product_coeffmod(ciph1_1_tile_iter[0], ciph2_1_tile_iter[0], tile_size,
+                                            I, ciph1_2_tile_iter[0]);
+                    dyadic_product_coeffmod(ciph1_1_tile_iter[0], ciph2_0_tile_iter[0], tile_size,
+                                            I, thread_local_temp);
+                    dyadic_product_coeffmod(ciph1_0_tile_iter[0], ciph2_1_tile_iter[0], tile_size,
+                                            I, ciph1_1_tile_iter[0]);
+                    add_poly_coeffmod(ciph1_1_tile_iter[0], thread_local_temp, tile_size, I,
+                                      ciph1_1_tile_iter[0]);
+                    dyadic_product_coeffmod(ciph1_0_tile_iter[0], ciph2_0_tile_iter[0], tile_size,
+                                            I, ciph1_0_tile_iter[0]);
+#else
+                auto &I = coeff_modulus[i];
+
+                RNSIter ciph1_0_tile_iter(ciph1_iter[0][i], tile_size);
+                RNSIter ciph1_1_tile_iter(ciph1_iter[1][i], tile_size);
+                RNSIter ciph1_2_tile_iter(ciph1_iter[2][i], tile_size);
+                ConstRNSIter ciph2_0_tile_iter(ciph2_iter[0][i], tile_size);
+                ConstRNSIter ciph2_1_tile_iter(ciph2_iter[1][i], tile_size);
+
+                ciph1_0_tile_iter += j;
+                ciph1_1_tile_iter += j;
+                ciph1_2_tile_iter += j;
+                ciph2_0_tile_iter += j;
+                ciph2_1_tile_iter += j;
+
+                dyadic_product_coeffmod(ciph1_1_tile_iter[0], ciph2_1_tile_iter[0], tile_size, I,
+                                        ciph1_2_tile_iter[0]);
+                dyadic_product_coeffmod(ciph1_1_tile_iter[0], ciph2_0_tile_iter[0], tile_size, I,
+                                        local_temp);
+                dyadic_product_coeffmod(ciph1_0_tile_iter[0], ciph2_1_tile_iter[0], tile_size, I,
+                                        ciph1_1_tile_iter[0]);
+                add_poly_coeffmod(ciph1_1_tile_iter[0], local_temp, tile_size, I,
+                                  ciph1_1_tile_iter[0]);
+                dyadic_product_coeffmod(ciph1_0_tile_iter[0], ciph2_0_tile_iter[0], tile_size, I,
+                                        ciph1_0_tile_iter[0]);
+#endif
+                }
+            }
+#ifdef USING_OPENMP
+        }
+#endif
     }
     else
     {
@@ -619,7 +655,7 @@ void EvaluatorBgvBase::multiply_plain_inplace(Ciphertext &ciph, const Plaintext 
     // Transparent ciph output is not allowed.
     if (ciph.is_transparent())
     {
-        throw logic_error("result ciph is transparent");
+        POSEIDON_THROW_LOGIC_ERROR("result ciph is transparent");
     }
 #endif
 }
@@ -647,12 +683,13 @@ void EvaluatorBgvBase::multiply_plain_ntt(Ciphertext &ciph_ntt, const Plaintext 
     // Size check
     if (!product_fits_in(encrypted_ntt_size, coeff_count, coeff_modulus_size))
     {
-        throw logic_error("invalid parameters");
+        POSEIDON_THROW_LOGIC_ERROR("invalid parameters");
     }
 
     ConstRNSIter plain_ntt_iter(plain_ntt.data(), coeff_count);
     POSEIDON_ITERATE(
-        iter(ciph_ntt), encrypted_ntt_size, [&](auto I)
+        iter(ciph_ntt), encrypted_ntt_size,
+        [&](auto I)
         { dyadic_product_coeffmod(I, plain_ntt_iter, coeff_modulus_size, coeff_modulus, I); });
 
     // Set the scale
@@ -681,7 +718,7 @@ void EvaluatorBgvBase::multiply_plain_ntt(Ciphertext &ciph_ntt, const Plaintext 
 //     // Size check
 //     if (!product_fits_in(encrypted_size, coeff_count, coeff_modulus_size))
 //     {
-//         throw logic_error("invalid parameters");
+//         POSEIDON_THROW_LOGIC_ERROR("invalid parameters");
 //     }
 
 //     /*
@@ -822,7 +859,7 @@ void EvaluatorBgvBase::drop_modulus_to_next(const Ciphertext &ciph, Ciphertext &
 
     if (!ciph.is_ntt_form())
     {
-        POSEIDON_THROW(config_error, "BGV ciph must be in NTT form");
+        POSEIDON_THROW_CONFIG_ERROR("BGV ciph must be in NTT form");
     }
     auto context_data_ptr = context_.crt_context()->get_context_data(ciph.parms_id());
     auto &context_data = *context_data_ptr;
@@ -843,7 +880,8 @@ void EvaluatorBgvBase::drop_modulus_to_next(const Ciphertext &ciph, Ciphertext &
                              I, context_.crt_context()->small_ntt_tables(), pool_);
                      });
     result.resize(context_, next_context_data.parms().parms_id(), ciph_size);
-    POSEIDON_ITERATE(iter(ciph_copy, result), ciph_size, [&](auto I)
+    POSEIDON_ITERATE(iter(ciph_copy, result), ciph_size,
+                     [&](auto I)
                      { set_poly(get<0>(I), coeff_count, next_coeff_modulus_size, get<1>(I)); });
 
     // Set other attributes

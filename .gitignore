@@ -20,3 +20,7 @@ __pycache__/
 /test-results/**/*.sqlite-wal
 /test-results/**/*.ncu-rep
 /test-results/**/*.qdrep
+
+thirdparty
+.venv-qwen/
+**/.idea/
